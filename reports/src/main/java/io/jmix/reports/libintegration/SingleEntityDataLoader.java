@@ -23,6 +23,8 @@ import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ProxyWrapper;
 import com.haulmont.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,9 +56,9 @@ public class SingleEntityDataLoader extends AbstractEntityDataLoader {
 
         EntityMap result;
         if (dataSet instanceof DataSet) {
-            result = new EntityMap((JmixEntity) entity, getView((JmixEntity)entity, (DataSet) dataSet));
+            result = new EntityMap((JmixEntity) entity, getView((JmixEntity)entity, (DataSet) dataSet),beanFactory);
         } else {
-            result = new EntityMap((JmixEntity) entity);
+            result = new EntityMap((JmixEntity) entity,beanFactory);
         }
         return Collections.singletonList(result);
     }

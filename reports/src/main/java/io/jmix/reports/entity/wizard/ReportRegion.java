@@ -16,13 +16,13 @@
 
 package io.jmix.reports.entity.wizard;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Transient;

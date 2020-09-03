@@ -26,6 +26,8 @@ import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ProxyWrapper;
 import com.haulmont.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,15 +96,15 @@ public class MultiEntityDataLoader extends AbstractEntityDataLoader {
             if (dataSet instanceof DataSet) {
                 if (hasNestedCollection) {
                     if (nestedCollectionView != null) {
-                        resultList.add(new EntityMap(entity, nestedCollectionView));
+                        resultList.add(new EntityMap(entity, nestedCollectionView,beanFactory));
                     } else {
-                        resultList.add(new EntityMap(entity));
+                        resultList.add(new EntityMap(entity,beanFactory));
                     }
                 } else {
-                    resultList.add(new EntityMap(entity, getView(entity, (DataSet) dataSet)));
+                    resultList.add(new EntityMap(entity, getView(entity, (DataSet) dataSet),beanFactory));
                 }
             } else {
-                resultList.add(new EntityMap(entity));
+                resultList.add(new EntityMap(entity,beanFactory));
             }
         }
         return resultList;

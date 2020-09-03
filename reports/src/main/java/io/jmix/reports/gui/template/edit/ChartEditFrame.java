@@ -35,6 +35,7 @@ import io.jmix.ui.action.ItemTrackingAction;
 import io.jmix.ui.component.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -64,7 +65,7 @@ public class ChartEditFrame extends DescriptionEditFrame {
     @Autowired
     private SourceCodeEditor pieJsonConfigEditor;
     @Autowired
-    private BeanLocator beanLocator;
+    private BeanFactory beanFactory;
 
     @Override
     @SuppressWarnings("IncorrectCreateEntity")
@@ -114,7 +115,7 @@ public class ChartEditFrame extends DescriptionEditFrame {
         serialJsonConfigEditor.addValueChangeListener(this::codeEditorChangeListener);
         pieJsonConfigEditor.addValueChangeListener(this::codeEditorChangeListener);
 
-        Consumer<String> validator = beanLocator.getPrototype(JsonConfigValidator.NAME, getMessagesPack());
+        Consumer<String> validator = beanFactory.getBean(JsonConfigValidator.class, getMessagesPack());
         serialJsonConfigEditor.addValidator(validator);
         pieJsonConfigEditor.addValidator(validator);
 
@@ -197,12 +198,12 @@ public class ChartEditFrame extends DescriptionEditFrame {
         if (ChartType.SERIAL == type.getValue()) {
             SerialChartDescription chartDescription = serialChartDs.getItem();
             data = new RandomChartDataGenerator().generateRandomChartData(chartDescription);
-            ChartToJsonConverter chartToJsonConverter = new ChartToJsonConverter();
+            ChartToJsonConverter chartToJsonConverter = beanFactory.getBean(ChartToJsonConverter.class);
             chartJson = chartToJsonConverter.convertSerialChart(chartDescription, data);
         } else if (ChartType.PIE == type.getValue()) {
             PieChartDescription chartDescription = pieChartDs.getItem();
             data = new RandomChartDataGenerator().generateRandomChartData(chartDescription);
-            ChartToJsonConverter chartToJsonConverter = new ChartToJsonConverter();
+            ChartToJsonConverter chartToJsonConverter = beanFactory.getBean(ChartToJsonConverter.class);
             chartJson = chartToJsonConverter.convertPieChart(chartDescription, data);
         }
         chartJson = chartJson == null ? "{}" : chartJson;

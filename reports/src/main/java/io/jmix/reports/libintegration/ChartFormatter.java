@@ -22,6 +22,11 @@ import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
 import com.haulmont.yarg.formatters.impl.AbstractFormatter;
 import com.haulmont.yarg.structure.BandData;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +34,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Component("reports_chartFormatter")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ChartFormatter extends AbstractFormatter {
+
+    @Autowired
+    private BeanFactory beanFactory;
+
     public ChartFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
         this.rootBand = formatterFactoryInput.getRootBand();
@@ -50,7 +61,7 @@ public class ChartFormatter extends AbstractFormatter {
         try {
             IOUtils.write(chartJson, outputStream, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("An error occurred while rendering chart",e);
+            throw new RuntimeException("An error occurred while rendering chart", e);
         }
     }
 
@@ -61,7 +72,7 @@ public class ChartFormatter extends AbstractFormatter {
             data.add(bandData.getData());
         }
 
-        return new ChartToJsonConverter(((ReportTemplate) reportTemplate).getReport().getLocName())
+        return beanFactory.getBean(ChartToJsonConverter.class, ((ReportTemplate) reportTemplate).getReport().getLocName())
                 .convertSerialChart(description, data);
     }
 
@@ -72,7 +83,7 @@ public class ChartFormatter extends AbstractFormatter {
             data.add(bandData.getData());
         }
 
-        return new ChartToJsonConverter(((ReportTemplate) reportTemplate).getReport().getLocName())
+        return beanFactory.getBean(ChartToJsonConverter.class, ((ReportTemplate) reportTemplate).getReport().getLocName())
                 .convertPieChart(description, data);
     }
 }

@@ -17,16 +17,24 @@
 package io.jmix.reports.converter;
 
 import io.jmix.reports.entity.Report;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  */
 //todo support versions
+@Component("report_gsonConverter")
 public class GsonConverter {
+
+    @Autowired
+    protected BeanFactory beanFactory;
+
     public String convertToString(Report report) {
-        return new ReportGsonSerializationSupport().convertToString(report);
+        return new ReportGsonSerializationSupport(beanFactory).convertToString(report);
     }
 
     public Report convertToReport(String json) {
-        return new ReportGsonSerializationSupport().convertToReport(json, Report.class);
+        return new ReportGsonSerializationSupport(beanFactory).convertToReport(json, Report.class);
     }
 }

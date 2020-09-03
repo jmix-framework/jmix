@@ -18,14 +18,31 @@ package io.jmix.reports;
 
 import com.haulmont.cuba.core.global.*;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.exception.ReportingException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component("report_prototypesLoader")
 public class PrototypesLoader {
+
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+
+    @Autowired
+    protected DataManager dataManager;
+
+    @Autowired
+    protected ReportingConfig reportingConfig;
+
+    @Autowired
+    protected Metadata metadata;
 
     /**
      * Load parameter data
@@ -34,12 +51,10 @@ public class PrototypesLoader {
      * @return Entities list
      */
     public List loadData(ParameterPrototype parameterPrototype) {
-        Metadata metadata = AppBeans.get(Metadata.class);
 
         MetaClass metaClass = metadata.getSession().getClassNN(parameterPrototype.getMetaClassName());
-        FetchPlan queryView = metadata.getViewRepository().getView(metaClass, parameterPrototype.getViewName());
+        FetchPlan queryView = fetchPlanRepository.getFetchPlan(metaClass, parameterPrototype.getViewName());
 
-        DataManager dataManager = AppBeans.get(DataManager.NAME);
         LoadContext loadContext = LoadContext.create(metaClass.getJavaClass());
 
         LoadContext.Query query = new LoadContext.Query(parameterPrototype.getQueryString());
@@ -52,17 +67,14 @@ public class PrototypesLoader {
         if (parameterPrototype.getMaxResults() != null && !parameterPrototype.getMaxResults().equals(0)) {
             query.setMaxResults(parameterPrototype.getMaxResults());
         } else {
-            Configuration configuration = AppBeans.get(Configuration.NAME);
-            ReportingConfig config = configuration.getConfig(ReportingConfig.class);
-            query.setMaxResults(config.getParameterPrototypeQueryLimit());
+            query.setMaxResults(reportingConfig.getParameterPrototypeQueryLimit());
         }
 
         loadContext.setView(queryView);
         loadContext.setQuery(query);
         List queryResult;
         try {
-            dataManager = dataManager.secure();
-            queryResult = dataManager.loadList(loadContext);
+            queryResult = dataManager.secure().loadList(loadContext);
         } catch (Exception e) {
             throw new ReportingException(e);
         }

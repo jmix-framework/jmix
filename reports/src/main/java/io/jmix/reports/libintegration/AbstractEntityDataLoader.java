@@ -16,18 +16,27 @@
 
 package io.jmix.reports.libintegration;
 
+import com.haulmont.yarg.loaders.ReportDataLoader;
+import com.haulmont.yarg.structure.ReportQuery;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.View;
-import com.haulmont.cuba.core.global.ViewRepository;
+import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.JmixEntity;
 import io.jmix.reports.ReportingApi;
 import io.jmix.reports.entity.DataSet;
-import com.haulmont.yarg.loaders.ReportDataLoader;
-import com.haulmont.yarg.structure.ReportQuery;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractEntityDataLoader implements ReportDataLoader {
+
+    @Autowired
+    protected BeanFactory beanFactory;
+
+    @Autowired
+    protected ReportingApi reportingApi;
+
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+
     protected JmixEntity reloadEntityByDataSetView(ReportQuery reportQuery, Object inputObject) {
         JmixEntity entity = null;
         if (inputObject instanceof JmixEntity && reportQuery instanceof DataSet) {
@@ -35,7 +44,6 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
             DataSet dataSet = (DataSet) reportQuery;
             FetchPlan view = getView(entity, dataSet);
             if (view != null) {
-                ReportingApi reportingApi = AppBeans.get(ReportingApi.NAME);
                 entity = reportingApi.reloadEntity(entity, view);
             }
         }
@@ -46,8 +54,7 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     protected FetchPlan getView(JmixEntity entity, DataSet dataSet) {
         FetchPlan view;
         if (Boolean.TRUE.equals(dataSet.getUseExistingView())) {
-            ViewRepository viewRepository = AppBeans.get(ViewRepository.NAME);
-            view = viewRepository.getView(entity.getClass(), dataSet.getViewName());
+            view = fetchPlanRepository.getFetchPlan(entity.getClass(), dataSet.getViewName());
         } else {
             view = dataSet.getView();
         }

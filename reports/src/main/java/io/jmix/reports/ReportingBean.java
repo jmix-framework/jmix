@@ -105,8 +105,10 @@ public class ReportingBean implements ReportingApi {
     @Autowired
     protected EntityStates entityStates;
 
-    protected PrototypesLoader prototypesLoader = new PrototypesLoader();
+    @Autowired
+    protected PrototypesLoader prototypesLoader;
 
+    @Autowired
     protected GsonConverter gsonConverter = new GsonConverter();
     protected XStreamConverter xStreamConverter = new XStreamConverter();
 

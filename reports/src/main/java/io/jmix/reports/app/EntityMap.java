@@ -15,18 +15,18 @@
  */
 package io.jmix.reports.app;
 
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.View;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -36,19 +36,26 @@ public class EntityMap implements Map<String, Object> {
 
     public static final String INSTANCE_NAME_KEY = "_instanceName";
 
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+    protected InstanceNameProvider instanceNameProvider;
+
     protected JmixEntity instance;
     protected FetchPlan view;
     protected HashMap<String, Object> explicitData;
 
     protected boolean loaded = false;
 
-    public EntityMap(JmixEntity entity) {
+    public EntityMap(JmixEntity entity, BeanFactory beanFactory) {
         this.instance = entity;
         this.explicitData = new HashMap<>();
+        this.metadata = beanFactory.getBean(Metadata.class);
+        this.metadataTools = beanFactory.getBean(MetadataTools.class);
+        this.instanceNameProvider = beanFactory.getBean(InstanceNameProvider.class);
     }
 
-    public EntityMap(JmixEntity entity, FetchPlan loadedAttributes) {
-        this(entity);
+    public EntityMap(JmixEntity entity, FetchPlan loadedAttributes, BeanFactory beanFactory) {
+        this(entity, beanFactory);
         view = loadedAttributes;
     }
 
@@ -77,7 +84,7 @@ public class EntityMap implements Map<String, Object> {
     }
 
     private MetaClass getMetaClass(JmixEntity entity) {
-        return AppBeans.get(Metadata.class).getClass(instance.getClass());
+        return metadata.getClass(instance.getClass());
     }
 
     @Override
@@ -137,11 +144,9 @@ public class EntityMap implements Map<String, Object> {
     }
 
     protected void loadAllProperties() {
-        Metadata metadata = AppBeans.get(Metadata.class);
-
         if (!loaded) {
             MetaClass metaClass = getMetaClass(instance);
-            String pkName = metadata.getTools().getPrimaryKeyName(metaClass);
+            String pkName = metadataTools.getPrimaryKeyName(metaClass);
             for (MetaProperty property : metaClass.getProperties()) {
                 if (view != null && view.getProperty(property.getName()) != null) {
                     explicitData.put(property.getName(), getValue(instance, property.getName()));
@@ -152,7 +157,7 @@ public class EntityMap implements Map<String, Object> {
                 }
             }
 
-            explicitData.put(INSTANCE_NAME_KEY, metadata.getTools().getInstanceName(instance));
+            explicitData.put(INSTANCE_NAME_KEY, instanceNameProvider.getInstanceName(instance));
 
             loaded = true;
         }
@@ -163,18 +168,16 @@ public class EntityMap implements Map<String, Object> {
             return null;
         }
 
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-
         String path = String.valueOf(key);
         if (path.endsWith(INSTANCE_NAME_KEY)) {
             if (StringUtils.isNotBlank(path.replace(INSTANCE_NAME_KEY, ""))) {
                 Object value = getValue(instance, path.replace("." + INSTANCE_NAME_KEY, ""));
                 if (value instanceof JmixEntity) {
-                    return metadataTools.getInstanceName((JmixEntity) value);
+                    return instanceNameProvider.getInstanceName((JmixEntity) value);
                 }
             } else {
                 try {
-                    return metadataTools.getInstanceName(instance);
+                    return instanceNameProvider.getInstanceName(instance);
                 } catch (Exception e) {
                     log.trace("Suppressed error from underlying EntityMap instance.getInstanceName", e);
                     return null;

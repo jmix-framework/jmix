@@ -18,18 +18,26 @@ package io.jmix.reports.entity.charts;
 
 import com.google.common.base.Strings;
 import com.google.gson.*;
-import io.jmix.core.AppBeans;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.JmixEntity;
 import io.jmix.reports.app.EntityMap;
 import io.jmix.reports.entity.charts.serialization.DateSerializer;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Component("reports_ChartToJsonConverter")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ChartToJsonConverter {
+
+    @Autowired
+    protected InstanceNameProvider instanceNameProvider;
 
     protected final static Gson gson;
 
@@ -63,7 +71,6 @@ public class ChartToJsonConverter {
     public ChartToJsonConverter(String resultFileName) {
         this.resultFileName = resultFileName;
     }
-
 
     public String convertSerialChart(SerialChartDescription description, List<Map<String, Object>> data) {
         HashMap<String, Object> chart = new HashMap<>();
@@ -274,7 +281,7 @@ public class ChartToJsonConverter {
 
     protected void addProperty(JsonObject jsonObject, String property, Object value) {
         if (value instanceof JmixEntity) {
-            value = AppBeans.get(InstanceNameProvider.class).getInstanceName((JmixEntity) value);
+            value = instanceNameProvider.getInstanceName((JmixEntity) value);
         }
 
         jsonObject.add(property, gson.toJsonTree(value));

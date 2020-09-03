@@ -24,17 +24,18 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.haulmont.chile.core.datatypes.Datatypes;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
+import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Id;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.io.IOException;
@@ -51,11 +52,16 @@ public class GsonSerializationSupport {
     protected Map<Object, JmixEntity> processedObjects = new HashMap<>();
     protected ExclusionPolicy exclusionPolicy;
 
+    protected Metadata metadata;
+    protected ExtendedEntities extendedEntities;
+
     public interface ExclusionPolicy {
         boolean exclude(Class objectClass, String propertyName);
     }
 
-    public GsonSerializationSupport() {
+    public GsonSerializationSupport(BeanFactory beanFactory) {
+        this.metadata = beanFactory.getBean(Metadata.class);
+        this.extendedEntities = beanFactory.getBean(ExtendedEntities.class);
         gsonBuilder = new GsonBuilder()
                 .registerTypeHierarchyAdapter(JmixEntity.class, new TypeAdapter<JmixEntity>() {
                     @Override
@@ -76,10 +82,9 @@ public class GsonSerializationSupport {
                             return (TypeAdapter<T>) new TypeAdapter<Class>() {
                                 @Override
                                 public void write(JsonWriter out, Class value) throws IOException {
-                                    Metadata metadata = AppBeans.get(Metadata.NAME);
                                     MetaClass metaClass = metadata.getClass(value);
                                     if (metaClass != null) {
-                                        metaClass = metadata.getExtendedEntities().getOriginalOrThisMetaClass(metaClass);
+                                        metaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                                         out.value(metaClass.getName());
                                     } else {
                                         out.value(value.getCanonicalName());
@@ -88,11 +93,10 @@ public class GsonSerializationSupport {
 
                                 @Override
                                 public Class read(JsonReader in) throws IOException {
-                                    Metadata metadata = AppBeans.get(Metadata.NAME);
                                     String value = in.nextString();
                                     MetaClass metaClass = metadata.getClass(value);
                                     if (metaClass != null) {
-                                        metaClass = metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
+                                        metaClass = extendedEntities.getEffectiveMetaClass(metaClass);
                                         return metaClass.getJavaClass();
                                     } else {
                                         return ReflectionHelper.getClass(value);
@@ -111,8 +115,7 @@ public class GsonSerializationSupport {
         in.beginObject();
         in.nextName();
         String metaClassName = in.nextString();
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        MetaClass metaClass = metadata.getSession().getClassNN(metaClassName);
+        MetaClass metaClass = metadata.getSession().getClass(metaClassName);
         JmixEntity entity = metadata.create(metaClass);
         in.nextName();
         String id = in.nextString();
@@ -211,7 +214,7 @@ public class GsonSerializationSupport {
     @SuppressWarnings("unchecked")
     protected void writeEntity(JsonWriter out, JmixEntity entity) throws IOException {
         out.beginObject();
-        MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entity);
+        MetaClass metaClass = metadata.getClass(entity);
         Datatype idType = Datatypes.getNN(metaClass.getProperty("id").getJavaType());
         Object id = Id.of(entity).getValue();
         if (processedObjects.containsKey(id)) {
@@ -233,7 +236,7 @@ public class GsonSerializationSupport {
 
     @SuppressWarnings("unchecked")
     protected void writeFields(JsonWriter out, JmixEntity entity) throws IOException {
-        MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entity);
+        MetaClass metaClass = metadata.getClass(entity);
         for (MetaProperty property : metaClass.getProperties()) {
             if (!"id".equalsIgnoreCase(property.getName())
                     && !property.isReadOnly()

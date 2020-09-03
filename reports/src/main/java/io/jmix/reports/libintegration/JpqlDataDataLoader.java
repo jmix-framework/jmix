@@ -29,6 +29,7 @@ import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ReportQuery;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +41,9 @@ import java.util.regex.Pattern;
 public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDataLoader {
     @Autowired
     private Persistence persistence;
+
+    @Autowired
+    private BeanFactory beanFactory;
 
     private static final String QUERY_END = "%%END%%";
     private static final String ALIAS_PATTERN = "as\\s+\"?([\\w|\\d|_|\\.]+)\"?\\s*";
@@ -81,7 +85,7 @@ public class JpqlDataDataLoader extends AbstractDbDataLoader implements ReportDa
             if (queryResult.size() > 0 && queryResult.get(0) instanceof JmixEntity) {
                 List<Map<String, Object>> wrappedResults = new ArrayList<>();
                 for (Object theResult : queryResult) {
-                    wrappedResults.add(new EntityMap((JmixEntity) theResult));
+                    wrappedResults.add(new EntityMap((JmixEntity) theResult,beanFactory));
                 }
                 return wrappedResults;
             } else {

@@ -18,9 +18,6 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.cuba.core.app.FileStorageAPI;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.core.global.*;
-import io.jmix.core.CoreProperties;
-import io.jmix.reports.ReportingConfig;
 import com.haulmont.yarg.exception.ReportFormattingException;
 import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
 import com.haulmont.yarg.formatters.impl.HtmlFormatter;
@@ -32,11 +29,14 @@ import freemarker.ext.util.WrapperTemplateModel;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateScalarModel;
+import io.jmix.core.*;
+import io.jmix.reports.ReportingConfig;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xhtmlrenderer.pdf.ITextFSImage;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -62,10 +62,20 @@ public class CubaHtmlFormatter extends HtmlFormatter {
 
     private static final Logger log = LoggerFactory.getLogger(CubaHtmlFormatter.class);
 
-    protected Messages messages = AppBeans.get(Messages.class);
-    protected final ReportingConfig reportingConfig = AppBeans.get(Configuration.class).getConfig(ReportingConfig.class);
-    protected int entityMapMaxDeep = reportingConfig.getEntityTreeModelMaxDeep();
-    protected int externalImagesTimeoutSec = reportingConfig.getHtmlExternalResourcesTimeoutSec();
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected ReportingConfig reportingConfig;
+    @Autowired
+    protected CoreProperties coreProperties;
+    @Autowired
+    protected DataManager dataManager;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected FileStorageAPI storageAPI;
 
     public CubaHtmlFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -106,16 +116,15 @@ public class CubaHtmlFormatter extends HtmlFormatter {
     }
 
     protected void loadFonts(ITextRenderer renderer) {
-        Configuration configuration = AppBeans.get(Configuration.class);
-        String fontsPath = AppBeans.get(CoreProperties.class).getConfDir() + CUBA_FONTS_DIR;
+        String fontsPath = coreProperties.getConfDir() + CUBA_FONTS_DIR;
 
         File fontsDir = new File(fontsPath);
 
         loadFontsFromDirectory(renderer, fontsDir);
 
-        ReportingConfig serverConfig = configuration.getConfig(ReportingConfig.class);
-        if (StringUtils.isNotBlank(serverConfig.getPdfFontsDirectory())) {
-            File systemFontsDir = new File(serverConfig.getPdfFontsDirectory());
+
+        if (StringUtils.isNotBlank(reportingConfig.getPdfFontsDirectory())) {
+            File systemFontsDir = new File(reportingConfig.getPdfFontsDirectory());
             loadFontsFromDirectory(renderer, systemFontsDir);
         }
     }
@@ -217,23 +226,21 @@ public class CubaHtmlFormatter extends HtmlFormatter {
             if (StringUtils.startsWith(uri, FS_PROTOCOL_PREFIX)) {
                 String uuidString = StringUtils.substring(uri, FS_PROTOCOL_PREFIX.length());
 
-                DataManager dataWorker = AppBeans.get(DataManager.class);
-                LoadContext<FileDescriptor> loadContext = new LoadContext<>(FileDescriptor.class);
-                loadContext.setView(View.LOCAL);
+                LoadContext<FileDescriptor> loadContext = new LoadContext(metadata.getClass(FileDescriptor.class));
+                loadContext.setFetchPlan(fetchPlanRepository.getFetchPlan(FileDescriptor.class, FetchPlan.LOCAL));
 
                 UUID id = UUID.fromString(uuidString);
                 loadContext.setId(id);
 
-                FileDescriptor fd = dataWorker.load(loadContext);
+                FileDescriptor fd = dataManager.load(loadContext);
                 if (fd == null) {
                     throw new ReportFormattingException(
                             format("File with id [%s] has not been found in file storage", id));
                 }
 
-                FileStorageAPI storageAPI = AppBeans.get(FileStorageAPI.class);
                 try {
                     return storageAPI.openStream(fd);
-                } catch (FileStorageException e) {
+                } catch (FileStorageException | com.haulmont.cuba.core.global.FileStorageException e) {
                     throw wrapWithReportingException(
                             format("An error occurred while loading file with id [%s] from file storage", id), e);
                 }
@@ -251,7 +258,7 @@ public class CubaHtmlFormatter extends HtmlFormatter {
             try {
                 URL url = new URL(uri);
                 URLConnection urlConnection = url.openConnection();
-                urlConnection.setConnectTimeout(externalImagesTimeoutSec * 1000);
+                urlConnection.setConnectTimeout(reportingConfig.getHtmlExternalResourcesTimeoutSec() * 1000);
                 inputStream = urlConnection.getInputStream();
             } catch (java.net.SocketTimeoutException e) {
                 throw new ReportFormattingException(format("Loading resource [%s] has been stopped by timeout", uri), e);
@@ -268,19 +275,17 @@ public class CubaHtmlFormatter extends HtmlFormatter {
     }
 
     protected String resolveServerPrefix(String uri) {
-        CoreProperties globalConfig = AppBeans.get(CoreProperties.class);
         String coreUrl = String.format("http://%s:%s/%s/",
-                globalConfig.getWebHostName(), globalConfig.getWebPort(), globalConfig.getWebContextName());
+                coreProperties.getWebHostName(), coreProperties.getWebPort(), coreProperties.getWebContextName());
         return uri.replace(CORE_APP_PREFIX, coreUrl);
     }
 
     @SuppressWarnings("unchecked")
     protected Map getTemplateModel(BandData rootBand) {
         Map model = super.getTemplateModel(rootBand);
-        if (reportTemplate.isGroovy()){
+        if (reportTemplate.isGroovy()) {
             model.put("messages", messages);
-        }
-        else {
+        } else {
             model.put("getMessage", (TemplateMethodModelEx) arguments -> {
                 checkArgsCount("getMessage", arguments, 1, 2);
                 if (arguments.size() == 1) {
@@ -308,7 +313,7 @@ public class CubaHtmlFormatter extends HtmlFormatter {
                 checkArgsCount("getMainMessage", arguments, 1);
                 Object arg = arguments.get(0);
                 if (arg instanceof TemplateScalarModel) {
-                    return messages.getMainMessage(((TemplateScalarModel) arg).getAsString());
+                    return messages.getMessage(((TemplateScalarModel) arg).getAsString());
                 } else {
                     throwIncorrectArgType("getMainMessage", 1, "String");
                 }

@@ -16,21 +16,30 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
+import com.haulmont.yarg.formatters.impl.AbstractFormatter;
+import com.haulmont.yarg.structure.BandData;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.reports.entity.PivotTableData;
 import io.jmix.reports.entity.ReportTemplate;
 import io.jmix.reports.entity.pivottable.PivotTableDescription;
-import com.haulmont.yarg.formatters.factory.FormatterFactoryInput;
-import com.haulmont.yarg.formatters.impl.AbstractFormatter;
-import com.haulmont.yarg.structure.BandData;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component("reports_pivotTableFormatter")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PivotTableFormatter extends AbstractFormatter {
+
+    @Autowired
+    private BeanFactory beanFactory;
 
     public PivotTableFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
@@ -41,7 +50,7 @@ public class PivotTableFormatter extends AbstractFormatter {
     @Override
     public void renderDocument() {
         PivotTableDescription pivotTableDescription = ((ReportTemplate) reportTemplate).getPivotTableDescription();
-        AppBeans.get(StandardSerialization.class).serialize(new PivotTableData(PivotTableDescription.toJsonString(pivotTableDescription), getEntries(pivotTableDescription)), outputStream);
+        beanFactory.getBean(StandardSerialization.class).serialize(new PivotTableData(PivotTableDescription.toJsonString(pivotTableDescription), getEntries(pivotTableDescription)), outputStream);
     }
 
     protected List<KeyValueEntity> getEntries(PivotTableDescription configuration) {

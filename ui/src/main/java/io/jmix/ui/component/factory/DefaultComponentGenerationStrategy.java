@@ -42,11 +42,6 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
     }
 
     @Autowired
-    public void setActions(Actions actions) {
-        this.actions = actions;
-    }
-
-    @Autowired
     public void setUiComponents(UiComponents uiComponents) {
         this.uiComponents = uiComponents;
     }

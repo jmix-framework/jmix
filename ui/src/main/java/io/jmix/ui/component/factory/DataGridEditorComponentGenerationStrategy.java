@@ -62,11 +62,6 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
         this.uiComponents = uiComponents;
     }
 
-    @Autowired
-    public void setActions(Actions actions) {
-        this.actions = actions;
-    }
-
     @Nullable
     @Override
     public Component createComponent(ComponentGenerationContext context) {

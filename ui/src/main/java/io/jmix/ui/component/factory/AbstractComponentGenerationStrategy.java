@@ -47,7 +47,6 @@ import static io.jmix.ui.component.DateField.Resolution;
 
 public abstract class AbstractComponentGenerationStrategy implements ComponentGenerationStrategy {
 
-    protected Actions actions;
     protected Messages messages;
     protected UiComponents uiComponents;
     protected EntityFieldCreationSupport entityFieldCreationSupport;

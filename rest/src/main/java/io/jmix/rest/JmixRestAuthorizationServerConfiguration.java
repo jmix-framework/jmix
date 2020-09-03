@@ -19,6 +19,7 @@ package io.jmix.rest;
 import io.jmix.rest.api.auth.UniqueAuthenticationKeyGenerator;
 import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,7 +33,6 @@ import org.springframework.security.oauth2.provider.token.AuthorizationServerTok
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
@@ -46,18 +46,9 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
     @Autowired
     protected AuthenticationManager authenticationManager;
 
-    @Bean
-    protected UniqueAuthenticationKeyGenerator authenticationKeyGenerator() {
-        return new UniqueAuthenticationKeyGenerator();
-    }
-
-    @Bean(name = "rest_tokenStore")
-    protected TokenStore tokenStore() {
-        //todo MG database token storage support
-        InMemoryTokenStore tokenStore = new InMemoryTokenStore();
-        tokenStore.setAuthenticationKeyGenerator(authenticationKeyGenerator());
-        return tokenStore;
-    }
+    @Autowired
+    @Qualifier("rest_tokenStore")
+    protected TokenStore tokenStore;
 
     @Bean(name = "rest_tokenEnhancer")
     public TokenEnhancer tokenEnhancer() {
@@ -101,8 +92,8 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.pathMapping("/oauth/token", "/rest/oauth/token")
                 .authenticationManager(authenticationManager)
-                .tokenStore(endpoints.getTokenStore() != null ? endpoints.getTokenStore() : tokenStore())
-                .tokenEnhancer(endpoints.getTokenEnhancer() != null ? endpoints.getTokenEnhancer() : tokenEnhancer())
+                .tokenStore(tokenStore)
+                .tokenEnhancer(tokenEnhancer())
                 .tokenServices(tokenServices(endpoints));
     }
 }

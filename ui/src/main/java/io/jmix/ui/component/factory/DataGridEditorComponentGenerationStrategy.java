@@ -42,13 +42,6 @@ import javax.annotation.Nullable;
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
     public static final String NAME = "jmix_DataGridEditorMetaComponentStrategy";
 
-    protected DataComponents dataComponents;
-
-    @Autowired
-    public void setDataComponents(DataComponents dataComponents) {
-        this.dataComponents = dataComponents;
-    }
-
     @Autowired
     public DataGridEditorComponentGenerationStrategy(Messages messages,
                                                      EntityFieldCreationSupport entityFieldCreationSupport,

@@ -74,7 +74,7 @@ class JmixBuildPlugin implements Plugin<Project> {
     }
 
     private void setupPublishing(Project project) {
-        if (!project.name.startsWith('sample-')) {
+        if (!project.name.startsWith('sample')) {
             project.with {
                 apply plugin: 'maven-publish'
 

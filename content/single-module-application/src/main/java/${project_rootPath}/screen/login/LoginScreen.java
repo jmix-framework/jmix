@@ -28,6 +28,8 @@ import org.springframework.security.web.authentication.session.CompositeSessionA
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 
+import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
+
 @UiController("${project_idPrefix}_LoginScreen")
 @UiDescriptor("login-screen.xml")
 @Route(path = "login", root = true)

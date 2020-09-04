@@ -16,6 +16,7 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -29,6 +30,7 @@ import javax.persistence.*;
 @DiscriminatorValue("F")
 @SystemLevel
 @EnableRestore(false)
+@NamePattern("%s|name")
 public class Folder extends StandardEntity {
 
     private static final long serialVersionUID = -2038652558181851215L;

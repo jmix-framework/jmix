@@ -16,6 +16,7 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.entity.annotation.EnableRestore;
@@ -30,6 +31,7 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")
 @DiscriminatorValue("S")
 @EnableRestore
+@NamePattern("%s|name")
 public class SearchFolder extends AbstractSearchFolder {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,11 +62,6 @@ public class SearchFolder extends AbstractSearchFolder {
 
     public void setPresentation(Presentation presentation) {
         this.presentation = presentation;
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 
     @Override

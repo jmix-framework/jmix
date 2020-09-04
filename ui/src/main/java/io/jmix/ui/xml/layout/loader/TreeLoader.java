@@ -20,6 +20,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ButtonsPanel;
+import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.tree.ContainerTreeItems;
@@ -82,6 +83,7 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
         loadContextHelp(resultComponent, element);
 
         loadSelectionMode(resultComponent, element);
+        loadContentMode(resultComponent, element);
 
         loadRowHeight(resultComponent, element);
     }
@@ -171,6 +173,13 @@ public class TreeLoader extends ActionsHolderLoader<Tree> {
         String rowHeight = element.attributeValue("rowHeight");
         if (!Strings.isNullOrEmpty(rowHeight)) {
             component.setRowHeight(Double.parseDouble(rowHeight));
+        }
+    }
+
+    protected void loadContentMode(Tree component, Element element) {
+        String contentMode = element.attributeValue("contentMode");
+        if (!Strings.isNullOrEmpty(contentMode)) {
+            component.setContentMode(ContentMode.valueOf(contentMode));
         }
     }
 }

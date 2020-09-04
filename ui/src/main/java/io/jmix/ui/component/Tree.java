@@ -284,6 +284,18 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      */
     void setRowHeight(double rowHeight);
 
+    /**
+     * @return the content mode of the item captions
+     */
+    ContentMode getContentMode();
+
+    /**
+     * Sets the content mode of the item captions.
+     *
+     * @param contentMode the content mode
+     */
+    void setContentMode(ContentMode contentMode);
+
     enum SelectionMode {
         /**
          * A SelectionMode that supports for only single rows to be selected at a time.

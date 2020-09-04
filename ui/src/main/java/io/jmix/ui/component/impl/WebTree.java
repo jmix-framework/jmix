@@ -988,7 +988,8 @@ public class WebTree<E extends JmixEntity>
     @Nullable
     protected String getRowDescription(E item) {
         String rowDescription = descriptionProvider.apply(item);
-        return WebWrapperUtils.toContentMode(component.getContentMode()) == ContentMode.HTML
+        return WebWrapperUtils.toContentMode(
+                component.getCompositionRoot().getRowDescriptionContentMode()) == ContentMode.HTML
                 ? sanitize(rowDescription)
                 : rowDescription;
     }
@@ -998,6 +999,16 @@ public class WebTree<E extends JmixEntity>
     @Override
     public Function<E, String> getDescriptionProvider() {
         return (Function<E, String>) descriptionProvider;
+    }
+
+    @Override
+    public ContentMode getContentMode() {
+        return WebWrapperUtils.toContentMode(component.getContentMode());
+    }
+
+    @Override
+    public void setContentMode(ContentMode contentMode) {
+        component.setContentMode(WebWrapperUtils.toVaadinContentMode(contentMode));
     }
 
     @SuppressWarnings("unchecked")

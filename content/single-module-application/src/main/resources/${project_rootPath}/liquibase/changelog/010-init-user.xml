@@ -14,7 +14,9 @@
             <column name="VERSION" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="USERNAME" type="varchar(255)"/>
+            <column name="USERNAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="FIRST_NAME" type="varchar(255)"/>
             <column name="LAST_NAME" type="varchar(255)"/>
             <column name="PASSWORD" type="varchar(255)"/>

@@ -23,7 +23,7 @@ public class User implements JmixEntity, BaseUser {
     private UUID id;
 
     @Version
-    @Column(name = "VERSION")
+    @Column(name = "VERSION", nullable = false)
     private Integer version;
 
     @Column(name = "USERNAME", nullable = false)

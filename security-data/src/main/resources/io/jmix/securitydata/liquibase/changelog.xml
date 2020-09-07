@@ -21,7 +21,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="security-data" id="1.0">
+    <changeSet author="security-data" id="1">
 
         <createTable tableName="SEC_ROLE_ENTITY">
             <column name="ID" type="uuid">

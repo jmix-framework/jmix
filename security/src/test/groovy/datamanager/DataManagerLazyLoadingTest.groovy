@@ -102,25 +102,8 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
                 .id(manyToOneId)
                 .one()
 
-        def oneToManyWithConstraints = dataManager.load(OneToManyEntity.class)
-                .accessConstraints(accessConstraintsRegistry.getConstraints())
-                .list()
-        def oneToManyWithoutConstraints = dataManager.load(OneToManyEntity.class)
-                .list()
-
-        def manyToOneWithConstraints = dataManager.load(ManyToOneEntity.class)
-                .accessConstraints(accessConstraintsRegistry.getConstraints())
-                .list()
-
-        def manyToOneWithoutConstraints = dataManager.load(ManyToOneEntity.class)
-                .list()
-
         then:
 
-        oneToManyWithConstraints.size() == 1
-        oneToManyWithoutConstraints.size() == 2
-        manyToOneWithConstraints.size() == 2
-        manyToOneWithoutConstraints.size() == 4
         oneToManyEntity.manyToOneEntities.size() == 2
         manyToOneEntity.oneToManyEntity == oneToManyEntity
     }
@@ -135,8 +118,7 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
 
         def manyToManySecondEntity = dataManager.load(ManyToManySecondEntity.class)
                 .accessConstraints(accessConstraintsRegistry.getConstraints())
-                .one()
-        manyToManySecondEntity.getManyToManyFirstEntities()
+                .list().iterator().next()
 
         then:
 
@@ -156,7 +138,7 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
 
         then:
 
-        resultWithConstraints.getManyToManyFirstEntities().size() == 3
+        resultWithConstraints.getManyToManyFirstEntities().size() == 2
         resultWithoutConstraints.getManyToManyFirstEntities().size() == 5
     }
 

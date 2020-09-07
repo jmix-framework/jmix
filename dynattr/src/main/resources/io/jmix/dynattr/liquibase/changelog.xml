@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="dynattr" id="1.0">
+    <changeSet author="dynattr" id="1">
 
         <createTable tableName="SYS_CATEGORY">
             <column name="ID" type="uuid">

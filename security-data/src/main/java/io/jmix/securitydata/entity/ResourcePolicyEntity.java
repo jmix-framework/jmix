@@ -77,10 +77,10 @@ public class ResourcePolicyEntity implements JmixEntity {
     @Column(name = "RESOURCE_", nullable = false, length = 1000)
     private String resource;
 
-    @Column(name = "ACTION_")
+    @Column(name = "ACTION_", nullable = false)
     private String action;
 
-    @Column(name = "EFFECT")
+    @Column(name = "EFFECT", nullable = false)
     private String effect;
 
     @Column(name = "SCOPE_")

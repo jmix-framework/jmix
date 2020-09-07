@@ -25,6 +25,8 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.impl.context.CrudEntityContext;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;
@@ -293,7 +295,7 @@ public class EntitiesControllerManager {
                                        MetaClass metaClass,
                                        Map<String, Object> queryParameters) {
         LoadContext<JmixEntity> ctx = new LoadContext<>(metaClass);
-        String orderedQueryString = addOrderBy(queryString, sort);
+        String orderedQueryString = addOrderBy(queryString, sort, metaClass);
         LoadContext.Query query = new LoadContext.Query(orderedQueryString);
 
         if (limit != null) {
@@ -330,23 +332,65 @@ public class EntitiesControllerManager {
         return json;
     }
 
-    protected String addOrderBy(String queryString, @Nullable String sort) {
+    protected String addOrderBy(String queryString, @Nullable String sort, MetaClass metaClass) {
         if (Strings.isNullOrEmpty(sort)) {
             return queryString;
         }
         StringBuilder orderBy = new StringBuilder(queryString).append(" order by ");
         Iterable<String> iterableColumns = Splitter.on(",").trimResults().omitEmptyStrings().split(sort);
         for (String column : iterableColumns) {
-            String order = " asc, ";
-            if (column.startsWith("-")) {
-                order = " desc, ";
-                column = column.substring(1);
-            } else if (column.startsWith("+")) {
+            String order = "";
+            if (column.startsWith("-") || column.startsWith("+")) {
+                order = column.substring(0, 1);
                 column = column.substring(1);
             }
-            orderBy.append("e.").append(column).append(order);
+            MetaPropertyPath propertyPath = metaClass.getPropertyPath(column);
+            if (propertyPath != null) {
+                switch (order) {
+                    case "-":
+                        order = " desc, ";
+                        break;
+                    case "+":
+                    default:
+                        order = " asc, ";
+                        break;
+                }
+                MetaProperty metaProperty = propertyPath.getMetaProperty();
+                if (metaProperty.getRange().isClass()) {
+                    if (!metaProperty.getRange().getCardinality().isMany()) {
+                        for (String exp : getEntityPropertySortExpression(propertyPath)) {
+                            orderBy.append(exp).append(order);
+                        }
+                    }
+                } else {
+                    orderBy.append("e.").append(column).append(order);
+                }
+            }
         }
         return orderBy.substring(0, orderBy.length() - 2);
+    }
+
+    protected List<String> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath) {
+        Collection<MetaProperty> properties = metadataTools.getInstanceNameRelatedProperties(
+                metaPropertyPath.getMetaProperty().getRange().asClass());
+        if (!properties.isEmpty()) {
+            List<String> sortExpressions = new ArrayList<>(properties.size());
+            for (MetaProperty metaProperty : properties) {
+                if (metadataTools.isPersistent(metaProperty)) {
+                    MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath, metaProperty);
+                    if (metaProperty.getRange().isClass()) {
+                        if (!metaProperty.getRange().getCardinality().isMany()) {
+                            sortExpressions.addAll(getEntityPropertySortExpression(childPropertyPath));
+                        }
+                    } else {
+                        sortExpressions.add(String.format("e.%s", childPropertyPath.toString()));
+                    }
+                }
+            }
+            return sortExpressions;
+        } else {
+            return Collections.singletonList(String.format("e.%s", metaPropertyPath.toString()));
+        }
     }
 
     public ResponseInfo createEntity(String entityJson,

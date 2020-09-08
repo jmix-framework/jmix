@@ -76,8 +76,8 @@
         </collection>
     </data>
 
-    <assign name="fieldWidth" value="theme://cuba.gui.entity-log-browse.field.width"/>
-    <assign name="buttonWidth" value="theme://cuba.gui.entity-log-browse.button.width"/>
+    <assign name="fieldWidth" value="theme://jmix.ui.entity-log-browse.field.width"/>
+    <assign name="buttonWidth" value="theme://jmix.ui.entity-log-browse.button.width"/>
 
     <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
                 width="theme://cuba.gui.dialogSize.width.xlarge"

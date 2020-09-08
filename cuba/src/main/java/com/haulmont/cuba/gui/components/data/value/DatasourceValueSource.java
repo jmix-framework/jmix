@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components.data.value;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
@@ -68,7 +69,9 @@ public class DatasourceValueSource<E extends JmixEntity, V> implements EntityVal
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        MetaClass metaClass = datasource.getMetaClass();
+        MetaClass metaClass = datasource instanceof RuntimePropsDatasource ?
+                ((RuntimePropsDatasource<E>) datasource).resolveCategorizedEntityClass() :
+                datasource.getMetaClass();
 
         MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
         this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);

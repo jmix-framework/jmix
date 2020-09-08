@@ -63,39 +63,38 @@ public class LiquibaseChangeLogProcessor {
             }
         }
 
+        Document doc = DocumentFactory.getInstance().createDocument();
+        Element rootElem = doc.addElement("databaseChangeLog", "http://www.liquibase.org/xml/ns/dbchangelog");
+        rootElem.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        rootElem.addAttribute("xsi:schemaLocation", "http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd");
+
         if (!moduleFiles.isEmpty()) {
             log.debug("Found module changelogs: {}", moduleFiles);
-            Document doc = DocumentFactory.getInstance().createDocument();
-            Element rootElem = doc.addElement("databaseChangeLog", "http://www.liquibase.org/xml/ns/dbchangelog");
-            rootElem.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            rootElem.addAttribute("xsi:schemaLocation", "http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd");
-
             for (String moduleFile : moduleFiles) {
                 Element includeElem = rootElem.addElement("include");
                 includeElem.addAttribute("file", moduleFile);
             }
-
-            log.info("Creating file " + fileName);
-
-            File outFile;
-            try {
-                outFile = new File(fileName).getCanonicalFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            if (!outFile.getParentFile().exists()) {
-                if (!outFile.getParentFile().mkdirs()) {
-                    throw new RuntimeException("Cannot create directory " + outFile.getParentFile());
-                }
-            }
-            try (OutputStream os = new FileOutputStream(outFile);
-                 Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-                Dom4j.writeDocument(doc, true, writer);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
         } else {
             log.debug("Did not find changelogs in {}", jmixModules.getAll());
+        }
+        log.info("Creating file " + fileName);
+
+        File outFile;
+        try {
+            outFile = new File(fileName).getCanonicalFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        if (!outFile.getParentFile().exists()) {
+            if (!outFile.getParentFile().mkdirs()) {
+                throw new RuntimeException("Cannot create directory " + outFile.getParentFile());
+            }
+        }
+        try (OutputStream os = new FileOutputStream(outFile);
+             Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
+            Dom4j.writeDocument(doc, true, writer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         return fileName;

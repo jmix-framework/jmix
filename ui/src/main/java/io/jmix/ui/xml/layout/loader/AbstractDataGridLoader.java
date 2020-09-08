@@ -809,6 +809,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             try {
                 Constructor<?> constructor = aggregationClass.getDeclaredConstructor();
                 AggregationStrategy customStrategy = (AggregationStrategy) constructor.newInstance();
+                applicationContext.getAutowireCapableBeanFactory().autowireBean(customStrategy);
                 aggregation.setStrategy(customStrategy);
             } catch (Exception e) {
                 throw new RuntimeException("Unable to instantiate strategy for aggregation", e);

@@ -587,6 +587,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 try {
                     Constructor<?> constructor = aggregationClass.getDeclaredConstructor();
                     AggregationStrategy customStrategy = (AggregationStrategy) constructor.newInstance();
+                    applicationContext.getAutowireCapableBeanFactory().autowireBean(customStrategy);
                     aggregation.setStrategy(customStrategy);
                 } catch (Exception e) {
                     throw new RuntimeException("Unable to instantiate strategy for aggregation", e);

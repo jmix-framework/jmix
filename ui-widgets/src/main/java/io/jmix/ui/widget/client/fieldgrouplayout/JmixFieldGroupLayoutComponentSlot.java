@@ -24,6 +24,7 @@ import com.google.gwt.user.client.EventListener;
 import com.vaadin.client.BrowserInfo;
 import io.jmix.ui.widget.client.caption.CaptionHolder;
 import io.jmix.ui.widget.client.caption.JmixCaptionWidget;
+import io.jmix.ui.widget.client.caption.JmixGridLayoutCaptionWidget;
 import io.jmix.ui.widget.client.gridlayout.JmixGridLayoutSlot;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.Util;
@@ -145,6 +146,14 @@ public class JmixFieldGroupLayoutComponentSlot extends JmixGridLayoutSlot
                 captionStyle.clearRight();
 
                 clearCaptionRight = true;
+
+                if (caption instanceof JmixGridLayoutCaptionWidget
+                        && ((JmixGridLayoutCaptionWidget) caption).hasInlineIcon()) {
+                    ((JmixGridLayoutCaptionWidget) caption).getIcon()
+                            .getElement()
+                            .getStyle()
+                            .setPaddingLeft(captionWidth, Style.Unit.PX);
+                }
             }
         }
 

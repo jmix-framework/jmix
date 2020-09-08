@@ -23,11 +23,15 @@ import com.google.gwt.user.client.Element;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.VCaption;
+import com.vaadin.client.WidgetUtil;
 import com.vaadin.client.communication.StateChangeEvent;
+import com.vaadin.client.ui.Icon;
+import com.vaadin.client.ui.ImageIcon;
 import com.vaadin.client.ui.VGridLayout;
 import com.vaadin.shared.ui.Connect;
 import io.jmix.ui.widget.JmixFormLayout;
 import io.jmix.ui.widget.client.caption.JmixCaptionWidget;
+import io.jmix.ui.widget.client.caption.JmixGridLayoutCaptionWidget;
 import io.jmix.ui.widget.client.gridlayout.JmixGridLayoutConnector;
 
 import javax.annotation.Nullable;
@@ -183,8 +187,33 @@ public class JmixFieldGroupLayoutConnector extends JmixGridLayoutConnector {
 
                 // Set fixed width to the inner textElement in order to have line wrapping
                 if (cell.slot.getCaption() instanceof JmixCaptionWidget) {
+                    int innerTextElementWidth = maxCaptionWidth;
                     Element textElement = ((JmixCaptionWidget) cell.slot.getCaption()).getTextElement();
-                    textElement.getStyle().setProperty("width", maxCaptionWidth + "px");
+
+                    if (cell.slot.getCaption() instanceof JmixGridLayoutCaptionWidget) {
+                        JmixGridLayoutCaptionWidget caption = (JmixGridLayoutCaptionWidget) cell.slot.getCaption();
+                        Icon icon = caption.getIcon();
+                        // If caption contains icon then you need to subtract the icon width from the inner text element
+                        // width. But it does not apply to the inline icon, since its width was not taken into account
+                        // when calculating maximum caption width.
+                        if (icon != null && !caption.hasInlineIcon()) {
+                            // Updating the caption resets the image icon size and it will acquire the appropriate size
+                            // later on a ONLOAD browser event. In order to get the width of the image icon, we first
+                            // set an undefined width, calculate the width and then reset the width value.
+                            if (icon instanceof ImageIcon && icon.getOffsetWidth() == 0) {
+                                icon.setWidth("");
+                                innerTextElementWidth -= WidgetUtil.getRequiredWidth(icon.getElement());
+                                icon.setWidth("0");
+                            } else {
+                                innerTextElementWidth -= WidgetUtil.getRequiredWidth(icon.getElement());
+                            }
+                        }
+
+                        // Subtract the horizontal padding and border of inner text element
+                        innerTextElementWidth -= WidgetUtil.measureHorizontalPaddingAndBorder(textElement, 0);
+                    }
+
+                    textElement.getStyle().setProperty("width", innerTextElementWidth + "px");
                 }
 
                 if (cell.slot.isRelativeWidth()) {

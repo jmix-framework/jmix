@@ -27,6 +27,7 @@ import com.vaadin.client.ui.gridlayout.GridLayoutConnector;
 import com.vaadin.client.ui.layout.VLayoutSlot;
 import com.vaadin.shared.AbstractComponentState;
 import com.vaadin.shared.ui.Connect;
+import io.jmix.ui.widget.client.caption.JmixGridLayoutCaptionWidget;
 
 @Connect(JmixGridLayout.class)
 public class JmixGridLayoutConnector extends GridLayoutConnector implements Paintable, HasRequiredIndicator {
@@ -56,7 +57,7 @@ public class JmixGridLayoutConnector extends GridLayoutConnector implements Pain
             VCaption caption = layoutSlot.getCaption();
             if (caption == null) {
                 // use our own caption widget
-                caption = new JmixCaptionWidget(childConnector, getConnection());
+                caption = new JmixGridLayoutCaptionWidget(childConnector, getConnection());
 
                 setDefaultCaptionParameters((JmixCaptionWidget)caption);
 

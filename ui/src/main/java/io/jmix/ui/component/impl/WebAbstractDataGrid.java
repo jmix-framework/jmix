@@ -1027,6 +1027,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     @Override
     public void dataGridSourceItemSetChanged(DataGridItems.ItemSetChangeEvent<E> event) {
+        clearFieldDatasources(null);
+
         // #PL-2035, reload selection from ds
         Set<E> selectedItems = getSelected();
         Set<E> newSelection = new HashSet<>();

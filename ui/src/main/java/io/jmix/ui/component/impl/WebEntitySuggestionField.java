@@ -98,15 +98,6 @@ public class WebEntitySuggestionField<V extends JmixEntity> extends WebEntityPic
         this.locale = currentAuthentication.getLocale();
     }
 
-    @Override
-    protected String formatValue(@Nullable V value) {
-        if (optionCaptionProvider != null) {
-            return nullToEmpty(optionCaptionProvider.apply(value));
-        }
-
-        return super.formatValue(value);
-    }
-
     protected void cancelSearch() {
         if (handler != null) {
             log.debug("Cancel previous search");

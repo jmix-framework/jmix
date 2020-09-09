@@ -168,12 +168,12 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         return internalValue;
     }
 
-
+    @Nullable
     public IconGenerator<T> getIconGenerator() {
         return iconGenerator;
     }
 
-    public void setIconGenerator(IconGenerator<T> iconGenerator) {
+    public void setIconGenerator(@Nullable IconGenerator<T> iconGenerator) {
         if (this.iconGenerator != iconGenerator) {
             this.iconGenerator = iconGenerator;
 

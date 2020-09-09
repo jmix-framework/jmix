@@ -44,8 +44,11 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
     protected void loadCaptionProperty(EntityPicker resultComponent, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
+            resultComponent.setFormatter(
+                    new CaptionAdapter(captionProperty,
+                            applicationContext.getBean(Metadata.class),
+                            applicationContext.getBean(MetadataTools.class))
+            );
         }
     }
 

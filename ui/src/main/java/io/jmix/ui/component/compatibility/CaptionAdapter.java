@@ -20,14 +20,14 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.ui.component.formatter.Formatter;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 /**
  * Converts {@code captionProperty} XML attribute to item/options caption provider.
  */
-public class CaptionAdapter implements Function<Object, String> {
+public class CaptionAdapter implements Formatter<Object> {
 
     protected String captionProperty;
 

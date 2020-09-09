@@ -30,9 +30,11 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.TestIdManager;
+import io.jmix.ui.theme.HaloTheme;
 import io.jmix.ui.widget.JmixButton;
 import io.jmix.ui.widget.JmixPickerField;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,6 +42,7 @@ import javax.annotation.Nullable;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -61,6 +64,8 @@ public class WebValuePicker<V>
 
     protected Consumer<PropertyChangeEvent> actionPropertyChangeListener = this::actionPropertyChanged;
 
+    protected Function<? super V, String> fieldIconProvider;
+
     protected Registration fieldListenerRegistration;
 
     public WebValuePicker() {
@@ -76,6 +81,12 @@ public class WebValuePicker<V>
     @Autowired
     public void setMetadataTools(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    protected void setUiProperties(UiProperties properties) {
+        actionHandler = new WebValuePickerActionHandler(properties);
+        component.addActionHandler(actionHandler);
     }
 
     @Override
@@ -116,12 +127,6 @@ public class WebValuePicker<V>
     @Override
     public void setFormatter(@Nullable Formatter<? super V> formatter) {
         this.formatter = formatter;
-    }
-
-    @Autowired
-    protected void setUiProperties(UiProperties properties) {
-        actionHandler = new WebValuePickerActionHandler(properties);
-        component.addActionHandler(actionHandler);
     }
 
     @Override
@@ -334,6 +339,44 @@ public class WebValuePicker<V>
     @Override
     public ActionsPermissions getActionsPermissions() {
         return actionsPermissions;
+    }
+
+    @Nullable
+    @Override
+    public Function<? super V, String> getFieldIconProvider() {
+        return fieldIconProvider;
+    }
+
+    @Override
+    public void setFieldIconProvider(@Nullable Function<? super V, String> iconProvider) {
+        if (this.fieldIconProvider != iconProvider) {
+            this.fieldIconProvider = iconProvider;
+
+            component.setStyleName("c-has-field-icon", iconProvider != null);
+            component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, iconProvider != null);
+
+            component.setIconGenerator(iconProvider != null
+                    ? this::generateOptionIcon
+                    : null);
+        }
+    }
+
+    @Nullable
+    protected Resource generateOptionIcon(@Nullable V item) {
+        if (fieldIconProvider == null) {
+            return null;
+        }
+
+        String resourceId;
+        try {
+            resourceId = fieldIconProvider.apply(item);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(WebEntityPicker.class)
+                    .warn("Error invoking optionIconProvider apply method", e);
+            return null;
+        }
+
+        return getIconResource(resourceId);
     }
 
     @Override

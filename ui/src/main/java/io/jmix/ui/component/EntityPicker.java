@@ -27,8 +27,7 @@ import javax.annotation.Nullable;
  *
  * @see EntityComboBox
  */
-public interface EntityPicker<V extends JmixEntity> extends ValuePicker<V>,
-        LookupComponent<V>, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
+public interface EntityPicker<V extends JmixEntity> extends ValuePicker<V>, LookupComponent<V> {
 
     String NAME = "entityPicker";
 

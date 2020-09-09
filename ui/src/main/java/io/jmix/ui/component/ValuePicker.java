@@ -22,6 +22,7 @@ import io.jmix.core.common.event.Subscription;
 import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Generic UI component designed to select and display a value of any type.
@@ -37,6 +38,19 @@ public interface ValuePicker<V> extends Field<V>, HasFormatter<V>,
     static <T> TypeToken<ValuePicker<T>> of(Class<T> valueClass) {
         return new TypeToken<ValuePicker<T>>() {};
     }
+
+    /**
+     * @return an icon provider or {code null} if not set
+     */
+    @Nullable
+    Function<? super V, String> getFieldIconProvider();
+
+    /**
+     * Sets a function that provides an icon for the field.
+     *
+     * @param iconProvider icon provider to set
+     */
+    void setFieldIconProvider(@Nullable Function<? super V, String> iconProvider);
 
     /**
      * @return whether a user can input the value manually

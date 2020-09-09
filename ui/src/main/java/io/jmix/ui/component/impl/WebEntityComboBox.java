@@ -60,6 +60,7 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
 
     protected Consumer<String> newOptionHandler;
 
+    protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> optionIconProvider;
     protected Function<? super V, io.jmix.ui.component.Resource> optionImageProvider;
     protected Function<? super V, String> optionStyleProvider;
@@ -292,6 +293,17 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         return iconResolver.getIconResource(resourceId);
     }
 
+    @Nullable
+    @Override
+    public Function<? super V, String> getFieldIconProvider() {
+        return null;
+    }
+
+    @Override
+    public void setFieldIconProvider(@Nullable Function<? super V, String> iconProvider) {
+        throw new UnsupportedOperationException("Use options icon provider instead");
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public void setOptionImageProvider(@Nullable Function<? super V, io.jmix.ui.component.Resource> optionImageProvider) {
@@ -413,6 +425,12 @@ public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
         }
 
         return StringUtils.containsIgnoreCase(itemCaption, filterText);
+    }
+
+    @Nullable
+    @Override
+    public Function<? super V, String> getOptionCaptionProvider() {
+        return optionCaptionProvider;
     }
 
     @Override

@@ -21,6 +21,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.data.meta.EntityValueSource;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
+import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
 public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionField<V>, V, V>
@@ -53,7 +55,7 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
     protected EnterActionHandler enterActionHandler;
     protected ArrowDownActionHandler arrowDownActionHandler;
 
-    protected Function<? super V, String> optionCaptionProvider;
+    protected Formatter<? super V> formatter;
     protected Function<? super V, String> optionStyleProvider;
 
     protected BackgroundWorker backgroundWorker;
@@ -128,14 +130,14 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
             return "";
         }
 
-        if (optionCaptionProvider != null) {
-            return optionCaptionProvider.apply(value);
+        if (formatter != null) {
+            return nullToEmpty(formatter.apply(value));
         }
 
-        return generateDefaultItemCaption(value);
+        return applyDefaultValueFormat(value);
     }
 
-    protected String generateDefaultItemCaption(V item) {
+    protected String applyDefaultValueFormat(V item) {
         if (valueBinding != null && valueBinding.getSource() instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) valueBinding.getSource();
             return metadataTools.format(item, entityValueSource.getMetaPropertyPath().getMetaProperty());
@@ -144,17 +146,16 @@ public class WebSuggestionField<V> extends WebV8AbstractField<JmixSuggestionFiel
         return metadataTools.format(item);
     }
 
-    @Override
-    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
-        if (this.optionCaptionProvider != optionCaptionProvider) {
-            this.optionCaptionProvider = optionCaptionProvider;
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public Function<? super V, String> getOptionCaptionProvider() {
-        return optionCaptionProvider;
+    public Formatter<V> getFormatter() {
+        return (Formatter<V>) formatter;
+    }
+
+    @Override
+    public void setFormatter(@Nullable Formatter<? super V> formatter) {
+        this.formatter = formatter;
     }
 
     protected void cancelSearch() {

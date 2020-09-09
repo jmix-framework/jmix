@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.component.impl;
 
-import com.vaadin.server.Resource;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -23,27 +22,19 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
-import io.jmix.ui.theme.HaloTheme;
 import io.jmix.ui.widget.JmixPickerField;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Function;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 public class WebEntityPicker<V extends JmixEntity> extends WebValuePicker<V> implements EntityPicker<V> {
 
     protected Metadata metadata;
 
     protected MetaClass metaClass;
-
-    protected Function<? super V, String> optionCaptionProvider;
-    protected Function<? super V, String> iconProvider;
 
     public WebEntityPicker() {
     }
@@ -88,15 +79,6 @@ public class WebEntityPicker<V extends JmixEntity> extends WebValuePicker<V> imp
         this.metadata = metadata;
     }
 
-    @Override
-    protected String formatValue(@Nullable V value) {
-        if (optionCaptionProvider != null) {
-            return nullToEmpty(optionCaptionProvider.apply(value));
-        }
-
-        return super.formatValue(value);
-    }
-
     @Nullable
     @Override
     public MetaClass getMetaClass() {
@@ -116,53 +98,6 @@ public class WebEntityPicker<V extends JmixEntity> extends WebValuePicker<V> imp
             throw new IllegalStateException("ValueSource is not null");
         }
         this.metaClass = metaClass;
-    }
-
-    @Override
-    public void setOptionCaptionProvider(@Nullable Function<? super V, String> optionCaptionProvider) {
-        this.optionCaptionProvider = optionCaptionProvider;
-    }
-
-    @Nullable
-    @Override
-    public Function<? super V, String> getOptionCaptionProvider() {
-        return optionCaptionProvider;
-    }
-
-    @Override
-    public void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider) {
-        if (this.iconProvider != optionIconProvider) {
-            this.iconProvider = optionIconProvider;
-
-            component.setStyleName("c-has-field-icon", optionIconProvider != null);
-            component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, optionIconProvider != null);
-
-            component.setIconGenerator(this::generateOptionIcon);
-        }
-    }
-
-    @Nullable
-    protected Resource generateOptionIcon(@Nullable V item) {
-        if (iconProvider == null) {
-            return null;
-        }
-
-        String resourceId;
-        try {
-            resourceId = iconProvider.apply(item);
-        } catch (Exception e) {
-            LoggerFactory.getLogger(WebEntityPicker.class)
-                    .warn("Error invoking optionIconProvider apply method", e);
-            return null;
-        }
-
-        return getIconResource(resourceId);
-    }
-
-    @Nullable
-    @Override
-    public Function<? super V, String> getOptionIconProvider() {
-        return iconProvider;
     }
 
     @Override

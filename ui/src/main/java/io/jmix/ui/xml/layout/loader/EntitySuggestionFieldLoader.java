@@ -73,8 +73,11 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
         String captionProperty = element.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(captionProperty)) {
-            suggestionField.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
+            suggestionField.setFormatter(
+                    new CaptionAdapter(captionProperty,
+                            applicationContext.getBean(Metadata.class),
+                            applicationContext.getBean(MetadataTools.class))
+            );
         }
     }
 

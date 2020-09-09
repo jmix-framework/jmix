@@ -28,14 +28,14 @@ import java.util.function.Function;
 public interface HasOptionIconProvider<T> extends Component {
 
     /**
-     * Sets a function that provides an icon for option.
+     * Sets a function that provides an icon for options.
      *
-     * @param optionIconProvider caption provider for options
+     * @param optionIconProvider icon provider for options to set
      */
     void setOptionIconProvider(@Nullable Function<? super T, String> optionIconProvider);
 
     /**
-     * @return option icon provider
+     * @return options icon provider or {@code null} if not defined
      */
     @Nullable
     Function<? super T, String> getOptionIconProvider();

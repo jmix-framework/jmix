@@ -344,8 +344,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             if (xmlDescriptor != null) {
                 String captionProperty = xmlDescriptor.attributeValue("captionProperty");
                 if (StringUtils.isNotEmpty(captionProperty)) {
-                    entityPicker.setOptionCaptionProvider(
-                            new CaptionAdapter(captionProperty, metadata, metadataTools));
+                    entityPicker.setFormatter(new CaptionAdapter(captionProperty, metadata, metadataTools));
                 }
             }
 

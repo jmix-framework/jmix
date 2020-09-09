@@ -62,6 +62,7 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
     // just stub
     protected FilterPredicate filterPredicate;
 
+    protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> optionIconProvider;
     protected Function<? super V, io.jmix.ui.component.Resource> optionImageProvider;
     protected Function<? super V, String> optionStyleProvider;
@@ -295,6 +296,12 @@ public class WebSearchPickerField<V extends JmixEntity> extends WebPickerField<V
         }
 
         return generateDefaultItemCaption(item);
+    }
+
+    @Nullable
+    @Override
+    public Function<? super V, String> getOptionCaptionProvider() {
+        return optionCaptionProvider;
     }
 
     // just stub

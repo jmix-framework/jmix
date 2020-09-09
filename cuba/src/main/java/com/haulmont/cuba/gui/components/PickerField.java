@@ -60,7 +60,8 @@ import java.util.function.Supplier;
  * @deprecated Use {@link EntityPicker} instead
  */
 @Deprecated
-public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicker<V>, HasCaptionMode {
+public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicker<V>,
+        HasCaptionMode, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
 
     String NAME = "pickerField";
 

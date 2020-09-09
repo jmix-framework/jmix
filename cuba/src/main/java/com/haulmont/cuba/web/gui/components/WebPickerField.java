@@ -17,12 +17,20 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PickerField;
+import com.vaadin.server.Resource;
 import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.impl.WebEntityPicker;
+import io.jmix.ui.theme.HaloTheme;
+import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class WebPickerField<V extends JmixEntity> extends WebEntityPicker<V> implements PickerField<V> {
+
+    protected Function<? super V, String> optionCaptionProvider;
+    protected Function<? super V, String> iconProvider;
 
     @Deprecated
     @Override
@@ -56,5 +64,69 @@ public class WebPickerField<V extends JmixEntity> extends WebEntityPicker<V> imp
     @Override
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    protected String formatValue(@Nullable V value) {
+        if (optionCaptionProvider != null) {
+            return optionCaptionProvider.apply(value);
+        }
+
+        return super.formatValue(value);
+    }
+
+    @Override
+    public void setOptionCaptionProvider(Function<? super V, String> optionCaptionProvider) {
+        this.optionCaptionProvider = optionCaptionProvider;
+    }
+
+    @Override
+    public Function<? super V, String> getOptionCaptionProvider() {
+        return optionCaptionProvider;
+    }
+
+    @Override
+    public void setOptionIconProvider(Function<? super V, String> optionIconProvider) {
+        if (this.iconProvider != optionIconProvider) {
+            this.iconProvider = optionIconProvider;
+
+            component.setStyleName("c-has-field-icon", optionIconProvider != null);
+            component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, optionIconProvider != null);
+
+            component.setIconGenerator(this::generateOptionIcon);
+        }
+    }
+
+    protected Resource generateOptionIcon(V item) {
+        if (iconProvider == null) {
+            return null;
+        }
+
+        String resourceId;
+        try {
+            resourceId = iconProvider.apply(item);
+        } catch (Exception e) {
+            LoggerFactory.getLogger(WebPickerField.class)
+                    .warn("Error invoking optionIconProvider apply method", e);
+            return null;
+        }
+
+        return getIconResource(resourceId);
+    }
+
+    @Override
+    public Function<? super V, String> getOptionIconProvider() {
+        return iconProvider;
+    }
+
+    @Override
+    public void setFieldIconProvider(@Nullable Function<? super V, String> iconProvider) {
+        setOptionIconProvider(iconProvider);
+    }
+
+    @Nullable
+    @Override
+    public Function<? super V, String> getFieldIconProvider() {
+        return getOptionIconProvider();
     }
 }

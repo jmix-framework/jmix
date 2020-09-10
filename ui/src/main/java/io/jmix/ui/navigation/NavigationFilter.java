@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.navigation.accessfilter;
+package io.jmix.ui.navigation;
 
 import io.jmix.ui.navigation.NavigationState;
 

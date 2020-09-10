@@ -27,7 +27,7 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.context.UiGlobalPresentationContext;
+import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;

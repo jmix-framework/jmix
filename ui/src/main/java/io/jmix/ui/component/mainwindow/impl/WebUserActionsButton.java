@@ -25,7 +25,7 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.mainwindow.UserActionsButton;
-import io.jmix.ui.context.UiShowScreenContext;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-@Internal
-@NonNullApi
-package io.jmix.ui.widget.renderer;
+package io.jmix.ui.accesscontext;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.context.SpecificOperationAccessContext;
+
+public class UiShowExceptionDetailsContext extends SpecificOperationAccessContext {
+}

@@ -17,6 +17,7 @@
 package io.jmix.uidata.settings;
 
 import com.google.gson.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.uidata.UiSettingsCache;
@@ -34,6 +35,7 @@ import java.util.Optional;
 /**
  * Screen settings that use JSON structure for stored settings.
  */
+@Internal
 @Component(ScreenSettings.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenSettingsJson extends AbstractScreenSettings {

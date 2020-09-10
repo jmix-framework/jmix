@@ -18,6 +18,7 @@ package io.jmix.ui.navigation.navigationhandler;
 
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;

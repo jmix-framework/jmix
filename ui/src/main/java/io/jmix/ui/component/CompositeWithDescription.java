@@ -14,35 +14,28 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
-
-import io.jmix.ui.component.Component;
-import io.jmix.ui.icon.Icons;
+package io.jmix.ui.component;
 
 import javax.annotation.Nullable;
 
 /**
- * {@link CompositeComponent} having an icon.
+ * {@link CompositeComponent} having a description.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
-public interface CompositeWithIcon extends Component.HasIcon {
+public interface CompositeWithDescription extends Component.HasDescription {
 
     @Nullable
     @Override
-    default String getIcon() {
-        Component.HasIcon hasIcon = (Component.HasIcon) ((CompositeComponent) this).getComposition();
-        return hasIcon.getIcon();
+    default String getDescription() {
+        Component.HasDescription hasDescription =
+                (Component.HasCaption) ((CompositeComponent) this).getComposition();
+        return hasDescription.getDescription();
     }
 
     @Override
-    default void setIcon(@Nullable String icon) {
-        Component.HasIcon hasIcon = (Component.HasIcon) ((CompositeComponent) this).getComposition();
-        hasIcon.setIcon(icon);
-    }
-
-    @Override
-    default void setIconFromSet(@Nullable Icons.Icon icon) {
-        Component.HasIcon hasIcon = (Component.HasIcon) ((CompositeComponent) this).getComposition();
-        hasIcon.setIconFromSet(icon);
+    default void setDescription(@Nullable String description) {
+        Component.HasDescription hasDescription =
+                (Component.HasDescription) ((CompositeComponent) this).getComposition();
+        hasDescription.setDescription(description);
     }
 }

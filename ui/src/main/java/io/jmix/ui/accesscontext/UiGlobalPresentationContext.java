@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.context;
+package io.jmix.ui.accesscontext;
 
 import io.jmix.core.context.SpecificOperationAccessContext;
 
-public class UiShowExceptionDetailsContext extends SpecificOperationAccessContext {
+public class UiGlobalPresentationContext extends SpecificOperationAccessContext {
 }

@@ -17,6 +17,7 @@
 package io.jmix.uidata;
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Internal
 public class TablePresentationsImpl implements TablePresentations {
 
     @Autowired

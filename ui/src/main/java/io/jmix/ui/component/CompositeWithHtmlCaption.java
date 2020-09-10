@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
-
-import io.jmix.ui.component.HasHtmlDescription;
+package io.jmix.ui.component;
 
 /**
- * {@link CompositeComponent} having a HTML description.
+ * {@link CompositeComponent} having a HTML caption.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
-public interface CompositeWithHtmlDescription extends CompositeWithDescription, HasHtmlDescription {
+public interface CompositeWithHtmlCaption extends CompositeWithCaption, HasHtmlCaption {
 
     @Override
-    default boolean isDescriptionAsHtml() {
-        HasHtmlDescription hasDescription = (HasHtmlDescription) ((CompositeComponent) this).getComposition();
-        return hasDescription.isDescriptionAsHtml();
+    default boolean isCaptionAsHtml() {
+        HasHtmlCaption hasCaption = (HasHtmlCaption) ((CompositeComponent) this).getComposition();
+        return hasCaption.isCaptionAsHtml();
     }
 
     @Override
-    default void setDescriptionAsHtml(boolean descriptionAsHtml) {
-        HasHtmlDescription hasDescription = (HasHtmlDescription) ((CompositeComponent) this).getComposition();
-        hasDescription.setDescriptionAsHtml(descriptionAsHtml);
+    default void setCaptionAsHtml(boolean captionAsHtml) {
+        HasHtmlCaption hasCaption = (HasHtmlCaption) ((CompositeComponent) this).getComposition();
+        hasCaption.setCaptionAsHtml(captionAsHtml);
     }
+
 }

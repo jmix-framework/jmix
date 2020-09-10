@@ -22,6 +22,7 @@ import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+@Internal
 @Component(TemporaryStorage.NAME)
 public class TemporaryStorageImpl implements TemporaryStorage {
 

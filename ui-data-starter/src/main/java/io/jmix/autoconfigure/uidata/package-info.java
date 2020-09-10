@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.ui.components.impl;
+@Internal
+package io.jmix.autoconfigure.uidata;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.annotation.Internal;

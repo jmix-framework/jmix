@@ -21,7 +21,6 @@ import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.navigation.accessfilter.NavigationFilter;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.util.OperationResult;

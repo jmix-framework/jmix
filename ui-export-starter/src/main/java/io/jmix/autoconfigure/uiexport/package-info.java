@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.context;
+@Internal
+package io.jmix.autoconfigure.uiexport;
 
-import io.jmix.core.context.SpecificOperationAccessContext;
-
-public class UiShowEntityInfoContext extends SpecificOperationAccessContext {
-}
+import io.jmix.core.annotation.Internal;

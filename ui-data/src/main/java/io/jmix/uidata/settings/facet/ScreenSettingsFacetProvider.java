@@ -17,6 +17,7 @@
 package io.jmix.uidata.settings.facet;
 
 import com.google.common.base.Strings;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Internal
 @org.springframework.stereotype.Component(ScreenSettingsFacetProvider.NAME)
 public class ScreenSettingsFacetProvider implements FacetProvider<ScreenSettingsFacet> {
 

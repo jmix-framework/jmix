@@ -29,7 +29,6 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.SingleFileUploadField;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.components.impl.JmixFileUploadField;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.widget.JmixFileUpload;

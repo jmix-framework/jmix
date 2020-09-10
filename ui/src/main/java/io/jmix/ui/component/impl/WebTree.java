@@ -50,7 +50,7 @@ import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.component.data.meta.EntityTreeItems;
 import io.jmix.ui.component.tree.TreeDataProvider;
 import io.jmix.ui.component.tree.TreeSourceEventsDelegate;
-import io.jmix.ui.context.UiShowEntityInfoContext;
+import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.theme.ThemeConstants;

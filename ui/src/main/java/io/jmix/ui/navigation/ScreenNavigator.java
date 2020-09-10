@@ -17,7 +17,6 @@
 package io.jmix.ui.navigation;
 
 import io.jmix.ui.AppUI;
-import io.jmix.ui.navigation.navigationhandler.NavigationHandler;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

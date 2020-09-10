@@ -16,6 +16,7 @@
 
 package io.jmix.uidata.settings.facet;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@Internal
 public class WebScreenSettingsFacet extends WebAbstractFacet implements ScreenSettingsFacet {
 
     protected Set<String> componentIds;

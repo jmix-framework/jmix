@@ -26,7 +26,7 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
-import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;

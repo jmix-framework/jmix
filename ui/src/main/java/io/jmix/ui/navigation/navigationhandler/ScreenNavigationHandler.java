@@ -29,7 +29,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.component.impl.WebWindow;
-import io.jmix.ui.context.UiEntityContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.navigation.*;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.MapUtils;

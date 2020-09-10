@@ -17,6 +17,7 @@
 package io.jmix.uidata;
 
 import com.vaadin.server.VaadinSession;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.executor.IllegalConcurrentAccessException;
 import io.jmix.ui.settings.UserSettingService;
@@ -31,6 +32,7 @@ import java.util.Optional;
 /**
  * User settings provider. Caches settings in HTTP session.
  */
+@Internal
 @Component(UiSettingsCache.NAME)
 public class UiSettingsCache {
 

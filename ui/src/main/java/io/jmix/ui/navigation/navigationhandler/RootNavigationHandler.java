@@ -26,6 +26,7 @@ import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
 import io.jmix.ui.navigation.UrlParamsChangedEvent;

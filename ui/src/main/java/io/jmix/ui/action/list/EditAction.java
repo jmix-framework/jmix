@@ -16,7 +16,6 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.AccessManager;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -27,7 +26,7 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.context.UiEntityContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;

@@ -21,12 +21,13 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.AppMenu;
-import io.jmix.ui.context.UiMenuContext;
+import io.jmix.ui.accesscontext.UiMenuContext;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +44,7 @@ import java.util.function.Consumer;
 /**
  * Main menu builder.
  */
+@Internal
 @Component(MenuBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MenuBuilder {

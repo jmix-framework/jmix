@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,28 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
+package io.jmix.ui.accesscontext;
 
-public final class CompositeComponentUtils {
+import io.jmix.core.context.AccessContext;
 
-    private CompositeComponentUtils() {
+public class UiShowScreenContext implements AccessContext {
+    protected final String screenId;
+
+    protected boolean permitted = true;
+
+    public UiShowScreenContext(String screenId) {
+        this.screenId = screenId;
     }
 
-    @SuppressWarnings("unchecked")
-    public static void setRoot(CompositeComponent compositeComponent,
-                               io.jmix.ui.component.Component root) {
-        compositeComponent.setComposition(root);
+    public String getScreenId() {
+        return screenId;
     }
 
-    public static <E> void fireEvent(CompositeComponent compositeComponent,
-                                     Class<E> eventType, E event) {
-        compositeComponent.publish(eventType, event);
+    public void setDenied() {
+        permitted = false;
+    }
+
+    public boolean isPermitted() {
+        return permitted;
     }
 }

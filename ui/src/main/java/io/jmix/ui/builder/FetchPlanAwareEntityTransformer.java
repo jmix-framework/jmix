@@ -17,12 +17,14 @@
 package io.jmix.ui.builder;
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Internal
 @Component("ui_FetchPlanAwareEntityTransformer")
 @Order(100)
 public class FetchPlanAwareEntityTransformer implements EditedEntityTransformer {

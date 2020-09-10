@@ -16,6 +16,7 @@
 
 package io.jmix.uidata.settings;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.settings.component.TableSettings;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Collects {@link ComponentSettingsBinder} and provides information for which component registered settings class.
  */
+@Internal
 @org.springframework.stereotype.Component(ComponentSettingsRegistry.NAME)
 public class ComponentSettingsRegistry implements InitializingBean {
 

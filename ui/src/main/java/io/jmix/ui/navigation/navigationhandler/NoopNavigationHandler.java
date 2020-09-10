@@ -17,6 +17,7 @@
 package io.jmix.ui.navigation.navigationhandler;
 
 import io.jmix.ui.AppUI;
+import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
 import org.slf4j.Logger;

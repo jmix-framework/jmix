@@ -37,7 +37,7 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.factory.AbstractFieldFactory;
 import io.jmix.ui.component.impl.WebAbstractTable;
-import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;

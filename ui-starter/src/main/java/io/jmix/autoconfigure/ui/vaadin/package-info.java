@@ -14,28 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.context;
+@Internal
+package io.jmix.autoconfigure.ui.vaadin;
 
-import io.jmix.core.context.AccessContext;
-
-public class UiShowScreenContext implements AccessContext {
-    protected final String screenId;
-
-    protected boolean permitted = true;
-
-    public UiShowScreenContext(String screenId) {
-        this.screenId = screenId;
-    }
-
-    public String getScreenId() {
-        return screenId;
-    }
-
-    public void setDenied() {
-        permitted = false;
-    }
-
-    public boolean isPermitted() {
-        return permitted;
-    }
-}
+import io.jmix.core.annotation.Internal;

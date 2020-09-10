@@ -16,6 +16,7 @@
 
 package io.jmix.ui.builder;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.Screens;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
@@ -25,6 +26,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
+@Internal
 @Component("ui_ScreenBuilderProcessor")
 public class ScreenBuilderProcessor {
 

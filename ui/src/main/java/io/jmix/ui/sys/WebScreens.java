@@ -36,7 +36,7 @@ import io.jmix.ui.component.impl.WebDialogWindow.GuiDialogWindow;
 import io.jmix.ui.component.impl.WebTabWindow;
 import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.component.impl.WindowImplementation;
-import io.jmix.ui.context.UiShowScreenContext;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.gui.OpenType;

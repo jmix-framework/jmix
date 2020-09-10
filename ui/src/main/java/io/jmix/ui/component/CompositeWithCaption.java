@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
+package io.jmix.ui.component;
 
-import io.jmix.ui.component.HasHtmlCaption;
+import javax.annotation.Nullable;
 
 /**
- * {@link CompositeComponent} having a HTML caption.
+ * {@link CompositeComponent} having a caption.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
-public interface CompositeWithHtmlCaption extends CompositeWithCaption, HasHtmlCaption {
+public interface CompositeWithCaption extends CompositeWithDescription, Component.HasCaption {
 
+    @Nullable
     @Override
-    default boolean isCaptionAsHtml() {
-        HasHtmlCaption hasCaption = (HasHtmlCaption) ((CompositeComponent) this).getComposition();
-        return hasCaption.isCaptionAsHtml();
+    default String getCaption() {
+        Component.HasCaption hasCaption = (Component.HasCaption) ((CompositeComponent) this).getComposition();
+        return hasCaption.getCaption();
     }
 
     @Override
-    default void setCaptionAsHtml(boolean captionAsHtml) {
-        HasHtmlCaption hasCaption = (HasHtmlCaption) ((CompositeComponent) this).getComposition();
-        hasCaption.setCaptionAsHtml(captionAsHtml);
+    default void setCaption(@Nullable String caption) {
+        Component.HasCaption hasCaption = (Component.HasCaption) ((CompositeComponent) this).getComposition();
+        hasCaption.setCaption(caption);
     }
 
 }

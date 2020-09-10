@@ -20,6 +20,7 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -49,6 +50,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
+@Internal
 @Component("ui_EditorBuilderProcessor")
 public class EditorBuilderProcessor {
 

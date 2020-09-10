@@ -24,7 +24,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.context.UiShowExceptionDetailsContext;
+import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;

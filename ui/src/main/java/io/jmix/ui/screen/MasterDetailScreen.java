@@ -31,7 +31,7 @@ import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
-import io.jmix.ui.context.UiEntityContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.DataLoadersHelper;
 import io.jmix.ui.util.OperationResult;

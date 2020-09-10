@@ -28,7 +28,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.ScreenComponentDescriptor;
-import io.jmix.ui.context.UiShowScreenContext;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.LookupComponent;

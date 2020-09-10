@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
+package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.sys.TestIdManager;
 import org.apache.commons.lang3.StringUtils;
 

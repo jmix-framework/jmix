@@ -28,7 +28,7 @@ import io.jmix.ui.action.ListAction;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;

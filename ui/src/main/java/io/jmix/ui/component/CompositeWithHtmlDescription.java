@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
-
-import io.jmix.ui.component.Component;
-
-import javax.annotation.Nullable;
+package io.jmix.ui.component;
 
 /**
- * {@link CompositeComponent} having a description.
+ * {@link CompositeComponent} having a HTML description.
  * Default implementations delegate their execution to {@link CompositeComponent#getComposition()}.
  */
-public interface CompositeWithDescription extends Component.HasDescription {
+public interface CompositeWithHtmlDescription extends CompositeWithDescription, HasHtmlDescription {
 
-    @Nullable
     @Override
-    default String getDescription() {
-        Component.HasDescription hasDescription =
-                (Component.HasCaption) ((CompositeComponent) this).getComposition();
-        return hasDescription.getDescription();
+    default boolean isDescriptionAsHtml() {
+        HasHtmlDescription hasDescription = (HasHtmlDescription) ((CompositeComponent) this).getComposition();
+        return hasDescription.isDescriptionAsHtml();
     }
 
     @Override
-    default void setDescription(@Nullable String description) {
-        Component.HasDescription hasDescription =
-                (Component.HasDescription) ((CompositeComponent) this).getComposition();
-        hasDescription.setDescription(description);
+    default void setDescriptionAsHtml(boolean descriptionAsHtml) {
+        HasHtmlDescription hasDescription = (HasHtmlDescription) ((CompositeComponent) this).getComposition();
+        hasDescription.setDescriptionAsHtml(descriptionAsHtml);
     }
 }

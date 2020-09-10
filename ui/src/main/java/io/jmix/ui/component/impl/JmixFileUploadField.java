@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.components.impl;
+package io.jmix.ui.component.impl;
 
 import com.vaadin.server.Resource;
 import com.vaadin.ui.Button;

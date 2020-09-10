@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.navigation.navigationhandler;
+package io.jmix.ui.navigation;
 
 import io.jmix.ui.AppUI;
 import io.jmix.ui.navigation.NavigationState;

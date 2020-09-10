@@ -16,6 +16,7 @@
 
 package io.jmix.uidata.settings;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
@@ -39,6 +40,7 @@ import static io.jmix.ui.component.ComponentsHelper.getComponentPath;
 /**
  * Provides functionality for applying and saving component settings.
  */
+@Internal
 @org.springframework.stereotype.Component(ScreenSettingsManager.NAME)
 public class ScreenSettingsManager {
 

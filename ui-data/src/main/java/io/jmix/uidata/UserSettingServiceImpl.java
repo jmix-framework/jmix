@@ -19,6 +19,7 @@ package io.jmix.uidata;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.entity.BaseUser;
@@ -26,7 +27,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.PermissionType;
-import io.jmix.data.impl.context.CrudEntityContext;
+import io.jmix.data.accesscontext.CrudEntityContext;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
@@ -45,6 +46,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.*;
 
+@Internal
 public class UserSettingServiceImpl implements UserSettingService {
 
     @Autowired

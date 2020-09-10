@@ -19,7 +19,7 @@ package io.jmix.ui.component.presentation.action;
 import io.jmix.core.AccessManager;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.context.UiGlobalPresentationContext;
+import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;

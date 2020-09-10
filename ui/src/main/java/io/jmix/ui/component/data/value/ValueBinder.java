@@ -36,7 +36,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
-import io.jmix.ui.context.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.constraints.NotNull;

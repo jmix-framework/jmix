@@ -18,6 +18,7 @@ package io.jmix.ui.navigation.accessfilter;
 
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
+import io.jmix.ui.navigation.NavigationFilter;
 import io.jmix.ui.navigation.NavigationState;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;

@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
+package io.jmix.ui.component;
 
-import java.lang.annotation.*;
+public final class CompositeComponentUtils {
 
-/**
- * Specifies a string value that is a file path to an xml descriptor
- * that can be used for a {@link CompositeComponent} initialization.
- */
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface CompositeDescriptor {
+    private CompositeComponentUtils() {
+    }
 
-    /**
-     * @return a path to the XML descriptor. If the value contains a file name only (i.e. don't start with '/'),
-     * it is assumed that the file is located in the package of the composite component class.
-     */
-    String value();
+    @SuppressWarnings("unchecked")
+    public static void setRoot(CompositeComponent compositeComponent,
+                               io.jmix.ui.component.Component root) {
+        compositeComponent.setComposition(root);
+    }
+
+    public static <E> void fireEvent(CompositeComponent compositeComponent,
+                                     Class<E> eventType, E event) {
+        compositeComponent.publish(eventType, event);
+    }
 }

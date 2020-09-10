@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.context;
+package io.jmix.ui.accesscontext;
 
 import io.jmix.core.context.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;

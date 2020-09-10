@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component.impl;
-
-import io.jmix.ui.component.HasContextHelp;
+package io.jmix.ui.component;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;

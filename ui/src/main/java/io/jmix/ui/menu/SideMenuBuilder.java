@@ -21,12 +21,13 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MessageTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.SideMenu;
-import io.jmix.ui.context.UiMenuContext;
+import io.jmix.ui.accesscontext.UiMenuContext;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,7 @@ import static io.jmix.ui.component.KeyCombination.getShortcutModifiers;
 /**
  * Side menu builder.
  */
+@Internal
 @Component(SideMenuBuilder.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SideMenuBuilder {

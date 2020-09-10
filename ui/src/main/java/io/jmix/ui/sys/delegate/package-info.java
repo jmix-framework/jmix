@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+@Internal
 @NonNullApi
 package io.jmix.ui.sys.delegate;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.lang.NonNullApi;

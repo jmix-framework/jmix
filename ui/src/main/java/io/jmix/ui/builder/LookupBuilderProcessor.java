@@ -18,6 +18,7 @@ package io.jmix.ui.builder;
 
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -50,6 +51,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
+@Internal
 @Component("ui_LookupBuilderProcessor")
 public class LookupBuilderProcessor {
 

@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
-package io.jmix.ui.widget.renderer;
+package io.jmix.uidata.entity;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

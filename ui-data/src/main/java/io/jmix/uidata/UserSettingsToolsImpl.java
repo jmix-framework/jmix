@@ -16,6 +16,7 @@
 
 package io.jmix.uidata;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.UiProperties;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
+@Internal
 public class UserSettingsToolsImpl implements UserSettingsTools {
 
     @Autowired

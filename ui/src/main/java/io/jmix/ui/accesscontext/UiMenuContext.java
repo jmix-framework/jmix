@@ -14,9 +14,28 @@
  * limitations under the License.
  */
 
-@Internal
-@NonNullApi
-package io.jmix.ui.widget.renderer;
+package io.jmix.ui.accesscontext;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import io.jmix.core.context.AccessContext;
+import io.jmix.ui.menu.MenuItem;
+
+public class UiMenuContext implements AccessContext {
+    protected final MenuItem menuItem;
+    protected boolean permitted = true;
+
+    public UiMenuContext(MenuItem menuItem) {
+        this.menuItem = menuItem;
+    }
+
+    public String getMenuItemId() {
+        return menuItem.getId();
+    }
+
+    public boolean isPermitted() {
+        return permitted;
+    }
+
+    public void setDenied() {
+        this.permitted = false;
+    }
+}

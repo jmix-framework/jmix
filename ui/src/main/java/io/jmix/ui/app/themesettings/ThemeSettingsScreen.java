@@ -17,6 +17,7 @@
 package io.jmix.ui.app.themesettings;
 
 import com.vaadin.server.Page;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.Route;
@@ -29,6 +30,7 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 import java.util.List;
 
+@Internal
 @Route("theme-settings")
 @UiController("themeSettingsScreen")
 @UiDescriptor("theme-settings-screen.xml")

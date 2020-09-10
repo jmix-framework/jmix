@@ -20,6 +20,7 @@ import com.google.common.collect.Multimap;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class SecurityState implements Serializable {
 
     private static final long serialVersionUID = 6613320540189701505L;
 
-    protected transient Multimap<String, Object> filteredData = null;
+    protected transient Multimap<String, Object> erasedData = null;
 
     protected String[] filteredAttributes;
 
@@ -41,11 +42,11 @@ public class SecurityState implements Serializable {
 
     @Nullable
     public Multimap<String, Object> getErasedData() {
-        return filteredData;
+        return erasedData;
     }
 
-    public void setFilteredData(Multimap<String, Object> filteredData) {
-        this.filteredData = filteredData;
+    public void setErasedData(Multimap<String, Object> erasedData) {
+        this.erasedData = erasedData;
     }
 
     public List<String> getErasedAttributes() {
@@ -54,6 +55,14 @@ public class SecurityState implements Serializable {
 
     public List<Object> getErasedIds(String attrName) {
         return null;
+    }
+
+    public void addErasedIds(String attrName, Collection<Object> erasedIds) {
+        erasedData.putAll(attrName, erasedIds);
+    }
+
+    public void addErasedId(String attrName, Object erasedId) {
+        erasedData.put(attrName, erasedId);
     }
 
     public void setFilteredAttributes(String[] filteredAttributes) {

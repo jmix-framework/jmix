@@ -40,8 +40,8 @@
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
-    <layout expand="tabSheet" spacing="true">
-        <tabSheet id="tabSheet" width="100%">
+    <layout expand="editActions" spacing="true">
+        <tabSheet id="tabSheet" width="100%" height="100%">
             <tab id="mainTab" caption="msg://mainTab.caption" spacing="true" margin="true" expand="attributeBox">
                 <hbox id="attributeBox" width="100%" spacing="true">
                     <form id="attributeForm" dataContainer="categoryAttributeDc" height="100%" width="100%">
@@ -76,8 +76,10 @@
                                 </validators>
                             </textField>
                             <textField id="rowsCountField" property="rowsCount">
-                                <validator class="io.jmix.ui.component.validator.IntegerValidator" minValue="1"
-                                           maxValue="40" message="msg://rowsCountField.validationMessage"/>
+                                <validators>
+                                    <min value="1" message="msg://rowsCountField.validationMessage"/>
+                                    <max value="40" message="msg://rowsCountField.validationMessage"/>
+                                </validators>
                             </textField>
                             <entityPicker id="defaultEntityIdField"
                                          caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.defaultEntityId">

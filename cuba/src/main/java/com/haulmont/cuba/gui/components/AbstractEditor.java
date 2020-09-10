@@ -32,7 +32,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
-import io.jmix.dynattr.impl.model.Categorized;
+import io.jmix.dynattr.model.Categorized;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;

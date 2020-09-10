@@ -27,8 +27,8 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.PermissionType;
-import io.jmix.data.impl.context.CrudEntityContext;
-import io.jmix.ui.context.UiShowScreenContext;
+import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

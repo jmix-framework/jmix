@@ -28,9 +28,9 @@ import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.component.impl.CompositeComponent;
-import io.jmix.ui.component.impl.CompositeDescriptor;
-import io.jmix.ui.component.impl.CompositeWithCaption;
+import io.jmix.ui.component.CompositeComponent;
+import io.jmix.ui.component.CompositeDescriptor;
+import io.jmix.ui.component.CompositeWithCaption;
 import io.jmix.ui.model.CollectionContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 

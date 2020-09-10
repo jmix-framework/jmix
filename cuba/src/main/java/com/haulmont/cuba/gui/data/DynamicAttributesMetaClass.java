@@ -20,8 +20,8 @@ package com.haulmont.cuba.gui.data;
 import com.google.common.collect.Collections2;
 import io.jmix.core.metamodel.model.*;
 import io.jmix.core.metamodel.model.impl.MetadataObjectImpl;
-import io.jmix.dynattr.impl.model.Category;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.Category;
+import io.jmix.dynattr.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
 import java.util.*;

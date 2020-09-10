@@ -33,7 +33,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattr.impl.model.Categorized;
+import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowParam;

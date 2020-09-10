@@ -25,6 +25,7 @@ dependencies {
 
     api 'org.springframework.boot:spring-boot'
     api 'org.springframework:spring-context'
+    api 'org.springframework:spring-context-support'
     api 'org.springframework:spring-webmvc'
     api 'org.apache.commons:commons-lang3'
     api 'org.apache.commons:commons-compress'
@@ -54,6 +55,8 @@ dependencies {
 
     api 'org.eclipse.persistence:jakarta.persistence'
     api 'org.antlr:antlr-runtime'
+
+    api 'javax.cache:cache-api'
 
     implementation'com.google.code.gson:gson'
 

@@ -23,10 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
+import test_support.base.TestBaseConfiguration
 
 import java.time.*
 
-@ContextConfiguration(classes = [CoreConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
 class DatatypeRegistryTest extends Specification {
 
     @Autowired

@@ -17,8 +17,6 @@
 package io.jmix.core.pessimisticlocking.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.cluster.ClusterListener;
-import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
@@ -28,17 +26,20 @@ import io.jmix.core.security.CurrentAuthentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.io.*;
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component(LockManager.NAME)
-public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
+public class LockManagerImpl implements LockManager {
 
-    protected static class LockKey {
+    protected static class LockKey implements Serializable {
 
         private final String name;
         private final String id;
@@ -71,7 +72,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
 
     protected volatile Map<String, LockDescriptor> config;
 
-    protected Map<LockKey, LockInfo> locks = new ConcurrentHashMap<>();
+    protected Cache locks;
 
     @Autowired
     protected ExtendedEntities extendedEntities;
@@ -89,14 +90,20 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
     protected CurrentAuthentication currentAuthentication;
 
     @Autowired
-    protected List<LockDescriptorProvider> lockDescriptorProviders = new ArrayList<>();
-
-    protected ClusterManager clusterManager;
+    protected CacheManager cacheManager;
 
     @Autowired
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-        this.clusterManager.addListener(LockInfo.class, this);
+    protected CacheOperations cacheOperations;
+
+    @Autowired
+    protected List<LockDescriptorProvider> lockDescriptorProviders = new ArrayList<>();
+
+    @PostConstruct
+    protected void init() {
+        locks = cacheManager.getCache(LOCKS_CACHE_NAME);
+        if (locks == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", LOCKS_CACHE_NAME));
+        }
     }
 
     protected Map<String, LockDescriptor> getConfig() {
@@ -119,9 +126,9 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
     public LockInfo lock(String name, String id) {
         LockKey key = new LockKey(name, id);
 
-        LockInfo lockInfo = locks.get(key);
+        LockInfo lockInfo = locks.get(key, LockInfo.class);
         if (lockInfo != null) {
-            log.debug("Already locked: " + lockInfo);
+            log.debug("Already locked: {}", lockInfo);
             return lockInfo;
         }
 
@@ -133,9 +140,7 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
         BaseUser user = currentAuthentication.getUser();
         lockInfo = new LockInfo(user.getKey(), user.getUsername(), name, id, timeSource.currentTimestamp());
         locks.put(key, lockInfo);
-        log.debug("Locked " + name + "/" + id);
-
-        clusterManager.send(lockInfo);
+        log.debug("Locked {}/{}", name, id);
 
         return null;
     }
@@ -153,11 +158,8 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
 
     @Override
     public void unlock(String name, String id) {
-        LockInfo lockInfo = locks.remove(new LockKey(name, id));
-        if (lockInfo != null) {
-            log.debug("Unlocked " + name + "/" + id);
-
-            clusterManager.send(new LockInfo(null, null, name, id, timeSource.currentTimestamp()));
+        if (locks.evictIfPresent(new LockKey(name, id))) {
+            log.debug("Unlocked {}/{}", name, id);
         }
     }
 
@@ -178,89 +180,49 @@ public class LockManagerImpl implements LockManager, ClusterListener<LockInfo> {
             return new LockNotSupported();
         }
 
-        return locks.get(new LockKey(name, id));
+        return locks.get(new LockKey(name, id), LockInfo.class);
     }
 
     @Override
-    public List<LockInfo> getCurrentLocks() {
-        return new ArrayList<>(locks.values());
+    public Collection<LockInfo> getCurrentLocks() {
+        if (cacheOperations.isIterableCache(locks)) {
+            return cacheOperations.getValues(locks);
+        } else {
+            log.debug("Current locks list operation is unsupported by cache provider");
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public void expireLocks() {
-        log.debug("Expiring locks");
-        ArrayList<LockKey> list = new ArrayList<>(locks.keySet());
-        for (LockKey key : list) {
-            LockInfo lockInfo = locks.get(key);
-            if (lockInfo != null) {
-                LockDescriptor ld = getConfig().get(key.name);
-                if (ld == null) {
-                    log.debug("Lock " + key.name + "/" + key.id + " configuration not found, remove it");
-                    locks.remove(key);
-                } else {
-                    Integer timeoutSec = ld.getTimeoutSec();
-                    if (timeoutSec != null && timeoutSec > 0) {
-                        Date since = lockInfo.getSince();
-                        if (since.getTime() + timeoutSec * 1000 < timeSource.currentTimestamp().getTime()) {
-                            log.debug("Lock " + key.name + "/" + key.id + " expired");
-                            locks.remove(key);
+        if (cacheOperations.isIterableCache(locks)) {
+            Collection<LockKey> keys = cacheOperations.getKeys(locks);
+            for (LockKey key : keys) {
+                LockInfo lockInfo = locks.get(key, LockInfo.class);
+                if (lockInfo != null) {
+                    LockDescriptor ld = getConfig().get(key.name);
+                    if (ld == null) {
+                        log.debug("Lock {}/{} configuration not found, remove it", key.name, key.id);
+                        locks.evict(key);
+                    } else {
+                        Integer timeoutSec = ld.getTimeoutSec();
+                        if (timeoutSec != null && timeoutSec > 0) {
+                            Date since = lockInfo.getSince();
+                            if (since.getTime() + timeoutSec * 1000 < timeSource.currentTimestamp().getTime()) {
+                                log.debug("Lock {}/{} expired", key.name, key.id);
+                                locks.evict(key);
+                            }
                         }
                     }
                 }
             }
+        } else {
+            log.debug("Expiring locks operation is unsupported by cache provider");
         }
     }
 
     @Override
     public void reloadConfiguration() {
         config = null;
-    }
-
-    @Override
-    public void receive(LockInfo message) {
-        LockKey key = new LockKey(message.getObjectType(), message.getObjectId());
-        if (message.getUserKey() != null) {
-            LockInfo lockInfo = locks.get(key);
-            if (lockInfo == null || lockInfo.getSince().before(message.getSince())) {
-                locks.put(key, message);
-            }
-        } else {
-            locks.remove(key);
-        }
-    }
-
-    @Override
-    public byte[] getState() {
-        List<LockInfo> list = new ArrayList<>(locks.values());
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(list);
-        } catch (IOException e) {
-            log.error("Error serializing LockInfo list", e);
-            return new byte[0];
-        }
-        return bos.toByteArray();
-    }
-
-    @Override
-    public void setState(byte[] state) {
-        if (state == null || state.length == 0)
-            return;
-
-        List<LockInfo> list;
-        ByteArrayInputStream bis = new ByteArrayInputStream(state);
-        try {
-            ObjectInputStream ois = new ObjectInputStream(bis);
-            list = (List<LockInfo>) ois.readObject();
-        } catch (Exception e) {
-            log.error("Error deserializing LockInfo list", e);
-            return;
-        }
-
-        for (LockInfo lockInfo : list) {
-            receive(lockInfo);
-        }
     }
 }

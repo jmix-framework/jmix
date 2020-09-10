@@ -19,11 +19,13 @@ package io.jmix.core.pessimisticlocking;
 import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.Collection;
 
 public interface LockManager {
 
     String NAME = "core_LockManager";
+
+    String LOCKS_CACHE_NAME = "jmix-locks-cache";
 
     /**
      * Try to lock an arbitrary object.
@@ -76,9 +78,9 @@ public interface LockManager {
     LockInfo getLockInfo(String name, String id);
 
     /**
-     * List of current locks
+     * Collection of current locks
      */
-    List<LockInfo> getCurrentLocks();
+    Collection<LockInfo> getCurrentLocks();
 
     /**
      * Process locks expiring. All expired locks will be removed.

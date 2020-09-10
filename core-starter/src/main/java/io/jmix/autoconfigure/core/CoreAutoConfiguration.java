@@ -17,12 +17,16 @@
 package io.jmix.autoconfigure.core;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.pessimisticlocking.LockManager;
+import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+
+import javax.cache.configuration.MutableConfiguration;
 
 @Configuration
 @Import({CoreConfiguration.class})
@@ -34,4 +38,12 @@ public class CoreAutoConfiguration {
         return new GroovyScriptEvaluator();
     }
 
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    JCacheManagerCustomizer lockCacheCustomizer() {
+        return cacheManager -> {
+            MutableConfiguration configuration = new MutableConfiguration();
+            cacheManager.createCache(LockManager.LOCKS_CACHE_NAME, configuration);
+        };
+    }
 }

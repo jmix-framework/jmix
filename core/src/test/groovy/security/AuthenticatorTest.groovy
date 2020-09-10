@@ -28,8 +28,9 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
 @TestPropertySource(properties = ["jmix.securityImplementation = core"])
 class AuthenticatorTest extends Specification {
 

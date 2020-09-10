@@ -23,6 +23,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -42,6 +43,7 @@ import org.springframework.core.annotation.Order;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})
 @PropertySource(name = "io.jmix.core", value = "classpath:/io/jmix/core/module.properties")
+@EnableCaching
 public class CoreConfiguration {
 
     @Bean("core_ModulesProcessor")

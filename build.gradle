@@ -162,6 +162,8 @@ dependencies {
 
         api 'org.springframework.security.oauth:spring-security-oauth2:2.4.1.RELEASE'
 
+        api 'javax.cache:cache-api:1.1.1'
+
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }
 }

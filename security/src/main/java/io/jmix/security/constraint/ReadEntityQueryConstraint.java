@@ -18,7 +18,7 @@ package io.jmix.security.constraint;
 
 import com.google.common.base.Strings;
 import io.jmix.core.constraint.RowLevelConstraint;
-import io.jmix.data.impl.context.ReadEntityQueryContext;
+import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import org.springframework.beans.factory.annotation.Autowired;

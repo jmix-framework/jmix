@@ -18,9 +18,9 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.security.constraint.SpecificConstraintImpl;
-import io.jmix.ui.context.UiGlobalPresentationContext;
-import io.jmix.ui.context.UiShowEntityInfoContext;
-import io.jmix.ui.context.UiShowExceptionDetailsContext;
+import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
+import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
+import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 

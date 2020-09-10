@@ -19,7 +19,7 @@ package io.jmix.securityui.constraint;
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.security.constraint.ResourcePolicyStore;
-import io.jmix.ui.context.UiEntityContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

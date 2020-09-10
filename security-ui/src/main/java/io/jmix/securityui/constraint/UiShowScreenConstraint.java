@@ -17,7 +17,7 @@
 package io.jmix.securityui.constraint;
 
 import io.jmix.core.constraint.AccessConstraint;
-import io.jmix.ui.context.UiShowScreenContext;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

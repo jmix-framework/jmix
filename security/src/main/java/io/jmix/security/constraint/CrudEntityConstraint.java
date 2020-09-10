@@ -17,7 +17,7 @@
 package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.data.impl.context.CrudEntityContext;
+import io.jmix.data.accesscontext.CrudEntityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

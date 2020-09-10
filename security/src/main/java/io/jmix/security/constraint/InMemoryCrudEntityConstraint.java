@@ -17,7 +17,7 @@
 package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.RowLevelConstraint;
-import io.jmix.data.impl.context.InMemoryCrudEntityContext;
+import io.jmix.data.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;

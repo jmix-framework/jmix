@@ -52,6 +52,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -505,7 +506,10 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     protected void initDependsOnAttributesField() {
-        dependsOnAttributesField.setOptionsList(getAttributesOptions());
+        List<CategoryAttribute> attributesOptions = getAttributesOptions();
+        if (attributesOptions != null) {
+            dependsOnAttributesField.setOptionsList(attributesOptions);
+        }
     }
 
     protected void setupNumberFormat() {
@@ -752,15 +756,16 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         return options;
     }
 
+    @Nullable
     protected List<CategoryAttribute> getAttributesOptions() {
-        List<CategoryAttribute> optionsList = new ArrayList<>();
         CategoryAttribute attribute = getEditedEntity();
         List<CategoryAttribute> categoryAttributes = attribute.getCategory().getCategoryAttrs();
         if (categoryAttributes != null) {
-            optionsList.addAll(categoryAttributes);
+            List<CategoryAttribute> optionsList = new ArrayList<>(categoryAttributes);
             optionsList.remove(attribute);
+            return optionsList;
         }
-        return optionsList;
+        return null;
     }
 
     protected void showMessageDialog(String caption, String message) {

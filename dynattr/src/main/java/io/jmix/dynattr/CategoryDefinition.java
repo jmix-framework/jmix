@@ -19,9 +19,10 @@ package io.jmix.dynattr;
 import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Collection;
 
-public interface CategoryDefinition {
+public interface CategoryDefinition extends Serializable {
 
     String getId();
 

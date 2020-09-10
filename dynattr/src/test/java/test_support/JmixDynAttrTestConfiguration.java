@@ -21,6 +21,8 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -57,5 +59,10 @@ public class JmixDynAttrTestConfiguration {
     @Primary
     PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
     }
 }

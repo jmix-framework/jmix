@@ -25,9 +25,11 @@ import java.util.Optional;
 public interface DynAttrMetadata {
     String NAME = "dynattr_DynAttrMetadata";
 
+    String DYN_ATTR_CACHE_NAME = "jmix-dyn-attr-cache";
+
     Collection<AttributeDefinition> getAttributes(MetaClass metaClass);
 
-    Collection<CategoryDefinition> getCategories(MetaClass metaCLass);
+    Collection<CategoryDefinition> getCategories(MetaClass metaClass);
 
     Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code);
 

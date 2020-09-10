@@ -21,11 +21,12 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.impl.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
-public interface AttributeDefinition {
+public interface AttributeDefinition extends Serializable {
     interface Configuration {
         boolean isLookup();
 

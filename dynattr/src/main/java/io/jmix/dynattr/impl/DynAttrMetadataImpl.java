@@ -16,9 +16,6 @@
 
 package io.jmix.dynattr.impl;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -33,10 +30,15 @@ import io.jmix.dynattr.impl.model.CategoryAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import java.io.Serializable;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component(DynAttrMetadata.NAME)
@@ -51,71 +53,59 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
-    FetchPlans fetchPlans;
+    protected FetchPlans fetchPlans;
+    @Autowired
+    protected CacheManager cacheManager;
+    @Autowired
+    protected CacheOperations cacheOperations;
 
-    protected volatile Cache cache;
-
+    protected Cache cache;
     protected String dynamicAttributesStore = Stores.MAIN;
 
-    private static final Logger log = LoggerFactory.getLogger(DynAttrMetadataImpl.class);
+    @PostConstruct
+    protected void init() {
+        cache = cacheManager.getCache(DYN_ATTR_CACHE_NAME);
+        if (cache == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", DYN_ATTR_CACHE_NAME));
+        }
+    }
 
     @Override
     public Collection<AttributeDefinition> getAttributes(MetaClass metaClass) {
-        return getCache().getAttributes(metaClass);
+        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
+        CacheItem value = cache.get(key, () -> loadCacheItem(key));
+        return value == null ? Collections.emptyList() : Collections.unmodifiableCollection(value.getAttributes());
     }
 
     @Override
     public Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code) {
-        return getCache().getAttributeByCode(metaClass, code);
+        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
+        CacheItem value = cache.get(key, () -> loadCacheItem(key));
+        return value == null ? Optional.empty() : value.getAttributeByCode(code);
     }
 
     @Override
-    public Collection<CategoryDefinition> getCategories(MetaClass metaCLass) {
-        return getCache().getCategories(metaCLass);
+    public Collection<CategoryDefinition> getCategories(MetaClass metaClass) {
+        String key = extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
+        CacheItem value = cache.get(key, () -> loadCacheItem(key));
+        return value == null ? Collections.emptyList() : value.getCategories();
     }
 
     @Override
     public void reload() {
-        cache = doLoadCache();
+        cache.invalidate();
     }
 
-    protected Cache getCache() {
-        if (cache == null) {
-            Cache newCache = doLoadCache();
-            if (cache == null) {
-                cache = newCache;
-            }
-        }
-        return cache;
+    protected CacheItem loadCacheItem(String entityName) {
+        List<CategoryDefinition> categories = loadCategoryDefinitions(entityName);
+        Map<String, AttributeDefinition> attributes = categories.stream()
+                .flatMap(category -> category.getAttributeDefinitions().stream())
+                .collect(Collectors.toMap(AttributeDefinition::getCode, Function.identity()));
+
+        return new CacheItem(categories, attributes);
     }
 
-    protected Cache doLoadCache() {
-        Multimap<String, CategoryDefinition> categoriesCache = HashMultimap.create();
-        Map<String, Map<String, AttributeDefinition>> attributesCache = new LinkedHashMap<>();
-
-        for (CategoryDefinition category : loadCategoryDefinitions()) {
-            if (category.getEntityType() != null) {
-                MetaClass metaClass = metadata.findClass(category.getEntityType());
-                if (metaClass != null) {
-                    metaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-                    categoriesCache.put(metaClass.getName(), category);
-
-                    Map<String, AttributeDefinition> attributes = attributesCache.computeIfAbsent(metaClass.getName(),
-                            k -> new LinkedHashMap<>());
-                    for (AttributeDefinition attribute : category.getAttributeDefinitions()) {
-                        attributes.put(attribute.getCode(), attribute);
-                    }
-                } else {
-                    log.warn("Could not resolve meta class name {} for the category {}.",
-                            category.getEntityType(), category.getName());
-                }
-            }
-        }
-
-        return new Cache(categoriesCache, attributesCache);
-    }
-
-    protected List<CategoryDefinition> loadCategoryDefinitions() {
+    protected List<CategoryDefinition> loadCategoryDefinitions(String entityName) {
         //noinspection ConstantConditions
         return storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                 .execute(transactionStatus -> {
@@ -130,7 +120,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
                             })
                             .build();
 
-                    return entityManager.createQuery("select c from sys_Category c", Category.class)
+                    return entityManager.createQuery("select c from sys_Category c where c.entityType = :entityType", Category.class)
+                            .setParameter("entityType", entityName)
                             .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                             .getResultList().stream()
                             .map(this::buildCategoryDefinition)
@@ -167,39 +158,25 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
         return new DynAttrMetaProperty(name, metaClass, javaClass, propertyMetaClass, datatype);
     }
 
-    protected class Cache {
-        protected final Multimap<String, CategoryDefinition> categories;
-        protected final Map<String, Map<String, AttributeDefinition>> attributes;
+    protected static class CacheItem implements Serializable {
+        protected final Collection<CategoryDefinition> categories;
+        protected final Map<String, AttributeDefinition> attributes;
 
-        public Cache(Multimap<String, CategoryDefinition> categories, Map<String, Map<String, AttributeDefinition>> attributes) {
+        public CacheItem(Collection<CategoryDefinition> categories, Map<String, AttributeDefinition> attributes) {
             this.categories = categories;
             this.attributes = attributes;
         }
 
-        public Collection<CategoryDefinition> getCategories(MetaClass metaClass) {
-            Collection<CategoryDefinition> targetCategories = categories.get(
-                    extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
-            return Collections.unmodifiableCollection(targetCategories);
+        public Collection<AttributeDefinition> getAttributes() {
+            return attributes.values();
         }
 
-        public Collection<AttributeDefinition> getAttributes(MetaClass metaClass) {
-            Collection<CategoryDefinition> targetCategories = categories.get(
-                    extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
-            return targetCategories.stream()
-                    .flatMap(c -> c.getAttributeDefinitions().stream())
-                    .filter(a -> !Strings.isNullOrEmpty(a.getCode()))
-                    .collect(Collectors.toList());
+        public Optional<AttributeDefinition> getAttributeByCode(String code) {
+            return Optional.ofNullable(attributes.get(code));
         }
 
-        public Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code) {
-            Map<String, AttributeDefinition> targetAttributes = attributes.get(
-                    extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
-            AttributeDefinition attribute = null;
-            if (targetAttributes != null) {
-                attribute = targetAttributes.get(code);
-            }
-
-            return Optional.ofNullable(attribute);
+        public Collection<CategoryDefinition> getCategories() {
+            return categories;
         }
     }
 }

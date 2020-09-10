@@ -75,7 +75,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                     entities.removeAll(references);
                 } else if (value instanceof JmixEntity) {
                     if (references.contains(value)) {
-                        EntityValues.setValue((JmixEntity) value, attribute, null);
+                        EntityValues.setValue(entity, attribute, null);
                     }
                 }
             }
@@ -107,7 +107,8 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                             metaProperty.getName(), entity));
         }
         for (Object id : ids) {
-            JmixEntity reference = dataManager.getReference((Class<JmixEntity>) metaProperty.getJavaType(), id);
+            MetaClass metaClass = metaProperty.getRange().asClass();
+            JmixEntity reference = dataManager.getReference(metaClass.getJavaClass(), id);
             items.add(reference);
         }
     }

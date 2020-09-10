@@ -18,7 +18,7 @@ package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
 import io.jmix.core.constraint.AccessConstraint;
-import io.jmix.core.constraint.RowLevelConstraint;
+import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -78,7 +78,9 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
 
         boolean softDeletion = loadContext.isSoftDeletion();
         Map<String, Serializable> hints = loadContext.getHints();
-        List<AccessConstraint<?>> constraints = loadContext.getAccessConstraints();
+        List<AccessConstraint<?>> constraints = (List<AccessConstraint<?>>) loadContext.getAccessConstraints().stream()
+                .filter(ac -> ac instanceof InMemoryConstraint)
+                .collect(Collectors.toList());
 
         for (Map.Entry<JmixEntity, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
@@ -133,6 +135,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                         }
                         vh = new JmixWrappingValueHolder(
                                 instance,
+                                property.getName(),
                                 property.getJavaType(),
                                 id,
                                 dataManager,
@@ -140,10 +143,13 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                                 metadataTools);
                     } else {
                         MetaProperty inverseProperty = property.getInverse();
-                        vh = new JmixSingleValueHolder(inverseProperty.getName(),
-                                property.getJavaType(),
+                        vh = new JmixSingleValueHolder(
                                 instance,
+                                property.getName(),
+                                inverseProperty.getName(),
+                                property.getJavaType(),
                                 dataManager,
+                                beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
                                 metadata,
                                 metadataTools);
                     }
@@ -188,6 +194,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                     }
                     vh = new JmixWrappingValueHolder(
                             instance,
+                            property.getName(),
                             property.getJavaType(),
                             id,
                             dataManager,
@@ -201,7 +208,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                 break;
             case ONE_TO_MANY:
             case MANY_TO_MANY:
-                IndirectCollection fieldValue = instance.__getEntityEntry().getAttributeValue(property.getName());
+                IndirectCollection fieldValue = EntityValues.getValue(instance, property.getName());
                 if (fieldValue == null || fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
                     return;
                 }

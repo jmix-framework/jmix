@@ -17,6 +17,8 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -30,6 +32,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
 
     protected JmixEntity parentEntity;
+    protected String propertyName;
     protected Object entityId;
     protected Class valueClass;
 
@@ -37,9 +40,10 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixWrappingValueHolder(JmixEntity parentEntity, Class valueClass, Object entityId, DataManager dataManager,
-                                   Metadata metadata, MetadataTools metadataTools) {
+    public JmixWrappingValueHolder(JmixEntity parentEntity, String propertyName, Class valueClass, Object entityId,
+                                   DataManager dataManager, Metadata metadata, MetadataTools metadataTools) {
         this.parentEntity = parentEntity;
+        this.propertyName = propertyName;
         this.valueClass = valueClass;
         this.entityId = entityId;
         this.dataManager = dataManager;
@@ -92,7 +96,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                                     break;
                                 case ONE_TO_MANY:
                                 case MANY_TO_MANY:
-                                    IndirectCollection fieldValue = entity.__getEntityEntry().getAttributeValue(property.getName());
+                                    IndirectCollection fieldValue = EntityValues.getValue(entity, property.getName());
                                     if (fieldValue != null && fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
                                         JmixAbstractValueHolder vh = (JmixAbstractValueHolder) fieldValue.getValueHolder();
                                         vh.setPreservedLoadContext(
@@ -114,6 +118,9 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                 };
                 if (value != null) {
                     metadataTools.traverseAttributes((JmixEntity) value, av);
+                } else {
+                    SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                    parentState.addErasedId(propertyName, entityId);
                 }
             }
             isInstantiated = true;

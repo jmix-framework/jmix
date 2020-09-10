@@ -17,6 +17,8 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,18 +33,23 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
 
     protected JmixEntity parentEntity;
     protected String propertyName;
+    protected String inversePropertyName;
     protected Class valueClass;
 
     protected transient DataManager dataManager;
+    protected transient FetchPlanBuilder fetchPlanBuilder;
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixSingleValueHolder(String propertyName, Class valueClass, JmixEntity parentEntity, DataManager dataManager,
+    public JmixSingleValueHolder(JmixEntity parentEntity, String propertyName, String inversePropertyName,
+                                 Class valueClass, DataManager dataManager, FetchPlanBuilder fetchPlanBuilder,
                                  Metadata metadata, MetadataTools metadataTools) {
-        this.propertyName = propertyName;
-        this.valueClass = valueClass;
         this.parentEntity = parentEntity;
+        this.propertyName = propertyName;
+        this.inversePropertyName = inversePropertyName;
+        this.valueClass = valueClass;
         this.dataManager = dataManager;
+        this.fetchPlanBuilder = fetchPlanBuilder;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
     }
@@ -55,19 +62,36 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
     public Object getValue() {
         if (!isInstantiated) {
             synchronized (this) {
-                MetaClass metaClass = metadata.getClass(valueClass);
-                String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
-                LoadContext lc = new LoadContext(metaClass);
-                lc.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId",
-                        metaClass.getName(), propertyName, primaryKeyName));
-                lc.getQuery().setParameter("entityId", parentEntity.__getEntityEntry().getEntityId());
+                MetaClass metaClass;
+                LoadContext lc;
+                Object parentId = EntityValues.getId(parentEntity);
                 PreservedLoadContext plc = getPreservedLoadContext();
-                lc.setSoftDeletion(false);
-                lc.setHints(plc.getHints());
                 if (plc.getAccessConstraints() != null && !plc.getAccessConstraints().isEmpty()) {
+                    metaClass = metadata.getClass(parentEntity);
+                    lc = new LoadContext(metaClass);
+                    lc.setFetchPlan(fetchPlanBuilder.add(propertyName).build());
+                    lc.setId(parentId);
+                    lc.setSoftDeletion(false);
+                    lc.setHints(plc.getHints());
                     lc.setAccessConstraints(plc.getAccessConstraints());
+                    JmixEntity result = dataManager.load(lc);
+                    value = EntityValues.getValue(result, propertyName);
+                    if (value == null) {
+                        SecurityState resultState = result.__getEntityEntry().getSecurityState();
+                        SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                        parentState.addErasedIds(propertyName, resultState.getErasedIds(propertyName));
+                    }
+                } else {
+                    metaClass = metadata.getClass(valueClass);
+                    String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+                    lc = new LoadContext(metaClass);
+                    lc.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId",
+                            metaClass.getName(), inversePropertyName, primaryKeyName));
+                    lc.getQuery().setParameter("entityId", parentId);
+                    lc.setSoftDeletion(false);
+                    lc.setHints(plc.getHints());
+                    value = dataManager.load(lc);
                 }
-                value = dataManager.load(lc);
 
                 EntityAttributeVisitor av = new EntityAttributeVisitor() {
                     @Override
@@ -96,7 +120,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
                                     break;
                                 case ONE_TO_MANY:
                                 case MANY_TO_MANY:
-                                    IndirectCollection fieldValue = entity.__getEntityEntry().getAttributeValue(property.getName());
+                                    IndirectCollection fieldValue = EntityValues.getValue(entity, property.getName());
                                     if (fieldValue != null && fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
                                         JmixAbstractValueHolder vh = (JmixAbstractValueHolder) fieldValue.getValueHolder();
                                         vh.setPreservedLoadContext(
@@ -129,6 +153,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
         in.defaultReadObject();
         BeanFactory beanFactory = SerializationContext.getThreadLocalBeanFactory();
         dataManager = (DataManager) beanFactory.getBean(DataManager.NAME);
+        fetchPlanBuilder = beanFactory.getBean(FetchPlanBuilder.class, parentEntity.getClass());
         metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
         metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
     }

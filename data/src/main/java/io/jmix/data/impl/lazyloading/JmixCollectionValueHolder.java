@@ -17,10 +17,11 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.eclipse.persistence.indirection.IndirectCollection;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 MetaClass metaClass = metadata.getClass(parentEntity.getClass());
                 LoadContext lc = new LoadContext(metaClass);
                 lc.setFetchPlan(fetchPlanBuilder.add(propertyName).build());
-                lc.setId(parentEntity.__getEntityEntry().getEntityId());
+                lc.setId(EntityValues.getId(parentEntity));
                 PreservedLoadContext plc = getPreservedLoadContext();
                 lc.setSoftDeletion(plc.isSoftDeletion());
                 lc.setHints(plc.getHints());
@@ -71,9 +72,14 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                     lc.setAccessConstraints(plc.getAccessConstraints());
                 }
                 JmixEntity result = dataManager.load(lc);
-                this.value = ((IndirectCollection) result.__getEntityEntry().getAttributeValue(propertyName))
-                        .getValueHolder()
-                        .getValue();
+
+                this.value = EntityValues.getValue(result, propertyName);
+                SecurityState resultState = result.__getEntityEntry().getSecurityState();
+                SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                Collection ids = resultState.getErasedIds(propertyName);
+                if (ids != null && !ids.isEmpty()) {
+                    parentState.addErasedIds(propertyName, ids);
+                }
                 JmixEntity rootEntity = getRootEntity();
                 if (rootEntity != null) {
                     if (value instanceof List) {

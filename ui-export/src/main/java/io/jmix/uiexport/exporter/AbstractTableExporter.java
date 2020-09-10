@@ -24,7 +24,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.core.metamodel.model.utils.InstanceUtils;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;

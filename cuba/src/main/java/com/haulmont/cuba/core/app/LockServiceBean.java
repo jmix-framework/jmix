@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Component(LockService.NAME)
@@ -59,7 +61,7 @@ public class LockServiceBean implements LockService {
 
     @Override
     public List<LockInfo> getCurrentLocks() {
-        return lockManager.getCurrentLocks();
+        return new ArrayList<>(lockManager.getCurrentLocks());
     }
 
     @Override

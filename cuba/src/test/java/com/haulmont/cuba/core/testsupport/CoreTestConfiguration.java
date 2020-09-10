@@ -30,6 +30,8 @@ import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.ui.UiConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -98,5 +100,10 @@ public class CoreTestConfiguration {
     @Bean
     public ScriptEvaluator scriptEvaluator() {
         return new GroovyScriptEvaluator();
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
     }
 }

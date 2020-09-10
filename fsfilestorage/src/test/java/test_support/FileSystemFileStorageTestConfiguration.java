@@ -20,6 +20,8 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorage;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,4 +39,8 @@ public class FileSystemFileStorageTestConfiguration {
         return new FileSystemFileStorage();
     }
 
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
+    }
 }

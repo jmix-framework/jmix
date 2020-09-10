@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+package io.jmix.data.impl;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.EntitySystemStateSupport;

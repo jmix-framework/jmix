@@ -16,6 +16,7 @@
 
 package io.jmix.data;
 
+import io.jmix.data.impl.DataEntitySystemStateSupport;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.EntitySystemStateSupport;

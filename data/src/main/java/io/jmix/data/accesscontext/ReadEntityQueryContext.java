@@ -1,4 +1,4 @@
-package io.jmix.data.impl.context;
+package io.jmix.data.accesscontext;
 
 
 import com.google.common.base.Strings;

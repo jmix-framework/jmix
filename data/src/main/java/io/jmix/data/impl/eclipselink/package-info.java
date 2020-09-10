@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+@Internal
+package io.jmix.data.impl.eclipselink;
 
-import io.jmix.core.entity.BaseUser;
-
-import javax.annotation.Nullable;
-
-/**
- * Provides information about current user for audit purposes -
- * Creatable, Updatable, SoftDelete entities and for Entity Log.
- */
-public interface AuditInfoProvider {
-
-    String NAME = "data_AuditInfoProvider";
-
-    @Nullable
-    BaseUser getCurrentUser();
-}
+import io.jmix.core.annotation.Internal;

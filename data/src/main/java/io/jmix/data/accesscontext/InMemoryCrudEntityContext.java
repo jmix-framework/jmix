@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.context;
+package io.jmix.data.accesscontext;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.context.AccessContext;

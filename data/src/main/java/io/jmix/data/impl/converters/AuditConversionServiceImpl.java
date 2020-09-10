@@ -21,16 +21,18 @@ import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+
 /**
  * Default implementation to support common types.
  * Instantiate this bean and add custom converters to support different date/time and user types.
  */
 @Component(AuditConversionService.NAME)
-public class AuditConversionServiceBean implements AuditConversionService {
+public class AuditConversionServiceImpl implements AuditConversionService {
 
     private GenericConversionService conversionService;
 
-    public AuditConversionServiceBean() {
+    public AuditConversionServiceImpl() {
         conversionService = new GenericConversionService();
 
         conversionService.addConverter(Jsr310Converters.DateToLocalDateTimeConverter.INSTANCE);
@@ -43,13 +45,13 @@ public class AuditConversionServiceBean implements AuditConversionService {
     }
 
     @Override
-    public boolean canConvert(Class<?> sourceType, Class<?> targetType) {
+    public boolean canConvert(@Nullable Class<?> sourceType, Class<?> targetType) {
         return conversionService.canConvert(sourceType, targetType);
     }
 
 
     @Override
-    public <T> T convert(Object source, Class<T> targetType) {
+    public <T> T convert(@Nullable Object source, Class<T> targetType) {
         return conversionService.convert(source, targetType);
     }
 

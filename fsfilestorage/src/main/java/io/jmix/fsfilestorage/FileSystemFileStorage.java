@@ -22,6 +22,7 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -53,6 +54,7 @@ import java.util.concurrent.Executors;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
+@Internal
 @Component("fsfs_FileStorage")
 public class FileSystemFileStorage implements FileStorage<URI, String> {
 

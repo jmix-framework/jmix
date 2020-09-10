@@ -54,14 +54,13 @@ import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
+import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import io.jmix.ui.xml.layout.loader.FileMultiUploadFieldLoader;
 import io.jmix.ui.xml.layout.loader.FragmentLoader;
 import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
 import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
 @Component(CubaLoaderConfig.NAME)
@@ -74,7 +73,8 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     @Override
     public boolean supports(Element element) {
-        return loaders.containsKey(element.getName());
+        return isLegacyScreen(element)
+                && loaders.containsKey(element.getName());
     }
 
     @Override
@@ -153,20 +153,18 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
     }
 
     protected boolean isLegacyScreen(Element element) {
-        Element parent = getRootElement(element);
+        if ("window".equals(element.getName())) {
+            return element.attribute("class") != null;
+        }
 
-        return parent != null
-                && parent.attribute("class") != null;
-    }
+        Element parent = element.getParent();
 
-    @Nullable
-    protected Element getRootElement(Element element) {
-        Element parent = element;
         while (parent != null
                 && !"window".equals(parent.getName())) {
             parent = parent.getParent();
         }
 
-        return parent;
+        return parent != null
+                && parent.attribute("class") != null;
     }
 }

@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
-package io.jmix.core.security.impl;
+package io.jmix.core.pessimisticlocking.impl;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

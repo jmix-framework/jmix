@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-@Internal
-@NonNullApi
-package io.jmix.core.security.impl;
+package io.jmix.core.annotation;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Internal {
+}

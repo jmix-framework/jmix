@@ -15,8 +15,6 @@
  */
 
 @Internal
-@NonNullApi
-package io.jmix.core.security.impl;
+package io.jmix.core.impl.jpql.transform;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.lang.NonNullApi;

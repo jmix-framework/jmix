@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.annotation.Order;
@@ -25,6 +26,7 @@ import org.springframework.core.env.MapPropertySource;
 import java.util.HashMap;
 import java.util.Map;
 
+@Internal
 @Order(Events.HIGHEST_CORE_PRECEDENCE)
 public class JmixEnvironmentPostProcessor implements EnvironmentPostProcessor {
 

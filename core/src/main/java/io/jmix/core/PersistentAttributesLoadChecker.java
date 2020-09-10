@@ -16,6 +16,9 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Internal;
+
+@Internal
 public interface PersistentAttributesLoadChecker {
     String NAME = "core_PersistentAttributesLoadChecker";
 

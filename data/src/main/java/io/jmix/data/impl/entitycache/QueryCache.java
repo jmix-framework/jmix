@@ -39,21 +39,6 @@ public interface QueryCache {
     void put(QueryKey queryKey, QueryResult queryResult);
 
     /**
-     * Finds query key by query identifier
-     */
-    QueryKey findQueryKeyById(UUID queryId);
-
-    /**
-     * Discards cached query results for query identifier {@code queryKey}.
-     */
-    QueryKey invalidate(UUID queryId);
-
-    /**
-     * Discards cached query results for query key {@code queryKey}.
-     */
-    void invalidate(QueryKey queryKey);
-
-    /**
      * Discards cached query results for metaClass name {@code typeName}.
      */
     void invalidate(String typeName);
@@ -72,17 +57,4 @@ public interface QueryCache {
      * Returns number of entries in this cache.
      */
     long size();
-
-    /**
-     * Returns the maximum number of entries the cache may contain.
-     * As the cache size grows close to the maximum, the cache
-     * evicts entries that are less likely to be used again.
-     */
-    long getMaxSize();
-
-    /**
-     * Returns a view of the entries stored in this cache as a map. Modifications made to
-     * the map doesn't affect the cache.
-     */
-    Map<QueryKey, QueryResult> asMap();
 }

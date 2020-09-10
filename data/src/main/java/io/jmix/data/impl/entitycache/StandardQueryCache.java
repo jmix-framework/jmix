@@ -16,165 +16,98 @@
 
 package io.jmix.data.impl.entitycache;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.jmix.data.DataProperties;
+import io.jmix.core.CacheOperations;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component(QueryCache.NAME)
 public class StandardQueryCache implements QueryCache {
 
-    protected Cache<QueryKey, QueryResult> data;
-    protected ConcurrentMap<String, CopyOnWriteArrayList<QueryKey>> typeIndex = new ConcurrentHashMap<>();
-    protected ReadWriteLock lock = new ReentrantReadWriteLock();
+    protected Cache queries;
 
     @Autowired
-    protected DataProperties properties;
+    protected CacheManager cacheManager;
+    @Autowired
+    protected CacheOperations cacheOperations;
+
+    public static final String QUERY_CACHE_NAME = "jmix-orm-query-cache";
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCache.class);
 
     @PostConstruct
     protected void init() {
-        data = CacheBuilder.newBuilder().maximumSize(properties.getQueryCacheMaxSize()).build();
+        queries = cacheManager.getCache(QUERY_CACHE_NAME);
+        if (queries == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", QUERY_CACHE_NAME));
+        }
     }
 
     @Override
     public QueryResult get(QueryKey queryKey) {
-        return data.getIfPresent(queryKey);
+        return queries.get(queryKey, QueryResult.class);
     }
 
     @Override
     public void put(QueryKey queryKey, QueryResult queryResult) {
-        Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            data.put(queryKey, queryResult);
-
-            for (String type : queryResult.getRelatedTypes()) {
-                CopyOnWriteArrayList<QueryKey> keys = typeIndex.get(type);
-                if (keys == null) {
-                    typeIndex.putIfAbsent(type, new CopyOnWriteArrayList<>());
-                    keys = typeIndex.get(type);
-                }
-                keys.add(queryKey);
-            }
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    @Override
-    public QueryKey findQueryKeyById(UUID queryId) {
-        Set<QueryKey> keys = Sets.newHashSet(data.asMap().keySet());
-        for (QueryKey key : keys) {
-            if (Objects.equals(queryId, key.getId())) {
-                return key;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public void invalidate(QueryKey queryKey) {
-        Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            log.debug("Invalidate query by key {}", queryKey.printDescription());
-            data.invalidate(queryKey);
-        } finally {
-            readLock.unlock();
-        }
+        queries.put(queryKey, queryResult);
     }
 
     @Override
     public void invalidate(String typeName) {
-        Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            CopyOnWriteArrayList<QueryKey> keys = typeIndex.get(typeName);
-            if (keys == null) return;
-            log.debug("Invalidate cache for type {}", typeName);
-            Arrays.stream(keys.toArray()).forEach(it -> data.invalidate(it));
-        } finally {
-            readLock.unlock();
-        }
+        log.debug("Invalidate cache for type {}", typeName);
+        invalidateByTypes(Sets.newHashSet(typeName));
     }
 
     @Override
     public void invalidate(Set<String> typeNames) {
-        Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            typeNames.forEach(typeName -> {
-                        CopyOnWriteArrayList<QueryKey> keys = typeIndex.get(typeName);
-                        if (keys == null) return;
-                        log.debug("Invalidate cache for type {}", typeName);
-                        Arrays.stream(keys.toArray()).forEach(it -> data.invalidate(it));
-                    }
-            );
-        } finally {
-            readLock.unlock();
-        }
+        log.debug("Invalidate cache for types {}", typeNames);
+        invalidateByTypes(typeNames);
     }
 
-    @Override
-    public QueryKey invalidate(UUID queryId) {
-        Lock readLock = lock.readLock();
-        readLock.lock();
-        try {
-            Set<QueryKey> keys = Sets.newHashSet(data.asMap().keySet());
-            for (QueryKey key : keys) {
-                if (Objects.equals(queryId, key.getId())) {
-                    log.debug("Invalidate query by identifier {}", queryId);
-                    data.invalidate(key);
-                    return key;
+    protected void invalidateByTypes(Set<String> typeNames) {
+        if (cacheOperations.isIterableCache(queries)) {
+            Set<QueryKey> evicted = new HashSet<>();
+
+            cacheOperations.<QueryKey, QueryResult>forEach(queries, (queryKey, queryResult) -> {
+                if (CollectionUtils.containsAny(queryResult.getRelatedTypes(), typeNames)) {
+                    evicted.add(queryKey);
                 }
+            });
+
+            for (QueryKey queryKey : evicted) {
+                queries.evictIfPresent(queryKey);
+
             }
-        } finally {
-            readLock.unlock();
+        } else {
+            queries.invalidate();
         }
-        return null;
     }
 
     @Override
     public void invalidateAll() {
-        Lock writeLock = lock.writeLock();
-        writeLock.lock();
-        try {
-            log.debug("Invalidate all cache");
-            data.invalidateAll();
-            typeIndex.clear();
-        } finally {
-            writeLock.unlock();
-        }
+        log.debug("Invalidate all cache");
+        queries.invalidate();
     }
 
     @Override
     public long size() {
-        return data.size();
-    }
-
-    @Override
-    public long getMaxSize() {
-        return properties.getQueryCacheMaxSize();
-    }
-
-    @Override
-    public Map<QueryKey, QueryResult> asMap() {
-        return Maps.newHashMap(data.asMap());
+        if (cacheOperations.isIterableCache(queries)) {
+            AtomicLong count = new AtomicLong();
+            cacheOperations.forEach(queries, (queryKey, queryResult) -> count.incrementAndGet());
+            return count.get();
+        } else {
+            return 0;
+        }
     }
 }

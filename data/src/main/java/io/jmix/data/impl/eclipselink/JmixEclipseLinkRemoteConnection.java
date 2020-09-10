@@ -144,7 +144,7 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
                         typeNames.add(metaClass.getName());
                     }
                 });
-                queryCacheManager.invalidate(typeNames, false);
+                queryCacheManager.invalidate(typeNames);
             }
         }
     }

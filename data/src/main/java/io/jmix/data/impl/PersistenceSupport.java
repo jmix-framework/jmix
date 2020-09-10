@@ -478,7 +478,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
                     transactionListener.beforeCommit(container.getStoreName(), allInstances);
                 }
-                queryCacheManager.invalidate(typeNames, true);
+                queryCacheManager.invalidate(typeNames);
 
                 List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(container.getAllInstances());
 

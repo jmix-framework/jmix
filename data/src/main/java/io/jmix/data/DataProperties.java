@@ -27,7 +27,6 @@ public class DataProperties {
     boolean inMemoryDistinct;
     boolean useReadOnlyTransactionForLoad;
     boolean queryCacheEnabled;
-    int queryCacheMaxSize;
     int numberIdCacheSize;
     boolean useEntityDataStoreForIdSequence;
 
@@ -35,14 +34,12 @@ public class DataProperties {
             boolean inMemoryDistinct,
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("true") boolean queryCacheEnabled,
-            @DefaultValue("100") int queryCacheMaxSize,
             @DefaultValue("100") int numberIdCacheSize,
             boolean useEntityDataStoreForIdSequence
     ) {
         this.inMemoryDistinct = inMemoryDistinct;
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.queryCacheEnabled = queryCacheEnabled;
-        this.queryCacheMaxSize = queryCacheMaxSize;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
     }
@@ -57,10 +54,6 @@ public class DataProperties {
 
     public boolean isQueryCacheEnabled() {
         return queryCacheEnabled;
-    }
-
-    public int getQueryCacheMaxSize() {
-        return queryCacheMaxSize;
     }
 
     public int getNumberIdCacheSize() {

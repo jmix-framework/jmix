@@ -285,10 +285,10 @@ public class JmixQuery<E> implements TypedQuery<E> {
         Cache cache = jpaQuery.getEntityManager().getEntityManagerFactory().getCache();
         if (referenceClass != null) {
             cache.evict(referenceClass);
-            queryCacheMgr.invalidate(referenceClass, true);
+            queryCacheMgr.invalidate(referenceClass);
         } else {
             cache.evictAll();
-            queryCacheMgr.invalidateAll(true);
+            queryCacheMgr.invalidateAll();
         }
         preExecute(jpaQuery);
         return jpaQuery.executeUpdate();

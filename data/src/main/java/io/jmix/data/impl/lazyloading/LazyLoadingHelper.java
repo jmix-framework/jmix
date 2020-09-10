@@ -78,9 +78,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
 
         boolean softDeletion = loadContext.isSoftDeletion();
         Map<String, Serializable> hints = loadContext.getHints();
-        List<AccessConstraint<?>> constraints = (List<AccessConstraint<?>>) loadContext.getAccessConstraints().stream()
-                .filter(ac -> !(ac instanceof RowLevelConstraint))
-                .collect(Collectors.toList());
+        List<AccessConstraint<?>> constraints = loadContext.getAccessConstraints();
 
         for (Map.Entry<JmixEntity, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());

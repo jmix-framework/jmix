@@ -16,14 +16,10 @@
 
 package io.jmix.data.impl.entitycache;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.cluster.ClusterListenerAdapter;
-import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
@@ -32,14 +28,12 @@ import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.TypedQuery;
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,8 +45,6 @@ public class QueryCacheManager {
     @Autowired
     protected DataProperties properties;
     @Autowired
-    protected ClusterManager clusterManager;
-    @Autowired
     protected QueryCache queryCache;
     @Autowired
     protected Metadata metadata;
@@ -62,22 +54,6 @@ public class QueryCacheManager {
     protected StoreAwareLocator storeAwareLocator;
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCacheManager.class);
-
-    @PostConstruct
-    public void init() {
-        clusterManager.addListener(InvalidateQueryCacheMsg.class, new ClusterListenerAdapter<InvalidateQueryCacheMsg>() {
-            @Override
-            public void receive(InvalidateQueryCacheMsg message) {
-                if (message.invalidateAll) {
-                    queryCache.invalidateAll();
-                } else if (message.queryKey != null) {
-                    queryCache.invalidate(message.queryKey);
-                } else {
-                    queryCache.invalidate(message.typeNames);
-                }
-            }
-        });
-    }
 
     /**
      * Returns true if query cache enabled
@@ -185,81 +161,37 @@ public class QueryCacheManager {
 
     /**
      * Discards cached query results for java class (associated with metaClass) {@code typeClass}
-     *
-     * @param sendInCluster - if true - discard queries results in all query caches in cluster
      */
-    public void invalidate(Class typeClass, boolean sendInCluster) {
+    public void invalidate(Class typeClass) {
         if (isEnabled()) {
             MetaClass metaClass = metadata.getClass(typeClass);
-            invalidate(metaClass.getName(), sendInCluster);
+            invalidate(metaClass.getName());
         }
     }
 
     /**
      * Discards cached query results for metaClass name {@code typeName}
-     *
-     * @param sendInCluster - if true - discard queries results in all query caches in cluster
      */
-    public void invalidate(String typeName, boolean sendInCluster) {
+    public void invalidate(String typeName) {
         if (isEnabled()) {
             queryCache.invalidate(typeName);
-            if (sendInCluster) {
-                MetaClass metaClass = metadata.findClass(typeName);
-                if (metaClass != null && metadataTools.isCacheable(metaClass)) {
-                    clusterManager.send(new InvalidateQueryCacheMsg(Sets.newHashSet(typeName)));
-                }
-            }
         }
     }
 
     /**
      * Discards cached query results for metaClass names {@code typeNames}
-     *
-     * @param sendInCluster - if true - discard queries results in all query caches in cluster
      */
-    public void invalidate(Set<String> typeNames, boolean sendInCluster) {
+    public void invalidate(Set<String> typeNames) {
         if (isEnabled()) {
             if (typeNames != null && typeNames.size() > 0) {
                 queryCache.invalidate(typeNames);
-                if (sendInCluster) {
-                    boolean hasCacheable = typeNames.stream().anyMatch(typeName -> {
-                        MetaClass metaClass = metadata.findClass(typeName);
-                        return metaClass != null && metadataTools.isCacheable(metaClass);
-                    });
-                    if (hasCacheable) {
-                        clusterManager.send(new InvalidateQueryCacheMsg(typeNames));
-                    }
-                }
             }
         }
     }
 
-    /**
-     * Discards cached query results for query identifier {@code queryId}
-     *
-     * @param sendInCluster - if true - discard queries results in all query caches in cluster
-     */
-    public void invalidate(UUID queryId, boolean sendInCluster) {
-        Preconditions.checkNotNull(queryId, "Query identifier is null");
-        if (isEnabled()) {
-            QueryKey queryKey = queryCache.invalidate(queryId);
-            if (queryKey != null && sendInCluster) {
-                clusterManager.send(new InvalidateQueryCacheMsg(queryKey));
-            }
-        }
-    }
-
-    /**
-     * Discards all query results in the cache.
-     *
-     * @param sendInCluster - if true - discard queries results in all query caches in cluster
-     */
-    public void invalidateAll(boolean sendInCluster) {
+    public void invalidateAll() {
         if (isEnabled()) {
             queryCache.invalidateAll();
-            if (sendInCluster) {
-                clusterManager.send(new InvalidateQueryCacheMsg(true));
-            }
         }
     }
 
@@ -277,25 +209,5 @@ public class QueryCacheManager {
             }
         });
         return newRelatedTypes;
-    }
-
-    protected static class InvalidateQueryCacheMsg implements Serializable {
-        private static final long serialVersionUID = -9099037380378341477L;
-
-        protected Set<String> typeNames;
-        protected QueryKey queryKey;
-        protected boolean invalidateAll;
-
-        public InvalidateQueryCacheMsg(Set<String> typeNames) {
-            this.typeNames = typeNames;
-        }
-
-        public InvalidateQueryCacheMsg(boolean invalidateAll) {
-            this.invalidateAll = invalidateAll;
-        }
-
-        public InvalidateQueryCacheMsg(QueryKey queryKey) {
-            this.queryKey = queryKey;
-        }
     }
 }

@@ -56,9 +56,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
     protected CurrentAuthentication currentAuthentication;
 
     @Autowired
-    protected ClusterManager clusterManager;
-
-    @Autowired
     protected Metadata metadata;
 
     @Autowired
@@ -256,9 +253,6 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
 
     @Override
     public void deleteForInactiveSessions() {
-        if (!clusterManager.isMaster())
-            return;
-
         internalDeleteForInactiveSessions();
     }
 

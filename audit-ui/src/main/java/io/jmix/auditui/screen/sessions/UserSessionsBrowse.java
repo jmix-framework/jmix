@@ -17,7 +17,7 @@
 package io.jmix.auditui.screen.sessions;
 
 import io.jmix.audit.entity.UserSession;
-import io.jmix.audit.sessions.UserSessions;
+import io.jmix.audit.UserSessions;
 import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;

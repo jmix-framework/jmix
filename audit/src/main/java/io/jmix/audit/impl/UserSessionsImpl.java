@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.audit.sessions;
+package io.jmix.audit.impl;
 
+import io.jmix.audit.UserSessions;
 import io.jmix.audit.entity.UserSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
@@ -29,7 +30,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Component(UserSessions.NAME)
-public class UserSessionsImps implements UserSessions {
+public class UserSessionsImpl implements UserSessions {
 
     @Autowired(required = false)
     protected SessionRegistry sessionRegistry;

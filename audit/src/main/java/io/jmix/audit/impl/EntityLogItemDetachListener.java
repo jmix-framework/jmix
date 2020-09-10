@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.audit.listener;
+package io.jmix.audit.impl;
 
 import com.google.common.collect.Ordering;
 import io.jmix.audit.entity.EntityLogAttr;

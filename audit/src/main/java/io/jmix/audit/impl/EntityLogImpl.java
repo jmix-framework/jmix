@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.audit;
+package io.jmix.audit.impl;
 
 import com.google.common.base.Strings;
+import io.jmix.audit.AuditProperties;
+import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
 import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;

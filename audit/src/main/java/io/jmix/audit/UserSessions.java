@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.audit.sessions;
+package io.jmix.audit;
 
 import io.jmix.audit.entity.UserSession;
 

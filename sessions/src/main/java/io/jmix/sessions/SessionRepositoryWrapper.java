@@ -17,6 +17,7 @@
 package io.jmix.sessions;
 
 import io.jmix.core.Events;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.sessions.events.JmixSessionCreatedEvent;
 import io.jmix.sessions.events.JmixSessionDestroyedEvent;
@@ -34,6 +35,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+@Internal
 public class SessionRepositoryWrapper<S extends Session> implements FindByIndexNameSessionRepository<SessionRepositoryWrapper<S>.SessionWrapper> {
 
     private List<SessionAttributePersistenceValidator> attributePersistenceValidators = new ArrayList<>();

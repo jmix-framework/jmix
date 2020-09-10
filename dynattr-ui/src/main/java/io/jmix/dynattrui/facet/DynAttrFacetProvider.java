@@ -16,6 +16,7 @@
 
 package io.jmix.dynattrui.facet;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.xml.FacetProvider;
@@ -23,6 +24,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Internal
 @org.springframework.stereotype.Component(DynAttrFacetProvider.NAME)
 public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     public static final String NAME = "dynattrui_DynamicAttributeFacetProvider";

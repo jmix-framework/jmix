@@ -18,7 +18,7 @@ package io.jmix.dynattr;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;

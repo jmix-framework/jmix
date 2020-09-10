@@ -26,7 +26,7 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.context.UiEntityContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;

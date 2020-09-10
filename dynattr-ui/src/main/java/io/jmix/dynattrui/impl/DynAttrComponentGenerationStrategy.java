@@ -29,7 +29,7 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;

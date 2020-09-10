@@ -20,12 +20,11 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import io.jmix.core.JmixEntity;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.OptionsLoaderType;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;

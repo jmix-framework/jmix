@@ -21,6 +21,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import io.jmix.core.LocaleResolver;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Internal
 @Component(MsgBundleTools.NAME)
 public final class MsgBundleTools {
     public static final String NAME = "dynattrui_MsgBundleTools";

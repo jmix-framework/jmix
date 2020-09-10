@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui.facet;
+package io.jmix.dynattr.model;
 
-import io.jmix.core.annotation.Internal;
-import io.jmix.ui.component.impl.WebAbstractFacet;
+/**
+ * Interface to be implemented by entities which can be separated by categories and hence have several sets of
+ * dynamic attributes.
+ * Such entities can be displayed in RuntimePropertiesFrame.
+ */
+public interface Categorized {
+    Category getCategory();
 
-@Internal
-public class WebDynAttrFacet extends WebAbstractFacet implements DynAttrFacet {
+    void setCategory(Category category);
 }

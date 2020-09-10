@@ -15,7 +15,7 @@
  *
  */
 
-package io.jmix.dynattr.impl.model;
+package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
 import com.google.gson.Gson;

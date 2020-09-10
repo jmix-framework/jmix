@@ -18,8 +18,8 @@ package io.jmix.dynattrui.screen.category;
 
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.dynattr.impl.model.Category;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.Category;
+import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrui.screen.categoryattr.CategoryAttrsFragment;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.dynattrui.screen.location.AttributeLocationFragment;

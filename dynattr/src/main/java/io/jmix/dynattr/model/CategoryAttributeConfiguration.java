@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattr.impl.model;
+package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
 import io.jmix.core.JmixEntity;

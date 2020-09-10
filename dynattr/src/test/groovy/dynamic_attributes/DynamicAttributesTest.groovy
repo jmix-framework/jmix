@@ -27,7 +27,7 @@ import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.dynattr.DynAttrQueryHints
-import io.jmix.dynattr.impl.model.CategoryAttribute
+import io.jmix.dynattr.model.CategoryAttribute
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
@@ -51,7 +51,7 @@ class DynamicAttributesTest extends Specification {
     @Autowired
     protected DataSource dataSource;
 
-    protected io.jmix.dynattr.impl.model.Category userCategory, userRoleCategory, roleCategory
+    protected io.jmix.dynattr.model.Category userCategory, userRoleCategory, roleCategory
 
     protected CategoryAttribute userAttribute, userRoleAttribute, roleAttribute,
                                 userGroupAttribute, userGroupCollectionAttribute, userIntCollectionAttribute,
@@ -66,15 +66,15 @@ class DynamicAttributesTest extends Specification {
     protected Group group1, group2
 
     void setup() {
-        userCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        userCategory = metadata.create(io.jmix.dynattr.model.Category)
         userCategory.name = 'user'
         userCategory.entityType = 'dynattr$User'
 
-        userRoleCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        userRoleCategory = metadata.create(io.jmix.dynattr.model.Category)
         userRoleCategory.name = 'userRole'
         userRoleCategory.entityType = 'dynattr$UserRole'
 
-        roleCategory = metadata.create(io.jmix.dynattr.impl.model.Category)
+        roleCategory = metadata.create(io.jmix.dynattr.model.Category)
         roleCategory.name = 'role'
         roleCategory.entityType = 'dynattr$Role'
 

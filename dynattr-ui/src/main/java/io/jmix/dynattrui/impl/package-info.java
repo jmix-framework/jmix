@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattrui.facet;
+@Internal
+package io.jmix.dynattrui.impl;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.ui.component.impl.WebAbstractFacet;
-
-@Internal
-public class WebDynAttrFacet extends WebAbstractFacet implements DynAttrFacet {
-}

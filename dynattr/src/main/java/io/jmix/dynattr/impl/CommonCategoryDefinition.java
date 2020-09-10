@@ -19,7 +19,7 @@ package io.jmix.dynattr.impl;
 import io.jmix.core.JmixEntity;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
-import io.jmix.dynattr.impl.model.Category;
+import io.jmix.dynattr.model.Category;
 
 import java.util.Collection;
 import java.util.List;

@@ -16,6 +16,7 @@
 
 package io.jmix.dynattrui;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrui.impl.EmbeddingStrategy;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@Internal
 @org.springframework.stereotype.Component(DynAttrEmbeddingStrategies.NAME)
 public class DynAttrEmbeddingStrategies {
     public static final String NAME = "dynattrui_DynAttrEmbeddingStrategies";

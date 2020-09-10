@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattr.impl.model;
+@Internal
+package io.jmix.dynattrui.screen.categoryattr;
 
-/**
- * Interface to be implemented by entities which can be separated by categories and hence have several sets of
- * dynamic attributes.
- * Such entities can be displayed in RuntimePropertiesFrame.
- */
-public interface Categorized {
-    Category getCategory();
-
-    void setCategory(Category category);
-}
+import io.jmix.core.annotation.Internal;

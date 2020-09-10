@@ -24,15 +24,15 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.dynattr.impl.model.Category;
+import io.jmix.dynattr.model.Category;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
-import io.jmix.ui.component.impl.CompositeComponent;
-import io.jmix.ui.component.impl.CompositeDescriptor;
+import io.jmix.ui.component.CompositeComponent;
+import io.jmix.ui.component.CompositeDescriptor;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 

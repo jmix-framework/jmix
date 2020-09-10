@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.panel;
 
 import com.google.common.base.Strings;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
@@ -25,6 +26,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.dom4j.Element;
 
+@Internal
 public class DynamicAttributesPanelLoader extends AbstractComponentLoader<DynamicAttributesPanel> {
     @Override
     public void createComponent() {

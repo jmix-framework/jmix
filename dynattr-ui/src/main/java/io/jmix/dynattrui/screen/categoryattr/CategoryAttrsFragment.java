@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.impl.model.CategoryAttribute;
+import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Button;

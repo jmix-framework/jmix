@@ -119,10 +119,13 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
         def manyToManySecondEntity = dataManager.load(ManyToManySecondEntity.class)
                 .accessConstraints(accessConstraintsRegistry.getConstraints())
                 .list().iterator().next()
+        def manyToManySecondEntityWithoutConstraints = dataManager.load(ManyToManySecondEntity.class)
+                .list().iterator().next()
 
         then:
 
-        manyToManySecondEntity.getManyToManyFirstEntities().size() == 3
+        manyToManySecondEntity.getManyToManyFirstEntities().size() == 2
+        manyToManySecondEntityWithoutConstraints.getManyToManyFirstEntities().size() == 5
 
         when:
 

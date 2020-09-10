@@ -109,7 +109,7 @@ public class SecurityTokenManager {
         }
         MetaClass metaClass = metadata.getClass(entity);
         Multimap<String, Object> filteredData = ArrayListMultimap.create();
-        securityState.setFilteredData(filteredData);
+        securityState.setErasedData(filteredData);
         Cipher cipher = getCipher(Cipher.DECRYPT_MODE);
         try {
             byte[] decrypted = cipher.doFinal(securityState.getSecurityToken());
@@ -211,7 +211,7 @@ public class SecurityTokenManager {
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getErasedData();
         if (filteredData == null) {
             filteredData = ArrayListMultimap.create();
-            entityEntry.getSecurityState().setFilteredData(filteredData);
+            entityEntry.getSecurityState().setErasedData(filteredData);
         }
         filteredData.put(property, id);
     }
@@ -224,7 +224,7 @@ public class SecurityTokenManager {
         Multimap<String, Object> filteredData = entityEntry.getSecurityState().getErasedData();
         if (filteredData == null) {
             filteredData = ArrayListMultimap.create();
-            entityEntry.getSecurityState().setFilteredData(filteredData);
+            entityEntry.getSecurityState().setErasedData(filteredData);
         }
         filteredData.putAll(property, ids);
     }

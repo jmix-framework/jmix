@@ -16,6 +16,7 @@
 
 package io.jmix.rest;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
@@ -27,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 //todo MG do we need JmixRestTokenGranter?
+@Internal
 public class JmixRestTokenGranter extends ResourceOwnerPasswordTokenGranter {
 
     private static final String SESSION_ID = "sessionId";

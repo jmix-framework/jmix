@@ -18,7 +18,7 @@ package io.jmix.rest.api.controller;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
-import io.jmix.data.impl.context.CrudEntityContext;
+import io.jmix.data.accesscontext.CrudEntityContext;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

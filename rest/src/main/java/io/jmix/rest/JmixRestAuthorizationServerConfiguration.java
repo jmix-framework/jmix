@@ -16,8 +16,7 @@
 
 package io.jmix.rest;
 
-import io.jmix.rest.api.auth.UniqueAuthenticationKeyGenerator;
-import io.jmix.rest.property.RestProperties;
+import io.jmix.core.annotation.Internal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +33,7 @@ import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
+@Internal
 @Configuration
 @EnableAuthorizationServer
 public class JmixRestAuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {

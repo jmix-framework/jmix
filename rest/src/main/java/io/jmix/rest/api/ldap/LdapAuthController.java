@@ -18,7 +18,7 @@ package io.jmix.rest.api.ldap;
 
 import com.google.common.base.Strings;
 import io.jmix.rest.api.auth.OAuthTokenIssuer;
-import io.jmix.rest.property.RestProperties;
+import io.jmix.rest.RestProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

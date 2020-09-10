@@ -16,7 +16,7 @@
 
 package io.jmix.rest.api.common;
 
-import io.jmix.rest.property.RestProperties;
+import io.jmix.rest.RestProperties;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;

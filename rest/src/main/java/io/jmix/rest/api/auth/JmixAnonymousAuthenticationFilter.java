@@ -21,7 +21,7 @@ import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
 import io.jmix.rest.api.config.RestServicesConfiguration;
 import io.jmix.rest.api.sys.CachingHttpServletRequestWrapper;
-import io.jmix.rest.property.RestProperties;
+import io.jmix.rest.RestProperties;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -19,12 +19,12 @@ package io.jmix.rest;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Events;
 import io.jmix.core.JmixModules;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.session.SessionProperties;
 import io.jmix.rest.api.auth.JmixRestLastSecurityFilter;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.sys.JmixRestExceptionLoggingFilter;
-import io.jmix.rest.property.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Internal
 @Configuration
 @EnableResourceServer
 public class JmixRestResourceServerConfiguration extends ResourceServerConfigurerAdapter {

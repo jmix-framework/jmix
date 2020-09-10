@@ -49,9 +49,9 @@ import static io.jmix.core.impl.serialization.EntitySerializationImpl.INSTANCE_N
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component(SwaggerGenerator.NAME)
-public class SwaggerGeneratorBean implements SwaggerGenerator {
+public class SwaggerGeneratorImpl implements SwaggerGenerator {
 
-    private static final Logger log = LoggerFactory.getLogger(SwaggerGeneratorBean.class);
+    private static final Logger log = LoggerFactory.getLogger(SwaggerGeneratorImpl.class);
 
     protected static final String ENTITY_PATH = "/entities/%s";
     protected static final String ENTITY_RUD_OPS = "/entities/%s/{entityId}";

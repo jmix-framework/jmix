@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.property;
+package io.jmix.rest;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;

@@ -20,7 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.rest.api.common.RestAuthUtils;
-import io.jmix.rest.property.RestProperties;
+import io.jmix.rest.RestProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

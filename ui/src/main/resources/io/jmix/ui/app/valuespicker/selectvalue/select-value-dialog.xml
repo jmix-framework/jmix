@@ -3,8 +3,8 @@
         caption="msg://selectValue.caption"
         messagesPack="">
     <dialogMode forceDialog="true"
-                width="theme://cuba.gui.listEditor.popup.dialog.width"
-                height="theme://cuba.gui.listEditor.popup.dialog.height"
+                width="theme://jmix.ui.selectValue.popup.dialog.width"
+                height="theme://jmix.ui.selectValue.popup.dialog.height"
                 resizable="true"/>
     <layout spacing="true" expand="valuesLayout">
         <hbox id="addItemLayout" spacing="true" width="100%"/>

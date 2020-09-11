@@ -64,7 +64,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         ThemeConstantsManager themeConstantsManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
         ThemeConstants theme = themeConstantsManager.getConstants();
 
-        dialogWindow.setWidth(theme.get("cuba.web.WebWindowManager.dialog.width"));
+        dialogWindow.setWidth(theme.get("jmix.ui.WebWindowManager.dialog.width"));
         dialogWindow.setHeightUndefined();
 
         component.setWidth(100, Sizeable.Unit.PERCENTAGE);

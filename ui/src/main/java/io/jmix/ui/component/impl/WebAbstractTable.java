@@ -1024,7 +1024,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 applicationContext.getBean(ThemeConstantsManager.NAME, ThemeConstantsManager.class);
         ThemeConstants theme = themeConstantsManager.getConstants();
         if (theme != null) {
-            defaultRowHeaderWidth = theme.getInt("cuba.web.Table.defaultRowHeaderWidth", 16);
+            defaultRowHeaderWidth = theme.getInt("jmix.ui.Table.defaultRowHeaderWidth", 16);
         }
 
         component.setColumnWidth(ROW_HEADER_PROPERTY_ID, defaultRowHeaderWidth);

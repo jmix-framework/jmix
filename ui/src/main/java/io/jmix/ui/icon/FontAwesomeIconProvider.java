@@ -98,6 +98,6 @@ public class FontAwesomeIconProvider implements IconProvider {
     }
 
     protected boolean isFontIconsEnabled() {
-        return themeConstantsManager.getConstants().getBoolean("cuba.web.useFontIcons", true);
+        return themeConstantsManager.getConstants().getBoolean("jmix.ui.useFontIcons", true);
     }
 }

@@ -116,7 +116,7 @@ public class ExceptionDialog extends JmixWindow {
         setCaption(caption != null ? caption : messages.getMessage("exceptionDialog.caption"));
 
         ThemeConstants theme = ui.getApp().getThemeConstants();
-        setWidth(theme.get("cuba.web.ExceptionDialog.width"));
+        setWidth(theme.get("jmix.ui.ExceptionDialog.width"));
         center();
 
         final String text = message != null ? message : getText(throwable);
@@ -128,7 +128,7 @@ public class ExceptionDialog extends JmixWindow {
         mainLayout.setSpacing(true);
 
         TextArea textArea = new TextArea();
-        textArea.setHeight(theme.get("cuba.web.ExceptionDialog.textArea.height"));
+        textArea.setHeight(theme.get("jmix.ui.ExceptionDialog.textArea.height"));
         textArea.setWidth(100, Sizeable.Unit.PERCENTAGE);
 
         boolean showExceptionDetails = false;
@@ -330,8 +330,8 @@ public class ExceptionDialog extends JmixWindow {
             mainLayout.setExpandRatio(stackTraceTextArea, 1.0f);
             mainLayout.setHeight(100, Sizeable.Unit.PERCENTAGE);
 
-            setWidth(theme.get("cuba.web.ExceptionDialog.expanded.width"));
-            setHeight(theme.get("cuba.web.ExceptionDialog.expanded.height"));
+            setWidth(theme.get("jmix.ui.ExceptionDialog.expanded.width"));
+            setHeight(theme.get("jmix.ui.ExceptionDialog.expanded.height"));
 
             setResizable(true);
             center();
@@ -347,7 +347,7 @@ public class ExceptionDialog extends JmixWindow {
             mainLayout.setHeight(-1, Sizeable.Unit.PIXELS);
             mainLayout.removeComponent(stackTraceTextArea);
 
-            setWidth(theme.get("cuba.web.ExceptionDialog.width"));
+            setWidth(theme.get("jmix.ui.ExceptionDialog.width"));
             setHeight(-1, Sizeable.Unit.PERCENTAGE);
 
             setResizable(false);

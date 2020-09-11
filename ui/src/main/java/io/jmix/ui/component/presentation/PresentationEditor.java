@@ -126,7 +126,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         setContent(root);
 
         nameField = new TextField(messages.getMessage("PresentationsEditor.name"));
-        nameField.setWidth(theme.get("cuba.web.PresentationEditor.name.width"));
+        nameField.setWidth(theme.get("jmix.ui.PresentationEditor.name.width"));
         nameField.setValue(getPresentationCaption());
         root.addComponent(nameField);
 

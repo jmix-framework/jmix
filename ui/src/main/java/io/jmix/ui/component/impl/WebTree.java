@@ -264,7 +264,7 @@ public class WebTree<E extends JmixEntity>
     @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
-        this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
+        this.showIconsForPopupMenuActions = theme.getBoolean("jmix.ui.showIconsForPopupMenuActions", false);
     }
 
     @Autowired

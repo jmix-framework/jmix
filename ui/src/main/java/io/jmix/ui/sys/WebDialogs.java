@@ -186,7 +186,7 @@ public class WebDialogs implements Dialogs {
             window.setContent(layout);
 
             ThemeConstants theme = ui.getApp().getThemeConstants();
-            window.setWidth(theme.get("cuba.web.WebWindowManager.optionDialog.width"));
+            window.setWidth(theme.get("jmix.ui.WebWindowManager.optionDialog.width"));
         }
 
         @Override
@@ -447,7 +447,7 @@ public class WebDialogs implements Dialogs {
             window.setContent(layout);
 
             ThemeConstants theme = ui.getApp().getThemeConstants();
-            window.setWidth(theme.get("cuba.web.WebWindowManager.messageDialog.width"));
+            window.setWidth(theme.get("jmix.ui.WebWindowManager.messageDialog.width"));
         }
 
         @Override

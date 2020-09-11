@@ -875,8 +875,8 @@ public class WebScreens implements Screens {
                 if (openDetails.isForceDialog()) {
                     ThemeConstants theme = ui.getApp().getThemeConstants();
 
-                    dialogWindow.setDialogWidth(theme.get("cuba.web.WebWindowManager.forciblyDialog.width"));
-                    dialogWindow.setDialogHeight(theme.get("cuba.web.WebWindowManager.forciblyDialog.height"));
+                    dialogWindow.setDialogWidth(theme.get("jmix.ui.WebWindowManager.forciblyDialog.width"));
+                    dialogWindow.setDialogHeight(theme.get("jmix.ui.WebWindowManager.forciblyDialog.height"));
                     dialogWindow.setResizable(true);
                 } else {
                     DialogMode dialogMode = screenClass.getAnnotation(DialogMode.class);

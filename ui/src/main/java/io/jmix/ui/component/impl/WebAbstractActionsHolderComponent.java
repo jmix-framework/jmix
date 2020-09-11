@@ -164,7 +164,7 @@ public abstract class WebAbstractActionsHolderComponent<T extends com.vaadin.ui.
     @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
-        this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
+        this.showIconsForPopupMenuActions = theme.getBoolean("jmix.ui.showIconsForPopupMenuActions", false);
     }
 
     @Override

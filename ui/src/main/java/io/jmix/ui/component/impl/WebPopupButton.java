@@ -71,7 +71,7 @@ public class WebPopupButton extends WebAbstractComponent<JmixPopupButton> implem
     @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
-        this.showActionIcons = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
+        this.showActionIcons = theme.getBoolean("jmix.ui.showIconsForPopupMenuActions", false);
     }
 
     protected JmixPopupButton createComponent() {

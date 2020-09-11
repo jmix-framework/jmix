@@ -87,8 +87,8 @@ public class AbbreviatedCellClickListener implements Table.CellClickListener {
         // todo implement injection for ThemeConstains in components
         ThemeConstants theme = App.getInstance().getThemeConstants();
         if (theme != null) {
-            content.setWidth(theme.get("cuba.web.Table.abbreviatedPopupWidth"));
-            content.setHeight(theme.get("cuba.web.Table.abbreviatedPopupHeight"));
+            content.setWidth(theme.get("jmix.ui.Table.abbreviatedPopupWidth"));
+            content.setHeight(theme.get("jmix.ui.Table.abbreviatedPopupHeight"));
         } else {
             content.setWidth("320px");
             content.setHeight("200px");

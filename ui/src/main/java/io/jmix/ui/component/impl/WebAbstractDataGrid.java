@@ -266,7 +266,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     @Autowired
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
-        this.showIconsForPopupMenuActions = theme.getBoolean("cuba.gui.showIconsForPopupMenuActions", false);
+        this.showIconsForPopupMenuActions = theme.getBoolean("jmix.ui.showIconsForPopupMenuActions", false);
     }
 
     @Autowired
@@ -3198,10 +3198,10 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             visible = true;
 
             ThemeConstants theme = App.getInstance().getThemeConstants();
-            width = theme.getInt("cuba.web.DataGrid.defaultColumnWidth", -1);
-            maxWidth = theme.getInt("cuba.web.DataGrid.defaultColumnMaxWidth", -1);
-            minWidth = theme.getInt("cuba.web.DataGrid.defaultColumnMinWidth", 10);
-            expandRatio = theme.getInt("cuba.web.DataGrid.defaultColumnExpandRatio", -1);
+            width = theme.getInt("jmix.ui.DataGrid.defaultColumnWidth", -1);
+            maxWidth = theme.getInt("jmix.ui.DataGrid.defaultColumnMaxWidth", -1);
+            minWidth = theme.getInt("jmix.ui.DataGrid.defaultColumnMinWidth", 10);
+            expandRatio = theme.getInt("jmix.ui.DataGrid.defaultColumnExpandRatio", -1);
         }
 
         @Override

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.facets;
 
+import com.haulmont.cuba.web.gui.components.CubaInputDialogFacet;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.component.InputDialogFacet;
@@ -30,6 +31,17 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class CubaInputDialogFacetProvider extends InputDialogFacetProvider {
 
     public static final String NAME = "cuba_InputDialogFacetProvider";
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public Class getFacetClass() {
+        return CubaInputDialogFacet.class;
+    }
+
+    @Override
+    public InputDialogFacet create() {
+        return new CubaInputDialogFacet();
+    }
 
     @Override
     protected void loadDialogActions(InputDialogFacet facet, Element element, ComponentLoader.ComponentContext context) {

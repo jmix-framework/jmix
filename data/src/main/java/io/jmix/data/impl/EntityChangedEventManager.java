@@ -170,7 +170,7 @@ public class EntityChangedEventManager {
                         AttributeChangeListener changeListener =
                                 (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
                         if (changeListener == null) {
-                            log.warn("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
+                            log.debug("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
                             continue;
                         }
                         if (info.onDeleted && persistenceSupport.isDeleted(entity, changeListener)) {

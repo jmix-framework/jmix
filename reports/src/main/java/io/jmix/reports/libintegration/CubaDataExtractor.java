@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CubaDataExtractor extends DataExtractorImpl {
     @Autowired
-    protected Configuration configuration;
+    protected ReportingConfig reportingConfig;
 
     public CubaDataExtractor(ReportLoaderFactory loaderFactory) {
         super(loaderFactory);
@@ -33,6 +33,6 @@ public class CubaDataExtractor extends DataExtractorImpl {
 
     @Override
     public boolean getPutEmptyRowIfNoDataSelected() {
-        return Boolean.TRUE.equals(configuration.getConfig(ReportingConfig.class).getPutEmptyRowIfNoDataSelected());
+        return Boolean.TRUE.equals(reportingConfig.getPutEmptyRowIfNoDataSelected());
     }
 }

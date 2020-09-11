@@ -25,9 +25,8 @@ import io.jmix.core.Stores;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import com.haulmont.cuba.core.global.*;
-import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
-import io.jmix.ui.action.RemoveAction;
+import io.jmix.ui.action.list.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
@@ -143,6 +142,8 @@ public class BandDefinitionEditor extends AbstractFrame implements Suggester {
     protected JpqlSuggestionFactory jpqlSuggestionFactory;
     @Autowired
     protected Stores stores;
+    @Autowired
+    protected ReportingClientConfig reportingClientConfig;
 
     protected SourceCodeEditor.Mode dataSetScriptFieldMode = SourceCodeEditor.Mode.Text;
 
@@ -258,8 +259,7 @@ public class BandDefinitionEditor extends AbstractFrame implements Suggester {
     }
 
     protected void initSourceCodeOptions() {
-        ReportingClientConfig config = configuration.getConfig(ReportingClientConfig.class);
-        boolean enableTabSymbolInDataSetEditor = config.getEnableTabSymbolInDataSetEditor();
+        boolean enableTabSymbolInDataSetEditor = reportingClientConfig.getEnableTabSymbolInDataSetEditor();
         jsonGroovyCodeEditor.setHandleTabKey(enableTabSymbolInDataSetEditor);
         dataSetScriptField.setHandleTabKey(enableTabSymbolInDataSetEditor);
     }

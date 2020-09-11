@@ -72,7 +72,7 @@ public class CustomFormatter implements CustomReport {
         this.template = template;
         this.scripting = AppBeans.get(Scripting.class);
         this.configuration = AppBeans.get(Configuration.class);
-        this.reportingConfig = configuration.getConfig(ReportingConfig.class);
+        this.reportingConfig = AppBeans.get(ReportingConfig.class);
         this.coreProperties = AppBeans.get(CoreProperties.class);
     }
 

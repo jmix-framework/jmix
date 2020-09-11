@@ -16,36 +16,41 @@
 
 package io.jmix.reports.gui;
 
-import com.haulmont.cuba.core.config.Config;
-import com.haulmont.cuba.core.config.Property;
-import com.haulmont.cuba.core.config.Source;
-import com.haulmont.cuba.core.config.SourceType;
-import com.haulmont.cuba.core.config.defaults.DefaultBoolean;
-import com.haulmont.cuba.core.config.defaults.DefaultLong;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@Source(type = SourceType.DATABASE)
-public interface ReportingClientConfig extends Config {
+@ConfigurationProperties(prefix = "jmix.reports.client")
+@ConstructorBinding
+public class ReportingClientConfig  {
 
-    @Property("reporting.useBackgroundReportProcessing")
-    @DefaultBoolean(false)
-    boolean getUseBackgroundReportProcessing();
+    boolean useBackgroundReportProcessing;
 
-    void setUseBackgroundReportProcessing(boolean useBackgroundReportProcessing);
+    long backgroundReportProcessingTimeoutMs;
 
-    @Property("reporting.backgroundReportProcessingTimeoutMs")
-    @DefaultLong(10000)
-    long getBackgroundReportProcessingTimeoutMs();
+    boolean enableTabSymbolInDataSetEditor;
 
-    void setBackgroundReportProcessingTimeoutMs(long backgroundReportProcessingTimeoutMs);
+    public ReportingClientConfig(@DefaultValue("false") boolean useBackgroundReportProcessing,
+                                 @DefaultValue("10000") long backgroundReportProcessingTimeoutMs,
+                                 @DefaultValue("false") boolean enableTabSymbolInDataSetEditor) {
+        this.useBackgroundReportProcessing = useBackgroundReportProcessing;
+        this.backgroundReportProcessingTimeoutMs = backgroundReportProcessingTimeoutMs;
+        this.enableTabSymbolInDataSetEditor = enableTabSymbolInDataSetEditor;
+    }
+
+    public boolean getUseBackgroundReportProcessing(){
+        return useBackgroundReportProcessing;
+    }
+
+    public long getBackgroundReportProcessingTimeoutMs(){
+        return backgroundReportProcessingTimeoutMs;
+    }
 
     /**
      * @return true if Script fields in report editor should handle TAB key as \t symbol instead of focus navigation
      * @see io.jmix.reports.gui.definition.edit.BandDefinitionEditor
      */
-    @Property("reporting.enableTabSymbolInDataSetEditor")
-    @DefaultBoolean(false)
-    boolean getEnableTabSymbolInDataSetEditor();
-
-    void setEnableTabSymbolInDataSetEditor(boolean enableTabSymbolInDataSetEditor);
-
+    public boolean getEnableTabSymbolInDataSetEditor(){
+        return enableTabSymbolInDataSetEditor;
+    }
 }

@@ -104,6 +104,9 @@ public class ReportGuiManager {
     @Autowired
     protected ExportDisplay exportDisplay;
 
+    @Autowired
+    protected ReportingClientConfig reportingClientConfig;
+
     /**
      * Open input parameters dialog if report has parameters otherwise print report
      *
@@ -228,9 +231,6 @@ public class ReportGuiManager {
      */
     public void printReport(Report report, Map<String, Object> params, @Nullable String templateCode,
                             @Nullable String outputFileName, @Nullable ReportOutputType outputType, FrameOwner screen) {
-
-        Configuration configuration = AppBeans.get(Configuration.NAME);
-        ReportingClientConfig reportingClientConfig = configuration.getConfig(ReportingClientConfig.class);
 
         if (screen != null && reportingClientConfig.getUseBackgroundReportProcessing()) {
             printReportBackground(report, params, templateCode, outputFileName, outputType, screen);
@@ -406,8 +406,6 @@ public class ReportGuiManager {
      */
     public void printReportBackground(Report report, final Map<String, Object> params, @Nullable String templateCode,
                                       @Nullable String outputFileName, @Nullable ReportOutputType outputType, FrameOwner screen) {
-        ReportingClientConfig reportingClientConfig = configuration.getConfig(ReportingClientConfig.class);
-
         Report targetReport = getReportForPrinting(report);
 
         long timeout = reportingClientConfig.getBackgroundReportProcessingTimeoutMs();
@@ -513,7 +511,6 @@ public class ReportGuiManager {
      */
     public void bulkPrint(Report report, @Nullable String templateCode, @Nullable ReportOutputType outputType, String alias,
                           Collection selectedEntities, @Nullable FrameOwner screen, @Nullable Map<String, Object> additionalParameters) {
-        ReportingClientConfig reportingClientConfig = configuration.getConfig(ReportingClientConfig.class);
         if (screen != null && reportingClientConfig.getUseBackgroundReportProcessing()) {
             bulkPrintBackground(report, templateCode, outputType, alias, selectedEntities, screen, additionalParameters);
         } else {
@@ -658,8 +655,6 @@ public class ReportGuiManager {
     public void bulkPrintBackground(Report report, @Nullable String templateCode, @Nullable ReportOutputType outputType,
                                     String alias, Collection selectedEntities, FrameOwner screen,
                                     Map<String, Object> additionalParameters) {
-        ReportingClientConfig reportingClientConfig = configuration.getConfig(ReportingClientConfig.class);
-
         Report targetReport = getReportForPrinting(report);
 
         long timeout = reportingClientConfig.getBackgroundReportProcessingTimeoutMs();

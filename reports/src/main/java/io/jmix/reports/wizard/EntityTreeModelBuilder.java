@@ -40,7 +40,7 @@ import java.util.Set;
 public class EntityTreeModelBuilder implements EntityTreeModelBuilderApi {
     protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
     protected ReportingWizardApi reportingWizardApi = AppBeans.get(ReportingWizardApi.NAME);
-    protected int entityTreeModelMaxDeep = AppBeans.get(Configuration.class).getConfig(ReportingConfig.class).getEntityTreeModelMaxDeep();
+    protected int entityTreeModelMaxDeep = AppBeans.get(ReportingConfig.class).getEntityTreeModelMaxDeep();
     protected Metadata metadata = AppBeans.get(Metadata.NAME);
 
     public int getEntityTreeModelMaxDeep() {

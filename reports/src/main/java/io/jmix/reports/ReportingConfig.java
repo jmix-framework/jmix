@@ -16,77 +16,154 @@
 
 package io.jmix.reports;
 
-import com.haulmont.cuba.core.config.Config;
-import com.haulmont.cuba.core.config.Property;
-import com.haulmont.cuba.core.config.Source;
-import com.haulmont.cuba.core.config.SourceType;
-import com.haulmont.cuba.core.config.defaults.DefaultBoolean;
-import com.haulmont.cuba.core.config.defaults.DefaultInt;
-import com.haulmont.cuba.core.config.defaults.DefaultInteger;
-import com.haulmont.cuba.core.config.defaults.DefaultString;
-import com.haulmont.cuba.core.config.type.CommaSeparatedStringListTypeFactory;
-import com.haulmont.cuba.core.config.type.Factory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.util.List;
 
 /**
  * Reporting configuration interface.
  */
-@Source(type = SourceType.APP)
-public interface ReportingConfig extends Config {
+@ConfigurationProperties(prefix = "jmix.reports")
+@ConstructorBinding
+public class ReportingConfig {
+
+    String officePath;
+
+    List<String> officePorts;
+
+    int docFormatterTimeout;
+
+    boolean displayDeviceAvailable;
+
+    String pdfFontsDirectory;
+
+    boolean putEmptyRowIfNoDataSelected;
+
+    int parameterPrototypeQueryLimit;
+
+    List<String> wizardEntitiesBlackList;
+
+    List<String> wizardEntitiesWhiteList;
+
+    List<String> wizardPropertiesBlackList;
+
+    List<String> wizardPropertiesExcludedBlackList;
+
+    int entityTreeModelMaxDeep;
+
+    int htmlExternalResourcesTimeoutSec;
+
+    String curlPath;
+
+    String curlParams;
+
+    int curlTimeout;
+
+    boolean useReadOnlyTransactionForGroovy;
+
+    boolean historyRecordingEnabled;
+
+    boolean saveOutputDocumentsToHistory;
+
+    int historyCleanupMaxDays;
+
+    int historyCleanupMaxItemsPerReport;
+
+    public ReportingConfig(@DefaultValue("/") String officePath,
+                           @DefaultValue("8100;8101;8102;8103") List<String> officePorts,
+                           @DefaultValue("20") int docFormatterTimeout,
+                           @DefaultValue("false") boolean displayDeviceAvailable,
+                           String pdfFontsDirectory,
+                           @DefaultValue("true") boolean putEmptyRowIfNoDataSelected,
+                           @DefaultValue("1000") int parameterPrototypeQueryLimit,
+                           @DefaultValue("") List<String> wizardEntitiesBlackList,
+                           @DefaultValue("") List<String> wizardEntitiesWhiteList,
+                           @DefaultValue("") List<String> wizardPropertiesBlackList,
+                           @DefaultValue("") List<String> wizardPropertiesExcludedBlackList,
+                           @DefaultValue("3") int entityTreeModelMaxDeep,
+                           @DefaultValue("5") int htmlExternalResourcesTimeoutSec,
+                           @DefaultValue("curl") String curlPath,
+                           @DefaultValue("") String curlParams,
+                           @DefaultValue("10") int curlTimeout,
+                           @DefaultValue("true") boolean useReadOnlyTransactionForGroovy,
+                           @DefaultValue("false") boolean historyRecordingEnabled,
+                           @DefaultValue("false") boolean saveOutputDocumentsToHistory,
+                           @DefaultValue("730") int historyCleanupMaxDays,
+                           @DefaultValue("1000") int historyCleanupMaxItemsPerReport) {
+        this.officePath = officePath;
+        this.officePorts = officePorts;
+        this.docFormatterTimeout = docFormatterTimeout;
+        this.displayDeviceAvailable = displayDeviceAvailable;
+        this.pdfFontsDirectory = pdfFontsDirectory;
+        this.putEmptyRowIfNoDataSelected = putEmptyRowIfNoDataSelected;
+        this.parameterPrototypeQueryLimit = parameterPrototypeQueryLimit;
+        this.wizardEntitiesBlackList = wizardEntitiesBlackList;
+        this.wizardEntitiesWhiteList = wizardEntitiesWhiteList;
+        this.wizardPropertiesBlackList = wizardPropertiesBlackList;
+        this.wizardPropertiesExcludedBlackList = wizardPropertiesExcludedBlackList;
+        this.entityTreeModelMaxDeep = entityTreeModelMaxDeep;
+        this.htmlExternalResourcesTimeoutSec = htmlExternalResourcesTimeoutSec;
+        this.curlPath = curlPath;
+        this.curlParams = curlParams;
+        this.curlTimeout = curlTimeout;
+        this.useReadOnlyTransactionForGroovy = useReadOnlyTransactionForGroovy;
+        this.historyRecordingEnabled = historyRecordingEnabled;
+        this.saveOutputDocumentsToHistory = saveOutputDocumentsToHistory;
+        this.historyCleanupMaxDays = historyCleanupMaxDays;
+        this.historyCleanupMaxItemsPerReport = historyCleanupMaxItemsPerReport;
+    }
 
     /**
      * @return Path to the installed OpenOffice
      */
-    @Property("reporting.office.path")
-    @DefaultString("/")
-    String getOfficePath();
+    public String getOfficePath() {
+        return officePath;
+    }
 
     /**
      * @return The list of ports to start OpenOffice on.
      */
-    @Property("reporting.office.ports")
-    @DefaultString("8100|8101|8102|8103")
-    String getOfficePorts();
+    public List<String> getOfficePorts() {
+        return officePorts;
+    }
 
     /**
      * @return Request to OpenOffice timeout in seconds.
      */
-    @Property("reporting.office.docFormatterTimeout")
-    @DefaultInteger(20)
-    Integer getDocFormatterTimeout();
+    public Integer getDocFormatterTimeout() {
+        return docFormatterTimeout;
+    }
 
     /**
      * @return Has to be false if using OpenOffice reporting formatter on a *nix server without X server running
      */
-    @Property("reporting.displayDeviceUnavailable")
-    @DefaultBoolean(false)
-    boolean getDisplayDeviceAvailable();
+    public boolean getDisplayDeviceAvailable() {
+        return displayDeviceAvailable;
+    }
 
     /**
      * @return Directory with fonts for generate PDF from HTML
      */
-    @Property("reporting.fontsDir")
-    String getPdfFontsDirectory();
+    public String getPdfFontsDirectory() {
+        return pdfFontsDirectory;
+    }
 
     /**
      * @return The option which enforces standard data extractor to put empty row in each band if no data has been selected
      * In summary this option says - would table linked with empty band have at least one empty row or not.
      */
-    @Property("reporting.putEmptyRowIfNoDataSelected")
-    @Source(type = SourceType.DATABASE)
-    @DefaultBoolean(true)
-    Boolean getPutEmptyRowIfNoDataSelected();
-
-    void setPutEmptyRowIfNoDataSelected(Boolean putEmptyRowIfNoDataSelected);
+    public Boolean getPutEmptyRowIfNoDataSelected() {
+        return putEmptyRowIfNoDataSelected;
+    }
 
     /**
      * @return Default limit used if parameter prototype object does not specify limit itself
      */
-    @Property("reporting.parameterPrototypeQueryLimit")
-    @Source(type = SourceType.DATABASE)
-    @DefaultInteger(1000)
-    Integer getParameterPrototypeQueryLimit();
+    public Integer getParameterPrototypeQueryLimit() {
+        return parameterPrototypeQueryLimit;
+    }
 
     /**
      * Return entities that will not be available for report wizard.
@@ -94,12 +171,9 @@ public interface ReportingConfig extends Config {
      *
      * @return list of ignored entities
      */
-    @Property("reporting.wizardEntitiesBlackList")
-    @Source(type = SourceType.DATABASE)
-    @DefaultString("")
-    String getWizardEntitiesBlackList();
-
-    void setWizardEntitiesBlackList(String wizardEntitiesBlackList);
+    public List<String> getWizardEntitiesBlackList() {
+        return wizardEntitiesBlackList;
+    }
 
     /**
      * Entities that will be available for report wizard. All others entities will be ignored.
@@ -107,12 +181,9 @@ public interface ReportingConfig extends Config {
      *
      * @return list of entities that available for reportWizard
      */
-    @Property("reporting.wizardEntitiesWhiteList")
-    @Source(type = SourceType.DATABASE)
-    @DefaultString("")
-    String getWizardEntitiesWhiteList();
-
-    void setWizardEntitiesWhiteList(String wizardEntitiesWhiteList);
+    public List<String> getWizardEntitiesWhiteList() {
+        return wizardEntitiesWhiteList;
+    }
 
     /**
      * JmixEntity properties that will not be available for report creation wizard. Format is like {@code BaseUuidEntity.id,BaseUuidEntity.createTs,ref$Car.id,...}<br>
@@ -122,111 +193,85 @@ public interface ReportingConfig extends Config {
      *
      * @return blacklisted properties that is not available
      */
-    @Property("reporting.wizardPropertiesBlackList")
-    @Source(type = SourceType.DATABASE)
-    @DefaultString("")
-    @Factory(factory = CommaSeparatedStringListTypeFactory.class)
-    List<String> getWizardPropertiesBlackList();
-
-    void setWizardPropertiesBlackList(List<String> wizardPropertiesBlackList);
+    public List<String> getWizardPropertiesBlackList() {
+        return wizardPropertiesBlackList;
+    }
 
     /**
      * JmixEntity properties that will not to be excluded by {@code reporting.wizardPropertiesBlackList} setting
+     *
      * @see ReportingConfig#getWizardPropertiesBlackList()
      */
-    @Property("reporting.wizardPropertiesExcludedBlackList")
-    @Source(type = SourceType.DATABASE)
-    @DefaultString("")
-    @Factory(factory =  CommaSeparatedStringListTypeFactory.class)
-    List<String> getWizardPropertiesExcludedBlackList();
-
-    void setWizardPropertiesExcludedBlackList(List<String> wizardPropertiesExcludedBlackList);
+    public List<String> getWizardPropertiesExcludedBlackList() {
+        return wizardPropertiesExcludedBlackList;
+    }
 
     /**
      * Maximum depth of entity model that is used in report wizard and report dataset view editor.
      */
-    @Property("reporting.entityTreeModelMaxDepth")
-    @Source(type = SourceType.DATABASE)
-    @DefaultInteger(3)
-    Integer getEntityTreeModelMaxDeep();
-
-    void setEntityTreeModelMaxDeep(Integer entityTreeModelMaxDeep);
+    public Integer getEntityTreeModelMaxDeep() {
+        return entityTreeModelMaxDeep;
+    }
 
 
-    @Property("reporting.html.externalResourcesTimeoutSec")
-    @DefaultInteger(5)
-    Integer getHtmlExternalResourcesTimeoutSec();
-
-    void setHtmlExternalResourcesTimeoutSec(Integer externalResourcesTimeoutSec);
+    public Integer getHtmlExternalResourcesTimeoutSec() {
+        return htmlExternalResourcesTimeoutSec;
+    }
 
     /**
      * Reporting uses CURL tool to generate reports from URL. This is the system path to the tool.
      */
-    @Property("reporting.curl.path")
-    @DefaultString("curl")
-    String getCurlPath();
-    void setCurlPath(String value);
+    public String getCurlPath() {
+        return curlPath;
+    }
 
     /**
      * Reporting uses CURL tool to generate reports from URL. This the string with parameters used while calling CURL.
      */
-    @Property("reporting.curl.params")
-    @DefaultString("")
-    String getCurlParams();
-    void setCurlParams(String value);
+    public String getCurlParams() {
+        return curlParams;
+    }
 
-    @Property("reporting.curl.timeoutSec")
-    @DefaultInteger(10)
-    Integer getCurlTimeout();
-    void setCurlTimeout(Integer value);
+    public Integer getCurlTimeout() {
+        return curlTimeout;
+    }
 
     /**
      * Toggle for Groovy dataset's transactions. If true, transactions are read-only.
      */
-    @Property("reporting.useReadOnlyTransactionForGroovy")
-    @Source(type = SourceType.DATABASE)
-    @DefaultBoolean(true)
-    Boolean getUseReadOnlyTransactionForGroovy();
-
-    void setUseReadOnlyTransactionForGroovy(Boolean useReadOnlyTransactionForGroovy);
+    public Boolean getUseReadOnlyTransactionForGroovy() {
+        return useReadOnlyTransactionForGroovy;
+    }
 
     /**
      * Flag to enable execution history recording.
      */
-    @Property("reporting.executionHistory.enabled")
-    @DefaultBoolean(false)
-    @Source(type = SourceType.DATABASE)
-    boolean isHistoryRecordingEnabled();
-    void setHistoryRecordingEnabled(boolean historyRecordingEnabled);
+    public boolean isHistoryRecordingEnabled() {
+        return historyRecordingEnabled;
+    }
 
     /**
      * If enabled - then save all output documents to file storage, so they can be downloaded later.
      * Note that ReportExecution stores file that is independent from the one created by ReportingApi#createAndSaveReport methods.
      */
-    @Property("reporting.executionHistory.saveOutputDocument")
-    @DefaultBoolean(false)
-    @Source(type = SourceType.DATABASE)
-    boolean isSaveOutputDocumentsToHistory();
-    void setSaveOutputDocumentsToHistory(boolean saveOutputDocumentsToHistory);
+    public boolean isSaveOutputDocumentsToHistory() {
+        return saveOutputDocumentsToHistory;
+    }
 
     /**
      * Report execution history deletes all history items older than this number of days.
      * Value == 0 means no cleanup by this criteria.
      */
-    @Property("reporting.executionHistory.cleanup.days")
-    @DefaultInt(2 * 365)
-    @Source(type = SourceType.DATABASE)
-    int getHistoryCleanupMaxDays();
-    void setHistoryCleanupMaxDays(int historyCleanupMaxDays);
+    public int getHistoryCleanupMaxDays() {
+        return historyCleanupMaxDays;
+    }
 
     /**
      * Report execution cleanup leaves only this number of execution history items for each report,
      * deleting all older items.
      * Value == 0 means no cleanup by this criteria.
      */
-    @Property("reporting.executionHistory.cleanup.itemsPerReport")
-    @DefaultInt(1000)
-    @Source(type = SourceType.DATABASE)
-    int getHistoryCleanupMaxItemsPerReport();
-    void setHistoryCleanupMaxItemsPerReport(int historyCleanupMaxItemsPerReport);
+    public int getHistoryCleanupMaxItemsPerReport() {
+        return historyCleanupMaxItemsPerReport;
+    }
 }

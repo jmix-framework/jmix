@@ -42,7 +42,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.Temporal;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
@@ -62,6 +64,8 @@ public class ReportingWizardBean implements ReportingWizardApi {
     protected ReportingApi reportingApi;
     @Autowired
     protected Configuration configuration;
+    @Autowired
+    protected ReportingConfig reportingConfig;
     @Autowired
     protected ExtendedEntities extendedEntities;
     @Autowired
@@ -476,7 +480,6 @@ public class ReportingWizardBean implements ReportingWizardApi {
     @Override
     public boolean isPropertyAllowedForReportWizard(MetaClass metaClass, MetaProperty metaProperty) {
         //here we can`t just to determine metaclass using property argument cause it can be an ancestor of it
-        ReportingConfig reportingConfig = configuration.getConfig(ReportingConfig.class);
         List<String> propertiesBlackList = reportingConfig.getWizardPropertiesBlackList();
         List<String> wizardPropertiesExcludedBlackList = reportingConfig.getWizardPropertiesExcludedBlackList();
 
@@ -489,32 +492,30 @@ public class ReportingWizardBean implements ReportingWizardApi {
     }
 
     protected List<String> getWizardBlackListedEntities() {
-        String entitiesBlackList = configuration.getConfig(ReportingConfig.class).getWizardEntitiesBlackList();
+        List<String> entitiesBlackList = reportingConfig.getWizardEntitiesBlackList();
         return getEffectiveEntities(entitiesBlackList);
     }
 
     protected List<String> getWizardWhiteListedEntities() {
-        String entitiesWhiteList = configuration.getConfig(ReportingConfig.class).getWizardEntitiesWhiteList();
+        List<String> entitiesWhiteList = reportingConfig.getWizardEntitiesWhiteList();
         return getEffectiveEntities(entitiesWhiteList);
     }
 
-    protected List<String> getEffectiveEntities(String entitiesList) {
+    protected List<String> getEffectiveEntities(List<String> entitiesList) {
         List<String> effectiveEntities = new ArrayList<>();
-        if (StringUtils.isNotBlank(entitiesList)) {
-            for (String className : Arrays.asList(StringUtils.split(entitiesList, ','))) {
-                MetaClass clazz = metadata.getClassNN(className);
-                effectiveEntities.add(extendedEntities.getEffectiveMetaClass(clazz).getName());
-            }
+        for (String className : entitiesList) {
+            MetaClass clazz = metadata.getClassNN(className);
+            effectiveEntities.add(extendedEntities.getEffectiveMetaClass(clazz).getName());
         }
         return effectiveEntities;
     }
 
     protected List<String> getWizardBlackListedProperties() {
-        return configuration.getConfig(ReportingConfig.class).getWizardPropertiesBlackList();
+        return reportingConfig.getWizardPropertiesBlackList();
     }
 
     protected List<String> getWizardPropertiesExcludedBlackList() {
-        return configuration.getConfig(ReportingConfig.class).getWizardPropertiesExcludedBlackList();
+        return reportingConfig.getWizardPropertiesExcludedBlackList();
     }
 
     protected MetaClass getOriginalMetaClass(MetaClass metaClass) {

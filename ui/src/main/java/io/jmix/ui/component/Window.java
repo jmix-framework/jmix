@@ -21,12 +21,12 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.compatibility.*;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.AfterCloseEvent;
 import io.jmix.ui.util.OperationResult;
-import io.jmix.ui.xml.layout.ComponentsFactory;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -271,7 +271,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
     interface Editor<T extends JmixEntity> extends Window, EditorScreen<T>, Window.Committable/*, LegacyFrame TODO: legacy-ui */ {
         /**
          * Name that is used to register a client type specific screen implementation in
-         * {@link io.jmix.ui.xml.layout.ComponentsFactory}
+         * {@link UiComponents}
          */
         @Deprecated
         String NAME = "window.editor";
@@ -347,7 +347,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
 
         /**
          * Name that is used to register a client type specific screen implementation in
-         * {@link ComponentsFactory}
+         * {@link UiComponents}
          */
         String NAME = "window.lookup";
 

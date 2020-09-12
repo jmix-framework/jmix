@@ -41,7 +41,7 @@ public interface Datatype<T> {
     @Nullable
     T parse(@Nullable String value, Locale locale) throws ParseException;
 
-    /** Java class representing this Datatype */
+    /** Unique ID of the Datatype used for registration */
     default String getId() {
         return DatatypeDefUtils.getId(this);
     }

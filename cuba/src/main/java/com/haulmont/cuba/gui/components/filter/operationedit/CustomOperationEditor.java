@@ -22,7 +22,7 @@ import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.filter.Op;
-import io.jmix.ui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import java.util.List;
 

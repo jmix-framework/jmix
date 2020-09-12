@@ -27,7 +27,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.PopupButton;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.filter.OpManager;
-import io.jmix.ui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import java.util.List;
 

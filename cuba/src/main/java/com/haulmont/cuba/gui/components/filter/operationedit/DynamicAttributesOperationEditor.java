@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Label;
-import io.jmix.ui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 /**
  * Operation editor for RuntimeProperties conditions. Just displays condition label, doesn't allow to edit condition.

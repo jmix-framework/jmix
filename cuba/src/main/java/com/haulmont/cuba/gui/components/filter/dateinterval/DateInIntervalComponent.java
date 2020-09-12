@@ -25,7 +25,7 @@ import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 

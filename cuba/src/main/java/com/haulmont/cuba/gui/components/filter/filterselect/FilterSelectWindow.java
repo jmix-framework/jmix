@@ -31,7 +31,7 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
-import io.jmix.ui.xml.layout.ComponentsFactory;
+import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;

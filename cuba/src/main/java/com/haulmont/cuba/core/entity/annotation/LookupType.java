@@ -16,27 +16,16 @@
 
 package com.haulmont.cuba.core.entity.annotation;
 
-import io.jmix.core.entity.annotation.MetaAnnotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 /**
  * Defines a reference lookup type.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-@MetaAnnotation
-public @interface Lookup {
-
-    LookupType type();
-
+public enum LookupType {
     /**
-     * Optional list of standard picker actions. See {@code PickerField.ActionType}.
-     * For example:
-     * <pre>@Lookup(type = LookupType.DROPDOWN, actions = {"lookup", "open"})</pre>
+     * Lookup from a drop-down list.
      */
-    String[] actions() default {};
+    DROPDOWN,
+    /**
+     * Lookup from a separate screen.
+     */
+    SCREEN
 }

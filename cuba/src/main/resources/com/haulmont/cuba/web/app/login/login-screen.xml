@@ -20,7 +20,7 @@
     <actions>
         <action id="submit"
                 caption="msg://loginWindow.okButton"
-                icon="app/images/login-button.png"
+                icon="CHECK"
                 invoke="login" shortcut="ENTER"/>
     </actions>
 

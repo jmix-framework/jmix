@@ -41,6 +41,7 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.EnumOptions;
 import io.jmix.ui.component.data.options.MapOptions;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.theme.ThemeConstants;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,7 +380,7 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
         itemLab.setAlignment(Alignment.MIDDLE_LEFT);
 
         LinkButton delItemBtn = uiComponents.create(LinkButton.class);
-        delItemBtn.setIcon("icons/item-remove.png");
+        delItemBtn.setIconFromSet(JmixIcon.TIMES);
         delItemBtn.addClickListener(e -> {
             valuesMap.remove(value);
             valuesLayout.remove(itemLayout);

@@ -18,8 +18,8 @@
         class="com.haulmont.cuba.gui.components.listeditor.ListEditorPopupWindow"
         caption="msg://listEditorPopup.caption">
     <actions>
-        <action id="commit" invoke="commit" caption="msg://actions.Ok" icon="icons/ok.png" primary="true" shortcut="CTRL-ENTER"/>
-        <action id="cancel" invoke="cancel" caption="msg://actions.Cancel" icon="icons/cancel.png" shortcut="ESCAPE"/>
+        <action id="commit" invoke="commit" caption="msg://actions.Ok" icon="CHECK" primary="true" shortcut="CTRL-ENTER"/>
+        <action id="cancel" invoke="cancel" caption="msg://actions.Cancel" icon="BAN" shortcut="ESCAPE"/>
     </actions>
     <dialogMode forceDialog="true"
                 width="theme://cuba.gui.listEditor.popup.dialog.width"

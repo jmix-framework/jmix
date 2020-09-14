@@ -35,8 +35,8 @@
     </data>
 
     <actions>
-        <action id="save" icon="icons/ok.png" caption="mainMsg://actions.Ok" shortcut="CTRL-ENTER"/>
-        <action id="cancel" icon="icons/cancel.png" caption="mainMsg://actions.Cancel" description="Esc"/>
+        <action id="save" icon="CHECK" caption="mainMsg://actions.Ok" shortcut="CTRL-ENTER"/>
+        <action id="cancel" icon="BAN" caption="mainMsg://actions.Cancel" description="Esc"/>
     </actions>
 
     <dialogMode height="600" width="800"/>

@@ -21,7 +21,7 @@
     <actions>
         <action id="submit" shortcut="ENTER" invoke="login"
                 caption="msg://loginWindow.okButton"
-                icon="app/images/login-button.png"/>
+                icon="CHECK"/>
     </actions>
 
     <layout stylename="c-login-main-layout" expand="loginWrapper">

@@ -64,6 +64,8 @@ import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.filter.*;
 import io.jmix.ui.gui.OpenType;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.FrameOwner;
@@ -128,6 +130,8 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected ScreenBuilders screenBuilders;
     @Autowired
     protected Dom4jTools dom4JTools;
+    @Autowired
+    protected Icons icons;
 
     @Autowired
     protected DataManager dataService;
@@ -324,7 +328,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         filtersPopupBox.add(searchBtn);
         searchBtn.setStyleName("filter-search-button");
         searchBtn.setCaption(getSearchBtnCaption());
-        searchBtn.setIcon("icons/search.png");
+        searchBtn.setIconFromSet(JmixIcon.SEARCH);
         searchBtn.setDescription(getMainMessage("filter.searchBtn.description"));
         searchBtn.addClickListener(e ->
                 apply(false)
@@ -357,7 +361,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         controlsLayout.expand(controlsLayoutGap);
 
         settingsBtn = uiComponents.create(PopupButton.class);
-        settingsBtn.setIcon("icons/gear.png");
+        settingsBtn.setIconFromSet(JmixIcon.GEAR);
         settingsBtn.setStyleName("filter-settings-button");
         filterHelper.setInternalDebugId(settingsBtn, "settingsBtn");
         createFilterActions();
@@ -404,7 +408,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         searchBtn = uiComponents.create(Button.class);
         searchBtn.setCaption(getSearchBtnCaption());
-        searchBtn.setIcon("icons/search.png");
+        searchBtn.setIconFromSet(JmixIcon.SEARCH);
         searchBtn.setAction(new AbstractAction("search") {
             @Override
             public void actionPerform(Component component) {
@@ -1411,7 +1415,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         label.setAlignment(Alignment.MIDDLE_LEFT);
 
         LinkButton button = uiComponents.create(LinkButton.class);
-        button.setIcon("icons/item-remove.png");
+        button.setIconFromSet(JmixIcon.TIMES);
         button.addClickListener(e -> removeAppliedFilter());
         layout.add(button);
 
@@ -2171,7 +2175,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 addToCurSetBtn.setVisible(true);
             }
             if (StringUtils.isEmpty(addToCurSetBtn.getIcon())) {
-                addToCurSetBtn.setIcon("icons/join-to-set.png");
+                addToCurSetBtn.setIconFromSet(JmixIcon.BARS);
             }
             addToCurSetBtn.setAction(addToCurrSet);
             table.addAction(addToCurrSet);
@@ -2186,7 +2190,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 removeFromCurSetBtn.setVisible(true);
             }
             if (StringUtils.isEmpty(removeFromCurSetBtn.getIcon())) {
-                removeFromCurSetBtn.setIcon("icons/delete-from-set.png");
+                removeFromCurSetBtn.setIconFromSet(JmixIcon.MINUS_CIRCLE);
             }
             removeFromCurSetBtn.setAction(removeFromCurrSet);
 
@@ -2202,7 +2206,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 addToSetBtn.setVisible(true);
             }
             if (StringUtils.isEmpty(addToSetBtn.getIcon())) {
-                addToSetBtn.setIcon("icons/insert-to-set.png");
+                addToSetBtn.setIconFromSet(JmixIcon.PLUS_CIRCLE);
             }
             addToSetBtn.setAction(addToSet);
             table.addAction(addToSet);
@@ -2696,7 +2700,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public String getIcon() {
-            return "icons/save.png";
+            return icons.get(JmixIcon.FLOPPY_O);
         }
     }
 
@@ -2810,7 +2814,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public String getIcon() {
-            return "icons/edit.png";
+            return icons.get(JmixIcon.PENCIL);
         }
     }
 
@@ -2864,7 +2868,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public String getIcon() {
-            return "icons/remove.png";
+            return icons.get(JmixIcon.TIMES);
         }
     }
 
@@ -2900,7 +2904,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public String getIcon() {
-            return "icons/erase.png";
+            return icons.get(JmixIcon.ERASER);
         }
     }
 
@@ -2951,7 +2955,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public String getIcon() {
-            return "icons/pin.png";
+            return icons.get(JmixIcon.THUMB_TACK);
         }
     }
 

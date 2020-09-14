@@ -33,12 +33,17 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 @org.springframework.stereotype.Component("cuba_DynamicAttributeComponentGenerationStrategy")
 public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
+
+    protected Icons icons;
+
     @Autowired
     public CubaDynAttrComponentGenerationStrategy(Messages messages,
                                                   UiComponents uiComponents,
@@ -51,9 +56,12 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                                                   Actions actions,
                                                   AttributeDependencies attributeDependencies,
                                                   FormatStringsRegistry formatStringsRegistry,
+                                                  Icons icons,
                                                   ApplicationContext applicationContext) {
         super(messages, uiComponents, dynamicModelMetadata, msgBundleTools, optionsLoader, attributeValidators,
                 windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, applicationContext);
+
+        this.icons = icons;
     }
 
     @Override
@@ -75,11 +83,11 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
-        fileUploadField.setUploadButtonIcon("icons/upload.png");
+        fileUploadField.setUploadButtonIcon(icons.get(JmixIcon.UPLOAD));
 
         fileUploadField.setClearButtonCaption(null);
         fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
-        fileUploadField.setClearButtonIcon("icons/remove.png");
+        fileUploadField.setClearButtonIcon(icons.get(JmixIcon.TIMES));
 
         fileUploadField.setShowFileName(true);
         fileUploadField.setShowClearButton(true);

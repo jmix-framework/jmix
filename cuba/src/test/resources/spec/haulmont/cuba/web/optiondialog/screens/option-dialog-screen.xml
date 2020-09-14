@@ -39,7 +39,7 @@
                 <action id="cancel"
                         caption="Cancel"
                         description="Cancel"
-                        icon="icons/ok.png"/>
+                        icon="CHECK"/>
             </actions>
         </optionDialog>
 

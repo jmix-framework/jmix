@@ -23,6 +23,7 @@ import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
+import io.jmix.ui.icon.JmixIcon;
 
 import java.util.Date;
 
@@ -89,7 +90,7 @@ public class ParamEditor implements AbstractCondition.Listener {
         paramEditComponentLayout.add(paramEditComponent);
         removeButton = uiComponents.create(LinkButton.class);
         removeButton.setStyleName("condition-remove-btn");
-        removeButton.setIcon("icons/item-remove.png");
+        removeButton.setIconFromSet(JmixIcon.TIMES);
         removeButton.setAlignment(Component.Alignment.MIDDLE_LEFT);
         removeButton.setVisible(removeButtonVisible);
         removeButton.setAction(removeButtonAction);

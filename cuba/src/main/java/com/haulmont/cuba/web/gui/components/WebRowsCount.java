@@ -37,12 +37,15 @@ import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.JmixRowsCount;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -53,7 +56,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("rawtypes")
 @Deprecated
-public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier {
+public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier,
+        InitializingBean {
 
     protected static final String TABLE_ROWS_COUNT_STYLENAME = "c-table-rows-count";
     protected static final String PAGING_COUNT_NUMBER_STYLENAME = "c-paging-count-number";
@@ -62,6 +66,8 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
 
     protected Messages messages;
     protected BackgroundWorker backgroundWorker;
+    protected Icons icons;
+    protected IconResolver iconResolver;
 
     protected WebRowsCount.Adapter adapter;
 
@@ -106,16 +112,25 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
 
     @Autowired
     public void setIconResolver(IconResolver iconResolver) {
-        // todo extract icon constants
-        component.getFirstButton().setIcon(iconResolver.getIconResource("icons/rows-count-first.png"));
-        component.getPrevButton().setIcon(iconResolver.getIconResource("icons/rows-count-prev.png"));
-        component.getNextButton().setIcon(iconResolver.getIconResource("icons/rows-count-next.png"));
-        component.getLastButton().setIcon(iconResolver.getIconResource("icons/rows-count-last.png"));
+        this.iconResolver = iconResolver;
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
     }
 
     @Autowired
     public void setBackgroundWorker(BackgroundWorker backgroundWorker) {
         this.backgroundWorker = backgroundWorker;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        component.getFirstButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_DOUBLE_LEFT)));
+        component.getPrevButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_LEFT)));
+        component.getNextButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_RIGHT)));
+        component.getLastButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_DOUBLE_RIGHT)));
     }
 
     @Override

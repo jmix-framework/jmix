@@ -55,13 +55,13 @@
                 <row>
                     <label value="mainMsg://filter.customConditionFrame.join"/>
                     <sourceCodeEditor id="joinField" height="theme://cuba.gui.customConditionFrame.joinField.height" width="theme://cuba.gui.customConditionFrame.field.width"/>
-                    <linkButton icon="icons/question-white.png" invoke="getJoinClauseHelp"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getJoinClauseHelp"/>
                 </row>
                 <row>
                     <label value="mainMsg://filter.customConditionFrame.where"/>
                     <sourceCodeEditor id="whereField" height="theme://cuba.gui.customConditionFrame.whereField.height" width="theme://cuba.gui.customConditionFrame.field.width"
                                       required="true" requiredMessage="mainMsg://filter.customConditionFrame.fillWhere"/>
-                    <linkButton icon="icons/question-white.png" invoke="getWhereClauseHelp"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getWhereClauseHelp"/>
                 </row>
                 <row>
                     <label value="mainMsg://filter.customConditionFrame.type" align="MIDDLE_LEFT"/>
@@ -84,7 +84,7 @@
                 <row>
                     <label id="paramWhereLab" value="mainMsg://filter.customConditionFrame.entityParamWhere"/>
                     <sourceCodeEditor id="entityParamWhereField" height="theme://cuba.gui.customConditionFrame.entityParamWhereField.height" width="theme://cuba.gui.customConditionFrame.field.width"/>
-                    <linkButton icon="icons/question-white.png" invoke="getParamWhereClauseHelp"/>
+                    <linkButton icon="QUESTION_CIRCLE" invoke="getParamWhereClauseHelp"/>
                 </row>
                 <row>
                     <label id="paramViewLab" value="mainMsg://filter.customConditionFrame.entityParamView" align="MIDDLE_LEFT"/>

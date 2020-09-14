@@ -25,14 +25,14 @@
                 datasourceClass="com.haulmont.cuba.gui.components.filter.addcondition.ConditionDescriptorsDs"/>
     </dsContext>
     <actions>
-        <action id="select" invoke="select" shortcut="CTRL-ENTER" icon="icons/ok.png" caption="mainMsg://actions.Select" primary="true"/>
-        <action id="cancel" invoke="cancel" shortcut="ESCAPE" icon="icons/cancel.png" caption="mainMsg://actions.Cancel"/>
+        <action id="select" invoke="select" shortcut="CTRL-ENTER" icon="CHECK" caption="mainMsg://actions.Select" primary="true"/>
+        <action id="cancel" invoke="cancel" shortcut="ESCAPE" icon="BAN" caption="mainMsg://actions.Cancel"/>
     </actions>
     <layout spacing="true" expand="tree">
         <hbox spacing="true" expand="treeFilter" width="100%">
             <label value="mainMsg://filter.addCondition.filter" align="MIDDLE_LEFT"/>
             <textField id="treeFilter"/>
-            <button id="searchBtn" invoke="search" icon="icons/search.png"/>
+            <button id="searchBtn" invoke="search" icon="SEARCH"/>
         </hbox>
         <tree id="tree" width="100%" multiselect="true">
             <treechildren datasource="conditionDescriptorsDs" captionProperty="treeCaption"/>

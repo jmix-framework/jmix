@@ -32,7 +32,7 @@
     </dsContext>
 
     <actions>
-        <action id="commit" invoke="commitAndClose" caption="mainMsg://actions.Ok" icon="icons/ok.png" primary="true" shortcut="CTRL-ENTER"/>
+        <action id="commit" invoke="commitAndClose" caption="mainMsg://actions.Ok" icon="CHECK" primary="true" shortcut="CTRL-ENTER"/>
     </actions>
 
     <layout spacing="true" expand="mainLayout">
@@ -82,8 +82,8 @@
                             <action id="remove" trackSelection="true" invoke="removeCondition" caption="mainMsg://filter.editor.removeCondition"/>
                             <action id="addAndGroup" invoke="addAndGroup" caption="mainMsg://filter.editor.addAndGroup"/>
                             <action id="addOrGroup" invoke="addOrGroup" caption="mainMsg://filter.editor.addOrGroup"/>
-                            <action id="moveConditionUp" trackSelection="true" invoke="moveConditionUp" caption="mainMsg://filter.editor.moveUp" icon="icons/up.png"/>
-                            <action id="moveConditionDown" trackSelection="true" invoke="moveConditionDown" caption="mainMsg://filter.editor.moveDown" icon="icons/down.png"/>
+                            <action id="moveConditionUp" trackSelection="true" invoke="moveConditionUp" caption="mainMsg://filter.editor.moveUp" icon="CARET_UP"/>
+                            <action id="moveConditionDown" trackSelection="true" invoke="moveConditionDown" caption="mainMsg://filter.editor.moveDown" icon="CARET_DOWN"/>
                             <action id="showComponentName" trackSelection="true" invoke="showComponentName" caption="mainMsg://filter.editor.showComponentName"/>
                         </actions>
                         <treechildren datasource="conditionsDs" captionProperty="locCaption"/>
@@ -103,7 +103,7 @@
         </hbox>
         <hbox id="actionBox" spacing="true">
             <button id="okBtn" action="commit"/>
-            <button id="cancelBtn" invoke="cancel" caption="mainMsg://actions.Cancel" icon="icons/cancel.png"/>
+            <button id="cancelBtn" invoke="cancel" caption="mainMsg://actions.Cancel" icon="BAN"/>
         </hbox>
     </layout>
 </window>

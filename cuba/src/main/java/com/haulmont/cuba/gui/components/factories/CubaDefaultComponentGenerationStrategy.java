@@ -28,6 +28,8 @@ import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.factory.DefaultComponentGenerationStrategy;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(CubaDefaultComponentGenerationStrategy.NAME)
@@ -38,8 +40,9 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
     public CubaDefaultComponentGenerationStrategy(Messages messages,
                                                   EntityFieldCreationSupport entityFieldCreationSupport,
                                                   Metadata metadata,
-                                                  MetadataTools metadataTools) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools);
+                                                  MetadataTools metadataTools,
+                                                  Icons icons) {
+        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Override
@@ -63,11 +66,11 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
-        fileUploadField.setUploadButtonIcon("icons/upload.png");
+        fileUploadField.setUploadButtonIcon(icons.get(JmixIcon.UPLOAD));
 
         fileUploadField.setClearButtonCaption(null);
         fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
-        fileUploadField.setClearButtonIcon("icons/remove.png");
+        fileUploadField.setClearButtonIcon(icons.get(JmixIcon.TIMES));
 
         fileUploadField.setShowFileName(true);
         fileUploadField.setShowClearButton(true);

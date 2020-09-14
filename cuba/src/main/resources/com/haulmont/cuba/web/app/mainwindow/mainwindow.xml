@@ -48,11 +48,11 @@
                   stylename="c-main-buttons"
                   align="MIDDLE_LEFT">
                 <newWindowButton id="newWindowButton"
-                                 icon="app/images/new-window.png"
+                                 icon="TH_LARGE"
                                  description="msg://newWindowBtnDescription"/>
 
                 <logoutButton id="logoutButton"
-                              icon="app/images/exit.png"
+                              icon="SIGN_OUT"
                               description="msg://logoutBtnDescription"/>
             </hbox>
         </hbox>

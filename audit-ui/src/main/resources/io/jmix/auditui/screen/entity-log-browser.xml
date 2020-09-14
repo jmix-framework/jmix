@@ -168,11 +168,11 @@
                                 <action id="remove" caption="msg://remove"/>
                             </actions>
                             <buttonsPanel alwaysVisible="true">
-                                <button action="loggedEntityTable.create" icon="icons/create.png"
+                                <button action="loggedEntityTable.create" icon="FILE_O"
                                         caption="msg://create"/>
-                                <button action="loggedEntityTable.edit" icon="icons/edit.png" caption="msg://edit"/>
+                                <button action="loggedEntityTable.edit" icon="PENCIL" caption="msg://edit"/>
                                 <button id="removeBtn" action="loggedEntityTable.remove"/>
-                                <button id="reloadBtn" icon="icons/ok.png" caption="msg://reloadConfiguration"/>
+                                <button id="reloadBtn" icon="CHECK" caption="msg://reloadConfiguration"/>
                             </buttonsPanel>
                             <columns>
                                 <column id="name"/>
@@ -200,8 +200,8 @@
 
                         <vbox id="actionsPaneLayout" visible="false">
                             <hbox id="buttonsBox" align="MIDDLE_LEFT" spacing="true">
-                                <button id="saveBtn" caption="msg://save" icon="icons/ok.png"/>
-                                <button id="cancelBtn" caption="msg://cancel" icon="icons/cancel.png"/>
+                                <button id="saveBtn" caption="msg://save" icon="CHECK"/>
+                                <button id="cancelBtn" caption="msg://cancel" icon="BAN"/>
                             </hbox>
                         </vbox>
                     </vbox>

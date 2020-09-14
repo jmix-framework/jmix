@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Facet;
@@ -24,6 +26,7 @@ import io.jmix.ui.xml.FacetLoader;
 import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
@@ -68,5 +71,15 @@ public class CubaWindowLoader extends WindowLoader {
                 loadShortcut(trimToNull(element.attributeValue("shortcut"))))
                 .orElseGet(() ->
                         super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
     }
 }

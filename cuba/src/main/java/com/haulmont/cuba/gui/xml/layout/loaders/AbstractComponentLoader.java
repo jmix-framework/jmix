@@ -16,11 +16,14 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.formatter.Formatter;
 import org.dom4j.Element;
+
+import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkState;
 
@@ -30,7 +33,7 @@ public abstract class AbstractComponentLoader<T extends Component>
     @Override
     protected ComponentLoaderContext getComponentContext() {
         checkState(context instanceof ComponentLoaderContext,
-            "'context' must implement io.jmix.ui.xml.layout.ComponentLoader.ComponentContext");
+                "'context' must implement io.jmix.ui.xml.layout.ComponentLoader.ComponentContext");
 
         return (ComponentLoaderContext) context;
     }
@@ -42,5 +45,15 @@ public abstract class AbstractComponentLoader<T extends Component>
     @Override
     protected Formatter<?> loadFormatter(Element element) {
         return ComponentLoaderHelper.loadFormatter(element, getClassManager(), getContext());
+    }
+
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
     }
 }

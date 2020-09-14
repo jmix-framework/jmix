@@ -16,11 +16,15 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
+import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+
+import javax.annotation.Nullable;
 
 public class CubaButtonLoader extends ButtonLoader {
 
@@ -54,4 +58,13 @@ public class CubaButtonLoader extends ButtonLoader {
         component.setAction(action);
     }
 
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
+    }
 }

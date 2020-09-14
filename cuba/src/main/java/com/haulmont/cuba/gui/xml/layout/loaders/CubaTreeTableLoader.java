@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -124,6 +125,16 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
     }
 
     protected static class CubaTreeTableDataHolder extends TableDataHolder {

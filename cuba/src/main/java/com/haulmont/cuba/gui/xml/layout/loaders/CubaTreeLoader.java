@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.CaptionMode;
 import com.haulmont.cuba.gui.components.HasItemCaptionMode;
 import com.haulmont.cuba.gui.components.Tree;
@@ -29,6 +30,7 @@ import io.jmix.ui.xml.layout.loader.TreeLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -82,6 +84,16 @@ public class CubaTreeLoader extends TreeLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.PickerField;
@@ -28,6 +29,7 @@ import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.xml.layout.loader.EntityPickerLoader;
 import org.dom4j.Element;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAction;
@@ -107,6 +109,16 @@ public class CubaPickerFieldLoader extends EntityPickerLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
+    }
+
+    @Nullable
+    @Override
+    protected String loadShortcutFromAlias(String shortcut) {
+        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
+                SHORTCUT_ALIASES,
+                getProperties(),
+                applicationContext.getBean(CubaProperties.class),
+                context);
     }
 
     @Override

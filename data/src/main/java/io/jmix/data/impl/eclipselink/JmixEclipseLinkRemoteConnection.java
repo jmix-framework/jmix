@@ -18,9 +18,8 @@ package io.jmix.data.impl.eclipselink;
 
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
-import io.jmix.core.cluster.ClusterListenerAdapter;
-import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import org.eclipse.persistence.internal.helper.Helper;
@@ -31,10 +30,11 @@ import org.eclipse.persistence.sessions.coordination.RemoteCommandManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -50,7 +50,9 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
     @Autowired
     protected QueryCacheManager queryCacheManager;
     @Autowired
-    protected ClusterManager clusterManager;
+    protected EclipseLinkChannelSupplier channelSupplier;
+    @Autowired
+    protected StandardSerialization serialization;
 
     public JmixEclipseLinkRemoteConnection(RemoteCommandManager rcm) {
         super(rcm);
@@ -60,12 +62,7 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
     protected void init() {
         rcm.logDebug("creating_broadcast_connection", getInfo());
         try {
-            this.clusterManager.addListener(Message.class, new ClusterListenerAdapter<Message>() {
-                @Override
-                public void receive(Message message) {
-                    onMessage(message);
-                }
-            });
+            channelSupplier.get().subscribe(this::onMessage);
             rcm.logDebug("broadcast_connection_created", getInfo());
         } catch (RuntimeException ex) {
             rcm.logDebug("failed_to_create_broadcast_connection", getInfo());
@@ -79,9 +76,7 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
     }
 
     @Override
-    protected Object executeCommandInternal(Object command) throws Exception {
-        Message message = new Message(command);
-
+    protected Object executeCommandInternal(Object command) {
         Object[] debugInfo = null;
         if (this.rcm.shouldLogDebugMessage()) {
             debugInfo = logDebugBeforePublish(null);
@@ -90,7 +85,9 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
         if (queryCacheManager.isEnabled()) {
             invalidateQueryCache(command);
         }
-        this.clusterManager.send(message);
+
+        Message<?> message = MessageBuilder.withPayload(serialization.serialize(command)).build();
+        channelSupplier.get().send(message);
 
         if (debugInfo != null) {
             logDebugAfterPublish(debugInfo, null);
@@ -99,17 +96,16 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
         return null;
     }
 
-    public void onMessage(Message message) {
+    public void onMessage(Message<?> message) {
         if (rcm.shouldLogDebugMessage()) {
             logDebugOnReceiveMessage(null);
         }
-        if (message.getObject() != null) {
-            Object command = message.getObject();
-            if (queryCacheManager.isEnabled()) {
-                invalidateQueryCache(command);
-            }
-            processReceivedObject(command, "");
+
+        Object command = serialization.deserialize((byte[]) message.getPayload());
+        if (queryCacheManager.isEnabled()) {
+            invalidateQueryCache(command);
         }
+        processReceivedObject(command, "");
     }
 
     @Override
@@ -146,24 +142,6 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
                 });
                 queryCacheManager.invalidate(typeNames);
             }
-        }
-    }
-
-    public static class Message implements Serializable {
-
-        private Object object;
-
-        public Message(Object object) {
-            this.object = object;
-        }
-
-        public Object getObject() {
-            return object;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("Message{object=%s}", object);
         }
     }
 }

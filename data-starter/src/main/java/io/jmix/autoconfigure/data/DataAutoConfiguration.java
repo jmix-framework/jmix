@@ -18,7 +18,6 @@ package io.jmix.autoconfigure.data;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.Stores;
-import io.jmix.core.pessimisticlocking.LockManager;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -34,6 +33,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -62,8 +62,11 @@ public class DataAutoConfiguration {
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer queryCacheCustomizer() {
         return cacheManager -> {
-            MutableConfiguration configuration = new MutableConfiguration();
-            cacheManager.createCache(StandardQueryCache.QUERY_CACHE_NAME, configuration);
+            Cache<Object, Object> cache = cacheManager.getCache(StandardQueryCache.QUERY_CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(StandardQueryCache.QUERY_CACHE_NAME, configuration);
+            }
         };
     }
 }

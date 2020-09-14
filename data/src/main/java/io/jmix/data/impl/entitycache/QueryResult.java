@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 public class QueryResult implements Serializable {
+    private static final long serialVersionUID = -4238659709136264710L;
+
     protected final List result;
     protected final String type;
     protected final Set<String> relatedTypes;

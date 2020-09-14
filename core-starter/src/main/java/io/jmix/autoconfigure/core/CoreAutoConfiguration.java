@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 
+import javax.cache.Cache;
 import javax.cache.configuration.MutableConfiguration;
 
 @Configuration
@@ -42,8 +43,11 @@ public class CoreAutoConfiguration {
     @SuppressWarnings({"rawtypes", "unchecked"})
     JCacheManagerCustomizer lockCacheCustomizer() {
         return cacheManager -> {
-            MutableConfiguration configuration = new MutableConfiguration();
-            cacheManager.createCache(LockManager.LOCKS_CACHE_NAME, configuration);
+            Cache<Object, Object> cache = cacheManager.getCache(LockManager.LOCKS_CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(LockManager.LOCKS_CACHE_NAME, configuration);
+            }
         };
     }
 }

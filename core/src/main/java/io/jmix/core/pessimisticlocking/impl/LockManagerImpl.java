@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LockManagerImpl implements LockManager {
 
     protected static class LockKey implements Serializable {
+        private static final long serialVersionUID = -79055072974087187L;
 
         private final String name;
         private final String id;

@@ -30,6 +30,7 @@ import spec.haulmont.cuba.web.navigation.entityinference.testscreens.notype.byin
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.notype.byinterface.ScreenImplEditorScreenNT
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass.ExtBaseAbstEditor
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass.ExtBaseStdEditor
+import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass.L3StdEditor
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass.ScreenExtAbstEditor
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass.ScreenExtStdEditor
 import spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byinterface.ExtBaseEditorScreen
@@ -99,6 +100,17 @@ class EditorEntityTypeInferenceTest extends Specification {
         def windowInfo = getWindowInfoFor(ExtBaseStdEditor.class)
 
         when: 'entity type is specified in parent in StandardEditor generic'
+        def entityClass = EditorTypeExtractor.extractEntityClass(windowInfo)
+
+        then: 'type can be extracted'
+        User.class.isAssignableFrom(entityClass)
+    }
+
+    @SuppressWarnings('GroovyAccessibility')
+    def 'Screen extends AbstractL2Editor<User> extends StandardEditor<T>'() {
+        def windowInfo = getWindowInfoFor(L3StdEditor.class)
+
+        when: 'entity type is specified in AbstractL2Editor generic'
         def entityClass = EditorTypeExtractor.extractEntityClass(windowInfo)
 
         then: 'type can be extracted'

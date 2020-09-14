@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 public class CommonAttributeDefinition implements AttributeDefinition {
+    private static final long serialVersionUID = -338980834303933684L;
+
     protected final CategoryAttribute attribute;
     protected final AttributeDefinition.Configuration configuration;
     protected final MetaProperty metaProperty;

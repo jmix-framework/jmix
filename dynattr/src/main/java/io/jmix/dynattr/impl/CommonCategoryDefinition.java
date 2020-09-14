@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class CommonCategoryDefinition implements CategoryDefinition {
+    private static final long serialVersionUID = 5280100014769447066L;
+
     protected final Category category;
     protected final List<AttributeDefinition> attributes;
 

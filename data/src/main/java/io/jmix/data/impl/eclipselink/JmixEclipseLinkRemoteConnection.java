@@ -49,7 +49,7 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
     protected ExtendedEntities extendedEntities;
     @Autowired
     protected QueryCacheManager queryCacheManager;
-    @Autowired
+    @Autowired(required = false)
     protected EclipseLinkChannelSupplier channelSupplier;
     @Autowired
     protected StandardSerialization serialization;
@@ -60,14 +60,16 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
 
     @PostConstruct
     protected void init() {
-        rcm.logDebug("creating_broadcast_connection", getInfo());
-        try {
-            channelSupplier.get().subscribe(this::onMessage);
-            rcm.logDebug("broadcast_connection_created", getInfo());
-        } catch (RuntimeException ex) {
-            rcm.logDebug("failed_to_create_broadcast_connection", getInfo());
-            close();
-            throw ex;
+        if (channelSupplier != null) {
+            rcm.logDebug("creating_broadcast_connection", getInfo());
+            try {
+                channelSupplier.get().subscribe(this::onMessage);
+                rcm.logDebug("broadcast_connection_created", getInfo());
+            } catch (RuntimeException ex) {
+                rcm.logDebug("failed_to_create_broadcast_connection", getInfo());
+                close();
+                throw ex;
+            }
         }
     }
 
@@ -86,8 +88,10 @@ public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
             invalidateQueryCache(command);
         }
 
-        Message<?> message = MessageBuilder.withPayload(serialization.serialize(command)).build();
-        channelSupplier.get().send(message);
+        if (channelSupplier != null) {
+            Message<?> message = MessageBuilder.withPayload(serialization.serialize(command)).build();
+            channelSupplier.get().send(message);
+        }
 
         if (debugInfo != null) {
             logDebugAfterPublish(debugInfo, null);

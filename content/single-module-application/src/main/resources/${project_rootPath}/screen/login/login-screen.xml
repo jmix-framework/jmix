@@ -4,7 +4,7 @@
     <actions>
         <action id="submit"
                 caption="msg://loginButton"
-                icon="app/images/login-button.png"
+                icon="CHECK"
                 shortcut="ENTER"/>
     </actions>
 

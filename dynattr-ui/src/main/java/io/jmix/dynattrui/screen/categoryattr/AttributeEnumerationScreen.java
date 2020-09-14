@@ -135,7 +135,7 @@ public class AttributeEnumerationScreen extends Screen {
     @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
     protected LinkButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
         LinkButton linkButton = uiComponents.create(LinkButton.class);
-        linkButton.setIcon(JmixIcon.REMOVE.source());
+        linkButton.setIconFromSet(JmixIcon.REMOVE);
         linkButton.setAction(new AbstractAction("") {
             @Override
             public void actionPerform(Component component) {

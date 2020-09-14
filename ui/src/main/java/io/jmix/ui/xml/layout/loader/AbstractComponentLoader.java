@@ -17,6 +17,7 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
@@ -60,8 +61,10 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
@@ -71,23 +74,20 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     private static final Logger log = LoggerFactory.getLogger(AbstractComponentLoader.class);
 
-    // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
-//    protected static final Map<String, Function<UiProperties, String>> SHORTCUT_ALIASES =
-//            ImmutableMap.<String, Function<ClientConfig, String>>builder()
-//                    .put("TABLE_EDIT_SHORTCUT", UiProperties::getTableEditShortcut)
-//                    .put("TABLE_INSERT_SHORTCUT", UiProperties::getTableInsertShortcut)
-//                    .put("TABLE_ADD_SHORTCUT", UiProperties::getTableAddShortcut)
-//                    .put("TABLE_REMOVE_SHORTCUT", UiProperties::getTableRemoveShortcut)
-//                    .put("COMMIT_SHORTCUT", UiProperties::getCommitShortcut)
-//                    .put("CLOSE_SHORTCUT", UiProperties::getCloseShortcut)
-//                    .put("FILTER_APPLY_SHORTCUT", UiProperties::getFilterApplyShortcut) // moved to jmix-cuba
-//                    .put("FILTER_SELECT_SHORTCUT", UiProperties::getFilterSelectShortcut) // moved to jmix-cuba
-//                    .put("NEXT_TAB_SHORTCUT", UiProperties::getNextTabShortcut)
-//                    .put("PREVIOUS_TAB_SHORTCUT", UiProperties::getPreviousTabShortcut)
-//                    .put("PICKER_LOOKUP_SHORTCUT", UiProperties::getPickerLookupShortcut)
-//                    .put("PICKER_OPEN_SHORTCUT", UiProperties::getPickerOpenShortcut)
-//                    .put("PICKER_CLEAR_SHORTCUT", UiProperties::getPickerClearShortcut)
-//                    .build();
+    protected static final Map<String, Function<UiProperties, String>> SHORTCUT_ALIASES =
+            ImmutableMap.<String, Function<UiProperties, String>>builder()
+                    .put("TABLE_EDIT_SHORTCUT", UiProperties::getTableEditShortcut)
+                    .put("TABLE_INSERT_SHORTCUT", UiProperties::getTableInsertShortcut)
+                    .put("TABLE_ADD_SHORTCUT", UiProperties::getTableAddShortcut)
+                    .put("TABLE_REMOVE_SHORTCUT", UiProperties::getTableRemoveShortcut)
+                    .put("COMMIT_SHORTCUT", UiProperties::getCommitShortcut)
+                    .put("CLOSE_SHORTCUT", UiProperties::getCloseShortcut)
+                    .put("NEXT_TAB_SHORTCUT", UiProperties::getNextTabShortcut)
+                    .put("PREVIOUS_TAB_SHORTCUT", UiProperties::getPreviousTabShortcut)
+                    .put("PICKER_LOOKUP_SHORTCUT", UiProperties::getPickerLookupShortcut)
+                    .put("PICKER_OPEN_SHORTCUT", UiProperties::getPickerOpenShortcut)
+                    .put("PICKER_CLEAR_SHORTCUT", UiProperties::getPickerClearShortcut)
+                    .build();
 
     protected Context context;
 
@@ -666,8 +666,9 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
             }
 
             String aliasShortcut = loadShortcutFromAlias(shortcut);
-            if (aliasShortcut != null)
+            if (aliasShortcut != null) {
                 return aliasShortcut;
+            }
         }
         return shortcut;
     }
@@ -714,17 +715,16 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     @Nullable
     protected String loadShortcutFromAlias(String shortcut) {
-        // todo shortcuts https://github.com/jmix-framework/jmix/issues/312
-//        if (shortcut.endsWith("_SHORTCUT}")) {
-//            String alias = shortcut.substring(2, shortcut.length() - 1);
-//            if (SHORTCUT_ALIASES.containsKey(alias)) {
-//                return SHORTCUT_ALIASES.get(alias).apply(getProperties());
-//            } else {
-//                String message = String.format("An error occurred while loading shortcut. " +
-//                        "Can't find shortcut for alias \"%s\"", alias);
-//                throw new GuiDevelopmentException(message, context);
-//            }
-//        }
+        if (shortcut.endsWith("_SHORTCUT}")) {
+            String alias = shortcut.substring(2, shortcut.length() - 1);
+            if (SHORTCUT_ALIASES.containsKey(alias)) {
+                return SHORTCUT_ALIASES.get(alias).apply(getProperties());
+            } else {
+                String message = String.format("An error occurred while loading shortcut. " +
+                        "Can't find shortcut for alias \"%s\"", alias);
+                throw new GuiDevelopmentException(message, context);
+            }
+        }
         return null;
     }
 

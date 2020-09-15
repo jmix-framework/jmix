@@ -72,6 +72,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -143,7 +144,8 @@ public class Param {
     protected DataComponents dataComponents;
     @Autowired
     private Actions actions;
-
+    @Autowired
+    protected PersistenceManagerClient persistenceManager;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
     @Autowired
@@ -954,6 +956,8 @@ public class Param {
         }
 
         dataLoader.setQuery(query);
+
+        dataLoader.setMaxResults(persistenceManager.getMaxFetchUI(metaClass.getName()));
 
         return dataLoader;
     }

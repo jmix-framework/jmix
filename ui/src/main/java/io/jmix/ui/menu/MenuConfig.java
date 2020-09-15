@@ -375,7 +375,7 @@ public class MenuConfig {
     }
 
     @Nullable
-    protected MenuItem findItem(String id, MenuItem item) {
+    public MenuItem findItem(String id, MenuItem item) {
         if (id.equals(item.getId()))
             return item;
         else if (!item.getChildren().isEmpty()) {

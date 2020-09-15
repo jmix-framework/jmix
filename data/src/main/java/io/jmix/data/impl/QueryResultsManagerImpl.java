@@ -17,7 +17,6 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.cluster.ClusterManager;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.persistence.DbTypeConverter;

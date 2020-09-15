@@ -17,6 +17,7 @@
 package io.jmix.autoconfigure.cuba;
 
 import com.haulmont.cuba.CubaConfiguration;
+import com.haulmont.cuba.core.app.ConfigStorage;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
@@ -24,8 +25,13 @@ import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiConfiguration;
+import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import javax.cache.Cache;
+import javax.cache.configuration.MutableConfiguration;
 
 @Configuration
 @Import({
@@ -38,4 +44,15 @@ import org.springframework.context.annotation.Import;
         FileSystemFileStorageConfiguration.class,
         CubaConfiguration.class})
 public class CubaAutoConfiguration {
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    JCacheManagerCustomizer configStorageCacheCustomizer() {
+        return cacheManager -> {
+            Cache<Object, Object> cache = cacheManager.getCache(ConfigStorage.CONFIG_STORAGE_CACHE_NAME);
+            if (cache == null) {
+                MutableConfiguration configuration = new MutableConfiguration();
+                cacheManager.createCache(ConfigStorage.CONFIG_STORAGE_CACHE_NAME, configuration);
+            }
+        };
+    }
 }

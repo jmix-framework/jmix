@@ -15,33 +15,31 @@
  */
 package com.haulmont.cuba.core.app;
 
-import io.jmix.core.Metadata;
-import io.jmix.core.cluster.ClusterListenerAdapter;
-import io.jmix.core.cluster.ClusterManager;
-import io.jmix.core.common.util.Preconditions;
 import com.haulmont.cuba.core.entity.Config;
+import io.jmix.core.Metadata;
+import io.jmix.core.common.util.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * Supports configuration parameters framework functionality.
@@ -50,28 +48,31 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ConfigStorage implements ConfigStorageAPI {
 
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Autowired
-    private DataSource dataSource;
+    protected DataSource dataSource;
+
+    @Autowired
+    protected CacheManager cacheManager;
 
     protected TransactionTemplate transaction;
 
-    protected ClusterManager clusterManager;
-
-    protected Map<String, String> cache;
-
-    protected ReadWriteLock lock = new ReentrantReadWriteLock();
-    protected Lock readLock = lock.readLock();
-    protected Lock writeLock = lock.writeLock();
+    protected Cache cache;
 
     private static final Logger log = LoggerFactory.getLogger(ConfigStorageAPI.class);
 
-    private static class InvalidateCacheMsg implements Serializable {
-        private static final long serialVersionUID = -3116358584797500962L;
+    public static final String CONFIG_STORAGE_CACHE_NAME = "cuba-config-storage-cache";
+
+    @PostConstruct
+    protected void init() {
+        cache = cacheManager.getCache(CONFIG_STORAGE_CACHE_NAME);
+        if (cache == null) {
+            throw new IllegalStateException(String.format("Unable to find cache: %s", CONFIG_STORAGE_CACHE_NAME));
+        }
     }
 
     @Autowired
@@ -79,84 +80,49 @@ public class ConfigStorage implements ConfigStorageAPI {
         transaction = new TransactionTemplate(transactionManager);
     }
 
-    @Autowired
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-        clusterManager.addListener(InvalidateCacheMsg.class, new ClusterListenerAdapter<InvalidateCacheMsg>() {
-            @Override
-            public void receive(InvalidateCacheMsg message) {
-                internalClearCache();
-            }
-        });
-    }
-
     @Override
     public void clearCache() {
-        internalClearCache();
-        clusterManager.send(new InvalidateCacheMsg());
-    }
-
-    private void internalClearCache() {
-        writeLock.lock();
-        try {
-            cache = null;
-        } finally {
-            writeLock.unlock();
-        }
+        cache.invalidate();
     }
 
     @Override
     public Map<String, String> getDbProperties() {
-        readLock.lock();
-        try {
-            loadCache();
-            return new HashMap<>(cache);
-        } finally {
-            readLock.unlock();
-        }
+        return loadDbProperties().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> (String) entry.getValue()));
     }
 
     @Override
     public String getDbProperty(String name) {
-        readLock.lock();
-        try {
-            loadCache();
-            return cache.get(name);
-        } finally {
-            readLock.unlock();
-        }
+        ValueHolder valueHolder = cache.get(name, () -> loadDbProperty(name));
+        return valueHolder == null ? null : valueHolder.getValue();
     }
 
-    protected void loadCache() {
-        if (cache == null) {
-            lock.readLock().unlock();
-            lock.writeLock().lock();
+    protected ValueHolder loadDbProperty(String name) {
+        log.debug("Loading DB-stored app property {}", name);
+        return transaction.execute(transactionStatus -> {
             try {
-                if (cache == null) {
-                    log.info("Loading DB-stored app properties cache");
-                    transaction.executeWithoutResult(transactionStatus -> {
-                        // Don't use transactions here because of loop possibility from EntityLog
-                        try {
-                            JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-                            cache = jdbcTemplate.query("select NAME, VALUE_ from SYS_CONFIG", new Object[]{},
-                                    (ResultSetExtractor<Map<String, String>>) rs -> {
-                                        HashMap<String, String> map = new HashMap<>();
-                                        while (rs.next()) {
-                                            map.put(rs.getString(1), rs.getString(2));
-                                        }
-                                        return map;
-                                    }
-                            );
-                        } catch (DataAccessException e) {
-                            throw new RuntimeException("Error loading DB-stored app properties cache", e);
-                        }
-                    });
-                }
-            } finally {
-                lock.readLock().lock();
-                lock.writeLock().unlock();
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                return new ValueHolder(jdbcTemplate.queryForObject(
+                        "select VALUE_ from SYS_CONFIG where NAME = ?", String.class, name));
+            } catch (EmptyResultDataAccessException e) {
+                return new ValueHolder(null);
+            } catch (DataAccessException e) {
+                throw new RuntimeException("Error loading DB-stored app properties cache", e);
             }
-        }
+        });
+    }
+
+    protected Map<String, Object> loadDbProperties() {
+        log.debug("Loading DB-stored app properties");
+        return transaction.execute(transactionStatus -> {
+            try {
+                JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+                return jdbcTemplate.queryForMap(
+                        "select NAME, VALUE_ from SYS_CONFIG where NAME = ?");
+            } catch (DataAccessException e) {
+                throw new RuntimeException("Error loading DB-stored app properties cache", e);
+            }
+        });
     }
 
     @Override
@@ -192,5 +158,19 @@ public class ConfigStorage implements ConfigStorageAPI {
             return null;
         else
             return list.get(0);
+    }
+
+    protected static class ValueHolder implements Serializable {
+        private static final long serialVersionUID = 5115145223092395387L;
+
+        private final String value;
+
+        public ValueHolder(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
     }
 }

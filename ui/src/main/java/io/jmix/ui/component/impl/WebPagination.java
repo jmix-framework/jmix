@@ -29,6 +29,7 @@ import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.icon.IconResolver;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.WeakCollectionChangeListener;
@@ -66,6 +67,7 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
     protected UiProperties uiProperties;
     protected ThemeConstantsManager themeConstantsManager;
     protected PaginationDelegate delegate;
+    protected Icons icons;
 
     protected WebPagination.Adapter adapter;
     protected BaseCollectionLoader loader;
@@ -132,6 +134,11 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
     @Autowired
     public void setDelegate(PaginationDelegate delegate) {
         this.delegate = delegate;
+    }
+
+    @Autowired
+    public void setIcons(Icons icons) {
+        this.icons = icons;
     }
 
     @Override
@@ -257,10 +264,10 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
         component.getFirstButton().setVisible(false);
         component.getLastButton().setVisible(false);
 
-        component.getFirstButton().setIcon(iconResolver.getIconResource(JmixIcon.ANGLE_DOUBLE_LEFT.source()));
-        component.getPrevButton().setIcon(iconResolver.getIconResource(JmixIcon.ANGLE_LEFT.source()));
-        component.getNextButton().setIcon(iconResolver.getIconResource(JmixIcon.ANGLE_RIGHT.source()));
-        component.getLastButton().setIcon(iconResolver.getIconResource(JmixIcon.ANGLE_DOUBLE_RIGHT.source()));
+        component.getFirstButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_DOUBLE_LEFT)));
+        component.getPrevButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_LEFT)));
+        component.getNextButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_RIGHT)));
+        component.getLastButton().setIcon(iconResolver.getIconResource(icons.get(JmixIcon.ANGLE_DOUBLE_RIGHT)));
 
         component.getMaxResultLabel().setValue(messages.getMessage("", "pagination.maxResult.label.value"));
 

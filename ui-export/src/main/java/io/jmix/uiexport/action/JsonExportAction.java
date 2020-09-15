@@ -1,6 +1,7 @@
 package io.jmix.uiexport.action;
 
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.uiexport.exporter.json.JsonExporter;
@@ -15,6 +16,9 @@ import org.springframework.context.ApplicationContext;
 @StudioAction(category = "List Actions", description = "Export selected entities to JSON")
 @ActionType(JsonExportAction.ID)
 public class JsonExportAction extends ExportAction {
+
+    @Autowired
+    protected Icons icons;
 
     public static final String ID = "jsonExport";
 
@@ -38,6 +42,6 @@ public class JsonExportAction extends ExportAction {
 
     @Override
     public String getIcon() {
-        return JmixIcon.CODE.source();
+        return icons.get(JmixIcon.CODE);
     }
 }

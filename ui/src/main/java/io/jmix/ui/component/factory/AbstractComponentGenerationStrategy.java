@@ -24,12 +24,13 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
-import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.gui.OpenType;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -52,15 +53,18 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected EntityFieldCreationSupport entityFieldCreationSupport;
     protected Metadata metadata;
     protected MetadataTools metadataTools;
+    protected Icons icons;
 
     public AbstractComponentGenerationStrategy(Messages messages,
                                                EntityFieldCreationSupport entityFieldCreationSupport,
                                                Metadata metadata,
-                                               MetadataTools metadataTools) {
+                                               MetadataTools metadataTools,
+                                               Icons icons) {
         this.messages = messages;
         this.entityFieldCreationSupport = entityFieldCreationSupport;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
+        this.icons = icons;
     }
 
     @Nullable
@@ -295,11 +299,11 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
-        fileUploadField.setUploadButtonIcon("icons/upload.png");
+        fileUploadField.setUploadButtonIcon(icons.get(JmixIcon.UPLOAD));
 
         fileUploadField.setClearButtonCaption(null);
         fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
-        fileUploadField.setClearButtonIcon("icons/remove.png");
+        fileUploadField.setClearButtonIcon(icons.get(JmixIcon.TIMES_CIRCLE));
 
         fileUploadField.setShowFileName(true);
         fileUploadField.setShowClearButton(true);
@@ -314,11 +318,11 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
-        fileUploadField.setUploadButtonIcon("icons/upload.png");
+        fileUploadField.setUploadButtonIcon(icons.get(JmixIcon.UPLOAD));
 
         fileUploadField.setClearButtonCaption(null);
         fileUploadField.setClearButtonDescription(messages.getMessage("upload.clear"));
-        fileUploadField.setClearButtonIcon("icons/remove.png");
+        fileUploadField.setClearButtonIcon(icons.get(JmixIcon.TIMES));
 
         fileUploadField.setShowFileName(true);
         fileUploadField.setShowClearButton(true);

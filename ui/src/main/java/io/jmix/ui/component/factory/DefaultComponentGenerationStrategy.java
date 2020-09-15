@@ -24,6 +24,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
+import io.jmix.ui.icon.Icons;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
@@ -37,8 +38,9 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
     public DefaultComponentGenerationStrategy(Messages messages,
                                               EntityFieldCreationSupport entityFieldCreationSupport,
                                               Metadata metadata,
-                                              MetadataTools metadataTools) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools);
+                                              MetadataTools metadataTools,
+                                              Icons icons) {
+        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Autowired

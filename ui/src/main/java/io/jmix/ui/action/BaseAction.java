@@ -49,7 +49,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * <pre>{@code
  *     Action action = new BaseAction("printAll")
  *             .withCaption("Print all")
- *             .withIcon("icons/print.png")
+ *             .withIcon(JmixIcon.PRINT.source())
  *             .withHandler(event -> {
  *                 // action logic here
  *              });

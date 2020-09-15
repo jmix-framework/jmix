@@ -25,6 +25,8 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
+import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -76,6 +78,8 @@ public class ExceptionDialog extends JmixWindow {
 
     protected AccessManager accessManager;
 
+    protected Icons icons;
+
     public ExceptionDialog(Throwable throwable, ApplicationContext applicationContext) {
         this(throwable, null, null, applicationContext);
     }
@@ -87,6 +91,7 @@ public class ExceptionDialog extends JmixWindow {
         currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         timeSource = applicationContext.getBean(TimeSource.class);
         accessManager = applicationContext.getBean(AccessManager.class);
+        icons = applicationContext.getBean(Icons.class);
 
         AppUI ui = AppUI.getCurrent();
 
@@ -392,7 +397,7 @@ public class ExceptionDialog extends JmixWindow {
                 .withActions(
                         new BaseAction("close")
                                 .withCaption(messages.getMessage("closeApplication"))
-                                .withIcon("icons/ok.png")
+                                .withIcon(icons.get(JmixIcon.CHECK))
                                 .withHandler(event -> forceLogout()),
                         new DialogAction(Type.CANCEL, Status.PRIMARY)
                 )

@@ -34,7 +34,7 @@ import io.jmix.ui.icon.Icons;
  *                     }),
  *                     new DialogAction(Type.NO)
  *                             .withCaption("Print selected")
- *                             .withIcon("icons/print-selected.png")
+ *                             .withIcon(JmixIcon.PRINT.source())
  *                             .withHandler(event -> {
  *                         // add action logic here
  *                     }),

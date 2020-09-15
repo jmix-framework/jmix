@@ -22,7 +22,7 @@
         <progressBar id="taskProgressBar" width="100%"/>
         <label id="progressText"/>
         <hbox align="MIDDLE_RIGHT">
-            <button id="cancelButton" icon="icons/cancel.png" caption="msg://actions.Cancel"/>
+            <button id="cancelButton" icon="BAN" caption="msg://actions.Cancel"/>
         </hbox>
     </layout>
 </window>

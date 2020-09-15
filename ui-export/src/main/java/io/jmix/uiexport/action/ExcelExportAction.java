@@ -1,6 +1,7 @@
 package io.jmix.uiexport.action;
 
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.uiexport.exporter.excel.ExcelExporter;
@@ -17,6 +18,9 @@ import org.springframework.context.ApplicationContext;
 public class ExcelExportAction extends ExportAction {
 
     public static final String ID = "excelExport";
+
+    @Autowired
+    protected Icons icons;
 
     public ExcelExportAction(String id) {
         this(id, null);
@@ -38,6 +42,6 @@ public class ExcelExportAction extends ExportAction {
 
     @Override
     public String getIcon() {
-        return JmixIcon.EXCEL_ACTION.source();
+        return icons.get(JmixIcon.EXCEL_ACTION);
     }
 }

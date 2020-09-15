@@ -29,6 +29,7 @@ import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.action.entitypicker.OpenCompositionAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
@@ -46,8 +47,9 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     public DataGridEditorComponentGenerationStrategy(Messages messages,
                                                      EntityFieldCreationSupport entityFieldCreationSupport,
                                                      Metadata metadata,
-                                                     MetadataTools metadataTools) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools);
+                                                     MetadataTools metadataTools,
+                                                     Icons icons) {
+        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Autowired

@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  * <pre>{@code
  *     Action action = actions.create(ItemTrackingAction.class, "moveToTrash")
  *             .withCaption("Move to trash")
- *             .withIcon("icons/trash.png")
+ *             .withIcon(JmixIcon.TRASH_O.source())
  *             .withHandler(event -> {
  *                 // action logic here
  *             });

@@ -34,7 +34,6 @@ public class CacheOperations {
 
     public static final String NAME = "core_CacheOperations";
 
-
     /**
      * Iterations over cache entries are supported for JCache and default {@link ConcurrentMapCache}.
      * @param cache

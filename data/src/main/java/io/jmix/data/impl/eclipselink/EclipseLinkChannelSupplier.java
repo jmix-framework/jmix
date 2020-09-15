@@ -21,8 +21,7 @@ import org.springframework.messaging.SubscribableChannel;
 import java.util.function.Supplier;
 
 /**
- * Define an abstract class for communication EclipseLink
- * in a cluster by sending remote commands
+ * Defines an interface for EclipseLink cluster communication
  */
 @FunctionalInterface
 public interface EclipseLinkChannelSupplier extends Supplier<SubscribableChannel> {

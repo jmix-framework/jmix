@@ -32,7 +32,7 @@
                 <comboBox id="entityField" caption="msg://EntityAttributeResourcePolicyModelEdit.entity" required="true"/>
                 <comboBox id="attributeField" caption="msg://EntityAttributeResourcePolicyModelEdit.attribute" required="true"/>
                 <comboBox id="actionField" property="action"/>
-                <textField id="scopeField" property="scope"/>
+<!--                <textField id="scopeField" property="scope"/>-->
             </column>
         </form>
         <hbox id="editActions" spacing="true">

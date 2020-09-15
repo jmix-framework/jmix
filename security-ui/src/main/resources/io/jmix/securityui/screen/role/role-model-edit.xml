@@ -52,12 +52,16 @@
                         <action id="edit" type="edit"/>
                         <action id="view" type="view"/>
                         <action id="remove" type="remove"/>
+                        <action id="expandCollapse" caption="msg://io.jmix.securityui.screen.role/RoleModelEdit.expandCollapse"/>
                     </actions>
                     <columns>
+                        <group>
+                            <column id="domain"/>
+                        </group>
                         <column id="type"/>
                         <column id="resource"/>
                         <column id="action"/>
-                        <column id="scope"/>
+<!--                        <column id="scope"/>-->
                     </columns>
                     <buttonsPanel>
                         <popupButton id="createResourcePolicyPopupBtn" caption="msg://RoleModelEdit.create"
@@ -80,6 +84,7 @@
                         <button action="resourcePoliciesTable.edit"/>
                         <button action="resourcePoliciesTable.view"/>
                         <button action="resourcePoliciesTable.remove"/>
+                        <button action="resourcePoliciesTable.expandCollapse"/>
                     </buttonsPanel>
                 </groupTable>
             </tab>

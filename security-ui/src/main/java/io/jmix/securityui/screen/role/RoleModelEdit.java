@@ -35,6 +35,8 @@ import io.jmix.ui.action.list.ViewAction;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.PopupButton;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.model.CollectionChangeType;
+import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
@@ -91,6 +93,8 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
     @Autowired
     private PopupButton createResourcePolicyPopupBtn;
 
+    private boolean resourcePoliciesTableExpanded = true;
+
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
         this.openedByCreateAction = openedByCreateAction;
     }
@@ -121,6 +125,12 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         }
 
         sourceField.setValue(messageBundle.getMessage("roleSource." + getEditedEntity().getSource()));
+    }
+
+    @Subscribe
+    public void onAfterShow(AfterShowEvent event) {
+        resourcePoliciesTable.expandAll();
+        resourcePoliciesTableExpanded = true;
     }
 
     @Subscribe("resourcePoliciesTable.createMenuPolicy")
@@ -342,5 +352,23 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
 
     private boolean isDatabaseSource() {
         return RoleSource.DATABASE.equals(getEditedEntity().getSource());
+    }
+
+    @Subscribe("resourcePoliciesTable.expandCollapse")
+    public void onResourcePoliciesTableExpandCollapse(Action.ActionPerformedEvent event) {
+        if (resourcePoliciesTableExpanded) {
+            resourcePoliciesTable.collapseAll();
+        } else {
+            resourcePoliciesTable.expandAll();
+        }
+        resourcePoliciesTableExpanded = !resourcePoliciesTableExpanded;
+    }
+
+    @Subscribe(id = "resourcePoliciesDc", target = Target.DATA_CONTAINER)
+    public void onResourcePoliciesDcCollectionChange(CollectionContainer.CollectionChangeEvent<ResourcePolicyModel> event) {
+        if (event.getChangeType() == CollectionChangeType.ADD_ITEMS) {
+            Collection<? extends ResourcePolicyModel> addedItems = event.getChanges();
+            addedItems.forEach(resourcePolicy -> resourcePoliciesTable.expandPath(resourcePolicy));
+        }
     }
 }

@@ -31,7 +31,7 @@
             <column width="350px">
                 <comboBox id="entityField" property="resource" caption="msg://EntityResourcePolicyModelEdit.entity"/>
                 <comboBox id="actionField" property="action"/>
-                <textField id="scopeField" property="scope"/>
+<!--                <textField id="scopeField" property="scope"/>-->
             </column>
         </form>
         <hbox id="editActions" spacing="true">

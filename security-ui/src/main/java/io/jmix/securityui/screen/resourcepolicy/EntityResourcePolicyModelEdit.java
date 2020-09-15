@@ -16,8 +16,10 @@
 
 package io.jmix.securityui.screen.resourcepolicy;
 
+import io.jmix.securityui.model.ResourcePolicyDomainResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,9 +39,18 @@ public class EntityResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
     @Autowired
     private ResourcePolicyEditorUtils resourcePolicyEditorUtils;
 
+    @Autowired
+    private ResourcePolicyDomainResolver resourcePolicyDomainResolver;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         entityField.setOptionsMap(resourcePolicyEditorUtils.getEntityOptionsMap());
         actionField.setOptionsList(Arrays.asList("create", "read", "update", "delete"));
+    }
+
+    @Subscribe(target = Target.DATA_CONTEXT)
+    public void onPreCommit(DataContext.PreCommitEvent event) {
+        String domain = resourcePolicyDomainResolver.resolveDomain(getEditedEntity().getType(), getEditedEntity().getResource());
+        getEditedEntity().setDomain(domain);
     }
 }

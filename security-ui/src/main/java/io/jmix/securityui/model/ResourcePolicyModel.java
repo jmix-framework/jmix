@@ -52,6 +52,9 @@ public class ResourcePolicyModel implements JmixEntity {
     private String scope;
 
     @ModelProperty
+    private String domain;
+
+    @ModelProperty
     private Map<String, String> customProperties = new HashMap<>();
 
     public UUID getId() {
@@ -100,6 +103,14 @@ public class ResourcePolicyModel implements JmixEntity {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 
     public Map<String, String> getCustomProperties() {

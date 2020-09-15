@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.entity;
+package io.jmix.securityui.entity;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -24,12 +24,19 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@Entity(name = "test_Order")
-public class TestOrder implements JmixEntity {
+@Entity(name = "test_Customer")
+public class TestCustomer implements JmixEntity {
+
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
     protected UUID id;
+
+    @Column(name = "NAME")
+    private String name;
+
+    @Column(name = "EMAIL")
+    private String email;
 
     public UUID getId() {
         return id;
@@ -39,14 +46,19 @@ public class TestOrder implements JmixEntity {
         this.id = id;
     }
 
-    @Column(name = "number")
-    private String number;
-
-    public String getNumber() {
-        return number;
+    public String getName() {
+        return name;
     }
 
-    public void setNumber(String number) {
-        this.number = number;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

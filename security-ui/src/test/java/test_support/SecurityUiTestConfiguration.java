@@ -17,14 +17,17 @@
 package test_support;
 
 import io.jmix.core.Stores;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
+import io.jmix.ui.sys.UiControllersConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,6 +40,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
@@ -81,5 +85,14 @@ public class SecurityUiTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean("sec_TestSecurityUiControllers")
+    public UiControllersConfiguration screens(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        UiControllersConfiguration uiControllers
+                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
+        uiControllers.setBasePackages(Collections.singletonList("test_support"));
+        return uiControllers;
     }
 }

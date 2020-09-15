@@ -17,10 +17,12 @@
 package io.jmix.securityui.screen.resourcepolicy;
 
 import com.google.common.base.Strings;
+import io.jmix.securityui.model.ResourcePolicyDomainResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +48,9 @@ public class ScreenResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
     @Autowired
     private ScreensHelper screensHelper;
 
+    @Autowired
+    private ResourcePolicyDomainResolver resourcePolicyDomainResolver;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         TreeMap<String, String> map = windowConfig.getWindows().stream()
@@ -68,5 +73,11 @@ public class ScreenResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
                         TreeMap::new));
         map.put(messageBundle.getMessage("allScreens"), "*");
         screenField.setOptionsMap(map);
+    }
+
+    @Subscribe(target = Target.DATA_CONTEXT)
+    public void onPreCommit(DataContext.PreCommitEvent event) {
+        String domain = resourcePolicyDomainResolver.resolveDomain(getEditedEntity().getType(), getEditedEntity().getResource());
+        getEditedEntity().setDomain(domain);
     }
 }

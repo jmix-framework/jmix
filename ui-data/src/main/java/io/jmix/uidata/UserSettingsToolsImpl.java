@@ -17,7 +17,6 @@
 package io.jmix.uidata;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.AppWorkArea;
@@ -30,8 +29,8 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.uidata.settings.ScreenSettings;
 import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @Internal
@@ -76,23 +75,6 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
         userSettingService.saveSetting("theme", theme);
     }
 
-    @Nullable
-    public FoldersState loadFoldersState() {
-        String s = userSettingService.loadSetting("foldersState");
-        if (s == null)
-            return null;
-
-        String[] parts = s.split(",");
-        if (parts.length != 3)
-            return null;
-
-        try {
-            return new FoldersState(Boolean.parseBoolean(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     @Override
     public <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass) {
         // screen id is empty as we won't commit any changes
@@ -133,13 +115,4 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
             }
         });
     }
-
-    /* todo folders panel
-    public void saveFoldersState(boolean visible, int horizontalSplit, int verticalSplit) {
-        userSettingService.saveSetting(ClientType.WEB, "foldersState",
-                String.valueOf(visible) + ","
-                + String.valueOf(horizontalSplit) + ","
-                + String.valueOf(verticalSplit)
-        );
-    }*/
 }

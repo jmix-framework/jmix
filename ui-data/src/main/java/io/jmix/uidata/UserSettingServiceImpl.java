@@ -44,7 +44,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Internal
 public class UserSettingServiceImpl implements UserSettingService {
@@ -137,13 +142,6 @@ public class UserSettingServiceImpl implements UserSettingService {
 
         Map<UUID, UiTablePresentation> presentationsMap = copyPresentations(fromUser, toUser);
 
-        /* todo folders panel
-        copyUserFolders(fromUser, toUser, presentationsMap);
-
-        todo filter
-        Map<UUID, FilterEntity> filtersMap = copyFilters(fromUser, toUser);
-        */
-
         transaction.executeWithoutResult(status -> {
             TypedQuery<UiSetting> q = entityManager.
                     createQuery("select s from ui_Setting s where s.userLogin = ?1", UiSetting.class);
@@ -168,18 +166,6 @@ public class UserSettingServiceImpl implements UserSettingService {
                                 presentationAttr.setValue(newPresentation.getId().toString());
                             }
                         }
-                        /* todo filter
-                        Element defaultFilterEl = component.element("defaultFilter");
-                        if (defaultFilterEl != null) {
-                            Attribute idAttr = defaultFilterEl.attribute("id");
-                            if (idAttr != null) {
-                                UUID filterId = UuidProvider.fromString(idAttr.getValue());
-                                FilterEntity newFilter = filtersMap.get(filterId);
-                                if (newFilter != null) {
-                                    idAttr.setValue(newFilter.getId().toString());
-                                }
-                            }
-                        }*/
                     }
 
                     newSetting.setValue(dom4JTools.writeDocument(doc, true));
@@ -254,128 +240,5 @@ public class UserSettingServiceImpl implements UserSettingService {
 
         return resultMap == null ? Collections.emptyMap() : resultMap;
     }
-
-    /* todo folders panel
-    protected void copyUserFolders(User fromUser, User toUser, Map<UUID, Presentation> presentationsMap) {
-        try (Transaction tx = persistence.createTransaction()) {
-            MetaClass effectiveMetaClass = metadata.getExtendedEntities().getEffectiveMetaClass(SearchFolder.class);
-            EntityManager em = persistence.getEntityManager();
-            try {
-                em.setSoftDeletion(false);
-                Query deleteSettingsQuery = em.createQuery(
-                        String.format("delete from %s s where s.user.id = ?1", effectiveMetaClass.getName())
-                );
-
-                deleteSettingsQuery.setParameter(1, toUser.getId());
-                deleteSettingsQuery.executeUpdate();
-            } finally {
-                em.setSoftDeletion(true);
-            }
-            TypedQuery<SearchFolder> q = em.createQuery(
-                    String.format("select s from %s s where s.user.id = ?1", effectiveMetaClass.getName()),
-                    SearchFolder.class);
-            q.setParameter(1, fromUser.getId());
-
-            List<SearchFolder> fromUserFolders = q.getResultList();
-            Map<SearchFolder, SearchFolder> copiedFolders = new HashMap<>();
-            for (SearchFolder searchFolder : fromUserFolders) {
-                copyFolder(searchFolder, toUser, copiedFolders, presentationsMap);
-            }
-            tx.commit();
-        }
-    }
-
-    protected SearchFolder copyFolder(SearchFolder searchFolder,
-                                      User toUser,
-                                      Map<SearchFolder, SearchFolder> copiedFolders,
-                                      Map<UUID, Presentation> presentationsMap) {
-        SearchFolder newFolder;
-        if (searchFolder.getUser() == null)
-            return searchFolder;
-        newFolder = copiedFolders.get(searchFolder);
-        if (newFolder != null)
-            return null;
-        newFolder = metadata.create(SearchFolder.class);
-        newFolder.setUser(toUser);
-        newFolder.setApplyDefault(searchFolder.getApplyDefault());
-        newFolder.setFilterComponentId(searchFolder.getFilterComponentId());
-        newFolder.setFilterXml(searchFolder.getFilterXml());
-        newFolder.setItemStyle(searchFolder.getItemStyle());
-        newFolder.setName(searchFolder.getName());
-        newFolder.setTabName(searchFolder.getTabName());
-        newFolder.setSortOrder(searchFolder.getSortOrder());
-        newFolder.setIsSet(searchFolder.getIsSet());
-        newFolder.setEntityType(searchFolder.getEntityType());
-        SearchFolder copiedFolder = copiedFolders.get(searchFolder.getParent());
-        if (searchFolder.getParent() != null) {
-            if (copiedFolder != null) {
-                newFolder.setParent(copiedFolder);
-            } else {
-                SearchFolder newParent = getParent((SearchFolder) searchFolder.getParent(), toUser, copiedFolders, presentationsMap);
-                newFolder.setParent(newParent);
-            }
-        }
-        if (searchFolder.getPresentation() != null) {
-            if (searchFolder.getPresentation().getUser() == null) {
-                newFolder.setPresentation(searchFolder.getPresentation());
-            } else {
-                Presentation newPresentation = presentationsMap.get(searchFolder.getPresentation().getId());
-                newFolder.setPresentation(newPresentation);
-            }
-        }
-        copiedFolders.put(searchFolder, newFolder);
-        EntityManager em = persistence.getEntityManager();
-        em.persist(newFolder);
-        return newFolder;
-    }
-
-    protected SearchFolder getParent(SearchFolder parentFolder, User toUser, Map<SearchFolder, SearchFolder> copiedFolders, Map<UUID, Presentation> presentationMap) {
-        if (parentFolder == null) {
-            return null;
-        }
-        if (parentFolder.getUser() == null) {
-            return parentFolder;
-        }
-        return copyFolder(parentFolder, toUser, copiedFolders, presentationMap);
-    }
-
-    protected Map<UUID, FilterEntity> copyFilters(User fromUser, User toUser) {
-        Map<UUID, FilterEntity> filtersMap = new HashMap<>();
-
-        try (Transaction tx = persistence.createTransaction()) {
-            MetaClass effectiveMetaClass = metadata.getExtendedEntities().getEffectiveMetaClass(FilterEntity.class);
-
-            EntityManager em = persistence.getEntityManager();
-            try {
-                em.setSoftDeletion(false);
-                Query deleteFiltersQuery = em.createQuery(
-                        String.format("delete from %s f where f.user.id = ?1", effectiveMetaClass.getName())
-                );
-                deleteFiltersQuery.setParameter(1, toUser.getId());
-                deleteFiltersQuery.executeUpdate();
-            } finally {
-                em.setSoftDeletion(true);
-            }
-
-            TypedQuery<FilterEntity> q = em.createQuery(
-                    String.format("select f from %s f where f.user.id = ?1", effectiveMetaClass.getName()),
-                    FilterEntity.class);
-            q.setParameter(1, fromUser.getId());
-            List<FilterEntity> fromUserFilters = q.getResultList();
-
-            for (FilterEntity filter : fromUserFilters) {
-                FilterEntity newFilter = metadata.create(FilterEntity.class);
-                newFilter.setUser(toUser);
-                newFilter.setCode(filter.getCode());
-                newFilter.setName(filter.getName());
-                newFilter.setComponentId(filter.getComponentId());
-                newFilter.setXml(filter.getXml());
-                filtersMap.put(filter.getId(), newFilter);
-                em.persist(newFilter);
-            }
-
-            tx.commit();
-            return filtersMap;
-        }
-    }*/
 }
+

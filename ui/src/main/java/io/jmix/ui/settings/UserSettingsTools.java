@@ -42,8 +42,6 @@ public interface UserSettingsTools {
 
     void saveAppWindowTheme(String theme);
 
-    FoldersState loadFoldersState();
-
     /**
      * Converts the string representation of settings to the given component settings class.
      *
@@ -71,20 +69,4 @@ public interface UserSettingsTools {
      * @param tabContent tab content
      */
     void applyLazyTabSettings(Window window, Component source, ComponentContainer tabContent);
-
-//    todo folders panel
-//    void saveFoldersState(boolean visible, int horizontalSplit, int verticalSplit);
-
-    class FoldersState {
-
-        public final boolean visible;
-        public final int horizontalSplit;
-        public final int verticalSplit;
-
-        public FoldersState(boolean visible, int horizontalSplit, int verticalSplit) {
-            this.horizontalSplit = horizontalSplit;
-            this.verticalSplit = verticalSplit;
-            this.visible = visible;
-        }
-    }
 }

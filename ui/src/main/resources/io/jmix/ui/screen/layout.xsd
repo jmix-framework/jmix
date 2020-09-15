@@ -3938,14 +3938,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="foldersPaneComponent">
-        <xs:complexContent>
-            <xs:extension base="baseMainElement">
-
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="timeZoneIndicatorComponent">
         <xs:complexContent>
             <xs:extension base="baseMainElement">
@@ -4092,7 +4084,6 @@
                 <xs:element name="ftsField" type="ftsFieldComponent"/>
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>
-                <xs:element name="foldersPane" type="foldersPaneComponent"/>
                 <xs:element name="workArea" type="workAreaComponent"/>
                 <xs:element name="sideMenu" type="sideMenuComponent"/>
                 <xs:element name="menu" type="menuComponent"/>

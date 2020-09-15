@@ -18,7 +18,6 @@ package io.jmix.ui.xml.layout;
 
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.mainwindow.AppMenu;
-import io.jmix.ui.component.mainwindow.FoldersPane;
 import io.jmix.ui.component.mainwindow.LogoutButton;
 import io.jmix.ui.component.mainwindow.NewWindowButton;
 import io.jmix.ui.component.mainwindow.SideMenu;
@@ -124,7 +123,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(LogoutButton.NAME, LogoutButtonLoader.class);
         loaders.put(NewWindowButton.NAME, NewWindowButtonLoader.class);
         loaders.put(UserIndicator.NAME, UserIndicatorLoader.class);
-        loaders.put(FoldersPane.NAME, FoldersPaneLoader.class);
 //        loaders.put(FtsField.NAME, FtsFieldLoader.class); // todo fts field
         loaders.put(TimeZoneIndicator.NAME, TimeZoneIndicatorLoader.class);
         loaders.put(SideMenu.NAME, SideMenuLoader.class);

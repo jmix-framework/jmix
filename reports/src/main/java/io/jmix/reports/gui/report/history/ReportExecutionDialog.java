@@ -16,34 +16,28 @@
 
 package io.jmix.reports.gui.report.history;
 
-import com.haulmont.cuba.core.global.LoadContext;
-import com.haulmont.cuba.core.global.UserSessionSource;
-import com.haulmont.cuba.gui.components.DateField;
-import com.haulmont.cuba.gui.components.LookupField;
-import com.haulmont.cuba.gui.components.Table;
-import com.haulmont.cuba.gui.components.TextField;
-import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
-import io.jmix.core.entity.BaseUser;
+import io.jmix.core.LoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportGroup;
 import io.jmix.reports.gui.ReportGuiManager;
 import io.jmix.ui.WindowParam;
-import io.jmix.ui.component.Button;
+import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.screen.LookupComponent;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@UiController("report$ReportExecution.dialog")
+@UiController("report_ReportExecution.dialog")
 @UiDescriptor("report-execution-dialog.xml")
 @LookupComponent("reportsTable")
-@LoadDataBeforeShow
 public class ReportExecutionDialog extends StandardLookup<Report> {
 
     public static final String META_CLASS_PARAMETER = "metaClass";
@@ -51,8 +45,6 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
 
     @Autowired
     protected ReportGuiManager reportGuiManager;
-    @Autowired
-    protected UserSessionSource userSessionSource;
 
     @Autowired
     protected CollectionContainer<Report> reportsDc;
@@ -66,7 +58,7 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     @Autowired
     protected TextField<String> filterCode;
     @Autowired
-    protected LookupField<ReportGroup> filterGroup;
+    protected ComboBox<ReportGroup> filterGroup;
     @Autowired
     protected DateField<Date> filterUpdatedDate;
 
@@ -77,8 +69,9 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
 
     @Install(to = "reportsDl", target = Target.DATA_LOADER)
     protected List<Report> reportsDlLoadDelegate(LoadContext<Report> loadContext) {
-        BaseUser sessionUser = userSessionSource.getUserSession().getUser();
-        return reportGuiManager.getAvailableReports(screenParameter, sessionUser, metaClassParameter);
+        return reportGuiManager.getAvailableReports(screenParameter,
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
+                metaClassParameter);
     }
 
     @Subscribe("clearFilterBtn")
@@ -96,8 +89,9 @@ public class ReportExecutionDialog extends StandardLookup<Report> {
     }
 
     protected void filterReports() {
-        BaseUser sessionUser = userSessionSource.getUserSession().getUser();
-        List<Report> reports = reportGuiManager.getAvailableReports(screenParameter, sessionUser, metaClassParameter)
+        List<Report> reports = reportGuiManager.getAvailableReports(screenParameter,
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
+                metaClassParameter)
                 .stream()
                 .filter(this::filterReport)
                 .collect(Collectors.toList());

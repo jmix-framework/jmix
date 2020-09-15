@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.UUID;
 
-public class CubaObjectToStringConverter extends AbstractObjectToStringConverter {
+public class JmixObjectToStringConverter extends AbstractObjectToStringConverter {
     @Autowired
     protected DataManager dataManager;
 

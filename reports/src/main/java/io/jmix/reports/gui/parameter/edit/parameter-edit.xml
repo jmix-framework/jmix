@@ -16,7 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.parameter.edit.ParameterEditor"
-        messagesPack="com.haulmont.reports.gui"
+        messagesPack="io.jmix.reports.gui"
         datasource="parameterDs"
         caption="msg://parameterEditor"
         focusComponent="name">

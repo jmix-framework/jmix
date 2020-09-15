@@ -27,9 +27,9 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CubaSqlDataLoader extends SqlDataLoader {
+public class JmixSqlDataLoader extends SqlDataLoader {
 
-    public CubaSqlDataLoader(DataSource dataSource) {
+    public JmixSqlDataLoader(DataSource dataSource) {
         super(dataSource);
     }
 

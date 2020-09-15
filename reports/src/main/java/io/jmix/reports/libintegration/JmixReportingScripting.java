@@ -16,23 +16,18 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.cuba.core.global.Configuration;
-import io.jmix.reports.ReportingConfig;
-import com.haulmont.yarg.loaders.factory.ReportLoaderFactory;
-import com.haulmont.yarg.reporting.DataExtractorImpl;
+import com.haulmont.yarg.util.groovy.Scripting;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
 
-public class CubaDataExtractor extends DataExtractorImpl {
+public class JmixReportingScripting implements Scripting {
+
     @Autowired
-    protected ReportingConfig reportingConfig;
-
-    public CubaDataExtractor(ReportLoaderFactory loaderFactory) {
-        super(loaderFactory);
-    }
+    private com.haulmont.cuba.core.global.Scripting  scripting;
 
     @Override
-    public boolean getPutEmptyRowIfNoDataSelected() {
-        return Boolean.TRUE.equals(reportingConfig.getPutEmptyRowIfNoDataSelected());
+    public <T> T evaluateGroovy(String s, Map<String, Object> stringObjectMap) {
+        return scripting.evaluateGroovy(s, stringObjectMap);
     }
 }

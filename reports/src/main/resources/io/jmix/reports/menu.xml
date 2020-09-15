@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+<menu-config xmlns="http://schemas.haulmont.com/jmix/menu.xsd">
 
     <menu id="reports" insertBefore="administration">
         <item id="report$Report.browse"/>

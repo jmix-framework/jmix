@@ -18,7 +18,7 @@
         class="com.haulmont.reports.gui.template.edit.TemplateEditor"
         datasource="templateDs"
         caption="msg://templateEditor"
-        messagesPack="com.haulmont.reports.gui"
+        messagesPack="io.jmix.reports.gui"
         focusComponent="code">
 
     <dsContext>

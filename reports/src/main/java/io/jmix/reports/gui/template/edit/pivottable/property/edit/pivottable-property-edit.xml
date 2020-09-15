@@ -17,7 +17,7 @@
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.template.edit.pivottable.property.edit.PivotTablePropertyEdit"
         caption="msg://pivotTablePropertyEditor"
-        messagesPack="com.haulmont.reports.gui" datasource="propertyDs">
+        messagesPack="io.jmix.reports.gui" datasource="propertyDs">
 
     <dsContext>
         <datasource id="propertyDs" class="com.haulmont.reports.entity.pivottable.PivotTableProperty"

@@ -16,7 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.valueformat.edit.ValueFormatEditor"
-        messagesPack="com.haulmont.reports.gui"
+        messagesPack="io.jmix.reports.gui"
         datasource="valuesFormatsDs"
         caption="msg://formatsEdit"
         focusComponent="gridLayout">

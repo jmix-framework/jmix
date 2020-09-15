@@ -14,21 +14,20 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
-        messagesPack="com.haulmont.reports.gui"
+<window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://report.browser.showExecutions">
     <data>
         <collection id="reportsDc"
-                    class="com.haulmont.reports.entity.Report"
-                    view="report.view">
+                    class="io.jmix.reports.entity.Report"
+                    fetchPlan="report.view">
             <loader id="reportsDl"/>
         </collection>
         <collection id="reportGroupsDc"
                     class="com.haulmont.reports.entity.ReportGroup"
-                    view="_local">
+                    fetchPlan="_local">
             <loader id="reportGroupsDl">
                 <query>
-                    <![CDATA[select e from report$ReportGroup e]]>
+                    <![CDATA[select e from report_ReportGroup e]]>
                 </query>
             </loader>
         </collection>

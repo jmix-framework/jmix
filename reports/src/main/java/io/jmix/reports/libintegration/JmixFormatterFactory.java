@@ -24,14 +24,14 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-public class CubaFormatterFactory extends DefaultFormatterFactory {
+public class JmixFormatterFactory extends DefaultFormatterFactory {
 
     @Autowired
     private BeanFactory beanFactory;
 
     protected boolean useOfficeForDocumentConversion = true;
 
-    public CubaFormatterFactory() {
+    public JmixFormatterFactory() {
         super();
         FormatterCreator ftlCreator = factoryInput -> {
             HtmlFormatter htmlFormatter = beanFactory.getBean(CubaHtmlFormatter.class,factoryInput);

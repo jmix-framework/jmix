@@ -15,7 +15,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity(name = "report$ReportExecution")
+@Entity(name = "report_ReportExecution")
 @Table(name = "REPORT_EXECUTION")
 public class ReportExecution extends BaseUuidEntity implements Creatable {
     private static final long serialVersionUID = -1714474379895234441L;

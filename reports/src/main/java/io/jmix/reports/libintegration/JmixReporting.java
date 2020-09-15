@@ -42,7 +42,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class CubaReporting extends Reporting {
+public class JmixReporting extends Reporting {
     public static final String REPORT_FILE_NAME_KEY = "__REPORT_FILE_NAME";
 
     protected Scripting scripting;

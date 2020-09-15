@@ -16,7 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.template.edit.ChartEditFrame"
-        messagesPack="com.haulmont.reports.gui">
+        messagesPack="io.jmix.reports.gui">
 
     <dsContext>
         <datasource id="pieChartDs" class="com.haulmont.reports.entity.charts.PieChartDescription" view="_local"

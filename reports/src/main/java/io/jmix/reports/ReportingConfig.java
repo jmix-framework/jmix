@@ -31,7 +31,7 @@ public class ReportingConfig {
 
     String officePath;
 
-    List<String> officePorts;
+    List<Integer> officePorts;
 
     int docFormatterTimeout;
 
@@ -71,8 +71,12 @@ public class ReportingConfig {
 
     int historyCleanupMaxItemsPerReport;
 
+    int countOfRetry;
+
+    boolean useOfficeForDocumentConversion;
+
     public ReportingConfig(@DefaultValue("/") String officePath,
-                           @DefaultValue("8100;8101;8102;8103") List<String> officePorts,
+                           @DefaultValue("8100;8101;8102;8103") List<Integer> officePorts,
                            @DefaultValue("20") int docFormatterTimeout,
                            @DefaultValue("false") boolean displayDeviceAvailable,
                            String pdfFontsDirectory,
@@ -91,7 +95,9 @@ public class ReportingConfig {
                            @DefaultValue("false") boolean historyRecordingEnabled,
                            @DefaultValue("false") boolean saveOutputDocumentsToHistory,
                            @DefaultValue("730") int historyCleanupMaxDays,
-                           @DefaultValue("1000") int historyCleanupMaxItemsPerReport) {
+                           @DefaultValue("1000") int historyCleanupMaxItemsPerReport,
+                           @DefaultValue("3") int countOfRetry,
+                           @DefaultValue("false") boolean useOfficeForDocumentConversion) {
         this.officePath = officePath;
         this.officePorts = officePorts;
         this.docFormatterTimeout = docFormatterTimeout;
@@ -113,6 +119,8 @@ public class ReportingConfig {
         this.saveOutputDocumentsToHistory = saveOutputDocumentsToHistory;
         this.historyCleanupMaxDays = historyCleanupMaxDays;
         this.historyCleanupMaxItemsPerReport = historyCleanupMaxItemsPerReport;
+        this.countOfRetry = countOfRetry;
+        this.useOfficeForDocumentConversion = useOfficeForDocumentConversion;
     }
 
     /**
@@ -125,7 +133,7 @@ public class ReportingConfig {
     /**
      * @return The list of ports to start OpenOffice on.
      */
-    public List<String> getOfficePorts() {
+    public List<Integer> getOfficePorts() {
         return officePorts;
     }
 
@@ -273,5 +281,13 @@ public class ReportingConfig {
      */
     public int getHistoryCleanupMaxItemsPerReport() {
         return historyCleanupMaxItemsPerReport;
+    }
+
+    public int getCountOfRetry() {
+        return countOfRetry;
+    }
+
+    public boolean isUseOfficeForDocumentConversion() {
+        return useOfficeForDocumentConversion;
     }
 }

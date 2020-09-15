@@ -17,14 +17,13 @@
 package io.jmix.reports.gui.report.history;
 
 
-
-import com.haulmont.cuba.gui.components.Table;
-import io.jmix.ui.WindowParam;
-import io.jmix.ui.action.BaseAction;
-import com.haulmont.cuba.gui.export.ExportDisplay;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
+import io.jmix.ui.WindowParam;
+import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
@@ -35,7 +34,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@UiController("report$ReportExecution.browse")
+@UiController("report_ReportExecution.browse")
 @UiDescriptor("report-execution-browse.xml")
 public class ReportExecutionBrowser extends StandardLookup {
 
@@ -48,7 +47,7 @@ public class ReportExecutionBrowser extends StandardLookup {
     @Autowired
     protected MessageBundle messageBundle;
     @Autowired
-    protected ExportDisplay exportDisplay;
+    protected Downloader downloader;
 
     @WindowParam(name = REPORTS_PARAMETER)
     protected List<Report> filterByReports;
@@ -71,7 +70,7 @@ public class ReportExecutionBrowser extends StandardLookup {
     }
 
     protected void initDataLoader() {
-        StringBuilder query = new StringBuilder("select e from report$ReportExecution e");
+        StringBuilder query = new StringBuilder("select e from report_ReportExecution e");
 
         if (!CollectionUtils.isEmpty(filterByReports)) {
             query.append(" where e.report.id in :reportIds");
@@ -127,7 +126,7 @@ public class ReportExecutionBrowser extends StandardLookup {
         public void actionPerform(Component component) {
             ReportExecution execution = executionsTable.getSingleSelected();
             if (execution != null && execution.getOutputDocument() != null) {
-                exportDisplay.show(execution.getOutputDocument(), null);
+                downloader.download(execution.getOutputDocument());
             }
         }
     }

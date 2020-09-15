@@ -16,7 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.template.edit.pivottable.aggregation.edit.PivotTableAggregationEdit"
-        messagesPack="com.haulmont.reports.gui"
+        messagesPack="io.jmix.reports.gui"
         caption="msg://pivotTableAggregationEditor"
         datasource="aggregationDs">
 

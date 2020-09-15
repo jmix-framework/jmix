@@ -15,7 +15,6 @@
  */
 package io.jmix.reports.libintegration;
 
-import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.yarg.exception.OpenOfficeException;
 import com.haulmont.yarg.exception.ReportingInterruptedException;
 import com.haulmont.yarg.formatters.impl.doc.connector.NoFreePortsException;
@@ -27,12 +26,17 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.PreDestroy;
+import java.util.List;
 import java.util.concurrent.*;
 
-public class CubaOfficeIntegration extends OfficeIntegration implements CubaOfficeIntegrationMBean {
+public class JmixOfficeIntegration extends OfficeIntegration implements CubaOfficeIntegrationMBean {
 
-    public CubaOfficeIntegration(String openOfficePath, Integer... ports) {
+    public JmixOfficeIntegration(String openOfficePath, Integer... ports) {
         super(openOfficePath, ports);
+    }
+
+    public JmixOfficeIntegration(String openOfficePath, List<Integer> ports) {
+        super(openOfficePath, ports.toArray(new Integer[0]));
     }
 
     @Override

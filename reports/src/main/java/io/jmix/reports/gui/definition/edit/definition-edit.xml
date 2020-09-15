@@ -16,7 +16,7 @@
 
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         class="com.haulmont.reports.gui.definition.edit.BandDefinitionEditor"
-        messagesPack="com.haulmont.reports.gui">
+        messagesPack="io.jmix.reports.gui">
 
     <companions>
         <desktop class="com.haulmont.reports.desktop.gui.BandDefinitionEditorCompanion"/>

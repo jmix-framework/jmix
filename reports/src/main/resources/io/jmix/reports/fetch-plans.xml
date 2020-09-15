@@ -15,37 +15,37 @@
   ~ limitations under the License.
   -->
 
-<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+<fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <view entity="report$ReportTemplate" name="template.edit" extends="_local">
+    <fetchPlan entity="report$ReportTemplate" name="template.edit" extends="_local">
         <property name="report">
             <property name="xml"/>
             <property name="name"/>
             <property name="localeNames"/>
         </property>
-    </view>
+    </fetchPlan>
 
-    <view entity="report$Report" name="report.edit" extends="_local">
-        <property name="templates" view="template.edit"/>
-        <property name="defaultTemplate" view="template.edit"/>
-        <property name="group" view="_local"/>
-    </view>
+    <fetchPlan entity="report$Report" name="report.edit" extends="_local">
+        <property name="templates" fetchPlan="template.edit"/>
+        <property name="defaultTemplate" fetchPlan="template.edit"/>
+        <property name="group" fetchPlan="_local"/>
+    </fetchPlan>
 
-    <view entity="report$Report" name="report.view">
+    <fetchPlan entity="report$Report" name="report.fetchPlan">
         <property name="name"/>
         <property name="localeNames"/>
         <property name="code"/>
         <property name="description"/>
         <property name="reportType"/>
-        <property name="group" view="_minimal"/>
-    </view>
+        <property name="group" fetchPlan="_minimal"/>
+    </fetchPlan>
 
-    <view entity="report$Report" name="report.withTemplates" extends="_minimal">
-        <property name="templates" view="_minimal"/>
-    </view>
+    <fetchPlan entity="report$Report" name="report.withTemplates" extends="_minimal">
+        <property name="templates" fetchPlan="_minimal"/>
+    </fetchPlan>
 
-    <view entity="report$ReportExecution" name="reportExecution.browse" extends="_local">
-        <property name="user" view="_minimal"/>
-        <property name="outputDocument" view="_minimal"/>
-    </view>
-</views>
+    <fetchPlan entity="report$ReportExecution" name="reportExecution.browse" extends="_local">
+        <property name="user" fetchPlan="_minimal"/>
+        <property name="outputDocument" fetchPlan="_minimal"/>
+    </fetchPlan>
+</fetchPlans>

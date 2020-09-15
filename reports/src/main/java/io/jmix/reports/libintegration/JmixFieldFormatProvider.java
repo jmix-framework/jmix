@@ -17,17 +17,17 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.core.global.Messages;
-import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.yarg.formatters.impl.DefaultFormatProvider;
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class CubaFieldFormatProvider implements DefaultFormatProvider {
+public class JmixFieldFormatProvider implements DefaultFormatProvider {
 
     @Autowired
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
 
     @Autowired
     protected Messages messages;
@@ -40,8 +40,8 @@ public class CubaFieldFormatProvider implements DefaultFormatProvider {
         if (o != null) {
             Datatype datatype = Datatypes.get(o.getClass());
             if (datatype != null) {
-                if (userSessionSource.checkCurrentUserSession()) {
-                    return datatype.format(o, userSessionSource.getLocale());
+                if (currentAuthentication.isSet()) {
+                    return datatype.format(o, currentAuthentication.getLocale());
                 } else {
                     return datatype.format(o);
                 }

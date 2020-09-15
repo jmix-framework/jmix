@@ -7,9 +7,9 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.formatters.factory.inline.DefaultInlinersProvider;
 
-public class CubaInlinersProvider extends DefaultInlinersProvider {
+public class JmixInlinersProvider extends DefaultInlinersProvider {
 
-    public CubaInlinersProvider(){
+    public JmixInlinersProvider(){
         super();
         addInliner(new FileStorageContentInliner());
     }

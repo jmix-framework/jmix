@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-public class CubaGroovyDataLoader implements ReportDataLoader {
+public class JmixGroovyDataLoader implements ReportDataLoader {
     protected Scripting scripting;
 
     @Autowired
@@ -39,7 +39,7 @@ public class CubaGroovyDataLoader implements ReportDataLoader {
     protected GroovyScriptParametersProvider groovyScriptParametersProvider;
 
     @Autowired
-    public CubaGroovyDataLoader(Scripting scripting) {
+    public JmixGroovyDataLoader(Scripting scripting) {
         this.scripting = scripting;
     }
 

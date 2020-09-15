@@ -43,7 +43,7 @@ import java.util.Map;
 import static io.jmix.reports.entity.DataSet.*;
 import static java.lang.String.format;
 
-public class CubaJsonDataLoader extends JsonDataLoader {
+public class JmixJsonDataLoader extends JsonDataLoader {
 
     protected Scripting scripting;
 
@@ -54,7 +54,7 @@ public class CubaJsonDataLoader extends JsonDataLoader {
     protected Resources resources;
 
     @Autowired
-    public CubaJsonDataLoader(Scripting scripting) {
+    public JmixJsonDataLoader(Scripting scripting) {
         this.scripting = scripting;
     }
 

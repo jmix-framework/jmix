@@ -17,7 +17,7 @@
 <window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="msg://scriptEditor"
         class="com.haulmont.reports.gui.definition.edit.scripteditordialog.ScriptEditorDialog"
-        messagesPack="com.haulmont.reports.gui">
+        messagesPack="io.jmix.reports.gui">
     <dialogMode height="700"
                 resizable="true"
                 width="1200"/>

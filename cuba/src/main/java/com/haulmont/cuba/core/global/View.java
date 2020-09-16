@@ -192,7 +192,7 @@ public class View extends FetchPlan {
 
     @Deprecated
     public View addProperty(String name, @Nullable FetchPlan view, boolean lazy) {
-        properties.put(name, new FetchPlanProperty(name, view, lazy));
+        properties.put(name, new FetchPlanProperty(name, view));
         return this;
     }
 

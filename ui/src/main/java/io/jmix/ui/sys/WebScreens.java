@@ -66,6 +66,7 @@ import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -201,9 +202,9 @@ public class WebScreens implements Screens {
 
         Timer.Sample loadSample = Timer.start(meterRegistry);
 
-        ComponentLoaderContext componentLoaderContext = !(controller instanceof CubaLegacyFrame)
-                ? new ComponentLoaderContext(options)
-                : applicationContext.getBean(DsSupport.class).createComponentLoaderContext(options); // TODO refactor
+        ComponentLoaderContext componentLoaderContext = applicationContext.containsBean(DsSupport.NAME)
+                ? applicationContext.getBean(DsSupport.class).createComponentLoaderContext(options)
+                : new ComponentLoaderContext(options);
 
         componentLoaderContext.setFullFrameId(windowInfo.getId());
         componentLoaderContext.setCurrentFrameId(windowInfo.getId());

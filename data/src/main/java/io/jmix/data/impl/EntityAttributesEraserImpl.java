@@ -68,6 +68,10 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
             for (String attribute : referencesCollector.getAttributes(entity)) {
                 Collection<JmixEntity> references = referencesCollector.getReferencesByAttribute(entity, attribute);
 
+                for (JmixEntity reference : references) {
+                    entity.__getEntityEntry().getSecurityState().addErasedId(attribute, EntityValues.getId(reference));
+                }
+
                 Object value = EntityValues.getValue(entity, attribute);
                 if (value instanceof Collection) {
                     @SuppressWarnings("unchecked")
@@ -86,7 +90,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         SecurityState securityState = entity.__getEntityEntry().getSecurityState();
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (String attrName : securityState.getErasedAttributes()) {
-            List<Object> ids = securityState.getErasedIds(attrName);
+            Collection<Object> ids = securityState.getErasedIds(attrName);
             if (!ids.isEmpty()) {
                 MetaProperty metaProperty = metaClass.getProperty(attrName);
                 if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
@@ -114,7 +118,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     }
 
     @SuppressWarnings("unchecked")
-    protected void restoreSingleAttribute(JmixEntity entity, MetaProperty metaProperty, List<Object> ids) {
+    protected void restoreSingleAttribute(JmixEntity entity, MetaProperty metaProperty, Collection<Object> ids) {
         Object id = Iterables.getFirst(ids, null);
         assert id != null;
         JmixEntity reference = dataManager.getReference((Class<JmixEntity>) metaProperty.getJavaType(), id);

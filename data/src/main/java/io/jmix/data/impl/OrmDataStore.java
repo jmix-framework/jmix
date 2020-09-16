@@ -30,11 +30,11 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.PermissionType;
 import io.jmix.data.*;
-import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.accesscontext.CrudEntityContext;
 import io.jmix.data.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
+import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
@@ -177,6 +177,7 @@ public class OrmDataStore implements DataStore {
 
         E result = null;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
+        boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
 
         TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
         try {
@@ -191,7 +192,7 @@ public class OrmDataStore implements DataStore {
                     && context.getQuery().getQueryString() != null)
                     && context.getId() != null;
 
-            FetchPlan fetchPlan = createFetchPlan(context);
+            FetchPlan fetchPlan = createFetchPlan(context, applyInMemoryPredicates);
             Query query = createQuery(em, context, singleResult, false);
 
             query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
@@ -266,6 +267,7 @@ public class OrmDataStore implements DataStore {
 
         List<E> resultList;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
+        boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
 
         TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
         try {
@@ -281,7 +283,7 @@ public class OrmDataStore implements DataStore {
                     context.getQuery().setQueryString(transformer.getResult());
                 }
             }
-            FetchPlan fetchPlan = createFetchPlan(context);
+            FetchPlan fetchPlan = createFetchPlan(context, applyInMemoryPredicates);
 
             InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
             accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
@@ -458,7 +460,7 @@ public class OrmDataStore implements DataStore {
                 context.getQuery().setMaxResults(0);
 
                 Query query = createQuery(em, context, false, false);
-                query.setHint(PersistenceHints.FETCH_PLAN, createFetchPlan(context));
+                query.setHint(PersistenceHints.FETCH_PLAN, createFetchPlan(context, true));
 
                 resultList = getResultList(context, query, filteringPredicate, ensureDistinct);
 
@@ -868,12 +870,20 @@ public class OrmDataStore implements DataStore {
         return query;
     }
 
-    protected FetchPlan createFetchPlan(LoadContext<?> context) {
+    protected FetchPlan createFetchPlan(LoadContext<?> context, boolean applyInMemoryPredicates) {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         FetchPlan fetchPlan = context.getFetchPlan() != null ? context.getFetchPlan() :
                 fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
 
-        return fetchPlans.builder(fetchPlan).partial(context.isLoadPartialEntities()).build();
+        if (applyInMemoryPredicates) {
+            return fetchPlans.builder(fetchPlan)
+                    .partial(false)
+                    .build();
+        } else {
+            return fetchPlans.builder(fetchPlan)
+                    .partial(context.isLoadPartialEntities())
+                    .build();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1041,44 +1051,6 @@ public class OrmDataStore implements DataStore {
         }
     }
 
-
-//    protected boolean needToApplyInMemoryReadConstraints(LoadContext context) {
-//        return isAuthorizationRequired(context) && security.hasConstraints()
-//                && needToApplyByPredicate(context, metaClass ->
-//                security.hasInMemoryConstraints(metaClass, ConstraintOperationType.READ, ConstraintOperationType.ALL));
-//    }
-
-    protected boolean needToApplyByPredicate(LoadContext context, Predicate<MetaClass> hasConstraints) {
-        if (context.getFetchPlan() == null) {
-            MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-            return hasConstraints.test(metaClass);
-        }
-
-        for (Class aClass : collectEntityClasses(context.getFetchPlan(), new HashSet<>())) {
-            if (hasConstraints.test(metadata.getClass(aClass))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected Set<Class> collectEntityClasses(FetchPlan view, Set<FetchPlan> visited) {
-        if (visited.contains(view)) {
-            return Collections.emptySet();
-        } else {
-            visited.add(view);
-        }
-
-        HashSet<Class> classes = new HashSet<>();
-        classes.add(view.getEntityClass());
-        for (FetchPlanProperty viewProperty : view.getProperties()) {
-            if (viewProperty.getFetchPlan() != null) {
-                classes.addAll(collectEntityClasses(viewProperty.getFetchPlan(), visited));
-            }
-        }
-        return classes;
-    }
-
     protected TransactionStatus beginLoadTransaction(boolean joinTransaction) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName(LOAD_TX_PREFIX + txCount.incrementAndGet());
@@ -1204,5 +1176,39 @@ public class OrmDataStore implements DataStore {
             exception.addSuppressed(e);
         }
         throw exception;
+    }
+
+    protected boolean hasInMemoryPredicates(LoadContext<?> context) {
+         return collectEntityClasses(context).stream()
+                 .anyMatch(entityClass -> {
+                     InMemoryCrudEntityContext crudContext =
+                             new InMemoryCrudEntityContext(entityClass);
+                     accessManager.applyConstraints(crudContext, context.getAccessConstraints());
+                     return crudContext.readPredicate() != null;
+                 });
+    }
+
+    protected Collection<MetaClass> collectEntityClasses(LoadContext<?> context) {
+        if (context.getFetchPlan() == null) {
+            return Collections.singletonList(context.getEntityMetaClass());
+        }
+        return collectEntityClasses(context.getFetchPlan(), new HashSet<>());
+    }
+
+    protected Collection<MetaClass> collectEntityClasses(FetchPlan fetchPlan, Set<FetchPlan> visited) {
+        if (visited.contains(fetchPlan)) {
+            return Collections.emptySet();
+        } else {
+            visited.add(fetchPlan);
+        }
+
+        Set<MetaClass> entityClasses = new HashSet<>();
+        entityClasses.add(metadata.getClass(fetchPlan.getEntityClass()));
+        for (FetchPlanProperty property : fetchPlan.getProperties()) {
+            if (property.getFetchPlan() != null) {
+                entityClasses.addAll(collectEntityClasses(property.getFetchPlan(), visited));
+            }
+        }
+        return entityClasses;
     }
 }

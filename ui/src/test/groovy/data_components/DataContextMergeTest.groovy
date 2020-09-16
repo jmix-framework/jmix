@@ -765,7 +765,7 @@ class DataContextMergeTest extends DataContextSpec {
         Customer customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
         Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
 
-        def order11 = dataManager.load(Id.of(order1)).view { it.add('number') }.one()
+        def order11 = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
 
         when:
         def order11t = context.merge(order11)
@@ -776,13 +776,13 @@ class DataContextMergeTest extends DataContextSpec {
 //        }
 
         and:
-        def order2 = dataManager.load(Id.of(order1)).view { it.add('number') }.one()
+        def order2 = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
         def order2t = context.merge(order2)
         order2t.number = '333'
         context.commit()
 
         then:
-        def order3 = dataManager.load(Id.of(order1)).view { it.addAll('number', 'customer.name') }.one()
+        def order3 = dataManager.load(Id.of(order1)).fetchPlan { it.addAll('number', 'customer.name') }.one()
         order3.customer != null
 
         cleanup:
@@ -810,14 +810,14 @@ class DataContextMergeTest extends DataContextSpec {
 //        Order order1 = dataManager.save(new Order(number: '111', customer: customer1))
 //
 //        when:
-//        def order11 = dataManager.load(Id.of(order1)).view { it.add('number') }.one()
+//        def order11 = dataManager.load(Id.of(order1)).fetchPlan { it.add('number') }.one()
 //
 //        then:
 //        JmixEntityFetchGroup fg = order11._persistence_fetchGroup
 //        fg != null
 //
 //        when:
-//        def order11_local = dataManager.load(Id.of(order1)).view {it.addView(View.LOCAL).addSystem()}.one()
+//        def order11_local = dataManager.load(Id.of(order1)).fetchPlan {it.addView(View.LOCAL).addSystem()}.one()
 //
 //        then:
 //        JmixEntityFetchGroup fg_local = order11_local._persistence_fetchGroup

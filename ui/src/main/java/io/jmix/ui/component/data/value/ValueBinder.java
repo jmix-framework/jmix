@@ -341,7 +341,7 @@ public class ValueBinder {
                 String propertyName = metaPropertyPath.getMetaProperty().getName();
                 Object value = EntityValues.getValue(targetItem, propertyName);
 
-                List<String> erasedAttributes = entityEntry.getSecurityState().getErasedAttributes();
+                Collection<String> erasedAttributes = entityEntry.getSecurityState().getErasedAttributes();
 
                 if (value == null && erasedAttributes.contains(propertyName)) {
                     field.setRequired(false);

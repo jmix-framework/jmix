@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+@Component(DsSupport.NAME)
 public class CubaDsSupport implements DsSupport {
 
     protected DataSupplier defaultDataSupplier = new GenericDataSupplier();

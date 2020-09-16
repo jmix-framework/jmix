@@ -155,7 +155,7 @@ public class RestJsonTransformations {
     }
 
     protected void loadConfig(Element rootElem) {
-        for (Element transformationElem : Dom4j.elements(rootElem, "transformation")) {
+        for (Element transformationElem : rootElem.elements("transformation")) {
             String modelVersion = transformationElem.attributeValue("modelVersion");
             if (Strings.isNullOrEmpty(modelVersion)) {
                 log.error("modelVersion attribute is not defined");
@@ -185,7 +185,7 @@ public class RestJsonTransformations {
     protected void parseStandardTransformers(String currentEntityName, String oldEntityName, String version, Element transformationElem) {
         BiMap<String, String> renamedAttributesMap = HashBiMap.create();
 
-        for (Element renameAttributeElem : Dom4j.elements(transformationElem, "renameAttribute")) {
+        for (Element renameAttributeElem : transformationElem.elements("renameAttribute")) {
             String oldAttributeName = renameAttributeElem.attributeValue("oldName");
             if (Strings.isNullOrEmpty(oldAttributeName)) {
                 log.error("oldName attribute for renamed attribute is not defined");
@@ -262,7 +262,7 @@ public class RestJsonTransformations {
 
     protected void processOneDirectionConfig(Element element, StandardEntityJsonTransformer transformer) {
         Set<String> removeAttributes = new HashSet<>();
-        for (Element removeAttributeElem : Dom4j.elements(element, "removeAttribute")) {
+        for (Element removeAttributeElem : element.elements("removeAttribute")) {
             String name = removeAttributeElem.attributeValue("name");
             if (Strings.isNullOrEmpty(name)) {
                 log.error("name for removeAttribute element is not specified");

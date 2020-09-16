@@ -165,7 +165,7 @@ public class RestServicesConfiguration {
     }
 
     protected void loadConfig(Element rootElem) {
-        for (Element serviceElem : Dom4j.elements(rootElem, "service")) {
+        for (Element serviceElem : rootElem.elements("service")) {
             String serviceName = serviceElem.attributeValue("name");
             if (!beanFactory.containsBean(serviceName)) {
                 log.error("Service not found: {}", serviceName);
@@ -173,11 +173,11 @@ public class RestServicesConfiguration {
             }
             List<RestMethodInfo> methodInfos = new ArrayList<>();
 
-            for (Element methodElem : Dom4j.elements(serviceElem, "method")) {
+            for (Element methodElem : serviceElem.elements("method")) {
                 String methodName = methodElem.attributeValue("name");
                 boolean anonymousAllowed = "true".equals(methodElem.attributeValue("anonymousAllowed"));
                 List<RestMethodParamInfo> params = new ArrayList<>();
-                for (Element paramEl : Dom4j.elements(methodElem, "param")) {
+                for (Element paramEl : methodElem.elements("param")) {
                     params.add(new RestMethodParamInfo(paramEl.attributeValue("name"), paramEl.attributeValue("type")));
                 }
                 Method method = _findMethod(serviceName, methodName, params);

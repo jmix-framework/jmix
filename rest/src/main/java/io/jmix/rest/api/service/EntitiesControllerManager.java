@@ -426,7 +426,7 @@ public class EntitiesControllerManager {
                 .path("/{id}")
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
-        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
+        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithFetchPlan(entity, responseView)) {
             entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
         }
         restControllerUtils.applyAttributesSecurity(entity);
@@ -451,7 +451,7 @@ public class EntitiesControllerManager {
         if (restProperties.isResponseViewEnabled() && responseView != null) {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 JmixEntity mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
-                if (!entityStates.isLoadedWithView(mainEntity, responseView)) {
+                if (!entityStates.isLoadedWithFetchPlan(mainEntity, responseView)) {
                     mainEntity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
                 }
                 restControllerUtils.applyAttributesSecurity(mainEntity);
@@ -503,7 +503,7 @@ public class EntitiesControllerManager {
         //there may be multiple entities in importedEntities (because of @Composition references), so we must find
         // the main entity that will be returned
         JmixEntity entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
-        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithView(entity, responseView)) {
+        if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithFetchPlan(entity, responseView)) {
             entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
         }
         restControllerUtils.applyAttributesSecurity(entity);

@@ -22,7 +22,9 @@ import io.jmix.ui.builder.EditMode
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.editorscreenfacet.screens.EditorScreenFacetTestScreen
+import spock.lang.Ignore
 
+@Ignore
 class EditorScreenFacetTest extends UiScreenSpec {
 
     void setup() {

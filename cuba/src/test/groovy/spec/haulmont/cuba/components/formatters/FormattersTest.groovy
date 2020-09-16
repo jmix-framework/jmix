@@ -26,11 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 import spec.haulmont.cuba.components.formatters.screens.FormattersScreen
 import spec.haulmont.cuba.web.UiScreenSpec
+import spock.lang.Ignore
 
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
 // todo: move to jmix-ui module
+@Ignore
 class FormattersTest extends UiScreenSpec {
 
     @Autowired

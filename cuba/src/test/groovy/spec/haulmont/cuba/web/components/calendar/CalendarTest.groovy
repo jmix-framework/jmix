@@ -22,7 +22,9 @@ import io.jmix.core.metamodel.datatype.impl.*
 import io.jmix.ui.component.Calendar
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.calendar.screens.CalendarScreen
+import spock.lang.Ignore
 
+@Ignore
 @SuppressWarnings("GroovyAssignabilityCheck")
 class CalendarTest extends UiScreenSpec {
 

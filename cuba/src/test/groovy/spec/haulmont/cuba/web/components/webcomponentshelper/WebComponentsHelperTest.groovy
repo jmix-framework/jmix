@@ -21,7 +21,9 @@ import io.jmix.ui.component.impl.WebComponentsHelper
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.webcomponentshelper.screen.WchTestScreen
+import spock.lang.Ignore
 
+@Ignore
 class WebComponentsHelperTest extends UiScreenSpec {
 
     void setup() {

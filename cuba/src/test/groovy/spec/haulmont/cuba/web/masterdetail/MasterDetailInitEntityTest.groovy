@@ -20,9 +20,11 @@ import io.jmix.ui.component.Table
 import io.jmix.ui.screen.MasterDetailScreen
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.masterdetail.screens.UserMasterDetail
+import spock.lang.Ignore
 
 import java.util.function.Consumer
 
+@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class MasterDetailInitEntityTest extends UiScreenSpec {
 

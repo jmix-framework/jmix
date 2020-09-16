@@ -27,7 +27,7 @@ import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridAggregationScreen
 import spock.lang.Ignore
 
-
+@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataGridAggregationTest extends UiScreenSpec {
 

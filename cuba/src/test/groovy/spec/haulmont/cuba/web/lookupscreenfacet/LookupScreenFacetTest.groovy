@@ -21,7 +21,9 @@ import com.haulmont.cuba.web.app.main.MainScreen
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.lookupscreenfacet.screens.LookupScreenFacetTestScreen
+import spock.lang.Ignore
 
+@Ignore
 @SuppressWarnings('GroovyAccessibility')
 class LookupScreenFacetTest extends UiScreenSpec {
 

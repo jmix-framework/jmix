@@ -131,20 +131,6 @@ public interface EntitySerialization {
      * deserialized like in the {@link #entityFromJson(String, MetaClass, EntitySerializationOption...)} method
      *
      * @param json    a string that represents an object
-     * @param clazz   java class of the object
-     * @param options options specifying how a JSON object graph was serialized
-     * @return deserialized object
-     * @deprecated use {@link #objectFromJson(String, Type, EntitySerializationOption...)}
-     */
-    @Deprecated
-    <T> T objectFromJson(String json, Class<T> clazz, EntitySerializationOption... options);
-
-    /**
-     * Deserializes an object of any class from JSON. Date fields are deserialized according to the {@link
-     * io.jmix.core.metamodel.datatype.impl.DateTimeDatatype} format, entities object and fields of Entity type are
-     * deserialized like in the {@link #entityFromJson(String, MetaClass, EntitySerializationOption...)} method
-     *
-     * @param json    a string that represents an object
      * @param type    type of the object
      * @param options options specifying how a JSON object graph was serialized
      * @return deserialized object

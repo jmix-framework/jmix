@@ -274,21 +274,6 @@ public class MessageTools {
     }
 
     /**
-     * @deprecated Use {@link #getDefaultRequiredMessage(MetaClass, String)}
-     * @return default required message for specified property.
-     */
-    @Deprecated
-    public String getDefaultRequiredMessage(MetaProperty metaProperty) {
-        String notNullMessage = getNotNullMessage(metaProperty);
-        if (notNullMessage != null) {
-            return notNullMessage;
-        }
-
-        return messages.formatMessage(
-                "validation.required.defaultMsg", getPropertyCaption(metaProperty));
-    }
-
-    /**
      * Get default required message for specified property of MetaClass.
      *
      * @param metaClass     MetaClass containing the property

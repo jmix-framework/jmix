@@ -37,12 +37,6 @@ public class FetchPlanProperty implements Serializable {
         this(name, view, FetchMode.AUTO);
     }
 
-    @Deprecated
-    public FetchPlanProperty(String name, @Nullable FetchPlan view, boolean lazy) {
-        this.name = name;
-        this.view = view;
-    }
-
     public FetchPlanProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
         this.name = name;
         this.view = view;

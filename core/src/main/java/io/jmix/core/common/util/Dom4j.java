@@ -140,30 +140,6 @@ public final class Dom4j {
         }
     }
 
-    /**
-     * @deprecated Use Dom4j API.
-     */
-    @Deprecated
-    public static List<Element> elements(Element element) {
-        return element.elements();
-    }
-
-    /**
-     * @deprecated Use Dom4j API.
-     */
-    @Deprecated
-    public static List<Element> elements(Element element, String name) {
-        return element.elements(name);
-    }
-
-    /**
-     * @deprecated Use Dom4j API.
-     */
-    @Deprecated
-    public static List<Attribute> attributes(Element element) {
-        return element.attributes();
-    }
-
     public static void storeMap(Element parentElement, Map<String, String> map) {
         if (map == null) {
             return;

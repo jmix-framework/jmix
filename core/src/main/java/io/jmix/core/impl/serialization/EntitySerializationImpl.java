@@ -135,12 +135,6 @@ public class EntitySerializationImpl implements EntitySerialization {
     }
 
     @Override
-    public <T> T objectFromJson(String json, Class<T> clazz, EntitySerializationOption... options) {
-        context.remove();
-        return createGsonForDeserialization(null, options).fromJson(json, clazz);
-    }
-
-    @Override
     public <T> T objectFromJson(String json, Type type, EntitySerializationOption... options) {
         context.remove();
         return createGsonForDeserialization(null, options).fromJson(json, type);

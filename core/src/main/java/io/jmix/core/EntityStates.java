@@ -22,13 +22,11 @@ import io.jmix.core.entity.EntitySystemValues;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -126,29 +124,6 @@ public class EntityStates {
     }
 
     /**
-     * DEPRECATED. Use {@link MetadataTools#getEntityName(Class)} instead.
-     */
-    @Deprecated
-    public String getEntityName(Class<?> entityClass) {
-        Annotation annotation = entityClass.getAnnotation(javax.persistence.Entity.class);
-        if (annotation == null)
-            throw new IllegalArgumentException("Class " + entityClass + " is not a persistent entity");
-        String name = ((javax.persistence.Entity) annotation).name();
-        if (!StringUtils.isEmpty(name))
-            return name;
-        else
-            return entityClass.getSimpleName();
-    }
-
-    /**
-     * DEPRECATED. Use {@link MetadataTools#isSoftDeletable(Class)} instead.
-     */
-    @Deprecated
-    public boolean isSoftDeleted(Class entityClass) {
-        return metadataTools.isSoftDeletable(entityClass);
-    }
-
-    /**
      * Checks if the property is loaded from DB.
      * <p>Non-persistent attributes are considered loaded if they do not have related properties, or all related
      * properties are loaded.
@@ -224,21 +199,6 @@ public class EntityStates {
     }
 
     /**
-     * Check that all properties of the view are loaded from DB for the passed entity.
-     * Throws exception if some property is not loaded.
-     *
-     * @param entity entity
-     * @param view   view
-     * @throws IllegalArgumentException if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(JmixEntity, FetchPlan)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void checkLoadedWithView(JmixEntity entity, FetchPlan view) {
-        checkLoadedWithFetchPlan(entity, view);
-    }
-
-    /**
      * Check that all properties of the fetch plan are loaded from DB for the passed entity.
      * Throws exception if some property is not loaded.
      *
@@ -246,27 +206,11 @@ public class EntityStates {
      * @param fetchPlan fetch plan
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
-    @SuppressWarnings("unchecked")
     public void checkLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan) {
         checkNotNullArgument(entity);
         checkNotNullArgument(fetchPlan);
 
         checkLoadedWithFetchPlan(entity, fetchPlan, Sets.newIdentityHashSet());
-    }
-
-    /**
-     * Check that all properties of the view are loaded from DB for the passed entity.
-     * Throws exception if some property is not loaded.
-     *
-     * @param entity   entity
-     * @param viewName view name
-     * @throws IllegalArgumentException if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#checkLoadedWithFetchPlan(JmixEntity, String)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public void checkLoadedWithView(JmixEntity entity, String viewName) {
-        checkLoadedWithFetchPlan(entity, viewName);
     }
 
     /**
@@ -277,7 +221,6 @@ public class EntityStates {
      * @param fetchPlanName fetch plan name
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
-    @SuppressWarnings("unchecked")
     public void checkLoadedWithFetchPlan(JmixEntity entity, String fetchPlanName) {
         checkNotNullArgument(fetchPlanName);
 
@@ -332,46 +275,17 @@ public class EntityStates {
     }
 
     /**
-     * Check that all properties of the view are loaded from DB for the passed entity.
-     *
-     * @param entity    entity
-     * @param fetchPlan view name
-     * @return false if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(JmixEntity, FetchPlan)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public boolean isLoadedWithView(JmixEntity entity, FetchPlan fetchPlan) {
-        return isLoadedWithFetchPlan(entity, fetchPlan);
-    }
-
-    /**
      * Check that all properties of the fetch plan are loaded from DB for the passed entity.
      *
      * @param entity    entity
      * @param fetchPlan fetch plan
      * @return false if at least one of properties is not loaded
      */
-    @SuppressWarnings("unchecked")
     public boolean isLoadedWithFetchPlan(JmixEntity entity, FetchPlan fetchPlan) {
         checkNotNullArgument(entity);
         checkNotNullArgument(fetchPlan);
 
         return isLoadedWithFetchPlan(entity, fetchPlan, Sets.newIdentityHashSet());
-    }
-
-    /**
-     * Check that all properties of the view are loaded from DB for the passed entity.
-     *
-     * @param entity        entity
-     * @param fetchPlanName view name
-     * @return false if at least one of properties is not loaded
-     * @deprecated replaced by {@link EntityStates#isLoadedWithFetchPlan(JmixEntity, String)}
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public boolean isLoadedWithView(JmixEntity entity, String fetchPlanName) {
-        return isLoadedWithFetchPlan(entity, fetchPlanName);
     }
 
     /**
@@ -381,7 +295,6 @@ public class EntityStates {
      * @param fetchPlanName fetch plan name
      * @return false if at least one of properties is not loaded
      */
-    @SuppressWarnings("unchecked")
     public boolean isLoadedWithFetchPlan(JmixEntity entity, String fetchPlanName) {
         checkNotNullArgument(fetchPlanName);
 

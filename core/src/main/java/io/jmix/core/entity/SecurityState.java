@@ -15,11 +15,11 @@
  */
 package io.jmix.core.entity;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -34,46 +34,32 @@ public class SecurityState implements Serializable {
 
     private static final long serialVersionUID = 6613320540189701505L;
 
-    protected transient Multimap<String, Object> erasedData = null;
-
-    protected String[] filteredAttributes;
-
-    protected byte[] securityToken;
+    protected transient Multimap<String, Object> erasedData;
 
     @Nullable
     public Multimap<String, Object> getErasedData() {
         return erasedData;
     }
 
-    public void setErasedData(Multimap<String, Object> erasedData) {
-        this.erasedData = erasedData;
+    public Collection<String> getErasedAttributes() {
+        return erasedData == null ? Collections.emptyList() : erasedData.keySet();
     }
 
-    public List<String> getErasedAttributes() {
-        return filteredAttributes == null ? Collections.emptyList() : Arrays.asList(filteredAttributes);
-    }
-
-    public List<Object> getErasedIds(String attrName) {
-        return null;
+    public Collection<Object> getErasedIds(String attrName) {
+        return erasedData == null ? Collections.emptyList() : erasedData.get(attrName);
     }
 
     public void addErasedIds(String attrName, Collection<Object> erasedIds) {
+        if (erasedData == null) {
+            erasedData = HashMultimap.create();
+        }
         erasedData.putAll(attrName, erasedIds);
     }
 
     public void addErasedId(String attrName, Object erasedId) {
+        if (erasedData == null) {
+            erasedData = HashMultimap.create();
+        }
         erasedData.put(attrName, erasedId);
-    }
-
-    public void setFilteredAttributes(String[] filteredAttributes) {
-        this.filteredAttributes = filteredAttributes;
-    }
-
-    public byte[] getSecurityToken() {
-        return securityToken;
-    }
-
-    public void setSecurityToken(byte[] securityToken) {
-        this.securityToken = securityToken;
     }
 }

@@ -244,13 +244,13 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
 
             if (coreRestProperties.isRequiresSecurityToken()) {
-                SecurityState securityState = entity.__getEntityEntry().getSecurityState();
-                if (securityState != null) {
-                    byte[] securityToken = securityState.getSecurityToken();
-                    if (securityToken != null) {
-                        jsonObject.addProperty("__securityToken", Base64.getEncoder().encodeToString(securityToken));
-                    }
-                }
+                //TODO:jmix-core#18
+//                if (securityState != null) {
+//                    byte[] securityToken = securityState.getSecurityToken();
+//                    if (securityToken != null) {
+//                        jsonObject.addProperty("__securityToken", Base64.getEncoder().encodeToString(securityToken));
+//                    }
+//                }
             }
 
             return jsonObject;
@@ -453,11 +453,12 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
 
             if (coreRestProperties.isRequiresSecurityToken()) {
-                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
-                if (securityTokenJonPrimitive != null) {
-                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
-                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
-                }
+                //TODO:jmix-core#18
+//                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
+//                if (securityTokenJonPrimitive != null) {
+//                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
+//                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
+//                }
             }
 
             Table<Object, MetaClass, JmixEntity> processedEntities = context.get().getProcessedEntities();
@@ -592,11 +593,12 @@ public class EntitySerializationImpl implements EntitySerialization {
             readFields(jsonObject, entity);
             boolean isEmbeddable = entity.__getEntityEntry().isEmbeddable();
             if (coreRestProperties.isRequiresSecurityToken() && isEmbeddable) {
-                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
-                if (securityTokenJonPrimitive != null) {
-                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
-                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
-                }
+                //TODO:jmix-core#18
+//                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
+//                if (securityTokenJonPrimitive != null) {
+//                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
+//                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
+//                }
             }
             return entity;
         }

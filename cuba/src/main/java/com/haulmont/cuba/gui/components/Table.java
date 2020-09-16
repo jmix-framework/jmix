@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import com.haulmont.cuba.gui.components.data.table.SortableDatasourceTableItems;
@@ -39,6 +40,10 @@ import java.util.function.Function;
 @SuppressWarnings("rawtypes")
 public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
         HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
+
+    static <T extends JmixEntity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+        return new TypeToken<Table<T>>() {};
+    }
 
     /**
      * Sets {@code CollectionDatasource} as Table data source.

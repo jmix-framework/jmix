@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.table.DatasourceTreeTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -36,6 +37,10 @@ import javax.annotation.Nullable;
 @SuppressWarnings("rawtypes")
 public interface TreeTable<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.TreeTable<E>, HasSettings,
         HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
+
+    static <T extends JmixEntity> TypeToken<TreeTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+        return new TypeToken<TreeTable<T>>() {};
+    }
 
     /**
      * @return hierarchical datasource

@@ -16,7 +16,10 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
+
+import java.math.BigDecimal;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -26,4 +29,11 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface CurrencyField<V extends Number> extends Field<V>, io.jmix.ui.component.CurrencyField<V> {
+
+    TypeToken<CurrencyField<BigDecimal>> TYPE_DEFAULT = new TypeToken<CurrencyField<BigDecimal>>(){};
+    TypeToken<CurrencyField<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<CurrencyField<BigDecimal>>(){};
+
+    TypeToken<CurrencyField<Integer>> TYPE_INTEGER = new TypeToken<CurrencyField<Integer>>(){};
+    TypeToken<CurrencyField<Long>> TYPE_LONG = new TypeToken<CurrencyField<Long>>(){};
+    TypeToken<CurrencyField<Double>> TYPE_DOUBLE = new TypeToken<CurrencyField<Double>>(){};
 }

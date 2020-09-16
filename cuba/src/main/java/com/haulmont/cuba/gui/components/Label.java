@@ -34,6 +34,10 @@ import java.util.function.Function;
 @Deprecated
 public interface Label<V> extends DatasourceComponent<V>, io.jmix.ui.component.Label<V> {
 
+    static <T, V> TypeToken<Label<T>> of(Class<V> valueClass) {
+        return new TypeToken<Label<T>>(){};
+    }
+
     TypeToken<Label<String>> TYPE_DEFAULT = new TypeToken<Label<String>>(){};
     TypeToken<Label<String>> TYPE_STRING = new TypeToken<Label<String>>(){};
     TypeToken<Label<Integer>> TYPE_INTEGER = new TypeToken<Label<Integer>>(){};

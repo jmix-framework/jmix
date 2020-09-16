@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.table.DatasourceGroupTableItems;
 import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -34,6 +35,10 @@ import io.jmix.ui.component.data.TableItems;
 @SuppressWarnings("rawtypes")
 public interface GroupTable<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.GroupTable<E>, HasSettings,
         HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
+
+    static <T extends JmixEntity> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+        return new TypeToken<GroupTable<T>>() {};
+    }
 
     /**
      * @return group datasource

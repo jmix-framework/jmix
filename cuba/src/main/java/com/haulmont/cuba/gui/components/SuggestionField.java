@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
 
 /**
@@ -26,4 +27,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.SuggestionField<V>, HasCaptionMode {
+
+    static <T> TypeToken<SuggestionField<T>> of(Class<T> valueClass) {
+        return new TypeToken<SuggestionField<T>>() {};
+    }
 }

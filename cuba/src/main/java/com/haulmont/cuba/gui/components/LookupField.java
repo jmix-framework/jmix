@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.compatibility.LookupFieldFilterPredicateAdapter;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.ComboBox;
@@ -36,6 +37,12 @@ import java.util.function.Predicate;
 public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V>, LookupComponent<V> {
 
     String NAME = "lookupField";
+
+    TypeToken<LookupField<String>> TYPE_STRING = new TypeToken<LookupField<String>>(){};
+
+    static <T> TypeToken<LookupField<T>> of(Class<T> valueClass) {
+        return new TypeToken<LookupField<T>>() {};
+    }
 
     /**
      * @deprecated Use {@link #getNullSelectionCaption()} instead

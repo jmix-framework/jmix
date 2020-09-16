@@ -16,7 +16,12 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
+
+import java.sql.Date;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -26,4 +31,10 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface TimeField<V> extends Field<V>, io.jmix.ui.component.TimeField<V> {
+
+    TypeToken<TimeField<Date>> TYPE_DEFAULT = new TypeToken<TimeField<Date>>(){};
+
+    TypeToken<TimeField<java.sql.Time>> TYPE_TIME = new TypeToken<TimeField<java.sql.Time>>(){};
+    TypeToken<TimeField<LocalTime>> TYPE_LOCALTIME = new TypeToken<TimeField<LocalTime>>(){};
+    TypeToken<TimeField<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TimeField<OffsetTime>>(){};
 }

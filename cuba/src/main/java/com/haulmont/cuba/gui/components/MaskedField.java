@@ -16,7 +16,11 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -26,4 +30,14 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface MaskedField<V> extends TextInputField<V>, io.jmix.ui.component.MaskedField<V> {
+
+    TypeToken<MaskedField<String>> TYPE_DEFAULT = new TypeToken<MaskedField<String>>(){};
+    TypeToken<MaskedField<String>> TYPE_STRING = new TypeToken<MaskedField<String>>(){};
+
+    TypeToken<MaskedField<Integer>> TYPE_INTEGER = new TypeToken<MaskedField<Integer>>(){};
+    TypeToken<MaskedField<Long>> TYPE_LONG = new TypeToken<MaskedField<Long>>(){};
+    TypeToken<MaskedField<Double>> TYPE_DOUBLE = new TypeToken<MaskedField<Double>>(){};
+    TypeToken<MaskedField<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<MaskedField<BigDecimal>>(){};
+
+    TypeToken<MaskedField<UUID>> TYPE_UUID = new TypeToken<MaskedField<UUID>>(){};
 }

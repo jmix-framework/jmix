@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
@@ -32,6 +33,10 @@ import io.jmix.ui.component.data.TreeItems;
 @SuppressWarnings("rawtypes")
 @Deprecated
 public interface Tree<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode {
+
+    static <T extends JmixEntity> TypeToken<Tree<T>> of(Class<T> itemClass) {
+        return new TypeToken<Tree<T>>() {};
+    }
 
     /**
      * Sets an instance of {@code HierarchicalDatasource} as Tree data source.

@@ -78,8 +78,6 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
                 ' delete from TEST_ONE_TO_MANY_ENTITY;')
     }
 
-
-    @Ignore
     def "lazy load manyToOne with constraints"() {
         setup:
 
@@ -108,7 +106,6 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
         manyToOneEntity.oneToManyEntity == oneToManyEntity
     }
 
-    @Ignore
     def "lazy load manyToMany with constraints"() {
         setup:
 

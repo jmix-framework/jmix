@@ -17,8 +17,6 @@
 package com.haulmont.cuba.core.global;
 
 import groovy.lang.Binding;
-import io.jmix.core.ScriptExecutionPolicy;
-import io.jmix.core.impl.JavaClassLoader;
 
 import javax.annotation.Nullable;
 import java.util.Map;

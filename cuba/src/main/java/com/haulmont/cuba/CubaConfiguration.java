@@ -151,6 +151,18 @@ public class CubaConfiguration {
         return new CubaScreenDataImpl();
     }
 
+    @Bean(EntityStates.NAME)
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    protected EntityStates entityStates() {
+        return new com.haulmont.cuba.core.global.EntityStates();
+    }
+
+    @Bean(FluentLoader.NAME)
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    protected com.haulmont.cuba.core.global.FluentLoader fluentLoader(Class entityClass) {
+        return new com.haulmont.cuba.core.global.FluentLoader(entityClass);
+    }
+
     @EventListener
     @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
     public void onApplicationContextRefreshFirst(ContextRefreshedEvent event) {

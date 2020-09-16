@@ -26,7 +26,7 @@ import groovy.util.ResourceConnector;
 import groovy.util.ResourceException;
 import groovy.util.ScriptException;
 import io.jmix.core.ClassManager;
-import io.jmix.core.ScriptExecutionPolicy;
+import com.haulmont.cuba.core.global.ScriptExecutionPolicy;
 import io.jmix.core.impl.SpringBeanLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;

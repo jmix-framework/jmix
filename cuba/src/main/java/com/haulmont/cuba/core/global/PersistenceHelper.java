@@ -15,7 +15,6 @@
  */
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.EntityStates;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 

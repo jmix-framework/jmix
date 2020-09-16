@@ -20,6 +20,7 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;

@@ -15,13 +15,10 @@
  */
 package io.jmix.core.common.util;
 
-import io.jmix.core.Logging;
-
 /**
  * Exception that is used to interrupt an execution flow without any messages to the user.
  *
  */
-@Logging(Logging.Type.NONE)
 public class SilentException extends RuntimeException {
 
     private static final long serialVersionUID = 6598108074890603763L;

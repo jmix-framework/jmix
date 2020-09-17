@@ -15,12 +15,9 @@
  */
 package io.jmix.core.security;
 
-import io.jmix.core.Logging;
-
 /**
  * Login error. Contains message localized accordingly to the current user locale. 
  */
-@Logging(Logging.Type.BRIEF)
 public class LoginException extends RuntimeException {
 
     private static final long serialVersionUID = 6144194102176774627L;

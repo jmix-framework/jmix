@@ -15,15 +15,12 @@
  */
 package io.jmix.core.security;
 
-import io.jmix.core.Logging;
-
 /**
  * Exception that is raised on attempt to violate a security constraint.
  * <p>
  * You can throw this exception in application code if you want a standard notification about "access denied"
  * to be shown to the user and the event to be logged.
  */
-@Logging(Logging.Type.BRIEF)
 public class AccessDeniedException extends RuntimeException
 {
     private static final long serialVersionUID = -3097861878301424338L;

@@ -21,7 +21,10 @@ import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
-import io.jmix.core.*;
+import io.jmix.core.CoreProperties;
+import io.jmix.core.Events;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.security.LoginException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -30,9 +33,8 @@ import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.event.screen.CloseWindowsInternalEvent;
 import io.jmix.ui.exception.ExceptionHandlers;
 import io.jmix.ui.executor.IllegalConcurrentAccessException;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.logging.AppLog;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -45,12 +47,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -82,8 +82,6 @@ public abstract class App {
             throw new IllegalConcurrentAccessException();
         });
     }
-
-    protected AppLog appLog;
 
     protected ExceptionHandlers exceptionHandlers;
 
@@ -196,7 +194,6 @@ public abstract class App {
         vSession.setErrorHandler(event -> {
             try {
                 getExceptionHandlers().handle(event);
-                getAppLog().log(event);
             } catch (Throwable e) {
                 log.error("Error handling exception\nOriginal exception:\n{}\nException in handlers:\n{}",
                         ExceptionUtils.getStackTrace(event.getThrowable()), ExceptionUtils.getStackTrace(e)
@@ -205,8 +202,6 @@ public abstract class App {
         });
 
         log.debug("Initializing application");
-
-        appLog = new AppLog(10, (TimeSource) applicationContext.getBean(TimeSource.NAME));
 
         exceptionHandlers = new ExceptionHandlers(this, applicationContext);
         cookies = new AppCookies();
@@ -374,10 +369,6 @@ public abstract class App {
             return (WebScreens) UiControllerUtils.getScreenContext(topLevelWindow.getFrameOwner())
                     .getScreens();
         }
-    }
-
-    public AppLog getAppLog() {
-        return appLog;
     }
 
     public ExceptionHandlers getExceptionHandlers() {

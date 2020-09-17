@@ -537,7 +537,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     public void error(com.vaadin.server.ErrorEvent event) {
         try {
             app.getExceptionHandlers().handle(event);
-            app.getAppLog().log(event);
         } catch (Throwable e) {
             log.error("Error handling exception\nOriginal exception:\n{}\nException in handlers:\n{}",
                     ExceptionUtils.getStackTrace(event.getThrowable()),

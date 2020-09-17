@@ -15,7 +15,6 @@
  */
 package io.jmix.data;
 
-import io.jmix.core.Logging;
 import io.jmix.core.security.EntityOp;
 
 import javax.annotation.Nullable;
@@ -24,7 +23,6 @@ import javax.annotation.Nullable;
  * Exception that is raised on different exceptions related to Row Level Security.
  * <p>
  */
-@Logging(Logging.Type.BRIEF)
 public class RowLevelSecurityException extends RuntimeException {
     private static final long serialVersionUID = -3097861878301424338L;
 

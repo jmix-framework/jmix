@@ -16,13 +16,11 @@
 
 package io.jmix.rest.exception;
 
-import io.jmix.core.Logging;
 import io.jmix.core.security.LoginException;
 
 /**
  * Exception that is thrown when REST API user that does not have permission to use REST API.
  */
-@Logging(Logging.Type.BRIEF)
 public class RestApiAccessDeniedException extends LoginException {
 
     public RestApiAccessDeniedException(String message) {

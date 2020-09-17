@@ -15,14 +15,11 @@
  */
 package com.haulmont.cuba.security.global;
 
-import io.jmix.core.Logging;
-
 import java.util.UUID;
 
 /**
  * Thrown if there is no {@link UserSession} on the current thread or if it is expired.
  */
-@Logging(Logging.Type.BRIEF)
 public class NoUserSessionException extends RuntimeException {
 
     private static final long serialVersionUID = 4820628023682230319L;

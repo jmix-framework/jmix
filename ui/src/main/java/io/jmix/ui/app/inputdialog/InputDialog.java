@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.inputdialog;
 
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
@@ -27,19 +26,15 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Actions;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
-import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -101,7 +96,10 @@ public class InputDialog extends Screen {
     protected ThemeConstants theme;
 
     @Autowired
-    protected PersistenceManagerClient persistenceManagerClient;
+    protected UiProperties uiProperties;
+
+    @Autowired
+    protected EntityFieldCreationSupport entityFieldCreationSupport;
 
     @Autowired
     protected DataComponents dataComponents;
@@ -399,35 +397,9 @@ public class InputDialog extends Screen {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected Field createEntityField(InputParameter parameter) {
         MetaClass metaClass = metadata.getClass(parameter.getEntityClass());
-        Action lookupAction = actions.create(LookupAction.ID);
-        Action clearAction = actions.create(EntityClearAction.ID);
-
-        if (persistenceManagerClient.useLookupScreen(metaClass.getName())) {
-            EntityPicker pickerField = uiComponents.create(EntityPicker.NAME);
-            pickerField.setMetaClass(metadata.getClass(parameter.getEntityClass()));
-            pickerField.addAction(lookupAction);
-            pickerField.addAction(clearAction);
-            pickerField.setWidthFull();
-            return pickerField;
-        } else {
-            EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.NAME);
-            entityComboBox.addAction(lookupAction);
-            entityComboBox.addAction(clearAction);
-            entityComboBox.setWidthFull();
-
-            CollectionContainer container = dataComponents.createCollectionContainer(parameter.getEntityClass());
-            CollectionLoader loader = dataComponents.createCollectionLoader();
-            loader.setQuery("select e from " + metaClass.getName() + " e");
-            loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
-            loader.setContainer(container);
-            loader.load();
-
-            entityComboBox.setOptions(new ContainerOptions(container));
-            return entityComboBox;
-        }
+        return entityFieldCreationSupport.createEntityField(metaClass, null);
     }
 
     @SuppressWarnings("unchecked")

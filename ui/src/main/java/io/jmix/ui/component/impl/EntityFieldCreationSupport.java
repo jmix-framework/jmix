@@ -61,9 +61,16 @@ public class EntityFieldCreationSupport {
     @Autowired
     protected Actions actions;
 
+    public EntityPicker createEntityField(MetaClass metaclass, @Nullable Options options) {
+        EntityPicker field = createFieldComponent(metaclass, options);
+        createFieldActions(metaclass, MetaProperty.Type.ASSOCIATION, field);
+        return field;
+    }
+
     public EntityPicker createEntityField(MetaPropertyPath metaPropertyPath, @Nullable Options options) {
-        EntityPicker field = createFieldComponent(metaPropertyPath, options);
-        createFieldActions(metaPropertyPath, field);
+        MetaClass metaClass = metaPropertyPath.getMetaProperty().getRange().asClass();
+        EntityPicker field = createFieldComponent(metaClass, options);
+        createFieldActions(metaClass, metaPropertyPath.getMetaProperty().getType(), field);
         return field;
     }
 
@@ -102,8 +109,7 @@ public class EntityFieldCreationSupport {
         return true;
     }
 
-    protected EntityPicker createFieldComponent(MetaPropertyPath metaPropertyPath, @Nullable Options options) {
-        MetaClass metaClass = metaPropertyPath.getMetaProperty().getRange().asClass();
+    protected EntityPicker createFieldComponent(MetaClass metaClass, @Nullable Options options) {
         String componentName = uiProperties.getEntityFieldType().get(metaClass.getName());
 
         EntityPicker field;
@@ -119,6 +125,7 @@ public class EntityFieldCreationSupport {
         } else {
             if (componentName == null || EntityPicker.NAME.equals(componentName)) {
                 field = uiComponents.create(EntityPicker.class);
+                field.setMetaClass(metaClass);
             } else {
                 EntityPicker component = uiComponents.create(componentName);
                 if (component instanceof OptionsField) {
@@ -130,16 +137,15 @@ public class EntityFieldCreationSupport {
         return field;
     }
 
-    protected void createFieldActions(MetaPropertyPath metaPropertyPath, EntityPicker field) {
-        MetaClass metaClass = metaPropertyPath.getMetaProperty().getRange().asClass();
+    protected void createFieldActions(MetaClass metaClass, MetaProperty.Type metaPropertyType, EntityPicker field) {
         List<String> actionIds = uiProperties.getEntityFieldActions().get(metaClass.getName());
 
         if (actionIds == null || actionIds.isEmpty()) {
             if (!(field instanceof EntityComboBox)) {
-                if (metaPropertyPath.getMetaProperty().getType() == MetaProperty.Type.ASSOCIATION) {
+                if (metaPropertyType == MetaProperty.Type.ASSOCIATION) {
                     field.addAction(actions.create(LookupAction.ID));
                     field.addAction(actions.create(EntityClearAction.ID));
-                } else if (metaPropertyPath.getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
+                } else if (metaPropertyType == MetaProperty.Type.COMPOSITION) {
                     field.addAction(actions.create(OpenCompositionAction.ID));
                     field.addAction(actions.create(EntityClearAction.ID));
                 }

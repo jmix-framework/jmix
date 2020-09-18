@@ -389,7 +389,7 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
 
         Integer maxResult = value;
         if (maxResult == null) {
-            maxResult = delegate.getMaxFetchValue(adapter.getEntityMetaClass());
+            maxResult = delegate.getMaxFetchSize(adapter.getEntityMetaClass());
         }
 
         adapter.setMaxResults(maxResult);
@@ -424,7 +424,7 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
         } else {
             // otherwise from loader
             int maxResultLoaded = adapter.getLoadedMaxResults();
-            int maxFetch = delegate.getMaxFetchValue(adapter.getEntityMetaClass());
+            int maxFetch = delegate.getMaxFetchSize(adapter.getEntityMetaClass());
             adapter.setMaxResults(Math.min(maxResultLoaded, maxFetch));
 
             // if loader has items
@@ -452,7 +452,7 @@ public class WebPagination extends WebAbstractComponent<JmixPagination> implemen
             }
         } else {
             int maxResultLoaded = adapter.getLoadedMaxResults();
-            int maxFetch = delegate.getMaxFetchValue(adapter.getEntityMetaClass());
+            int maxFetch = delegate.getMaxFetchSize(adapter.getEntityMetaClass());
             adapter.setMaxResults(Math.min(maxResultLoaded, maxFetch));
             adapter.refresh();
         }

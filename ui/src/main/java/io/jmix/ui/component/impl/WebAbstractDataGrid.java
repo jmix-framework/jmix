@@ -76,7 +76,6 @@ import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.ScreenValidation;
-import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -121,7 +120,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     protected AccessManager accessManager;
     protected Messages messages;
     protected MessageTools messageTools;
-    protected PersistenceManagerClient persistenceManagerClient;
     protected ScreenValidation screenValidation;
     protected Actions actions;
     protected IconResolver iconResolver;
@@ -267,11 +265,6 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
     public void setThemeConstantsManager(ThemeConstantsManager themeConstantsManager) {
         ThemeConstants theme = themeConstantsManager.getConstants();
         this.showIconsForPopupMenuActions = theme.getBoolean("jmix.ui.showIconsForPopupMenuActions", false);
-    }
-
-    @Autowired
-    public void setPersistenceManagerClient(PersistenceManagerClient persistenceManagerClient) {
-        this.persistenceManagerClient = persistenceManagerClient;
     }
 
     @Autowired
@@ -706,9 +699,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         if (propertyPath != null) {
             MetaProperty metaProperty = propertyPath.getMetaProperty();
             MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(propertyPath);
-            String storeName = metadataTools.getStoreName(propertyMetaClass);
             if (metadataTools.isLob(metaProperty)
-                    && !persistenceManagerClient.supportsLobSortingAndFiltering(storeName)) {
+                    && !propertyMetaClass.getStore().supportsLobSortingAndFiltering()) {
                 column.setSortable(false);
             }
         }

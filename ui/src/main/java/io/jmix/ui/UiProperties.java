@@ -85,6 +85,10 @@ public class UiProperties {
     String paginationMaxResults;
     Map<String, String> entityFieldType;
     Map<String, List<String>> entityFieldActions;
+    Integer defaultPageSize;
+    Integer defaultMaxFetchSize;
+    Map<String, Integer> entityPageSize;
+    Map<String, Integer> entityMaxFetchSize;
 
     public UiProperties(
             boolean testMode,
@@ -138,7 +142,11 @@ public class UiProperties {
             @DefaultValue("true") boolean productionMode,
             @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationMaxResults,
             @Nullable Map<String, String> entityFieldType,
-            @Nullable Map<String, List<String>> entityFieldActions) {
+            @Nullable Map<String, List<String>> entityFieldActions,
+            @DefaultValue("50") Integer defaultPageSize,
+            @DefaultValue("10000") Integer defaultMaxFetchSize,
+            @Nullable Map<String, Integer> entityPageSize,
+            @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
@@ -191,6 +199,10 @@ public class UiProperties {
         this.paginationMaxResults = paginationMaxResults;
         this.entityFieldType = entityFieldType == null ? Collections.emptyMap() : entityFieldType;
         this.entityFieldActions = entityFieldActions == null ? Collections.emptyMap() : entityFieldActions;
+        this.defaultPageSize = defaultPageSize;
+        this.defaultMaxFetchSize = defaultMaxFetchSize;
+        this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
+        this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -462,5 +474,27 @@ public class UiProperties {
 
     public Map<String, List<String>> getEntityFieldActions() {
         return entityFieldActions;
+    }
+
+    public int getDefaultPageSize() {
+        return defaultPageSize;
+    }
+
+    public int getEntityPageSize(String entityName) {
+        Integer forEntity = entityPageSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultPageSize;
+    }
+
+    public int getDefaultMaxFetchSize() {
+        return defaultMaxFetchSize;
+    }
+
+    public int getEntityMaxFetchSize(String entityName) {
+        Integer forEntity = entityMaxFetchSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultMaxFetchSize;
     }
 }

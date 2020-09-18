@@ -19,6 +19,7 @@ package io.jmix.ui.model.impl;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.beans.factory.BeanFactory;
 
 import javax.annotation.Nullable;
@@ -31,11 +32,13 @@ import javax.annotation.Nullable;
  * <pre>{@code Comparator.comparing(e -> e.getValueEx(propertyPath), EntityValuesComparator.of(asc))}</pre>
  */
 public class EntityValuesComparator<T> extends AbstractComparator<T> {
-    public EntityValuesComparator(boolean asc, BeanFactory beanFactory) {
+    public EntityValuesComparator(boolean asc, MetaClass metaClass, BeanFactory beanFactory) {
         super(asc);
 
         metadata = beanFactory.getBean(Metadata.class);
         metadataTools = beanFactory.getBean(MetadataTools.class);
+
+        nullsLast = metaClass.getStore().isNullsLastSorting() ? 1 : -1;
     }
 
     @Override

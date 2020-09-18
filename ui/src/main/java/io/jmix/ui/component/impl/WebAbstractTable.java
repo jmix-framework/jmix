@@ -43,6 +43,9 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
+import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
@@ -50,7 +53,10 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.component.columnmanager.ColumnManager;
-import io.jmix.ui.component.data.*;
+import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
@@ -59,9 +65,6 @@ import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiEntityContext;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
@@ -82,7 +85,6 @@ import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.ui.settings.component.binder.TableSettingsBinder;
-import io.jmix.ui.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixButton;
@@ -144,7 +146,6 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     protected AccessManager accessManager;
     protected Messages messages;
     protected MessageTools messageTools;
-    protected PersistenceManagerClient persistenceManagerClient;
     protected DatatypeRegistry datatypeRegistry;
     protected DataComponents dataComponents;
     protected FetchPlanRepository viewRepository;
@@ -250,11 +251,6 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Autowired
     public void setMessages(Messages messages) {
         this.messages = messages;
-    }
-
-    @Autowired
-    public void setPersistenceManagerClient(PersistenceManagerClient persistenceManagerClient) {
-        this.persistenceManagerClient = persistenceManagerClient;
     }
 
     @Autowired
@@ -522,9 +518,8 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         if (propertyPath != null) {
             MetaProperty metaProperty = propertyPath.getMetaProperty();
             MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(propertyPath);
-            String storeName = metadataTools.getStoreName(propertyMetaClass);
             if (metadataTools.isLob(metaProperty)
-                    && !persistenceManagerClient.supportsLobSortingAndFiltering(storeName)) {
+                    && !propertyMetaClass.getStore().supportsLobSortingAndFiltering()) {
                 component.setColumnSortable(columnId, false);
             }
         }

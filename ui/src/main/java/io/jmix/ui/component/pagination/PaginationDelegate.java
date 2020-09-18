@@ -20,7 +20,6 @@ import com.google.common.base.Splitter;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Pagination;
-import io.jmix.ui.sys.PersistenceManagerClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,16 +36,10 @@ public class PaginationDelegate {
     public static final String NAME = "ui_PaginationDelegate";
 
     protected UiProperties uiProperties;
-    protected PersistenceManagerClient persistenceManager;
 
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
         this.uiProperties = uiProperties;
-    }
-
-    @Autowired
-    public void setPersistenceManager(PersistenceManagerClient persistenceManager) {
-        this.persistenceManager = persistenceManager;
     }
 
     public int findClosestValue(int maxResults, List<Integer> optionsList) {
@@ -95,8 +88,7 @@ public class PaginationDelegate {
      * @return filtered and sorted options
      */
     public List<Integer> filterPropertyOptions(@Nullable Integer loaderMaxResult, MetaClass metaClass) {
-        Integer maxFetch = persistenceManager.getMaxFetchUI(metaClass.getName());
-        return doFilter(getMaxResultsFromProperty(), loaderMaxResult, maxFetch);
+        return doFilter(getMaxResultsFromProperty(), loaderMaxResult, getMaxFetchSize(metaClass));
     }
 
     /**
@@ -108,8 +100,7 @@ public class PaginationDelegate {
      * @return filtered and sorted options
      */
     public List<Integer> filterOptions(List<Integer> options, @Nullable Integer loaderMaxResult, MetaClass metaClass) {
-        Integer maxFetch = persistenceManager.getMaxFetchUI(metaClass.getName());
-        return doFilter(options, loaderMaxResult, maxFetch);
+        return doFilter(options, loaderMaxResult, getMaxFetchSize(metaClass));
     }
 
     /**
@@ -123,7 +114,7 @@ public class PaginationDelegate {
     public Integer getAllowedOption(List<Integer> options, Integer expectedValue, MetaClass metaClass) {
         // default loader's value
         if (expectedValue == Integer.MAX_VALUE) {
-            return findClosestValue(persistenceManager.getFetchUI(metaClass.getName()), options);
+            return findClosestValue(uiProperties.getEntityPageSize(metaClass.getName()), options);
         }
 
         if (!options.contains(expectedValue)) {
@@ -133,8 +124,8 @@ public class PaginationDelegate {
         return expectedValue;
     }
 
-    public Integer getMaxFetchValue(MetaClass metaClass) {
-        return persistenceManager.getMaxFetchUI(metaClass.getName());
+    public int getMaxFetchSize(MetaClass metaClass) {
+        return uiProperties.getEntityMaxFetchSize(metaClass.getName());
     }
 
     protected List<Integer> doFilter(List<Integer> options, @Nullable Integer loaderMaxResult, Integer maxFetch) {

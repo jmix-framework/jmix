@@ -31,15 +31,12 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
 
     protected boolean asc;
 
-    protected int nullsLast;
+    protected int nullsLast = 1;
 
     protected Metadata metadata;
     protected MetadataTools metadataTools;
 
     protected AbstractComparator(boolean asc) {
-        // todo PersistenceManager or DbmsFeatures
-//        PersistenceManagerClient persistenceManager = AppBeans.get(PersistenceManagerClient.NAME, PersistenceManagerClient.class);
-        this.nullsLast = 1; //persistenceManager.isNullsLastSorting() ? 1 : -1;
         this.asc = asc;
     }
 

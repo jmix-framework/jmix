@@ -18,6 +18,7 @@ package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -2686,6 +2687,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          *
          * @param columnGenerator column generator instance
          */
+        @Internal
         default void setColumnGenerator(Function<ColumnGeneratorEvent<E>, ?> columnGenerator) {
             if (getOwner() != null) {
                 getOwner().addGeneratedColumn(getId(), columnGenerator);

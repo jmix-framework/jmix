@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
@@ -416,6 +417,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
          * INTERNAL.
          * Invoked by the framework after creating the window to give it a chance to setup a specific layout.
          */
+        @Internal
         void initLookupLayout();
 
         /**
@@ -642,6 +644,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * Interface implemented by screen controllers which are not themselves windows,
      * but has {@link Window} interface and delegate work to wrapped real window.
      */
+    @Internal
     @Deprecated
     interface Wrapper {
         Window getWrappedWindow();

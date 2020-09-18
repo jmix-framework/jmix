@@ -26,6 +26,7 @@ import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.LoginException;
 import io.jmix.ui.component.RootWindow;
@@ -506,6 +507,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
      * INTERNAL.
      * Set currently displayed top-level window.
      */
+    @Internal
     public void setTopLevelWindow(@Nullable RootWindow window) {
         if (this.topLevelWindow != window) {
             this.topLevelWindow = window;

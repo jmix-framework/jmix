@@ -18,6 +18,7 @@ package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.URLEncodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,6 +246,7 @@ public class UrlTools {
      *
      * @return whether application is running in headless mode
      */
+    @Internal
     public static boolean headless() {
         Page current = Page.getCurrent();
         if (current == null) {

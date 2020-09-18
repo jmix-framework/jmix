@@ -37,6 +37,7 @@ import com.vaadin.client.Focusable;
 import com.vaadin.client.WidgetUtil;
 import com.vaadin.client.ui.*;
 import com.vaadin.client.ui.aria.AriaHelper;
+import io.jmix.core.annotation.Internal;
 
 import static com.vaadin.client.WidgetUtil.isFocusedElementEditable;
 
@@ -580,6 +581,7 @@ public class JmixFileUploadProgressWindow extends VOverlay implements KeyDownHan
     }
 
     /** INTERNAL. May be removed or replaced in the future. */
+    @Internal
     public void setResizable(boolean resizability) {
         resizable = resizability;
         if (resizability) {

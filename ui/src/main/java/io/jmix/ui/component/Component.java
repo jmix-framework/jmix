@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioProperty;
@@ -76,6 +77,7 @@ public interface Component {
      *
      * @param parent Parent component
      */
+    @Internal
     void setParent(@Nullable Component parent);
 
     /**

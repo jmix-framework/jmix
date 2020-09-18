@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
+
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -121,6 +123,7 @@ public interface ActionsAwareDialogFacet<T> {
          *
          * @param actionHandler action handler
          */
+        @Internal
         public void setActionHandler(Consumer<DialogActionPerformedEvent<T>> actionHandler) {
             this.actionHandler = actionHandler;
         }

@@ -16,12 +16,14 @@
 
 package io.jmix.ui.xml.layout;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.Component;
 import org.dom4j.Element;
 
 /**
  * INTERNAL
  */
+@Internal
 public interface ComponentRootLoader<T extends Component> extends ComponentLoader<T> {
 
     void createContent(Element layoutElement);

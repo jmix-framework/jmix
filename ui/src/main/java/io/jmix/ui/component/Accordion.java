@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -45,6 +46,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
     /**
      * INTERNAL. Add a new lazy tab to the component.
      */
+    @Internal
     Tab addLazyTab(String name, Element descriptor, ComponentLoader loader);
 
     /**
@@ -183,6 +185,7 @@ public interface Accordion extends ComponentContainer, Component.BelongToFrame, 
         /**
          * INTERNAL. Set tab id.
          */
+        @Internal
         void setName(String name);
 
         /**

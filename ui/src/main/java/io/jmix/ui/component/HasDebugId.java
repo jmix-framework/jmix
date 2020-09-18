@@ -16,11 +16,14 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
+
 import javax.annotation.Nullable;
 
 public interface HasDebugId {
     @Nullable
     String getDebugId();
     /** INTERNAL. Managed by debug Id system. */
+    @Internal
     void setDebugId(@Nullable String id);
 }

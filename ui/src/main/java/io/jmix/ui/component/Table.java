@@ -16,6 +16,7 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
@@ -1226,6 +1227,7 @@ public interface Table<E extends JmixEntity>
          *
          * @param event event to be fired
          */
+        @Internal
         public void fireClickEvent(ClickEvent<T> event) {
             getEventHub().publish(ClickEvent.class, event);
         }

@@ -101,11 +101,12 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
                 return;
         }
 
-        RelatedEntitiesAPI.RelatedScreenDescriptor descriptor = new RelatedEntitiesAPI.RelatedScreenDescriptor(screen, openType);
-        descriptor.setFilterCaption(filterCaption);
+        // TODO: gg, wait for Haulmont/jmix-ui#40
+//        RelatedEntitiesAPI.RelatedScreenDescriptor descriptor = new RelatedEntitiesAPI.RelatedScreenDescriptor(screen, openType);
+//        descriptor.setFilterCaption(filterCaption);
 
         //noinspection unchecked
-        relatedEntitiesApi.openRelatedScreen(target.getSelected(), metaClass, metaProperty, descriptor);
+//        relatedEntitiesApi.openRelatedScreen(target.getSelected(), metaClass, metaProperty, descriptor);
     }
 
     @Override

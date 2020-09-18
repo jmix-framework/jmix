@@ -23,7 +23,7 @@ import java.util.Map;
  * Interface defining methods of getting some DBMS-specific values. It must be implemented for each supported DBMS type
  * and version.
  *
- * @see com.haulmont.cuba.core.sys.persistence.DbmsSpecificFactory
+ * @see DbmsSpecifics
  */
 public interface DbmsFeatures {
 
@@ -73,7 +73,7 @@ public interface DbmsFeatures {
     }
 
     /**
-     * @return true if the DBMS supports equals conditions in the filter and sort for LOB columns
+     * @return true if the DBMS supports equality check and sorting for LOB columns
      */
     boolean supportsLobSortingAndFiltering();
 

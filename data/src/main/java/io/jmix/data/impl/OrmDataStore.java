@@ -71,7 +71,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
  */
 @Component(OrmDataStore.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class OrmDataStore implements DataStore {
+public class OrmDataStore implements DataStore, DataSortingOptions {
 
     public static final String NAME = "data_OrmDataStore";
 
@@ -1210,5 +1210,15 @@ public class OrmDataStore implements DataStore {
             }
         }
         return entityClasses;
+    }
+
+    @Override
+    public boolean isNullsLastSorting() {
+        return dbmsSpecifics.getDbmsFeatures(storeName).isNullsLastSorting();
+    }
+
+    @Override
+    public boolean supportsLobSortingAndFiltering() {
+        return dbmsSpecifics.getDbmsFeatures(storeName).supportsLobSortingAndFiltering();
     }
 }

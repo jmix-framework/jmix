@@ -61,14 +61,6 @@ public class RelatedAction extends SecuredListAction
         this.relatedEntitiesApi = relatedEntitiesApi;
     }
 
-    // TODO: gg, add Actions.create(Class<T> actionTypeClass, String id, Object...  args)?
-    /*@Autowired
-    protected void setMessageTools(MessageTools messageTools) {
-        if (metaProperty != null) {
-            setCaption(messageTools.getPropertyCaption(metaProperty));
-        }
-    }*/
-
     @Nullable
     @Override
     public LaunchMode getLaunchMode() {

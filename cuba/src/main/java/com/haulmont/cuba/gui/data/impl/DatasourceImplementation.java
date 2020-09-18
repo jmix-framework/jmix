@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import java.util.Set;
  * INTERNAL.
  * Common internal methods of datasources.
  */
+@Internal
 @Deprecated
 public interface DatasourceImplementation<T extends JmixEntity> extends Datasource<T> {
 

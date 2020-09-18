@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.global;
 
 import com.haulmont.cuba.core.global.BeanLocator;
+import io.jmix.core.annotation.Internal;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
@@ -110,6 +111,7 @@ public class AppBeans {
     /**
      * INTERNAL
      */
+    @Internal
     public static void setApplicationContext(@Nullable ApplicationContext applicationContext) {
         AppBeans.applicationContext = applicationContext;
     }

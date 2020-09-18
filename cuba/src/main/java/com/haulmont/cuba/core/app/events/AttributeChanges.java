@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.app.events;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -36,6 +37,7 @@ public class AttributeChanges {
     /**
      * INTERNAL.
      */
+    @Internal
     public AttributeChanges(io.jmix.data.event.AttributeChanges changes) {
         this.changes = changes;
     }

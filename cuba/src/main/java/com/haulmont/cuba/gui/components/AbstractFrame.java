@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
@@ -84,6 +85,7 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
     /**
      * INTERNAL. Don't call from application code.
      */
+    @Internal
     public void setWrappedFrame(Frame frame) {
         this.frame = frame;
     }
@@ -445,6 +447,7 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
     /**
      * INTERNAL. Don't call from application code.
      */
+    @Internal
     public void setCompanion(Object companion) {
         this._companion = companion;
     }

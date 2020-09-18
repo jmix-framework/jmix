@@ -20,6 +20,7 @@ import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.ValidationException;
 import org.dom4j.Element;
 import org.hibernate.validator.constraints.Email;
@@ -57,6 +58,7 @@ public class EmailValidator implements Field.Validator {
     /**
      * INTERNAL. Used in tests.
      */
+    @Internal
     protected EmailValidator(Messages messages, MessageTools messageTools, Validator validator) {
         this.messages = messages;
         this.messageTools = messageTools;

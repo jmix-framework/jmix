@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.context.ApplicationEvent;
@@ -69,6 +70,7 @@ public class EntityChangedEvent<E extends JmixEntity, K> extends ApplicationEven
     /**
      * INTERNAL.
      */
+    @Internal
     public EntityChangedEvent(Object source, Id<E, K> entityId, Type type, AttributeChanges changes) {
         super(source);
         this.entityId = entityId;
@@ -107,6 +109,7 @@ public class EntityChangedEvent<E extends JmixEntity, K> extends ApplicationEven
     /**
      * INTERNAL.
      */
+    @Internal
     @Override
     public ResolvableType getResolvableType() {
         Metadata metadata = AppBeans.get(Metadata.NAME);

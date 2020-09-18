@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.*;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.Internal;
 import io.jmix.data.*;
 import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;
@@ -199,6 +200,7 @@ public class PersistenceImpl implements Persistence {
      * INTERNAL.
      * Destroys the persistence configuration. Further use of this bean instance is impossible.
      */
+    @Internal
     public void dispose() {
         jpaEmf.close();
         for (String store : stores.getAdditional()) {

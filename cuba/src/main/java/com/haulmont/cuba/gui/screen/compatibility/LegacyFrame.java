@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.screen.compatibility;
 
 import com.haulmont.cuba.gui.components.HasWindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ExpandingLayout;
@@ -81,5 +82,6 @@ public interface LegacyFrame extends
     DsContext getDsContext();
 
     /** INTERNAL. Don't call from application code. */
+    @Internal
     void setDsContext(DsContext dsContext);
 }

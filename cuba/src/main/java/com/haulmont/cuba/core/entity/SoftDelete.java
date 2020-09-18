@@ -17,6 +17,7 @@ package com.haulmont.cuba.core.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.Internal;
 
 import java.util.Date;
 
@@ -47,10 +48,12 @@ public interface SoftDelete {
     /**
      * INTERNAL. Sets soft deletion timestamp.
      */
+    @Internal
     void setDeleteTs(Date deleteTs);
 
     /**
      * INTERNAL. Sets login name of the user who deleted the entity.
      */
+    @Internal
     void setDeletedBy(String deletedBy);
 }

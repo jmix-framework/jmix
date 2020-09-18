@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.screen.ScreenSettings;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
@@ -473,6 +474,7 @@ public class AbstractWindow extends Screen
     /**
      * INTERNAL. Don't call from application code.
      */
+    @Internal
     public void setCompanion(Object companion) {
         this._companion = companion;
     }
@@ -754,6 +756,7 @@ public class AbstractWindow extends Screen
     /**
      * INTERNAL. Don't call from application code.
      */
+    @Internal
     @Override
     public Window getWrappedWindow() {
         return ((Window) frame);

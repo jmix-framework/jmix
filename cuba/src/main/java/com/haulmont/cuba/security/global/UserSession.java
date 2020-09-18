@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.security.global;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.ClientDetails;
 import org.springframework.security.core.Authentication;
@@ -162,6 +163,7 @@ public class UserSession implements Authentication {
     /**
      * INTERNAL
      */
+    @Internal
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }

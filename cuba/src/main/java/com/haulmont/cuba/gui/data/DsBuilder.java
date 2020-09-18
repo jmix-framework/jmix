@@ -21,6 +21,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.client.sys.PersistenceManagerClient;
@@ -107,6 +108,7 @@ public class DsBuilder {
     /**
      * INTERNAL
      */
+    @Internal
     public DsBuilder() {
         this(null);
     }
@@ -114,6 +116,7 @@ public class DsBuilder {
     /**
      * INTERNAL
      */
+    @Internal
     public DsBuilder(DsContext dsContext) {
         this.dsContext = dsContext;
         this.id = "ds";

@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.settings;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.screen.Screen;
 import org.dom4j.Element;
 
@@ -49,15 +50,18 @@ public interface Settings {
     /**
      * INTERNAL. The lifecycle of settings is controlled by the framework.
      */
+    @Internal
     void setModified(boolean modified);
 
     /**
      * INTERNAL. The lifecycle of settings is controlled by the framework.
      */
+    @Internal
     void commit();
 
     /**
      * INTERNAL. The lifecycle of settings is controlled by the framework.
      */
+    @Internal
     void delete();
 }

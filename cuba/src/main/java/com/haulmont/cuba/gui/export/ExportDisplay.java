@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.export;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.download.Downloader;
 
@@ -77,5 +78,6 @@ public interface ExportDisplay {
     void setShowNewWindow(boolean showNewWindow);
 
     /** INTERNAL. Don't call from application code. */
+    @Internal
     void setFrame(@Nullable Frame frame);
 }

@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGrid
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.HasFormatter;
@@ -409,6 +410,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @param <E> DataGrid data type
      * @param <T> Column data type
      */
+    @Internal
     interface GenericColumnGenerator<E extends JmixEntity, T> {
 
         /**
@@ -447,6 +449,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @param columnId  column identifier as defined in XML descriptor
      * @param generator column generator instance
      */
+    @Internal
     io.jmix.ui.component.DataGrid.Column<E> addGeneratedColumn(String columnId, GenericColumnGenerator<E, ?> generator);
 
     /**
@@ -474,6 +477,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
          *
          * @param generatedType generated column type
          */
+        @Internal
         void setGeneratedType(Class generatedType);
 
         /**
@@ -481,6 +485,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
          *
          * @return generated column type
          */
+        @Internal
         Class getGeneratedType();
 
         /**

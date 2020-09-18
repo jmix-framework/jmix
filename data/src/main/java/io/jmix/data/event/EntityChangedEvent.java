@@ -18,6 +18,7 @@ package io.jmix.data.event;
 
 import io.jmix.core.Id;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
@@ -65,6 +66,7 @@ public class EntityChangedEvent<E extends JmixEntity> extends ApplicationEvent i
     /**
      * INTERNAL.
      */
+    @Internal
     public EntityChangedEvent(Object source, Id<E> entityId, Type type, AttributeChanges changes, MetaClass originalMetaClass) {
         super(source);
         this.entityId = entityId;
@@ -104,6 +106,7 @@ public class EntityChangedEvent<E extends JmixEntity> extends ApplicationEvent i
     /**
      * INTERNAL.
      */
+    @Internal
     @Override
     public ResolvableType getResolvableType() {
         return ResolvableType.forClassWithGenerics(getClass(),

@@ -17,6 +17,7 @@
 package io.jmix.data.persistence;
 
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.Internal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <p>For data conversion on the middleware use {@link DbTypeConverter} obtained from
  * {@link DbmsSpecifics} bean.
  */
+@Internal
 @Component(DbmsType.NAME)
 public class DbmsType {
 

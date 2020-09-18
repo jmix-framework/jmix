@@ -18,6 +18,7 @@ package io.jmix.data.event;
 
 import io.jmix.core.JmixEntity;
 import io.jmix.core.Id;
+import io.jmix.core.annotation.Internal;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -39,6 +40,7 @@ public class AttributeChanges {
     /**
      * INTERNAL.
      */
+    @Internal
     public AttributeChanges(Set<Change> changes, Map<String, AttributeChanges> embeddedChanges) {
         this.changes = changes;
         this.embeddedChanges = embeddedChanges;
@@ -162,6 +164,7 @@ public class AttributeChanges {
      * INTERNAL.
      * Contains name and old value of a changed attribute.
      */
+    @Internal
     public static class Change {
 
         public final String name;

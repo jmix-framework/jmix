@@ -17,6 +17,7 @@
 package io.jmix.data.event;
 
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.context.ApplicationEvent;
@@ -52,6 +53,7 @@ public class EntityPersistingEvent<E extends JmixEntity> extends ApplicationEven
     /**
      * INTERNAL.
      */
+    @Internal
     public EntityPersistingEvent(Object source, E entity, MetaClass originalMetaClass) {
         super(source);
         Preconditions.checkNotNullArgument(entity, "entity is null");
@@ -69,6 +71,7 @@ public class EntityPersistingEvent<E extends JmixEntity> extends ApplicationEven
     /**
      * INTERNAL.
      */
+    @Internal
     @Override
     public ResolvableType getResolvableType() {
         return ResolvableType.forClassWithGenerics(getClass(), ResolvableType.forClass(originalMetaClass.getJavaClass()));

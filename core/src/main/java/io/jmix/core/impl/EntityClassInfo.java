@@ -16,10 +16,13 @@
 
 package io.jmix.core.impl;
 
+import io.jmix.core.annotation.Internal;
+
 /**
  * INTERNAL.
  * Describes entity class for metadata loading.
  */
+@Internal
 public class EntityClassInfo {
 
     public final String store;

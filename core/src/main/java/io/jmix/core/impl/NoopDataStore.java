@@ -21,6 +21,7 @@ import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -37,6 +38,7 @@ import java.util.Set;
  * Empty implementation of the {@link DataStore} interface. {@code DataManager} routes here entities that do not
  * belong to any data store.
  */
+@Internal
 @Component(NoopDataStore.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NoopDataStore implements DataStore {

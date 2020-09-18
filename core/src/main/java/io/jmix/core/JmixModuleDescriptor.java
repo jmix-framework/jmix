@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.core.env.PropertySource;
 
 import javax.annotation.Nullable;
@@ -53,6 +54,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
      * INTERNAL.
      * Add a dependency to the module.
      */
+    @Internal
     public void addDependency(JmixModuleDescriptor other) {
         if (dependencies.contains(other))
             return;
@@ -77,6 +79,7 @@ public class JmixModuleDescriptor implements Comparable<JmixModuleDescriptor> {
      * INTERNAL.
      * Set the module's PropertySource.
      */
+    @Internal
     public void setPropertySource(@Nullable PropertySource<?> propertySource) {
         this.propertySource = propertySource;
     }

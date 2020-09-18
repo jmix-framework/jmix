@@ -17,6 +17,7 @@
 package io.jmix.core.common.xmlparsing;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -51,6 +52,7 @@ public class Dom4jTools {
     /**
      * INTERNAL
      */
+    @Internal
     @Autowired
     public Dom4jTools(CoreProperties properties) {
         this.properties = properties;

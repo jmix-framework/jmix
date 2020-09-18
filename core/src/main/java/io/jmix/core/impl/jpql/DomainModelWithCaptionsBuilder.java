@@ -16,12 +16,14 @@
 
 package io.jmix.core.impl.jpql;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.stereotype.Component;
 
 /**
  * INTERNAL.
  * Generates domain model for use in autocomplete fields.
  */
+@Internal
 @Component(DomainModelWithCaptionsBuilder.NAME)
 public class DomainModelWithCaptionsBuilder extends DomainModelBuilder {
 

@@ -16,6 +16,7 @@
 
 package io.jmix.core;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.entity.annotation.ReplacedByEntity;
@@ -229,6 +230,7 @@ public class ExtendedEntities {
     /**
      * INTERNAL. Import replaced meta class from metadata.
      */
+    @Internal
     public void registerReplacedMetaClass(MetaClass metaClass) {
         replacedMetaClasses.put(metaClass.getJavaClass(), metaClass);
     }

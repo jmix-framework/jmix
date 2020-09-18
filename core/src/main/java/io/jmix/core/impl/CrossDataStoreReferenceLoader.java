@@ -18,6 +18,7 @@ package io.jmix.core.impl;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
  * INTERNAL.
  * Populates references to entities from different data stores.
  */
+@Internal
 @Component(CrossDataStoreReferenceLoader.NAME)
 @Scope("prototype")
 public class CrossDataStoreReferenceLoader {

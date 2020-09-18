@@ -20,6 +20,7 @@ import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.impl.jpql.model.EntityBuilder;
 import io.jmix.core.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -34,6 +35,7 @@ import java.util.Collection;
  * INTERNAL.
  * Generates domain model for use in JPQL parser.
  */
+@Internal
 @Component(DomainModelBuilder.NAME)
 public class DomainModelBuilder {
 

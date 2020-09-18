@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl;
 
+import io.jmix.core.annotation.Internal;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.DataStore;
 import io.jmix.core.Stores;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * INTERNAL.
  * Factory of {@link DataStore} implementations.
  */
+@Internal
 @Component(DataStoreFactory.NAME)
 public class DataStoreFactory {
 

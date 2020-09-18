@@ -23,6 +23,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
@@ -65,6 +66,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * INTERNAL.
  * Loads meta-model from a set of annotated Java classes.
  */
+@Internal
 @Component(MetaModelLoader.NAME)
 public class MetaModelLoader {
 

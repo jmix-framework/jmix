@@ -19,6 +19,7 @@ package io.jmix.core;
 import com.google.common.base.Splitter;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
@@ -1020,6 +1021,7 @@ public class MetadataTools {
     /**
      * INTERNAL
      */
+    @Internal
     public interface EntitiesHolder {
         JmixEntity create(Class<? extends JmixEntity> entityClass, Object id);
 
@@ -1031,6 +1033,7 @@ public class MetadataTools {
     /**
      * INTERNAL
      */
+    @Internal
     public static class CachingEntitiesHolder implements EntitiesHolder {
 
         private static class CacheKey {

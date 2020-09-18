@@ -218,7 +218,7 @@ public class InspectorFormBuilder {
             lookupAction.setScreenClass(EntityInspectorBrowser.class);
             lookupAction.setScreenOptionsSupplier(() -> new MapScreenOptions(
                     ParamsMap.of("entity", metaProperty.getRange().asClass().getName())));
-            lookupAction.setOpenMode(OpenMode.THIS_TAB);
+            lookupAction.setLaunchMode(OpenMode.THIS_TAB);
 
             pickerField.addAction(lookupAction);
             pickerField.addAction(actions.create(EntityClearAction.class));

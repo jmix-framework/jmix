@@ -357,7 +357,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     private CreateAction createCreateAction(Table table) {
         CreateAction createAction = actions.create(CreateAction.class);
-        createAction.setOpenMode(OpenMode.THIS_TAB);
+        createAction.setLaunchMode(OpenMode.THIS_TAB);
         createAction.setTarget(table);
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
@@ -367,7 +367,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
 
     private EditAction createEditAction(Table table) {
         EditAction editAction = actions.create(EditAction.class);
-        editAction.setOpenMode(OpenMode.THIS_TAB);
+        editAction.setLaunchMode(OpenMode.THIS_TAB);
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(uiProperties.getTableInsertShortcut());

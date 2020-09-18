@@ -23,7 +23,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.sys.PersistenceManagerClient;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

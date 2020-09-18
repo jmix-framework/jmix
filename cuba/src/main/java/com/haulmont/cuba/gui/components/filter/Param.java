@@ -56,7 +56,7 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
-import io.jmix.ui.sys.PersistenceManagerClient;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.BooleanUtils;
@@ -72,7 +72,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import javax.persistence.TemporalType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

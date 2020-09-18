@@ -38,7 +38,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.filter.ConditionType;
 import io.jmix.ui.filter.Op;
-import io.jmix.ui.sys.PersistenceManagerClient;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;

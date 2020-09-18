@@ -16,12 +16,13 @@
 package io.jmix.ui.action;
 
 import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
@@ -263,19 +264,86 @@ public interface Action {
      */
     interface ScreenOpeningAction {
 
-        OpenMode getOpenMode();
-        void setOpenMode(OpenMode openMode);
+        /**
+         * Returns the editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)}
+         * or in the screen XML, otherwise returns null.
+         */
+        @Nullable
+        LaunchMode getLaunchMode();
 
+        /**
+         * Sets the editor screen open mode.
+         */
+        void setLaunchMode(@Nullable LaunchMode launchMode);
+
+        /**
+         * Returns the editor screen id if it was set by {@link #setScreenId(String)}
+         * or in the screen XML, otherwise returns null.
+         */
+        @Nullable
         String getScreenId();
-        void setScreenId(String screenId);
 
-        Class getScreenClass();
-        void setScreenClass(Class screenClass);
+        /**
+         * Sets the editor screen id.
+         */
+        void setScreenId(@Nullable String screenId);
 
+        /**
+         * Returns the editor screen class if it was set by {@link #setScreenClass(Class)}
+         * or in the screen XML, otherwise returns null.
+         */
+        @Nullable
+        Class<? extends Screen> getScreenClass();
+
+        /**
+         * Sets the editor screen id.
+         */
+        void setScreenClass(@Nullable Class<? extends Screen> screenClass);
+
+        /**
+         * Sets the editor screen options supplier. The supplier provides
+         * {@code ScreenOptions} to the opened screen.
+         * <p>
+         * The preferred way to set the supplier is using a controller method
+         * annotated with {@link Install}, e.g.:
+         * <pre>
+         * &#64;Install(to = "petsTable.view", subject = "screenOptionsSupplier")
+         * protected ScreenOptions petsTableViewScreenOptionsSupplier() {
+         *     return new MapScreenOptions(ParamsMap.of("someParameter", 10));
+         * }
+         * </pre>
+         */
         void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier);
 
+        /**
+         * Sets the editor screen configurer. Use the configurer if you need to provide
+         * parameters to the opened screen through setters.
+         * <p>
+         * The preferred way to set the configurer is using a controller method
+         * annotated with {@link Install}, e.g.:
+         * <pre>
+         * &#64;Install(to = "petsTable.view", subject = "screenConfigurer")
+         * protected void petsTableViewScreenConfigurer(Screen editorScreen) {
+         *     ((PetEdit) editorScreen).setSomeParameter(someValue);
+         * }
+         * </pre>
+         */
         void setScreenConfigurer(Consumer<Screen> screenConfigurer);
 
+        /**
+         * Sets the handler to be invoked when the editor screen closes.
+         * <p>
+         * The preferred way to set the handler is using a controller method
+         * annotated with {@link Install}, e.g.:
+         * <pre>
+         * &#64;Install(to = "petsTable.view", subject = "afterCloseHandler")
+         * protected void petsTableViewAfterCloseHandler(AfterCloseEvent event) {
+         *     if (event.closedWith(StandardOutcome.COMMIT)) {
+         *         System.out.println("Committed");
+         *     }
+         * }
+         * </pre>
+         */
         void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler);
     }
 

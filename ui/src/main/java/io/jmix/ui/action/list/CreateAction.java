@@ -21,6 +21,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -81,20 +82,22 @@ public class CreateAction<E extends JmixEntity> extends ListAction
     }
 
     /**
-     * Returns the editor screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
+     * Returns the editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
-    public OpenMode getOpenMode() {
-        return screenInitializer.getOpenMode();
+    @Override
+    public LaunchMode getLaunchMode() {
+        return screenInitializer.getLaunchMode();
     }
 
     /**
      * Sets the editor screen open mode.
      */
     @StudioPropertiesItem
-    public void setOpenMode(OpenMode openMode) {
-        screenInitializer.setOpenMode(openMode);
+    @Override
+    public void setLaunchMode(@Nullable LaunchMode launchMode) {
+        screenInitializer.setLaunchMode(launchMode);
     }
 
     /**
@@ -102,6 +105,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * Otherwise returns null.
      */
     @Nullable
+    @Override
     public String getScreenId() {
         return screenInitializer.getScreenId();
     }
@@ -110,7 +114,8 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * Sets the editor screen id.
      */
     @StudioPropertiesItem
-    public void setScreenId(String screenId) {
+    @Override
+    public void setScreenId(@Nullable String screenId) {
         screenInitializer.setScreenId(screenId);
     }
 
@@ -119,7 +124,8 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * Otherwise returns null.
      */
     @Nullable
-    public Class getScreenClass() {
+    @Override
+    public Class<? extends Screen> getScreenClass() {
         return screenInitializer.getScreenClass();
     }
 
@@ -127,7 +133,8 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * Sets the editor screen class.
      */
     @StudioPropertiesItem
-    public void setScreenClass(Class screenClass) {
+    @Override
+    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
         screenInitializer.setScreenClass(screenClass);
     }
 
@@ -143,6 +150,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * }
      * </pre>
      */
+    @Override
     public void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier) {
         screenInitializer.setScreenOptionsSupplier(screenOptionsSupplier);
     }
@@ -159,6 +167,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * }
      * </pre>
      */
+    @Override
     public void setScreenConfigurer(Consumer<Screen> screenConfigurer) {
         screenInitializer.setScreenConfigurer(screenConfigurer);
     }
@@ -176,6 +185,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction
      * }
      * </pre>
      */
+    @Override
     public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }

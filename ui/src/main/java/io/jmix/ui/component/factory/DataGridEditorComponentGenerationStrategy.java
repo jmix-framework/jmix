@@ -21,7 +21,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.LookupAction;
@@ -30,7 +29,6 @@ import io.jmix.ui.action.entitypicker.OpenCompositionAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
-import io.jmix.ui.model.DataComponents;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +76,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     private void initActionScreenParameters(@Nullable Action.ScreenOpeningAction action) {
         if (action != null) {
             // Opening screen in another mode will close editor
-            action.setOpenMode(OpenMode.DIALOG);
+            action.setLaunchMode(OpenMode.DIALOG);
             // In case of adding special logic for a screen opened from DataGrid editor
             action.setScreenOptionsSupplier(() ->
                     new MapScreenOptions(ParamsMap.of("dataGridEditor", true)));

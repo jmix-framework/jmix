@@ -25,6 +25,7 @@ import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -48,11 +49,12 @@ public class RelatedEntitiesBuilder {
 
     protected String property;
     protected MetaProperty metaProperty;
-    protected Class entityClass;
+    protected Class<? extends JmixEntity> entityClass;
     protected MetaClass metaClass;
 
     protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
     protected String screenId;
+    protected Class<? extends Screen> screenClass;
 
     protected FrameOwner origin;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
@@ -70,10 +72,13 @@ public class RelatedEntitiesBuilder {
 
         this.launchMode = builder.launchMode;
         this.screenId = builder.screenId;
+        this.screenClass = builder.screenClass;
 
         this.origin = builder.origin;
         this.options = builder.options;
         this.selectedEntities = builder.selectedEntities;
+
+        this.filterCaption = builder.filterCaption;
     }
 
     public RelatedEntitiesBuilder(FrameOwner origin, Function<RelatedEntitiesBuilder, Screen> handler) {
@@ -84,6 +89,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return property set by {@link #withProperty(String)}
      */
+    @Nullable
     public String getProperty() {
         return property;
     }
@@ -91,6 +97,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return meta property set by {@link #withMetaProperty(MetaProperty)}
      */
+    @Nullable
     public MetaProperty getMetaProperty() {
         return metaProperty;
     }
@@ -98,13 +105,15 @@ public class RelatedEntitiesBuilder {
     /**
      * @return entity class set by {@link #withEntityClass(Class)}
      */
-    public Class getEntityClass() {
+    @Nullable
+    public Class<? extends JmixEntity> getEntityClass() {
         return entityClass;
     }
 
     /**
      * @return launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}
      */
+    @Nullable
     public Screens.LaunchMode getLaunchMode() {
         return launchMode;
     }
@@ -112,8 +121,17 @@ public class RelatedEntitiesBuilder {
     /**
      * @return screen id set by {@link #withScreenId(String)}
      */
+    @Nullable
     public String getScreenId() {
         return screenId;
+    }
+
+    /**
+     * @return a screen class
+     */
+    @Nullable
+    public Class<? extends Screen> getScreenClass() {
+        return screenClass;
     }
 
     /**
@@ -126,6 +144,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return screen options set by {@link #withOptions(ScreenOptions)}
      */
+    @Nullable
     public ScreenOptions getOptions() {
         return options;
     }
@@ -133,6 +152,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return meta class set by {@link #withMetaClass(MetaClass)}
      */
+    @Nullable
     public MetaClass getMetaClass() {
         return metaClass;
     }
@@ -140,6 +160,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return selected entities set by {@link #withSelectedEntities(Collection)}
      */
+    @Nullable
     public Collection<? extends JmixEntity> getSelectedEntities() {
         return selectedEntities;
     }
@@ -147,6 +168,7 @@ public class RelatedEntitiesBuilder {
     /**
      * @return filter caption set by {@link #withFilterCaption(String)}
      */
+    @Nullable
     public String getFilterCaption() {
         return filterCaption;
     }
@@ -179,7 +201,7 @@ public class RelatedEntitiesBuilder {
      * @param entityClass class
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withEntityClass(Class entityClass) {
+    public RelatedEntitiesBuilder withEntityClass(Class<? extends JmixEntity> entityClass) {
         this.entityClass = entityClass;
         return this;
     }
@@ -222,13 +244,14 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * Sets screen class and returns the {@link RelatedEntitiesClassBuilder} for chaining.
+     * Sets screen class and returns the builder for chaining.
      *
      * @param screenClass class of the screen controller
-     * @return RelatedEntitiesClassBuilder with copied fields
+     * @return current instance of builder
      */
-    public <S extends Screen> RelatedEntitiesClassBuilder<S> withScreenClass(Class<S> screenClass) {
-        return new RelatedEntitiesClassBuilder<>(this, screenClass);
+    public RelatedEntitiesBuilder withScreenClass(Class<? extends Screen> screenClass) {
+        this.screenClass = screenClass;
+        return this;
     }
 
     /**

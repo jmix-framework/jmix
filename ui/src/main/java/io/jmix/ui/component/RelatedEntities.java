@@ -16,25 +16,35 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.gui.OpenType;
+import io.jmix.core.JmixEntity;
+import io.jmix.ui.Screens.LaunchMode;
 
 import javax.annotation.Nullable;
 
-public interface RelatedEntities extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
-                                         Component.Focusable, HasHtmlCaption, HasHtmlDescription {
+public interface RelatedEntities<E extends JmixEntity> extends Component,
+        Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
+        Component.Focusable, HasHtmlCaption, HasHtmlDescription {
 
     String NAME = "relatedEntities";
 
-    OpenType getOpenType();
-    void setOpenType(OpenType openType);
+    LaunchMode getLaunchMode();
 
+    void setLaunchMode(LaunchMode launchMode);
+
+    @Nullable
     String getExcludePropertiesRegex();
-    void setExcludePropertiesRegex(String excludeRegex);
 
-    void addPropertyOption(String property, @Nullable String screen, @Nullable String caption, @Nullable String filterCaption);
+    void setExcludePropertiesRegex(@Nullable String excludeRegex);
+
+    void addPropertyOption(String property,
+                           @Nullable String screen,
+                           @Nullable String caption,
+                           @Nullable String filterCaption);
+
     void removePropertyOption(String property);
 
     @Nullable
-    ListComponent getListComponent();
-    void setListComponent(@Nullable ListComponent listComponent);
+    ListComponent<E> getListComponent();
+
+    void setListComponent(@Nullable ListComponent<E> listComponent);
 }

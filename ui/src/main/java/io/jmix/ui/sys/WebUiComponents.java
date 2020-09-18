@@ -125,9 +125,8 @@ public class WebUiComponents implements UiComponents {
         classes.put(ProgressBar.NAME, WebProgressBar.class);
         classes.put(Pagination.NAME, WebPagination.class);
         classes.put(TablePagination.NAME, WebTablePagination.class);
-//        classes.put(RelatedEntities.NAME, WebRelatedEntities.class); todo dynamic attributes
+        classes.put(RelatedEntities.NAME, WebRelatedEntities.class);
         classes.put(DatePicker.NAME, WebDatePicker.class);
-//        classes.put(ListEditor.NAME, WebListEditor.class); // todo
         classes.put(CapsLockIndicator.NAME, WebCapsLockIndicator.class);
 
         classes.put(Form.NAME, WebForm.class);

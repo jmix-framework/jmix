@@ -16,40 +16,127 @@
 
 package io.jmix.ui.relatedentities;
 
+import com.google.common.base.Strings;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.ui.Screens;
+import io.jmix.ui.WindowConfig;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-
-//todo implementation
 @Component(RelatedEntitiesAPI.NAME)
 public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
+    //    protected Messages messages;
+    protected Metadata metadata;
+    protected WindowConfig windowConfig;
+
+    public RelatedEntitiesBean(Metadata metadata, WindowConfig windowConfig) {
+//        this.messages = messages;
+        this.metadata = metadata;
+        this.windowConfig = windowConfig;
+    }
+
     @Override
     public RelatedEntitiesBuilder builder(FrameOwner frameOwner) {
-        throw new UnsupportedOperationException("Not implemented");
+        return new RelatedEntitiesBuilder(frameOwner, this::buildScreen);
     }
 
-    @Override
-    public void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected Screen buildScreen(RelatedEntitiesBuilder builder) {
+        MetaClass metaClass = getMetaClass(builder);
+        MetaProperty metaProperty = getMetaProperty(builder, metaClass);
+
+        return createScreen(builder, metaClass, metaProperty);
+        // TODO: gg, wait for Haulmont/jmix-old#90
+        /*Screen screen = createScreen(builder, metaClass, metaProperty);
+
+        Collection<? extends JmixEntity> selectedEntities = builder.getSelectedEntities() == null
+                ? Collections.emptyList()
+                : builder.getSelectedEntities();
+
+        boolean found = ComponentsHelper.walkComponents(screen.getWindow(), screenComponent -> {
+            if (!(screenComponent instanceof Filter)) {
+                return false;
+            } else {
+                MetaClass actualMetaClass = ((FilterImplementation) screenComponent).getEntityMetaClass();
+                MetaClass relatedMetaClass = metaProperty.getRange().asClass();
+                MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(relatedMetaClass);
+                if (Objects.equals(actualMetaClass, effectiveMetaClass)) {
+                    MetaDataDescriptor metaDataDescriptor = new MetaDataDescriptor(metaClass, metaProperty);
+
+                    RelatedScreenDescriptor descriptor = new RelatedScreenDescriptor();
+                    descriptor.setFilterCaption(builder.getFilterCaption());
+                    applyFilter(((Filter) screenComponent), selectedEntities, descriptor, metaDataDescriptor);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        if (!found) {
+            screen.addAfterShowListener(event -> {
+                ScreenContext screenContext = UiControllerUtils.getScreenContext(event.getSource());
+                screenContext.getNotifications()
+                        .create(NotificationType.WARNING)
+                        .withCaption(messages.getMessage("actions.Related.FilterNotFound"))
+                        .show();
+            });
+        }
+
+        return screen;*/
     }
 
-    @Override
-    public void openRelatedScreen(Collection<? extends JmixEntity> selectedEntities, MetaClass metaClass, MetaProperty metaProperty, RelatedScreenDescriptor descriptor) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected MetaClass getMetaClass(RelatedEntitiesBuilder builder) {
+        MetaClass metaClass = builder.getMetaClass();
+        if (metaClass != null) {
+            return metaClass;
+        }
+
+        Class<? extends JmixEntity> entityClass = builder.getEntityClass();
+        if (entityClass != null) {
+            return metadata.getClass(entityClass);
+        }
+
+        throw new IllegalStateException("'metaClass' or 'entityClass' can't be null");
     }
 
-    @Override
-    public <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected MetaProperty getMetaProperty(RelatedEntitiesBuilder builder, MetaClass metaClass) {
+        MetaProperty metaProperty = builder.getMetaProperty();
+        if (metaProperty != null) {
+            return metaProperty;
+        }
+
+        String property = builder.getProperty();
+        if (!Strings.isNullOrEmpty(property)) {
+            return metaClass.getProperty(property);
+        }
+
+        throw new IllegalStateException("'metaProperty' or 'property' can't be null");
     }
 
-    @Override
-    public <T extends JmixEntity> void openRelatedScreen(Collection<T> selectedEntities, Class<T> clazz, String property, RelatedScreenDescriptor descriptor) {
-        throw new UnsupportedOperationException("Not implemented");
+    protected Screen createScreen(RelatedEntitiesBuilder builder, MetaClass metaClass, MetaProperty metaProperty) {
+        FrameOwner origin = builder.getOrigin();
+        Screens screens = UiControllerUtils.getScreenContext(origin).getScreens();
+
+        if (builder.getScreenClass() != null) {
+            return screens.create(builder.getScreenClass(), builder.getLaunchMode(), builder.getOptions());
+        } else {
+            String screenId = builder.getScreenId();
+            if (Strings.isNullOrEmpty(screenId)) {
+                // try to get default browse screen id
+                screenId = windowConfig.getBrowseScreenId(metaProperty.getRange().asClass());
+                if (Strings.isNullOrEmpty(screenId)) {
+                    String message = String.format("Can't create related entities screen: passed screen id is null and " +
+                            "there is no default browse screen for %s", metaClass.getName());
+                    throw new IllegalStateException(message);
+                }
+            }
+
+            return screens.create(screenId, builder.getLaunchMode(), builder.getOptions());
+        }
     }
 }

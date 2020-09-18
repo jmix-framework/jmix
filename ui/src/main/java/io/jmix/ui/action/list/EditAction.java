@@ -20,6 +20,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -80,20 +81,22 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
     }
 
     /**
-     * Returns the editor screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
+     * Returns the editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
-    public OpenMode getOpenMode() {
-        return screenInitializer.getOpenMode();
+    @Override
+    public LaunchMode getLaunchMode() {
+        return screenInitializer.getLaunchMode();
     }
 
     /**
      * Sets the editor screen open mode.
      */
     @StudioPropertiesItem
-    public void setOpenMode(OpenMode openMode) {
-        screenInitializer.setOpenMode(openMode);
+    @Override
+    public void setLaunchMode(@Nullable LaunchMode launchMode) {
+        screenInitializer.setLaunchMode(launchMode);
     }
 
     /**
@@ -101,6 +104,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * Otherwise returns null.
      */
     @Nullable
+    @Override
     public String getScreenId() {
         return screenInitializer.getScreenId();
     }
@@ -109,7 +113,8 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * Sets the editor screen id.
      */
     @StudioPropertiesItem
-    public void setScreenId(String screenId) {
+    @Override
+    public void setScreenId(@Nullable String screenId) {
         screenInitializer.setScreenId(screenId);
     }
 
@@ -118,7 +123,8 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * Otherwise returns null.
      */
     @Nullable
-    public Class getScreenClass() {
+    @Override
+    public Class<? extends Screen> getScreenClass() {
         return screenInitializer.getScreenClass();
     }
 
@@ -126,7 +132,8 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * Sets the editor screen id.
      */
     @StudioPropertiesItem
-    public void setScreenClass(Class screenClass) {
+    @Override
+    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
         screenInitializer.setScreenClass(screenClass);
     }
 
@@ -142,6 +149,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * }
      * </pre>
      */
+    @Override
     public void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier) {
         screenInitializer.setScreenOptionsSupplier(screenOptionsSupplier);
     }
@@ -158,6 +166,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * }
      * </pre>
      */
+    @Override
     public void setScreenConfigurer(Consumer<Screen> screenConfigurer) {
         screenInitializer.setScreenConfigurer(screenConfigurer);
     }
@@ -175,6 +184,7 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
      * }
      * </pre>
      */
+    @Override
     public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
@@ -293,7 +303,6 @@ public class EditAction<E extends JmixEntity> extends SecuredListAction
             // Even though the screen is read-only, this edit action may remain active
             // because the related entity cannot be edited and the corresponding edit screen
             // will be opened in read-only mode either.
-
             UiEntityContext entityContext = new UiEntityContext(metaClass);
             accessManager.applyRegisteredConstraints(entityContext);
 

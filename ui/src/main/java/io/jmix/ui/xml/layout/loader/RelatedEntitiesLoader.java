@@ -21,6 +21,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.RelatedEntities;
+import io.jmix.ui.screen.OpenMode;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -46,51 +47,25 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
         loadAlign(resultComponent, element);
         loadCss(resultComponent, element);
 
-        /*
-        TODO: legacy-ui
         String openType = element.attributeValue("openType");
-
         if (StringUtils.isNotEmpty(openType)) {
-            resultComponent.setOpenType(OpenType.valueOf(openType));
-        }*/
-
-        String exclude = element.attributeValue("exclude");
-        if (StringUtils.isNotBlank(exclude)) {
-            resultComponent.setExcludePropertiesRegex(exclude);
+            resultComponent.setLaunchMode(OpenMode.valueOf(openType));
         }
 
-        for (Object routeObject : element.elements("property")) {
-            Element routeElement = (Element) routeObject;
+        loadString(element, "exclude", resultComponent::setExcludePropertiesRegex);
 
-            String property = routeElement.attributeValue("name");
-            if (StringUtils.isEmpty(property)) {
-                throw new GuiDevelopmentException("Name attribute for related entities property is not specified",
-                        context, "componentId", resultComponent.getId());
-            }
-
-            String caption = loadResourceString(routeElement.attributeValue("caption"));
-            String filterCaption = loadResourceString(routeElement.attributeValue("filterCaption"));
-            String screen = routeElement.attributeValue("screen");
-
-            if (StringUtils.isNotEmpty(screen)) {
-                if (getWindowConfig().findWindowInfo(screen) == null) {
-                    throw new GuiDevelopmentException("Screen for custom route in related entities not found",
-                            context, "componentId", resultComponent.getId());
-                }
-            }
-
-            resultComponent.addPropertyOption(property, screen, caption, filterCaption);
+        for (Element routeObject : element.elements("property")) {
+            loadPropertyOption(routeObject);
         }
 
-        String listComponent = element.attributeValue("for");
-        if (StringUtils.isEmpty(listComponent)) {
-            throw new GuiDevelopmentException("'for' attribute of related entities is not specified",
-                    context, "componentId", resultComponent.getId());
-        }
+        String listComponentId = loadString(element, "for")
+                .orElseThrow(() ->
+                        new GuiDevelopmentException("'for' attribute of related entities is not specified",
+                                context, "componentId", resultComponent.getId()));
 
         getComponentContext().addPostInitTask((context1, window) -> {
             if (resultComponent.getListComponent() == null) {
-                Component bindComponent = resultComponent.getFrame().getComponent(listComponent);
+                Component bindComponent = resultComponent.getFrame().getComponent(listComponentId);
                 if (!(bindComponent instanceof ListComponent)) {
                     throw new GuiDevelopmentException("Specify 'for' attribute: id of table or tree",
                             context1, "componentId", resultComponent.getId());
@@ -102,6 +77,26 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
 
         loadFocusable(resultComponent, element);
         loadTabIndex(resultComponent, element);
+    }
+
+    protected void loadPropertyOption(Element routeElement) {
+        String property = loadString(routeElement, "name")
+                .orElseThrow(() ->
+                        new GuiDevelopmentException("Name attribute for related entities property is not specified",
+                                context, "componentId", resultComponent.getId()));
+
+        String caption = loadResourceString(routeElement.attributeValue("caption"));
+        String filterCaption = loadResourceString(routeElement.attributeValue("filterCaption"));
+        String screen = routeElement.attributeValue("screen");
+
+        if (StringUtils.isNotEmpty(screen)) {
+            if (getWindowConfig().findWindowInfo(screen) == null) {
+                throw new GuiDevelopmentException("Screen for custom route in related entities not found",
+                        context, "componentId", resultComponent.getId());
+            }
+        }
+
+        resultComponent.addPropertyOption(property, screen, caption, filterCaption);
     }
 
     protected WindowConfig getWindowConfig() {

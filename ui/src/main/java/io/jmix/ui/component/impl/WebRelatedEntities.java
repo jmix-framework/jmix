@@ -1,0 +1,293 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.ui.component.impl;
+
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.Label;
+import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.ui.Actions;
+import io.jmix.ui.Screens.LaunchMode;
+import io.jmix.ui.WindowInfo;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.list.RelatedAction;
+import io.jmix.ui.component.ListComponent;
+import io.jmix.ui.component.RelatedEntities;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.sys.ScreensHelper;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+
+public class WebRelatedEntities<E extends JmixEntity> extends WebPopupButton
+        implements RelatedEntities<E> {
+
+    protected Actions actions;
+    protected Messages messages;
+    protected MessageTools messageTools;
+    protected AccessManager accessManager;
+    protected MetadataTools metadataTools;
+    protected ScreensHelper screensHelper;
+
+    protected ListComponent<E> listComponent;
+    protected LaunchMode launchMode = OpenMode.THIS_TAB;
+
+    protected Map<String, PropertyOption> propertyOptions = new HashMap<>();
+
+    protected String excludeRegex;
+
+    public WebRelatedEntities() {
+    }
+
+    @Autowired
+    public void setActions(Actions actions) {
+        this.actions = actions;
+    }
+
+    @Autowired
+    public void setMessages(Messages messages) {
+        this.messages = messages;
+        setCaption(messages.getMessage("actions.Related"));
+    }
+
+    @Autowired
+    public void setAccessManager(AccessManager accessManager) {
+        this.accessManager = accessManager;
+    }
+
+    @Autowired
+    public void setMessageTools(MessageTools messageTools) {
+        this.messageTools = messageTools;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setScreensHelper(ScreensHelper screensHelper) {
+        this.screensHelper = screensHelper;
+    }
+
+    @Override
+    public LaunchMode getLaunchMode() {
+        return launchMode;
+    }
+
+    @Override
+    public void setLaunchMode(LaunchMode launchMode) {
+        this.launchMode = launchMode;
+
+        for (Action action : getActions()) {
+            if (action instanceof RelatedAction) {
+                ((RelatedAction) action).setLaunchMode(launchMode);
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getExcludePropertiesRegex() {
+        return excludeRegex;
+    }
+
+    @Override
+    public void setExcludePropertiesRegex(@Nullable String excludeRegex) {
+        if (!Objects.equals(this.excludeRegex, excludeRegex)) {
+            this.excludeRegex = excludeRegex;
+            refreshNavigationActions();
+        }
+    }
+
+    @Override
+    public void addPropertyOption(String property,
+                                  @Nullable String screen,
+                                  @Nullable String caption,
+                                  @Nullable String filterCaption) {
+        if (StringUtils.isBlank(property)) {
+            throw new IllegalArgumentException("Empty name for custom property option");
+        }
+
+        propertyOptions.put(property, new PropertyOption(screen, caption, filterCaption));
+
+        refreshNavigationActions();
+    }
+
+    @Override
+    public void removePropertyOption(String property) {
+        if (propertyOptions.remove(property) != null) {
+            refreshNavigationActions();
+        }
+    }
+
+    @Nullable
+    @Override
+    public ListComponent<E> getListComponent() {
+        return listComponent;
+    }
+
+    @Override
+    public void setListComponent(@Nullable ListComponent<E> listComponent) {
+        if (!Objects.equals(this.listComponent, listComponent)) {
+            this.listComponent = listComponent;
+            refreshNavigationActions();
+        }
+    }
+
+    protected void refreshNavigationActions() {
+        ComponentContainer actionContainer = (ComponentContainer) vPopupComponent;
+
+        actionContainer.removeAllComponents();
+        actionOrder.clear();
+
+        if (listComponent != null) {
+            MetaClass metaClass = getMetaClass(listComponent);
+
+            Pattern excludePattern = null;
+            if (excludeRegex != null) {
+                excludePattern = Pattern.compile(excludeRegex);
+            }
+
+            for (MetaProperty metaProperty : metaClass.getProperties()) {
+                if (isSuitableProperty(metaClass, metaProperty, excludePattern)) {
+                    addNavigationAction(metaProperty);
+                }
+            }
+
+            if (actionContainer.getComponentCount() == 0) {
+                Label label = new Label(messages.getMessage("actions.Related.Empty"));
+                actionContainer.addComponent(label);
+            }
+        }
+    }
+
+    protected boolean isSuitableProperty(MetaClass metaClass, MetaProperty metaProperty,
+                                         @Nullable Pattern excludePattern) {
+        if (!metaProperty.getRange().isClass()) {
+            return false;
+        }
+
+        // check that entities are placed in the same data store
+        MetaClass propertyMetaClass = metaProperty.getRange().asClass();
+        String propertyStore = metadataTools.getStoreName(propertyMetaClass);
+        String effectiveStore = metadataTools.getStoreName(metaClass);
+        if (!Objects.equals(effectiveStore, propertyStore)) {
+            return false;
+        }
+
+        // apply security
+        UiEntityContext entityContext = new UiEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+
+        UiEntityAttributeContext attributeContext =
+                new UiEntityAttributeContext(metaClass, metaProperty.getName());
+        accessManager.applyRegisteredConstraints(attributeContext);
+
+        return entityContext.isViewPermitted()
+                && attributeContext.isViewPermitted()
+                && (excludePattern == null
+                || !excludePattern.matcher(metaProperty.getName()).matches());
+    }
+
+    protected MetaClass getMetaClass(ListComponent<E> listComponent) {
+        if (!(listComponent.getItems() instanceof EntityDataUnit)) {
+            throw new IllegalStateException("ListComponent items is null or does not implement EntityDataUnit");
+        }
+
+        MetaClass metaClass = ((EntityDataUnit) listComponent.getItems()).getEntityMetaClass();
+        if (metaClass == null) {
+            throw new IllegalStateException("ListComponent is not bound to entity");
+        }
+
+        return metaClass;
+    }
+
+    protected void addNavigationAction(MetaProperty metaProperty) {
+        // check if browse screen available
+        PropertyOption propertyOption = propertyOptions.get(metaProperty.getName());
+
+        WindowInfo defaultScreen = screensHelper.getDefaultBrowseScreen(metaProperty.getRange().asClass());
+        if (defaultScreen != null
+                || (propertyOption != null && StringUtils.isNotEmpty(propertyOption.getScreenId()))) {
+
+            RelatedAction relatedAction = actions.create(RelatedAction.class, "related" + actionOrder.size());
+
+            relatedAction.setTarget(listComponent);
+            relatedAction.setMetaProperty(metaProperty);
+            relatedAction.setLaunchMode(launchMode);
+            relatedAction.setCaption(messageTools.getPropertyCaption(metaProperty));
+
+            if (defaultScreen != null) {
+                relatedAction.setScreenId(defaultScreen.getId());
+            }
+
+            if (propertyOption != null) {
+                if (StringUtils.isNotEmpty(propertyOption.getCaption())) {
+                    relatedAction.setCaption(propertyOption.getCaption());
+                }
+
+                if (StringUtils.isNotEmpty(propertyOption.getFilterCaption())) {
+                    relatedAction.setFilterCaption(propertyOption.getFilterCaption());
+                }
+
+                if (StringUtils.isNotEmpty(propertyOption.getScreenId())) {
+                    relatedAction.setScreenId(propertyOption.getScreenId());
+                }
+            }
+
+            addAction(relatedAction);
+        }
+    }
+
+    protected static class PropertyOption {
+
+        protected String screenId;
+        protected String caption;
+        protected String filterCaption;
+
+        public PropertyOption(@Nullable String screenId, @Nullable String caption, @Nullable String filterCaption) {
+            this.screenId = screenId;
+            this.caption = caption;
+            this.filterCaption = filterCaption;
+        }
+
+        @Nullable
+        public String getScreenId() {
+            return screenId;
+        }
+
+        @Nullable
+        public String getCaption() {
+            return caption;
+        }
+
+        @Nullable
+        public String getFilterCaption() {
+            return filterCaption;
+        }
+    }
+}

@@ -16,13 +16,15 @@
 
 package io.jmix.ui.sys;
 
+import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.builder.ScreenBuilder;
-import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -31,46 +33,49 @@ import java.util.function.Supplier;
  */
 public class ActionScreenInitializer {
 
-    protected OpenMode openMode;
+    protected LaunchMode launchMode;
     protected String screenId;
-    protected Class screenClass;
+    protected Class<? extends Screen> screenClass;
     protected Supplier<ScreenOptions> screenOptionsSupplier;
     protected Consumer<Screen> screenConfigurer;
     protected Consumer<Screen.AfterCloseEvent> afterCloseHandler;
 
-    public OpenMode getOpenMode() {
-        return openMode;
+    @Nullable
+    public LaunchMode getLaunchMode() {
+        return launchMode;
     }
 
+    @Nullable
     public String getScreenId() {
         return screenId;
     }
 
-    public Class getScreenClass() {
+    @Nullable
+    public Class<? extends Screen> getScreenClass() {
         return screenClass;
     }
 
-    public void setOpenMode(OpenMode openMode) {
-        this.openMode = openMode;
+    public void setLaunchMode(@Nullable LaunchMode launchMode) {
+        this.launchMode = launchMode;
     }
 
-    public void setScreenId(String screenId) {
+    public void setScreenId(@Nullable String screenId) {
         this.screenId = screenId;
     }
 
-    public void setScreenClass(Class screenClass) {
+    public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
         this.screenClass = screenClass;
     }
 
-    public void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier) {
+    public void setScreenOptionsSupplier(@Nullable Supplier<ScreenOptions> screenOptionsSupplier) {
         this.screenOptionsSupplier = screenOptionsSupplier;
     }
 
-    public void setScreenConfigurer(Consumer<Screen> screenConfigurer) {
+    public void setScreenConfigurer(@Nullable Consumer<Screen> screenConfigurer) {
         this.screenConfigurer = screenConfigurer;
     }
 
-    public void setAfterCloseHandler(Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
+    public void setAfterCloseHandler(@Nullable Consumer<Screen.AfterCloseEvent> afterCloseHandler) {
         this.afterCloseHandler = afterCloseHandler;
     }
 
@@ -88,8 +93,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (openMode != null) {
-            builder = builder.withOpenMode(openMode);
+        if (launchMode != null) {
+            builder = builder.withLaunchMode(launchMode);
         }
 
         return builder;
@@ -109,8 +114,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (openMode != null) {
-            builder = builder.withOpenMode(openMode);
+        if (launchMode != null) {
+            builder = builder.withLaunchMode(launchMode);
         }
 
         return builder;
@@ -130,8 +135,29 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (openMode != null) {
-            builder = builder.withOpenMode(openMode);
+        if (launchMode != null) {
+            builder = builder.withLaunchMode(launchMode);
+        }
+
+        return builder;
+    }
+
+    public RelatedEntitiesBuilder initBuilder(RelatedEntitiesBuilder builder) {
+        if (screenClass != null) {
+            builder = builder.withScreenClass(screenClass);
+        }
+
+        if (screenId != null) {
+            builder = builder.withScreenId(screenId);
+        }
+
+        if (screenOptionsSupplier != null) {
+            ScreenOptions screenOptions = screenOptionsSupplier.get();
+            builder = builder.withOptions(screenOptions);
+        }
+
+        if (launchMode != null) {
+            builder = builder.withLaunchMode(launchMode);
         }
 
         return builder;

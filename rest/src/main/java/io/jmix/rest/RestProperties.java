@@ -21,7 +21,10 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @ConfigurationProperties(prefix = "jmix.rest")
 @ConstructorBinding
@@ -47,6 +50,8 @@ public class RestProperties {
     String securityScope;
     boolean storeTokensInDb;
     boolean syncTokenReplication;
+    Integer defaultMaxFetchSize;
+    Map<String, Integer> entityMaxFetchSize;
 
     public RestProperties(
             @DefaultValue("client") String clientId,
@@ -69,7 +74,9 @@ public class RestProperties {
             @DefaultValue("true") boolean responseViewEnabled,
             @DefaultValue("REST") String securityScope,
             @DefaultValue("false") boolean storeTokensInDb,
-            @DefaultValue("false") boolean syncTokenReplication) {
+            @DefaultValue("false") boolean syncTokenReplication,
+            @DefaultValue("10000") Integer defaultMaxFetchSize,
+            @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientTokenExpirationTimeSec = clientTokenExpirationTimeSec;
@@ -90,6 +97,8 @@ public class RestProperties {
         this.securityScope = securityScope;
         this.storeTokensInDb = storeTokensInDb;
         this.syncTokenReplication = syncTokenReplication;
+        this.defaultMaxFetchSize = defaultMaxFetchSize;
+        this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
     }
 
     /**
@@ -229,5 +238,16 @@ public class RestProperties {
      */
     public boolean isStoreTokensInDb() {
         return storeTokensInDb;
+    }
+
+    public int getDefaultMaxFetchSize() {
+        return defaultMaxFetchSize;
+    }
+
+    public int getEntityMaxFetchSize(String entityName) {
+        Integer forEntity = entityMaxFetchSize.get(entityName);
+        if (forEntity != null)
+            return forEntity;
+        return defaultMaxFetchSize;
     }
 }

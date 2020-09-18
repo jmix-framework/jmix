@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.rest.RestProperties;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
@@ -72,6 +73,9 @@ public class QueriesControllerManager {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
+
+    @Autowired
+    protected RestProperties restProperties;
 
     public String executeQueryGet(String entityName,
                                   String queryName,
@@ -189,8 +193,7 @@ public class QueriesControllerManager {
         } else if (queryInfo.getLimit() != null) {
             query.setMaxResults(queryInfo.getLimit());
         } else {
-            // todo PersistenceManagerClient
-//            query.setMaxResults(persistenceManagerClient.getMaxFetchUI(entityName));
+            query.setMaxResults(restProperties.getEntityMaxFetchSize(entityName));
         }
 
         if (offset != null) {

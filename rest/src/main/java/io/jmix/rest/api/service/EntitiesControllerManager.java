@@ -50,8 +50,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
 
-//import io.jmix.ui.sys.PersistenceManagerClient;
-
 /**
  * Class that executes business logic required by the {@link io.jmix.rest.api.controller.EntitiesController}. It
  * performs CRUD operations with entities
@@ -82,9 +80,6 @@ public class EntitiesControllerManager {
 
     @Autowired
     protected RestControllerUtils restControllerUtils;
-
-//    @Autowired
-//    protected PersistenceManagerClient persistenceManagerClient;
 
     @Autowired
     protected RestFilterParser restFilterParser;
@@ -301,8 +296,7 @@ public class EntitiesControllerManager {
         if (limit != null) {
             query.setMaxResults(limit);
         } else {
-            // todo persistenceManagerClient
-            //query.setMaxResults(persistenceManagerClient.getMaxFetchUI(metaClass.getName()));
+            query.setMaxResults(restProperties.getEntityMaxFetchSize(metaClass.getName()));
         }
         if (offset != null) {
             query.setFirstResult(offset);

@@ -139,7 +139,7 @@ public class LockManagerImpl implements LockManager {
         }
 
         BaseUser user = currentAuthentication.getUser();
-        lockInfo = new LockInfo(user.getKey(), user.getUsername(), name, id, timeSource.currentTimestamp());
+        lockInfo = new LockInfo(user.getUsername(), name, id, timeSource.currentTimestamp());
         locks.put(key, lockInfo);
         log.debug("Locked {}/{}", name, id);
 

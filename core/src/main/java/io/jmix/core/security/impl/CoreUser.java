@@ -84,11 +84,6 @@ public class CoreUser implements BaseUser {
     }
 
     @Override
-    public String getKey() {
-        return username;
-    }
-
-    @Override
     public String getDisplayName() {
         return name;
     }

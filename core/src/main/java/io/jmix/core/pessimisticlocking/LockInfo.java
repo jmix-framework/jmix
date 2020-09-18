@@ -40,8 +40,7 @@ public class LockInfo implements JmixEntity {
     private final String objectType;
     private final String objectId;
     private final Date since;
-    private final String userKey;
-    private final String userName;
+    private final String username;
 
 
     @Id
@@ -53,18 +52,16 @@ public class LockInfo implements JmixEntity {
         this.objectType = null;
         this.objectId = null;
         this.since = null;
-        this.userKey = null;
-        this.userName = null;
+        this.username = null;
     }
 
-    public LockInfo(@Nullable String userKey, @Nullable String userName, String objectType, String objectId,
+    public LockInfo(@Nullable String username, String objectType, String objectId,
                     Date since) {
         this.id = UuidProvider.createUuid();
         this.objectType = objectType;
         this.objectId = objectId;
         this.since = since;
-        this.userKey = userKey;
-        this.userName = userName;
+        this.username = username;
     }
 
     public UUID getId() {
@@ -100,24 +97,15 @@ public class LockInfo implements JmixEntity {
     }
 
     /**
-     * @return unique representation of the user which holds the lock
-     */
-    @ModelProperty
-    public String getUserKey() {
-        return userKey;
-    }
-
-    /**
      * @return username of the user which holds the lock
      */
     @ModelProperty
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     @Override
     public String toString() {
-        return objectType + "/" + objectId + ", userKey=" + userKey
-                + ", userName=" + userName + ", since=" + since;
+        return objectType + "/" + objectId + ", userName=" + username + ", since=" + since;
     }
 }

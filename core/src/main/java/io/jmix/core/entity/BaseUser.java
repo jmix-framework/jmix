@@ -24,14 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface BaseUser extends UserDetails {
 
     /**
-     * Returns unique representation of the user. It may be a string with user identifier, a combination of tenant id
-     * and login, etc.
-     * <p>
-     * This key will be used by framework mechanisms to refer the user.
-     */
-    String getKey();
-
-    /**
      * Returns a string that is used for displaying users in suggestion fields, lookups, etc.
      */
     String getDisplayName();

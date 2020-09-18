@@ -154,8 +154,6 @@ public class ResourcePolicyDomainResolver {
             } else {
                 return metaClass.getName();
             }
-        } else {
-            log.warn("Error on resolving domain for entity policy. Entity {} not found", entityName);
         }
         return null;
     }

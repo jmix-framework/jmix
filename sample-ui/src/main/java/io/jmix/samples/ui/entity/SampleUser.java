@@ -208,11 +208,6 @@ public class SampleUser implements JmixEntity, BaseUser {
     }
 
     @Override
-    public String getKey() {
-        return id.toString();
-    }
-
-    @Override
     public String getDisplayName() {
         return name;
     }

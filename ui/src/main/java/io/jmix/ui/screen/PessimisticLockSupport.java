@@ -63,7 +63,7 @@ public class PessimisticLockSupport {
                     .withCaption(messages.getMessage("entityLocked.msg"))
                     .withDescription(
                             messages.formatMessage("entityLocked.desc",
-                                    lockInfo.getUserKey(),
+                                    lockInfo.getUsername(),
                                     datatypeFormatter.formatDateTime(lockInfo.getSince())
                             ))
                     .show();

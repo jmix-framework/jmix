@@ -79,7 +79,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     protected void ownerWindowRemoved(FrameOwner frameOwner) {
         if (log.isTraceEnabled()) {
             String windowClass = frameOwner.getClass().getCanonicalName();
-            log.trace("Window removed. User: {}. Window: {}", user.getKey(), windowClass);
+            log.trace("Window removed. User: {}. Window: {}", user.getUsername(), windowClass);
         }
 
         taskExecutor.cancelExecution();
@@ -95,7 +95,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
 
         this.watchDog.manageTask(this);
 
-        log.trace("Run task: {}. User: {}", taskExecutor.getTask(), user.getKey());
+        log.trace("Run task: {}. User: {}", taskExecutor.getTask(), user.getUsername());
 
         taskExecutor.startExecution();
     }
@@ -121,9 +121,9 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
                 if (ownerFrame != null) {
                     String windowClass = ownerFrame.getClass().getCanonicalName();
 
-                    log.trace("Task was cancelled. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getKey(), windowClass);
+                    log.trace("Task was cancelled. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getUsername(), windowClass);
                 } else {
-                    log.trace("Task was cancelled. Task: {}. User: {}", taskExecutor.getTask(), user.getKey());
+                    log.trace("Task was cancelled. Task: {}. User: {}", taskExecutor.getTask(), user.getUsername());
                 }
             }
         } else {
@@ -174,9 +174,9 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
             if (log.isTraceEnabled()) {
                 if (ownerFrame != null) {
                     String windowClass = ownerFrame.getClass().getCanonicalName();
-                    log.trace("Task killed. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getKey(), windowClass);
+                    log.trace("Task killed. Task: {}. User: {}. Frame: {}", taskExecutor.getTask(), user.getUsername(), windowClass);
                 } else {
-                    log.trace("Task killed. Task: {}. User: {}", taskExecutor.getTask(), user.getKey());
+                    log.trace("Task killed. Task: {}. User: {}", taskExecutor.getTask(), user.getUsername());
                 }
             }
 

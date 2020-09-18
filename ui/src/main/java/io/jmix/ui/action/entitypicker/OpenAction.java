@@ -311,7 +311,7 @@ public class OpenAction<E extends JmixEntity> extends BaseAction
 
         JmixEntity entity = entityPicker.getValue();
 
-        if (EntitySystemValues.isSoftDeleted(entity)) {
+        if (entity != null && EntitySystemValues.isSoftDeleted(entity)) {
             ScreenContext screenContext = ComponentsHelper.getScreenContext(entityPicker);
             Notifications notifications = screenContext.getNotifications();
 

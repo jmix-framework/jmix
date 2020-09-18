@@ -16,9 +16,28 @@
 
 package io.jmix.core.metamodel.model;
 
+/**
+ * Defines a data store used in the application.
+ */
 public interface Store {
 
+    /**
+     * The data store name.
+     */
     String getName();
 
+    /**
+     * The data store descriptor.
+     */
     StoreDescriptor getDescriptor();
+
+    /**
+     * Default sort order of null values.
+     */
+    boolean isNullsLastSorting();
+
+    /**
+     * Whether the data store supports equality check and sorting for LOB columns.
+     */
+    boolean supportsLobSortingAndFiltering();
 }

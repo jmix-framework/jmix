@@ -23,14 +23,13 @@ import io.jmix.core.impl.OrmStoreDescriptor;
 import io.jmix.core.impl.UndefinedStoreDescriptor;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
-import io.jmix.core.metamodel.model.impl.StoreImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 /**
@@ -69,17 +68,17 @@ public class Stores {
 
     @PostConstruct
     protected void initialize() {
-        stores.put(UNDEFINED, new StoreImpl(UNDEFINED, undefinedStoreDescriptor));
+        stores.put(UNDEFINED, applicationContext.getBean(Store.class, UNDEFINED, undefinedStoreDescriptor));
 
         StoreDescriptor mainDescriptor = getStoreDescriptor(MAIN);
-        stores.put(MAIN, new StoreImpl(MAIN, mainDescriptor != null ? mainDescriptor : ormStoreDescriptor));
+        stores.put(MAIN, applicationContext.getBean(Store.class, MAIN, mainDescriptor != null ? mainDescriptor : ormStoreDescriptor));
 
         StoreDescriptor noopDescriptor = getStoreDescriptor(NOOP);
-        stores.put(NOOP, new StoreImpl(NOOP, noopDescriptor != null ? noopDescriptor : noopStoreDescriptor));
+        stores.put(NOOP, applicationContext.getBean(Store.class, NOOP, noopDescriptor != null ? noopDescriptor : noopStoreDescriptor));
 
         for (String storeName : getAdditional()) {
             StoreDescriptor storeDescriptor = getStoreDescriptor(storeName);
-            stores.put(storeName, new StoreImpl(storeName, storeDescriptor != null ? storeDescriptor : ormStoreDescriptor));
+            stores.put(storeName, applicationContext.getBean(Store.class, storeName, storeDescriptor != null ? storeDescriptor : ormStoreDescriptor));
         }
     }
 

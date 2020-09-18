@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.core.metamodel.model;
+package io.jmix.core;
 
 /**
- * Describes the type of a data store.
+ * Defines sorting options of a data store.
  */
-public interface StoreDescriptor {
+public interface DataSortingOptions {
 
     /**
-     * Data store implementation bean name.
+     * @return default sort order of null values
      */
-    String getBeanName();
+    boolean isNullsLastSorting();
 
     /**
-     * Whether data is stored in a persistent storage.
+     * @return true if the data store supports equality check and sorting for LOB columns
      */
-    boolean isPersistent();
+    boolean supportsLobSortingAndFiltering();
 }

@@ -16,14 +16,26 @@
 
 package io.jmix.core.metamodel.model.impl;
 
+import io.jmix.core.DataSortingOptions;
+import io.jmix.core.DataStore;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.impl.DataStoreFactory;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component("core_Store")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class StoreImpl implements Store {
 
     private String name;
     private StoreDescriptor descriptor;
+
+    @Autowired
+    private DataStoreFactory dataStoreFactory;
 
     public StoreImpl(String name, StoreDescriptor descriptor) {
         Preconditions.checkNotNullArgument(name, "name is null");
@@ -40,6 +52,24 @@ public class StoreImpl implements Store {
     @Override
     public StoreDescriptor getDescriptor() {
         return descriptor;
+    }
+
+    @Override
+    public boolean isNullsLastSorting() {
+        DataStore dataStore = dataStoreFactory.get(name);
+        if (dataStore instanceof DataSortingOptions) {
+            return ((DataSortingOptions) dataStore).isNullsLastSorting();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean supportsLobSortingAndFiltering() {
+        DataStore dataStore = dataStoreFactory.get(name);
+        if (dataStore instanceof DataSortingOptions) {
+            return ((DataSortingOptions) dataStore).supportsLobSortingAndFiltering();
+        }
+        return true;
     }
 
     @Override

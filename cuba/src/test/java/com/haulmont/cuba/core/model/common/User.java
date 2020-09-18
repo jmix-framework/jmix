@@ -16,13 +16,13 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
-import com.haulmont.cuba.core.entity.StandardEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -311,13 +311,6 @@ public class User extends StandardEntity implements BaseUser {
     @Deprecated
     public String getSalt() {
         return id != null ? id.toString() : "";
-    }
-
-    //    BaseUser methods
-
-    @Override
-    public String getKey() {
-        return id.toString();
     }
 
     //    UserDetails methods

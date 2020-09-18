@@ -8,8 +8,8 @@ import com.haulmont.cuba.gui.components.actions.RemoveAction;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeFormatter;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -201,7 +201,7 @@ public class EntityCombinedScreen extends AbstractLookup {
             showNotification(
                     messages.getMainMessage("entityLocked.msg"),
                     String.format(messages.getMainMessage("entityLocked.desc"),
-                            lockInfo.getUserName(),
+                            lockInfo.getUsername(),
                             getApplicationContext().getBean(DatatypeFormatter.class).formatDateTime(lockInfo.getSince())
                     ),
                     Frame.NotificationType.HUMANIZED

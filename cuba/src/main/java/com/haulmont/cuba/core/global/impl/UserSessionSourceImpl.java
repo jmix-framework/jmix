@@ -85,7 +85,7 @@ public class UserSessionSourceImpl implements UserSessionSource {
     @Override
     public UUID currentOrSubstitutedUserId() {
         // todo user substitution
-        return UUID.fromString(getUserSession().getUser().getKey());
+        return UserIdUtils.getUserId(getUserSession().getUser());
     }
 
     @Override

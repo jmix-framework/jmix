@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.impl.UserIdUtils;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -410,7 +411,7 @@ public abstract class AbstractCollectionDatasource<T extends JmixEntity, K>
         }
 
         String sessionPrefix = ParameterInfo.Type.SESSION.getPrefix() + "$";
-        templateParams.put(sessionPrefix + "userId", UUID.fromString(userSession.getUser().getKey()));
+        templateParams.put(sessionPrefix + "userId", UserIdUtils.getUserId(userSession.getUser()));
         templateParams.put(sessionPrefix + "userLogin", userSession.getUser().getUsername());
         for (String name : userSession.getAttributeNames()) {
             templateParams.put(sessionPrefix + name, userSession.getAttribute(name));

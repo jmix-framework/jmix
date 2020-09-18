@@ -36,7 +36,7 @@ public class UserInfo {
     public String locale;
 
     public UserInfo(BaseUser user) {
-        this.id = user.getKey();
+//        this.id = user.getKey();
 //        this.login = user.getLogin();
 //        this.name = user.getName();
 

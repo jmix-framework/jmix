@@ -43,7 +43,7 @@
         <insert tableName="SEC_ROLE_ASSIGNMENT_ENTITY">
             <column name="ID" value="6c9e420a-2b7a-4c42-8654-a9027ee14083"/>
             <column name="VERSION" value="1"/>
-            <column name="USER_KEY" value="admin"/>
+            <column name="USERNAME" value="admin"/>
             <column name="ROLE_CODE" value="system-full-access"/>
         </insert>
 

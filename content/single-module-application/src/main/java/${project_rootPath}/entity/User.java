@@ -136,11 +136,6 @@ public class User implements JmixEntity, BaseUser {
         return enabled;
     }
 
-    @Override
-    public String getKey() {
-        return username;
-    }
-
     @InstanceName
     @Override
     public String getDisplayName() {

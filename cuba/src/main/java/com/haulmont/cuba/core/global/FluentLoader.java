@@ -19,10 +19,13 @@ package com.haulmont.cuba.core.global;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.querycondition.Condition;
 import org.springframework.beans.factory.BeanFactory;
 
-import java.util.Arrays;
-import java.util.Collection;
+import javax.persistence.TemporalType;
+import java.io.Serializable;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoader<E> {
@@ -33,6 +36,51 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
         super(entityClass);
     }
 
+    @Override
+    public FluentLoader<E> joinTransaction(boolean join) {
+        return (FluentLoader<E>) super.joinTransaction(join);
+    }
+
+    @Override
+    public FluentLoader<E> fetchPlan(FetchPlan fetchPlan) {
+        return (FluentLoader<E>) super.fetchPlan(fetchPlan);
+    }
+
+    @Override
+    public FluentLoader<E> fetchPlan(String fetchPlanName) {
+        return (FluentLoader<E>) super.fetchPlan(fetchPlanName);
+    }
+
+    @Override
+    public FluentLoader<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+        return (FluentLoader<E>) super.fetchPlan(fetchPlanBuilderConfigurer);
+    }
+
+    @Override
+    public FluentLoader<E> fetchPlanProperties(String... properties) {
+        return (FluentLoader<E>) super.fetchPlanProperties(properties);
+    }
+
+    @Override
+    public FluentLoader<E> softDeletion(boolean softDeletion) {
+        return (FluentLoader<E>) super.softDeletion(softDeletion);
+    }
+
+    @Override
+    public FluentLoader<E> hint(String hintName, Serializable value) {
+        return (FluentLoader<E>) super.hint(hintName, value);
+    }
+
+    @Override
+    public FluentLoader<E> hints(Map<String, Serializable> hints) {
+        return (FluentLoader<E>) super.hints(hints);
+    }
+
+    @Override
+    public FluentLoader<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+        return (FluentLoader<E>) super.accessConstraints(accessConstraints);
+    }
+
     /**
      * Sets a view.
      *
@@ -40,7 +88,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
      */
     @Deprecated
     public FluentLoader<E> view(FetchPlan fetchPlan) {
-        return (FluentLoader<E>) fetchPlan(fetchPlan);
+        return fetchPlan(fetchPlan);
     }
 
     /**
@@ -50,7 +98,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
      */
     @Deprecated
     public FluentLoader<E> view(String fetchPlanName) {
-        return (FluentLoader<E>) fetchPlan(fetchPlanName);
+        return fetchPlan(fetchPlanName);
     }
 
     /**
@@ -58,7 +106,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
      */
     @Deprecated
     public FluentLoader<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-        return (FluentLoader<E>) fetchPlan(fetchPlanBuilderConfigurer);
+        return fetchPlan(fetchPlanBuilderConfigurer);
     }
 
     /**
@@ -66,7 +114,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
      */
     @Deprecated
     public FluentLoader<E> viewProperties(String... properties) {
-        return (FluentLoader<E>) fetchPlanProperties(properties);
+        return fetchPlanProperties(properties);
     }
 
     /**
@@ -110,6 +158,46 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
             super(loader, id);
         }
 
+        @Override
+        public FluentLoader.ById<E> fetchPlan(FetchPlan fetchPlan) {
+            return (ById<E>) super.fetchPlan(fetchPlan);
+        }
+
+        @Override
+        public FluentLoader.ById<E> fetchPlan(String fetchPlanName) {
+            return (ById<E>) super.fetchPlan(fetchPlanName);
+        }
+
+        @Override
+        public FluentLoader.ById<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return (ById<E>) super.fetchPlan(fetchPlanBuilderConfigurer);
+        }
+
+        @Override
+        public FluentLoader.ById<E> fetchPlanProperties(String... properties) {
+            return (ById<E>) super.fetchPlanProperties(properties);
+        }
+
+        @Override
+        public FluentLoader.ById<E> softDeletion(boolean softDeletion) {
+            return (ById<E>) super.softDeletion(softDeletion);
+        }
+
+        @Override
+        public FluentLoader.ById<E> hint(String hintName, Serializable value) {
+            return (ById<E>) super.hint(hintName, value);
+        }
+
+        @Override
+        public FluentLoader.ById<E> hints(Map<String, Serializable> hints) {
+            return (ById<E>) super.hints(hints);
+        }
+
+        @Override
+        public FluentLoader.ById<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            return (ById<E>) super.accessConstraints(accessConstraints);
+        }
+
         /**
          * Sets a fetchPlan.
          *
@@ -117,7 +205,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ById<E> view(FetchPlan fetchPlan) {
-            return (ById<E>) fetchPlan(fetchPlan);
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -127,7 +215,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ById<E> view(String fetchPlanName) {
-            return (ById<E>) fetchPlan(fetchPlanName);
+            return fetchPlan(fetchPlanName);
         }
 
         /**
@@ -135,7 +223,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ById<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-            return (ById<E>) fetchPlan(fetchPlanBuilderConfigurer);
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         /**
@@ -143,7 +231,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ById<E> viewProperties(String... properties) {
-            return (ById<E>) fetchPlanProperties(properties);
+            return fetchPlanProperties(properties);
         }
     }
 
@@ -153,6 +241,46 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
             super(loader, ids);
         }
 
+        @Override
+        public FluentLoader.ByIds<E> fetchPlan(FetchPlan fetchPlan) {
+            return (ByIds<E>) super.fetchPlan(fetchPlan);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> fetchPlan(String fetchPlanName) {
+            return (ByIds<E>) super.fetchPlan(fetchPlanName);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return (ByIds<E>) super.fetchPlan(fetchPlanBuilderConfigurer);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> fetchPlanProperties(String... properties) {
+            return (ByIds<E>) super.fetchPlanProperties(properties);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> softDeletion(boolean softDeletion) {
+            return (ByIds<E>) super.softDeletion(softDeletion);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> hint(String hintName, Serializable value) {
+            return (ByIds<E>) super.hint(hintName, value);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> hints(Map<String, Serializable> hints) {
+            return (ByIds<E>) super.hints(hints);
+        }
+
+        @Override
+        public FluentLoader.ByIds<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            return (ByIds<E>) super.accessConstraints(accessConstraints);
+        }
+
         /**
          * Sets a fetchPlan.
          *
@@ -160,7 +288,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ByIds<E> view(FetchPlan fetchPlan) {
-            return (ByIds<E>) fetchPlan(fetchPlan);
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -170,7 +298,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ByIds<E> view(String fetchPlanName) {
-            return (ByIds<E>) fetchPlan(fetchPlanName);
+            return fetchPlan(fetchPlanName);
         }
 
         /**
@@ -188,7 +316,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ByIds<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-            return (ByIds<E>) fetchPlan(fetchPlanBuilderConfigurer);
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         /**
@@ -223,6 +351,81 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
             super(loader, queryString, positionalParams, beanFactory);
         }
 
+        @Override
+        public FluentLoader.ByQuery<E> fetchPlan(FetchPlan fetchPlan) {
+            return (ByQuery<E>) super.fetchPlan(fetchPlan);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> fetchPlan(String fetchPlanName) {
+            return (ByQuery<E>) super.fetchPlan(fetchPlanName);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            return (ByQuery<E>) super.fetchPlan(fetchPlanBuilderConfigurer);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> fetchPlanProperties(String... properties) {
+            return (ByQuery<E>) super.fetchPlanProperties(properties);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> softDeletion(boolean softDeletion) {
+            return (ByQuery<E>) super.softDeletion(softDeletion);
+        }
+
+        @Override
+        public FluentLoader.ByQuery hint(String hintName, Serializable value) {
+            return (ByQuery) super.hint(hintName, value);
+        }
+
+        @Override
+        public FluentLoader.ByQuery hints(Map<String, Serializable> hints) {
+            return (ByQuery) super.hints(hints);
+        }
+
+        @Override
+        public FluentLoader.ByQuery condition(Condition condition) {
+            return (ByQuery) super.condition(condition);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> parameter(String name, Date value, TemporalType temporalType) {
+            return (ByQuery<E>) super.parameter(name, value, temporalType);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> setParameters(Map<String, Object> parameters) {
+            return (ByQuery<E>) super.setParameters(parameters);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> firstResult(int firstResult) {
+            return (ByQuery<E>) super.firstResult(firstResult);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> maxResults(int maxResults) {
+            return (ByQuery<E>) super.maxResults(maxResults);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> cacheable(boolean cacheable) {
+            return (ByQuery<E>) super.cacheable(cacheable);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            return (ByQuery<E>) super.accessConstraints(accessConstraints);
+        }
+
+        @Override
+        public FluentLoader.ByQuery<E> parameter(String name, Object value) {
+            return (ByQuery<E>) super.parameter(name, value);
+        }
+
         /**
          * Sets a fetchPlan.
          *
@@ -230,7 +433,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ByQuery<E> view(FetchPlan fetchPlan) {
-            return (ByQuery<E>) fetchPlan(fetchPlan);
+            return fetchPlan(fetchPlan);
         }
 
         /**
@@ -240,21 +443,23 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
          */
         @Deprecated
         public ByQuery<E> view(String fetchPlanName) {
-            return (ByQuery<E>) fetchPlan(fetchPlanName);
+            return fetchPlan(fetchPlanName);
         }
 
         /**
          * @deprecated replaced by {@link ByQuery#fetchPlan(Consumer)} )}
          */
+        @Deprecated
         public ByQuery<E> view(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-            return (ByQuery<E>) fetchPlan(fetchPlanBuilderConfigurer);
+            return fetchPlan(fetchPlanBuilderConfigurer);
         }
 
         /**
          * @deprecated replaced by {@link ByQuery#fetchPlanProperties(String...)}
          */
+        @Deprecated
         public ByQuery<E> viewProperties(String... properties) {
-            return (ByQuery<E>) fetchPlanProperties(properties);
+            return fetchPlanProperties(properties);
         }
     }
 }

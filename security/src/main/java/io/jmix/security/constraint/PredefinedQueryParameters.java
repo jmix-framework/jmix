@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 @Component(PredefinedQueryParameters.NAME)
 public class PredefinedQueryParameters {
@@ -30,7 +29,6 @@ public class PredefinedQueryParameters {
 
     public static final String PARAM_SESSION_ATTR = "session$";
     public static final String PARAM_USER_LOGIN = "username";
-    public static final String PARAM_USER_ID = "userId";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
@@ -45,11 +43,8 @@ public class PredefinedQueryParameters {
     Object getParameterValue(String paramName) {
         if (paramName.startsWith(PARAM_SESSION_ATTR)) {
             String attrName = paramName.substring(PARAM_SESSION_ATTR.length());
-
             if (PARAM_USER_LOGIN.equals(attrName)) {
                 return currentAuthentication.getUser().getUsername();
-            } else if (PARAM_USER_ID.equals(attrName)) {
-                return UUID.fromString(currentAuthentication.getUser().getKey());
             }
         }
         return null;

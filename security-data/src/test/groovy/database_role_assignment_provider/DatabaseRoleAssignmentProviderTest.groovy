@@ -48,10 +48,10 @@ class DatabaseRoleAssignmentProviderTest extends SecurityDataSpecification {
         dataManager.save(new SaveContext().saving(assignments))
     }
 
-    protected RoleAssignmentEntity createRoleAssignmentEntity(String roleCode, String userKey) {
+    protected RoleAssignmentEntity createRoleAssignmentEntity(String roleCode, String username) {
         def roleAssignment = metadata.create(RoleAssignmentEntity)
         roleAssignment.roleCode = roleCode
-        roleAssignment.userKey = userKey
+        roleAssignment.username = username
         return roleAssignment
     }
 
@@ -63,16 +63,16 @@ class DatabaseRoleAssignmentProviderTest extends SecurityDataSpecification {
         assignments.size() == 3
     }
 
-    def "getAssignmentsByUserKey"() {
+    def "getAssignmentsByUsername"() {
         when:
-        def assignments1 = databaseRoleAssignmentProvider.getAssignmentsByUserKey("user1")
+        def assignments1 = databaseRoleAssignmentProvider.getAssignmentsByUsername("user1")
 
         then:
         assignments1.size() == 1
         assignments1.find {it.roleCode == 'role1'} != null
 
         when:
-        def assignments2 = databaseRoleAssignmentProvider.getAssignmentsByUserKey("user2")
+        def assignments2 = databaseRoleAssignmentProvider.getAssignmentsByUsername("user2")
 
         then:
         assignments2.size() == 2

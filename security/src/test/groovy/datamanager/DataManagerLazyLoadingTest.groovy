@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import spock.lang.Ignore
 import test_support.SecuritySpecification
 import test_support.annotated_role_builder.TestLazyLoadingRole
 import test_support.entity.ManyToManyFirstEntity
@@ -56,7 +55,7 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
     def setup() {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
         userRepository.createUser(user1)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.key, TestLazyLoadingRole.NAME))
+        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.username, TestLazyLoadingRole.NAME))
 
         prepareManyToOne()
         prepareManyToMany()
@@ -69,7 +68,7 @@ class DataManagerLazyLoadingTest extends SecuritySpecification {
 
         userRepository.removeUser(user1)
 
-        roleAssignmentProvider.removeAssignments(user1.key)
+        roleAssignmentProvider.removeAssignments(user1.username)
 
         new JdbcTemplate(dataSource).execute('delete from TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK;' +
                 ' delete from TEST_MANY_TO_MANY_FIRST_ENTITY;' +

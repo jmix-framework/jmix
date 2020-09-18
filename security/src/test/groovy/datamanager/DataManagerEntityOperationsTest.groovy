@@ -74,7 +74,7 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
 
         user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2")
         userRepository.createUser(user2)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user2.key, TestDataManagerEntityOperationsRole.NAME))
+        roleAssignmentProvider.addAssignment(new RoleAssignment(user2.username, TestDataManagerEntityOperationsRole.NAME))
 
         order = metadata.create(TestOrder)
         order.number = '1'
@@ -89,8 +89,8 @@ class DataManagerEntityOperationsTest extends SecuritySpecification {
         userRepository.removeUser(user1)
         userRepository.removeUser(user2)
 
-        roleAssignmentProvider.removeAssignments(user1.key)
-        roleAssignmentProvider.removeAssignments(user2.key)
+        roleAssignmentProvider.removeAssignments(user1.username)
+        roleAssignmentProvider.removeAssignments(user2.username)
 
 
         new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')

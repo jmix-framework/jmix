@@ -16,8 +16,10 @@
 
 package datamanager
 
-import io.jmix.core.*
-import io.jmix.core.security.AccessDeniedException
+
+import io.jmix.core.AccessConstraintsRegistry
+import io.jmix.core.DataManager
+import io.jmix.core.Metadata
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.impl.InMemoryUserRepository
@@ -29,7 +31,6 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import test_support.SecuritySpecification
-import test_support.annotated_role_builder.TestDataManagerEntityOperationsRole
 import test_support.annotated_role_builder.TestDataManagerReadQueryRole
 import test_support.entity.TestOrder
 
@@ -67,7 +68,7 @@ class DataManagerReadQueryConstraintTest extends SecuritySpecification {
     def setup() {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
         userRepository.createUser(user1)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.key, TestDataManagerReadQueryRole.NAME))
+        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.username, TestDataManagerReadQueryRole.NAME))
 
         orderDenied1 = metadata.create(TestOrder)
         orderDenied1.number = '1'
@@ -89,7 +90,7 @@ class DataManagerReadQueryConstraintTest extends SecuritySpecification {
 
         userRepository.removeUser(user1)
 
-        roleAssignmentProvider.removeAssignments(user1.key)
+        roleAssignmentProvider.removeAssignments(user1.username)
 
         new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')
     }

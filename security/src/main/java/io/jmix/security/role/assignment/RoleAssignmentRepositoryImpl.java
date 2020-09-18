@@ -42,9 +42,9 @@ public class RoleAssignmentRepositoryImpl implements RoleAssignmentRepository {
     }
 
     @Override
-    public Collection<RoleAssignment> getAssignmentsByUserKey(String userKey) {
+    public Collection<RoleAssignment> getAssignmentsByUsername(String username) {
         return assignmentProviders.stream()
-                .flatMap(roleAssignmentProvider -> roleAssignmentProvider.getAssignmentsByUserKey(userKey).stream())
+                .flatMap(roleAssignmentProvider -> roleAssignmentProvider.getAssignmentsByUsername(username).stream())
                 .collect(Collectors.toList());
     }
 }

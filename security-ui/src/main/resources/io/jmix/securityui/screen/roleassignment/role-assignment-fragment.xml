@@ -21,7 +21,7 @@
                     class="io.jmix.securitydata.entity.RoleAssignmentEntity">
             <loader id="roleAssignmentEntitiesDl">
                 <query>
-                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.userKey = :userKey]]>
+                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username]]>
                 </query>
             </loader>
         </collection>

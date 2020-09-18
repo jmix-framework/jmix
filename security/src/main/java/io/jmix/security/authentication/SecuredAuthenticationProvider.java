@@ -57,7 +57,7 @@ public class SecuredAuthenticationProvider extends DaoAuthenticationProvider {
         List<ResourcePolicy> resourcePolicies = new ArrayList<>();
         List<RowLevelPolicy> rowLevelPolicies = new ArrayList<>();
 
-        Collection<RoleAssignment> roleAssignments = roleAssignmentRepository.getAssignmentsByUserKey(((BaseUser) user).getKey());
+        Collection<RoleAssignment> roleAssignments = roleAssignmentRepository.getAssignmentsByUsername(user.getUsername());
         for (RoleAssignment roleAssignment : roleAssignments) {
             Role role = roleRepository.getRoleByCode(roleAssignment.getRoleCode());
             if (role != null) {

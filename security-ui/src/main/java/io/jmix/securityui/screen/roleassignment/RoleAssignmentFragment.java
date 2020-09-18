@@ -79,7 +79,7 @@ public class RoleAssignmentFragment extends ScreenFragment {
     public void onAfterShow(Screen.AfterShowEvent event) {
         BaseUser user = userDc.getItem();
         if (!entityStates.isNew(user)) {
-            roleAssignmentEntitiesDl.setParameter("userKey", user.getKey());
+            roleAssignmentEntitiesDl.setParameter("username", user.getUsername());
             roleAssignmentEntitiesDl.load();
         }
     }
@@ -97,7 +97,7 @@ public class RoleAssignmentFragment extends ScreenFragment {
                 .map(roleModel -> {
                     RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
                     roleAssignmentEntity.setRoleCode(roleModel.getCode());
-                    roleAssignmentEntity.setUserKey(user.getKey());
+                    roleAssignmentEntity.setUsername(user.getUsername());
                     return roleAssignmentEntity;
                 })
                 .collect(Collectors.toList());
@@ -111,13 +111,13 @@ public class RoleAssignmentFragment extends ScreenFragment {
 
     @Subscribe(target = Target.DATA_CONTEXT)
     public void onPreCommit(DataContext.PreCommitEvent event) {
-        //we don't know userKey when a new user is created, so in this case we set userKey for role assignment when
-        //user is saved
+        //we don't know the username when a new user is created, so in this case we set username for role assignment
+        //when the user is saved
         BaseUser user = userDc.getItem();
         if (entityStates.isNew(user)) {
             event.getModifiedInstances().stream()
                     .filter(entity -> entity instanceof RoleAssignmentEntity)
-                    .forEach(roleAssEntity -> ((RoleAssignmentEntity) roleAssEntity).setUserKey(user.getKey()));
+                    .forEach(roleAssEntity -> ((RoleAssignmentEntity) roleAssEntity).setUsername(user.getUsername()));
         }
     }
 }

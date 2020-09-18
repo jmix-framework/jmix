@@ -68,11 +68,13 @@ public class RoleAssignmentEntity implements JmixEntity {
     @Column(name = "DELETED_BY", length = 50)
     protected String deletedBy;
 
-    @Column(name = "USER_KEY", nullable = false)
-    private @NotNull String userKey;
+    @NotNull
+    @Column(name = "USERNAME", nullable = false)
+    private String username;
 
+    @NotNull
     @Column(name = "ROLE_CODE", nullable = false)
-    private @NotNull String roleCode;
+    private  String roleCode;
 
     public UUID getId() {
         return id;
@@ -146,11 +148,11 @@ public class RoleAssignmentEntity implements JmixEntity {
         this.roleCode = roleCode;
     }
 
-    public String getUserKey() {
-        return userKey;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserKey(String userKey) {
-        this.userKey = userKey;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

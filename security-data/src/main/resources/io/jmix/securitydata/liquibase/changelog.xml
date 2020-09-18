@@ -140,4 +140,11 @@
 
     </changeSet>
 
+    <changeSet author="security-data" id="2">
+        <renameColumn tableName="SEC_ROLE_ASSIGNMENT_ENTITY"
+                      oldColumnName="USER_KEY"
+                      newColumnName="USERNAME"
+                      columnDataType="VARCHAR(255)"/>
+    </changeSet>
+
 </databaseChangeLog>

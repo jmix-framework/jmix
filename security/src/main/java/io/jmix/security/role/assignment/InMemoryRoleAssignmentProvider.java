@@ -31,7 +31,7 @@ public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
 
     public static final String NAME = "sec_InMemoryRoleAssignmentProvider";
 
-    //key of the map is BaseUser.key
+    //the key of the map is User.username
     protected Multimap<String, RoleAssignment> assignments = HashMultimap.create();
 
     @Override
@@ -40,15 +40,15 @@ public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
     }
 
     @Override
-    public Collection<RoleAssignment> getAssignmentsByUserKey(String userKey) {
-        return assignments.get(userKey);
+    public Collection<RoleAssignment> getAssignmentsByUsername(String username) {
+        return assignments.get(username);
     }
 
     public void addAssignment(RoleAssignment roleAssignment) {
-        assignments.put(roleAssignment.getUserKey(), roleAssignment);
+        assignments.put(roleAssignment.getUsername(), roleAssignment);
     }
 
-    public void removeAssignments(String userKey) {
-        assignments.removeAll(userKey);
+    public void removeAssignments(String username) {
+        assignments.removeAll(username);
     }
 }

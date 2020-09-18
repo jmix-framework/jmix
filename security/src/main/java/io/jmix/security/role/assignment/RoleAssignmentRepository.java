@@ -27,5 +27,5 @@ public interface RoleAssignmentRepository {
 
     Collection<RoleAssignment> getAllAssignments();
 
-    Collection<RoleAssignment> getAssignmentsByUserKey(String userKey);
+    Collection<RoleAssignment> getAssignmentsByUsername(String username);
 }

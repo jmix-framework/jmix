@@ -47,10 +47,10 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
     }
 
     @Override
-    public Collection<RoleAssignment> getAssignmentsByUserKey(String userKey) {
+    public Collection<RoleAssignment> getAssignmentsByUsername(String username) {
         return dataManager.load(RoleAssignmentEntity.class)
-                .query("e.userKey = :userKey")
-                .parameter("userKey", userKey)
+                .query("e.username = :username")
+                .parameter("username", username)
                 .list()
                 .stream()
                 .map(this::buildRoleAssignment)
@@ -58,6 +58,6 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
     }
 
     protected RoleAssignment buildRoleAssignment(RoleAssignmentEntity roleAssignmentEntity) {
-        return new RoleAssignment(roleAssignmentEntity.getUserKey(), roleAssignmentEntity.getRoleCode());
+        return new RoleAssignment(roleAssignmentEntity.getUsername(), roleAssignmentEntity.getRoleCode());
     }
 }

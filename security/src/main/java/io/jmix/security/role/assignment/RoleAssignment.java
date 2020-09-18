@@ -24,16 +24,16 @@ import io.jmix.security.model.Role;
  */
 public class RoleAssignment {
 
-    private final String userKey;
+    private final String username;
     private final String roleCode;
 
-    public RoleAssignment(String userKey, String roleCode) {
-        this.userKey = userKey;
+    public RoleAssignment(String username, String roleCode) {
+        this.username = username;
         this.roleCode = roleCode;
     }
 
-    public String getUserKey() {
-        return userKey;
+    public String getUsername() {
+        return username;
     }
 
     public String getRoleCode() {

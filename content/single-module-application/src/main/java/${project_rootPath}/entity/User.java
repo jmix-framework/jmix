@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.UUID;
 
 @Entity(name = "${project_idPrefix}_User")
-@Table(name = "${project_idPrefix.toUpperCase()}_USER")
+@Table(name = "${project_idPrefix.toUpperCase()}_USER", indexes = {
+        @Index(name = "IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
+})
 public class User implements JmixEntity, BaseUser {
 
     @Id

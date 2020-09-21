@@ -129,8 +129,8 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                         MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
                         iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
                         Object id = wrappedValueHolder.getRow().get(fieldName.get());
-                        // Since UUID is stored as String
-                        if (idProperty.getJavaType() == UUID.class) {
+                        // Since UUID is stored as String in some cases
+                        if (idProperty.getJavaType() == UUID.class && id instanceof String) {
                             id = UUID.fromString((String) id);
                         }
                         vh = new JmixWrappingValueHolder(
@@ -188,8 +188,8 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                     MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
                     iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
                     Object id = wrappedValueHolder.getRow().get(fieldName.get());
-                    // Since UUID is stored as String
-                    if (idProperty.getJavaType() == UUID.class) {
+                    // Since UUID is stored as String in some cases
+                    if (idProperty.getJavaType() == UUID.class && id instanceof String) {
                         id = UUID.fromString((String) id);
                     }
                     vh = new JmixWrappingValueHolder(

@@ -28,10 +28,10 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.OpenMode;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -376,10 +376,9 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
                 linkField.setCustomClickHandler(new InvokeEntityLinkClickHandler(invokeMethodName));
             }
 
-            String openTypeAttribute = xmlDescriptor.attributeValue("linkScreenOpenType");
-            if (StringUtils.isNotEmpty(openTypeAttribute)) {
-                OpenType openType = OpenType.valueOf(openTypeAttribute);
-                linkField.setScreenOpenType(openType);
+            String openOpenModeAttribute = xmlDescriptor.attributeValue("linkScreenOpenMode");
+            if (StringUtils.isNotEmpty(openOpenModeAttribute)) {
+                linkField.setOpenMode(OpenMode.valueOf(openOpenModeAttribute));
             }
         }
     }

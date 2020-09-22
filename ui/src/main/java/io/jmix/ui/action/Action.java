@@ -21,7 +21,6 @@ import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.ListComponent;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -160,16 +159,6 @@ public interface Action {
      * @see #addPropertyChangeListener
      */
     void removePropertyChangeListener(Consumer<PropertyChangeEvent> listener);
-
-    /**
-     * Indicates that the action can be assigned a {@link OpenType} to open a related screen.
-     */
-    @Deprecated
-    interface HasOpenType extends Action {
-        OpenType getOpenType();
-
-        void setOpenType(OpenType openType);
-    }
 
     /**
      * Indicates that the action can be affected by UI permissions.

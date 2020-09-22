@@ -74,7 +74,7 @@
         <xs:attribute type="xs:string" name="class"/>
         <xs:attribute type="xs:string" name="bean"/>
         <xs:attribute type="xs:string" name="beanMethod"/>
-        <xs:attribute type="openTypeType" name="openType"/>
+        <xs:attribute type="openModeType" name="openMode"/>
         <xs:attribute type="xs:boolean" name="resizable"/>
         <xs:attribute type="xs:string" name="shortcut"/>
         <xs:attribute type="resourceString" name="caption"/>
@@ -121,7 +121,7 @@
         </xs:simpleContent>
     </xs:complexType>
 
-    <xs:simpleType name="openTypeType">
+    <xs:simpleType name="openModeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NEW_TAB"/>
             <xs:enumeration value="DIALOG"/>

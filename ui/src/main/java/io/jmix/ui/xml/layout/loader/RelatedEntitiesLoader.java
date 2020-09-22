@@ -47,10 +47,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
         loadAlign(resultComponent, element);
         loadCss(resultComponent, element);
 
-        String openType = element.attributeValue("openType");
-        if (StringUtils.isNotEmpty(openType)) {
-            resultComponent.setLaunchMode(OpenMode.valueOf(openType));
-        }
+        loadOpenMode(resultComponent, element);
 
         loadString(element, "exclude", resultComponent::setExcludePropertiesRegex);
 
@@ -77,6 +74,13 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
 
         loadFocusable(resultComponent, element);
         loadTabIndex(resultComponent, element);
+    }
+
+    protected void loadOpenMode(RelatedEntities resultComponent, Element element) {
+        String openMode = element.attributeValue("openMode");
+        if (StringUtils.isNotEmpty(openMode)) {
+            resultComponent.setLaunchMode(OpenMode.valueOf(openMode));
+        }
     }
 
     protected void loadPropertyOption(Element routeElement) {

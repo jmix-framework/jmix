@@ -18,6 +18,7 @@ package io.jmix.ui.menu;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.ui.component.DialogWindow;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -26,8 +27,6 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.component.Window;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.logging.UserActionsLogger;
 import io.jmix.ui.monitoring.UiMonitoring;
 import io.jmix.ui.screen.*;
@@ -94,7 +93,7 @@ public class MenuItemCommands {
         List<UiControllerProperty> properties = loadProperties(item.getDescriptor());
 
         if (StringUtils.isNotEmpty(item.getScreen())) {
-            return new ScreenCommand(origin, item, item.getScreen(), item.getDescriptor(), params, properties);
+            return createScreenCommand(origin, item, params, properties);
         }
 
         if (StringUtils.isNotEmpty(item.getRunnableClass())) {
@@ -106,6 +105,13 @@ public class MenuItemCommands {
         }
 
         return null;
+    }
+
+    protected MenuItemCommand createScreenCommand(FrameOwner origin,
+                                                  MenuItem item,
+                                                  Map<String, Object> params,
+                                                  List<UiControllerProperty> properties) {
+        return new ScreenCommand(origin, item, item.getScreen(), item.getDescriptor(), params, properties);
     }
 
     protected Map<String, Object> loadParams(MenuItem item) {
@@ -234,44 +240,13 @@ public class MenuItemCommands {
 
             Timer.Sample sample = Timer.start(meterRegistry);
 
-            OpenType openType = OpenType.NEW_TAB;
-            String openTypeStr = descriptor.attributeValue("openType");
-            if (StringUtils.isNotEmpty(openTypeStr)) {
-                openType = OpenType.valueOf(openTypeStr);
-            }
-
-            if (openType.getOpenMode() == OpenMode.DIALOG) {
-                String resizable = descriptor.attributeValue("resizable");
-                if (StringUtils.isNotEmpty(resizable)) {
-                    openType = openType.resizable(Boolean.parseBoolean(resizable));
-                }
-            }
-
-            Screens screens = getScreenContext(origin).getScreens();
-
-            String screenId = this.screen;
-            Screen screen;
             WindowInfo windowInfo = windowConfig.getWindowInfo(this.screen);
+            Screen screen = createScreen(windowInfo, this.screen);
 
-            if (windowInfo.getDescriptor() != null) {
-                // legacy screens
-
-                Map<String, Object> paramsMap = parseLegacyScreenParams(windowInfo.getDescriptor());
-                paramsMap.putAll(params);
-
-                if (screenId.endsWith(Window.CREATE_WINDOW_SUFFIX)
-                        || screenId.endsWith(Window.EDITOR_WINDOW_SUFFIX)) {
-                    // TODO: legacy-ui
-                    // screen = ((WindowManager) screens).createEditor(windowInfo, getEntityToEdit(screenId), openType, paramsMap);
-                    screen = null;
-                } else {
-                    screen = screens.create(screenId, openType.getOpenMode(), new MapScreenOptions(paramsMap));
-                }
-            } else {
-                screen = screens.create(screenId, openType.getOpenMode(), new MapScreenOptions(params));
-                if (screen instanceof EditorScreen) {
-                    //noinspection unchecked
-                    ((EditorScreen) screen).setEntityToEdit(getEntityToEdit(screenId));
+            if (screen != null && screen.getWindow() instanceof DialogWindow) {
+                Boolean resizable = getResizable(descriptor);
+                if (resizable != null) {
+                    ((DialogWindow) screen.getWindow()).setResizable(resizable);
                 }
             }
 
@@ -289,6 +264,7 @@ public class MenuItemCommands {
             propertyInjector.inject();
 
             if (screen != null) {
+                Screens screens = getScreenContext(origin).getScreens();
                 screens.showFromNavigation(screen);
             }
 
@@ -326,31 +302,38 @@ public class MenuItemCommands {
             return entityItem;
         }
 
-        // CAUTION copied from com.haulmont.cuba.web.sys.WebScreens#createParametersMap
-        protected Map<String, Object> parseLegacyScreenParams(Element descriptor) {
-            Map<String, Object> map = new HashMap<>();
+        @Nullable
+        protected Screen createScreen(WindowInfo windowInfo, String screenId) {
+            Screens screens = getScreenContext(origin).getScreens();
 
-            Element paramsElement = descriptor.element("params") != null ? descriptor.element("params") : descriptor;
-            if (paramsElement != null) {
-                List<Element> paramElements = paramsElement.elements("param");
-                for (Element paramElement : paramElements) {
-                    String name = paramElement.attributeValue("name");
-                    String value = paramElement.attributeValue("value");
-                    if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-                        Boolean booleanValue = Boolean.valueOf(value);
-                        map.put(name, booleanValue);
-                    } else {
-                        map.put(name, value);
-                    }
-                }
+            Screen screen = screens.create(screenId, getOpenMode(descriptor), new MapScreenOptions(params));
+            if (screen instanceof EditorScreen) {
+                //noinspection unchecked
+                ((EditorScreen) screen).setEntityToEdit(getEntityToEdit(screenId));
             }
-
-            return map;
+            return screen;
         }
 
         @Override
         public String getDescription() {
             return String.format("Opening window: \"%s\"", screen);
+        }
+
+        protected OpenMode getOpenMode(Element descriptor) {
+            String openModeStr = descriptor.attributeValue("openMode");
+            if (StringUtils.isNotEmpty(openModeStr)) {
+                return OpenMode.valueOf(openModeStr);
+            }
+            return OpenMode.NEW_TAB;
+        }
+
+        @Nullable
+        protected Boolean getResizable(Element descriptor) {
+            String resizable = descriptor.attributeValue("resizable");
+            if (StringUtils.isNotEmpty(resizable)) {
+                return Boolean.parseBoolean(resizable);
+            }
+            return null;
         }
     }
 

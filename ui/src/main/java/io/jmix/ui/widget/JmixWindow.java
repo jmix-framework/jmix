@@ -17,6 +17,7 @@
 package io.jmix.ui.widget;
 
 import io.jmix.ui.AppUI;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.widget.client.tabsheet.ClientAction;
 import io.jmix.ui.widget.client.window.JmixWindowClientRpc;
 import io.jmix.ui.widget.client.window.JmixWindowServerRpc;
@@ -36,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Dialog window container for OpenType.DIALOG windows.
+ * Dialog window container for {@link OpenMode#DIALOG} windows.
  */
 public class JmixWindow extends Window {
 

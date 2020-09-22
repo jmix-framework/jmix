@@ -29,7 +29,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.DialogWindow.WindowMode;
 import io.jmix.ui.component.Window.HasWorkArea;
 import io.jmix.ui.component.impl.WebAppWorkArea;
 import io.jmix.ui.component.impl.WebDialogWindow.GuiDialogWindow;
@@ -39,7 +38,6 @@ import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
@@ -1331,37 +1329,6 @@ public class WebScreens implements Screens {
             }
         }
     }
-
-    @Deprecated
-    protected void applyOpenTypeParameters(Window window, OpenType openType) {
-        if (window instanceof DialogWindow) {
-            DialogWindow dialogWindow = (DialogWindow) window;
-
-            if (openType.getCloseOnClickOutside() != null) {
-                dialogWindow.setCloseOnClickOutside(openType.getCloseOnClickOutside());
-            }
-            if (openType.getMaximized() != null) {
-                dialogWindow.setWindowMode(openType.getMaximized() ? WindowMode.MAXIMIZED : WindowMode.NORMAL);
-            }
-            if (openType.getModal() != null) {
-                dialogWindow.setModal(openType.getModal());
-            }
-            if (openType.getResizable() != null) {
-                dialogWindow.setResizable(openType.getResizable());
-            }
-            if (openType.getWidth() != null) {
-                dialogWindow.setDialogWidth(openType.getWidthString());
-            }
-            if (openType.getHeight() != null) {
-                dialogWindow.setDialogHeight(openType.getHeightString());
-            }
-        }
-
-        if (openType.getCloseable() != null) {
-            window.setCloseable(openType.getCloseable());
-        }
-    }
-
 
     /**
      * Content of each tab of AppWorkArea TabSheet.

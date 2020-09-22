@@ -22,11 +22,11 @@ import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -180,10 +180,8 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
                 if (StringUtils.isNotEmpty(lookupScreen)) {
                     component.setLookupScreen(lookupScreen);
                 }
-                String openType = lookupElement.attributeValue("openType");
-                if (StringUtils.isNotEmpty(openType)) {
-                    component.setLookupOpenMode(OpenType.valueOf(openType));
-                }
+
+                loadLookupOpenMode(component, lookupElement);
             }
         }
 
@@ -198,6 +196,13 @@ public class TokenListLoader extends AbstractFieldLoader<TokenList> {
         }
 
         loadFilterMode(component, lookupElement);
+    }
+
+    protected void loadLookupOpenMode(TokenList tokenList, Element lookupElement) {
+        String openMode = lookupElement.attributeValue("openMode");
+        if (StringUtils.isNotEmpty(openMode)) {
+            tokenList.setLookupLaunchMode(OpenMode.valueOf(openMode));
+        }
     }
 
     protected void loadLookupCaptionProperty(TokenList component, Element lookupElement) {

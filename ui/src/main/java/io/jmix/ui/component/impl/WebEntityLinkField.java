@@ -35,7 +35,6 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.widget.JmixButtonField;
@@ -57,7 +56,6 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
 
     protected String screen;
     protected OpenMode screenOpenMode = OpenMode.THIS_TAB;
-    protected OpenType screenOpenType = OpenType.THIS_TAB;
     protected ScreenCloseListener screenCloseListener;
     protected Map<String, Object> screenParams;
 
@@ -90,7 +88,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     }
 
     @Autowired
-    public void setSceenBuilders(ScreenBuilders screenBuilders) {
+    public void setScreenBuilders(ScreenBuilders screenBuilders) {
         this.screenBuilders = screenBuilders;
     }
 
@@ -229,17 +227,6 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     @Override
     public void setCustomClickHandler(@Nullable EntityLinkClickHandler clickHandler) {
         this.clickHandler = clickHandler;
-    }
-
-    @Override
-    public OpenType getScreenOpenType() {
-        return screenOpenType;
-    }
-
-    @Override
-    public void setScreenOpenType(OpenType screenOpenType) {
-        this.screenOpenType = screenOpenType;
-        this.screenOpenMode = screenOpenType.getOpenMode();
     }
 
     @Override

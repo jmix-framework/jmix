@@ -299,7 +299,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="openType">
+    <xs:simpleType name="openMode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NEW_TAB"/>
             <xs:enumeration value="THIS_TAB"/>
@@ -1607,7 +1607,6 @@
 
         <xs:attribute name="type" type="xs:string"/>
 
-        <xs:attribute name="openType" type="openType"/>
         <xs:attribute name="trackSelection" type="xs:boolean"/>
         <xs:attribute name="shortcut" type="shortcut"/>
         <xs:attribute name="constraintOperationType" type="constraintOperationType"/>
@@ -2661,7 +2660,7 @@
         <xs:attribute name="link" type="xs:boolean"/>
         <xs:attribute name="linkScreen" type="xs:string"/>
         <xs:attribute name="linkInvoke" type="xs:string"/>
-        <xs:attribute name="linkScreenOpenType" type="openType"/>
+        <xs:attribute name="linkScreenOpenMode" type="openMode"/>
 
         <!-- Additional attributes, use only for editable table -->
         <xs:attributeGroup ref="hasEditable"/>
@@ -2938,7 +2937,7 @@
         <!-- Show entity reference as clickable link -->
         <xs:attribute name="link" type="xs:boolean"/>
         <xs:attribute name="linkScreen" type="xs:string"/>
-        <xs:attribute name="linkScreenOpenType" type="openType"/>
+        <xs:attribute name="linkScreenOpenMode" type="openMode"/>
         <xs:attribute name="linkInvoke" type="xs:string"/>
 
         <xs:attribute name="generator" type="xs:string"/>
@@ -3046,7 +3045,7 @@
                             <xs:attribute name="lookupScreen" type="xs:string"/>
                             <xs:attribute name="lookup" type="xs:boolean"/>
                             <xs:attribute name="filterMode" type="filterMode"/>
-                            <xs:attribute name="openType" type="openType"/>
+                            <xs:attribute name="openMode" type="openMode"/>
                             <xs:attribute name="multiselect" type="xs:boolean"/>
                             <xs:attribute name="inputPrompt" type="resourceString"/>
                         </xs:complexType>
@@ -3521,7 +3520,7 @@
                     </xs:element>
                 </xs:sequence>
 
-                <xs:attribute name="openType" type="openType"/>
+                <xs:attribute name="openMode" type="openMode"/>
                 <xs:attribute name="for" type="xs:string" use="required"/>
                 <xs:attribute name="exclude" type="xs:string"/>
                 <xs:attribute name="focusable" type="xs:boolean"/>
@@ -3544,7 +3543,7 @@
                     </xs:element>
                 </xs:sequence>
 
-                <xs:attribute name="openType" type="openType"/>
+                <xs:attribute name="openMode" type="openMode"/>
                 <xs:attribute name="for" type="xs:string" use="required"/>
                 <xs:attribute name="exclude" type="xs:string"/>
                 <xs:attribute name="includeProperties" type="xs:string"/>

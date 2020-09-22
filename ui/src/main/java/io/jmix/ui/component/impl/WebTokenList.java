@@ -20,10 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
-import io.jmix.ui.WindowConfig;
+import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
@@ -34,7 +31,6 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapEntityOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
@@ -71,7 +67,7 @@ public class WebTokenList<V extends JmixEntity>
     protected Action lookupAction;
     protected String lookupScreen;
     protected Map<String, Object> lookupScreenParams;
-    protected OpenType lookupOpenMode = OpenType.THIS_TAB;
+    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
 
     protected Position position = Position.TOP;
     protected boolean inline;
@@ -241,13 +237,13 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     @Override
-    public OpenType getLookupOpenMode() {
-        return lookupOpenMode;
+    public Screens.LaunchMode getLookupLaunchMode() {
+        return launchMode;
     }
 
     @Override
-    public void setLookupOpenMode(OpenType lookupOpenMode) {
-        this.lookupOpenMode = lookupOpenMode;
+    public void setLookupLaunchMode(Screens.LaunchMode launchMode) {
+        this.launchMode = launchMode;
     }
 
     @Override
@@ -379,14 +375,9 @@ public class WebTokenList<V extends JmixEntity>
     }
 
     protected Screen createLookupScreen(@Nullable Runnable afterLookupSelect) {
-        Class<V> entityClass = getLookupEntityClass();
-        OpenMode openMode = /*lookupOpenMode != null TODO: legacy-ui
-                ? lookupOpenMode.getOpenMode()
-                :*/ OpenMode.DIALOG;
-
-        Screen lookupScreen = screenBuilders.lookup(entityClass, getFrame().getFrameOwner())
+        Screen lookupScreen = screenBuilders.lookup(getLookupEntityClass(), getFrame().getFrameOwner())
                 .withScreenId(getLookupScreenInternal())
-                .withLaunchMode(openMode)
+                .withLaunchMode(launchMode)
                 .withOptions(new MapScreenOptions(getLookupScreenParamsInternal()))
                 .withSelectHandler(selected -> {
                     handleLookupSelection(selected);
@@ -395,12 +386,6 @@ public class WebTokenList<V extends JmixEntity>
                     }
                 })
                 .build();
-
-        /*
-        TODO: legacy-ui
-        if (lookupOpenMode != null) {
-            applyOpenTypeParameters(lookupScreen.getWindow(), lookupOpenMode);
-        }*/
 
         if (lookupScreen instanceof MultiSelectLookupScreen) {
             ((MultiSelectLookupScreen) lookupScreen).setLookupComponentMultiSelect(isMultiSelect());
@@ -452,38 +437,6 @@ public class WebTokenList<V extends JmixEntity>
             params.putAll(lookupScreenParams);
         }
         return params;
-    }
-
-    @Deprecated
-    protected void applyOpenTypeParameters(Window window/*, OpenType openType*/) {
-        /*
-        TODO: legacy-ui
-        if (window instanceof DialogWindow) {
-            DialogWindow dialogWindow = (DialogWindow) window;
-
-            if (openType.getCloseOnClickOutside() != null) {
-                dialogWindow.setCloseOnClickOutside(openType.getCloseOnClickOutside());
-            }
-            if (openType.getMaximized() != null) {
-                dialogWindow.setWindowMode(openType.getMaximized() ? DialogWindow.WindowMode.MAXIMIZED : DialogWindow.WindowMode.NORMAL);
-            }
-            if (openType.getModal() != null) {
-                dialogWindow.setModal(openType.getModal());
-            }
-            if (openType.getResizable() != null) {
-                dialogWindow.setResizable(openType.getResizable());
-            }
-            if (openType.getWidth() != null) {
-                dialogWindow.setDialogWidth(openType.getWidthString());
-            }
-            if (openType.getHeight() != null) {
-                dialogWindow.setDialogHeight(openType.getHeightString());
-            }
-        }
-
-        if (openType.getCloseable() != null) {
-            window.setCloseable(openType.getCloseable());
-        }*/
     }
 
     protected void handleLookupSelection(Collection<V> selectedEntities) {

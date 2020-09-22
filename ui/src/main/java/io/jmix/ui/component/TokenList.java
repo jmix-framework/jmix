@@ -17,11 +17,12 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.JmixEntity;
+import io.jmix.ui.Screens;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapEntityOptions;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.LookupScreen;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
@@ -188,23 +189,18 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
     Map<String, Object> getLookupScreenParams();
 
     /**
-     * @return lookup screen open mode
+     * @return launch mode for Lookup screen
+     * @see #getLookupProvider()
      */
-
-    @Deprecated
-    OpenType getLookupOpenMode();
+    Screens.LaunchMode getLookupLaunchMode();
 
     /**
-     * Sets lookup screen open mode.
-     * <p>
-     * {@link OpenType#THIS_TAB} is the default.
+     * Sets launch mode for Lookup screen. Uses {@link OpenMode#THIS_TAB} if not set.
      *
-     * @param lookupOpenMode open mode
-     *
-     * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
+     * @param launchMode screen open mode
+     * @see #setLookupProvider(Supplier)
      */
-    @Deprecated
-    void setLookupOpenMode(OpenType lookupOpenMode);
+    void setLookupLaunchMode(Screens.LaunchMode launchMode);
 
     /**
      * @return clear button is enabled

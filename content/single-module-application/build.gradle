@@ -7,9 +7,9 @@ apply plugin: 'org.springframework.boot'
 
 jmix {
     bomVersion = '0.1.0-SNAPSHOT'
+    projectId = '$project_id'
 }
 
-ext.projectId = '$project_id'
 group = 'com.company'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'

@@ -31,6 +31,11 @@ class JmixExtension {
     String bomVersion
 
     /**
+     * Project id that is used by Jmix Studio.
+     */
+    String projectId
+
+    /**
      * If true, the Jmix BOM will be added to the project dependencies as a platform.
      */
     boolean useBom = true

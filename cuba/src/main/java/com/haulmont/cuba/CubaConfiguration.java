@@ -46,6 +46,7 @@ import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
+import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
 import io.jmix.ui.sys.UiControllersConfiguration;
@@ -124,6 +125,14 @@ public class CubaConfiguration {
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
         uiControllers.setBasePackages(Collections.singletonList("com.haulmont.cuba.web.app"));
         return uiControllers;
+    }
+
+    @Bean("cuba_UiActions")
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("com.haulmont.cuba.gui.actions"));
+        return actionsConfiguration;
     }
 
     @Bean(UiControllerDependencyInjector.NAME)

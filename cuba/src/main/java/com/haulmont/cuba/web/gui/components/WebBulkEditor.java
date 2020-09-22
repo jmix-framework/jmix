@@ -16,13 +16,13 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.BulkEditAction;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.component.impl.WebButton;
-import io.jmix.ui.gui.OpenType;
 
 import java.util.Collections;
 import java.util.List;

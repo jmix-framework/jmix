@@ -20,6 +20,7 @@ package com.haulmont.cuba.gui.components.filter;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.addcondition.AddConditionWindow;
@@ -34,7 +35,6 @@ import io.jmix.core.common.datastruct.Tree;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.gui.OpenType;
 
 import java.util.Collection;
 import java.util.HashMap;

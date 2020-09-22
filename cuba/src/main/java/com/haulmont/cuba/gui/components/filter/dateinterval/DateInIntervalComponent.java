@@ -18,12 +18,12 @@ package com.haulmont.cuba.gui.components.filter.dateinterval;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.JmixIcon;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import org.springframework.beans.factory.annotation.Autowired;

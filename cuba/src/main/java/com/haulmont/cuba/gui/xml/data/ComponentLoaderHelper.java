@@ -19,14 +19,8 @@ package com.haulmont.cuba.gui.xml.data;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.gui.components.CaptionMode;
-import com.haulmont.cuba.gui.components.Field;
-import com.haulmont.cuba.gui.components.HasCaptionMode;
-import com.haulmont.cuba.gui.components.HasRowsCount;
-import com.haulmont.cuba.gui.components.HasSettings;
-import com.haulmont.cuba.gui.components.ListComponent;
-import com.haulmont.cuba.gui.components.PickerField;
-import com.haulmont.cuba.gui.components.RowsCount;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.ListActionType;
 import com.haulmont.cuba.gui.components.validators.DateValidator;
 import com.haulmont.cuba.gui.components.validators.DoubleValidator;
@@ -48,7 +42,6 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -419,7 +412,7 @@ public final class ComponentLoaderHelper {
     }
 
     public static void loadActionOpenType(Action action, Element element, ComponentLoader.Context context) {
-        if (action instanceof Action.HasOpenType) {
+        if (action instanceof HasOpenType) {
             String openTypeString = element.attributeValue("openType");
             if (StringUtils.isNotEmpty(openTypeString)) {
                 OpenType openType;
@@ -431,7 +424,7 @@ public final class ComponentLoaderHelper {
                             context);
                 }
 
-                ((Action.HasOpenType) action).setOpenType(openType);
+                ((HasOpenType) action).setOpenType(openType);
             }
         }
     }

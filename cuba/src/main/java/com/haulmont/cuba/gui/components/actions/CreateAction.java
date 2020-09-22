@@ -18,7 +18,10 @@ package com.haulmont.cuba.gui.components.actions;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.AbstractEditor;
+import com.haulmont.cuba.gui.components.HasOpenType;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
@@ -36,7 +39,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import org.springframework.context.annotation.Scope;
@@ -62,7 +64,7 @@ import java.util.function.Supplier;
 @org.springframework.stereotype.Component("cuba_CreateAction")
 @Scope("prototype")
 public class CreateAction extends ListAction
-        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
+        implements HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.CREATE.getId();
 

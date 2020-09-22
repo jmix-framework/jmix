@@ -51,6 +51,7 @@ import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;
 import io.jmix.ui.component.TwinColumn;
+import io.jmix.ui.component.EntityLinkField;
 import io.jmix.ui.component.impl.WebGridLayout;
 import io.jmix.ui.sys.WebUiComponents;
 
@@ -95,6 +96,7 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(LookupField.NAME, WebLookupField.class);
         classes.put(LookupPickerField.NAME, WebLookupPickerField.class);
         classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
+        classes.put(EntityLinkField.NAME, WebEntityLinkField.class);
 
         classes.put(OptionsList.NAME, WebOptionsList.class);
         classes.put(PickerField.NAME, WebPickerField.class);

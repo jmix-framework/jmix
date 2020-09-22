@@ -16,13 +16,10 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.gui.components.CaptionMode;
-import com.haulmont.cuba.gui.components.DatasourceComponent;
-import com.haulmont.cuba.gui.components.Field;
-import com.haulmont.cuba.gui.components.HasCaptionMode;
+import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.component.TokenList;
 import io.jmix.ui.xml.layout.loader.TokenListLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -60,16 +57,25 @@ public class CubaTokenListLoader extends TokenListLoader {
     }
 
     @Override
-    protected void loadCaptionProperty(TokenList component, Element element) {
+    protected void loadCaptionProperty(io.jmix.ui.component.TokenList component, Element element) {
         ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) component, element);
     }
 
     @Override
-    protected void loadLookupCaptionProperty(TokenList component, Element lookupElement) {
+    protected void loadLookupCaptionProperty(io.jmix.ui.component.TokenList component, Element lookupElement) {
         String optionsCaptionProperty = lookupElement.attributeValue("captionProperty");
         if (!StringUtils.isEmpty(optionsCaptionProperty)) {
-            ((com.haulmont.cuba.gui.components.TokenList) component).setOptionsCaptionMode(CaptionMode.PROPERTY);
-            ((com.haulmont.cuba.gui.components.TokenList) component).setOptionsCaptionProperty(optionsCaptionProperty);
+            ((TokenList) component).setOptionsCaptionMode(CaptionMode.PROPERTY);
+            ((TokenList) component).setOptionsCaptionProperty(optionsCaptionProperty);
+        }
+    }
+
+    protected void loadLookupOpenMode(io.jmix.ui.component.TokenList tokenList, Element lookupElement) {
+        super.loadLookupOpenMode(tokenList, lookupElement);
+
+        String openType = lookupElement.attributeValue("openType");
+        if (StringUtils.isNotEmpty(openType)) {
+            ((TokenList) tokenList).setLookupOpenMode(WindowManager.OpenType.valueOf(openType));
         }
     }
 }

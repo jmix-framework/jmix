@@ -33,7 +33,6 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.exception.AccessDeniedHandler;
 import io.jmix.ui.exception.EntityAccessExceptionHandler;
 import io.jmix.ui.exception.NoSuchScreenHandler;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.Screen;
@@ -50,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.haulmont.cuba.gui.WindowManager.*;
 import static java.lang.String.format;
 
 @Component(ScreensLinkHandlerProcessor.NAME)

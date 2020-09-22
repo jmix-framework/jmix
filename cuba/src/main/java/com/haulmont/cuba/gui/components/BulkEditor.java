@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasHtmlCaption;
 import io.jmix.ui.component.HasHtmlDescription;
 import io.jmix.ui.component.HasHtmlSanitizer;
-import io.jmix.ui.gui.OpenType;
 
 import java.util.List;
 import java.util.Map;

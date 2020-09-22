@@ -17,19 +17,32 @@
 package com.haulmont.cuba.web.sys;
 
 import com.google.common.collect.ImmutableMap;
+import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
+import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.menu.MenuItem;
+import io.jmix.ui.menu.MenuItemCommand;
 import io.jmix.ui.menu.MenuItemCommands;
+import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.sys.UiControllerProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.core.env.Environment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Collections;
-import java.util.Map;
+
+import javax.annotation.Nullable;
+import java.util.*;
+
+import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 public class CubaMenuItemCommands extends MenuItemCommands {
 
@@ -90,4 +103,76 @@ public class CubaMenuItemCommands extends MenuItemCommands {
         return dataManager.load(ctx);
     }
 
+    @Override
+    protected MenuItemCommand createScreenCommand(FrameOwner origin, MenuItem item, Map<String, Object> params, List<UiControllerProperty> properties) {
+        return new CubaScreenCommand(origin, item, item.getScreen(), item.getDescriptor(), params, properties);
+    }
+
+    protected class CubaScreenCommand extends ScreenCommand {
+
+        protected CubaScreenCommand(FrameOwner origin, MenuItem item, String screen, Element descriptor, Map<String, Object> params, List<UiControllerProperty> controllerProperties) {
+            super(origin, item, screen, descriptor, params, controllerProperties);
+        }
+
+        @Nullable
+        @Override
+        protected Screen createScreen(WindowInfo windowInfo, String screenId) {
+            Screens screens = getScreenContext(origin).getScreens();
+            if (windowInfo.getDescriptor() != null) {
+                // legacy screens
+
+                Map<String, Object> paramsMap = parseLegacyScreenParams(windowInfo.getDescriptor());
+                paramsMap.putAll(params);
+
+                if (screenId.endsWith(Window.CREATE_WINDOW_SUFFIX)
+                        || screenId.endsWith(Window.EDITOR_WINDOW_SUFFIX)) {
+                    return ((WindowManager) screens).createEditor(windowInfo, getEntityToEdit(screenId), getOpenType(descriptor), paramsMap);
+                } else {
+                    return screens.create(screenId, getOpenMode(descriptor), new MapScreenOptions(paramsMap));
+                }
+            } else {
+                return super.createScreen(windowInfo, screenId);
+            }
+        }
+
+        protected OpenType getOpenType(Element descriptor) {
+            OpenType openType = OpenType.NEW_TAB;
+
+            String openTypeStr = descriptor.attributeValue("openType");
+            if (StringUtils.isNotEmpty(openTypeStr)) {
+                openType = OpenType.valueOf(openTypeStr);
+            }
+
+            if (openType.getOpenMode() == OpenMode.DIALOG) {
+                Boolean resizable = getResizable(descriptor);
+                if (resizable != null) {
+                    openType = openType.resizable(resizable);
+                }
+            }
+
+            return openType;
+        }
+
+        // CAUTION copied from com.haulmont.cuba.web.sys.WebScreens#createParametersMap
+        protected Map<String, Object> parseLegacyScreenParams(Element descriptor) {
+            Map<String, Object> map = new HashMap<>();
+
+            Element paramsElement = descriptor.element("params") != null ? descriptor.element("params") : descriptor;
+            if (paramsElement != null) {
+                List<Element> paramElements = paramsElement.elements("param");
+                for (Element paramElement : paramElements) {
+                    String name = paramElement.attributeValue("name");
+                    String value = paramElement.attributeValue("value");
+                    if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+                        Boolean booleanValue = Boolean.valueOf(value);
+                        map.put(name, booleanValue);
+                    } else {
+                        map.put(name, value);
+                    }
+                }
+            }
+
+            return map;
+        }
+    }
 }

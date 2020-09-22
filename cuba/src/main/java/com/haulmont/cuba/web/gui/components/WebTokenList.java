@@ -16,10 +16,15 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TokenList;
 import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.gui.components.CaptionMode;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.DialogWindow;
+import io.jmix.ui.component.Window;
+import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -27,6 +32,9 @@ import java.util.function.Consumer;
 
 @Deprecated
 public class WebTokenList<V extends JmixEntity> extends io.jmix.ui.component.impl.WebTokenList<V> implements TokenList<V> {
+
+    protected OpenType lookupOpenType = OpenType.THIS_TAB;
+
     @Override
     public void addValidator(Consumer<? super Collection<V>> validator) {
         addValidator(validator::accept);
@@ -68,5 +76,59 @@ public class WebTokenList<V extends JmixEntity> extends io.jmix.ui.component.imp
     protected void createEntityComboBox() {
         entityComboBox = uiComponents.create(LookupPickerField.class);
         entityComboBox.addValueChangeListener(lookupSelectListener);
+    }
+
+    @Override
+    public OpenType getLookupOpenMode() {
+        return lookupOpenType;
+    }
+
+    @Override
+    public void setLookupOpenMode(OpenType lookupOpenMode) {
+        Preconditions.checkNotNullArgument(lookupOpenMode);
+
+        lookupOpenType = lookupOpenMode;
+        launchMode = lookupOpenMode.getOpenMode();
+    }
+
+    @Override
+    protected Screen createLookupScreen(@Nullable Runnable afterLookupSelect) {
+        Screen lookupScreen = super.createLookupScreen(afterLookupSelect);
+
+        if (lookupOpenType != null) {
+            applyOpenTypeParameters(lookupScreen.getWindow(), lookupOpenType);
+        }
+
+        return lookupScreen;
+    }
+
+    @Deprecated
+    protected void applyOpenTypeParameters(Window window, OpenType openType) {
+        if (window instanceof DialogWindow) {
+            DialogWindow dialogWindow = (DialogWindow) window;
+
+            if (openType.getCloseOnClickOutside() != null) {
+                dialogWindow.setCloseOnClickOutside(openType.getCloseOnClickOutside());
+            }
+            if (openType.getMaximized() != null) {
+                dialogWindow.setWindowMode(openType.getMaximized() ? DialogWindow.WindowMode.MAXIMIZED : DialogWindow.WindowMode.NORMAL);
+            }
+            if (openType.getModal() != null) {
+                dialogWindow.setModal(openType.getModal());
+            }
+            if (openType.getResizable() != null) {
+                dialogWindow.setResizable(openType.getResizable());
+            }
+            if (openType.getWidth() != null) {
+                dialogWindow.setDialogWidth(openType.getWidthString());
+            }
+            if (openType.getHeight() != null) {
+                dialogWindow.setDialogHeight(openType.getHeightString());
+            }
+        }
+
+        if (openType.getCloseable() != null) {
+            window.setCloseable(openType.getCloseable());
+        }
     }
 }

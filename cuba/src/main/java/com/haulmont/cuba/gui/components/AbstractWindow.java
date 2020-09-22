@@ -29,7 +29,6 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
 import com.haulmont.cuba.settings.CubaLegacySettings;
@@ -209,7 +208,7 @@ public class AbstractWindow extends Screen
      * <br> Override this method and put initialization logic here.
      *
      * @param params parameters passed from caller's code, usually from
-     *               {@link #openWindow(String, OpenType)} and similar methods, or set in
+     *               {@link #openWindow(String, WindowManager.OpenType)} and similar methods, or set in
      *               {@code screens.xml} for this registered screen
      */
     public void init(Map<String, Object> params) {

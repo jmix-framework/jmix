@@ -17,10 +17,8 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Security;
-import com.haulmont.cuba.gui.components.AbstractEditor;
-import com.haulmont.cuba.gui.components.BulkEditor;
-import com.haulmont.cuba.gui.components.Field;
-import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
@@ -37,7 +35,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import org.springframework.context.annotation.Scope;
@@ -62,7 +59,7 @@ import java.util.function.Supplier;
 @org.springframework.stereotype.Component("cuba_EditAction")
 @Scope("prototype")
 public class EditAction extends ItemTrackingAction
-        implements Action.HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
+        implements HasOpenType, Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.EDIT.getId();
 

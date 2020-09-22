@@ -16,12 +16,14 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -66,4 +68,19 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>, i
      */
     @Deprecated
     void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty);
+
+    @Deprecated
+    WindowManager.OpenType getLookupOpenMode();
+
+    /**
+     * Sets lookup screen open mode.
+     * <p>
+     * {@link WindowManager.OpenType#THIS_TAB} is the default.
+     *
+     * @param lookupOpenMode open mode
+     *
+     * @deprecated use {@link io.jmix.ui.component.TokenList#setLookupProvider(Supplier)} instead
+     */
+    @Deprecated
+    void setLookupOpenMode(WindowManager.OpenType lookupOpenMode);
 }

@@ -17,6 +17,8 @@
 package com.haulmont.cuba.gui.components.factories;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.components.EntityLinkField;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -30,6 +32,8 @@ import io.jmix.ui.component.factory.DefaultComponentGenerationStrategy;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(CubaDefaultComponentGenerationStrategy.NAME)
@@ -78,6 +82,19 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
         setValueSource(fileUploadField, context);
 
         return fileUploadField;
+    }
+
+    @Override
+    protected void setLinkFieldAttributes(io.jmix.ui.component.EntityLinkField linkField, ComponentGenerationContext context) {
+        super.setLinkFieldAttributes(linkField, context);
+
+        Element xmlDescriptor = context.getXmlDescriptor();
+        if (xmlDescriptor != null) {
+            String openTypeAttribute = xmlDescriptor.attributeValue("linkScreenOpenType");
+            if (StringUtils.isNotEmpty(openTypeAttribute)) {
+                ((EntityLinkField) linkField).setScreenOpenType(OpenType.valueOf(openTypeAttribute));
+            }
+        }
     }
 
     @Override

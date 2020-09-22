@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.compatibility.PickerFieldFieldListenerWrapper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -38,7 +39,6 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import org.apache.commons.lang3.StringUtils;

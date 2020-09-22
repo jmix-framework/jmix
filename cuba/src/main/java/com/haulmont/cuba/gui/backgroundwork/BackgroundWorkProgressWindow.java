@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.backgroundwork;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.Label;
 import io.jmix.core.Messages;
@@ -30,7 +31,6 @@ import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.LocalizedTaskWrapper;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.JmixEntity;
@@ -27,7 +28,6 @@ import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenContext;
 

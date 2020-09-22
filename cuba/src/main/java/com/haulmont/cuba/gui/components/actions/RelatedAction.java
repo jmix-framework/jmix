@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.gui.WindowManager.OpenType;
 import io.jmix.core.MessageTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -25,7 +26,6 @@ import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.RelatedEntities;
-import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.relatedentities.RelatedEntitiesAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

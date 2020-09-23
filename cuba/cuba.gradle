@@ -32,6 +32,9 @@ dependencies {
     api 'io.jmix.dynattr:jmix-dynattr-ui'
     api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
 
+    api 'com.thoughtworks.xstream:xstream:1.4.13'
+    api 'org.perf4j:perf4j:0.9.16'
+
     testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 
     testImplementation 'org.apache.commons:commons-dbcp2'

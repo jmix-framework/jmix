@@ -24,6 +24,7 @@ import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.DialogOptions;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
@@ -81,7 +82,7 @@ public class AbstractWindow extends Screen
     }
 
     @Override
-    protected void setWindow(Window window) {
+    protected void setWindow(io.jmix.ui.component.Window window) {
         super.setWindow(window);
 
         this.frame = window;

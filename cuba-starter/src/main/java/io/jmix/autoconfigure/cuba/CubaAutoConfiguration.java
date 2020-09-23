@@ -27,6 +27,7 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.context.annotation.Bean;
+import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -42,6 +43,7 @@ import javax.cache.configuration.MutableConfiguration;
         DynAttrConfiguration.class,
         DynAttrUiConfiguration.class,
         FileSystemFileStorageConfiguration.class,
+        UiDataConfiguration.class,
         CubaConfiguration.class})
 public class CubaAutoConfiguration {
     @Bean

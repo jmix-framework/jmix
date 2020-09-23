@@ -23,11 +23,12 @@ import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowParam;
+import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.theme.ThemeConstants;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +50,9 @@ public class SaveFilterWindow extends AbstractWindow {
 
     @Override
     public void init(Map<String, Object> params) {
-        /*getDialogOptions()
-                .setWidth(theme.get("cuba.gui.saveFilterWindow.dialog.width"));*/
+        if (getWindow() instanceof DialogWindow) {
+            getWindow().setWidth(theme.get("cuba.gui.saveFilterWindow.dialog.width"));
+        }
 
         super.init(params);
         String filterNameParam = (String) params.get("filterName");

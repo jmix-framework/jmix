@@ -20,6 +20,7 @@ import io.jmix.core.entity.BaseUser;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.UUID;
 
 public class UserIdUtils {
@@ -28,6 +29,9 @@ public class UserIdUtils {
         Field idField = ReflectionUtils.findField(user.getClass(), "id");
         if (idField != null) {
             try {
+                if (!Modifier.isPublic(idField.getModifiers())) {
+                    idField.setAccessible(true);
+                }
                 Object idValue = idField.get(user);
                 if (!(idValue instanceof UUID)) {
                     throw new RuntimeException("User id must be a UUID");

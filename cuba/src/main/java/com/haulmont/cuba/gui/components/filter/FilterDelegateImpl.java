@@ -20,10 +20,17 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
+import com.haulmont.cuba.core.entity.AbstractSearchFolder;
+import com.haulmont.cuba.core.entity.AppFolder;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.core.global.PersistenceHelper;
+import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowParams;
@@ -33,17 +40,28 @@ import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
-import com.haulmont.cuba.gui.components.filter.condition.*;
+import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
+import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
+import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
+import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
+import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
 import com.haulmont.cuba.gui.components.filter.edit.FilterEditor;
 import com.haulmont.cuba.gui.components.filter.filterselect.FilterSelectWindow;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.security.entity.FilterEntity;
+import com.haulmont.cuba.security.entity.SearchFolder;
 import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
 import io.jmix.core.DataManager;
-import io.jmix.core.*;
+import io.jmix.core.EntitySet;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.QueryParser;
+import io.jmix.core.QueryTransformerFactory;
+import io.jmix.core.Stores;
+import io.jmix.core.UuidProvider;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.common.event.Subscription;
@@ -52,7 +70,12 @@ import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.dynattr.DynAttrMetadata;
-import io.jmix.ui.*;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.WindowConfig;
+import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -62,13 +85,20 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.filter.*;
+import io.jmix.ui.filter.Clause;
+import io.jmix.ui.filter.Condition;
+import io.jmix.ui.filter.DenyingClause;
+import io.jmix.ui.filter.LogicalCondition;
+import io.jmix.ui.filter.ParameterInfo;
+import io.jmix.ui.filter.ParametersHelper;
+import io.jmix.ui.filter.QueryFilter;
+import io.jmix.ui.filter.QueryFilters;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
-import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -112,6 +142,8 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected Messages messages;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired
@@ -263,8 +295,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         conditionsLocation = properties.getGenericFilterConditionsLocation();
 
-        // todo filter
-        // applyImmediately = clientConfig.getGenericFilterApplyImmediately();
+        applyImmediately = properties.isGenericFilterApplyImmediately();
 
         createLayout();
     }
@@ -675,8 +706,8 @@ public class FilterDelegateImpl implements FilterDelegate {
         setConditionsLayoutVisible(true);
 
         if (BooleanUtils.isTrue(filterEntity.getIsSet())
-                || (/* filterEntity.getFolder() != null todo app folders
-                        && */BooleanUtils.isNotFalse(filterEntity.getApplyDefault()))) {
+                || (filterEntity.getFolder() != null
+                && BooleanUtils.isNotFalse(filterEntity.getApplyDefault()))) {
             apply(true);
         }
 
@@ -706,7 +737,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         initialFilterEntity = metadata.create(FilterEntity.class);
         initialFilterEntity.setName(filterEntity.getName());
         initialFilterEntity.setCode(filterEntity.getCode());
-        // initialFilterEntity.setUser(filterEntity.getUser());
+        initialFilterEntity.setUsername(filterEntity.getUsername());
         initialFilterEntity.setXml(filterEntity.getXml());
     }
 
@@ -720,16 +751,17 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected void setFilterActionsEnabled() {
-        boolean isGlobal = true; //filterEntity.getUser() == null; todo filter
-        boolean userCanEditGlobalFilter = uerCanEditGlobalFilter();
+        boolean isGlobal = filterEntity.getUsername() == null;
+        boolean userCanEditGlobalFilter = userCanEditGlobalFilter();
         boolean userCanEditFilters = userCanEditFilers();
         boolean filterEditable = isEditable();
-        boolean userCanEditGlobalAppFolder = true; // userSessionSource.getUserSession().isSpecificPermitted(GLOBAL_APP_FOLDERS_PERMISSION);
-        boolean createdByCurrentUser = false; // userSessionSource.getUserSession().getCurrentOrSubstitutedUser().equals(filterEntity.getUser());
+        boolean userCanEditGlobalAppFolder = security.isSpecificPermitted(GLOBAL_APP_FOLDERS_PERMISSION);
+        boolean createdByCurrentUser =
+                userSessionSource.getUserSession().getUser().getUsername().equals(filterEntity.getUsername());
         boolean hasCode = !Strings.isNullOrEmpty(filterEntity.getCode());
-        boolean isFolder = false; //filterEntity.getFolder() != null;
-        boolean isSearchFolder = false; // isFolder && (filterEntity.getFolder() instanceof SearchFolder); todo app folders
-        boolean isAppFolder = false; // isFolder && (filterEntity.getFolder() instanceof AppFolder); todo app folders
+        boolean isFolder = filterEntity.getFolder() != null;
+        boolean isSearchFolder = isFolder && (filterEntity.getFolder() instanceof SearchFolder);
+        boolean isAppFolder = isFolder && (filterEntity.getFolder() instanceof AppFolder);
         boolean isSet = BooleanUtils.isTrue(filterEntity.getIsSet());
         boolean isDefault = BooleanUtils.isTrue(filterEntity.getIsDefault());
         boolean isAdHocFilter = filterEntity == adHocFilter;
@@ -747,7 +779,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         boolean makeDefaultActionEnabled = !isDefault && !isFolder && !isSet && !isAdHocFilter && (!isGlobal || userCanEditGlobalFilter);
         boolean pinAppliedActionEnabled = lastAppliedFilter != null
                 && !(lastAppliedFilter.getFilterEntity() == adHocFilter && lastAppliedFilter.getConditions().getRoots().size() == 0)
-                && (adapter == null || Stores.isMain(metadata.getTools().getStoreName(adapter.getMetaClass())));
+                && (adapter == null || Stores.isMain(metadataTools.getStoreName(adapter.getMetaClass())));
         boolean saveAsSearchFolderActionEnabled = folderActionsEnabled && !isFolder && !hasCode;
         boolean saveAsAppFolderActionEnabled = folderActionsEnabled && !isFolder && !hasCode && userCanEditGlobalAppFolder;
 
@@ -791,10 +823,8 @@ public class FilterDelegateImpl implements FilterDelegate {
         filterActionsCreated = true;
     }
 
-    protected boolean uerCanEditGlobalFilter() {
-        return true;
-        // todo specific permissions
-        // return userSessionSource.getUserSession().isSpecificPermitted(GLOBAL_FILTER_PERMISSION);
+    protected boolean userCanEditGlobalFilter() {
+        return security.isSpecificPermitted(GLOBAL_FILTER_PERMISSION);
     }
 
     protected boolean userCanEditFilers() {
@@ -804,10 +834,9 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected void saveFilterEntity() {
         Boolean isDefault = filterEntity.getIsDefault();
         Boolean applyDefault = filterEntity.getApplyDefault();
-        // todo app folders
-        /*if (filterEntity.getFolder() == null) {
+        if (filterEntity.getFolder() == null) {
             CommitContext ctx = new CommitContext(Collections.singletonList(filterEntity));
-            Set<Entity> result = dataService.commit(ctx);
+            EntitySet result = dataService.save(ctx);
             FilterEntity savedFilterEntity = (FilterEntity) result.iterator().next();
             filterEntities.remove(filterEntity);
             filterEntity = savedFilterEntity;
@@ -820,25 +849,25 @@ public class FilterDelegateImpl implements FilterDelegate {
             filterEntity.getFolder().setFilterXml(filterEntity.getXml());
             AbstractSearchFolder folder = saveFolder(filterEntity.getFolder());
             filterEntity.setFolder(folder);
-        }*/
+        }
 
         saveInitialFilterState();
         setFilterActionsEnabled();
         updateFilterModifiedIndicator();
     }
 
-    // todo app folders
-    /*@Nullable
+    @Nullable
     protected AbstractSearchFolder saveFolder(AbstractSearchFolder folder) {
         return filterHelper.saveFolder(folder);
     }
 
     protected void saveAsFolder(boolean isAppFolder) {
         final AbstractSearchFolder folder;
-        if (isAppFolder)
+        if (isAppFolder) {
             folder = (metadata.create(AppFolder.class));
-        else
+        } else {
             folder = (metadata.create(SearchFolder.class));
+        }
 
         if (filterEntity.getCode() == null) {
             String folderName = filterEntity != adHocFilter ? filterEntity.getName() : "";
@@ -855,14 +884,17 @@ public class FilterDelegateImpl implements FilterDelegate {
         folder.setFilterComponentId(filterEntity.getComponentId());
         folder.setFilterXml(newXml);
         if (!isAppFolder) {
-            if (uerCanEditGlobalFilter())
-                ((SearchFolder) folder).setUser(filterEntity.getUser());
-            else
-                ((SearchFolder) folder).setUser(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
+            if (userCanEditGlobalFilter()) {
+                ((SearchFolder) folder).setUsername(filterEntity.getUsername());
+            } else {
+                // todo user substitution
+                //((SearchFolder) folder).setUser(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
+                ((SearchFolder) folder).setUsername(userSessionSource.getUserSession().getUser().getUsername());
+            }
         }
-        Presentations presentations;
-        if (applyTo != null && applyTo instanceof HasPresentations) {
-            final HasPresentations presentationsOwner = (HasPresentations) applyTo;
+        TablePresentations presentations;
+        if (applyTo != null && applyTo instanceof HasTablePresentations) {
+            final HasTablePresentations presentationsOwner = (HasTablePresentations) applyTo;
             presentations = presentationsOwner.isUsePresentations()
                     ? presentationsOwner.getPresentations() : null;
         } else {
@@ -884,7 +916,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         filterHelper.openFolderEditWindow(isAppFolder, folder, presentations, commitHandler);
 
-    }*/
+    }
 
     /**
      * Removes all components from conditionsLayout and fills it with components for editing filter conditions
@@ -1177,11 +1209,12 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected boolean isFilterModified() {
         boolean filterPropertiesModified =
                 !Objects.equals(initialFilterEntity.getName(), filterEntity.getName()) ||
-                        !Objects.equals(initialFilterEntity.getCode(), filterEntity.getCode())/* ||
-                        !Objects.equals(initialFilterEntity.getUser(), filterEntity.getUser())*/;
+                        !Objects.equals(initialFilterEntity.getCode(), filterEntity.getCode()) ||
+                        !Objects.equals(initialFilterEntity.getUsername(), filterEntity.getUsername());
         if (filterPropertiesModified) return true;
-        String filterXml = /*filterEntity.getFolder() == null ? */filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE)
-                /*: filterParser.getXml(conditions, Param.ValueProperty.VALUE)*/;
+        String filterXml = filterEntity.getFolder() == null
+                ? filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE)
+                : filterParser.getXml(conditions, Param.ValueProperty.VALUE);
         return !Objects.equals(filterXml, initialFilterEntity.getXml());
     }
 
@@ -1210,9 +1243,12 @@ public class FilterDelegateImpl implements FilterDelegate {
         filterEntities = new ArrayList<>(dataService.load(FilterEntity.class)
                 .fetchPlan("app")
                 .query("select f from sec$Filter f " +  /*"left join f.user u " +*/
-                        "where f.componentId = :component" /*+ "and (u.id = :userId or u is null) order by f.name"*/)
+                        "where f.componentId = :component and (f.username = :username or f.username is null) " +
+                        /*+ "and (u.id = :userId or u is null)*/ "order by f.name")
                 .parameter("component", CubaComponentsHelper.getFilterComponentPath(filter))
+                // todo user substitution
                 //.parameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())
+                .parameter("username", userSessionSource.getUserSession().getUser().getUsername())
                 .list());
     }
 
@@ -1387,7 +1423,9 @@ public class FilterDelegateImpl implements FilterDelegate {
         String emptyXml = filterParser.getXml(new ConditionsTree(), Param.ValueProperty.VALUE);
         adHocFilter.setXml(emptyXml);
         adHocFilter.setComponentId(CubaComponentsHelper.getFilterComponentPath(filter));
+        // todo user substitution
         // adHocFilter.setUser(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
+        adHocFilter.setUsername(userSessionSource.getUserSession().getUser().getUsername());
         adHocFilter.setName(getMainMessage("filter.adHocFilter"));
     }
 
@@ -1461,8 +1499,7 @@ public class FilterDelegateImpl implements FilterDelegate {
             else {
                 name = messages.getMainMessage(filterEntity.getCode());
             }
-            // todo app folders
-            /*AbstractSearchFolder folder = filterEntity.getFolder();
+            AbstractSearchFolder folder = filterEntity.getFolder();
             if (folder != null) {
                 if (!StringUtils.isBlank(folder.getTabName()))
                     name = messages.getMainMessage(folder.getTabName());
@@ -1473,7 +1510,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                     name = getMainMessage("filter.setPrefix") + " " + name;
                 else
                     name = getMainMessage("filter.folderPrefix") + " " + name;
-            }*/
+            }
         } else
             name = "";
         return name;
@@ -2433,7 +2470,7 @@ public class FilterDelegateImpl implements FilterDelegate {
             if (initialWindowCaption == null) {
                 initialWindowCaption = window.getCaption();
             }
-            // getWindowManager().setWindowCaption(window, initialWindowCaption, filterTitle);
+            getWindowManager().setWindowCaption(window, initialWindowCaption, filterTitle);
         }
 
         String newCaption = Strings.isNullOrEmpty(filterTitle) ? caption : caption + ": " + filterTitle;
@@ -2650,8 +2687,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public void actionPerform(Component component) {
-            // todo app folders
-            if (PersistenceHelper.isNew(filterEntity) /*&& filterEntity.getFolder() == null*/) {
+            if (PersistenceHelper.isNew(filterEntity) && filterEntity.getFolder() == null) {
                 WindowInfo windowInfo = windowConfig.getWindowInfo("saveFilter");
                 Map<String, Object> params = new HashMap<>();
                 if (!getMainMessage("filter.adHocFilter").equals(filterEntity.getName())) {
@@ -2689,8 +2725,9 @@ public class FilterDelegateImpl implements FilterDelegate {
                     }
                 }
 
-                String xml = /*filterEntity.getFolder() == null ?*/ filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE);
-                /*: filterParser.getXml(conditions, Param.ValueProperty.VALUE);*/
+                String xml = filterEntity.getFolder() == null
+                        ? filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE)
+                        : filterParser.getXml(conditions, Param.ValueProperty.VALUE);
                 filterEntity.setXml(xml);
                 saveFilterEntity();
                 initFilterSelectComponents();
@@ -2730,11 +2767,16 @@ public class FilterDelegateImpl implements FilterDelegate {
                     newFilterEntity.setGlobalDefault(false);
                     //if filter was global but current user cannot create global filter then new filter
                     //will be connected with current user
+                    // todo user substitution
                     /*if (newFilterEntity.getUser() == null && !uerCanEditGlobalFilter()) {
                         newFilterEntity.setUser(userSessionSource.getUserSession().getCurrentOrSubstitutedUser());
                     }*/
-                    String xml = /*filterEntity.getFolder() == null ?*/ filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE);
-                    /*: filterParser.getXml(conditions, Param.ValueProperty.VALUE);*/
+                    if (newFilterEntity.getUsername() == null && !userCanEditGlobalFilter()) {
+                        newFilterEntity.setUsername(userSessionSource.getUserSession().getUser().getUsername());
+                    }
+                    String xml = filterEntity.getFolder() == null ?
+                            filterParser.getXml(conditions, Param.ValueProperty.DEFAULT_VALUE)
+                            : filterParser.getXml(conditions, Param.ValueProperty.VALUE);
                     filterEntity = newFilterEntity;
                     filterEntity.setName(filterName);
                     filterEntity.setXml(xml);
@@ -2837,6 +2879,11 @@ public class FilterDelegateImpl implements FilterDelegate {
             setFilterActionsEnabled();
         }
 
+        @Nullable
+        @Override
+        public String getCaption() {
+            return getMainMessage("filter.makeDefault");
+        }
     }
 
     protected class RemoveAction extends AbstractAction {
@@ -2917,11 +2964,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
     @Nullable
     protected WindowManager getWindowManager() {
-        /*Window window = ComponentsHelper.getWindow(filter);
-        if (window != null) {
-            return window.getWindowManager();
-        }*/
-        return null;
+        return (WindowManager) ComponentsHelper.getScreenContext(filter).getScreens();
     }
 
     protected Notifications getNotifications() {
@@ -2977,7 +3020,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public void actionPerform(Component component) {
-            // saveAsFolder(isAppFolder); todo app folders
+            saveAsFolder(isAppFolder);
         }
     }
 
@@ -3015,6 +3058,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                 params.put("foldersPane", filterHelper.getFoldersPane());
                 params.put("entityClass", adapter.getMetaClass().getJavaClass().getName());
                 params.put("query", adapter.getQuery());
+                params.put("username", userSessionSource.getUserSession().getUser().getUsername());
 
                 WindowManager wm = (WindowManager) ComponentsHelper.getScreenContext(filter).getScreens();
                 WindowInfo windowInfo = windowConfig.getWindowInfo("saveSetInFolder");
@@ -3057,7 +3101,7 @@ public class FilterDelegateImpl implements FilterDelegate {
             }
 
             if (size == selected.size()) {
-                // filterHelper.removeFolderFromFoldersPane(filterEntity.getFolder()); todo app folders
+                filterHelper.removeFolderFromFoldersPane(filterEntity.getFolder());
                 removeFilterEntity();
 
                 Window window = ComponentsHelper.getWindow(filter);
@@ -3065,8 +3109,8 @@ public class FilterDelegateImpl implements FilterDelegate {
             } else {
                 String filterXml = filterEntity.getXml();
                 filterEntity.setXml(UserSetHelper.removeEntities(filterXml, selected));
-                /*filterEntity.getFolder().setFilterXml(filterEntity.getXml()); todo app folders
-                filterEntity.setFolder(saveFolder((filterEntity.getFolder())));*/
+                filterEntity.getFolder().setFilterXml(filterEntity.getXml());
+                filterEntity.setFolder(saveFolder((filterEntity.getFolder())));
                 setFilterEntity(filterEntity);
             }
         }
@@ -3097,8 +3141,8 @@ public class FilterDelegateImpl implements FilterDelegate {
                     .withSelectHandler(entities -> {
                         String filterXml = filterEntity.getXml();
                         filterEntity.setXml(UserSetHelper.addEntities(filterXml, entities));
-                        /*filterEntity.getFolder().setFilterXml(filterEntity.getXml()); todo app folders
-                        filterEntity.setFolder(saveFolder(filterEntity.getFolder()));*/
+                        filterEntity.getFolder().setFilterXml(filterEntity.getXml());
+                        filterEntity.setFolder(saveFolder(filterEntity.getFolder()));
                         setFilterEntity(filterEntity);
                     })
                     .show();

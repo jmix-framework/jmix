@@ -16,9 +16,10 @@
  */
 package com.haulmont.cuba.security.entity;
 
+import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ public class FilterEntity extends StandardEntity {
     @Column(name = "COMPONENT")
     protected String componentId;
 
-    @Column(name = "NAME", length = 255)
+    @Column(name = "NAME")
     protected String name;
 
     @Column(name = "CODE", length = 200)
@@ -48,9 +49,8 @@ public class FilterEntity extends StandardEntity {
     @Lob
     protected String xml;
 
-    /*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    protected User user;*/
+    @Column(name = "USERNAME")
+    protected String username;
 
     @Column(name = "GLOBAL_DEFAULT")
     protected Boolean globalDefault = false;
@@ -65,8 +65,8 @@ public class FilterEntity extends StandardEntity {
     @Transient
     protected Boolean applyDefault = false;
 
-    /*@Transient todo app folders
-    protected AbstractSearchFolder folder;*/
+    @Transient
+    protected AbstractSearchFolder folder;
 
     @Transient
     protected Boolean isSet = false;
@@ -87,13 +87,13 @@ public class FilterEntity extends StandardEntity {
         this.name = name;
     }
 
-    /*public User getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }*/
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getXml() {
         return xml;
@@ -119,13 +119,13 @@ public class FilterEntity extends StandardEntity {
         this.applyDefault = applyDefault;
     }
 
-    /*public AbstractSearchFolder getFolder() {
+    public AbstractSearchFolder getFolder() {
         return folder;
     }
 
     public void setFolder(AbstractSearchFolder folder) {
         this.folder = folder;
-    }*/
+    }
 
     public String getCode() {
         return code;

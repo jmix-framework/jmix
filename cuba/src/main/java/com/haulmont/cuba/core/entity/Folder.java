@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright (c) 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,21 @@
  * limitations under the License.
  *
  */
-package com.haulmont.cuba.core.model.common;
+package com.haulmont.cuba.core.entity;
 
-import com.haulmont.chile.core.annotations.NamePattern;
-import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
 
-@Entity(name = "test$Folder")
-@Table(name = "TEST_FOLDER")
+@Entity(name = "sys$Folder")
+@Table(name = "SYS_FOLDER")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "FOLDER_TYPE", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("F")
 @SystemLevel
 @EnableRestore(false)
-@NamePattern("%s|name")
 public class Folder extends StandardEntity {
 
     private static final long serialVersionUID = -2038652558181851215L;
@@ -39,6 +37,7 @@ public class Folder extends StandardEntity {
     @JoinColumn(name = "PARENT_ID")
     protected Folder parent;
 
+    @InstanceName
     @Column(name = "NAME", length = 100)
     protected String name;
 

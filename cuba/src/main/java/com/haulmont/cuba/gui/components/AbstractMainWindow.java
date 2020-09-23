@@ -16,25 +16,24 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import io.jmix.ui.ScreenTools;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.ThemeResource;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.screen.Screen;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+
 /**
- *
  * Legacy base class for a controller of application Main window.
  */
 public class AbstractMainWindow extends AbstractTopLevelWindow
-        implements Window.HasWorkArea, Window.HasUserIndicator /*, Window.HasFoldersPane*/ {
+        implements Window.HasWorkArea, Window.HasUserIndicator, Window.HasFoldersPane {
 
     protected static final String APP_LOGO_IMAGE = "application.logoImage";
 
@@ -45,16 +44,16 @@ public class AbstractMainWindow extends AbstractTopLevelWindow
 
     protected AppWorkArea workArea;
     protected UserIndicator userIndicator;
-//    protected FoldersPane foldersPane; // todo folders pane
+    protected FoldersPane foldersPane;
 
     public AbstractMainWindow() {
         addInitListener(this::initComponents);
     }
 
-    protected void initComponents(@SuppressWarnings("unused") Screen.InitEvent e) {
+    protected void initComponents(Screen.InitEvent e) {
         workArea = getWorkArea();
         userIndicator = getUserIndicator();
-//        foldersPane = getFoldersPane();
+        foldersPane = getFoldersPane();
     }
 
     @Override
@@ -69,12 +68,11 @@ public class AbstractMainWindow extends AbstractTopLevelWindow
         return (UserIndicator) getComponent("userIndicator");
     }
 
-    //todo folders pane
-//    @Nullable
-//    @Override
-//    public FoldersPane getFoldersPane() {
-//        return (FoldersPane) getComponent("foldersPane");
-//    }
+    @Nullable
+    @Override
+    public FoldersPane getFoldersPane() {
+        return (FoldersPane) getComponent("foldersPane");
+    }
 
     protected void initLogoImage(Image logoImage) {
         String logoImagePath = messages.getMessage(APP_LOGO_IMAGE);

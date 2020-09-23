@@ -24,6 +24,9 @@ import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
+import com.haulmont.cuba.gui.presentation.PresentationsImpl;
+import com.haulmont.cuba.security.app.UserSettingServiceBean;
+import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
@@ -43,19 +46,28 @@ import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
+import io.jmix.ui.settings.UserSettingService;
+import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -67,7 +79,8 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class,
-        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class})
+        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class,
+        UiDataConfiguration.class})
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class CubaConfiguration {
 
@@ -172,6 +185,22 @@ public class CubaConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected com.haulmont.cuba.core.global.FluentLoader fluentLoader(Class entityClass) {
         return new com.haulmont.cuba.core.global.FluentLoader(entityClass);
+    }
+
+    @Bean(UserSettingsTools.NAME)
+    protected UserSettingsTools userSettingsTools() {
+        return new UserSettingsToolsImpl();
+    }
+
+    @Bean(UserSettingService.NAME)
+    protected UserSettingService userSettingService() {
+        return new UserSettingServiceBean();
+    }
+
+    @Bean(TablePresentations.NAME)
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    protected TablePresentations tablePresentations(Component component) {
+        return new PresentationsImpl(component);
     }
 
     @EventListener

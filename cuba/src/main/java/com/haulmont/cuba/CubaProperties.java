@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.cuba")
@@ -35,17 +36,25 @@ public class CubaProperties {
     String filterSelectShortcut;
     String genericFilterConditionsLocation;
     String genericFilterControlsLayout;
-    private int genericFilterPopupListSize;
+    int genericFilterPopupListSize;
     boolean genericFilterChecking;
     int genericFilterPropertiesHierarchyDepth;
     boolean genericFilterTrimParamValues;
     String genericFilterMaxResultsOptions;
+    boolean genericFilterApplyImmediately;
     boolean localeSelectVisible;
+    boolean showFolderIcons;
+    boolean foldersPaneVisibleByDefault;
+    boolean foldersPaneEnabled;
+    int appFoldersRefreshPeriodSec;
+    String appFolderEditWindow;
+    String folderEditWindow;
+    int foldersPaneDefaultWidth;
 
     public CubaProperties(
             boolean dataManagerBeanValidation,
             List<String> disableEscapingLikeForDataStores,
-            boolean allowQueryFromSelected,
+            @DefaultValue("true") boolean allowQueryFromSelected,
             boolean genericFilterManualApplyRequired,
             @DefaultValue("3") int genericFilterColumnsCount,
             @DefaultValue("SHIFT-ENTER") String filterApplyShortcut,
@@ -57,7 +66,15 @@ public class CubaProperties {
             @DefaultValue("2") int genericFilterPropertiesHierarchyDepth,
             @DefaultValue("true") boolean genericFilterTrimParamValues,
             @DefaultValue("NULL, 20, 50, 100, 500, 1000, 5000") String genericFilterMaxResultsOptions,
-            @DefaultValue("true") boolean localeSelectVisible
+            @DefaultValue("true") boolean genericFilterApplyImmediately,
+            @DefaultValue("true") boolean localeSelectVisible,
+            @DefaultValue("false") boolean showFolderIcons,
+            @DefaultValue("false") boolean foldersPaneVisibleByDefault,
+            @DefaultValue("false") boolean foldersPaneEnabled,
+            @DefaultValue("180") int appFoldersRefreshPeriodSec,
+            @Nullable String appFolderEditWindow,
+            @Nullable String folderEditWindow,
+            @DefaultValue("200") int foldersPaneDefaultWidth
     ) {
         this.dataManagerBeanValidation = dataManagerBeanValidation;
         this.disableEscapingLikeForDataStores = disableEscapingLikeForDataStores;
@@ -73,7 +90,15 @@ public class CubaProperties {
         this.genericFilterPropertiesHierarchyDepth = genericFilterPropertiesHierarchyDepth;
         this.genericFilterTrimParamValues = genericFilterTrimParamValues;
         this.genericFilterMaxResultsOptions = genericFilterMaxResultsOptions;
+        this.genericFilterApplyImmediately = genericFilterApplyImmediately;
         this.localeSelectVisible = localeSelectVisible;
+        this.showFolderIcons = showFolderIcons;
+        this.foldersPaneVisibleByDefault = foldersPaneVisibleByDefault;
+        this.foldersPaneEnabled = foldersPaneEnabled;
+        this.appFoldersRefreshPeriodSec = appFoldersRefreshPeriodSec;
+        this.appFolderEditWindow = appFolderEditWindow;
+        this.folderEditWindow = folderEditWindow;
+        this.foldersPaneDefaultWidth = foldersPaneDefaultWidth;
     }
 
     public boolean isDataManagerBeanValidation() {
@@ -167,7 +192,39 @@ public class CubaProperties {
         return genericFilterMaxResultsOptions;
     }
 
+    public boolean isGenericFilterApplyImmediately() {
+        return genericFilterApplyImmediately;
+    }
+
     public boolean isLocaleSelectVisible() {
         return localeSelectVisible;
+    }
+
+    public boolean isShowFolderIcons() {
+        return showFolderIcons;
+    }
+
+    public boolean isFoldersPaneVisibleByDefault() {
+        return foldersPaneVisibleByDefault;
+    }
+
+    public boolean isFoldersPaneEnabled() {
+        return foldersPaneEnabled;
+    }
+
+    public int getAppFoldersRefreshPeriodSec() {
+        return appFoldersRefreshPeriodSec;
+    }
+
+    public String getAppFolderEditWindowClassName() {
+        return appFolderEditWindow;
+    }
+
+    public String getFolderEditWindowClassName() {
+        return folderEditWindow;
+    }
+
+    public int getFoldersPaneDefaultWidth() {
+        return foldersPaneDefaultWidth;
     }
 }

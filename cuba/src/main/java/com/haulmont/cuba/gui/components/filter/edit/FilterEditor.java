@@ -336,6 +336,7 @@ public class FilterEditor extends AbstractWindow {
             activeConditionFrame.commit();
         }
         filterEntity.setName(filterName.getValue());
+        // todo user substitution
         /*if (availableForAllCb.getValue()) {
             filterEntity.setUser(null);
         } else {

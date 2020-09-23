@@ -17,34 +17,46 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.core.entity.AbstractSearchFolder;
+import com.haulmont.cuba.core.entity.Folder;
 import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.gui.components.filter.ConditionsTree;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.GroupCondition;
+import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
+import com.haulmont.cuba.web.app.folders.AppFolderEditWindow;
+import com.haulmont.cuba.web.app.folders.FolderEditWindow;
+import com.haulmont.cuba.web.app.folders.CubaFoldersPane;
 import com.vaadin.shared.ui.grid.DropLocation;
 import com.vaadin.shared.ui.grid.DropMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.components.grid.TreeGridDragSource;
 import com.vaadin.ui.components.grid.TreeGridDropTarget;
-import com.haulmont.cuba.core.global.BeanLocator;
-import com.haulmont.cuba.core.global.Configuration;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
+import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.widget.JmixTextField;
 import io.jmix.ui.widget.JmixTree;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+
+import static io.jmix.ui.screen.UiControllerUtils.getHostScreen;
 
 @org.springframework.stereotype.Component(FilterHelper.NAME)
 public class WebFilterHelper implements FilterHelper {
@@ -52,25 +64,25 @@ public class WebFilterHelper implements FilterHelper {
     protected static final String TREE_DRAGGED_ITEM_ID = "itemid";
 
     @Autowired
-    protected Configuration configuration;
-
-    @Autowired
     protected UiComponents uiComponents;
 
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected CubaProperties cubaProperties;
+
     @Override
-    public void setLookupNullSelectionAllowed(ComboBox lookupField, boolean value) {
-        lookupField.setNullOptionVisible(value);
+    public void setLookupNullSelectionAllowed(ComboBox comboBox, boolean value) {
+        comboBox.setNullOptionVisible(value);
     }
 
     @Override
-    public void setLookupTextInputAllowed(ComboBox lookupField, boolean value) {
-        lookupField.setTextInputAllowed(value);
+    public void setLookupTextInputAllowed(ComboBox comboBox, boolean value) {
+        comboBox.setTextInputAllowed(value);
     }
 
-    /*@Override todo app folders
+    @Override
     @Nullable
     public AbstractSearchFolder saveFolder(AbstractSearchFolder folder) {
         FoldersPane foldersPane = getUiFoldersPane();
@@ -89,14 +101,17 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void openFolderEditWindow(boolean isAppFolder, AbstractSearchFolder folder, Presentations presentations, Runnable commitHandler) {
+    public void openFolderEditWindow(boolean isAppFolder, AbstractSearchFolder folder, TablePresentations presentations, Runnable commitHandler) {
         FolderEditWindow window = AppFolderEditWindow.create(isAppFolder, false, folder, presentations, commitHandler);
-        AppUI.getCurrent().addWindow(window);
-    }*/
+        AppUI appUI = AppUI.getCurrent();
+        if (appUI != null) {
+            appUI.addWindow(window);
+        }
+    }
 
     @Override
     public boolean isFolderActionsEnabled() {
-        return false; // todo folderspane configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
+        return cubaProperties.isFoldersPaneEnabled();
     }
 
     @Override
@@ -105,8 +120,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     public boolean mainScreenHasFoldersPane(Frame currentFrame) {
-        // todo app folders
-        /*RootWindow rootWindow = AppUI.getCurrent().getTopLevelWindow();
+        RootWindow rootWindow = AppUI.getCurrent().getTopLevelWindow();
         if (rootWindow != null) {
             return rootWindow.getFrameOwner() instanceof Window.HasFoldersPane;
         } else {
@@ -115,7 +129,7 @@ public class WebFilterHelper implements FilterHelper {
                 Screen rootScreen = getHostScreen((ScreenFragment) frameOwner);
                 return rootScreen instanceof Window.HasFoldersPane;
             }
-        }*/
+        }
 
         return false;
     }
@@ -241,18 +255,16 @@ public class WebFilterHelper implements FilterHelper {
 
     @Override
     public Object getFoldersPane() {
-        return null;
-        // todo app folders
-        /*FoldersPane foldersPane = getUiFoldersPane();
+        FoldersPane foldersPane = getUiFoldersPane();
 
         if (foldersPane == null) {
             return null;
         }
 
-        return foldersPane.unwrapOrNull(CubaFoldersPane.class);*/
+        return foldersPane.unwrapOrNull(CubaFoldersPane.class);
     }
 
-    /*@Override todo app folders
+    @Override
     public void removeFolderFromFoldersPane(Folder folder) {
         FoldersPane foldersPane = getUiFoldersPane();
 
@@ -275,11 +287,11 @@ public class WebFilterHelper implements FilterHelper {
             return ((Window.HasFoldersPane) topLevelWindow).getFoldersPane();
         }
         return null;
-    }*/
+    }
 
     @Override
     public boolean isTableActionsEnabled() {
-        return false; // todo folderspane configuration.getConfig(WebConfig.class).getFoldersPaneEnabled();
+        return cubaProperties.isFoldersPaneEnabled();
     }
 
     @Override

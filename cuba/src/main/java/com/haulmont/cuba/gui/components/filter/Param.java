@@ -258,7 +258,7 @@ public class Param {
         isDateInterval = builder.isDateInterval;
         useUserTimeZone = builder.useUserTimeZone;
 
-        if (DynAttrUtils.isDynamicAttributeProperty(builder.property.getName())) {
+        if (builder.property != null && DynAttrUtils.isDynamicAttributeProperty(builder.property.getName())) {
             // todo dynamic attributes
             /*CategoryAttribute categoryAttribute = DynamicAttributesUtils.getCategoryAttribute(builder.property);
             if (categoryAttribute.getDataType() == PropertyType.ENUMERATION) {

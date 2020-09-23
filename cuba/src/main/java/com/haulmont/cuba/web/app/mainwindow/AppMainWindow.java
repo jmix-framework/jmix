@@ -17,31 +17,38 @@
 
 package com.haulmont.cuba.web.app.mainwindow;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.AbstractMainWindow;
 import com.haulmont.cuba.gui.components.Image;
+import com.vaadin.server.Sizeable;
 import io.jmix.ui.component.BoxLayout;
+import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.component.mainwindow.AppMenu;
+import io.jmix.ui.widget.JmixHorizontalSplitPanel;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 public class AppMainWindow extends AbstractMainWindow {
 
-    @Inject
+    @Autowired
     protected AppMenu mainMenu;
 
-    @Inject
+    @Autowired
     protected BoxLayout titleBar;
 
-    @Inject
+    @Autowired
     protected SplitPanel foldersSplit;
 
-/*    @Inject
+/*    @Autowired
     protected FtsField ftsField;*/
 
-    @Inject
+    @Autowired
     protected Image logoImage;
+
+    @Autowired
+    protected CubaProperties cubaProperties;
 
     @Override
     public void init(Map<String, Object> params) {
@@ -55,17 +62,16 @@ public class AppMainWindow extends AbstractMainWindow {
         // todo fts
 //        initFtsField(ftsField);
 
-        //            todo folders pane
- /*       if (webConfig.getFoldersPaneEnabled()) {
-            if (webConfig.getFoldersPaneVisibleByDefault()) {
-                foldersSplit.setSplitPosition(webConfig.getFoldersPaneDefaultWidth(), SizeUnit.PIXELS);
+        if (cubaProperties.isFoldersPaneEnabled()) {
+            if (cubaProperties.isFoldersPaneVisibleByDefault()) {
+                foldersSplit.setSplitPosition(cubaProperties.getFoldersPaneDefaultWidth(), SizeUnit.PIXELS);
             } else {
                 foldersSplit.setSplitPosition(0);
             }
 
-            CubaHorizontalSplitPanel vSplitPanel = (CubaHorizontalSplitPanel) WebComponentsHelper.unwrap(foldersSplit);
-            vSplitPanel.setDefaultPosition(webConfig.getFoldersPaneDefaultWidth() + "px");
-            vSplitPanel.setMaxSplitPosition(50, Unit.PERCENTAGE);
+            JmixHorizontalSplitPanel vSplitPanel = foldersSplit.unwrap(JmixHorizontalSplitPanel.class);
+            vSplitPanel.setDefaultPosition(cubaProperties.getFoldersPaneDefaultWidth() + "px");
+            vSplitPanel.setMaxSplitPosition(50, Sizeable.Unit.PERCENTAGE);
             vSplitPanel.setDockable(true);
         } else {
             foldersPane.setEnabled(false);
@@ -79,6 +85,6 @@ public class AppMainWindow extends AbstractMainWindow {
             add(workArea, foldersSplitIndex);
 
             expand(workArea);
-        }*/
+        }
     }
 }

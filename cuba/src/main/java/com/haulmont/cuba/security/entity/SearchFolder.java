@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,35 +12,40 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package com.haulmont.cuba.core.model.common;
+package com.haulmont.cuba.security.entity;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.entity.annotation.EnableRestore;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import java.util.UUID;
 
 /**
  * Search folder settings.
  */
-@Entity(name = "test$SearchFolder")
-@Table(name = "TEST_SEARCH_FOLDER")
+@Entity(name = "sec$SearchFolder")
+@Table(name = "SEC_SEARCH_FOLDER")
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")
 @DiscriminatorValue("S")
 @EnableRestore
 @NamePattern("%s|name")
 public class SearchFolder extends AbstractSearchFolder {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    protected User user;
+    @Column(name = "USERNAME")
+    protected String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRESENTATION_ID")
-    protected Presentation presentation;
+    @Column(name = "PRESENTATION_ID")
+    protected UUID presentationId;
 
     @Column(name = "IS_SET")
     protected Boolean isSet = false;
@@ -48,20 +53,20 @@ public class SearchFolder extends AbstractSearchFolder {
     @Column(name = "ENTITY_TYPE")
     protected String entityType;
 
-    public User getUser() {
-        return user;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public Presentation getPresentation() {
-        return presentation;
+    public UUID getPresentationId() {
+        return presentationId;
     }
 
-    public void setPresentation(Presentation presentation) {
-        this.presentation = presentation;
+    public void setPresentationId(UUID presentationId) {
+        this.presentationId = presentationId;
     }
 
     @Override
@@ -86,4 +91,9 @@ public class SearchFolder extends AbstractSearchFolder {
         this.entityType = entityType;
     }
 
+    @InstanceName
+    @DependsOnProperties("name")
+    public String getInstanceName() {
+        return name;
+    }
 }

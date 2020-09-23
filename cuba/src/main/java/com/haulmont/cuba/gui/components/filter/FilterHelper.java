@@ -17,15 +17,18 @@
 
 package com.haulmont.cuba.gui.components.filter;
 
+import com.haulmont.cuba.core.entity.AbstractSearchFolder;
+import com.haulmont.cuba.core.entity.Folder;
 import com.haulmont.cuba.gui.components.ListComponent;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
+import io.jmix.ui.presentation.TablePresentations;
 
 import java.util.Map;
 
@@ -66,11 +69,12 @@ public interface FilterHelper {
 
     /**
      * Saves a folder to a FoldersPane
+     *
      * @return saved folder or null if foldersPane not found
      */
-    // todo app folders
-    // AbstractSearchFolder saveFolder(AbstractSearchFolder folder);
-    // void openFolderEditWindow(boolean isAppFolder, AbstractSearchFolder folder, Presentations presentations, Runnable commitHandler);
+    AbstractSearchFolder saveFolder(AbstractSearchFolder folder);
+
+    void openFolderEditWindow(boolean isAppFolder, AbstractSearchFolder folder, TablePresentations presentations, Runnable commitHandler);
 
     boolean isFolderActionsEnabled();
 
@@ -82,8 +86,7 @@ public interface FilterHelper {
 
     Object getFoldersPane();
 
-    // todo app folders
-    // void removeFolderFromFoldersPane(Folder folder);
+    void removeFolderFromFoldersPane(Folder folder);
 
     boolean isTableActionsEnabled();
 

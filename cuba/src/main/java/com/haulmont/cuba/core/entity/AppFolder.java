@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,22 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package com.haulmont.cuba.core.model.common;
+package com.haulmont.cuba.core.entity;
 
-import com.haulmont.chile.core.annotations.NamePattern;
 import io.jmix.core.entity.annotation.EnableRestore;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
-@Entity(name = "test$AppFolder")
-@Table(name = "TEST_APP_FOLDER")
+@Entity(name = "sys$AppFolder")
+@Table(name = "SYS_APP_FOLDER")
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")
 @DiscriminatorValue("A")
 @EnableRestore
-@NamePattern("%s(%s)|name,quantity")
 public class AppFolder extends AbstractSearchFolder {
 
     private static final long serialVersionUID = -3587493035203986325L;
@@ -74,6 +78,8 @@ public class AppFolder extends AbstractSearchFolder {
         this.quantity = quantity;
     }
 
+    @InstanceName
+    @DependsOnProperties({"name", "quantity"})
     @Override
     public String getCaption() {
         String s = getLocName();
@@ -84,4 +90,8 @@ public class AppFolder extends AbstractSearchFolder {
         }
     }
 
+    @Override
+    public String toString() {
+        return getName() + " (" + quantity + ")";
+    }
 }

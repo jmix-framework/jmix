@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-package com.haulmont.cuba.core.model.common;
+package com.haulmont.cuba.core.entity;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
@@ -29,7 +28,7 @@ import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 @SystemLevel
-@ModelObject(name = "test$AbstractSearchFolder")
+@ModelObject(name = "sys$AbstractSearchFolder")
 public abstract class AbstractSearchFolder extends Folder {
 
     private static final long serialVersionUID = -2234453892776090930L;

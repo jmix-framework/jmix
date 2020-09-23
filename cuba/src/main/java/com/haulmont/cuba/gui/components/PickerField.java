@@ -434,7 +434,7 @@ public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicke
             }
         }
 
-        protected void afterLookupWindowOpened(Window lookupWindow) {
+        protected void afterLookupWindowOpened(io.jmix.ui.component.Window lookupWindow) {
         }
 
         /**
@@ -648,7 +648,7 @@ public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicke
                 return;
             }
 
-            Window window = ComponentsHelper.getWindow(pickerField);
+            Window window = (Window) ComponentsHelper.getWindow(pickerField);
             if (window == null) {
                 throw new IllegalStateException("Please specify Frame for EntityLinkField");
             }

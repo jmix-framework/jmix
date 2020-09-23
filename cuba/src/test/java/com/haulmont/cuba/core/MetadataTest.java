@@ -16,7 +16,13 @@
  */
 package com.haulmont.cuba.core;
 
-import com.haulmont.cuba.core.model.common.*;
+import com.haulmont.cuba.core.entity.Folder;
+import com.haulmont.cuba.security.entity.SearchFolder;
+import com.haulmont.cuba.core.model.common.EntityLogItem;
+import com.haulmont.cuba.core.model.common.LockInfo;
+import com.haulmont.cuba.core.model.common.User;
+import com.haulmont.cuba.core.model.common.UserRole;
+import com.haulmont.cuba.core.model.common.UserSessionEntity;
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.Metadata;

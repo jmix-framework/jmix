@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Calendar;
@@ -150,6 +151,8 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(GroupBoxLayout.NAME, CubaGroupBoxLayoutLoader.class);
         loaders.put(SplitPanel.NAME, CubaSplitPanelLoader.class);
         loaders.put(PopupButton.NAME, CubaPopupButtonLoader.class);
+
+        loaders.put(FoldersPane.NAME, FoldersPaneLoader.class);
     }
 
     protected boolean isLegacyScreen(Element element) {

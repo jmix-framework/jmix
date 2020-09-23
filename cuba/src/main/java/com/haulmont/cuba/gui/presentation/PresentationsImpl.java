@@ -32,8 +32,6 @@ import org.springframework.context.annotation.Scope;
 
 import java.util.UUID;
 
-@org.springframework.stereotype.Component(Presentations.NAME)
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PresentationsImpl extends TablePresentationsImpl implements Presentations {
 
     @Autowired

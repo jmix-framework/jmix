@@ -19,6 +19,7 @@ package com.haulmont.cuba.core.entity_cache;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.haulmont.cuba.core.*;
+import com.haulmont.cuba.core.entity.AppFolder;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.model.common.*;
 import com.haulmont.cuba.core.testsupport.CoreTest;
@@ -162,8 +163,8 @@ public class QueryCacheTestClass {
         if (user3 != null)
             testSupport.deleteRecord(user3);
         if (appFolder != null) {
-            testSupport.deleteRecord("TEST_APP_FOLDER", "FOLDER_ID", appFolder.getId());
-            testSupport.deleteRecord("TEST_FOLDER", "ID", appFolder.getId());
+            testSupport.deleteRecord("SYS_APP_FOLDER", "FOLDER_ID", appFolder.getId());
+            testSupport.deleteRecord("SYS_FOLDER", "ID", appFolder.getId());
         }
         testSupport.deleteRecord(group);
     }
@@ -607,7 +608,7 @@ public class QueryCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from test$Folder f");
+            Query query = em.createQuery("select f from sys$Folder f");
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -626,7 +627,7 @@ public class QueryCacheTestClass {
         assertEquals(0, queryCache.size());
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from test$Folder f");
+            Query query = em.createQuery("select f from sys$Folder f");
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -639,7 +640,7 @@ public class QueryCacheTestClass {
     public void testWarningInLog() throws Exception {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from test$Folder f", User.class);
+            Query query = em.createQuery("select f from sys$Folder f", User.class);
             query.setCacheable(true);
             query.getResultList();
             tx.commit();
@@ -647,7 +648,7 @@ public class QueryCacheTestClass {
 
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
-            Query query = em.createQuery("select f from test$Folder f", User.class);
+            Query query = em.createQuery("select f from sys$Folder f", User.class);
             query.setCacheable(true);
             query.getResultList();
             tx.commit();

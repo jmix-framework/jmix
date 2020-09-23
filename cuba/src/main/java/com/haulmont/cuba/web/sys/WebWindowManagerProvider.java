@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.sys;
 
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
-import io.jmix.ui.AppUI;
+import io.jmix.ui.Screens;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,6 @@ public class WebWindowManagerProvider implements WindowManagerProvider {
 
     @Override
     public WindowManager get() {
-        AppUI ui = AppUI.getCurrent();
-        return (WindowManager) ui.getScreens();
+        return (WindowManager) applicationContext.getBean(Screens.NAME);
     }
 }

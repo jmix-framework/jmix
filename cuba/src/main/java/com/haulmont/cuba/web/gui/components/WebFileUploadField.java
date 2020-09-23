@@ -72,11 +72,11 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
     protected void applyPermissions() {
         Security security = (Security) applicationContext.getBean(Security.NAME);
 
-        if (!security.isEntityOpPermitted(java.io.FileDescriptor.class, EntityOp.UPDATE)) {
+        if (!security.isEntityOpPermitted(FileDescriptor.class, EntityOp.UPDATE)) {
             component.setUploadButtonEnabled(false);
             component.setClearButtonEnabled(false);
         }
-        if (!security.isEntityOpPermitted(java.io.FileDescriptor.class, EntityOp.READ)) {
+        if (!security.isEntityOpPermitted(FileDescriptor.class, EntityOp.READ)) {
             component.setFileNameButtonEnabled(false);
         }
     }

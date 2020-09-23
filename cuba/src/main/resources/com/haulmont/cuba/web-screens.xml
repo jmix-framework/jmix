@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019 Haulmont.
+  ~ Copyright 2020 Haulmont.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -27,4 +27,6 @@
             template="/com/haulmont/cuba/gui/app/core/file/file-upload-dialog.xml"/>
     <screen id="list-editor-popup"
             template="/com/haulmont/cuba/gui/components/listeditor/list-editor-popup.xml"/>
+    <screen id="saveSetInFolder"
+            template="/com/haulmont/cuba/web/app/folders/save-set-window.xml"/>
 </screen-config>

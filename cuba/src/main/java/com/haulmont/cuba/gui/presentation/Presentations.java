@@ -28,8 +28,6 @@ import javax.annotation.Nullable;
 @Deprecated
 public interface Presentations extends TablePresentations {
 
-    String NAME = "cuba_Presentations";
-
     /**
      * Returns user settings for the selected presentation or <code>null</code>
      * if the presentation doesn't exist or if the presentation doesn't contain any settings.

@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.components;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Window;
 
+@Deprecated
 public final class CubaComponentsHelper {
 
     private CubaComponentsHelper() {

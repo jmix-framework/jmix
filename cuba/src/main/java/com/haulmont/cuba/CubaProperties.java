@@ -40,6 +40,7 @@ public class CubaProperties {
     int genericFilterPropertiesHierarchyDepth;
     boolean genericFilterTrimParamValues;
     String genericFilterMaxResultsOptions;
+    boolean localeSelectVisible;
 
     public CubaProperties(
             boolean dataManagerBeanValidation,
@@ -55,7 +56,8 @@ public class CubaProperties {
             boolean genericFilterChecking,
             @DefaultValue("2") int genericFilterPropertiesHierarchyDepth,
             @DefaultValue("true") boolean genericFilterTrimParamValues,
-            @DefaultValue("NULL, 20, 50, 100, 500, 1000, 5000") String genericFilterMaxResultsOptions
+            @DefaultValue("NULL, 20, 50, 100, 500, 1000, 5000") String genericFilterMaxResultsOptions,
+            @DefaultValue("true") boolean localeSelectVisible
     ) {
         this.dataManagerBeanValidation = dataManagerBeanValidation;
         this.disableEscapingLikeForDataStores = disableEscapingLikeForDataStores;
@@ -71,6 +73,7 @@ public class CubaProperties {
         this.genericFilterPropertiesHierarchyDepth = genericFilterPropertiesHierarchyDepth;
         this.genericFilterTrimParamValues = genericFilterTrimParamValues;
         this.genericFilterMaxResultsOptions = genericFilterMaxResultsOptions;
+        this.localeSelectVisible = localeSelectVisible;
     }
 
     public boolean isDataManagerBeanValidation() {
@@ -162,5 +165,9 @@ public class CubaProperties {
 
     public String getGenericFilterMaxResultsOptions() {
         return genericFilterMaxResultsOptions;
+    }
+
+    public boolean isLocaleSelectVisible() {
+        return localeSelectVisible;
     }
 }

@@ -41,6 +41,7 @@ dependencies {
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework.data:spring-data-commons'
+    api 'org.aspectj:aspectjweaver'
 
     api 'javax.inject:javax.inject'
     api 'org.apache.commons:commons-collections4'

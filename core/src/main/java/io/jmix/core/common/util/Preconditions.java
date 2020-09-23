@@ -33,7 +33,7 @@ public final class Preconditions {
      * @param value string value
      * @throws IllegalArgumentException if {@code value} is empty
      */
-    public static void checkNotEmptyString(String value) {
+    public static void checkNotEmptyString(@Nullable String value) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException("An empty string passed as parameter");
         }
@@ -47,7 +47,7 @@ public final class Preconditions {
      *                     {@link String#valueOf(Object)}
      * @throws IllegalArgumentException if {@code value} is empty
      */
-    public static void checkNotEmptyString(String value, @Nullable String errorMessage) {
+    public static void checkNotEmptyString(@Nullable String value, @Nullable String errorMessage) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException(String.valueOf(errorMessage));
         }
@@ -69,7 +69,7 @@ public final class Preconditions {
      *                             {@link String#valueOf(Object)}.
      * @throws IllegalArgumentException if {@code value} is empty
      */
-    public static void checkNotEmptyString(String value, @Nullable String errorMessageTemplate,
+    public static void checkNotEmptyString(@Nullable String value, @Nullable String errorMessageTemplate,
                                            @Nullable Object... errorMessageArgs) {
         if (value == null || value.isEmpty()) {
             throw new IllegalArgumentException(formatExceptionArgs(errorMessageTemplate, errorMessageArgs));
@@ -82,7 +82,7 @@ public final class Preconditions {
      * @param reference an object reference
      * @throws IllegalArgumentException if {@code reference} is null
      */
-    public static void checkNotNullArgument(Object reference) {
+    public static void checkNotNullArgument(@Nullable Object reference) {
         if (reference == null) {
             throw new IllegalArgumentException("Null reference passed as parameter");
         }
@@ -96,7 +96,7 @@ public final class Preconditions {
      *                     be converted to a string using {@link String#valueOf(Object)}
      * @throws IllegalArgumentException if {@code reference} is null
      */
-    public static void checkNotNullArgument(Object reference, @Nullable String errorMessage) {
+    public static void checkNotNullArgument(@Nullable Object reference, @Nullable String errorMessage) {
         if (reference == null) {
             throw new IllegalArgumentException(String.valueOf(errorMessage));
         }
@@ -117,7 +117,7 @@ public final class Preconditions {
      *                             {@link String#valueOf(Object)}.
      * @throws IllegalArgumentException if {@code reference} is null
      */
-    public static void checkNotNullArgument(Object reference, @Nullable String errorMessageTemplate,
+    public static void checkNotNullArgument(@Nullable Object reference, @Nullable String errorMessageTemplate,
                                             @Nullable Object... errorMessageArgs) {
         if (reference == null) {
             throw new IllegalArgumentException(formatExceptionArgs(errorMessageTemplate, errorMessageArgs));

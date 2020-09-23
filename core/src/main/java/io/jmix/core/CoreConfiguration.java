@@ -44,6 +44,7 @@ import org.springframework.core.annotation.Order;
 @JmixModule(dependsOn = {})
 @PropertySource(name = "io.jmix.core", value = "classpath:/io/jmix/core/module.properties")
 @EnableCaching
+@EnableAspectJAutoProxy
 public class CoreConfiguration {
 
     @Bean("core_ModulesProcessor")

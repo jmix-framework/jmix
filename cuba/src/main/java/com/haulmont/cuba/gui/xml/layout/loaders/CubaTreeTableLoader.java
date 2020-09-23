@@ -55,17 +55,17 @@ public class CubaTreeTableLoader extends TreeTableLoader {
     }
 
     @Override
-    protected CubaTreeTableDataHolder initTableDataHolder() {
-        CubaTreeTableDataHolder holder = new CubaTreeTableDataHolder();
+    protected TableDataHolder initTableDataHolder() {
         Element rowsElement = element.element("rows");
         if (rowsElement == null) {
-            return holder;
+            return super.initTableDataHolder();
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadTableDatasource(
                 element, rowsElement, context, (ComponentLoaderContext) getComponentContext()
         );
 
+        CubaTreeTableDataHolder holder = new CubaTreeTableDataHolder();
         holder.setDatasource(datasource);
         holder.setMetaClass(datasource.getMetaClass());
         holder.setFetchPlan(datasource.getView());
@@ -75,14 +75,18 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
     @Override
     protected void setupDataContainer(TableDataHolder holder) {
-        CollectionDatasource datasource = ((CubaTreeTableDataHolder) holder).getDatasource();
-        if (datasource == null) {
-            return;
-        }
-        ((TreeTable) resultComponent).setDatasource(datasource);
+        if (holder instanceof CubaTreeTableDataHolder) {
+            CollectionDatasource datasource = ((CubaTreeTableDataHolder) holder).getDatasource();
+            if (datasource == null) {
+                return;
+            }
+            ((TreeTable) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
-        embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+            DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
+            embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+        } else {
+            super.setupDataContainer(holder);
+        }
     }
 
     @Override

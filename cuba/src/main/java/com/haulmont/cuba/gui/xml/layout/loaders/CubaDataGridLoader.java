@@ -57,18 +57,17 @@ public class CubaDataGridLoader extends DataGridLoader {
     }
 
     @Override
-    protected CubaDataGridDataHolder initDataGridDataHolder() {
-        CubaDataGridDataHolder holder = new CubaDataGridDataHolder();
-
+    protected DataGridDataHolder initDataGridDataHolder() {
         String datasourceId = element.attributeValue("datasource");
         if (Strings.isNullOrEmpty(datasourceId)) {
-            return holder;
+            return super.initDataGridDataHolder();
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadCollectionDatasource(
                 datasourceId, context, (ComponentLoaderContext) getComponentContext()
         );
 
+        CubaDataGridDataHolder holder = new CubaDataGridDataHolder();
         holder.setDatasource(datasource);
         holder.setMetaClass(datasource.getMetaClass());
         holder.setFetchPlan(datasource.getView());
@@ -78,14 +77,18 @@ public class CubaDataGridLoader extends DataGridLoader {
 
     @Override
     protected void setupDataContainer(DataGridDataHolder holder) {
-        CollectionDatasource datasource = ((CubaDataGridDataHolder) holder).getDatasource();
-        if (datasource == null) {
-            return;
-        }
-        ((DataGrid) resultComponent).setDatasource(datasource);
+        if (holder instanceof CubaDataGridDataHolder) {
+            CollectionDatasource datasource = ((CubaDataGridDataHolder) holder).getDatasource();
+            if (datasource == null) {
+                return;
+            }
+            ((DataGrid) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
-        embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+            DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
+            embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+        } else {
+            super.setupDataContainer(holder);
+        }
     }
 
     @Override

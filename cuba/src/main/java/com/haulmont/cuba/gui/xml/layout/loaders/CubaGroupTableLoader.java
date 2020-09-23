@@ -47,17 +47,17 @@ public class CubaGroupTableLoader extends GroupTableLoader {
     }
 
     @Override
-    protected CubaGroupTableDataHolder initTableDataHolder() {
-        CubaGroupTableDataHolder holder = new CubaGroupTableDataHolder();
+    protected TableDataHolder initTableDataHolder() {
         Element rowsElement = element.element("rows");
         if (rowsElement == null) {
-            return holder;
+            return super.initTableDataHolder();
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadTableDatasource(
                 element, rowsElement, context, (ComponentLoaderContext) getComponentContext()
         );
 
+        CubaGroupTableDataHolder holder = new CubaGroupTableDataHolder();
         holder.setDatasource(datasource);
         holder.setMetaClass(datasource.getMetaClass());
         holder.setFetchPlan(datasource.getView());
@@ -67,14 +67,18 @@ public class CubaGroupTableLoader extends GroupTableLoader {
 
     @Override
     protected void setupDataContainer(TableDataHolder holder) {
-        CollectionDatasource datasource = ((CubaGroupTableDataHolder) holder).getDatasource();
-        if (datasource == null) {
-            return;
-        }
-        ((GroupTable) resultComponent).setDatasource(datasource);
+        if (holder instanceof CubaGroupTableDataHolder) {
+            CollectionDatasource datasource = ((CubaGroupTableDataHolder) holder).getDatasource();
+            if (datasource == null) {
+                return;
+            }
+            ((GroupTable) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
-        embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+            DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
+            embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+        } else {
+            super.setupDataContainer(holder);
+        }
     }
 
     @Override

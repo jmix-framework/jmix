@@ -58,18 +58,17 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
     }
 
     @Override
-    protected CubaTreeDataGridDataHolder initDataGridDataHolder() {
-        CubaTreeDataGridDataHolder holder = new CubaTreeDataGridDataHolder();
-
+    protected DataGridDataHolder initDataGridDataHolder() {
         String datasourceId = element.attributeValue("datasource");
         if (Strings.isNullOrEmpty(datasourceId)) {
-            return holder;
+            return super.initDataGridDataHolder();
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadCollectionDatasource(
                 datasourceId, context, (ComponentLoaderContext) getComponentContext()
         );
 
+        CubaTreeDataGridDataHolder holder = new CubaTreeDataGridDataHolder();
         holder.setDatasource(datasource);
         holder.setMetaClass(datasource.getMetaClass());
         holder.setFetchPlan(datasource.getView());
@@ -79,14 +78,18 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
 
     @Override
     protected void setupDataContainer(DataGridDataHolder holder) {
-        CollectionDatasource datasource = ((CubaTreeDataGridDataHolder) holder).getDatasource();
-        if (datasource == null) {
-            return;
-        }
-        ((TreeDataGrid) resultComponent).setDatasource(datasource);
+        if (holder instanceof CubaTreeDataGridDataHolder) {
+            CollectionDatasource datasource = ((CubaTreeDataGridDataHolder) holder).getDatasource();
+            if (datasource == null) {
+                return;
+            }
+            ((TreeDataGrid) resultComponent).setDatasource(datasource);
 
-        DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
-        embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+            DynAttrEmbeddingStrategies embeddingStrategies = applicationContext.getBean(DynAttrEmbeddingStrategies.class);
+            embeddingStrategies.embedAttributes(resultComponent, getComponentContext().getFrame());
+        } else {
+            super.setupDataContainer(holder);
+        }
     }
 
     @Override

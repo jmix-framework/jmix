@@ -35,7 +35,10 @@ import io.jmix.ui.event.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.navigation.*;
-import io.jmix.ui.sys.*;
+import io.jmix.ui.sys.ControllerUtils;
+import io.jmix.ui.sys.LinkHandler;
+import io.jmix.ui.sys.TestIdManager;
+import io.jmix.ui.sys.WebJarResourceResolver;
 import io.jmix.ui.sys.event.UiEventsMulticaster;
 import io.jmix.ui.theme.ThemeConstantsRepository;
 import io.jmix.ui.widget.AppUIUtils;
@@ -48,11 +51,8 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -79,15 +79,11 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     @Autowired
     protected UiProperties uiProperties;
 
-//    @Autowired
-//    protected UserSettingsTools userSettingsTools;
     @Autowired
     protected ThemeConstantsRepository themeConstantsRepository;
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
-//    @Autowired
-//    protected UserSessionService userSessionService; todo ping session ?
 
     @Autowired
     protected UiEventsMulticaster uiEventsMulticaster;
@@ -99,9 +95,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     @Autowired
     protected BeanFactory beanFactory;
-
-    @Autowired
-    protected AppUIBeanProvider appUIBeanProvider;
 
     protected TestIdManager testIdManager = new TestIdManager();
 
@@ -167,6 +160,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return screens;
     }
 
+    @Autowired
+    @Lazy
     protected void setScreens(Screens screens) {
         this.screens = screens;
     }
@@ -176,6 +171,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return dialogs;
     }
 
+    @Autowired
+    @Lazy
     protected void setDialogs(Dialogs dialogs) {
         this.dialogs = dialogs;
     }
@@ -185,6 +182,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return notifications;
     }
 
+    @Autowired
+    @Lazy
     protected void setNotifications(Notifications notifications) {
         this.notifications = notifications;
     }
@@ -194,6 +193,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return webBrowserTools;
     }
 
+    @Autowired
+    @Lazy
     protected void setWebBrowserTools(WebBrowserTools webBrowserTools) {
         this.webBrowserTools = webBrowserTools;
     }
@@ -203,6 +204,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return fragments;
     }
 
+    @Autowired
+    @Lazy
     protected void setFragments(Fragments fragments) {
         this.fragments = fragments;
     }
@@ -212,6 +215,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return urlRouting;
     }
 
+    @Autowired
+    @Lazy
     public void setUrlRouting(UrlRouting urlRouting) {
         this.urlRouting = urlRouting;
     }
@@ -220,14 +225,19 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         return urlChangeHandler;
     }
 
+    @Autowired
+    @Lazy
     public void setUrlChangeHandler(UrlChangeHandler urlChangeHandler) {
         this.urlChangeHandler = urlChangeHandler;
+        getPage().addPopStateListener(urlChangeHandler::handleUrlChange);
     }
 
     public History getHistory() {
         return history;
     }
 
+    @Autowired
+    @Lazy
     public void setHistory(History history) {
         this.history = history;
     }
@@ -260,21 +270,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
             } else {
                 this.app = App.getInstance();
             }
-
-//            Connection connection = app.getConnection();
-//            if (connection != null && !isUserSessionAlive(connection)) {
-//                connection.logout();
-//
-//                Notification.show(
-//                        messages.getMessage("app.sessionExpiredCaption"),
-//                        messages.getMessage("app.sessionExpiredMessage"),
-//                        Notification.Type.HUMANIZED_MESSAGE);
-//            }
-//
-//            if (connection != null) {
-//                setUserSession(connection.getSession());
-//            }
-
             setupUI();
         } catch (Exception e) {
             log.error("Unable to init ui", e);
@@ -287,77 +282,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
         processExternalLink(request, requestedState);
     }
-
-    @Autowired
-    protected void setApplicationContext(ApplicationContext applicationContext) {
-        Dialogs dialogs = new WebDialogs(this);
-        autowireContext(dialogs, applicationContext);
-        setDialogs(dialogs);
-
-        Notifications notifications = new WebNotifications(this);
-        autowireContext(notifications, applicationContext);
-        setNotifications(notifications);
-
-        WebBrowserTools webBrowserTools = new WebBrowserToolsImpl(this);
-        autowireContext(webBrowserTools, applicationContext);
-        setWebBrowserTools(webBrowserTools);
-
-        Fragments fragments = new WebFragments(this);
-        autowireContext(fragments, applicationContext);
-        setFragments(fragments);
-
-        Screens screens = appUIBeanProvider.createScreens(this);
-        autowireContext(screens, applicationContext);
-        setScreens(screens);
-
-
-        UrlRouting urlRouting = new WebUrlRouting(this);
-        autowireContext(urlRouting, applicationContext);
-        setUrlRouting(urlRouting);
-
-        History history = new WebHistory(this);
-        autowireContext(history, applicationContext);
-        setHistory(history);
-
-        UrlChangeHandler urlChangeHandler = new UrlChangeHandler(this);
-        autowireContext(urlChangeHandler, applicationContext);
-        setUrlChangeHandler(urlChangeHandler);
-
-        getPage().addPopStateListener(urlChangeHandler::handleUrlChange);
-    }
-
-    protected void autowireContext(Object instance, ApplicationContext applicationContext) {
-        AutowireCapableBeanFactory autowireBeanFactory = applicationContext.getAutowireCapableBeanFactory();
-        autowireBeanFactory.autowireBean(instance);
-
-        if (instance instanceof ApplicationContextAware) {
-            ((ApplicationContextAware) instance).setApplicationContext(applicationContext);
-        }
-
-        if (instance instanceof InitializingBean) {
-            try {
-                ((InitializingBean) instance).afterPropertiesSet();
-            } catch (Exception e) {
-                throw new RuntimeException(
-                        "Unable to initialize UI Component - calling afterPropertiesSet for " +
-                                instance.getClass(), e);
-            }
-        }
-    }
-
-//    protected boolean isUserSessionAlive(Connection connection) {
-//        try {
-//            UserSession session = connection.getSession();
-//
-//            // todo do we need this ?
-//            /*if (session.isAuthenticated()) {
-//                userSessionService.getUserSession(session.getId());
-//            }*/
-//            return true;
-//        } catch (NoUserSessionException e) {
-//            return false;
-//        }
-//    }
 
     //todo MG remove
     public boolean hasAuthenticatedSession() {
@@ -428,43 +352,9 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     @Override
     protected void refresh(VaadinRequest request) {
         super.refresh(request);
-
-        boolean sessionIsAlive = true;
-
-//        Connection connection = app.getConnection();
-//
-//        if (connection.isAuthenticated()) {
-//            // Ping middleware session if connected
-//            log.debug("Ping middleware session");
-//
-//            try {
-//                UserSession session = connection.getSession();
-//                if (session != null && session.isAuthenticated()) {
-//                    // todo do we need this ?
-//                    // userSessionService.getUserSession(session.getId());
-//
-//                    if (hasAuthenticatedSession()
-//                            && !Objects.equals(userSession, session)) {
-//                        setUserSession(session);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                sessionIsAlive = false;
-//
-//                app.exceptionHandlers.handle(new com.vaadin.server.ErrorEvent(e));
-//            }
-//
-//            if (sessionIsAlive) {
-//                events.publish(new SessionHeartbeatEvent(app));
-//            }
-//        }
-
         urlChangeHandler.restoreState();
-
-        if (sessionIsAlive) {
-            events.publish(new UIRefreshEvent(this));
-        }
-    }
+        events.publish(new UIRefreshEvent(this));
+     }
 
     @Override
     public void handleRequest(VaadinRequest request) {
@@ -709,7 +599,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
-        String lastHistoryOp = ((WebUrlRouting) getUrlRouting()).getLastHistoryOperation();
+        String lastHistoryOp = getUrlRouting().getLastHistoryOperation();
         target.addAttribute(AppUIConstants.LAST_HISTORY_OP, lastHistoryOp);
     }
 

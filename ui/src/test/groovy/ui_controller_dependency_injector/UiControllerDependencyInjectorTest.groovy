@@ -20,6 +20,7 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.core.Messages
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.ScreenBuilders
+import io.jmix.ui.Screens
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Button
 import io.jmix.ui.component.formatter.NumberFormatter
@@ -56,7 +57,7 @@ class UiControllerDependencyInjectorTest extends ScreenSpecification {
         screen.beanFactory == applicationContext
         screen.messages == applicationContext.getBean(Messages)
         screen.screenBuilders == applicationContext.getBean(ScreenBuilders)
-        screen.screens == getScreens()
+        screen.screens instanceof Screens
 
         screen.button instanceof Button
 
@@ -77,7 +78,7 @@ class UiControllerDependencyInjectorTest extends ScreenSpecification {
         screen.beanFactory == applicationContext
         screen.messages == applicationContext.getBean(Messages)
         screen.screenBuilders == applicationContext.getBean(ScreenBuilders)
-        screen.screens == getScreens()
+        screen.screens instanceof Screens
 
         screen.button instanceof Button
 

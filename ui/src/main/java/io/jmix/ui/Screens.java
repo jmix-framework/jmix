@@ -17,6 +17,7 @@
 package io.jmix.ui;
 
 import io.jmix.ui.component.AppWorkArea;
+import io.jmix.ui.component.impl.WebAppWorkArea;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 
@@ -29,6 +30,8 @@ import java.util.Collection;
  * @see ScreenBuilders
  */
 public interface Screens {
+
+    String NAME = "ui_Screens";
 
     String NAVIGATION_CLOSE_ACTION_ID = "mainMenu";
 
@@ -125,6 +128,9 @@ public interface Screens {
      * @return object that provides information about opened screens
      */
     OpenedScreens getOpenedScreens();
+
+    @Nullable
+    WebAppWorkArea getConfiguredWorkAreaOrNull();
 
     /**
      * Marker interface for screen launch modes.

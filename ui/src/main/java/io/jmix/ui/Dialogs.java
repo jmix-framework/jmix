@@ -36,6 +36,9 @@ import java.util.function.Function;
  * Utility dialogs API.
  */
 public interface Dialogs {
+
+    String NAME = "ui_Dialogs";
+
     /**
      * Creates option dialog builder.
      * <br>

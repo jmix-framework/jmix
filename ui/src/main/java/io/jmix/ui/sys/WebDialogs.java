@@ -18,12 +18,15 @@ package io.jmix.ui.sys;
 
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.window.WindowMode;
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
-import io.jmix.ui.*;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
@@ -47,22 +50,22 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.widget.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static io.jmix.ui.component.impl.WebComponentsHelper.setClickShortcut;
-import static io.jmix.ui.component.impl.WebWrapperUtils.toContentMode;
-import static io.jmix.ui.component.impl.WebWrapperUtils.toSizeUnit;
-import static io.jmix.ui.component.impl.WebWrapperUtils.toVaadinContentMode;
+import static io.jmix.ui.component.impl.WebWrapperUtils.*;
 
+@UIScope
+@Component(Dialogs.NAME)
 public class WebDialogs implements Dialogs {
-
-    protected AppUI ui;
 
     @Autowired
     protected Messages messages;
@@ -79,9 +82,11 @@ public class WebDialogs implements Dialogs {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    protected AppUI ui;
     protected ScreenBuilders screenBuilders;
 
-    public WebDialogs(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
 

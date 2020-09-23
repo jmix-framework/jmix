@@ -17,17 +17,23 @@
 package io.jmix.ui.sys;
 
 import com.vaadin.shared.ui.BorderStyle;
+import com.vaadin.spring.annotation.UIScope;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.WebBrowserTools;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
+@UIScope
+@Component(WebBrowserTools.NAME)
 public class WebBrowserToolsImpl implements WebBrowserTools {
 
     protected AppUI ui;
 
-    public WebBrowserToolsImpl(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
 

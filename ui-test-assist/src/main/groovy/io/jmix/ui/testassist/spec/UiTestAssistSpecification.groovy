@@ -18,17 +18,14 @@ package io.jmix.ui.testassist.spec
 
 import com.vaadin.server.VaadinSession
 import com.vaadin.server.WebBrowser
+import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
-import io.jmix.ui.App
-import io.jmix.ui.AppUI
-import io.jmix.ui.JmixApp
-import io.jmix.ui.UiComponents
-import io.jmix.ui.WindowConfig
+import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies
 import io.jmix.ui.sys.UiControllersConfiguration
@@ -78,6 +75,7 @@ class UiTestAssistSpecification extends Specification {
     @Autowired
     WindowConfig windowConfig
 
+    @Autowired
     AppUI vaadinUi
 
     @SuppressWarnings("GroovyAccessibility")
@@ -99,16 +97,13 @@ class UiTestAssistSpecification extends Specification {
 
         injectFactory.autowireBean(app)
 
-        vaadinUi = new AppUI()
-        injectFactory.autowireBean(vaadinUi)
+        UI.setCurrent(vaadinUi)
 
         def connectorTracker = new TestConnectorTracker(vaadinUi)
         getDeclaredField(UI.class, "connectorTracker", true)
                 .set(vaadinUi, connectorTracker)
         getDeclaredField(UI.class, "session", true)
                 .set(vaadinUi, vaadinSession)
-
-        UI.setCurrent(vaadinUi)
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(Mock(HttpServletRequest)))
 
@@ -119,7 +114,12 @@ class UiTestAssistSpecification extends Specification {
 
     void cleanup() {
         resetScreensConfig()
-
+        def notifications = vaadinUi.getExtensions().findAll {
+            it instanceof Notification
+        }
+        notifications.forEach {
+            vaadinUi.removeExtension(it)
+        }
         UI.setCurrent(null)
     }
 

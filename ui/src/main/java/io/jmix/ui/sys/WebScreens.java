@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.sys;
 
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
 import io.jmix.core.AccessManager;
@@ -25,6 +26,7 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
 import io.jmix.ui.*;
 import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
@@ -35,7 +37,6 @@ import io.jmix.ui.component.impl.WebDialogWindow.GuiDialogWindow;
 import io.jmix.ui.component.impl.WebTabWindow;
 import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.component.impl.WindowImplementation;
-import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.gui.data.compatibility.DsSupport;
@@ -64,7 +65,7 @@ import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -83,6 +84,8 @@ import static io.jmix.ui.screen.UiControllerUtils.*;
 import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructor;
 
 @ParametersAreNonnullByDefault
+@UIScope
+@Component(Screens.NAME)
 public class WebScreens implements Screens {
 
     private static final org.slf4j.Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
@@ -125,9 +128,11 @@ public class WebScreens implements Screens {
 
     protected AppUI ui;
 
-    public WebScreens(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
+
 
     @Override
     public <T extends Screen> T create(Class<T> requiredScreenClass, LaunchMode launchMode, ScreenOptions options) {
@@ -839,6 +844,7 @@ public class WebScreens implements Screens {
         throw new IllegalStateException("RootWindow does not have any configured work area");
     }
 
+    @Override
     @Nullable
     public WebAppWorkArea getConfiguredWorkAreaOrNull() {
         RootWindow topLevelWindow = ui.getTopLevelWindow();

@@ -24,6 +24,8 @@ import java.util.Map;
  */
 public interface WebBrowserTools {
 
+    String NAME = "ui_WebBrowserTools";
+
     /**
      * Open a web page in browser.
      *

@@ -19,7 +19,6 @@ package io.jmix.ui.sys;
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
-import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.HasXmlDescriptor;
@@ -28,7 +27,6 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.navigation.UrlRouting;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.sys.UiControllerReflectionInspector.AnnotatedMethod;
@@ -67,7 +65,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenData;
 import static io.jmix.ui.sys.ValuePathHelper.pathPrefix;
 import static java.lang.reflect.Proxy.newProxyInstance;
@@ -598,26 +595,6 @@ public class UiControllerDependencyInjector {
             // injecting logger
             return LoggerFactory.getLogger(((Field) element).getDeclaringClass());
 
-        } else if (Screens.class.isAssignableFrom(type)) {
-            // injecting screens
-            return getScreenContext(frameOwner).getScreens();
-
-        } else if (Dialogs.class.isAssignableFrom(type)) {
-            // injecting dialogs
-            return getScreenContext(frameOwner).getDialogs();
-
-        } else if (Notifications.class.isAssignableFrom(type)) {
-            // injecting notifications
-            return getScreenContext(frameOwner).getNotifications();
-
-        } else if (Fragments.class.isAssignableFrom(type)) {
-            // injecting fragments
-            return getScreenContext(frameOwner).getFragments();
-
-        } else if (UrlRouting.class.isAssignableFrom(type)) {
-            // injecting urlRouting
-            return getScreenContext(frameOwner).getUrlRouting();
-
         } else if (MessageBundle.class == type) {
             return createMessageBundle(element, frameOwner, frame);
 
@@ -625,10 +602,6 @@ public class UiControllerDependencyInjector {
             // Injecting a Theme
             ThemeConstantsManager themeManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
             return themeManager.getConstants();
-
-        } else if (WebBrowserTools.class.isAssignableFrom(type)) {
-            // Injecting WebBrowserTools
-            return getScreenContext(frameOwner).getWebBrowserTools();
 
         } else if (BeanFactory.class.isAssignableFrom(type)) {
             return applicationContext;

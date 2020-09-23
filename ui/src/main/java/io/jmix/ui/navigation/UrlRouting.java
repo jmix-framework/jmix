@@ -45,6 +45,8 @@ import java.util.Map;
  */
 public interface UrlRouting {
 
+    String NAME = "ui_UrlRouting";
+
     /**
      * Pushes the state corresponding to the given {@code screen}.
      * <p>
@@ -100,6 +102,8 @@ public interface UrlRouting {
      * @return {@link RouteGenerator} instance
      */
     RouteGenerator getRouteGenerator();
+
+    String getLastHistoryOperation();
 
     /**
      * Provides API to generate routes for screens with optional URL parameters.

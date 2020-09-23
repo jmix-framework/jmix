@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.sys;
+package io.jmix.ui.testassist.ui;
+
 
 import io.jmix.ui.AppUI;
-import io.jmix.ui.AppUIBeanProvider;
-import io.jmix.ui.Screens;
-import org.springframework.stereotype.Component;
 
-@Component(AppUIBeanProvider.NAME)
-public class AppUIBeanProviderImpl implements AppUIBeanProvider {
+public class TestAppUI extends AppUI {
 
-    @Override
-    public Screens createScreens(AppUI appUI) {
-        return new WebScreens(appUI);
+    public int getUIId() {
+        return 1;
     }
 
 }

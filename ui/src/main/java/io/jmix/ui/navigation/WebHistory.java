@@ -16,6 +16,7 @@
 
 package io.jmix.ui.navigation;
 
+import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
@@ -23,12 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+@UIScope
+@Component(History.NAME)
 public class WebHistory implements History {
 
     private static final Logger log = LoggerFactory.getLogger(WebHistory.class);
@@ -41,10 +46,14 @@ public class WebHistory implements History {
     protected int now;
     protected List<NavigationState> history;
 
-    public WebHistory(AppUI ui) {
-        this.ui = ui;
+    public WebHistory() {
         this.now = -1;
         this.history = new ArrayList<>();
+    }
+
+    @Autowired
+    public void setAppUi(AppUI ui) {
+        this.ui = ui;
     }
 
     @Override

@@ -31,7 +31,7 @@ import java.util.List;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenNavigator {
 
-    public static final String NAME = "jmix_ScreenNavigator";
+    public static final String NAME = "ui_ScreenNavigator";
 
     @Autowired
     protected List<NavigationHandler> navigationHandlers;

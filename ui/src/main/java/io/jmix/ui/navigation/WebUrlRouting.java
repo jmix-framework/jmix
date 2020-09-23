@@ -17,6 +17,7 @@
 package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Events;
 import io.jmix.core.Metadata;
@@ -34,7 +35,6 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.sys.UiDescriptorUtils;
-import io.jmix.ui.sys.WebScreens;
 import io.jmix.ui.widget.client.ui.AppUIConstants;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +53,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
+@UIScope
+@Component(UrlRouting.NAME)
 public class WebUrlRouting implements UrlRouting {
 
     public static final String NEW_ENTITY_ID = "new";
@@ -70,12 +74,15 @@ public class WebUrlRouting implements UrlRouting {
     protected UrlTools urlTools;
     @Autowired
     protected EntityStates entityStates;
+    @Autowired
+    protected Screens screens;
 
     protected AppUI ui;
 
     protected String lastHistoryOperation = AppUIConstants.HISTORY_PUSH_OP;
 
-    public WebUrlRouting(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
 
@@ -358,7 +365,7 @@ public class WebUrlRouting implements UrlRouting {
 
     @Nullable
     protected Screen findActiveScreenByState(NavigationState requestedState) {
-        WebAppWorkArea workArea = ((WebScreens) ui.getScreens()).getConfiguredWorkAreaOrNull();
+        WebAppWorkArea workArea = screens.getConfiguredWorkAreaOrNull();
 
         return workArea != null
                 ? findScreenByState(getOpenedScreens().getActiveScreens(), requestedState)
@@ -412,6 +419,7 @@ public class WebUrlRouting implements UrlRouting {
         return notAttached;
     }
 
+    @Override
     public String getLastHistoryOperation() {
         return lastHistoryOperation;
     }

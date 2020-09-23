@@ -16,24 +16,27 @@
 
 package io.jmix.ui.sys;
 
+import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Notification;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.executor.BackgroundWorker;
-import io.jmix.ui.Notifications;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.function.Consumer;
 
+@UIScope
+@Component(Notifications.NAME)
 public class WebNotifications implements Notifications {
 
     protected static final int HUMANIZED_NOTIFICATION_DELAY_MSEC = 3000;
     protected static final int WARNING_NOTIFICATION_DELAY_MSEC = -1;
 
     protected AppUI ui;
-
     protected BackgroundWorker backgroundWorker;
 
     @Autowired
@@ -41,7 +44,8 @@ public class WebNotifications implements Notifications {
     @Autowired
     protected HtmlSanitizer htmlSanitizer;
 
-    public WebNotifications(AppUI ui) {
+    @Autowired
+    public void setUi(AppUI ui) {
         this.ui = ui;
     }
 

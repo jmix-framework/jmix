@@ -16,26 +16,40 @@
 
 package io.jmix.ui.testassist.ui;
 
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.server.VaadinSession;
-import com.vaadin.server.WebBrowser;
+import com.vaadin.server.*;
+import org.springframework.mock.web.MockHttpSession;
 
+import javax.servlet.http.HttpSession;
 import java.util.Locale;
 
 public class TestVaadinSession extends VaadinSession {
 
     protected WebBrowser webBrowser;
+    protected WrappedSession wrappedSession;
 
     public TestVaadinSession(WebBrowser webBrowser, Locale locale) {
         super(new VaadinServletService(){});
         this.webBrowser = webBrowser;
-
         setLocale(locale);
+        wrappedSession = new WrappedHttpSession(new MockHttpSession());
     }
 
     @Override
     public boolean hasLock() {
         return true;
+    }
+
+    @Override
+    public void lock() {
+    }
+
+    @Override
+    public void unlock() {
+    }
+
+    @Override
+    public WrappedSession getSession() {
+        return wrappedSession;
     }
 
     @Override

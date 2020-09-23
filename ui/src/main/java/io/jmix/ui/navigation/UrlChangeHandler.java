@@ -17,6 +17,7 @@
 package io.jmix.ui.navigation;
 
 import com.vaadin.server.Page;
+import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.AccessManager;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
@@ -40,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -50,7 +52,11 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+@UIScope
+@Component(UrlChangeHandler.NAME)
 public class UrlChangeHandler implements InitializingBean {
+
+    public static final String NAME = "ui_UrlChangeHandler";
 
     private static final Logger log = LoggerFactory.getLogger(UrlChangeHandler.class);
 
@@ -79,7 +85,8 @@ public class UrlChangeHandler implements InitializingBean {
 
     protected RedirectHandler redirectHandler;
 
-    public UrlChangeHandler(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
 

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.sys;
 
+import com.vaadin.spring.annotation.UIScope;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
@@ -34,6 +35,7 @@ import io.micrometer.core.instrument.Timer;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -42,6 +44,8 @@ import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.UiControllerUtils.*;
 import static java.util.Collections.emptyMap;
 
+@UIScope
+@Component(Fragments.NAME)
 @ParametersAreNonnullByDefault
 public class WebFragments implements Fragments {
 
@@ -61,7 +65,8 @@ public class WebFragments implements Fragments {
 
     protected AppUI ui;
 
-    public WebFragments(AppUI ui) {
+    @Autowired
+    public void setAppUi(AppUI ui) {
         this.ui = ui;
     }
 

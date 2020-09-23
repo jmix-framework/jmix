@@ -27,6 +27,8 @@ import javax.annotation.Nullable;
  */
 public interface History {
 
+    String NAME = "ui_History";
+
     /**
      * Adds new history entry. Flushes all entries coming after current entry.
      *

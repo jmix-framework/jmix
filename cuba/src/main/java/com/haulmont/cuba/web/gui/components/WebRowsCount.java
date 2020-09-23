@@ -22,14 +22,14 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.impl.WeakCollectionChangeListener;
 import com.vaadin.shared.Registration;
-import io.jmix.core.DataLoadContext;
-import io.jmix.core.DataManager;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.VisibilityChangeNotifier;
 import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.impl.WebAbstractComponent;
 import io.jmix.ui.component.impl.WebAbstractTable;
 import io.jmix.ui.executor.BackgroundTask;
@@ -39,6 +39,7 @@ import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.JmixRowsCount;
@@ -49,6 +50,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -73,6 +76,8 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
 
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
 
     protected boolean refreshing;
     protected State state;
@@ -190,6 +195,8 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
             DataUnit items = ((ListComponent) target).getItems();
             if (items instanceof DatasourceDataUnit) {
                 return createDatasourceAdapter(((DatasourceDataUnit) items).getDatasource());
+            } else if (items instanceof ContainerDataUnit) {
+                return createLoaderAdapter(((ContainerDataUnit<?>) items).getContainer());
             }
             throw new IllegalStateException("Unsupported data unit type: " + items);
         }
@@ -242,6 +249,17 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         } else {
             return new NoPagingDatasourceAdapter(datasource);
         }
+    }
+
+    protected Adapter createLoaderAdapter(CollectionContainer container) {
+        DataLoader loader = null;
+        if (container instanceof HasLoader) {
+            loader = ((HasLoader) container).getLoader();
+        }
+        if (loader != null && !(loader instanceof BaseCollectionLoader)) {
+            throw new IllegalStateException("RowsCount component currently supports only BaseCollectionLoader");
+        }
+        return new LoaderAdapter(container, (BaseCollectionLoader) loader);
     }
 
     @Override
@@ -552,6 +570,105 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         int size();
 
         void refresh();
+    }
+
+    protected class LoaderAdapter implements Adapter {
+
+        protected CollectionContainer container;
+
+        protected Consumer<CollectionContainer.CollectionChangeEvent> containerCollectionChangeListener;
+        protected io.jmix.ui.model.impl.WeakCollectionChangeListener weakContainerCollectionChangeListener;
+
+        @Nullable
+        protected BaseCollectionLoader loader;
+
+        @SuppressWarnings("unchecked")
+        public LoaderAdapter(CollectionContainer container, @Nullable BaseCollectionLoader loader) {
+            this.container = container;
+            this.loader = loader;
+
+            containerCollectionChangeListener = e -> {
+                samePage = CollectionChangeType.REFRESH != e.getChangeType();
+                onCollectionChanged();
+            };
+
+            weakContainerCollectionChangeListener = new io.jmix.ui.model.impl.WeakCollectionChangeListener(
+                    container, containerCollectionChangeListener);
+
+            onCollectionChanged();
+        }
+
+        @Override
+        public void unbind() {
+            weakContainerCollectionChangeListener.removeItself();
+        }
+
+        @Override
+        public int getFirstResult() {
+            return loader != null ? loader.getFirstResult() : 0;
+        }
+
+        @Override
+        public int getMaxResults() {
+            return loader != null ? loader.getMaxResults() : Integer.MAX_VALUE;
+        }
+
+        @Override
+        public void setFirstResult(int startPosition) {
+            if (loader != null)
+                loader.setFirstResult(startPosition);
+        }
+
+        @Override
+        public void setMaxResults(int maxResults) {
+            if (loader != null)
+                loader.setMaxResults(maxResults);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public int getCount() {
+            if (loader == null) {
+                return container.getItems().size();
+            }
+
+            if (loader instanceof CollectionLoader) {
+                LoadContext context = ((CollectionLoader) loader).createLoadContext();
+                if (totalCountDelegate == null) {
+                    return (int) dataManager.getCount(context);
+                } else {
+                    return Math.toIntExact(totalCountDelegate.apply(context));
+                }
+            } else if (loader instanceof KeyValueCollectionLoader) {
+                ValueLoadContext context = ((KeyValueCollectionLoader) loader).createLoadContext();
+                if (totalCountDelegate == null) {
+                    QueryTransformer transformer = queryTransformerFactory.transformer(context.getQuery().getQueryString());
+                    // TODO it doesn't work for query containing scalars in select
+                    transformer.replaceWithCount();
+                    context.getQuery().setQueryString(transformer.getResult());
+                    context.setProperties(Collections.singletonList("cnt"));
+                    List<KeyValueEntity> list = dataManager.loadValues(context);
+                    Number count = list.get(0).getValue("cnt");
+                    return count == null ? 0 : count.intValue();
+                } else {
+                    return Math.toIntExact(totalCountDelegate.apply(context));
+                }
+            } else {
+                log.warn("Unsupported loader type: {}", loader.getClass().getName());
+                return 0;
+            }
+        }
+
+        @Override
+        public int size() {
+            return container.getItems().size();
+        }
+
+        @Override
+        public void refresh() {
+            if (loader != null)
+                loader.load();
+        }
     }
 
     protected class DatasourceAdapter extends AbstractDatasourceAdapter {

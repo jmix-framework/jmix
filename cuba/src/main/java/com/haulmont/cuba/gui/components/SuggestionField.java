@@ -26,7 +26,8 @@ import com.haulmont.cuba.gui.data.Datasource;
  * @deprecated Use {@link io.jmix.ui.component.SuggestionField} instead
  */
 @Deprecated
-public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.SuggestionField<V>, HasCaptionMode {
+public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.SuggestionField<V>, HasCaptionMode,
+        HasOptionsStyleProvider<V> {
 
     static <T> TypeToken<SuggestionField<T>> of(Class<T> valueClass) {
         return new TypeToken<SuggestionField<T>>() {};

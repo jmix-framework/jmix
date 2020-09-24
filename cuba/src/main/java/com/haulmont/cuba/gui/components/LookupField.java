@@ -34,7 +34,8 @@ import java.util.function.Predicate;
  * @deprecated Use {@link ComboBox} instead
  */
 @Deprecated
-public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V>, LookupComponent<V> {
+public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V>, LookupComponent<V>,
+        HasOptionsStyleProvider<V> {
 
     String NAME = "lookupField";
 

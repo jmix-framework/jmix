@@ -162,6 +162,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'MessageDialog has an unsafe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == UNSAFE_HTML
         }
@@ -180,6 +181,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'OptionDialog has a safe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == SAFE_HTML
         }
@@ -196,6 +198,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'OptionDialog has an unsafe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == UNSAFE_HTML
         }
@@ -249,6 +252,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'MessageDialog has a safe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == SAFE_HTML
         }
@@ -270,6 +274,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'MessageDialog has an unsafe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == UNSAFE_HTML
         }
@@ -291,6 +296,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'OptionDialog has a safe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == SAFE_HTML
         }
@@ -312,6 +318,7 @@ class SanitizerTest extends UiScreenSpec {
         then: 'OptionDialog has an unsafe html as its message'
 
         vaadinUi.windows.find { window ->
+            if (!(window.content instanceof VerticalLayout)) return false
             def messageLabel = ((VerticalLayout) window.content).components.first
             ((JmixLabel) messageLabel).value == UNSAFE_HTML
         }

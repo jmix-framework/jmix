@@ -93,7 +93,7 @@ public class EntityLogItem implements Serializable {
     @Column(name = "EVENT_TS")
     private Date eventTs;
 
-    @Column(name = "USER_LOGIN")
+    @Column(name = "USER_LOGIN", length = 50)
     private String userLogin;
 
     @Column(name = "CHANGE_TYPE", length = 1)
@@ -106,7 +106,7 @@ public class EntityLogItem implements Serializable {
     @EmbeddedParameters(nullAllowed = false)
     private ReferenceToEntity entityRef;
 
-    @Column(name = "ENTITY_INSTANCE_NAME")
+    @Column(name = "ENTITY_INSTANCE_NAME", length = 1000)
     private String entityInstanceName;
 
     @Transient
@@ -116,6 +116,7 @@ public class EntityLogItem implements Serializable {
     @ModelProperty
     private Set<EntityLogAttr> attributes;
 
+    @Lob
     @Column(name = "CHANGES")
     private String changes;
 

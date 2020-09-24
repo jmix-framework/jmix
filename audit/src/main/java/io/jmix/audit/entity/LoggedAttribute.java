@@ -30,7 +30,8 @@ import java.util.UUID;
  * Configuration element of <code>EntityLog</code> bean.
  */
 @Entity(name = "audit_LoggedAttribute")
-@Table(name = "AUDIT_LOGGED_ATTR")
+@Table(name = "AUDIT_LOGGED_ATTR",
+        uniqueConstraints = @UniqueConstraint(name = "AUDIT_LOGGED_ATTR_UNIQ_NAME", columnNames = {"ENTITY_ID", "NAME"}))
 @SystemLevel
 public class LoggedAttribute implements Serializable {
 
@@ -50,10 +51,10 @@ public class LoggedAttribute implements Serializable {
     private String createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ENTITY_ID")
+    @JoinColumn(name = "ENTITY_ID", nullable = false)
     private LoggedEntity entity;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", length = 50)
     private String name;
 
     public UUID getId() {

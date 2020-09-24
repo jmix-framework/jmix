@@ -52,7 +52,7 @@ public class LoggedEntity implements Serializable {
     @Column(name = "CREATED_BY", length = 50)
     private String createdBy;
 
-    @Column(name = "NAME", length = 100)
+    @Column(name = "NAME", length = 100, unique = true)
     private String name;
 
     @Column(name = "AUTO")

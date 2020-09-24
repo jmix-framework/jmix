@@ -20,13 +20,13 @@ import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
-
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Pet
 import test_support.app.entity.fetch_plans.ChildTestEntity
 import test_support.app.entity.fetch_plans.ParentTestEntity
+import test_support.app.entity.fetch_plans.spaceport.Waybill
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class FetchPlanRepositoryTest extends Specification {
@@ -69,6 +69,20 @@ class FetchPlanRepositoryTest extends Specification {
 
         parentPlan.getProperty("youngerChildren").fetchPlan.containsProperty("birthDate")
         !parentPlan.getProperty("youngerChildren").fetchPlan.containsProperty("name")
+    }
+
+    def "fetchplan correctly complemented by additional properties"() {
+
+        setup:
+
+        def plane = repository.getFetchPlan(Waybill, "fetchPlan.extend")
+
+
+        expect:
+
+        plane.getProperty("items").getFetchPlan().getProperties().size() == 6;
+        plane.getProperty("items").getFetchPlan().containsProperty("dim");
+
     }
 
     def "local fetch plan contains system properties"() {

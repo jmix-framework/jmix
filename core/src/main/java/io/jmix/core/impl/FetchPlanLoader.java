@@ -170,8 +170,8 @@ public class FetchPlanLoader {
                     refFetchPlanBuilder = fetchPlans.builder(rangeClass);
                     if (systemProperties)
                         refFetchPlanBuilder.addSystem();
-                    loadFetchPlanProperties(propElem, refFetchPlanBuilder, systemProperties, refFetchPlanResolver);
                 }
+                loadFetchPlanProperties(propElem, refFetchPlanBuilder, systemProperties, refFetchPlanResolver);
             }
             FetchMode fetchMode = FetchMode.AUTO;
             String fetch = propElem.attributeValue("fetch");

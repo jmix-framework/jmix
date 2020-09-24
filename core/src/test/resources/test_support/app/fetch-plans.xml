@@ -34,5 +34,15 @@
         <property name="birthDate"/>
     </fetchPlan>
 
+    <fetchPlan extends="_local" class="test_support.app.entity.fetch_plans.spaceport.Waybill" name="fetchPlan.extend">
+        <property name="items" fetchPlan="_base">
+            <property name="dim" fetchPlan="_instance_name">
+                <property name="length"/>
+                <property name="width"/>
+                <property name="height"/>
+            </property>
+        </property>
+    </fetchPlan>
+
 
 </fetchPlans>

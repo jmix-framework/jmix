@@ -25,36 +25,7 @@ import java.util.function.Function;
  *
  * @param <I> option item type
  */
-public interface HasOptionsStyleProvider<I> extends Component {
-
-// TODO VM legacy
-//
-//    /**
-//     * Sets the given {@code optionsStyleProvider} to the component.
-//     *
-//     * @param optionsStyleProvider {@link OptionsStyleProvider} instance that will be used by this component
-//     * @deprecated Use {@link #setOptionStyleProvider(Function)} instead.
-//     */
-//    @Deprecated
-//    default void setOptionsStyleProvider(OptionsStyleProvider optionsStyleProvider) {
-//        setOptionStyleProvider(new OptionsStyleProviderAdapter<>(this, optionsStyleProvider));
-//    }
-//
-//    /**
-//     * @return {@link OptionsStyleProvider} instance that is used by this component
-//     * @deprecated Use {@link #getOptionStyleProvider()} instead.
-//     */
-//    @SuppressWarnings("unchecked")
-//    @Deprecated
-//    default OptionsStyleProvider getOptionsStyleProvider() {
-//        Function<? super I, String> optionStyleProvider = getOptionStyleProvider();
-//
-//        if (optionStyleProvider instanceof OptionsStyleProviderAdapter) {
-//            return ((OptionsStyleProviderAdapter<? super I>) optionStyleProvider).getDelegate();
-//        }
-//
-//        return null;
-//    }
+public interface HasOptionStyleProvider<I> extends Component {
 
     /**
      * Sets the style provider that is used to produce custom class names for option items.

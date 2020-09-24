@@ -18,40 +18,13 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.Options;
 
-import javax.annotation.Nullable;
-import java.util.function.Function;
-
 /**
  * A group of RadioButtons. Individual radio buttons are made from items supplied by a {@link Options}.
  *
  * @param <I> item type
  */
-public interface RadioButtonGroup<I> extends OptionsField<I, I>, Component.Focusable, HasOrientation {
+public interface RadioButtonGroup<I> extends OptionsField<I, I>, Component.Focusable, HasOrientation,
+        HasOptionIconProvider<I>, HasOptionDescriptionProvider<I> {
 
     String NAME = "radioButtonGroup";
-
-    /**
-     * @return icon provider of the LookupField.
-     */
-    @Nullable
-    Function<? super I, String> getOptionIconProvider();
-    /**
-     * Set the icon provider for the LookupField.
-     *
-     * @param optionIconProvider provider which provides icons for options
-     */
-    void setOptionIconProvider(@Nullable Function<? super I, String> optionIconProvider);
-
-    /**
-     * @return option description provider
-     */
-    @Nullable
-    Function<? super I, String> getOptionDescriptionProvider();
-
-    /**
-     * Sets the option description provider.
-     *
-     * @param optionDescriptionProvider provider which provides descriptions for options
-     */
-    void setOptionDescriptionProvider(@Nullable Function<? super I, String> optionDescriptionProvider);
 }

@@ -20,7 +20,6 @@ import com.google.common.reflect.TypeToken;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -29,7 +28,7 @@ import java.util.function.Predicate;
  * @param <V> type of options and value
  */
 public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered,
-        Component.Focusable, HasOptionsStyleProvider<V> {
+        Component.Focusable, HasOptionStyleProvider<V>, HasOptionIconProvider<V>, HasOptionImageProvider<V> {
 
     String NAME = "comboBox";
 
@@ -111,33 +110,6 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @return true if first null element is visible.
      */
     boolean isNullOptionVisible();
-
-    /**
-     * Set the icon provider for the LookupField.
-     *
-     * @param optionIconProvider provider which provides icons for options
-     */
-    void setOptionIconProvider(@Nullable Function<? super V, String> optionIconProvider);
-
-    /**
-     * @return icon provider of the LookupField.
-     */
-    @Nullable
-    Function<? super V, String> getOptionIconProvider();
-
-    /**
-     * Sets a function that provides option images.
-     *
-     * @see Resource
-     * @param optionImageProvider options image provider
-     */
-    void setOptionImageProvider(@Nullable Function<? super V, Resource> optionImageProvider);
-
-    /**
-     * @return options image provider.
-     */
-    @Nullable
-    Function<? super V, Resource> getOptionImageProvider();
 
     /**
      * Returns the suggestion pop-up's width as a string. By default this

@@ -18,41 +18,15 @@ package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.Options;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.function.Function;
 
 /**
  * A group of Checkboxes. Individual checkboxes are made from items supplied by {@link Options}.
  *
  * @param <I> item type
  */
-public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, Component.Focusable, HasOrientation {
+public interface CheckBoxGroup<I> extends OptionsField<Collection<I>, I>, Component.Focusable, HasOrientation,
+        HasOptionIconProvider<I>, HasOptionDescriptionProvider<I> {
 
     String NAME = "checkBoxGroup";
-
-    /**
-     * Set the icon provider for the LookupField.
-     *
-     * @param optionIconProvider provider which provides icons for options
-     */
-    void setOptionIconProvider(@Nullable Function<? super I, String> optionIconProvider);
-    /**
-     * @return icon provider of the LookupField.
-     */
-    @Nullable
-    Function<? super I, String> getOptionIconProvider();
-
-    /**
-     * @return option description provider
-     */
-    @Nullable
-    Function<? super I, String> getOptionDescriptionProvider();
-
-    /**
-     * Sets the option description provider.
-     *
-     * @param optionDescriptionProvider provider which provides descriptions for options
-     */
-    void setOptionDescriptionProvider(@Nullable Function<? super I, String> optionDescriptionProvider);
 }

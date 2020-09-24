@@ -29,7 +29,7 @@ import java.util.Map;
  * @param <V> type of value
  */
 public interface SuggestionField<V> extends Field<V>,
-        Component.Focusable, HasInputPrompt, HasOptionsStyleProvider<V>, HasFormatter<V> {
+        Component.Focusable, HasInputPrompt, HasOptionStyleProvider<V>, HasFormatter<V> {
 
     String NAME = "suggestionField";
 

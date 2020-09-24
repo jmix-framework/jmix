@@ -16,10 +16,12 @@
 
 package io.jmix.ui.testassist.spec
 
+import com.vaadin.server.Extension
 import com.vaadin.server.VaadinSession
 import com.vaadin.server.WebBrowser
 import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
+import com.vaadin.ui.Window
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
@@ -114,11 +116,13 @@ class UiTestAssistSpecification extends Specification {
 
     void cleanup() {
         resetScreensConfig()
-        def notifications = vaadinUi.getExtensions().findAll {
-            it instanceof Notification
-        }
-        notifications.forEach {
+        def extensions = vaadinUi.getExtensions().findAll()
+        extensions.forEach() {
             vaadinUi.removeExtension(it)
+        }
+        def windows = vaadinUi.getWindows().findAll()
+        windows.forEach() {
+            vaadinUi.removeWindow(it)
         }
         UI.setCurrent(null)
     }

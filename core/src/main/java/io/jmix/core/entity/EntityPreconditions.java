@@ -16,35 +16,19 @@
 
 package io.jmix.core.entity;
 
-import javax.annotation.Nullable;
+import io.jmix.core.JmixEntity;
 
-public interface EntityEntryAuditable {
+public class EntityPreconditions {
 
-    void setCreatedDate(Object date);
-
-    void setCreatedBy(Object createdBy);
-
-    void setLastModifiedDate(Object date);
-
-    void setLastModifiedBy(Object updatedBy);
-
-    @Nullable
-    default Class<?> getCreatedDateClass() {
-        return null;
+    public static void checkEntityType(Object entity) {
+        if (!(entity instanceof JmixEntity)) {
+            throw new IllegalStateException(String.format("Unsupported entity type %s", entity.getClass()));
+        }
     }
 
-    @Nullable
-    default Class<?> getCreatedByClass() {
-        return null;
-    }
-
-    @Nullable
-    default Class<?> getLastModifiedDateClass() {
-        return null;
-    }
-
-    @Nullable
-    default Class<?> getLastModifiedByClass() {
-        return null;
+    public static void checkEntityType(Object entity, String arg) {
+        if (!(entity instanceof JmixEntity)) {
+            throw new IllegalStateException(String.format("Argument %s has unsupported entity type %s", arg, entity.getClass()));
+        }
     }
 }

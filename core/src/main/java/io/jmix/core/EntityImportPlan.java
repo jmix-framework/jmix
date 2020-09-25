@@ -71,13 +71,13 @@ public class EntityImportPlan implements Serializable {
 
     private Map<String, EntityImportPlanProperty> properties = new HashMap<>();
 
-    private Class<? extends JmixEntity> entityClass;
+    private Class<?> entityClass;
 
-    public EntityImportPlan(Class<? extends JmixEntity> entityClass) {
+    public EntityImportPlan(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
-    public EntityImportPlan(Class<? extends JmixEntity> entityClass, Map<String, EntityImportPlanProperty> properties) {
+    public EntityImportPlan(Class<?> entityClass, Map<String, EntityImportPlanProperty> properties) {
         this.entityClass = entityClass;
         this.properties = properties;
     }
@@ -95,7 +95,7 @@ public class EntityImportPlan implements Serializable {
         return properties.values();
     }
 
-    public Class<? extends JmixEntity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 }

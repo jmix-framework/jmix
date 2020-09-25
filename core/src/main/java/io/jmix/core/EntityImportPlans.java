@@ -34,7 +34,7 @@ public class EntityImportPlans {
     /**
      * Returns {@link EntityImportPlanBuilder} builder for the given entity class.
      */
-    public EntityImportPlanBuilder builder(Class<? extends JmixEntity> entityClass) {
+    public EntityImportPlanBuilder builder(Class<?> entityClass) {
         return entityImportPlanBuilderProvider.getObject(entityClass);
     }
 }

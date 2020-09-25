@@ -21,6 +21,7 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityEntryHasUuid;
+import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -202,7 +203,7 @@ public class MetadataTools {
      * @return Instance name as defined by {@link io.jmix.core.metamodel.annotation.InstanceName}
      * or <code>toString()</code>.
      */
-    public String getInstanceName(JmixEntity instance) {
+    public String getInstanceName(Object instance) {
         return instanceNameProvider.getInstanceName(instance);
     }
 
@@ -311,7 +312,7 @@ public class MetadataTools {
      * @param entityClass entity class
      * @return {@code true} if the entity has @{@link DeletedDate} field
      */
-    public boolean isSoftDeletable(Class<? extends JmixEntity> entityClass) {
+    public boolean isSoftDeletable(Class<?> entityClass) {
         return findDeletedDateProperty(entityClass) != null;
     }
 
@@ -781,7 +782,7 @@ public class MetadataTools {
      * @return field annotated with @DeletedDate
      * @throws IllegalArgumentException if entity has no @{@link DeletedDate} field
      */
-    public String getDeletedDateProperty(JmixEntity entity) throws IllegalArgumentException {
+    public String getDeletedDateProperty(Object entity) throws IllegalArgumentException {
         String result = findDeletedDateProperty(entity.getClass());
 
         if (result != null) {
@@ -795,7 +796,7 @@ public class MetadataTools {
      * @return field annotated with @DeletedDate or null if annotation is not present
      */
     @Nullable
-    public String findDeletedDateProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedDateProperty(Class<?> clazz) {
         return findPropertyByAnnotation(clazz, DELETED_DATE_ANN_NAME);
     }
 
@@ -803,7 +804,7 @@ public class MetadataTools {
      * @return field annotated with @DeletedBy or null if annotation is not present
      */
     @Nullable
-    public String findDeletedByProperty(Class<? extends JmixEntity> clazz) {
+    public String findDeletedByProperty(Class<?> clazz) {
         return findPropertyByAnnotation(clazz, DELETED_BY_ANN_NAME);
     }
 
@@ -824,7 +825,7 @@ public class MetadataTools {
     /**
      * @return list contains @{@link DeletedDate}, @{@link DeletedBy} property names if present.
      */
-    public List<String> getSoftDeleteProperties(Class<? extends JmixEntity> clazz) {
+    public List<String> getSoftDeleteProperties(Class<?> clazz) {
         LinkedList<String> result = new LinkedList<>();
 
         Optional.ofNullable(findDeletedDateProperty(clazz)).ifPresent(result::add);
@@ -921,44 +922,47 @@ public class MetadataTools {
      * @param entity  entity graph entry point
      * @param visitor the attribute visitor implementation
      */
-    public void traverseAttributes(JmixEntity entity, EntityAttributeVisitor visitor) {
+    public void traverseAttributes(Object entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
+        EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributes(entity, visitor, new HashSet<>());
+        internalTraverseAttributes((JmixEntity) entity, visitor, new HashSet<>());
     }
 
     /**
      * Depth-first traversal of the object graph by the fetch plan starting from the specified entity instance.
      * Visits attributes defined in the fetch plan.
      *
-     * @param fetchPlan    fetchPlan instance
-     * @param entity  entity graph entry point
-     * @param visitor the attribute visitor implementation
+     * @param fetchPlan fetchPlan instance
+     * @param entity    entity graph entry point
+     * @param visitor   the attribute visitor implementation
      */
-    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, EntityAttributeVisitor visitor) {
+    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor visitor) {
         checkNotNullArgument(fetchPlan, "fetchPlan is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
+        EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), false);
+        internalTraverseAttributesByFetchPlan(fetchPlan, (JmixEntity) entity, visitor, new HashMap<>(), false);
     }
 
     /**
      * Depth-first traversal of the object graph by the fetch plan starting from the specified entity instance.
      * Visits attributes defined in the fetch plan.
      *
-     * @param fetchPlan    fetchPlan instance
-     * @param entity  entity graph entry point
+     * @param fetchPlan   fetchPlan instance
+     * @param entity      entity graph entry point
      * @param checkLoaded if true, skips not loaded attributes
-     * @param visitor the attribute visitor implementation
+     * @param visitor     the attribute visitor implementation
      */
-    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, boolean checkLoaded, EntityAttributeVisitor visitor) {
+    public void traverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, boolean checkLoaded, EntityAttributeVisitor visitor) {
         checkNotNullArgument(fetchPlan, "fetchPlan is null");
         checkNotNullArgument(entity, "entity is null");
         checkNotNullArgument(visitor, "visitor is null");
+        EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, entity, visitor, new HashMap<>(), checkLoaded);
+        internalTraverseAttributesByFetchPlan(fetchPlan, (JmixEntity) entity, visitor, new HashMap<>(), checkLoaded);
     }
 
     /**
@@ -968,7 +972,7 @@ public class MetadataTools {
      * @param source source instance
      * @return new instance of the same Java class as source
      */
-    public <T extends JmixEntity> T copy(T source) {
+    public <T> T copy(T source) {
         checkNotNullArgument(source, "source is null");
 
         @SuppressWarnings("unchecked")
@@ -988,9 +992,11 @@ public class MetadataTools {
      * @param source source instance
      * @param dest   destination instance
      */
-    public void copy(JmixEntity source, JmixEntity dest) {
+    public void copy(Object source, Object dest) {
         checkNotNullArgument(source, "source is null");
         checkNotNullArgument(dest, "dest is null");
+        EntityPreconditions.checkEntityType(source);
+        EntityPreconditions.checkEntityType(dest);
 
         MetaClass sourceMetaClass = metadata.getClass(source.getClass());
         MetaClass destMetaClass = metadata.getClass(dest.getClass());
@@ -1023,11 +1029,11 @@ public class MetadataTools {
      */
     @Internal
     public interface EntitiesHolder {
-        JmixEntity create(Class<? extends JmixEntity> entityClass, Object id);
+        Object create(Class<?> entityClass, Object id);
 
-        JmixEntity find(Class<? extends JmixEntity> entityClass, Object id);
+        Object find(Class<?> entityClass, Object id);
 
-        void put(JmixEntity entity);
+        void put(Object entity);
     }
 
     /**
@@ -1037,10 +1043,10 @@ public class MetadataTools {
     public static class CachingEntitiesHolder implements EntitiesHolder {
 
         private static class CacheKey {
-            private Class<? extends JmixEntity> entityClass;
+            private Class<?> entityClass;
             private Object id;
 
-            public CacheKey(Class<? extends JmixEntity> entityClass, Object id) {
+            public CacheKey(Class<?> entityClass, Object id) {
                 this.entityClass = entityClass;
                 this.id = id;
             }
@@ -1060,12 +1066,12 @@ public class MetadataTools {
             }
         }
 
-        protected Map<CacheKey, JmixEntity> cache = new HashMap<>();
+        protected Map<CacheKey, Object> cache = new HashMap<>();
 
         @Override
-        public JmixEntity create(Class<? extends JmixEntity> entityClass, Object id) {
+        public Object create(Class<?> entityClass, Object id) {
             CacheKey key = new CacheKey(entityClass, id);
-            JmixEntity entity = cache.get(key);
+            Object entity = cache.get(key);
             if (entity == null) {
                 entity = createInstanceWithId(entityClass, id);
                 cache.put(key, entity);
@@ -1075,12 +1081,12 @@ public class MetadataTools {
         }
 
         @Override
-        public JmixEntity find(Class<? extends JmixEntity> entityClass, Object id) {
+        public Object find(Class<?> entityClass, Object id) {
             return cache.get(new CacheKey(entityClass, id));
         }
 
         @Override
-        public void put(JmixEntity entity) {
+        public void put(Object entity) {
             cache.put(new CacheKey(entity.getClass(), EntityValues.getId(entity)), entity);
         }
     }
@@ -1089,9 +1095,10 @@ public class MetadataTools {
      * Makes a deep copy of the source entity. All referenced entities and collections will be copied as well.
      */
     @SuppressWarnings("unchecked")
-    public <T extends JmixEntity> T deepCopy(T source) {
+    public <T> T deepCopy(T source) {
+        EntityPreconditions.checkEntityType(source);
         CachingEntitiesHolder entityFinder = new CachingEntitiesHolder();
-        JmixEntity destination = entityFinder.create(source.getClass(), EntityValues.getId(source));
+        Object destination = entityFinder.create(source.getClass(), EntityValues.getId(source));
 
         deepCopy(source, destination, entityFinder);
 
@@ -1101,7 +1108,9 @@ public class MetadataTools {
     /**
      * Copies all property values from source to destination excluding null values.
      */
-    public void deepCopy(JmixEntity source, JmixEntity destination, EntitiesHolder entitiesHolder) {
+    public void deepCopy(Object source, Object destination, EntitiesHolder entitiesHolder) {
+        EntityPreconditions.checkEntityType(source);
+        EntityPreconditions.checkEntityType(destination);
         for (MetaProperty srcProperty : metadata.getClass(source).getProperties()) {
             String name = srcProperty.getName();
 
@@ -1115,14 +1124,13 @@ public class MetadataTools {
             }
 
             if (srcProperty.getRange().isClass()) {
-                Class refClass = srcProperty.getRange().asClass().getJavaClass();
                 if (srcProperty.getRange().getCardinality().isMany()) {
                     @SuppressWarnings("unchecked")
-                    Collection<JmixEntity> srcCollection = (Collection) value;
-                    Collection<JmixEntity> dstCollection = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                    Collection<Object> srcCollection = (Collection) value;
+                    Collection<Object> dstCollection = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
 
-                    for (JmixEntity srcRef : srcCollection) {
-                        JmixEntity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
+                    for (Object srcRef : srcCollection) {
+                        Object reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                         if (reloadedRef == null) {
                             reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                             deepCopy(srcRef, reloadedRef, entitiesHolder);
@@ -1131,8 +1139,8 @@ public class MetadataTools {
                     }
                     EntityValues.setValue(destination, name, dstCollection);
                 } else {
-                    JmixEntity srcRef = (JmixEntity) value;
-                    JmixEntity reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
+                    Object srcRef = value;
+                    Object reloadedRef = entitiesHolder.find(srcRef.getClass(), EntityValues.getId(srcRef));
                     if (reloadedRef == null) {
                         reloadedRef = entitiesHolder.create(srcRef.getClass(), EntityValues.getId(srcRef));
                         deepCopy(srcRef, reloadedRef, entitiesHolder);
@@ -1177,8 +1185,8 @@ public class MetadataTools {
         }
     }
 
-    protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, JmixEntity entity, EntityAttributeVisitor visitor,
-                                                         Map<JmixEntity, Set<FetchPlan>> visited, boolean checkLoaded) {
+    protected void internalTraverseAttributesByFetchPlan(FetchPlan fetchPlan, Object entity, EntityAttributeVisitor visitor,
+                                                         Map<Object, Set<FetchPlan>> visited, boolean checkLoaded) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {
             fetchPlans = new HashSet<>();
@@ -1208,10 +1216,10 @@ public class MetadataTools {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
                         if (item instanceof JmixEntity)
-                            internalTraverseAttributesByFetchPlan(propertyFetchPlan, (JmixEntity) item, visitor, visited, checkLoaded);
+                            internalTraverseAttributesByFetchPlan(propertyFetchPlan, item, visitor, visited, checkLoaded);
                     }
                 } else if (value instanceof JmixEntity) {
-                    internalTraverseAttributesByFetchPlan(propertyFetchPlan, (JmixEntity) value, visitor, visited, checkLoaded);
+                    internalTraverseAttributesByFetchPlan(propertyFetchPlan, value, visitor, visited, checkLoaded);
                 }
             }
         }
@@ -1226,8 +1234,8 @@ public class MetadataTools {
     }
 
     @SuppressWarnings("unchecked")
-    protected static JmixEntity createInstanceWithId(Class<? extends JmixEntity> entityClass, Object id) {
-        JmixEntity entity = createInstance(entityClass);
+    protected static Object createInstanceWithId(Class<?> entityClass, Object id) {
+        Object entity = createInstance(entityClass);
         EntityValues.setId(entity, id);
         return entity;
     }

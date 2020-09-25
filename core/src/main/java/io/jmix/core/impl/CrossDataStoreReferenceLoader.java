@@ -70,20 +70,20 @@ public class CrossDataStoreReferenceLoader {
         this.joinTransaction = joinTransaction;
     }
 
-    public Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> getCrossPropertiesMap() {
-        Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> crossPropertiesMap = new HashMap<>();
+    public Map<Class<?>, List<CrossDataStoreProperty>> getCrossPropertiesMap() {
+        Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap = new HashMap<>();
         traverseView(fetchPlan, crossPropertiesMap, Sets.newIdentityHashSet());
         return crossPropertiesMap;
     }
 
-    private void traverseView(FetchPlan view, Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<FetchPlan> visited) {
+    private void traverseView(FetchPlan view, Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<FetchPlan> visited) {
         if (visited.contains(view))
             return;
         visited.add(view);
 
         String storeName = metadataTools.getStoreName(metaClass);
 
-        Class<? extends JmixEntity> entityClass = view.getEntityClass();
+        Class<?> entityClass = view.getEntityClass();
         for (FetchPlanProperty viewProperty : view.getProperties()) {
             MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(viewProperty.getName());
             if (metaProperty.getRange().isClass()) {
@@ -109,17 +109,17 @@ public class CrossDataStoreReferenceLoader {
         }
     }
 
-    public void processEntities(Collection<? extends JmixEntity> entities) {
-        Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> crossPropertiesMap = getCrossPropertiesMap();
+    public void processEntities(Collection entities) {
+        Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap = getCrossPropertiesMap();
         if (crossPropertiesMap.isEmpty())
             return;
 
-        Set<JmixEntity> affectedEntities = getAffectedEntities(entities, crossPropertiesMap);
+        Set<Object> affectedEntities = getAffectedEntities(entities, crossPropertiesMap);
         if (affectedEntities.isEmpty())
             return;
 
         List<EntityCrossDataStoreProperty> entityCrossDataStorePropertyList = new ArrayList<>();
-        for (JmixEntity affectedEntity : affectedEntities) {
+        for (Object affectedEntity : affectedEntities) {
             for (CrossDataStoreProperty crossDataStoreProperty : crossPropertiesMap.get(affectedEntity.getClass())) {
                 entityCrossDataStorePropertyList.add(new EntityCrossDataStoreProperty(affectedEntity, crossDataStoreProperty));
             }
@@ -135,13 +135,13 @@ public class CrossDataStoreReferenceLoader {
         }
     }
 
-    private Set<JmixEntity> getAffectedEntities(Collection<? extends JmixEntity> entities,
-                                                Map<Class<? extends JmixEntity>, List<CrossDataStoreProperty>> crossPropertiesMap) {
-        Set<JmixEntity> resultSet = new HashSet<>();
-        for (JmixEntity entity : entities) {
+    private Set<Object> getAffectedEntities(Collection entities,
+                                            Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap) {
+        Set<Object> resultSet = new HashSet<>();
+        for (Object entity : entities) {
             metadataTools.traverseAttributesByFetchPlan(fetchPlan, entity, new EntityAttributeVisitor() {
                 @Override
-                public void visit(JmixEntity entity, MetaProperty property) {
+                public void visit(Object entity, MetaProperty property) {
                     List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.get(entity.getClass());
                     if (crossProperties != null) {
                         crossProperties.stream()
@@ -164,24 +164,24 @@ public class CrossDataStoreReferenceLoader {
     }
 
     private void loadOne(EntityCrossDataStoreProperty entityCrossDataStoreProperty) {
-        JmixEntity entity = entityCrossDataStoreProperty.entity;
+        Object entity = entityCrossDataStoreProperty.entity;
         CrossDataStoreProperty aProp = entityCrossDataStoreProperty.crossProp;
         Object id = EntityValues.getValue(entity, aProp.relatedPropertyName);
 
-        LoadContext<JmixEntity> loadContext = new LoadContext<>(aProp.property.getRange().asClass());
-        loadContext.setId(id);
+        LoadContext<?> loadContext = new LoadContext<>(aProp.property.getRange().asClass())
+                .setId(id);
         if (aProp.fetchPlanProperty.getFetchPlan() != null)
             loadContext.setFetchPlan(aProp.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
-        JmixEntity relatedEntity = dataManager.load(loadContext);
+        Object relatedEntity = dataManager.load(loadContext);
         EntityValues.setValue(entity, aProp.property.getName(), relatedEntity);
     }
 
-    private void loadMany(CrossDataStoreProperty crossDataStoreProperty, List<JmixEntity> entities) {
+    private void loadMany(CrossDataStoreProperty crossDataStoreProperty, List<Object> entities) {
         int offset = 0, limit = properties.getCrossDataStoreReferenceLoadingBatchSize();
         while (true) {
             int end = offset + limit;
-            List<JmixEntity> batch = entities.subList(offset, Math.min(end, entities.size()));
+            List<Object> batch = entities.subList(offset, Math.min(end, entities.size()));
             loadBatch(crossDataStoreProperty, batch);
             if (end >= entities.size())
                 break;
@@ -190,7 +190,7 @@ public class CrossDataStoreReferenceLoader {
         }
     }
 
-    private void loadBatch(CrossDataStoreProperty crossDataStoreProperty, List<JmixEntity> entities) {
+    private void loadBatch(CrossDataStoreProperty crossDataStoreProperty, List<Object> entities) {
         List<Object> idList = entities.stream()
                 .map(e -> EntityValues.getValue(e, crossDataStoreProperty.relatedPropertyName))
                 .filter(Objects::nonNull)
@@ -201,7 +201,7 @@ public class CrossDataStoreReferenceLoader {
             return;
 
         MetaClass cdsrMetaClass = crossDataStoreProperty.property.getRange().asClass();
-        LoadContext<JmixEntity> loadContext = new LoadContext<>(cdsrMetaClass);
+        LoadContext<?> loadContext = new LoadContext<>(cdsrMetaClass);
 
         MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(cdsrMetaClass);
         if (primaryKeyProperty == null || !primaryKeyProperty.getRange().isClass()) {
@@ -224,7 +224,7 @@ public class CrossDataStoreReferenceLoader {
             LoadContext.Query query = new LoadContext.Query(sb.toString());
             for (MetaProperty property : idMetaClass.getProperties()) {
                 List<Object> propList = idList.stream()
-                        .map(o -> EntityValues.getValue(((JmixEntity) o), property.getName()))
+                        .map(o -> EntityValues.getValue(o, property.getName()))
                         .collect(Collectors.toList());
                 query.setParameter("list_" + property.getName(), propList);
             }
@@ -234,9 +234,9 @@ public class CrossDataStoreReferenceLoader {
         loadContext.setFetchPlan(crossDataStoreProperty.fetchPlanProperty.getFetchPlan());
         loadContext.setJoinTransaction(joinTransaction);
 
-        List<JmixEntity> loadedEntities = dataManager.loadList(loadContext);
+        List<?> loadedEntities = dataManager.loadList(loadContext);
 
-        for (JmixEntity entity : entities) {
+        for (Object entity : entities) {
             Object relatedPropertyValue = EntityValues.getValue(entity, crossDataStoreProperty.relatedPropertyName);
             loadedEntities.stream()
                     .filter(e -> {
@@ -252,10 +252,10 @@ public class CrossDataStoreReferenceLoader {
 
     private static class EntityCrossDataStoreProperty {
 
-        private final JmixEntity entity;
+        private final Object entity;
         public final CrossDataStoreProperty crossProp;
 
-        public EntityCrossDataStoreProperty(JmixEntity entity, CrossDataStoreProperty crossDataStoreProperty) {
+        public EntityCrossDataStoreProperty(Object entity, CrossDataStoreProperty crossDataStoreProperty) {
             this.entity = entity;
             this.crossProp = crossDataStoreProperty;
         }

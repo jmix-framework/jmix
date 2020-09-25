@@ -38,19 +38,19 @@ public class SecureDataManagerImpl implements DataManager {
 
     @Nullable
     @Override
-    public <E extends JmixEntity> E load(LoadContext<E> context) {
+    public <E> E load(LoadContext<E> context) {
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         return dataManager.load(context);
     }
 
     @Override
-    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+    public <E> List<E> loadList(LoadContext<E> context) {
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         return dataManager.loadList(context);
     }
 
     @Override
-    public long getCount(LoadContext<? extends JmixEntity> context) {
+    public long getCount(LoadContext<?> context) {
         context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
         return dataManager.getCount(context);
     }
@@ -62,14 +62,14 @@ public class SecureDataManagerImpl implements DataManager {
     }
 
     @Override
-    public EntitySet save(JmixEntity... entities) {
+    public EntitySet save(Object... entities) {
         return dataManager.save(new SaveContext()
                 .setAccessConstraints(mergeConstraints(Collections.emptyList()))
                 .saving(entities));
     }
 
     @Override
-    public <E extends JmixEntity> E save(E entity) {
+    public <E> E save(E entity) {
         return dataManager.save(new SaveContext()
                 .setAccessConstraints(mergeConstraints(Collections.emptyList()))
                 .saving(entity))
@@ -78,14 +78,14 @@ public class SecureDataManagerImpl implements DataManager {
     }
 
     @Override
-    public void remove(JmixEntity... entity) {
+    public void remove(Object... entity) {
         dataManager.save(new SaveContext()
                 .setAccessConstraints(mergeConstraints(Collections.emptyList()))
                 .removing(entity));
     }
 
     @Override
-    public <E extends JmixEntity> void remove(Id<E> entityId) {
+    public <E> void remove(Id<E> entityId) {
         dataManager.save(new SaveContext()
                 .setAccessConstraints(mergeConstraints(Collections.emptyList()))
                 .removing(dataManager.getReference(entityId)));
@@ -98,14 +98,14 @@ public class SecureDataManagerImpl implements DataManager {
     }
 
     @Override
-    public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
+    public <E> FluentLoader<E> load(Class<E> entityClass) {
         FluentLoader<E> loader = dataManager.load(entityClass);
         loader.setDataManager(this);
         return loader;
     }
 
     @Override
-    public <E extends JmixEntity> FluentLoader.ById<E> load(Id<E> entityId) {
+    public <E> FluentLoader.ById<E> load(Id<E> entityId) {
         return load(entityId.getEntityClass())
                 .id(entityId.getValue());
     }
@@ -125,17 +125,17 @@ public class SecureDataManagerImpl implements DataManager {
     }
 
     @Override
-    public <T extends JmixEntity> T create(Class<T> entityClass) {
+    public <T> T create(Class<T> entityClass) {
         return dataManager.create(entityClass);
     }
 
     @Override
-    public <T extends JmixEntity> T getReference(Class<T> entityClass, Object id) {
+    public <T> T getReference(Class<T> entityClass, Object id) {
         return dataManager.getReference(entityClass, id);
     }
 
     @Override
-    public <T extends JmixEntity> T getReference(Id<T> entityId) {
+    public <T> T getReference(Id<T> entityId) {
         return dataManager.getReference(entityId);
     }
 

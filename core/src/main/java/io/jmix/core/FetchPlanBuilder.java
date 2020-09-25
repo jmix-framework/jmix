@@ -50,7 +50,7 @@ public class FetchPlanBuilder {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    protected Class<? extends JmixEntity> entityClass;
+    protected Class<?> entityClass;
     protected MetaClass metaClass;
     protected Set<String> properties = new LinkedHashSet<>();
     protected Map<String, FetchPlanBuilder> builders = new HashMap<>();
@@ -61,7 +61,7 @@ public class FetchPlanBuilder {
     protected String name = "";
     protected FetchPlan result = null;
 
-    protected FetchPlanBuilder(Class<? extends JmixEntity> entityClass) {
+    protected FetchPlanBuilder(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -98,7 +98,7 @@ public class FetchPlanBuilder {
     }
 
     //extended in CUBA module for legacy support
-    protected FetchPlan createFetchPlan(Class<? extends JmixEntity> entityClass,
+    protected FetchPlan createFetchPlan(Class<?> entityClass,
                                         String name,
                                         List<FetchPlanProperty> properties,
                                         boolean loadPartialEntities) {
@@ -120,7 +120,7 @@ public class FetchPlanBuilder {
         properties.add(propName);
         if (metaProperty.getRange().isClass()) {
             if (!builders.containsKey(propName)) {
-                Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
+                Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
                 builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
             }
         }
@@ -144,7 +144,7 @@ public class FetchPlanBuilder {
     public FetchPlanBuilder add(String property, Consumer<FetchPlanBuilder> consumer) {
         checkState();
         properties.add(property);
-        Class<JmixEntity> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
+        Class<?> refClass = metaClass.getProperty(property).getRange().asClass().getJavaClass();
         FetchPlanBuilder builder = applicationContext.getBean(FetchPlanBuilder.class, refClass);
         consumer.accept(builder);
         builders.put(property, builder);
@@ -311,7 +311,7 @@ public class FetchPlanBuilder {
                 MetaProperty metaProperty = metaClass.getProperty(propName);
                 if (metaProperty.getRange().isClass()) {//ref property need to be merged with existing property
                     if (!builders.containsKey(propName)) {
-                        Class<JmixEntity> refClass = metaProperty.getRange().asClass().getJavaClass();
+                        Class<?> refClass = metaProperty.getRange().asClass().getJavaClass();
                         builders.put(propName, applicationContext.getBean(FetchPlanBuilder.class, refClass));
                         builders.get(propName).merge(fetchPlans.get(propName));
                     }
@@ -360,7 +360,7 @@ public class FetchPlanBuilder {
         return this;
     }
 
-    public Class<? extends JmixEntity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 

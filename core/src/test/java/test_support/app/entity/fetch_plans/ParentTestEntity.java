@@ -1,6 +1,5 @@
 package test_support.app.entity.fetch_plans;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.*;
@@ -9,10 +8,7 @@ import java.util.UUID;
 
 
 @Entity(name = "app_ParentTestEntity")
-public class ParentTestEntity implements JmixEntity {
-
-    private static final long serialVersionUID = 5503629081437265373L;
-
+public class ParentTestEntity {
     @Id
     @Column(name = "UUID")
     @JmixGeneratedValue

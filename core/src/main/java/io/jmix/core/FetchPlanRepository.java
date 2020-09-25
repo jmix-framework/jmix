@@ -32,33 +32,34 @@ public interface FetchPlanRepository {
     /**
      * Get fetch plan for an entity.
      *
-     * @param entityClass   entity class
-     * @param name          fetch plan name
-     * @return              fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
+     * @param entityClass entity class
+     * @param name        fetch plan name
+     * @return fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
-    FetchPlan getFetchPlan(Class<? extends JmixEntity> entityClass, String name);
+    FetchPlan getFetchPlan(Class<?> entityClass, String name);
 
     /**
      * Get FetchPlan for an entity.
      *
-     * @param metaClass     entity class
-     * @param name          fetch plan name
-     * @return              fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
+     * @param metaClass entity class
+     * @param name      fetch plan name
+     * @return fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
     FetchPlan getFetchPlan(MetaClass metaClass, String name);
 
     /**
      * Searches for a FetchPlan for an entity.
      *
-     * @param metaClass     entity class
-     * @param name          fetch plan name
-     * @return              fetch plan instance or null if no fetch plan found
+     * @param metaClass entity class
+     * @param name      fetch plan name
+     * @return fetch plan instance or null if no fetch plan found
      */
     @Nullable
     FetchPlan findFetchPlan(MetaClass metaClass, String name);
 
     /**
      * Returns names of fetch plans defined for the metaClass
+     *
      * @param metaClass entity class
      * @return names of fetch plans
      */
@@ -66,8 +67,9 @@ public interface FetchPlanRepository {
 
     /**
      * Returns names of fetch plans defined for the entityClass
+     *
      * @param entityClass entity class
      * @return names of fetch plans
      */
-    Collection<String> getFetchPlanNames(Class<? extends JmixEntity> entityClass);
+    Collection<String> getFetchPlanNames(Class<?> entityClass);
 }

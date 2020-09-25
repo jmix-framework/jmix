@@ -33,7 +33,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities);
+    byte[] exportEntitiesToZIP(Collection<Object> entities);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
@@ -45,7 +45,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a byte array of zipped JSON file
      */
-    byte[] exportEntitiesToZIP(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan);
+    byte[] exportEntitiesToZIP(Collection<Object> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.
@@ -56,7 +56,7 @@ public interface EntityImportExport {
      * @param fetchPlan before serialization to JSON entities will be reloaded with this fetch plan
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<? extends JmixEntity> entities, FetchPlan fetchPlan);
+    String exportEntitiesToJSON(Collection<Object> entities, FetchPlan fetchPlan);
 
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}.</p>
@@ -66,7 +66,7 @@ public interface EntityImportExport {
      * @param entities a collection of entities to export
      * @return a JSON string
      */
-    String exportEntitiesToJSON(Collection<? extends JmixEntity> entities);
+    String exportEntitiesToJSON(Collection<Object> entities);
 
     /**
      * Deserializes the JSON and persists deserialized entities according to the rules, described by the {@code
@@ -78,7 +78,7 @@ public interface EntityImportExport {
      * @return a collection of entities that have been imported
      * @see EntityImportPlan
      */
-    Collection<JmixEntity> importEntitiesFromJson(String json, EntityImportPlan importPlan);
+    Collection<Object> importEntitiesFromJson(String json, EntityImportPlan importPlan);
 
     /**
      * Reads a zip archive that contains a JSON file, deserializes the JSON and persists deserialized entities according
@@ -90,13 +90,13 @@ public interface EntityImportExport {
      * @return a collection of entities that have been imported
      * @see EntityImportPlan
      */
-    Collection<JmixEntity> importEntitiesFromZIP(byte[] zipBytes, EntityImportPlan importPlan);
+    Collection<Object> importEntitiesFromZIP(byte[] zipBytes, EntityImportPlan importPlan);
 
     /**
      * See {@link #importEntities(Collection, EntityImportPlan, boolean)}. The current method doesn't perform bean
      * validation
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan);
+    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan);
 
     /**
      * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
@@ -111,7 +111,7 @@ public interface EntityImportExport {
      *                   entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate);
+    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate);
 
     /**
      * Persists entities according to the rules, described by the {@code importPlan} parameter. If the entity is not
@@ -128,5 +128,5 @@ public interface EntityImportExport {
      * @param optimisticLocking whether the passed entities versions should be validated before entities are persisted
      * @return a collection of entities that have been imported
      */
-    Collection<JmixEntity> importEntities(Collection<? extends JmixEntity> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
+    Collection<Object> importEntities(Collection<Object> entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking);
 }

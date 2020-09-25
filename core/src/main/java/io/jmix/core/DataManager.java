@@ -37,64 +37,73 @@ public interface DataManager {
      * Loads a single entity instance.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
-     * @param context   {@link LoadContext} object, defining what and how to load
-     * @return          the loaded detached object, or null if not found
+     *
+     * @param context {@link LoadContext} object, defining what and how to load
+     * @return the loaded detached object, or null if not found
      */
     @Nullable
-    <E extends JmixEntity> E load(LoadContext<E> context);
+    <E> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}
      * object passed in {@link LoadContext}.</p>
-     * @param context   {@link LoadContext} object, defining what and how to load
-     * @return          a list of detached instances, or empty list if nothing found
+     *
+     * @param context {@link LoadContext} object, defining what and how to load
+     * @return a list of detached instances, or empty list if nothing found
      */
-    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
+    <E> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
-     * @param context   defines the query
-     * @return          number of instances in the data store
+     *
+     * @param context defines the query
+     * @return number of instances in the data store
      */
-    long getCount(LoadContext<? extends JmixEntity> context);
+    long getCount(LoadContext<?> context);
 
     /**
      * Commits a collection of new or detached entity instances to the data store.
-     * @param context   {@link SaveContext} object, containing committing entities and other information
-     * @return          set of committed instances
+     *
+     * @param context {@link SaveContext} object, containing committing entities and other information
+     * @return set of committed instances
      */
     EntitySet save(SaveContext context);
 
     /**
      * Commits new or detached entity instances to the data store.
-     * @param entities  entities to commit
-     * @return          set of committed instances
+     *
+     * @param entities entities to commit
+     * @return set of committed instances
      */
-    EntitySet save(JmixEntity... entities);
+    EntitySet save(Object... entities);
 
     /**
      * Commits the entity to the data store.
-     * @param entity    entity instance
-     * @return          committed instance
+     *
+     * @param entity entity instance
+     * @return committed instance
      */
-    <E extends JmixEntity> E save(E entity);
+    <E> E save(E entity);
 
     /**
      * Removes the entities from the data store.
-     * @param entity    entity instance
+     *
+     * @param entity entity instance
      */
-    void remove(JmixEntity... entity);
+    void remove(Object... entity);
 
     /**
      * Removes the entity instance from the data store by its id.
-     * @param entityId    entity id
+     *
+     * @param entityId entity id
      */
-    <E extends JmixEntity> void remove(Id<E> entityId);
+    <E> void remove(Id<E> entityId);
 
     /**
      * Loads list of key-value pairs.
-     * @param context   defines a query for scalar values and a list of keys for returned KeyValueEntity
+     *
+     * @param context defines a query for scalar values and a list of keys for returned KeyValueEntity
      * @return list of KeyValueEntity instances
      */
     List<KeyValueEntity> loadValues(ValueLoadContext context);
@@ -112,9 +121,10 @@ public interface DataManager {
      *      .fetchPlan("customer-fetch-plan")
      *      .list();
      * </pre>
-     * @param entityClass   class of entity that needs to be loaded
+     *
+     * @param entityClass class of entity that needs to be loaded
      */
-    <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass);
+    <E> FluentLoader<E> load(Class<E> entityClass);
 
     /**
      * Entry point to the fluent API for loading entities.
@@ -123,9 +133,10 @@ public interface DataManager {
      * <pre>
      * Customer customer = dataManager.load(customerId).fetchPlan("with-grade").one();
      * </pre>
-     * @param entityId   {@link Id} of entity that needs to be loaded
+     *
+     * @param entityId {@link Id} of entity that needs to be loaded
      */
-    <E extends JmixEntity> FluentLoader.ById<E> load(Id<E> entityId);
+    <E> FluentLoader.ById<E> load(Id<E> entityId);
 
     /**
      * Entry point to the fluent API for loading scalar values.
@@ -143,7 +154,8 @@ public interface DataManager {
      *      .properties("custName", "custCount")
      *      .one();
      * </pre>
-     * @param queryString   query string
+     *
+     * @param queryString query string
      */
     FluentValuesLoader loadValues(String queryString);
 
@@ -160,16 +172,18 @@ public interface DataManager {
      * Long customerCount = dataManager.loadValue(
      *          "select count(c) from sample$Customer c", Long.class).one();
      * </pre>
-     * @param queryString   query string
-     * @param valueClass    type of the returning value
+     *
+     * @param queryString query string
+     * @param valueClass  type of the returning value
      */
     <T> FluentValueLoader<T> loadValue(String queryString, Class<T> valueClass);
 
     /**
      * Creates a new entity instance in memory. This is a shortcut to {@code Metadata.create()}.
-     * @param entityClass   entity class
+     *
+     * @param entityClass entity class
      */
-    <T extends JmixEntity> T create(Class<T> entityClass);
+    <T> T create(Class<T> entityClass);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
@@ -185,17 +199,16 @@ public interface DataManager {
      * dataManager.remove(dataManager.getReference(Customer.class, customerId));
      * </pre>
      *
-     * @param entityClass   entity class
-     * @param id            id of an existing object
+     * @param entityClass entity class
+     * @param id          id of an existing object
      */
-    <T extends JmixEntity> T getReference(Class<T> entityClass, Object id);
+    <T> T getReference(Class<T> entityClass, Object id);
 
     /**
      * Returns an entity instance which can be used as a reference to an object which exists in the database.
      *
      * @param entityId id of an existing object
-     *
      * @see #getReference(Class, Object)
      */
-    <T extends JmixEntity> T getReference(Id<T> entityId);
+    <T> T getReference(Id<T> entityId);
 }

@@ -45,7 +45,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component(FetchPlanLoader.NAME)
 public class FetchPlanLoader {
 
-
     public static final String NAME = "core_FetchPlanLoader";
 
     private final Logger log = LoggerFactory.getLogger(FetchPlanLoader.class);
@@ -164,7 +163,7 @@ public class FetchPlanLoader {
 
             if (inlineFetchPlan) {
                 // try to import anonymous fetch plan
-                Class<? extends JmixEntity> rangeClass = range.asClass().getJavaClass();
+                Class<?> rangeClass = range.asClass().getJavaClass();
 
                 if (refFetchPlanBuilder == null) {
                     refFetchPlanBuilder = fetchPlans.builder(rangeClass);

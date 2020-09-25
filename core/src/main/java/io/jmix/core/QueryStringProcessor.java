@@ -37,7 +37,7 @@ public class QueryStringProcessor {
     @Autowired
     private Metadata metadata;
 
-    public String process(String queryString, Class<? extends JmixEntity> entityClass) {
+    public String process(String queryString, Class<?> entityClass) {
         if (Strings.isNullOrEmpty(queryString)) {
             return queryString;
         }
@@ -48,7 +48,7 @@ public class QueryStringProcessor {
         }
     }
 
-    protected String processJpaQuery(String queryString, Class<? extends JmixEntity> entityClass) {
+    protected String processJpaQuery(String queryString, Class<?> entityClass) {
         MetaClass metaClass = metadata.getClass(entityClass);
         String entityName = metaClass.getName();
 

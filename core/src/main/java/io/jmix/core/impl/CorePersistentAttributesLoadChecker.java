@@ -113,7 +113,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
     protected boolean checkIsLoadedWithGetter(Object entity, String property) {
         if (entity instanceof JmixEntity) {
             try {
-                Object value = EntityValues.getValue(((JmixEntity) entity), property);
+                Object value = EntityValues.getValue(entity, property);
                 if (value instanceof Collection) { //check for IndirectCollection behaviour, should fail if property is not loaded
                     //noinspection ResultOfMethodCallIgnored
                     ((Collection) value).size();

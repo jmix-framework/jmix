@@ -59,23 +59,23 @@ public class NoopDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E extends JmixEntity> E load(LoadContext<E> context) {
+    public <E> E load(LoadContext<E> context) {
         return null;
     }
 
     @Override
-    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+    public <E> List<E> loadList(LoadContext<E> context) {
         return Collections.emptyList();
     }
 
     @Override
-    public long getCount(LoadContext<? extends JmixEntity> context) {
+    public long getCount(LoadContext<?> context) {
         return 0;
     }
 
     @Override
-    public Set<JmixEntity> save(SaveContext context) {
-        Set<JmixEntity> set = new HashSet<>();
+    public Set<?> save(SaveContext context) {
+        Set<Object> set = new HashSet<>();
         set.addAll(context.getEntitiesToSave());
         set.addAll(context.getEntitiesToRemove());
         return set;

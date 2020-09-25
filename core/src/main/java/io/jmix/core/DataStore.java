@@ -31,36 +31,42 @@ import java.util.Set;
 public interface DataStore {
 
     String getName();
+
     void setName(String name);
 
     /**
      * Loads a single entity instance.
+     *
      * @return the loaded object, or null if not found
      */
     @Nullable
-    <E extends JmixEntity> E load(LoadContext<E> context);
+    <E> E load(LoadContext<E> context);
 
     /**
      * Loads collection of entity instances.
+     *
      * @return a list of instances, or empty list if nothing found
      */
-    <E extends JmixEntity> List<E> loadList(LoadContext<E> context);
+    <E> List<E> loadList(LoadContext<E> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
+     *
      * @return number of instances in the storage
      */
-    long getCount(LoadContext<? extends JmixEntity> context);
+    long getCount(LoadContext<?> context);
 
     /**
      * Commits a collection of new or detached entity instances to the storage.
+     *
      * @return set of committed instances
      */
-    Set<JmixEntity> save(SaveContext context);
+    Set<?> save(SaveContext context);
 
     /**
      * Loads list of key-value pairs.
-     * @param context   defines a query for scalar values and a list of keys for returned KeyValueEntity
+     *
+     * @param context defines a query for scalar values and a list of keys for returned KeyValueEntity
      * @return list of KeyValueEntity instances
      */
     List<KeyValueEntity> loadValues(ValueLoadContext context);

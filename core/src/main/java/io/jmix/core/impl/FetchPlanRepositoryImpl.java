@@ -170,7 +170,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
      * @return fetch plan instance. Throws {@link FetchPlanNotFoundException} if not found.
      */
     @Override
-    public FetchPlan getFetchPlan(Class<? extends JmixEntity> entityClass, String name) {
+    public FetchPlan getFetchPlan(Class<?> entityClass, String name) {
         return getFetchPlan(metadata.getClass(entityClass), name);
     }
 
@@ -238,14 +238,14 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     @Override
-    public Collection<String> getFetchPlanNames(Class<? extends JmixEntity> entityClass) {
+    public Collection<String> getFetchPlanNames(Class<?> entityClass) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         MetaClass metaClass = metadata.getClass(entityClass);
         return getFetchPlanNames(metaClass);
     }
 
     protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        Class<? extends JmixEntity> javaClass = metaClass.getJavaClass();
+        Class<?> javaClass = metaClass.getJavaClass();
 
         FetchPlanLoader.FetchPlanInfo info = new FetchPlanLoader.FetchPlanInfo(metaClass, name);
         if (visited.contains(info)) {

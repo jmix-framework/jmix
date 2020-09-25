@@ -16,14 +16,13 @@
 
 package test_support.app.entity.nullable_id;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_NFOO")
 @Entity(name = "test_NFoo")
-public class NFoo implements JmixEntity {
+public class NFoo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

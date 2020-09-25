@@ -24,7 +24,6 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -76,20 +75,20 @@ public class EntitySerializationImpl implements EntitySerialization {
      * Class is used for storing a collection of entities already processed during the serialization.
      */
     protected static class EntitySerializationContext {
-        protected Table<Object, MetaClass, JmixEntity> processedEntities = HashBasedTable.create();
+        protected Table<Object, MetaClass, Object> processedEntities = HashBasedTable.create();
 
-        protected Table<Object, MetaClass, JmixEntity> getProcessedEntities() {
+        protected Table<Object, MetaClass, Object> getProcessedEntities() {
             return processedEntities;
         }
     }
 
     @Override
-    public String toJson(JmixEntity entity) {
+    public String toJson(Object entity) {
         return toJson(entity, null);
     }
 
     @Override
-    public String toJson(JmixEntity entity,
+    public String toJson(Object entity,
                          @Nullable FetchPlan view,
                          EntitySerializationOption... options) {
         context.remove();
@@ -97,12 +96,12 @@ public class EntitySerializationImpl implements EntitySerialization {
     }
 
     @Override
-    public String toJson(Collection<? extends JmixEntity> entities) {
+    public String toJson(Collection<?> entities) {
         return toJson(entities, null);
     }
 
     @Override
-    public String toJson(Collection<? extends JmixEntity> entities,
+    public String toJson(Collection<?> entities,
                          @Nullable FetchPlan view,
                          EntitySerializationOption... options) {
         context.remove();
@@ -117,17 +116,17 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends JmixEntity> T entityFromJson(String json,
-                                                   @Nullable MetaClass metaClass,
-                                                   EntitySerializationOption... options) {
+    public <T> T entityFromJson(String json,
+                                @Nullable MetaClass metaClass,
+                                EntitySerializationOption... options) {
         context.remove();
         return (T) createGsonForDeserialization(metaClass, options).fromJson(json, JmixEntity.class);
     }
 
     @Override
-    public <T extends JmixEntity> Collection<T> entitiesCollectionFromJson(String json,
-                                                                           @Nullable MetaClass metaClass,
-                                                                           EntitySerializationOption... options) {
+    public <T> Collection<T> entitiesCollectionFromJson(String json,
+                                                        @Nullable MetaClass metaClass,
+                                                        EntitySerializationOption... options) {
         context.remove();
         Type collectionType = new TypeToken<Collection<JmixEntity>>() {
         }.getType();
@@ -222,7 +221,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 }
                 writeIdField(entity, jsonObject);
                 if (compactRepeatedEntities) {
-                    Table<Object, MetaClass, JmixEntity> processedObjects = context.get().getProcessedEntities();
+                    Table<Object, MetaClass, Object> processedObjects = context.get().getProcessedEntities();
                     if (processedObjects.get(EntityValues.getId(entity), metaClass) == null) {
                         processedObjects.put(EntityValues.getId(entity), metaClass, entity);
                         writeFields(entity, jsonObject, view, cyclicReferences);
@@ -390,10 +389,10 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         @Override
         public JmixEntity deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return readEntity(jsonElement.getAsJsonObject(), metaClass);
+            return (JmixEntity) readEntity(jsonElement.getAsJsonObject(), metaClass);
         }
 
-        protected JmixEntity readEntity(JsonObject jsonObject, @Nullable MetaClass metaClass) {
+        protected Object readEntity(JsonObject jsonObject, @Nullable MetaClass metaClass) {
             Object pkValue = null;
             MetaClass resultMetaClass = metaClass;
             JsonElement idJsonElement = jsonObject.get("id");
@@ -409,7 +408,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 throw new EntitySerializationException("Cannot deserialize an entity. MetaClass is not defined");
             }
 
-            JmixEntity entity = metadata.create(resultMetaClass);
+            Object entity = metadata.create(resultMetaClass);
             clearFields(entity);
 
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(resultMetaClass);
@@ -455,8 +454,8 @@ public class EntitySerializationImpl implements EntitySerialization {
 //                }
             }
 
-            Table<Object, MetaClass, JmixEntity> processedEntities = context.get().getProcessedEntities();
-            JmixEntity processedEntity = processedEntities.get(EntityValues.getId(entity), resultMetaClass);
+            Table<Object, MetaClass, Object> processedEntities = context.get().getProcessedEntities();
+            Object processedEntity = processedEntities.get(EntityValues.getId(entity), resultMetaClass);
             if (processedEntity != null) {
                 entity = processedEntity;
             } else {
@@ -472,7 +471,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             return !"id".equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken".equals(propertyName);
         }
 
-        protected void readFields(JsonObject jsonObject, JmixEntity entity) {
+        protected void readFields(JsonObject jsonObject, Object entity) {
             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                 String propertyName = entry.getKey();
                 if (!propertyReadRequired(propertyName)) continue;
@@ -580,13 +579,12 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected JmixEntity readEmbeddedEntity(JsonObject jsonObject, MetaProperty metaProperty) {
+        protected Object readEmbeddedEntity(JsonObject jsonObject, MetaProperty metaProperty) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            JmixEntity entity = metadata.create(metaClass);
+            Object entity = metadata.create(metaClass);
             clearFields(entity);
             readFields(jsonObject, entity);
-            boolean isEmbeddable = entity.__getEntityEntry().isEmbeddable();
-            if (coreRestProperties.isRequiresSecurityToken() && isEmbeddable) {
+            if (coreRestProperties.isRequiresSecurityToken()) {
                 //TODO:jmix-core#18
 //                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
 //                if (securityTokenJonPrimitive != null) {
@@ -598,7 +596,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected Collection readCollection(JsonArray jsonArray, MetaProperty metaProperty) {
-            Collection<JmixEntity> entities;
+            Collection<Object> entities;
             Class<?> propertyType = metaProperty.getJavaType();
             if (List.class.isAssignableFrom(propertyType)) {
                 entities = new ArrayList<>();
@@ -609,7 +607,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
 
             jsonArray.forEach(jsonElement -> {
-                JmixEntity entityForList = readEntity(jsonElement.getAsJsonObject(), metaProperty.getRange().asClass());
+                Object entityForList = readEntity(jsonElement.getAsJsonObject(), metaProperty.getRange().asClass());
                 entities.add(entityForList);
             });
             return entities;
@@ -624,7 +622,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             return collection;
         }
 
-        protected void clearFields(JmixEntity entity) {
+        protected void clearFields(Object entity) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             for (MetaProperty metaProperty : metaClass.getProperties()) {
                 if (metaProperty.getName().equals(metadataTools.getPrimaryKeyName(metaClass)) ||

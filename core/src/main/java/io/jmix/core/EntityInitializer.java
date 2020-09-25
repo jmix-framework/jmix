@@ -27,5 +27,5 @@ public interface EntityInitializer {
      */
     int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
-    void initEntity(JmixEntity entity);
+    void initEntity(Object entity);
 }

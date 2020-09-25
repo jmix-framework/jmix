@@ -34,7 +34,7 @@ public class FetchPlans {
     /**
      * Returns {@link FetchPlan} builder for the given entity class.
      */
-    public FetchPlanBuilder builder(Class<? extends JmixEntity> entityClass) {
+    public FetchPlanBuilder builder(Class<?> entityClass) {
         return fetchPlanBuilderProvider.getObject(entityClass);
     }
 

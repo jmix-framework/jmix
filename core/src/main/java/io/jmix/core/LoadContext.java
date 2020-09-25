@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * <p>
  * Instead of using this class directly, consider fluent interface with the entry point in {@link DataManager#load(Class)}.
  */
-public class LoadContext<E extends JmixEntity> implements DataLoadContext, Serializable {
+public class LoadContext<E> implements DataLoadContext, Serializable {
 
     private static final long serialVersionUID = -3406772812465222907L;
 
@@ -137,7 +137,7 @@ public class LoadContext<E extends JmixEntity> implements DataLoadContext, Seria
      * @return this instance for chaining
      */
     public LoadContext<E> setId(Object id) {
-        this.id = id instanceof JmixEntity ? EntityValues.getId(((JmixEntity) id)) : id; // for compatibility with legacy code relying on implicit conversions
+        this.id = id instanceof JmixEntity ? EntityValues.getId(id) : id; // for compatibility with legacy code relying on implicit conversions
         return this;
     }
 

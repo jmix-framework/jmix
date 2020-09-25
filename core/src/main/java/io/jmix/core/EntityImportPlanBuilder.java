@@ -39,7 +39,7 @@ public class EntityImportPlanBuilder {
 
     public static final String NAME = "core_EntityImportPlanBuilder";
 
-    private Class<? extends JmixEntity> entityClass;
+    private Class<?> entityClass;
 
     private Map<String, EntityImportPlanProperty> properties = new HashMap<>();
 
@@ -50,7 +50,7 @@ public class EntityImportPlanBuilder {
     protected MetadataTools metadataTools;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public EntityImportPlanBuilder(Class<? extends JmixEntity> entityClass) {
+    public EntityImportPlanBuilder(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 

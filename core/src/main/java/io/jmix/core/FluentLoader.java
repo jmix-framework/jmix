@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 @Component(FluentLoader.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class FluentLoader<E extends JmixEntity> {
+public class FluentLoader<E> {
 
     public static final String NAME = "core_FluentLoader";
 
@@ -254,7 +254,7 @@ public class FluentLoader<E extends JmixEntity> {
         return new ByQuery<>(this, queryString, parameters, beanFactory);
     }
 
-    public static class ById<E extends JmixEntity> {
+    public static class ById<E> {
 
         private FluentLoader<E> loader;
         private Object id;
@@ -362,7 +362,7 @@ public class FluentLoader<E extends JmixEntity> {
         }
     }
 
-    public static class ByIds<E extends JmixEntity> {
+    public static class ByIds<E> {
 
         private FluentLoader<E> loader;
         private Collection ids;
@@ -477,7 +477,7 @@ public class FluentLoader<E extends JmixEntity> {
         }
     }
 
-    public static class ByQuery<E extends JmixEntity> {
+    public static class ByQuery<E> {
 
         private FluentLoader<E> loader;
 

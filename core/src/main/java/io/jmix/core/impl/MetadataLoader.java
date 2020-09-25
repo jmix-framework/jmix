@@ -16,7 +16,6 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
@@ -160,7 +159,7 @@ public class MetadataLoader {
             List<Class> superClasses = new ArrayList<>();
             ReplaceEntity replaceAnnotation = javaClass.getAnnotation(ReplaceEntity.class);
             while (replaceAnnotation != null) {
-                Class<? extends JmixEntity> superClass = replaceAnnotation.value();
+                Class<?> superClass = replaceAnnotation.value();
                 superClasses.add(superClass);
                 replaceAnnotation = superClass.getAnnotation(ReplaceEntity.class);
             }

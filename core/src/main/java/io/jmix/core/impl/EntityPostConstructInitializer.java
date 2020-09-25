@@ -21,15 +21,14 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.EntityInitializer;
-import io.jmix.core.JmixEntity;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -55,7 +54,7 @@ public class EntityPostConstructInitializer implements EntityInitializer {
                     });
 
     @Override
-    public void initEntity(JmixEntity entity) {
+    public void initEntity(Object entity) {
         try {
             List<Method> postConstructMethods = postConstructMethodsCache.getUnchecked(entity.getClass());
             // methods are store in the correct execution order

@@ -17,7 +17,6 @@
 package test_support.app.entity;
 
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -29,9 +28,7 @@ import java.util.Locale;
 
 @Embeddable
 @ModelObject(name = "app_Address")
-public class Address implements JmixEntity {
-
-    private static final long serialVersionUID = 3973674066005826186L;
+public class Address {
 
     @Column(name = "CITY")
     protected String city;
@@ -40,7 +37,7 @@ public class Address implements JmixEntity {
     protected String zip;
 
     @InstanceName
-    @DependsOnProperties({"city","zip"})
+    @DependsOnProperties({"city", "zip"})
     public String getName(Locale locale) {
         if (LocaleUtils.toLocale("ru").equals(locale))
             return "Город: " + city + ", индекс: " + zip;

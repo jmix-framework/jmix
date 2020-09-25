@@ -30,38 +30,39 @@ import java.util.Set;
  * Implementation of {@code Set<Entity>} with convenient methods for getting entities by a prototype instance
  * or by a class and id.
  *
- * @see #get(JmixEntity)
+ * @see #get(Object)
  * @see #get(Class, Object)
- * @see #optional(JmixEntity)
+ * @see #optional(Object)
  * @see #optional(Class, Object)
  */
-public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable {
+public class EntitySet extends ForwardingSet<Object> implements Serializable {
+    private static final long serialVersionUID = 4239884277120360439L;
 
-    private Set<? extends JmixEntity> entities;
+    private Set entities;
 
     public EntitySet() {
         this.entities = new HashSet<>();
     }
 
-    public EntitySet(Set<? extends JmixEntity> entities) {
+    public EntitySet(Set<?> entities) {
         this.entities = entities;
     }
 
-    public EntitySet(Collection<? extends JmixEntity> entities) {
-        this.entities = new HashSet<>(entities);
+    public EntitySet(Collection entities) {
+        this.entities = new HashSet(entities);
     }
 
     /**
      * Creates the {@code EntitySet} wrapping an existing set.
      */
-    public static EntitySet of(Set<? extends JmixEntity> entities) {
+    public static EntitySet of(Set<?> entities) {
         return new EntitySet(entities);
     }
 
     /**
      * Creates the {@code EntitySet} by copying the given collection to the internal set.
      */
-    public static EntitySet of(Collection<? extends JmixEntity> entities) {
+    public static EntitySet of(Collection<?> entities) {
         return new EntitySet(entities);
     }
 
@@ -69,10 +70,10 @@ public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable
      * Returns the entity wrapped in {@code Optional} if it exists in the set.
      *
      * @param entityClass class of entity
-     * @param entityId entity id
+     * @param entityId    entity id
      */
     @SuppressWarnings("unchecked")
-    public <T extends JmixEntity> Optional<T> optional(Class<T> entityClass, Object entityId) {
+    public <T> Optional<T> optional(Class<T> entityClass, Object entityId) {
         Preconditions.checkNotNullArgument(entityClass, "entityClass is null");
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return (Optional<T>) entities.stream()
@@ -86,7 +87,7 @@ public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable
      * @param prototype a prototype instance whose class and id are used to look up an entity in the set.
      */
     @SuppressWarnings("unchecked")
-    public <T extends JmixEntity> Optional<T> optional(T prototype) {
+    public <T> Optional<T> optional(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         return (Optional<T>) optional(prototype.getClass(), EntityValues.getId(prototype));
     }
@@ -95,10 +96,10 @@ public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable
      * Returns the entity if it exists in the set.
      *
      * @param entityClass class of entity
-     * @param entityId entity id
+     * @param entityId    entity id
      * @throws IllegalArgumentException if the entity not found
      */
-    public <T extends JmixEntity> T get(Class<T> entityClass, Object entityId) {
+    public <T> T get(Class<T> entityClass, Object entityId) {
         return optional(entityClass, entityId).orElseThrow(() -> new IllegalArgumentException("Entity not found"));
     }
 
@@ -109,14 +110,14 @@ public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable
      * @throws IllegalArgumentException if the entity not found
      */
     @SuppressWarnings("unchecked")
-    public <T extends JmixEntity> T get(T prototype) {
+    public <T> T get(T prototype) {
         Preconditions.checkNotNullArgument(prototype, "prototype entity is null");
         return (T) get(prototype.getClass(), EntityValues.getId(prototype));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Set<JmixEntity> delegate() {
-        return (Set<JmixEntity>) entities;
+    protected Set delegate() {
+        return (Set<?>) entities;
     }
 }

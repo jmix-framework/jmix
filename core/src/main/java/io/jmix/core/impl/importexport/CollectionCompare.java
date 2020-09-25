@@ -26,9 +26,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class CollectionCompare {
-    protected Consumer<JmixEntity> createConsumer;
-    protected Consumer<JmixEntity> deleteConsumer;
-    protected BiConsumer<JmixEntity, JmixEntity> updateConsumer;
+    protected Consumer<Object> createConsumer;
+    protected Consumer<Object> deleteConsumer;
+    protected BiConsumer<Object, Object> updateConsumer;
 
     private CollectionCompare() {
     }
@@ -37,28 +37,28 @@ public class CollectionCompare {
         return new CollectionCompare();
     }
 
-    public CollectionCompare onCreate(Consumer<JmixEntity> createConsumer) {
+    public CollectionCompare onCreate(Consumer<Object> createConsumer) {
         this.createConsumer = createConsumer;
         return this;
     }
 
-    public CollectionCompare onDelete(Consumer<JmixEntity> deleteConsumer) {
+    public CollectionCompare onDelete(Consumer<Object> deleteConsumer) {
         this.deleteConsumer = deleteConsumer;
         return this;
     }
 
-    public CollectionCompare onUpdate(BiConsumer<JmixEntity, JmixEntity> updateConsumer) {
+    public CollectionCompare onUpdate(BiConsumer<Object, Object> updateConsumer) {
         this.updateConsumer = updateConsumer;
         return this;
     }
 
-    public void compare(Collection<JmixEntity> src, Collection<JmixEntity> dst) {
-        final Collection<JmixEntity> srcNN = Optional.ofNullable(src)
+    public void compare(Collection<Object> src, Collection<Object> dst) {
+        final Collection<Object> srcNN = Optional.ofNullable(src)
                 .orElse(Collections.emptyList());
-        final Collection<JmixEntity> dstNN = Optional.ofNullable(dst)
+        final Collection<Object> dstNN = Optional.ofNullable(dst)
                 .orElse(Collections.emptyList());
-        for (JmixEntity srcEntity : srcNN) {
-            Optional<JmixEntity> existingOptional = dstNN.stream()
+        for (Object srcEntity : srcNN) {
+            Optional<Object> existingOptional = dstNN.stream()
                     .filter(e -> Objects.equals(e, srcEntity))
                     .findFirst();
             if (existingOptional.isPresent()) {

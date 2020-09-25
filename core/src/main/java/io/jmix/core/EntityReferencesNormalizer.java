@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,7 +42,7 @@ public class EntityReferencesNormalizer {
      * For each entity in the collection, updates reference properties to point to instances which are items of
      * the collection.
      */
-    public void updateReferences(Collection<JmixEntity> entities) {
+    public void updateReferences(Collection<Object> entities) {
         updateReferences(entities, entities);
     }
 
@@ -51,18 +50,19 @@ public class EntityReferencesNormalizer {
      * For each entity in the first collection, updates reference properties to point to instances from
      * the second collection.
      */
-    public void updateReferences(Collection<JmixEntity> entities, Collection<JmixEntity> references) {
-        for (JmixEntity entity : entities) {
+    public void updateReferences(Collection<Object> entities, Collection<Object> references) {
+        for (Object entity : entities) {
             if (entity == null)
                 continue;
-            for (JmixEntity refEntity : references) {
+            for (Object refEntity : references) {
                 if (entity != refEntity) {
-                    updateReferences(entity, refEntity, new HashSet<>());                }
+                    updateReferences(entity, refEntity, new HashSet<>());
+                }
             }
         }
     }
 
-    private void updateReferences(JmixEntity entity, JmixEntity refEntity, Set<JmixEntity> visited) {
+    private void updateReferences(Object entity, Object refEntity, Set<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -75,7 +75,7 @@ public class EntityReferencesNormalizer {
                     Collection<?> collection = EntityValues.getValue(entity, property.getName());
                     if (collection != null) {
                         for (Object obj : new ArrayList<>(collection)) {
-                            JmixEntity itemEntity = (JmixEntity) obj;
+                            Object itemEntity = obj;
                             if (itemEntity != refEntity && getId(itemEntity).equals(getId(refEntity))) {
                                 itemEntity = updateCollection(collection, itemEntity, refEntity);
                             }
@@ -83,7 +83,7 @@ public class EntityReferencesNormalizer {
                         }
                     }
                 } else {
-                    JmixEntity propEntity = EntityValues.getValue(entity, property.getName());
+                    Object propEntity = EntityValues.getValue(entity, property.getName());
                     if (propEntity != null) {
                         if (propEntity != refEntity && getId(propEntity).equals(getId(refEntity))) {
                             if (property.isReadOnly() && !metadataTools.isPersistent(property)) {
@@ -100,7 +100,7 @@ public class EntityReferencesNormalizer {
     }
 
     @SuppressWarnings("unchecked")
-    private JmixEntity updateCollection(Collection collection, JmixEntity itemEntity, JmixEntity refEntity) {
+    private Object updateCollection(Collection collection, Object itemEntity, Object refEntity) {
         if (collection instanceof List) {
             List list = (List) collection;
             int i = list.indexOf(itemEntity);
@@ -112,12 +112,12 @@ public class EntityReferencesNormalizer {
         return refEntity;
     }
 
-    private boolean isPropertyAssignableFrom(MetaProperty property, JmixEntity entity) {
+    private boolean isPropertyAssignableFrom(MetaProperty property, Object entity) {
         Class<Object> propertyClass = property.getRange().asClass().getJavaClass();
         return propertyClass.isAssignableFrom(entity.getClass());
     }
 
-    private Object getId(JmixEntity entity) {
+    private Object getId(Object entity) {
         return EntityValues.getGeneratedId(entity);
     }
 }

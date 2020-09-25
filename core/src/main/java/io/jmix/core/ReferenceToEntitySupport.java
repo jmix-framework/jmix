@@ -16,7 +16,6 @@
 
 package io.jmix.core;
 
-import io.jmix.core.entity.EntityEntryHasUuid;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -43,9 +42,9 @@ public class ReferenceToEntitySupport {
      * @param entity entity
      * @return entity id to store in database
      */
-    public Object getReferenceId(JmixEntity entity) {
-        if (entity.__getEntityEntry() instanceof EntityEntryHasUuid) {
-            return ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid();
+    public Object getReferenceId(Object entity) {
+        if (EntityValues.isUuidSupported(entity)) {
+            return EntityValues.getUuid(entity);
         }
         return EntityValues.getId(entity);
     }
@@ -55,13 +54,13 @@ public class ReferenceToEntitySupport {
      * @return entity id for links
      */
     @Nullable
-    public Object getReferenceIdForLink(JmixEntity entity) {
+    public Object getReferenceIdForLink(Object entity) {
         Object entityId = EntityValues.getId(entity);
         if (entityId == null)
             return null;
         if (metadataTools.hasCompositePrimaryKey(metadata.getClass(entity))) {
-            if (entity.__getEntityEntry() instanceof EntityEntryHasUuid)
-                return ((EntityEntryHasUuid) entity.__getEntityEntry()).getUuid();
+            if (EntityValues.isUuidSupported(entity))
+                return EntityValues.getUuid(entity);
             else
                 throw new IllegalArgumentException(
                         String.format("Unsupported primary key type: %s", entityId.getClass().getSimpleName()));

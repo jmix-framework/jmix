@@ -16,7 +16,6 @@
 
 package io.jmix.core.pessimisticlocking;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -25,6 +24,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.annotation.Nullable;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ import java.util.UUID;
  */
 @ModelObject(name = "sys_LockInfo")
 @SystemLevel
-public class LockInfo implements JmixEntity {
+public class LockInfo implements Serializable {
 
     private static final long serialVersionUID = -1991047219638006414L;
 
@@ -41,7 +41,6 @@ public class LockInfo implements JmixEntity {
     private final String objectId;
     private final Date since;
     private final String username;
-
 
     @Id
     @ModelProperty

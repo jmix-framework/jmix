@@ -37,7 +37,7 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
     private Metadata metadata;
 
     @Override
-    public void initEntity(JmixEntity entity) {
+    public void initEntity(Object entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         metaClass.getProperties().stream()
                 .filter(property -> property.getRange().isDatatype()

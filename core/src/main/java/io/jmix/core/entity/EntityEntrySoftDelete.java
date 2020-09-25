@@ -27,14 +27,11 @@ public interface EntityEntrySoftDelete {
     Class<?> getDeletedDateClass();
 
     default void setDeletedBy(Object deletedBy) {
-        //do nothing
     }
 
     default Object getDeletedBy() {
         return null;
     }
-
-    ;
 
     @Nullable
     default Class<?> getDeletedByClass() {

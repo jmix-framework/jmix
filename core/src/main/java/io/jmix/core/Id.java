@@ -28,7 +28,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <T> entity type
  */
-public final class Id<T extends JmixEntity> implements Serializable {
+public final class Id<T> implements Serializable {
     private final Object id;
     private final Class<T> entityClass;
 
@@ -53,11 +53,10 @@ public final class Id<T extends JmixEntity> implements Serializable {
 
     /**
      * @param entity entity instance
-     * @param <K>    type of entity key
      * @param <T>    entity type
      * @return Id of the passed entity
      */
-    public static <T extends JmixEntity> Id<T> of(T entity) {
+    public static <T> Id<T> of(T entity) {
         checkNotNullArgument(entity);
         checkNotNullArgument(EntityValues.getId(entity));
 
@@ -68,12 +67,11 @@ public final class Id<T extends JmixEntity> implements Serializable {
 
     /**
      * @param entity entity instance, can be null
-     * @param <K>    type of entity key
      * @param <T>    entity type
      * @return Id of the passed entity or null
      */
     @Nullable
-    public static <T extends JmixEntity> Id<T> ofNullable(@Nullable T entity) {
+    public static <T> Id<T> ofNullable(@Nullable T entity) {
         return entity == null ? null : Id.of(entity);
     }
 
@@ -84,7 +82,7 @@ public final class Id<T extends JmixEntity> implements Serializable {
      * @param <T>         entity type
      * @return Id of the passed entity
      */
-    public static <T extends JmixEntity> Id<T> of(Object id, Class<T> entityClass) {
+    public static <T> Id<T> of(Object id, Class<T> entityClass) {
         checkNotNullArgument(id);
         checkNotNullArgument(entityClass);
 

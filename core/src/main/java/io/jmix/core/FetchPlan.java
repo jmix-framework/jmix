@@ -55,7 +55,7 @@ public class FetchPlan implements Serializable {
 
     private static final long serialVersionUID = 4313784222934349594L;
 
-    protected Class<? extends JmixEntity> entityClass;
+    protected Class<?> entityClass;
 
     protected String name;
 
@@ -63,12 +63,12 @@ public class FetchPlan implements Serializable {
 
     protected boolean loadPartialEntities;
 
-    protected FetchPlan(Class<? extends JmixEntity> entityClass, String name) {
+    protected FetchPlan(Class<?> entityClass, String name) {
         this.entityClass = entityClass;
         this.name = name != null ? name : "";
     }
 
-    FetchPlan(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+    FetchPlan(Class<?> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
         this(entityClass, name);
         this.loadPartialEntities = loadPartialEntities;
 
@@ -79,7 +79,7 @@ public class FetchPlan implements Serializable {
     /**
      * @return entity class this view belongs to
      */
-    public Class<? extends JmixEntity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 

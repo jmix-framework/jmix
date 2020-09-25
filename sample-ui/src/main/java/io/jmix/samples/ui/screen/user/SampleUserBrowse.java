@@ -17,6 +17,7 @@
 package io.jmix.samples.ui.screen.user;
 
 import com.google.common.collect.Lists;
+import io.jmix.core.Metadata;
 import io.jmix.samples.ui.entity.SampleUser;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
@@ -30,15 +31,17 @@ public class SampleUserBrowse extends StandardLookup<SampleUser> {
 
     @Autowired
     private CollectionContainer<SampleUser> usersDc;
+    @Autowired
+    private Metadata metadata;
 
     @Subscribe
     private void onInit(InitEvent event) {
-        SampleUser user1 = new SampleUser();
+        SampleUser user1 = metadata.create(SampleUser.class);
         user1.setEnabled(true);
         user1.setFirstName("asd");
         user1.setLastName("asxcvcx");
 
-        SampleUser user2 = new SampleUser();
+        SampleUser user2 = metadata.create(SampleUser.class);
         user2.setEnabled(true);
         user2.setFirstName("asd");
         user2.setLastName("asxcvcx");

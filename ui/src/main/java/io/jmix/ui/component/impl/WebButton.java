@@ -247,6 +247,11 @@ public class WebButton extends WebAbstractComponent<JmixButton> implements Butto
     }
 
     @Override
+    public void click() {
+        component.click();
+    }
+
+    @Override
     public Subscription addClickListener(Consumer<ClickEvent> listener) {
         return getEventHub().subscribe(ClickEvent.class, listener);
     }

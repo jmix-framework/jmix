@@ -70,6 +70,13 @@ public interface Button extends Component, Component.HasCaption, Component.Belon
      */
     void setShortcut(@Nullable String shortcut);
 
+    /**
+     * Simulates a button click, notifying all server-side listeners.
+     * <p>
+     * No action is taken if the button is disabled.
+     */
+    void click();
+
     Subscription addClickListener(Consumer<ClickEvent> listener);
 
     /**

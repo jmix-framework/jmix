@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Objects;
 
 public class MetaModelUtil {
-    public static final String ENTITY_TYPE = "io.jmix.core.JmixEntity";
+    public static final String ENTITY_TYPE = "io.jmix.core.Entity";
     public static final String ENTITY_ENTRY_TYPE = "io.jmix.core.EntityEntry";
     public static final String BASE_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.BaseEntityEntry";
     public static final String EMBEDDABLE_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.EmbeddableEntityEntry";

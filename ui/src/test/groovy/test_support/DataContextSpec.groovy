@@ -21,7 +21,7 @@ import io.jmix.core.EntityStates
 import io.jmix.core.JmixEntity
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.entity.EntitySystemAccess
+import io.jmix.core.entity.EntityValues
 import io.jmix.core.impl.StandardSerialization
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
@@ -98,10 +98,10 @@ class DataContextSpec extends Specification {
         T e = reserialize(entity)
         entityStates.makeDetached(e)
 
-        if (EntitySystemAccess.isVersionSupported(e)) {
-            def version = (Integer) EntitySystemAccess.getVersion(e) ?: 0;
+        if (EntityValues.isVersionSupported(e)) {
+            def version = (Integer) EntityValues.getVersion(e) ?: 0;
             version++
-            EntitySystemAccess.setVersion(e, version)
+            EntityValues.setVersion(e, version)
         }
 
         if (e instanceof JmixEntity && e.__getEntityEntry() instanceof EntityEntryAuditable) {

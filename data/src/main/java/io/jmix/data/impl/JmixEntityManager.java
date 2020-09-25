@@ -110,7 +110,7 @@ public class JmixEntityManager implements EntityManager {
             Object destEntity = findOrCreate(object.getClass(), EntityValues.getId(object));
             deepCopyIgnoringNulls(object, destEntity, Sets.newIdentityHashSet());
             if (entityStates.isNew(destEntity)) {
-                entityPersistingEventMgr.publishEvent(object);
+                entityPersistingEventMgr.publishEvent(destEntity);
             }
             return (T) destEntity;
         }

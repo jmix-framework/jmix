@@ -50,4 +50,9 @@ public class CubaSuggestionFieldLoader extends SuggestionFieldLoader {
     protected void loadCaptionProperty(SuggestionField suggestionField, Element element) {
         ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) suggestionField, element);
     }
+
+    @Override
+    protected String loadFetchPlan(Element queryElement) {
+        return queryElement.attributeValue("view");
+    }
 }

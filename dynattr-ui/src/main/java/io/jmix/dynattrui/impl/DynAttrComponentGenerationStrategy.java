@@ -18,6 +18,7 @@ package io.jmix.dynattrui.impl;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import io.jmix.core.JmixOrder;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -442,6 +443,6 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 20;
+        return JmixOrder.HIGHEST_PRECEDENCE + 20;
     }
 }

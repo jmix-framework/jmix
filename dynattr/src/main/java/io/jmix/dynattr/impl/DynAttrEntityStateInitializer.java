@@ -17,6 +17,7 @@
 package io.jmix.dynattr.impl;
 
 import io.jmix.core.EntityInitializer;
+import io.jmix.core.JmixOrder;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.DynamicAttributesState;
 import org.springframework.core.Ordered;
@@ -38,6 +39,6 @@ public class DynAttrEntityStateInitializer implements EntityInitializer, Ordered
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 50;
+        return JmixOrder.HIGHEST_PRECEDENCE + 50;
     }
 }

@@ -17,7 +17,6 @@
 package io.jmix.ui.model;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

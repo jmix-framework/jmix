@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
@@ -73,7 +73,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
             setOptionStyleProvider(null);
         } else {
             setOptionStyleProvider((item, selected) -> {
-                if (item instanceof JmixEntity) {
+                if (item instanceof Entity) {
                     return styleProvider.getStyleName(item, EntityValues.getId((item)), selected);
                 } else {
                     return null;

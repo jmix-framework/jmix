@@ -224,7 +224,7 @@ public class DataContextImpl implements DataContext {
 
             mergeState(entity, managed, mergedMap, isRoot, options);
 
-            ((JmixEntity) managed).__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
+            ((Entity) managed).__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
 
             if (entityStates.isNew(managed)) {
                 modifiedInstances.add(managed);
@@ -311,13 +311,13 @@ public class DataContextImpl implements DataContext {
                         throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
                     }
                 } else {
-                    JmixEntity srcRef = (JmixEntity) value;
+                    Entity srcRef = (Entity) value;
                     if (!mergedMap.containsKey(srcRef)) {
                         Object managedRef = internalMerge(srcRef, mergedMap, false, options);
                         setPropertyValue(dstEntity, property, managedRef, false);
                         if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
-                            ((JmixEntity) managedRef).__getEntityEntry().addPropertyChangeListener(listener);
+                            ((Entity) managedRef).__getEntityEntry().addPropertyChangeListener(listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
                         }
                     } else {
@@ -362,7 +362,7 @@ public class DataContextImpl implements DataContext {
         EntityPreconditions.checkEntityType(dstEntity);
 
         EntityValues.setId(dstEntity, EntityValues.getId(srcEntity));
-        entitySystemStateSupport.copySystemState((JmixEntity) srcEntity, (JmixEntity) dstEntity);
+        entitySystemStateSupport.copySystemState((Entity) srcEntity, (Entity) dstEntity);
 
         if (EntityValues.isVersionSupported(dstEntity)) {
             EntityValues.setVersion(dstEntity, EntityValues.getVersion(srcEntity));
@@ -371,7 +371,7 @@ public class DataContextImpl implements DataContext {
 
     protected void mergeSystemState(Object srcEntity, Object dstEntity, boolean isRoot, MergeOptions options) {
         if (isRoot || options.isFresh()) {
-            entitySystemStateSupport.mergeSystemState((JmixEntity) srcEntity, (JmixEntity) dstEntity);
+            entitySystemStateSupport.mergeSystemState((Entity) srcEntity, (Entity) dstEntity);
         }
     }
 
@@ -544,11 +544,11 @@ public class DataContextImpl implements DataContext {
 
     protected void removeListeners(Object entity) {
         EntityPreconditions.checkEntityType(entity);
-        ((JmixEntity) entity).__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
+        ((Entity) entity).__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
         Map<String, EmbeddedPropertyChangeListener> listenerMap = embeddedPropertyListeners.get(entity);
         if (listenerMap != null) {
             for (Map.Entry<String, EmbeddedPropertyChangeListener> entry : listenerMap.entrySet()) {
-                JmixEntity embedded = EntityValues.getValue(entity, entry.getKey());
+                Entity embedded = EntityValues.getValue(entity, entry.getKey());
                 if (embedded != null) {
                     embedded.__getEntityEntry().removePropertyChangeListener(entry.getValue());
                     embedded.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
@@ -773,14 +773,14 @@ public class DataContextImpl implements DataContext {
                 continue;
             Object value = EntityValues.getValue(entity, property.getName());
             String prefix = StringUtils.repeat("  ", level);
-            if (value instanceof JmixEntity) {
-                String str = printEntity((JmixEntity) value, level + 1, visited);
+            if (value instanceof Entity) {
+                String str = printEntity((Entity) value, level + 1, visited);
                 if (!str.equals(""))
                     sb.append(prefix).append(str);
             } else if (value instanceof Collection) {
                 sb.append(prefix).append(value.getClass().getSimpleName()).append("[\n");
                 for (Object item : (Collection) value) {
-                    String str = printEntity((JmixEntity) item, level + 1, visited);
+                    String str = printEntity((Entity) item, level + 1, visited);
                     if (!str.equals(""))
                         sb.append(prefix).append(str);
                 }

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.table;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Table;
@@ -187,7 +187,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
 
     @Nullable
     protected Method findLinkInvokeMethod(Class cls, String methodName) {
-        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, JmixEntity.class, String.class);
+        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, Entity.class, String.class);
         if (exactMethod != null) {
             return exactMethod;
         }
@@ -198,7 +198,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
             if (availableMethod.getName().equals(methodName)) {
                 if (availableMethod.getParameterCount() == 2
                         && Void.TYPE.equals(availableMethod.getReturnType())) {
-                    if (JmixEntity.class.isAssignableFrom(availableMethod.getParameterTypes()[0]) &&
+                    if (Entity.class.isAssignableFrom(availableMethod.getParameterTypes()[0]) &&
                             String.class == availableMethod.getParameterTypes()[1]) {
                         // get accessible version of method
                         return MethodUtils.getAccessibleMethod(availableMethod);

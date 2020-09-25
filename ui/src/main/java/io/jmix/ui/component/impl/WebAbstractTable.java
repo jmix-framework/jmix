@@ -3209,7 +3209,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 break;
             }
 
-            currentInstance = currentValue instanceof JmixEntity ? currentValue : null;
+            currentInstance = currentValue instanceof Entity ? currentValue : null;
         }
         return currentValue;
     }

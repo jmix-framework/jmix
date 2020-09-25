@@ -16,7 +16,7 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Screens;
@@ -49,7 +49,7 @@ public class RelatedEntitiesBuilder {
 
     protected String property;
     protected MetaProperty metaProperty;
-    protected Class<? extends JmixEntity> entityClass;
+    protected Class<? extends Entity> entityClass;
     protected MetaClass metaClass;
 
     protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
@@ -106,7 +106,7 @@ public class RelatedEntitiesBuilder {
      * @return entity class set by {@link #withEntityClass(Class)}
      */
     @Nullable
-    public Class<? extends JmixEntity> getEntityClass() {
+    public Class<? extends Entity> getEntityClass() {
         return entityClass;
     }
 
@@ -201,7 +201,7 @@ public class RelatedEntitiesBuilder {
      * @param entityClass class
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withEntityClass(Class<? extends JmixEntity> entityClass) {
+    public RelatedEntitiesBuilder withEntityClass(Class<? extends Entity> entityClass) {
         this.entityClass = entityClass;
         return this;
     }

@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.JmixEntity;
 
 /**
  * A components that adds to {@link EntityPicker} the ability to select an entity from drop-down list.

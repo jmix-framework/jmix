@@ -18,7 +18,7 @@ package io.jmix.ui.model.impl;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -127,14 +127,14 @@ public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader
     protected void attachListener(Object entity) {
         if (entity != null) {
             EntityPreconditions.checkEntityType(entity);
-            ((JmixEntity) entity).__getEntityEntry().addPropertyChangeListener(listener);
+            ((Entity) entity).__getEntityEntry().addPropertyChangeListener(listener);
         }
     }
 
     protected void detachListener(Object entity) {
         if (entity != null) {
             EntityPreconditions.checkEntityType(entity);
-            ((JmixEntity) entity).__getEntityEntry().removePropertyChangeListener(listener);
+            ((Entity) entity).__getEntityEntry().removePropertyChangeListener(listener);
         }
     }
 

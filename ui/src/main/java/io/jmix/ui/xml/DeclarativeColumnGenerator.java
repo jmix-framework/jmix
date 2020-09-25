@@ -16,7 +16,7 @@
 
 package io.jmix.ui.xml;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Table;
@@ -85,7 +85,7 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
     // Find method with one parameter of type extends Entity and result extends Component
     @Nullable
     protected Method findGeneratorMethod(Class cls, String methodName) {
-        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, JmixEntity.class);
+        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, Entity.class);
         if (exactMethod != null) {
             return exactMethod;
         }
@@ -96,7 +96,7 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
             if (availableMethod.getName().equals(methodName)) {
                 if (availableMethod.getParameterCount() == 1
                         && Component.class.isAssignableFrom(availableMethod.getReturnType())) {
-                    if (JmixEntity.class.isAssignableFrom(availableMethod.getParameterTypes()[0])) {
+                    if (Entity.class.isAssignableFrom(availableMethod.getParameterTypes()[0])) {
                         // get accessible version of method
                         return MethodUtils.getAccessibleMethod(availableMethod);
                     }

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
@@ -125,9 +125,9 @@ public class CollectionContainerImpl<E>
     public int getItemIndex(Object entityOrId) {
         checkNotNullArgument(entityOrId, "entity or id is null");
         IndexKey indexKey;
-        if (entityOrId instanceof JmixEntity) {
+        if (entityOrId instanceof Entity) {
             // if an entity instance is passed instead of id, check if the entity is of valid class and extract id
-            JmixEntity entity = (JmixEntity) entityOrId;
+            Entity entity = (Entity) entityOrId;
             if (!entityMetaClass.getJavaClass().isAssignableFrom(entity.getClass())) {
                 throw new IllegalArgumentException("Invalid entity class: " + entity.getClass());
             }

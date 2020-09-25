@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class WebRelatedEntities<E extends JmixEntity> extends WebPopupButton
+public class WebRelatedEntities<E extends Entity> extends WebPopupButton
         implements RelatedEntities<E> {
 
     protected Actions actions;

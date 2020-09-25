@@ -17,7 +17,6 @@
 package io.jmix.ui.component.data.value;
 
 import com.google.common.base.Joiner;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;

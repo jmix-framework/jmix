@@ -17,7 +17,7 @@
 package io.jmix.uiexport.exporter.excel;
 
 import io.jmix.core.Id;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -752,7 +752,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             if (sizers[sizersIndex].isNotificationRequired(notificationRequired)) {
                 sizers[sizersIndex].notifyCellValue(message, stdFont);
             }
-        } else if (cellValue instanceof JmixEntity) {
+        } else if (cellValue instanceof Entity) {
             Object entityVal = cellValue;
             String instanceName = metadataTools.getInstanceName(entityVal);
             String str = sizersIndex == 0 ? createSpaceString(level) + instanceName : instanceName;

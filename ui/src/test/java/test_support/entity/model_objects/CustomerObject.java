@@ -17,7 +17,7 @@
 package test_support.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.NoIdEntityEntry;
 import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import javax.validation.constraints.NotNull;
 
 @ModelObject(name = "test_CustomerObject", annotatedPropertiesOnly = true)
-public class CustomerObject implements JmixEntity {
+public class CustomerObject implements Entity {
 
     @ModelProperty(mandatory = true)
     @InstanceName

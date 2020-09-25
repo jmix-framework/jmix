@@ -17,7 +17,6 @@
 package io.jmix.ui.component.data.meta;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.ValueSource;
 

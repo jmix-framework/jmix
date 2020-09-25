@@ -18,7 +18,7 @@ package io.jmix.ui.filter;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -67,7 +67,7 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
             return condition.getContent().replace(":" + parameterInfo.getName(), valueToString);
         } else if (operator.isUnary()) {
             return format("{E}.%s %s", condition.getName(), jpqlOperator);
-        } else if (JmixEntity.class.isAssignableFrom(javaClass)) {
+        } else if (Entity.class.isAssignableFrom(javaClass)) {
             return String.format("{E}.%s.id %s %s", condition.getName(), jpqlOperator, valueToString);
         } else {
             return String.format("{E}.%s %s %s", condition.getName(), jpqlOperator, valueToString);
@@ -97,7 +97,7 @@ public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
             Enum enumValue = Enum.valueOf(javaClass, value);
             Object enumId = ((EnumClass) enumValue).getId();
             return (enumId instanceof Number) ? enumId.toString() : "'" + enumId + "'";
-        } else if (JmixEntity.class.isAssignableFrom(javaClass)) {
+        } else if (Entity.class.isAssignableFrom(javaClass)) {
             MetaClass metaClass = metadata.findClass(javaClass);
             if (metaClass != null) {
                 MetaProperty metaProperty = metadataTools.getPrimaryKeyProperty(metaClass);

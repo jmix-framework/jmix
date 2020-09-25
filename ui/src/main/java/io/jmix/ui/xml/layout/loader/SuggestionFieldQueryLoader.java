@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.FluentLoader;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.GuiDevelopmentException;

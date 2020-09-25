@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.data.options;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
@@ -106,7 +106,7 @@ public class OptionsBinder {
         @SuppressWarnings("unchecked")
         protected void componentValueChanged(HasValue.ValueChangeEvent event) {
             // value could be List / Set / something else
-            if (event.getValue() instanceof JmixEntity
+            if (event.getValue() instanceof Entity
                     || event.getValue() == null) {
                 EntityOptions entityOptionsSource = (EntityOptions) this.source;
                 entityOptionsSource.setSelectedItem(event.getValue());

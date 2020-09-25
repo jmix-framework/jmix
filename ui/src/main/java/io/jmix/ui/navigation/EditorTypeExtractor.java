@@ -16,17 +16,13 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.screen.EditorScreen;
-import io.jmix.ui.screen.StandardEditor;
 import org.springframework.core.ResolvableType;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Optional;
 
 public final class EditorTypeExtractor{
@@ -47,7 +43,7 @@ public final class EditorTypeExtractor{
     }
 
     private static Optional<Class<?>> asEntityClass(Class<?> cls) {
-        if (!JmixEntity.class.isAssignableFrom(cls)) {
+        if (!Entity.class.isAssignableFrom(cls)) {
             return Optional.empty();
         }
         int modifiers = cls.getModifiers();

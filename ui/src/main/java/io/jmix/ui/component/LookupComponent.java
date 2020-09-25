@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 import java.util.EventObject;

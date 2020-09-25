@@ -21,7 +21,6 @@ import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.JmixEntity;
 import org.springframework.context.ApplicationContextAware;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.FileStorageResource;

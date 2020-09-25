@@ -16,7 +16,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;

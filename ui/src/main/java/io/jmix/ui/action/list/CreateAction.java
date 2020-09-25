@@ -17,7 +17,6 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;

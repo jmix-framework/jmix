@@ -17,7 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import com.google.common.collect.ForwardingList;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.model.CollectionChangeType;
 
 import javax.annotation.Nullable;
@@ -150,7 +150,7 @@ public class ObservableList<T> extends ForwardingList<T> implements Serializable
     @SuppressWarnings("unchecked")
     @Override
     public boolean remove(Object object) {
-        if (idMap != null && object instanceof JmixEntity) {
+        if (idMap != null && object instanceof Entity) {
             Integer index = idMap.get(IndexKey.ofEntity(object));
             if (index != null) {
                 T itemForRemove = delegate.get(index);
@@ -177,7 +177,7 @@ public class ObservableList<T> extends ForwardingList<T> implements Serializable
             List<T> itemsForRemove = new ArrayList<>(collection.size());
 
             for (Object object : collection) {
-                if (object instanceof JmixEntity) {
+                if (object instanceof Entity) {
                     Integer index = idMap.get(IndexKey.ofEntity(object));
                     if (index != null) {
                         itemsForRemove.add((T) object);

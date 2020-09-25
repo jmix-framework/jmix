@@ -18,7 +18,7 @@ package test_support
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.EntityStates
-import io.jmix.core.JmixEntity
+import io.jmix.core.Entity
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.entity.EntityValues
@@ -104,7 +104,7 @@ class DataContextSpec extends Specification {
             EntityValues.setVersion(e, version)
         }
 
-        if (e instanceof JmixEntity && e.__getEntityEntry() instanceof EntityEntryAuditable) {
+        if (e instanceof Entity && e.__getEntityEntry() instanceof EntityEntryAuditable) {
             EntityEntryAuditable entityEntry = ((EntityEntryAuditable) e.__getEntityEntry());
 
             entityEntry.setCreatedDate(timeSource.currentTimestamp())

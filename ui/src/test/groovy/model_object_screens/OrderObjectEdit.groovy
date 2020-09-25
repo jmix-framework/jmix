@@ -16,7 +16,7 @@
 
 package model_object_screens
 
-import io.jmix.core.JmixEntity
+
 import io.jmix.core.SaveContext
 import io.jmix.ui.component.DateField
 import io.jmix.ui.component.EntityPicker

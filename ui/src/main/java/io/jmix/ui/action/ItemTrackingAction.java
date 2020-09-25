@@ -16,7 +16,6 @@
 
 package io.jmix.ui.action;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.ListComponent;
 

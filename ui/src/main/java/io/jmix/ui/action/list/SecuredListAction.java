@@ -17,7 +17,6 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;

@@ -19,7 +19,6 @@ package io.jmix.ui.screen;
 import com.google.common.collect.Iterables;
 import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.data.table;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeTableItems;
 import io.jmix.ui.model.CollectionContainer;
@@ -72,7 +72,7 @@ public class ContainerTreeTableItems<E>
             if (item == null)
                 return null;
             else {
-                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
                 return parentItem == null ? null : EntityValues.getId(parentItem);
             }
         }

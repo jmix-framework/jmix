@@ -129,7 +129,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 return "";
             }
 
-            if (value instanceof JmixEntity) {
+            if (value instanceof Entity) {
                 return metadataTools.getInstanceName(value);
             }
 
@@ -287,7 +287,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
         V value = getValue();
 
         Object entity = null;
-        if (value instanceof JmixEntity) {
+        if (value instanceof Entity) {
             entity = value;
         } else if (getValueSource() instanceof EntityValueSource) {
             entity = ((EntityValueSource) getValueSource()).getItem();

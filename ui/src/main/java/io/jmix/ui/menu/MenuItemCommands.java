@@ -40,8 +40,6 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -284,7 +282,7 @@ public class MenuItemCommands {
                         .findFirst()
                         .map(UiControllerProperty::getValue)
                         .orElse(null);
-                if (entityToEdit instanceof JmixEntity) {
+                if (entityToEdit instanceof Entity) {
                     entityItem = entityToEdit;
                 } else {
                     String[] strings = screenId.split("[.]");

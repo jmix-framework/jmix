@@ -16,7 +16,6 @@
 
 package io.jmix.ui.action.entitypicker;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.valuepicker.ValueClearAction;

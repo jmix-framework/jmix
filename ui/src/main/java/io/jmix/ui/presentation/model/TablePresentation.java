@@ -16,7 +16,6 @@
 
 package io.jmix.ui.presentation.model;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.presentation.TablePresentations;
 
 import javax.annotation.Nullable;

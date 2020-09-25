@@ -223,7 +223,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
             return String.valueOf(cellValue);
         } else if (cellValue instanceof Enum) {
             return messages.getMessage((Enum) cellValue);
-        } else if (cellValue instanceof JmixEntity) {
+        } else if (cellValue instanceof Entity) {
             return metadataTools.getInstanceName(cellValue);
         } else {
             return cellValue == null ? "" : cellValue.toString();

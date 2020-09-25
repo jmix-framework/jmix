@@ -16,7 +16,6 @@
 
 package io.jmix.uiexport.action;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.*;

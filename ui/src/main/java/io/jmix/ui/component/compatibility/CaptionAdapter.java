@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component.compatibility;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -42,7 +42,7 @@ public class CaptionAdapter implements Formatter<Object> {
 
     @Override
     public String apply(Object entity) {
-        if (!(entity instanceof JmixEntity)) {
+        if (!(entity instanceof Entity)) {
             return "";
         }
 

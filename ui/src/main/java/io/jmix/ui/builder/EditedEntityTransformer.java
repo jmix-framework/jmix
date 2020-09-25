@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.model.CollectionContainer;
 

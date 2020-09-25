@@ -17,13 +17,13 @@
 package test_support.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.NoIdEntityEntry;
 import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 @ModelObject(name = "test_OrderLineObject")
-public class OrderLineObject implements JmixEntity {
+public class OrderLineObject implements Entity {
 
     private OrderObject order;
 

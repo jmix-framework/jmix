@@ -16,12 +16,12 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.Screens.LaunchMode;
 
 import javax.annotation.Nullable;
 
-public interface RelatedEntities<E extends JmixEntity> extends Component,
+public interface RelatedEntities<E extends Entity> extends Component,
         Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
         Component.Focusable, HasHtmlCaption, HasHtmlDescription {
 

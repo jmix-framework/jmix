@@ -21,7 +21,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.TableFieldFactory;
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;

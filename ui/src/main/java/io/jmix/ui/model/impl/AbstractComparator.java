@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -51,7 +51,7 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
             c = ((String) o1).compareToIgnoreCase((String) o2);
         } else if (o1 instanceof Comparable && o2 instanceof Comparable) {
             c = ((Comparable) o1).compareTo(o2);
-        } else if (o1 instanceof JmixEntity && o2 instanceof JmixEntity) {
+        } else if (o1 instanceof Entity && o2 instanceof Entity) {
             MetaClass metaClass = metadata.getClass(o1.getClass());
             Collection<MetaProperty> namePatternProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
             if (namePatternProperties.isEmpty()) {

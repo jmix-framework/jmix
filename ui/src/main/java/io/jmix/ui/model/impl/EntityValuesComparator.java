@@ -16,7 +16,7 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -49,7 +49,7 @@ public class EntityValuesComparator<T> extends AbstractComparator<T> {
     @Nullable
     protected Object transformValue(@Nullable T value) {
         Object newValue = value;
-        if (!(value == null || value instanceof Comparable || value instanceof JmixEntity)) {
+        if (!(value == null || value instanceof Comparable || value instanceof Entity)) {
             newValue = value.toString();
         }
         return newValue;

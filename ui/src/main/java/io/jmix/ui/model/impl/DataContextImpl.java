@@ -311,9 +311,8 @@ public class DataContextImpl implements DataContext {
                         throw new UnsupportedOperationException("Unsupported collection type: " + value.getClass().getName());
                     }
                 } else {
-                    Entity srcRef = (Entity) value;
-                    if (!mergedMap.containsKey(srcRef)) {
-                        Object managedRef = internalMerge(srcRef, mergedMap, false, options);
+                    if (!mergedMap.containsKey(value)) {
+                        Object managedRef = internalMerge(value, mergedMap, false, options);
                         setPropertyValue(dstEntity, property, managedRef, false);
                         if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
@@ -321,12 +320,12 @@ public class DataContextImpl implements DataContext {
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
                         }
                     } else {
-                        Object managedRef = mergedMap.get(srcRef);
+                        Object managedRef = mergedMap.get(value);
                         if (managedRef != null) {
                             setPropertyValue(dstEntity, property, managedRef, false);
                         } else {
                             // should never happen
-                            log.debug("Instance was merged but managed instance is null: {}", srcRef);
+                            log.debug("Instance was merged but managed instance is null: {}", value);
                         }
                     }
                 }

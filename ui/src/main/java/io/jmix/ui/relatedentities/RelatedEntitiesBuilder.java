@@ -49,7 +49,7 @@ public class RelatedEntitiesBuilder {
 
     protected String property;
     protected MetaProperty metaProperty;
-    protected Class<? extends Entity> entityClass;
+    protected Class<?> entityClass;
     protected MetaClass metaClass;
 
     protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
@@ -106,7 +106,7 @@ public class RelatedEntitiesBuilder {
      * @return entity class set by {@link #withEntityClass(Class)}
      */
     @Nullable
-    public Class<? extends Entity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 
@@ -201,7 +201,7 @@ public class RelatedEntitiesBuilder {
      * @param entityClass class
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withEntityClass(Class<? extends Entity> entityClass) {
+    public RelatedEntitiesBuilder withEntityClass(Class<?> entityClass) {
         this.entityClass = entityClass;
         return this;
     }

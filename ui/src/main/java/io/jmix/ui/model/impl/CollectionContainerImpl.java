@@ -127,7 +127,7 @@ public class CollectionContainerImpl<E>
         IndexKey indexKey;
         if (entityOrId instanceof Entity) {
             // if an entity instance is passed instead of id, check if the entity is of valid class and extract id
-            Entity entity = (Entity) entityOrId;
+            Object entity = entityOrId;
             if (!entityMetaClass.getJavaClass().isAssignableFrom(entity.getClass())) {
                 throw new IllegalArgumentException("Invalid entity class: " + entity.getClass());
             }

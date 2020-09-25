@@ -72,7 +72,7 @@ public class ContainerTreeTableItems<E>
             if (item == null)
                 return null;
             else {
-                Entity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                Object parentItem = EntityValues.getValue(item, hierarchyProperty);
                 return parentItem == null ? null : EntityValues.getId(parentItem);
             }
         }

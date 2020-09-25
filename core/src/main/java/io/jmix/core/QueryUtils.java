@@ -16,6 +16,8 @@
 
 package io.jmix.core;
 
+import java.util.Collection;
+
 public class QueryUtils {
     
     public static final String ESCAPE_CHARACTER = "\\";
@@ -39,5 +41,23 @@ public class QueryUtils {
         return value.replace(escapeCharacter, escapeCharacter + escapeCharacter)
                 .replace("%", escapeCharacter + "%")
                 .replace("_", escapeCharacter + "_");
+    }
+
+    /**
+     * Returns the query string after applying the given processors on it.
+     *
+     * @param processors query processors
+     * @param query query string
+     * @param entityClass queried entity
+     * @return result of the processing
+     */
+    public static String applyQueryStringProcessors(Collection<QueryStringProcessor> processors,
+                                                    String query,
+                                                    Class<?> entityClass) {
+        String result = query;
+        for (QueryStringProcessor processor : processors) {
+            result = processor.process(query, entityClass);
+        }
+        return result;
     }
 }

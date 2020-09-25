@@ -21,10 +21,10 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -60,7 +60,7 @@ public class FluentLoader<E> {
     private FetchPlanRepository fetchPlanRepository;
 
     @Autowired
-    protected BeanFactory beanFactory;
+    protected ApplicationContext applicationContext;
 
     @Autowired
     private ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;
@@ -244,14 +244,14 @@ public class FluentLoader<E> {
      * Sets the query text.
      */
     public ByQuery<E> query(String queryString) {
-        return new ByQuery<>(this, queryString, beanFactory);
+        return new ByQuery<>(this, queryString, applicationContext);
     }
 
     /**
      * Sets the query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
      */
     public ByQuery<E> query(String queryString, Object... parameters) {
-        return new ByQuery<>(this, queryString, parameters, beanFactory);
+        return new ByQuery<>(this, queryString, parameters, applicationContext);
     }
 
     public static class ById<E> {
@@ -487,17 +487,17 @@ public class FluentLoader<E> {
         private int maxResults;
         private boolean cacheable;
         private Condition condition;
-        private BeanFactory beanFactory;
+        private ApplicationContext applicationContext;
 
-        protected ByQuery(FluentLoader<E> loader, String queryString, BeanFactory beanFactory) {
-            this.beanFactory = beanFactory;
+        protected ByQuery(FluentLoader<E> loader, String queryString, ApplicationContext applicationContext) {
+            this.applicationContext = applicationContext;
             Preconditions.checkNotEmptyString(queryString, "queryString is empty");
             this.loader = loader;
             this.queryString = queryString;
         }
 
-        protected ByQuery(FluentLoader<E> loader, String queryString, Object[] positionalParams, BeanFactory beanFactory) {
-            this(loader, queryString, beanFactory);
+        protected ByQuery(FluentLoader<E> loader, String queryString, Object[] positionalParams, ApplicationContext applicationContext) {
+            this(loader, queryString, applicationContext);
             processPositionalParams(positionalParams);
         }
 
@@ -518,7 +518,9 @@ public class FluentLoader<E> {
             LoadContext<E> loadContext = new LoadContext(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
-            String processedQuery = beanFactory.getBean(QueryStringProcessor.class).process(queryString, loader.entityClass);
+            Collection<QueryStringProcessor> processors = applicationContext.getBeansOfType(QueryStringProcessor.class).values();
+            String processedQuery = QueryUtils.applyQueryStringProcessors(processors, queryString, loader.entityClass);
+
             LoadContext.Query query = new LoadContext.Query(processedQuery);
             for (Map.Entry<String, Object> entry : parameters.entrySet()) {
                 query.setParameter(entry.getKey(), entry.getValue());

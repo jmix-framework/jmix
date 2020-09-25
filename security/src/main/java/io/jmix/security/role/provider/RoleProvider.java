@@ -33,4 +33,6 @@ public interface RoleProvider {
 
     @Nullable
     Role getRoleByCode(String code);
+
+    boolean deleteRole(Role role);
 }

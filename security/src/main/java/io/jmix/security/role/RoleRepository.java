@@ -28,5 +28,7 @@ public interface RoleRepository {
     @Nullable
     Role getRoleByCode(String code);
 
+    boolean deleteRole(String code);
+
     Collection<Role> getAllRoles();
 }

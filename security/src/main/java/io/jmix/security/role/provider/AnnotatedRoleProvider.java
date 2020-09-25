@@ -56,4 +56,9 @@ public class AnnotatedRoleProvider implements RoleProvider {
     public Role getRoleByCode(String code) {
         return roles.get(code);
     }
+
+    @Override
+    public boolean deleteRole(Role role) {
+        throw new UnsupportedOperationException("Annotated role cannot be deleted");
+    }
 }

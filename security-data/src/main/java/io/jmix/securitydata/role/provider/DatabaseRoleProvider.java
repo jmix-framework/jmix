@@ -16,8 +16,12 @@
 
 package io.jmix.securitydata.role.provider;
 
+import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
+import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
@@ -32,10 +36,7 @@ import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,15 @@ public class DatabaseRoleProvider implements RoleProvider {
 
     @Autowired
     protected ScriptEvaluator scriptEvaluator;
+
+    @Autowired
+    protected ResourcePolicyStore policyStore;
+
+    @Autowired
+    protected SecureOperations entityOperations;
+
+    @Autowired
+    protected Metadata metadata;
 
     @Override
     public Collection<Role> getAllRoles() {
@@ -82,6 +92,23 @@ public class DatabaseRoleProvider implements RoleProvider {
                 .optional()
                 .map(this::buildRole)
                 .orElse(null);
+    }
+
+    @Override
+    public boolean deleteRole(Role role) {
+        if (!entityOperations.isEntityDeletePermitted(metadata.getClass(RoleEntity.class), policyStore)) {
+            return false;
+        }
+        String roleDatabaseId = role.getCustomProperties().get("databaseId");
+        RoleEntity roleEntity;
+        if (Strings.isNullOrEmpty(roleDatabaseId)) {
+            throw new IllegalArgumentException(String.format("Database ID of role with code \"%s\" is empty", role.getCode()));
+        } else {
+            UUID roleEntityId = UUID.fromString(roleDatabaseId);
+            roleEntity = dataManager.getReference(RoleEntity.class, roleEntityId);
+            dataManager.remove(roleEntity);
+        }
+        return true;
     }
 
     protected Role buildRole(RoleEntity roleEntity) {

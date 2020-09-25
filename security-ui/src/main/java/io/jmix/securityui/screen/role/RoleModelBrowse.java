@@ -16,14 +16,18 @@
 
 package io.jmix.securityui.screen.role;
 
+import io.jmix.core.Messages;
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RoleType;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.securityui.model.RoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.navigation.Route;
@@ -56,6 +60,15 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
 
     @Autowired
     private MessageBundle messageBundle;
+
+    @Autowired
+    private Dialogs dialogs;
+
+    @Autowired
+    private Messages messages;
+
+    @Autowired
+    private Notifications notifications;
 
     @Autowired
     private ScreenBuilders screenBuilders;
@@ -125,6 +138,42 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
                 .build();
         editor.setOpenedByCreateAction(true);
         editor.show();
+    }
+
+    @Subscribe("roleModelsTable.remove")
+    public void onRoleModelsTableRemove(Action.ActionPerformedEvent event) {
+        dialogs.createOptionDialog()
+                .withCaption(messages.getMessage("dialogs.Confirmation"))
+                .withMessage(messages.getMessage("dialogs.Confirmation.Remove"))
+                .withActions(
+                        new DialogAction(DialogAction.Type.YES).withHandler(e -> {
+                            RoleModel roleModel = roleModelsTable.getSingleSelected();
+                            if (roleModel == null) {
+                                return;
+                            }
+                            String code = roleModel.getCode();
+                            try {
+                                boolean deleted = roleRepository.deleteRole(code);
+                                if (deleted) {
+                                    roleModelsDc.getMutableItems().remove(roleModel);
+                                } else {
+                                    notifications.create()
+                                            .withCaption(messageBundle.getMessage("RoleModelBrowse.unableToRemove"))
+                                            .withDescription(messageBundle.getMessage("RoleModelBrowse.noPermission"))
+                                            .withType(Notifications.NotificationType.HUMANIZED)
+                                            .show();
+                                }
+                            } catch (UnsupportedOperationException | IllegalArgumentException ex) {
+                                notifications.create()
+                                        .withCaption(messageBundle.getMessage("RoleModelBrowse.unableToRemove"))
+                                        .withDescription(ex.getMessage())
+                                        .withType(Notifications.NotificationType.ERROR)
+                                        .show();
+                            }
+                        }),
+                        new DialogAction(DialogAction.Type.NO)
+                )
+                .show();
     }
 
     private boolean isDatabaseRoleSelected() {

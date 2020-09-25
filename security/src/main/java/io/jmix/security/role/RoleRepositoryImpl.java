@@ -65,6 +65,17 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
+    public boolean deleteRole(String code) {
+        for (RoleProvider roleProvider : roleProviders) {
+            Role role = roleProvider.getRoleByCode(code);
+            if (role != null) {
+                return roleProvider.deleteRole(role);
+            }
+        }
+        throw new IllegalArgumentException(String.format("Role with code \"%s\" was not found", code));
+    }
+
+    @Override
     public Collection<Role> getAllRoles() {
         Collection<Role> roles = new ArrayList<>();
         for (RoleProvider roleProvider : roleProviders) {

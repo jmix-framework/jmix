@@ -16,13 +16,13 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -30,7 +30,7 @@ import java.util.UUID;
  */
 @ModelObject(name = "audit_EntityLogAttr")
 @SystemLevel
-public class EntityLogAttr implements JmixEntity {
+public class EntityLogAttr implements Serializable {
 
     private static final long serialVersionUID = 4258700403293876630L;
 

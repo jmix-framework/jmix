@@ -16,7 +16,6 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -28,7 +27,7 @@ import java.util.Date;
 
 @ModelObject(name = "core_UserSession", annotatedPropertiesOnly = true)
 @SystemLevel
-public class UserSession implements JmixEntity {
+public class UserSession {
 
     @Transient
     protected SessionInformation sessionInformation;

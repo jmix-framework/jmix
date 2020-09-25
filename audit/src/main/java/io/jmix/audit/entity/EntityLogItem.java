@@ -30,6 +30,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -42,7 +43,7 @@ import java.util.UUID;
 @Table(name = "AUDIT_ENTITY_LOG")
 @Listeners("audit_EntityLogItemDetachListener")
 @SystemLevel
-public class EntityLogItem implements JmixEntity {
+public class EntityLogItem implements Serializable {
 
     private static final long serialVersionUID = 5859030306889056606L;
 
@@ -110,7 +111,7 @@ public class EntityLogItem implements JmixEntity {
     private String entityInstanceName;
 
     @Transient
-    private transient JmixEntity dbGeneratedIdEntity;
+    private transient Object dbGeneratedIdEntity;
 
     @Transient
     @ModelProperty
@@ -207,11 +208,11 @@ public class EntityLogItem implements JmixEntity {
         this.entityRef = entityRef;
     }
 
-    public JmixEntity getDbGeneratedIdEntity() {
+    public Object getDbGeneratedIdEntity() {
         return dbGeneratedIdEntity;
     }
 
-    public void setDbGeneratedIdEntity(JmixEntity dbGeneratedIdEntity) {
+    public void setDbGeneratedIdEntity(Object dbGeneratedIdEntity) {
         this.dbGeneratedIdEntity = dbGeneratedIdEntity;
     }
 

@@ -17,7 +17,6 @@
 package io.jmix.audit.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -25,6 +24,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -35,7 +35,7 @@ import java.util.UUID;
 @Entity(name = "audit_LoggedEntity")
 @Table(name = "AUDIT_LOGGED_ENTITY")
 @SystemLevel
-public class LoggedEntity implements JmixEntity {
+public class LoggedEntity implements Serializable {
 
     private static final long serialVersionUID = 2189206984294705835L;
 

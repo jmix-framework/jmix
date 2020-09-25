@@ -16,13 +16,13 @@
 
 package io.jmix.audit.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ import java.util.UUID;
 @Entity(name = "audit_LoggedAttribute")
 @Table(name = "AUDIT_LOGGED_ATTR")
 @SystemLevel
-public class LoggedAttribute implements JmixEntity {
+public class LoggedAttribute implements Serializable {
 
     private static final long serialVersionUID = -615000337312303671L;
 

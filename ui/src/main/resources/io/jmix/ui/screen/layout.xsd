@@ -1627,7 +1627,7 @@
             <xs:extension base="xs:string">
                 <xs:attribute name="entityClass" type="xs:string" use="required"/>
                 <xs:attribute name="searchStringFormat" type="xs:string"/>
-                <xs:attribute name="view" type="xs:string"/>
+                <xs:attribute name="fetchPlan" type="xs:string"/>
                 <xs:attribute name="escapeValueForLike" type="xs:boolean"/>
             </xs:extension>
         </xs:simpleContent>

@@ -17,7 +17,11 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.FluentLoader;
+import io.jmix.core.JmixEntity;
+import io.jmix.core.QueryUtils;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Field;
@@ -36,7 +40,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
             String searchFormat = queryElement.attributeValue("searchStringFormat");
 
-            String view = queryElement.attributeValue("view");
+            String fetchPlan = loadFetchPlan(queryElement);
 
             String escapeValueForLike = queryElement.attributeValue("escapeValueForLike");
             if (StringUtils.isNotEmpty(escapeValueForLike)) {
@@ -56,8 +60,9 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
                     searchString = applySearchFormat(searchString, searchFormat);
 
                     FluentLoader<JmixEntity> loader = dataManager.load(entityClass);
-                    if (!Strings.isNullOrEmpty(view)) {
-                        loader.fetchPlan(applicationContext.getBean(FetchPlanRepository.class).getFetchPlan(entityClass, view));
+                    if (!Strings.isNullOrEmpty(fetchPlan)) {
+                        FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
+                        loader.fetchPlan(fetchPlanRepository.getFetchPlan(entityClass, fetchPlan));
                     }
                     loader.query(stringQuery)
                             .parameter("searchString", searchString);
@@ -83,5 +88,9 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 //            }
         }
         return searchString;
+    }
+
+    protected String loadFetchPlan(Element queryElement) {
+        return queryElement.attributeValue("fetchPlan");
     }
 }

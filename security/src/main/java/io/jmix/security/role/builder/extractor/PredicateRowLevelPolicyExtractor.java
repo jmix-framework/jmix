@@ -16,7 +16,6 @@
 
 package io.jmix.security.role.builder.extractor;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
@@ -51,11 +50,12 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
         PredicateRowLevelPolicy[] annotations = method.getAnnotationsByType(PredicateRowLevelPolicy.class);
         for (PredicateRowLevelPolicy annotation : annotations) {
             for (RowLevelPolicyAction action : annotation.actions()) {
-                Class<? extends JmixEntity> entityClass = annotation.entityClass();
+                Class<?> entityClass = annotation.entityClass();
                 MetaClass metaClass = metadata.getClass(entityClass);
-                Predicate<JmixEntity> predicate;
+                Predicate<Object> predicate;
                 try {
-                    predicate = (Predicate<JmixEntity>) method.invoke(null);
+                    //noinspection unchecked
+                    predicate = (Predicate<Object>) method.invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }

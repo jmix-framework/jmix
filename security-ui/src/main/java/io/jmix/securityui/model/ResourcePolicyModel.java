@@ -16,7 +16,6 @@
 
 package io.jmix.securityui.model;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -30,7 +29,7 @@ import java.util.UUID;
  * Non-persistent entity used to display resource policies in UI
  */
 @ModelObject(name = "sec_ResourcePolicyModel")
-public class ResourcePolicyModel implements JmixEntity {
+public class ResourcePolicyModel {
 
     @Id
     @JmixGeneratedValue

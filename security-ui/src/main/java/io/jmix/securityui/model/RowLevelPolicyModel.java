@@ -16,10 +16,10 @@
 
 package io.jmix.securityui.model;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
 
 import javax.persistence.Id;
@@ -31,7 +31,7 @@ import java.util.UUID;
  * Non-persistent entity used to display row level policies in UI
  */
 @ModelObject(name = "sec_RowLevelPolicyModel")
-public class RowLevelPolicyModel implements JmixEntity {
+public class RowLevelPolicyModel {
 
     @Id
     @JmixGeneratedValue

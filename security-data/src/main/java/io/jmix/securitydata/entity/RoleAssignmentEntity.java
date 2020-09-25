@@ -16,7 +16,6 @@
 
 package io.jmix.securitydata.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -27,12 +26,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
 @Table(name = "SEC_ROLE_ASSIGNMENT_ENTITY")
 @Entity(name = "sec_RoleAssignmentEntity")
-public class RoleAssignmentEntity implements JmixEntity {
+public class RoleAssignmentEntity implements Serializable {
     private static final long serialVersionUID = -6805425065569471069L;
 
     @Id

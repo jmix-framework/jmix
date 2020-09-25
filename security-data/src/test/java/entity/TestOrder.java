@@ -16,7 +16,6 @@
 
 package entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
@@ -25,7 +24,7 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity(name = "test_Order")
-public class TestOrder implements JmixEntity {
+public class TestOrder {
 
     @Id
     @Column(name = "ID")

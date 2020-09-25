@@ -17,7 +17,6 @@
 package io.jmix.security.role.builder.extractor;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.EntityAttributePolicyAction;
@@ -54,7 +53,7 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
         EntityAttributePolicy[] policyAnnotations = method.getAnnotationsByType(EntityAttributePolicy.class);
         for (EntityAttributePolicy policyAnnotation : policyAnnotations) {
-            Class<? extends JmixEntity> entityClass = policyAnnotation.entityClass();
+            Class<?> entityClass = policyAnnotation.entityClass();
             String entityName = policyAnnotation.entityName();
             if (entityClass != NullEntity.class) {
                 MetaClass metaClass = metadata.getClass(entityClass);

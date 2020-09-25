@@ -16,7 +16,6 @@
 
 package io.jmix.security.role.annotation;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.security.model.EntityPolicyAction;
 
 import java.lang.annotation.*;
@@ -50,7 +49,7 @@ import java.lang.annotation.*;
 @Repeatable(EntityPolicyContainer.class)
 public @interface EntityPolicy {
 
-    Class<? extends JmixEntity> entityClass() default NullEntity.class;
+    Class<?> entityClass() default NullEntity.class;
 
     String entityName() default "";
 

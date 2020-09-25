@@ -16,7 +16,6 @@
 
 package io.jmix.securityui.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.securityui.role.annotation.SecurityDomain;
 
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @Entity(name = "test_Order")
 @SecurityDomain(name = "Order")
-public class TestOrder implements JmixEntity {
+public class TestOrder {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

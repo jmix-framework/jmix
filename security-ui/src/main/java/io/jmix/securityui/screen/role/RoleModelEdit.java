@@ -118,8 +118,8 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove
         //all entities from dataContext.modifiedInstances collection
         if (!openedByCreateAction) {
-            Set<JmixEntity> modified = new HashSet<>(dataContext.getModified());
-            for (JmixEntity entity : modified) {
+            Set<Object> modified = new HashSet<>(dataContext.getModified());
+            for (Object entity : modified) {
                 dataContext.setModified(entity, false);
             }
         }
@@ -276,7 +276,7 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         }
     }
 
-    private void saveRoleEntityToDatabase(Collection<JmixEntity> modifiedInstances) {
+    private void saveRoleEntityToDatabase(Collection<Object> modifiedInstances) {
         RoleModel roleModel = getEditedEntity();
         String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");
         RoleEntity roleEntity;

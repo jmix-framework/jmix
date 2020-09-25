@@ -16,7 +16,6 @@
 
 package io.jmix.security.role.builder.extractor;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
@@ -45,7 +44,7 @@ public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
         Set<RowLevelPolicy> policies = new HashSet<>();
         JpqlRowLevelPolicy[] annotations = method.getAnnotationsByType(JpqlRowLevelPolicy.class);
         for (JpqlRowLevelPolicy annotation : annotations) {
-            Class<? extends JmixEntity> entityClass = annotation.entityClass();
+            Class<?> entityClass = annotation.entityClass();
             MetaClass metaClass = metadata.getClass(entityClass);
             RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(), annotation.where(), annotation.join());
             policies.add(rowLevelPolicy);

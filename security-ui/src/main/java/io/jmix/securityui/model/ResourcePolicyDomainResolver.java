@@ -100,7 +100,7 @@ public class ResourcePolicyDomainResolver {
      *     <li>
      *         returns a domain of the related entity (for standard editor and browser). If the screen implements
      *         the {@link LookupScreen} or {@link EditorScreen} interfaces then a generic type is taken
-     *         and assuming that a generic type points to the {@link JmixEntity} class the entity domain is returned
+     *         and assuming that a generic type points to the entity class the entity domain is returned
      *     </li>
      * </ul>
      * <p>

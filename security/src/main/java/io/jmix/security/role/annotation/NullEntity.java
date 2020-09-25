@@ -16,10 +16,8 @@
 
 package io.jmix.security.role.annotation;
 
-import io.jmix.core.JmixEntity;
-
 /**
  * Class is used as a default value for attribute of {@link EntityPolicy} and {@link EntityAttributePolicy} annotations
  */
-public abstract class NullEntity implements JmixEntity {
+public abstract class NullEntity {
 }

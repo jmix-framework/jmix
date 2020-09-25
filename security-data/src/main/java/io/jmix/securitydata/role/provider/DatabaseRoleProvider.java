@@ -18,7 +18,6 @@ package io.jmix.securitydata.role.provider;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
@@ -128,7 +127,7 @@ public class DatabaseRoleProvider implements RoleProvider {
         return role;
     }
 
-    protected Predicate<JmixEntity> createPredicateFromScript(String script) {
+    protected Predicate<Object> createPredicateFromScript(String script) {
         return entity -> {
             String modifiedScript = script.replace("{E}", "__entity__");
             Map<String, Object> arguments = new HashMap<>();

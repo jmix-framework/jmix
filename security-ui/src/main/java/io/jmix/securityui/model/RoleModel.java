@@ -16,7 +16,6 @@
 
 package io.jmix.securityui.model;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -32,7 +31,7 @@ import java.util.UUID;
  * Non-persistent entity used to display roles in UI
  */
 @ModelObject(name = "sec_RoleModel")
-public class RoleModel implements JmixEntity {
+public class RoleModel {
 
     @Id
     @JmixGeneratedValue

@@ -16,8 +16,6 @@
 
 package io.jmix.security.model;
 
-import io.jmix.core.JmixEntity;
-
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +32,7 @@ public class RowLevelPolicy {
 
     private RowLevelPolicyAction action;
 
-    private Predicate<JmixEntity> predicate;
+    private Predicate<Object> predicate;
 
     private String whereClause;
 
@@ -58,11 +56,11 @@ public class RowLevelPolicy {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<JmixEntity> predicate) {
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<Object> predicate) {
         this(entityName, action, predicate, Collections.emptyMap());
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<JmixEntity> predicate,
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<Object> predicate,
                           Map<String, String> customProperties) {
         this.entityName = entityName;
         this.action = action;
@@ -93,7 +91,7 @@ public class RowLevelPolicy {
      * @return a predicate
      */
     @Nullable
-    public Predicate<JmixEntity> getPredicate() {
+    public Predicate<Object> getPredicate() {
         return predicate;
     }
 

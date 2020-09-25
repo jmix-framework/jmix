@@ -18,7 +18,7 @@ package io.jmix.rest.api.service;
 
 import io.jmix.core.EntitySerialization;
 import io.jmix.core.EntitySerializationOption;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -156,7 +156,7 @@ public class ServicesControllerManager {
         }
 
         Class<?> methodReturnType = serviceMethod.getReturnType();
-        if (JmixEntity.class.isAssignableFrom(methodReturnType)) {
+        if (Entity.class.isAssignableFrom(methodReturnType)) {
             restControllerUtils.applyAttributesSecurity(methodResult);
             String entityJson = entitySerializationAPI.toJson(methodResult,
                     null,
@@ -166,7 +166,7 @@ public class ServicesControllerManager {
             return new ServiceCallResult(entityJson, true);
         } else if (Collection.class.isAssignableFrom(methodReturnType)) {
             Type returnTypeArgument = getMethodReturnTypeArgument(serviceMethod);
-            if ((returnTypeArgument instanceof Class && JmixEntity.class.isAssignableFrom((Class) returnTypeArgument))
+            if ((returnTypeArgument instanceof Class && Entity.class.isAssignableFrom((Class) returnTypeArgument))
                     || isEntitiesCollection((Collection) methodResult)) {
                 Collection<?> entities = (Collection<?>) methodResult;
                 entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
@@ -212,7 +212,7 @@ public class ServicesControllerManager {
     protected boolean isEntitiesCollection(Collection collection) {
         if (collection.isEmpty()) return false;
         for (Object item : collection) {
-            if (!(item instanceof JmixEntity)) {
+            if (!(item instanceof Entity)) {
                 return false;
             }
         }

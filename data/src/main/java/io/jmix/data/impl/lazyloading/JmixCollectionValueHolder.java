@@ -72,7 +72,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 if (plc.getAccessConstraints() != null && !plc.getAccessConstraints().isEmpty()) {
                     lc.setAccessConstraints(plc.getAccessConstraints());
                 }
-                JmixEntity result = (JmixEntity) dataManager.load(lc);
+                Entity result = (Entity) dataManager.load(lc);
 
                 this.value = EntityValues.getValue(result, propertyName);
                 SecurityState resultState = EntitySystemAccess.getSecurityState(result);
@@ -85,7 +85,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 if (rootEntity != null) {
                     if (value instanceof List) {
                         for (ListIterator iterator = ((List) value).listIterator(); iterator.hasNext(); ) {
-                            JmixEntity entity = (JmixEntity) iterator.next();
+                            Entity entity = (Entity) iterator.next();
                             if (rootEntity.equals(entity) && !(rootEntity == entity)) {
                                 iterator.remove();
                                 iterator.add(rootEntity);
@@ -94,7 +94,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                     } else if (value instanceof Set) {
                         Set setValue = (Set) value;
                         for (Iterator iterator = setValue.iterator(); iterator.hasNext(); ) {
-                            JmixEntity entity = (JmixEntity) iterator.next();
+                            Entity entity = (Entity) iterator.next();
                             if (rootEntity.equals(entity) && !(rootEntity == entity)) {
                                 setValue.remove(entity);
                                 setValue.add(rootEntity);
@@ -103,9 +103,9 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                         }
                     } else if (value instanceof Collection) {
                         Collection collectionValue = (Collection) value;
-                        List<JmixEntity> itemsToRemove = new ArrayList<>();
+                        List<Entity> itemsToRemove = new ArrayList<>();
                         for (Iterator iterator = collectionValue.iterator(); iterator.hasNext(); ) {
-                            JmixEntity entity = (JmixEntity) iterator.next();
+                            Entity entity = (Entity) iterator.next();
                             if (rootEntity.equals(entity) && !(rootEntity == entity)) {
                                 itemsToRemove.add(entity);
                             }
@@ -134,7 +134,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 };
 
                 for (Object entity : (Collection) value) {
-                    metadataTools.traverseAttributes((JmixEntity) entity, av);
+                    metadataTools.traverseAttributes((Entity) entity, av);
                 }
                 isInstantiated = true;
             }

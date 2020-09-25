@@ -16,8 +16,6 @@
 
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
-
 import java.util.Collection;
 
 /**

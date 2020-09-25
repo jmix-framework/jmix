@@ -18,7 +18,7 @@ package io.jmix.data.impl.eclipselink;
 
 import com.google.common.base.Strings;
 import io.jmix.core.EntityStates;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.datastruct.Pair;
@@ -102,7 +102,7 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
                 setMultipleTableConstraintDependency(metaClass, desc);
             }
 
-            if (JmixEntity.class.isAssignableFrom(desc.getJavaClass())) {
+            if (Entity.class.isAssignableFrom(desc.getJavaClass())) {
                 // set DescriptorEventManager that doesn't invoke listeners for base classes
                 desc.setEventManager(new DescriptorEventManagerWrapper(desc.getDescriptorEventManager()));
                 desc.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
@@ -189,7 +189,7 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
 
     protected void enhancementCheck(Class entityClass, List<Pair<Class, String>> missingEnhancements) {
         boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixSettersEnhanced.class)
-                || !(JmixEntity.class.isAssignableFrom(entityClass))
+                || !(Entity.class.isAssignableFrom(entityClass))
                 || ArrayUtils.contains(entityClass.getDeclaredAnnotations(), DisableEnhancing.class);
         boolean persistenceObject = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceObject.class);
         boolean persistenceWeaved = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeaved.class);

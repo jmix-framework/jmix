@@ -536,7 +536,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
                         if (!context.isDiscardSaved()) {
                             FetchPlan fetchPlan = getFetchPlanFromContextOrNull(context, entity);
-                            entityFetcher.fetch((JmixEntity) entity, fetchPlan, true);
+                            entityFetcher.fetch((Entity) entity, fetchPlan, true);
                         }
                     }
                 }
@@ -547,12 +547,12 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
                         assertToken(accessConstraints, entity);
-                        entityAttributesEraser.restoreAttributes((JmixEntity) entity);
+                        entityAttributesEraser.restoreAttributes((Entity) entity);
 
                         Object merged = em.merge(entity);
                         saved.add(merged);
 
-                        entityFetcher.fetch((JmixEntity) merged, getFetchPlanFromContext(context, entity));
+                        entityFetcher.fetch((Entity) merged, getFetchPlanFromContext(context, entity));
 
                         InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
                         accessManager.applyConstraints(new InMemoryCrudEntityContext(metaClass), accessConstraints);
@@ -571,11 +571,11 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     MetaClass metaClass = metadata.getClass(entity.getClass());
 
                     assertToken(accessConstraints, entity);
-                    entityAttributesEraser.restoreAttributes((JmixEntity) entity);
+                    entityAttributesEraser.restoreAttributes((Entity) entity);
                     Object e;
                     if (EntityValues.isSoftDeletionSupported(entity)) {
                         e = em.merge(entity);
-                        entityFetcher.fetch((JmixEntity) e, getFetchPlanFromContext(context, entity));
+                        entityFetcher.fetch((Entity) e, getFetchPlanFromContext(context, entity));
                     } else {
                         e = em.merge(entity);
                     }
@@ -1105,8 +1105,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                 if (value != null) {
                     if (property.getRange().getCardinality().isMany()) {
                         @SuppressWarnings("unchecked")
-                        Collection<JmixEntity> collection = (Collection<JmixEntity>) value;
-                        for (JmixEntity element : collection) {
+                        Collection<Entity> collection = (Collection<Entity>) value;
+                        for (Entity element : collection) {
                             em.detach(element);
                         }
                     } else {

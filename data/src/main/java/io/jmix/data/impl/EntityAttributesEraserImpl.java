@@ -77,7 +77,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                     @SuppressWarnings("unchecked")
                     Collection<Object> entities = (Collection<Object>) value;
                     entities.removeAll(references);
-                } else if (value instanceof JmixEntity) {
+                } else if (value instanceof Entity) {
                     if (references.contains(value)) {
                         EntityValues.setValue(entity, attribute, null);
                     }
@@ -95,7 +95,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                 MetaProperty metaProperty = metaClass.getProperty(attrName);
                 if (Collection.class.isAssignableFrom(metaProperty.getJavaType())) {
                     restoreCollectionAttribute(entity, metaProperty, ids);
-                } else if (JmixEntity.class.isAssignableFrom(metaProperty.getJavaType())) {
+                } else if (Entity.class.isAssignableFrom(metaProperty.getJavaType())) {
                     restoreSingleAttribute(entity, metaProperty, ids);
                 }
             }
@@ -142,7 +142,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                             traverseEntities(item, visited, visitor);
                         }
                     }
-                } else if (value instanceof JmixEntity) {
+                } else if (value instanceof Entity) {
                     if (visitor.visit(entity, value, property.getName())) {
                         traverseEntities(value, visited, visitor);
                     }

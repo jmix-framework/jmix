@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -80,7 +80,7 @@ public class OrmCacheSupport {
     }
 
     private void evictEntity(Object entity) {
-        if (entity instanceof JmixEntity && !entityStates.isNew(entity)) {
+        if (entity instanceof Entity && !entityStates.isNew(entity)) {
             String storeName = metadata.getClass(entity).getStore().getName();
             EntityManagerFactory entityManagerFactory = storeAwareLocator.getEntityManagerFactory(storeName);
             JpaCache cache = (JpaCache) entityManagerFactory.getCache();

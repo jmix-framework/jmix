@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.ResourceHolderSupport;
@@ -39,9 +39,9 @@ public class SavedEntitiesHolder extends ResourceHolderSupport {
 
     public static final String RESOURCE_KEY = "cuba-SavedEntitiesHolder";
 
-    private Set<JmixEntity> entities = new HashSet<>();
+    private Set<Entity> entities = new HashSet<>();
 
-    public static SavedEntitiesHolder setEntities(Collection<JmixEntity> saved) {
+    public static SavedEntitiesHolder setEntities(Collection<Entity> saved) {
         SavedEntitiesHolder holder = (SavedEntitiesHolder) TransactionSynchronizationManager.getResource(RESOURCE_KEY);
 
         if (holder == null) {
@@ -54,7 +54,7 @@ public class SavedEntitiesHolder extends ResourceHolderSupport {
         }
 
         log.trace("{} updates entities: {}", holder, saved);
-        for (JmixEntity entity : saved) {
+        for (Entity entity : saved) {
             holder.entities.remove(entity);
             holder.entities.add(entity);
         }
@@ -62,8 +62,8 @@ public class SavedEntitiesHolder extends ResourceHolderSupport {
         return holder;
     }
 
-    public Set<JmixEntity> getEntities(Collection<JmixEntity> saved) {
-        Set<JmixEntity> result = new HashSet<>(entities);
+    public Set<Entity> getEntities(Collection<Entity> saved) {
+        Set<Entity> result = new HashSet<>(entities);
         result.retainAll(saved);
         return result;
     }

@@ -17,7 +17,7 @@
 package io.jmix.data.impl.eclipselink;
 
 import io.jmix.core.EntityStates;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
@@ -98,8 +98,8 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void postBuild(DescriptorEvent event) {
-        if (event.getObject() instanceof JmixEntity) {
-            ((JmixEntity) event.getObject()).__getEntityEntry().setNew(false);
+        if (event.getObject() instanceof Entity) {
+            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -112,9 +112,9 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Override
     public void postClone(DescriptorEvent event) {
         // in shared cache mode, postBuild event is missed, so we repeat it here
-        if (event.getObject() instanceof JmixEntity) {
-            ((JmixEntity) event.getObject()).__copyEntityEntry();
-            ((JmixEntity) event.getObject()).__getEntityEntry().setNew(false);
+        if (event.getObject() instanceof Entity) {
+            ((Entity) event.getObject()).__copyEntityEntry();
+            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -123,14 +123,14 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
                 entity._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
         }
 
-        if (event.getObject() instanceof JmixEntity)
-            persistenceSupport.registerInstance((JmixEntity) event.getObject(), event.getSession());
+        if (event.getObject() instanceof Entity)
+            persistenceSupport.registerInstance((Entity) event.getObject(), event.getSession());
     }
 
     @Override
     public void postDelete(DescriptorEvent event) {
         String storeName = persistenceSupport.getStorageName(event.getSession());
-        entityListenerManager.fireListener((JmixEntity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
+        entityListenerManager.fireListener((Entity) event.getSource(), EntityListenerType.AFTER_DELETE, storeName);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void preUpdate(DescriptorEvent event) {
-        JmixEntity entity = (JmixEntity) event.getObject();
+        Entity entity = (Entity) event.getObject();
         if (!(isJustSoftDeleted(entity)) && EntityValues.isAuditSupported(entity)) {
             setUpdateInfo(entity, timeSource.currentTimestamp(), auditInfoProvider.getCurrentUser(), false);
         }

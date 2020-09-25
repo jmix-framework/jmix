@@ -75,7 +75,7 @@ public class EntityFetcher {
      *
      * @param fetchPlanName if null, nothing happens
      */
-    public void fetch(JmixEntity instance, @Nullable String fetchPlanName) {
+    public void fetch(Entity instance, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
@@ -90,7 +90,7 @@ public class EntityFetcher {
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(JmixEntity instance, @Nullable FetchPlan fetchPlan, boolean optimizeForDetached) {
+    public void fetch(Entity instance, @Nullable FetchPlan fetchPlan, boolean optimizeForDetached) {
         if (fetchPlan == null)
             return;
         fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
@@ -104,7 +104,7 @@ public class EntityFetcher {
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(JmixEntity instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
+    public void fetch(Entity instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
@@ -138,7 +138,7 @@ public class EntityFetcher {
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
                     for (Object item : new ArrayList(((Collection) value))) {
-                        if (item instanceof JmixEntity) {
+                        if (item instanceof Entity) {
                             if (entityStates.isDetached(item)) {
                                 fetchReloaded(item, propertyFetchPlan, visited, optimizeForDetached, managed -> {
                                     if (value instanceof List) {
@@ -155,7 +155,7 @@ public class EntityFetcher {
                             }
                         }
                     }
-                } else if (value instanceof JmixEntity) {
+                } else if (value instanceof Entity) {
                     boolean isEmbeddable = EntitySystemAccess.isEmbeddable(value);
                     if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !isEmbeddable) {
                         fetchReloaded(value, propertyFetchPlan, visited, optimizeForDetached, managed -> {

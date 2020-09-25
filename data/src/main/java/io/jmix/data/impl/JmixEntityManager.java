@@ -18,6 +18,7 @@ package io.jmix.data.impl;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
@@ -83,8 +84,8 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void persist(Object entity) {
-        if (entity instanceof JmixEntity) {
-            entityPersistingEventMgr.publishEvent((JmixEntity) entity);
+        if (entity instanceof Entity) {
+            entityPersistingEventMgr.publishEvent((Entity) entity);
         }
         internalPersist(entity);
     }
@@ -94,7 +95,7 @@ public class JmixEntityManager implements EntityManager {
     public <T> T merge(T object) {
         log.debug("merge {}", object);
 
-        if (!(object instanceof JmixEntity)) {
+        if (!(object instanceof Entity)) {
             return delegate.merge(object);
         }
 
@@ -124,11 +125,11 @@ public class JmixEntityManager implements EntityManager {
     public void remove(Object object) {
         log.debug("remove {}", object);
 
-        if (!(object instanceof JmixEntity)) {
+        if (!(object instanceof Entity)) {
             delegate.remove(object);
             return;
         }
-        JmixEntity entity = (JmixEntity) object;
+        Entity entity = (Entity) object;
 
         if (entityStates.isDetached(entity)) {
             entity = internalMerge(entity);
@@ -183,7 +184,7 @@ public class JmixEntityManager implements EntityManager {
         Class<T> effectiveClass = extendedEntities.getEffectiveClass(entityClass);
 
         T reference = delegate.getReference(effectiveClass, primaryKey);
-        ((JmixEntity) reference).__getEntityEntry().setNew(false);
+        ((Entity) reference).__getEntityEntry().setNew(false);
         return reference;
     }
 
@@ -242,8 +243,8 @@ public class JmixEntityManager implements EntityManager {
     @Override
     public void detach(Object entity) {
         delegate.detach(entity);
-        if (entity instanceof JmixEntity) {
-            support.detach(this, (JmixEntity) entity);
+        if (entity instanceof Entity) {
+            support.detach(this, (Entity) entity);
         }
     }
 
@@ -414,8 +415,8 @@ public class JmixEntityManager implements EntityManager {
 
     private void internalPersist(Object entity) {
         delegate.persist(entity);
-        if (entity instanceof JmixEntity) {
-            support.registerInstance((JmixEntity) entity, this);
+        if (entity instanceof Entity) {
+            support.registerInstance((Entity) entity, this);
         }
     }
 
@@ -448,7 +449,7 @@ public class JmixEntityManager implements EntityManager {
 
         T entity = delegate.find(javaClass, realId, lockMode, properties);
 
-        if (entity != null && EntityValues.isSoftDeleted((JmixEntity) entity)
+        if (entity != null && EntityValues.isSoftDeleted((Entity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache
         else

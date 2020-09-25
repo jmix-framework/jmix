@@ -166,7 +166,7 @@ public class EntityChangedEventManager {
             if (info.publish) {
                 EntityChangedEvent.Type type = null;
                 AttributeChanges attributeChanges = null;
-                if (info.onCreated && ((JmixEntity) entity).__getEntityEntry().isNew()) {
+                if (info.onCreated && ((Entity) entity).__getEntityEntry().isNew()) {
                     type = EntityChangedEvent.Type.CREATED;
                     attributeChanges = getEntityAttributeChanges(entity, false);
                 } else {
@@ -219,7 +219,7 @@ public class EntityChangedEventManager {
                         getEntityAttributeChanges(null, ((AggregateChangeRecord) changeRecord).getChangedObject()));
             } else {
                 Object oldValue = changeRecord.getOldValue();
-                if (oldValue instanceof JmixEntity) {
+                if (oldValue instanceof Entity) {
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of(oldValue)));
                 } else if (oldValue instanceof Collection) {
                     Collection<Object> coll = (Collection<Object>) oldValue;
@@ -321,7 +321,7 @@ public class EntityChangedEventManager {
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             Object value = EntityValues.getValue(entity, property.getName());
             if (deleted) {
-                if (value instanceof JmixEntity) {
+                if (value instanceof Entity) {
                     if (EntitySystemAccess.isEmbeddable(entity)) {
                         embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
                     } else {

@@ -142,7 +142,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
                     }
                 };
                 if (value != null) {
-                    metadataTools.traverseAttributes((JmixEntity) value, av);
+                    metadataTools.traverseAttributes((Entity) value, av);
                 }
                 isInstantiated = true;
             }

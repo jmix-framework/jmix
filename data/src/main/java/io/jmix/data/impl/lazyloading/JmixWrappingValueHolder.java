@@ -118,7 +118,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                     }
                 };
                 if (value != null) {
-                    metadataTools.traverseAttributes((JmixEntity) value, av);
+                    metadataTools.traverseAttributes((Entity) value, av);
                 } else {
                     SecurityState parentState = EntitySystemAccess.getSecurityState(parentEntity);
                     parentState.addErasedId(propertyName, entityId);

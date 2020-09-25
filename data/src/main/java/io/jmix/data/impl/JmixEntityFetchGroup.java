@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import org.eclipse.persistence.core.queries.CoreAttributeGroup;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.FetchGroupManager;
@@ -68,7 +68,7 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
     }
 
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
-        if (Boolean.FALSE.equals(accessLocalUnfetched.get()) && entity instanceof JmixEntity) {
+        if (Boolean.FALSE.equals(accessLocalUnfetched.get()) && entity instanceof Entity) {
             return entityStates != null && !entityStates.isLoadedWithFetchPlan(entity, FetchPlan.LOCAL);
         }
         return false;

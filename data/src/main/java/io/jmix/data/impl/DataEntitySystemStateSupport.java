@@ -18,13 +18,12 @@ package io.jmix.data.impl;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.EntitySystemStateSupport;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.data.impl.JmixEntityFetchGroup;
 import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
@@ -45,7 +44,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     @Autowired
     protected EntityStates entityStates;
 
-    public void copySystemState(JmixEntity src, JmixEntity dst) {
+    public void copySystemState(Entity src, Entity dst) {
         super.copySystemState(src, dst);
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
@@ -55,7 +54,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
 
     }
 
-    public void mergeSystemState(JmixEntity src, JmixEntity dst) {
+    public void mergeSystemState(Entity src, Entity dst) {
         super.copySystemState(src, dst);
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
@@ -95,7 +94,7 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
         }
     }
 
-    protected FetchGroup suggestFetchGroup(JmixEntity entity) {
+    protected FetchGroup suggestFetchGroup(Entity entity) {
         Set<String> attributes = metadata.getClass(entity.getClass()).getProperties().stream()
                 .filter(metaProperty ->
                         !metaProperty.getRange().isClass() || entityStates.isLoaded(entity, metaProperty.getName()))

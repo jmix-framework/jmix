@@ -249,11 +249,11 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
                     for (Object item : new ArrayList(((Collection) value))) {
-                        if (item instanceof JmixEntity) {
+                        if (item instanceof Entity) {
                             collectFetchPlans(item, propertyFetchPlan, collectedFetchPlans);
                         }
                     }
-                } else if (value instanceof JmixEntity) {
+                } else if (value instanceof Entity) {
                     collectFetchPlans(value, propertyFetchPlan, collectedFetchPlans);
                 }
             }

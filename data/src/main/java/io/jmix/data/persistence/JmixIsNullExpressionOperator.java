@@ -16,7 +16,7 @@
 
 package io.jmix.data.persistence;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import org.eclipse.persistence.expressions.ExpressionOperator;
 import org.eclipse.persistence.internal.expressions.ExpressionSQLPrinter;
@@ -50,7 +50,7 @@ public class JmixIsNullExpressionOperator extends ExpressionOperator {
         if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression && !CubaUtil.isSoftDeletion()) {
             QueryKeyExpression expression = (QueryKeyExpression) items.get(0);
             //noinspection unchecked
-            Class<? extends JmixEntity> clazz = expression.getContainingDescriptor().getJavaClass();
+            Class<? extends Entity> clazz = expression.getContainingDescriptor().getJavaClass();
 
             String deletedDateFieldName = metadataTools.findDeletedDateProperty(clazz);
             if (Objects.equals(deletedDateFieldName, expression.getName())) {

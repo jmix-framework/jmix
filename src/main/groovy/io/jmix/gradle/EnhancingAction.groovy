@@ -90,7 +90,7 @@ class EnhancingAction implements Action<Task> {
     }
 
     protected boolean findEclipseLink(Set<ResolvedDependency> deps) {
-        for (def dep: deps) {
+        for (def dep : deps) {
             if (dep.moduleGroup == 'org.eclipse.persistence' && dep.moduleName == 'org.eclipse.persistence.jpa')
                 return true
             if (findEclipseLink(dep.children))
@@ -184,6 +184,10 @@ class EnhancingAction implements Action<Task> {
     }
 
     protected static List<EnhancingStep> enhancingSteps() {
-        Arrays.asList(new EntityEntryEnhancingStep(), new SettersEnhancingStep(), new TransientAnnotationEnhancingStep())
+        Arrays.asList(
+                new JmixEntityEnhancingStep(),
+                new EntityEntryEnhancingStep(),
+                new SettersEnhancingStep(),
+                new TransientAnnotationEnhancingStep())
     }
 }

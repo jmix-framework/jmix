@@ -46,12 +46,12 @@ public abstract class BaseEnhancingStep implements EnhancingStep {
                 return;
             }
 
-            if (!subtypeOfEntityInterface(ctClass, classPool)) {
-                logger.info(String.format("[%s] %s is not an Entity and should not be enhanced", getEnhancingType(), className));
+            if (isJpaConverter(ctClass)) {
                 return;
             }
 
-            if (isJpaConverter(ctClass)) {
+            if (!isEnhancingSupported(ctClass)) {
+                logger.info(String.format("[%s] %s is not an Entity and should not be enhanced", getEnhancingType(), className));
                 return;
             }
 
@@ -63,6 +63,11 @@ public abstract class BaseEnhancingStep implements EnhancingStep {
         } catch (NotFoundException | IOException | CannotCompileException e) {
             throw new EnhancingException(String.format("Error while enhancing class %s: %s", className, e.getMessage()), e);
         }
+    }
+
+    public boolean isEnhancingSupported(CtClass ctClass) {
+        return isJpaEntity(ctClass) || isJpaEmbeddable(ctClass) || isJpaMappedSuperclass(ctClass)
+                || isModelObject(ctClass);
     }
 
     @Override

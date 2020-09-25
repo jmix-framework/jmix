@@ -18,7 +18,7 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.EntitySystemValues;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -130,7 +130,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
             }
 
             if (value instanceof JmixEntity) {
-                return metadataTools.getInstanceName((JmixEntity) value);
+                return metadataTools.getInstanceName(value);
             }
 
             Datatype datatype = datatypeRegistry.get(value.getClass());
@@ -286,9 +286,9 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
     protected void openEntityEditor() {
         V value = getValue();
 
-        JmixEntity entity = null;
+        Object entity = null;
         if (value instanceof JmixEntity) {
-            entity = (JmixEntity) value;
+            entity = value;
         } else if (getValueSource() instanceof EntityValueSource) {
             entity = ((EntityValueSource) getValueSource()).getItem();
         }
@@ -304,7 +304,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
 
         ScreenContext context = ComponentsHelper.getScreenContext(this);
 
-        if (EntitySystemValues.isSoftDeleted(entity)) {
+        if (EntityValues.isSoftDeleted(entity)) {
             context.getNotifications().create(Notifications.NotificationType.HUMANIZED)
                     .withCaption(messages.getMessage("OpenAction.objectIsDeleted"))
                     .show();
@@ -344,7 +344,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
             Screen screenSource = null;
             if (StringUtils.isNotEmpty(closeActionId)
                     && Window.COMMIT_ACTION_ID.equals(closeActionId)) {
-                JmixEntity item = null;
+                Object item = null;
                 screenSource = event.getSource();
                 if (screenSource instanceof EditorScreen) {
                     item = ((EditorScreen) screenSource).getEditedEntity();
@@ -366,7 +366,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
                 new EditorCloseEvent<>(this, editorScreen, closeActionId));
     }
 
-    protected void afterCommitOpenedEntity(JmixEntity item) {
+    protected void afterCommitOpenedEntity(Object item) {
         MetaProperty metaProperty = getMetaPropertyForEditedValue();
         if (metaProperty != null && metaProperty.getRange().isClass()) {
             if (getValueSource() != null) {

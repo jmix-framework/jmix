@@ -58,7 +58,7 @@ public class RelatedEntitiesBuilder {
 
     protected FrameOwner origin;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
-    protected Collection<? extends JmixEntity> selectedEntities;
+    protected Collection<?> selectedEntities;
 
     protected String filterCaption;
 
@@ -161,7 +161,7 @@ public class RelatedEntitiesBuilder {
      * @return selected entities set by {@link #withSelectedEntities(Collection)}
      */
     @Nullable
-    public Collection<? extends JmixEntity> getSelectedEntities() {
+    public Collection<?> getSelectedEntities() {
         return selectedEntities;
     }
 
@@ -282,7 +282,7 @@ public class RelatedEntitiesBuilder {
      * @param selectedEntities selected entities
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withSelectedEntities(Collection<? extends JmixEntity> selectedEntities) {
+    public RelatedEntitiesBuilder withSelectedEntities(Collection<?> selectedEntities) {
         this.selectedEntities = selectedEntities;
         return this;
     }

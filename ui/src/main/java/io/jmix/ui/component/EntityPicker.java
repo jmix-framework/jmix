@@ -27,11 +27,11 @@ import javax.annotation.Nullable;
  *
  * @see EntityComboBox
  */
-public interface EntityPicker<V extends JmixEntity> extends ValuePicker<V>, LookupComponent<V> {
+public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
 
     String NAME = "entityPicker";
 
-    static <T extends JmixEntity> TypeToken<EntityPicker<T>> of(Class<T> valueClass) {
+    static <T> TypeToken<EntityPicker<T>> of(Class<T> valueClass) {
         return new TypeToken<EntityPicker<T>>() {};
     }
 

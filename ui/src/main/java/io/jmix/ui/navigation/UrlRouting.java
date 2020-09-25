@@ -141,7 +141,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(JmixEntity entity) {
+        default String getEditorRoute(Object entity) {
             return getEditorRoute(entity, Collections.emptyMap());
         }
 
@@ -155,7 +155,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(JmixEntity entity, String screenId) {
+        default String getEditorRoute(Object entity, String screenId) {
             return getEditorRoute(entity, screenId, Collections.emptyMap());
         }
 
@@ -167,7 +167,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        default String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass) {
+        default String getEditorRoute(Object entity, Class<? extends Screen> screenClass) {
             return getEditorRoute(entity, screenClass, Collections.emptyMap());
         }
 
@@ -201,7 +201,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(JmixEntity entity, Map<String, String> urlParams);
+        String getEditorRoute(Object entity, Map<String, String> urlParams);
 
         /**
          * Generates route for editor with the given {@code screenId} and {@code entity} and {@code urlParams}.
@@ -214,7 +214,7 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(JmixEntity entity, String screenId, Map<String, String> urlParams);
+        String getEditorRoute(Object entity, String screenId, Map<String, String> urlParams);
 
         /**
          * Generates route for editor with the given {@code screenClass} and {@code entity} and {@code urlParams}.
@@ -225,6 +225,6 @@ public interface UrlRouting {
          *
          * @return generated route
          */
-        String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams);
+        String getEditorRoute(Object entity, Class<? extends Screen> screenClass, Map<String, String> urlParams);
     }
 }

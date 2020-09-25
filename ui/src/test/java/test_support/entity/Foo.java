@@ -16,7 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @Entity(name = "test_Foo")
 @Table(name = "TEST_FOO")
-public class Foo implements JmixEntity {
+public class Foo {
 
     private static final long serialVersionUID = -700103428544298828L;
 

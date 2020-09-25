@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  *
  * @see TablePresentations
  */
-public interface TablePresentation extends JmixEntity {
+public interface TablePresentation {
 
     @Nullable
     String getName();

@@ -574,7 +574,7 @@ public class WindowConfig {
         return getMetaClassScreenId(metaClass, Window.EDITOR_WINDOW_SUFFIX);
     }
 
-    public WindowInfo getEditorScreen(JmixEntity entity) {
+    public WindowInfo getEditorScreen(Object entity) {
         MetaClass metaClass = metadata.getClass(entity);
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         WindowInfo windowInfo = primaryEditors.get(originalMetaClass.getJavaClass());
@@ -593,7 +593,7 @@ public class WindowConfig {
      * @return id of lookup screen
      * @throws NoSuchScreenException if the screen with specified ID is not registered
      */
-    public WindowInfo getLookupScreen(Class<? extends JmixEntity> entityClass) {
+    public WindowInfo getLookupScreen(Class<?> entityClass) {
         MetaClass metaClass = metadata.getSession().findClass(entityClass);
 
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 
 public class IndexKey {
@@ -29,7 +28,7 @@ public class IndexKey {
     /**
      * Creates IndexKey by entity instance or its id, if the id is not null.
      */
-    public static IndexKey ofEntity(JmixEntity entity) {
+    public static IndexKey ofEntity(Object entity) {
         IndexKey indexKey = new IndexKey();
         indexKey.key = EntityValues.getId(entity) != null ? EntityValues.getId(entity) : entity;
         return indexKey;

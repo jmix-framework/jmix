@@ -20,7 +20,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.DataGridItems;
@@ -44,13 +43,13 @@ import static io.jmix.ui.component.MouseEventDetails.MouseButton;
  *
  * @param <E> row item type
  */
-public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasButtonsPanel, Component.HasCaption,
+public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Component.HasCaption,
         Component.HasIcon, HasContextHelp, HasHtmlCaption, HasHtmlDescription, LookupComponent<E>,
         Component.Focusable, HasSubParts, HasHtmlSanitizer, HasTablePagination {
 
     String NAME = "dataGrid";
 
-    static <T extends JmixEntity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
+    static <T> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<DataGrid<T>>() {
         };
     }
@@ -435,7 +434,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Sets whether or not the item editor UI is enabled for this DataGrid.
      * When the editor is enabled, the user can open it by double-clicking
      * a row or hitting enter when a row is focused. The editor can also be opened
-     * programmatically using the {@link #edit(JmixEntity)} method.
+     * programmatically using the {@link #edit(E)} method.
      *
      * @param isEnabled {@code true} to enable the feature, {@code false} otherwise
      * @see #getEditedItem()
@@ -557,7 +556,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * The root class from which all DataGrid editor event state objects shall be derived.
      */
-    abstract class AbstractDataGridEditorEvent<E extends JmixEntity> extends AbstractDataGridEvent {
+    abstract class AbstractDataGridEditorEvent<E> extends AbstractDataGridEvent {
         protected E item;
         protected Map<String, Field> fields;
 
@@ -603,7 +602,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Provides access to the components that were used in the editor,
      * giving the possibility to use their values programmatically.
      */
-    class EditorPreCommitEvent<E extends JmixEntity> extends AbstractDataGridEditorEvent<E> {
+    class EditorPreCommitEvent<E> extends AbstractDataGridEditorEvent<E> {
         /**
          * Constructor for a DataGrid editor pre commit event.
          *
@@ -627,7 +626,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Provides access to the components that were used in the editor,
      * giving the possibility to use their values programmatically.
      */
-    class EditorPostCommitEvent<E extends JmixEntity> extends AbstractDataGridEditorEvent<E> {
+    class EditorPostCommitEvent<E> extends AbstractDataGridEditorEvent<E> {
         /**
          * Constructor for a DataGrid editor post commit event.
          *
@@ -651,7 +650,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Provides access to the components that were used in the editor,
      * giving the possibility to use their values programmatically.
      */
-    class EditorCloseEvent<E extends JmixEntity> extends AbstractDataGridEditorEvent<E> {
+    class EditorCloseEvent<E> extends AbstractDataGridEditorEvent<E> {
         /**
          * Constructor for a DataGrid editor close event.
          *
@@ -690,7 +689,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * });
      * }</pre>
      */
-    class EditorOpenEvent<E extends JmixEntity> extends AbstractDataGridEditorEvent<E> {
+    class EditorOpenEvent<E> extends AbstractDataGridEditorEvent<E> {
         /**
          * @param component the DataGrid from which this event originates
          * @param item      the editing item
@@ -752,7 +751,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Scrolls to a certain item, using {@link ScrollDestination#ANY}.
      *
      * @param item item to scroll to
-     * @see #scrollTo(JmixEntity, ScrollDestination)
+     * @see #scrollTo(E, ScrollDestination)
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -763,7 +762,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      *
      * @param item        item to scroll to
      * @param destination value specifying desired position of scrolled-to row
-     * @see #scrollTo(JmixEntity)
+     * @see #scrollTo(E)
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -772,8 +771,8 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * Scrolls to the first data item.
      *
-     * @see #scrollTo(JmixEntity)
-     * @see #scrollTo(JmixEntity, ScrollDestination)
+     * @see #scrollTo(E)
+     * @see #scrollTo(E, ScrollDestination)
      * @see #scrollToEnd()
      */
     void scrollToStart();
@@ -781,8 +780,8 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * Scrolls to the last data item.
      *
-     * @see #scrollTo(JmixEntity)
-     * @see #scrollTo(JmixEntity, ScrollDestination)
+     * @see #scrollTo(E)
+     * @see #scrollTo(E, ScrollDestination)
      * @see #scrollToStart()
      */
     void scrollToEnd();
@@ -949,7 +948,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * Event provided by a column generator
      */
-    class ColumnGeneratorEvent<E extends JmixEntity> extends AbstractDataGridEvent {
+    class ColumnGeneratorEvent<E> extends AbstractDataGridEvent {
         protected E item;
         protected String columnId;
         protected InstanceContainer<E> container;
@@ -1004,7 +1003,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @param <E> DataGrid data type
      */
     @FunctionalInterface
-    interface DetailsGenerator<E extends JmixEntity> {
+    interface DetailsGenerator<E> {
 
         /**
          * Returns the component which will be used as details for the given row.
@@ -1139,7 +1138,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * Click event fired by a {@link HasRendererClickListener}
      */
-    class RendererClickEvent<T extends JmixEntity> extends DataGridClickEvent {
+    class RendererClickEvent<T> extends DataGridClickEvent {
         protected T item;
         protected String columnId;
 
@@ -1178,7 +1177,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Renderer has click listener.
      */
     @FunctionalInterface
-    interface HasRendererClickListener<T extends JmixEntity> {
+    interface HasRendererClickListener<T> {
         /**
          * Sets new renderer click listener.
          *
@@ -1198,7 +1197,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * A renderer for presenting simple plain-text string values as a link with call back handler.
      */
-    interface ClickableTextRenderer<T extends JmixEntity>
+    interface ClickableTextRenderer<T>
             extends Renderer, HasNullRepresentation, HasRendererClickListener<T> {
 
         String NAME = "ui_ClickableTextRenderer";
@@ -1317,7 +1316,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * corresponding property is used as the caption. Click listeners can be added
      * to the renderer, invoked when any of the rendered buttons is clicked.
      */
-    interface ButtonRenderer<T extends JmixEntity>
+    interface ButtonRenderer<T>
             extends Renderer, HasNullRepresentation, HasRendererClickListener<T> {
 
         String NAME = "ui_ButtonRenderer";
@@ -1327,7 +1326,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * A renderer for presenting images. The value of the corresponding property
      * is used as the image location. Location can be a theme resource or URL.
      */
-    interface ImageRenderer<T extends JmixEntity> extends Renderer, HasRendererClickListener<T> {
+    interface ImageRenderer<T> extends Renderer, HasRendererClickListener<T> {
 
         String NAME = "ui_ImageRenderer";
     }
@@ -1351,7 +1350,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * A renderer that represents {@link JmixIcon}.
      */
-    interface IconRenderer<T extends JmixEntity> extends Renderer {
+    interface IconRenderer<T> extends Renderer {
 
         String NAME = "ui_IconRenderer";
     }
@@ -1518,7 +1517,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
      * selection took place.
      */
-    class SelectionEvent<E extends JmixEntity> extends AbstractDataGridEvent implements HasUserOriginated {
+    class SelectionEvent<E> extends AbstractDataGridEvent implements HasUserOriginated {
         protected final Set<E> selected;
         protected final Set<E> oldSelection;
         protected final boolean userOriginated;
@@ -2310,7 +2309,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
     /**
      * A column in the DataGrid.
      */
-    interface Column<E extends JmixEntity> extends Serializable {
+    interface Column<E> extends Serializable {
 
         /**
          * @return id of a column
@@ -2593,7 +2592,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * editable when the item editor is active.
          *
          * @return {@code true} if this column is editable, {@code false} otherwise
-         * @see DataGrid#edit(JmixEntity)
+         * @see DataGrid#edit(E)
          * @see #setEditable(boolean)
          */
         boolean isEditable();
@@ -2610,7 +2609,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
          * not) be edited even in principle should be set non-editable.
          *
          * @param editable {@code true} if this column should be editable, {@code false} otherwise
-         * @see DataGrid#edit(JmixEntity)
+         * @see DataGrid#edit(E)
          * @see DataGrid#isEditorActive()
          */
         void setEditable(boolean editable);
@@ -2732,7 +2731,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, HasBut
      * @see #setEmptyStateLinkMessage(String)
      * @see #setEmptyStateLinkClickHandler(Consumer)
      */
-    class EmptyStateClickEvent<E extends JmixEntity> extends EventObject {
+    class EmptyStateClickEvent<E> extends EventObject {
 
         public EmptyStateClickEvent(DataGrid<E> source) {
             super(source);

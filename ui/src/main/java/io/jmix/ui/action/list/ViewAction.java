@@ -16,18 +16,17 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
@@ -54,7 +53,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Opens an editor screen for an entity instance in read-only mode")
 @ActionType(ViewAction.ID)
-public class ViewAction<E extends JmixEntity> extends SecuredListAction implements Action.ScreenOpeningAction {
+public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpeningAction {
 
     public static final String ID = "view";
 
@@ -283,7 +282,7 @@ public class ViewAction<E extends JmixEntity> extends SecuredListAction implemen
             throw new IllegalStateException("Target is not bound to entity");
         }
 
-        JmixEntity editedEntity = target.getSingleSelected();
+        Object editedEntity = target.getSingleSelected();
         if (editedEntity == null) {
             throw new IllegalStateException("There is not selected item in ViewAction target");
         }
@@ -303,7 +302,7 @@ public class ViewAction<E extends JmixEntity> extends SecuredListAction implemen
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    Object committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });

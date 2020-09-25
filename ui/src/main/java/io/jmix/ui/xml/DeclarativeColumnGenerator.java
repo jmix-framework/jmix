@@ -48,7 +48,7 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
     }
 
     @Override
-    public Component generateCell(JmixEntity entity) {
+    public Component generateCell(Object entity) {
         if (unableToFindMethod) {
             return null;
         }

@@ -55,14 +55,14 @@ public abstract class AbstractComparator<T> implements Comparator<T> {
             MetaClass metaClass = metadata.getClass(o1.getClass());
             Collection<MetaProperty> namePatternProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
             if (namePatternProperties.isEmpty()) {
-                String instanceName1 = metadataTools.getInstanceName((JmixEntity) o1);
-                String instanceName2 = metadataTools.getInstanceName((JmixEntity) o2);
+                String instanceName1 = metadataTools.getInstanceName(o1);
+                String instanceName2 = metadataTools.getInstanceName(o2);
                 c = instanceName1.compareToIgnoreCase(instanceName2);
             } else {
                 c = 0;
                 for (MetaProperty property : namePatternProperties) {
-                    Object v1 = EntityValues.getValue(((JmixEntity) o1), property.getName());
-                    Object v2 = EntityValues.getValue(((JmixEntity) o2), property.getName());
+                    Object v1 = EntityValues.getValue(o1, property.getName());
+                    Object v2 = EntityValues.getValue(o2, property.getName());
                     c = compareAsc(v1, v2);
                     if (c != 0)
                         break;

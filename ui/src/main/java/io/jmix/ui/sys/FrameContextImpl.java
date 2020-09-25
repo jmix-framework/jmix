@@ -15,15 +15,11 @@
  */
 package io.jmix.ui.sys;
 
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.ListComponent;
-import io.jmix.ui.component.FrameContext;
+import io.jmix.ui.component.*;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.ScreenOptions;
@@ -97,8 +93,7 @@ public class FrameContextImpl implements FrameContext {
         }
 
         if (component == null || component instanceof Frame
-                || ((component instanceof Component.Wrapper) && ((Component.Wrapper) component).getComponent() instanceof Frame))
-        {
+                || ((component instanceof Component.Wrapper) && ((Component.Wrapper) component).getComponent() instanceof Frame)) {
             // if component not found or found a frame, try to search in the parent frame
             if (frame.getFrame() != null && frame.getFrame() != frame)
                 return frame.getFrame().getContext().getValue(property);
@@ -119,7 +114,7 @@ public class FrameContextImpl implements FrameContext {
 
             if (value instanceof JmixEntity) {
                 //noinspection RedundantTypeArguments
-                return EntityValues.getValueEx(((JmixEntity) value), properties);
+                return EntityValues.getValueEx(value, properties);
             } else if (value instanceof EnumClass) {
                 if (properties.length == 1 && "id".equals(properties[0])) {
                     //noinspection unchecked
@@ -141,7 +136,7 @@ public class FrameContextImpl implements FrameContext {
         } else if (component instanceof ListComponent) {
             ListComponent list = (ListComponent) component;
             //noinspection unchecked
-            return list.isMultiSelect() ? (T)list.getSelected() : (T)list.getSingleSelected();
+            return list.isMultiSelect() ? (T) list.getSelected() : (T) list.getSingleSelected();
         } else {
             return null;
         }

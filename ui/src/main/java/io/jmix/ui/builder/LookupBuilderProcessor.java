@@ -73,7 +73,7 @@ public class LookupBuilderProcessor {
     protected FetchPlans fetchPlans;
 
     @SuppressWarnings("unchecked")
-    public <E extends JmixEntity> Screen buildLookup(LookupBuilder<E> builder) {
+    public <E> Screen buildLookup(LookupBuilder<E> builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -148,7 +148,7 @@ public class LookupBuilderProcessor {
         return screen;
     }
 
-    protected <E extends JmixEntity> Screen createScreen(LookupBuilder<E> builder, Screens screens) {
+    protected <E> Screen createScreen(LookupBuilder<E> builder, Screens screens) {
         Screen screen;
 
         if (builder instanceof LookupClassBuilder) {
@@ -178,15 +178,15 @@ public class LookupBuilderProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends JmixEntity> void handleSelectionWithField(@SuppressWarnings("unused") LookupBuilder<E> builder,
-                                                                   HasValue<E> field, Collection<E> itemsFromLookup) {
+    protected <E> void handleSelectionWithField(@SuppressWarnings("unused") LookupBuilder<E> builder,
+                                                HasValue<E> field, Collection<E> itemsFromLookup) {
         if (itemsFromLookup.isEmpty()) {
             return;
         }
 
         Collection<E> selectedItems = transform(itemsFromLookup, builder);
 
-        JmixEntity newValue = selectedItems.iterator().next();
+        E newValue = selectedItems.iterator().next();
 
         FetchPlan fetchPlanForField = properties.isReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
                 getFetchPlanForField(field) :
@@ -214,9 +214,9 @@ public class LookupBuilderProcessor {
         }
     }
 
-    protected <E extends JmixEntity> void handleSelectionWithContainer(LookupBuilder<E> builder,
-                                                                       CollectionContainer<E> collectionDc,
-                                                                       Collection<E> itemsFromLookup) {
+    protected <E> void handleSelectionWithContainer(LookupBuilder<E> builder,
+                                                    CollectionContainer<E> collectionDc,
+                                                    Collection<E> itemsFromLookup) {
         if (itemsFromLookup.isEmpty()) {
             return;
         }
@@ -224,7 +224,7 @@ public class LookupBuilderProcessor {
         Collection<E> selectedItems = transform(itemsFromLookup, builder);
 
         boolean initializeMasterReference = false;
-        JmixEntity masterItem = null;
+        Object masterItem = null;
         MetaProperty inverseMetaProperty = null;
 
         // update holder reference if needed
@@ -273,7 +273,7 @@ public class LookupBuilderProcessor {
         collectionDc.getMutableItems().addAll(mergedItems);
     }
 
-    protected <E extends JmixEntity> Collection<E> transform(Collection<E> selectedItems, LookupBuilder<E> builder) {
+    protected <E> Collection<E> transform(Collection<E> selectedItems, LookupBuilder<E> builder) {
         if (builder.getTransformation() != null) {
             return builder.getTransformation().apply(selectedItems);
         }
@@ -289,7 +289,7 @@ public class LookupBuilderProcessor {
      * @return a view or null if the fetch plan cannot be evaluated
      */
     @Nullable
-    protected <E extends JmixEntity> FetchPlan getFetchPlanForField(HasValue<E> field) {
+    protected <E> FetchPlan getFetchPlanForField(HasValue<E> field) {
         if (field instanceof HasValueSource) {
             ValueSource valueSource = ((HasValueSource) field).getValueSource();
             if (valueSource instanceof ContainerValueSource) {
@@ -321,9 +321,9 @@ public class LookupBuilderProcessor {
      * @return a fetch plan or null if the fetch plan cannot be evaluated
      */
     @Nullable
-    protected <E extends JmixEntity> FetchPlan getFetchPlanForCollectionContainer(CollectionContainer<E> collectionDc,
-                                                                                  boolean initializeMasterReference,
-                                                                                  @Nullable MetaProperty inverseMetaProperty) {
+    protected <E> FetchPlan getFetchPlanForCollectionContainer(CollectionContainer<E> collectionDc,
+                                                               boolean initializeMasterReference,
+                                                               @Nullable MetaProperty inverseMetaProperty) {
         FetchPlan fetchPlan = null;
         if (collectionDc instanceof Nested) {
             InstanceContainer masterDc = ((Nested) collectionDc).getMaster();

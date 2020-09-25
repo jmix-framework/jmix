@@ -16,9 +16,8 @@
 
 package io.jmix.ui.component.data.meta;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.model.CollectionContainer;
 
-public interface ContainerDataUnit<E extends JmixEntity> extends EntityDataUnit {
+public interface ContainerDataUnit<E> extends EntityDataUnit {
     CollectionContainer<E> getContainer();
 }

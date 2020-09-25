@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.calendar.CalendarEvent;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 import io.jmix.ui.component.calendar.ContainerCalendarEventProvider;
@@ -322,7 +321,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         protected CalendarEvent<V> calendarEvent;
         protected V newStart;
         protected V newEnd;
-        protected JmixEntity entity;
+        protected Object entity;
 
         @Deprecated
         public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart) {
@@ -332,7 +331,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
             this.newStart = newStart;
         }
 
-        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart, @Nullable JmixEntity entity) {
+        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart, @Nullable Object entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -341,7 +340,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         }
 
         public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable V newStart,
-                                      @Nullable V newEnd, @Nullable JmixEntity entity) {
+                                      @Nullable V newEnd, @Nullable Object entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -389,7 +388,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
          * @return moved event entity or null if it is not entity based event
          */
         @Nullable
-        public JmixEntity getEntity() {
+        public Object getEntity() {
             return entity;
         }
     }
@@ -469,9 +468,9 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      */
     class CalendarEventClickEvent<V> extends EventObject {
         protected CalendarEvent<V> calendarEvent;
-        protected JmixEntity entity;
+        protected Object entity;
 
-        public CalendarEventClickEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable JmixEntity entity) {
+        public CalendarEventClickEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable Object entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -482,7 +481,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
          * @return event entity that was clicked or null if it is not entity based event
          */
         @Nullable
-        public JmixEntity getEntity() {
+        public Object getEntity() {
             return entity;
         }
 
@@ -543,10 +542,10 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         protected CalendarEvent<V> calendarEvent;
         protected V newStart;
         protected V newEnd;
-        protected JmixEntity entity;
+        protected Object entity;
 
         public CalendarEventResizeEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, @Nullable V newStart,
-                                        @Nullable V newEnd, @Nullable JmixEntity entity) {
+                                        @Nullable V newEnd, @Nullable Object entity) {
             super(calendar);
 
             this.calendarEvent = calendarEvent;
@@ -559,7 +558,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
          * @return event entity that was resized or null if it is not entity based event
          */
         @Nullable
-        public JmixEntity getEntity() {
+        public Object getEntity() {
             return entity;
         }
 

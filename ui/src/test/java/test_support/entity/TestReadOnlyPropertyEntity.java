@@ -16,7 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
@@ -30,7 +29,7 @@ import java.util.UUID;
 
 @Entity(name = "test_ReadOnlyPropertyEntity")
 @Table(name = "TEST_READONLY_PROPERTY_ENTITY")
-public class TestReadOnlyPropertyEntity implements JmixEntity {
+public class TestReadOnlyPropertyEntity {
 
     private static final long serialVersionUID = -8628312032421692288L;
 

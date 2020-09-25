@@ -17,16 +17,19 @@
 package io.jmix.ui.component.data.value;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.BeanValidation;
+import io.jmix.core.MessageTools;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.MetadataObject;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.HasValue;
@@ -36,14 +39,14 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.metadata.BeanDescriptor;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -218,7 +221,7 @@ public class ValueBinder {
             this.sourceValueChangeSubscription = source.addValueChangeListener(this::sourceValueChanged);
             this.sourceStateChangeSubscription = source.addStateChangeListener(this::valueSourceStateChanged);
             if (source instanceof EntityValueSource) {
-                EntityValueSource<JmixEntity, V> entityValueSource = (EntityValueSource<JmixEntity, V>) this.source;
+                EntityValueSource<Object, V> entityValueSource = (EntityValueSource<Object, V>) this.source;
                 this.sourceInstanceChangeSubscription = entityValueSource.addInstanceChangeListener(this::sourceInstanceChanged);
 
                 if (component instanceof Field) {
@@ -296,7 +299,7 @@ public class ValueBinder {
             }
         }
 
-        protected void sourceInstanceChanged(@SuppressWarnings("unused") EntityValueSource.InstanceChangeEvent<JmixEntity> event) {
+        protected void sourceInstanceChanged(@SuppressWarnings("unused") EntityValueSource.InstanceChangeEvent<Object> event) {
             if (source.getState() == BindingState.ACTIVE
                     && !isBuffered()) {
 
@@ -323,8 +326,8 @@ public class ValueBinder {
                     && valueSource.getItem() != null
                     && metaPropertyPath.getMetaProperty().getRange().isClass()) {
 
-                JmixEntity rootItem = valueSource.getItem();
-                JmixEntity targetItem = rootItem;
+                Object rootItem = valueSource.getItem();
+                Object targetItem = rootItem;
 
                 MetaProperty[] propertiesChain = metaPropertyPath.getMetaProperties();
                 if (propertiesChain.length > 1) {
@@ -336,12 +339,10 @@ public class ValueBinder {
                     targetItem = EntityValues.getValueEx(rootItem, basePropertyItem);
                 }
 
-                EntityEntry entityEntry = targetItem.__getEntityEntry();
-
                 String propertyName = metaPropertyPath.getMetaProperty().getName();
                 Object value = EntityValues.getValue(targetItem, propertyName);
 
-                Collection<String> erasedAttributes = entityEntry.getSecurityState().getErasedAttributes();
+                Collection<String> erasedAttributes = EntitySystemAccess.getSecurityState(targetItem).getErasedAttributes();
 
                 if (value == null && erasedAttributes.contains(propertyName)) {
                     field.setRequired(false);

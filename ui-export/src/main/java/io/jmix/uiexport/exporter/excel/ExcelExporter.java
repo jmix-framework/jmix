@@ -131,7 +131,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     }
 
     @Override
-    public void exportTable(Downloader downloader, Table<JmixEntity> table, ExportMode exportMode) {
+    public void exportTable(Downloader downloader, Table<Object> table, ExportMode exportMode) {
         if (downloader == null) {
             throw new IllegalArgumentException("Downloader is null");
         }
@@ -140,7 +140,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             throw new IllegalStateException("Table items should not be null");
         }
 
-        List<Table.Column<JmixEntity>> columns = table.getColumns();
+        List<Table.Column<Object>> columns = table.getColumns();
 
         createWorkbookWithSheet();
         createFonts();
@@ -155,7 +155,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
         CellStyle headerCellStyle = wb.createCellStyle();
         headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        for (Table.Column<JmixEntity> column : columns) {
+        for (Table.Column<Object> column : columns) {
             String caption = column.getCaption();
 
             int countOfReturnSymbols = StringUtils.countMatches(caption, "\n");
@@ -167,7 +167,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         row.setHeightInPoints(maxHeight);
 
         for (int c = 0; c < columns.size(); c++) {
-            Table.Column<JmixEntity> column = columns.get(c);
+            Table.Column<Object> column = columns.get(c);
             String caption = column.getCaption();
 
             Cell cell = row.createCell(c);
@@ -182,16 +182,16 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             cell.setCellStyle(headerCellStyle);
         }
 
-        TableItems<JmixEntity> tableItems = table.getItems();
+        TableItems<Object> tableItems = table.getItems();
 
         if (exportMode == ExportMode.SELECTED && table.getSelected().size() > 0) {
-            Set<JmixEntity> selected = table.getSelected();
+            Set<Object> selected = table.getSelected();
 
-            List<JmixEntity> ordered = tableItems.getItemIds().stream()
+            List<Object> ordered = tableItems.getItemIds().stream()
                     .map(tableItems::getItem)
                     .filter(selected::contains)
                     .collect(Collectors.toList());
-            for (JmixEntity item : ordered) {
+            for (Object item : ordered) {
                 if (checkIsRowNumberExceed(r)) {
                     break;
                 }
@@ -206,8 +206,8 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 }
             }
             if (table instanceof TreeTable) {
-                TreeTable<JmixEntity> treeTable = (TreeTable<JmixEntity>) table;
-                TreeTableItems<JmixEntity> treeTableSource = (TreeTableItems<JmixEntity>) treeTable.getItems();
+                TreeTable<Object> treeTable = (TreeTable<Object>) table;
+                TreeTableItems<Object> treeTableSource = (TreeTableItems<Object>) treeTable.getItems();
                 if (treeTableSource != null) {
                     for (Object itemId : treeTableSource.getRootItemIds()) {
                         if (checkIsRowNumberExceed(r)) {
@@ -218,15 +218,15 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                     }
                 }
             } else if (table instanceof GroupTable && tableItems instanceof GroupTableItems
-                    && ((GroupTableItems<JmixEntity>) tableItems).hasGroups()) {
-                GroupTableItems<JmixEntity> groupTableSource = (GroupTableItems<JmixEntity>) tableItems;
+                    && ((GroupTableItems<Object>) tableItems).hasGroups()) {
+                GroupTableItems<Object> groupTableSource = (GroupTableItems<Object>) tableItems;
 
                 for (Object item : groupTableSource.rootGroups()) {
                     if (checkIsRowNumberExceed(r)) {
                         break;
                     }
 
-                    r = createGroupRow((GroupTable<JmixEntity>) table, columns, ++r, (GroupInfo<?>) item, 0);
+                    r = createGroupRow((GroupTable<Object>) table, columns, ++r, (GroupInfo<?>) item, 0);
                 }
             } else {
                 if (tableItems != null) {
@@ -280,7 +280,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
     }
 
     @Override
-    public void exportDataGrid(Downloader downloader, DataGrid<JmixEntity> dataGrid, ExportMode exportMode) {
+    public void exportDataGrid(Downloader downloader, DataGrid<Object> dataGrid, ExportMode exportMode) {
         if (downloader == null) {
             throw new IllegalArgumentException("Downloader is null");
         }
@@ -289,7 +289,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         createFonts();
         createFormats();
 
-        List<DataGrid.Column<JmixEntity>> columns = dataGrid.getColumns();
+        List<DataGrid.Column<Object>> columns = dataGrid.getColumns();
 
         int r = 0;
 
@@ -327,16 +327,16 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
             cell.setCellStyle(headerCellStyle);
         }
 
-        EntityDataGridItems<JmixEntity> dataGridSource = (EntityDataGridItems) dataGrid.getItems();
+        EntityDataGridItems<Object> dataGridSource = (EntityDataGridItems) dataGrid.getItems();
         if (dataGridSource == null) {
             throw new IllegalStateException("DataGrid is not bound to data");
         }
         if (exportMode == ExportMode.SELECTED && dataGrid.getSelected().size() > 0) {
-            Set<JmixEntity> selected = dataGrid.getSelected();
-            List<JmixEntity> ordered = dataGridSource.getItems()
+            Set<Object> selected = dataGrid.getSelected();
+            List<Object> ordered = dataGridSource.getItems()
                     .filter(selected::contains)
                     .collect(Collectors.toList());
-            for (JmixEntity item : ordered) {
+            for (Object item : ordered) {
                 if (checkIsRowNumberExceed(r)) {
                     break;
                 }
@@ -346,9 +346,9 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         } else {
             if (dataGrid instanceof TreeDataGrid) {
                 TreeDataGrid treeDataGrid = (TreeDataGrid) dataGrid;
-                TreeDataGridItems<JmixEntity> treeDataGridItems = (TreeDataGridItems) dataGridSource;
-                List<JmixEntity> items = treeDataGridItems.getChildren(null).collect(Collectors.toList());
-                for (JmixEntity item : items) {
+                TreeDataGridItems<Object> treeDataGridItems = (TreeDataGridItems) dataGridSource;
+                List<Object> items = treeDataGridItems.getChildren(null).collect(Collectors.toList());
+                for (Object item : items) {
                     if (checkIsRowNumberExceed(r)) {
                         break;
                     }
@@ -356,7 +356,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                     r = createDataGridHierarchicalRow(treeDataGrid, treeDataGridItems, columns, 0, r, item);
                 }
             } else {
-                for (Object itemId : dataGridSource.getItems().map(entity->Id.of(entity).getValue()).collect(Collectors.toList())) {
+                for (Object itemId : dataGridSource.getItems().map(entity -> Id.of(entity).getValue()).collect(Collectors.toList())) {
                     if (checkIsRowNumberExceed(r)) {
                         break;
                     }
@@ -388,14 +388,14 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         }
     }
 
-    protected int createDataGridHierarchicalRow(TreeDataGrid dataGrid, TreeDataGridItems<JmixEntity> treeDataGridItems,
-                                                List<DataGrid.Column<JmixEntity>> columns, int startColumn,
-                                                int rowNumber, JmixEntity item) {
+    protected int createDataGridHierarchicalRow(TreeDataGrid dataGrid, TreeDataGridItems<Object> treeDataGridItems,
+                                                List<DataGrid.Column<Object>> columns, int startColumn,
+                                                int rowNumber, Object item) {
         if (!checkIsRowNumberExceed(rowNumber)) {
             createDataGridRow(dataGrid, columns, startColumn, ++rowNumber, Id.of(item).getValue());
 
-            Collection<JmixEntity> children = treeDataGridItems.getChildren(item).collect(Collectors.toList());
-            for (JmixEntity child: children) {
+            Collection<Object> children = treeDataGridItems.getChildren(item).collect(Collectors.toList());
+            for (Object child : children) {
                 rowNumber = createDataGridHierarchicalRow(dataGrid, treeDataGridItems, columns, startColumn, rowNumber, child);
             }
         }
@@ -403,17 +403,17 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return rowNumber;
     }
 
-    protected void createDataGridRow(DataGrid dataGrid, List<DataGrid.Column<JmixEntity>> columns,
+    protected void createDataGridRow(DataGrid dataGrid, List<DataGrid.Column<Object>> columns,
                                      int startColumn, int rowNumber, Object itemId) {
         if (startColumn >= columns.size()) {
             return;
         }
         Row row = sheet.createRow(rowNumber);
-        JmixEntity item = (JmixEntity) dataGrid.getItems().getItem(itemId);
+        Object item = dataGrid.getItems().getItem(itemId);
 
         int level = 0;
         if (dataGrid instanceof TreeDataGrid) {
-            level = ((TreeDataGrid<JmixEntity>) dataGrid).getLevel(item);
+            level = ((TreeDataGrid<Object>) dataGrid).getLevel(item);
         }
         for (int c = startColumn; c < columns.size(); c++) {
             Cell cell = row.createCell(c);
@@ -424,13 +424,13 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 propertyPath = column.getPropertyPath();
             }
 
-            Object cellValue = getColumnValue(dataGrid,columns.get(c),item);
+            Object cellValue = getColumnValue(dataGrid, columns.get(c), item);
 
             formatValueCell(cell, cellValue, propertyPath, c, rowNumber, level, null);
         }
     }
 
-    protected Function<JmixEntity, InstanceContainer<JmixEntity>> createInstanceContainerProvider(DataGrid dataGrid, JmixEntity item) {
+    protected Function<Object, InstanceContainer<Object>> createInstanceContainerProvider(DataGrid dataGrid, Object item) {
         return entity -> {
             throw new UnsupportedOperationException("ExcelExporter doesn't provide instance container");
         };
@@ -467,9 +467,9 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return messages.getMessage(id);
     }
 
-    protected int createHierarchicalRow(TreeTable<JmixEntity> table, List<Table.Column<JmixEntity>> columns,
+    protected int createHierarchicalRow(TreeTable<Object> table, List<Table.Column<Object>> columns,
                                         Boolean exportExpanded, int rowNumber, Object itemId) {
-        TreeTableItems<JmixEntity> treeTableSource = (TreeTableItems<JmixEntity>) table.getItems();
+        TreeTableItems<Object> treeTableSource = (TreeTableItems<Object>) table.getItems();
         createRow(table, columns, 0, ++rowNumber, itemId);
         if (BooleanUtils.isTrue(exportExpanded) && !table.isExpanded(itemId) && !treeTableSource.getChildren(itemId).isEmpty()) {
             return rowNumber;
@@ -488,13 +488,13 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return rowNumber;
     }
 
-    protected int createAggregatableRow(Table<JmixEntity> table, List<Table.Column<JmixEntity>> columns, int rowNumber,
+    protected int createAggregatableRow(Table<Object> table, List<Table.Column<Object>> columns, int rowNumber,
                                         int aggregatableRow) {
         Row row = sheet.createRow(rowNumber);
         Map<Object, Object> results = table.getAggregationResults();
 
         int i = 0;
-        for (Table.Column<JmixEntity> column : columns) {
+        for (Table.Column<Object> column : columns) {
             AggregationInfo agr = column.getAggregation();
             if (agr != null) {
                 Object key = agr.getPropertyPath() != null ? agr.getPropertyPath() : column.getId();
@@ -509,9 +509,9 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return rowNumber;
     }
 
-    protected int createGroupRow(GroupTable<JmixEntity> table, List<Table.Column<JmixEntity>> columns, int rowNumber,
+    protected int createGroupRow(GroupTable<Object> table, List<Table.Column<Object>> columns, int rowNumber,
                                  GroupInfo<?> groupInfo, int groupNumber) {
-        GroupTableItems<JmixEntity> groupTableSource = (GroupTableItems<JmixEntity>) table.getItems();
+        GroupTableItems<Object> groupTableSource = (GroupTableItems<Object>) table.getItems();
 
         Row row = sheet.createRow(rowNumber);
         Map<Object, Object> aggregations = table.isAggregatable()
@@ -520,7 +520,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
         int i = 0;
         int initialGroupNumber = groupNumber;
-        for (Table.Column<JmixEntity> column : columns) {
+        for (Table.Column<Object> column : columns) {
             if (i == initialGroupNumber) {
                 Cell cell = row.createCell(i);
                 Object val = groupInfo.getValue();
@@ -546,22 +546,22 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                     String captionProperty = xmlDescriptor.attributeValue("captionProperty");
 
                     Object itemId = children.iterator().next();
-                    JmixEntity item = groupTableSource.getItemNN(itemId);
+                    Object item = groupTableSource.getItemNN(itemId);
                     captionValue = EntityValues.getValue(item, captionProperty);
                 }
 
-                GroupTable.GroupCellValueFormatter<JmixEntity> groupCellValueFormatter =
+                GroupTable.GroupCellValueFormatter<Object> groupCellValueFormatter =
                         table.getGroupCellValueFormatter();
 
                 if (groupCellValueFormatter != null) {
                     // disable separate "(N)" printing
                     groupChildCount = null;
 
-                    List<JmixEntity> groupItems = groupTableSource.getGroupItemIds(groupInfo).stream()
+                    List<Object> groupItems = groupTableSource.getGroupItemIds(groupInfo).stream()
                             .map(groupTableSource::getItem)
                             .collect(Collectors.toList());
 
-                    GroupTable.GroupCellContext<JmixEntity> cellContext = new GroupTable.GroupCellContext<>(
+                    GroupTable.GroupCellContext<Object> cellContext = new GroupTable.GroupCellContext<>(
                             groupInfo, captionValue, metadataTools.format(captionValue), groupItems
                     );
 
@@ -607,7 +607,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
         return rowNumber;
     }
 
-    protected void createRow(Table<JmixEntity> table, List<Table.Column<JmixEntity>> columns, int startColumn, int rowNumber, Object itemId) {
+    protected void createRow(Table<Object> table, List<Table.Column<Object>> columns, int startColumn, int rowNumber, Object itemId) {
         if (startColumn >= columns.size()) {
             return;
         }
@@ -618,17 +618,17 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
 
         Row row = sheet.createRow(rowNumber);
         if (table.getItems() != null) {
-            JmixEntity instance = table.getItems().getItem(itemId);
+            Object instance = table.getItems().getItem(itemId);
 
             int level = 0;
             if (table instanceof TreeTable) {
-                level = ((TreeTable<JmixEntity>) table).getLevel(itemId);
+                level = ((TreeTable<Object>) table).getLevel(itemId);
             }
 
             for (int c = startColumn; c < columns.size(); c++) {
                 Cell cell = row.createCell(c);
 
-                Table.Column<JmixEntity> column = columns.get(c);
+                Table.Column<Object> column = columns.get(c);
                 MetaPropertyPath propertyPath = null;
                 if (column.getId() instanceof MetaPropertyPath) {
                     propertyPath = (MetaPropertyPath) column.getId();
@@ -753,7 +753,7 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
                 sizers[sizersIndex].notifyCellValue(message, stdFont);
             }
         } else if (cellValue instanceof JmixEntity) {
-            JmixEntity entityVal = (JmixEntity) cellValue;
+            Object entityVal = cellValue;
             String instanceName = metadataTools.getInstanceName(entityVal);
             String str = sizersIndex == 0 ? createSpaceString(level) + instanceName : instanceName;
             str = str + childCountValue;
@@ -833,9 +833,9 @@ public class ExcelExporter extends AbstractTableExporter<ExcelExporter> {
      * @param table table
      * @return true if at least one column is aggregatable
      */
-    protected boolean hasAggregatableColumn(Table<JmixEntity> table) {
-        List<Table.Column<JmixEntity>> columns = table.getColumns();
-        for (Table.Column<JmixEntity> column : columns) {
+    protected boolean hasAggregatableColumn(Table<Object> table) {
+        List<Table.Column<Object>> columns = table.getColumns();
+        for (Table.Column<Object> column : columns) {
             if (column.getAggregation() != null) {
                 return true;
             }

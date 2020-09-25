@@ -50,7 +50,7 @@ import java.util.function.Consumer;
  *
  * @param <T> type of entity
  */
-public abstract class StandardEditor<T extends JmixEntity> extends Screen
+public abstract class StandardEditor<T> extends Screen
         implements EditorScreen<T>, ReadOnlyAwareScreen {
 
     protected boolean commitActionPerformed = false;
@@ -224,7 +224,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
 
     protected void releaseLock() {
         if (isLocked()) {
-            JmixEntity entity = getEditedEntityContainer().getItemOrNull();
+            Object entity = getEditedEntityContainer().getItemOrNull();
             if (entity != null) {
                 Object entityId = Objects.requireNonNull(EntityValues.getId(entity));
                 getLockingSupport().unlock(entityId);
@@ -256,7 +256,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
         return result;
     }
 
-    protected boolean isEntityModifiedRecursive(JmixEntity entity, DataContext dataContext, HashSet<Object> visited) {
+    protected boolean isEntityModifiedRecursive(Object entity, DataContext dataContext, HashSet<Object> visited) {
         if (visited.contains(entity)) {
             return false;
         }
@@ -274,12 +274,12 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                if (isEntityModifiedRecursive((JmixEntity) item, dataContext, visited)) {
+                                if (isEntityModifiedRecursive(item, dataContext, visited)) {
                                     return true;
                                 }
                             }
                         } else {
-                            if (isEntityModifiedRecursive((JmixEntity) value, dataContext, visited)) {
+                            if (isEntityModifiedRecursive(value, dataContext, visited)) {
                                 return true;
                             }
                         }
@@ -590,7 +590,7 @@ public abstract class StandardEditor<T extends JmixEntity> extends Screen
      * @see #addInitEntityListener(Consumer)
      */
     @TriggerOnce
-    public static class InitEntityEvent<E extends JmixEntity> extends EventObject {
+    public static class InitEntityEvent<E> extends EventObject {
         protected final E entity;
 
         public InitEntityEvent(Screen source, E entity) {

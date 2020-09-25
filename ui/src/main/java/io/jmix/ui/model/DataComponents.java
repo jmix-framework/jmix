@@ -17,7 +17,6 @@
 package io.jmix.ui.model;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
@@ -79,7 +78,7 @@ public class DataComponents {
     /**
      * Creates {@code InstanceContainer}.
      */
-    public <E extends JmixEntity> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
+    public <E> InstanceContainer<E> createInstanceContainer(Class<E> entityClass) {
         InstanceContainerImpl<E> container = new InstanceContainerImpl<>(metadata.getClass(entityClass));
         autowire(container);
         return container;
@@ -89,9 +88,9 @@ public class DataComponents {
      * Creates {@code InstancePropertyContainer}.
      */
     @SuppressWarnings("unchecked")
-    public <E extends JmixEntity> InstancePropertyContainer<E> createInstanceContainer(Class<E> entityClass,
-                                                                                       InstanceContainer<? extends JmixEntity> masterContainer,
-                                                                                       String property) {
+    public <E> InstancePropertyContainer<E> createInstanceContainer(Class<E> entityClass,
+                                                                    InstanceContainer<?> masterContainer,
+                                                                    String property) {
         InstancePropertyContainerImpl<E> container = new InstancePropertyContainerImpl<>(
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
@@ -106,7 +105,7 @@ public class DataComponents {
         if (entityContext.isViewPermitted()
                 && attributeContext.isViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
-                JmixEntity item = masterContainer.getItemOrNull();
+                Object item = masterContainer.getItemOrNull();
                 container.setItem(item != null ? EntityValues.getValue(item, property) : null);
             });
 
@@ -123,7 +122,7 @@ public class DataComponents {
     /**
      * Creates {@code CollectionContainer}.
      */
-    public <E extends JmixEntity> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
+    public <E> CollectionContainer<E> createCollectionContainer(Class<E> entityClass) {
         CollectionContainerImpl<E> container = new CollectionContainerImpl<>(metadata.getClass(entityClass));
         autowire(container);
         container.setSorter(sorterFactory.createCollectionContainerSorter(container, null));
@@ -134,9 +133,9 @@ public class DataComponents {
      * Creates {@code CollectionPropertyContainer}.
      */
     @SuppressWarnings("unchecked")
-    public <E extends JmixEntity> CollectionPropertyContainer<E> createCollectionContainer(Class<E> entityClass,
-                                                                                           InstanceContainer<? extends JmixEntity> masterContainer,
-                                                                                           String property) {
+    public <E> CollectionPropertyContainer<E> createCollectionContainer(Class<E> entityClass,
+                                                                        InstanceContainer<?> masterContainer,
+                                                                        String property) {
         CollectionPropertyContainerImpl<E> container = new CollectionPropertyContainerImpl<>(
                 metadata.getClass(entityClass), masterContainer, property);
         autowire(container);
@@ -151,7 +150,7 @@ public class DataComponents {
         if (attributeContext.isViewPermitted()
                 && entityContext.isViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
-                JmixEntity item = masterContainer.getItemOrNull();
+                Object item = masterContainer.getItemOrNull();
                 container.setItems(item != null ? EntityValues.getValue(item, property) : null);
             });
 
@@ -199,7 +198,7 @@ public class DataComponents {
     /**
      * Creates {@code InstanceLoader}.
      */
-    public <E extends JmixEntity> InstanceLoader<E> createInstanceLoader() {
+    public <E> InstanceLoader<E> createInstanceLoader() {
         InstanceLoaderImpl<E> loader = new InstanceLoaderImpl<>();
         autowire(loader);
         return loader;
@@ -208,7 +207,7 @@ public class DataComponents {
     /**
      * Creates {@code CollectionLoader}.
      */
-    public <E extends JmixEntity> CollectionLoader<E> createCollectionLoader() {
+    public <E> CollectionLoader<E> createCollectionLoader() {
         CollectionLoaderImpl<E> loader = new CollectionLoaderImpl<>();
         autowire(loader);
         return loader;

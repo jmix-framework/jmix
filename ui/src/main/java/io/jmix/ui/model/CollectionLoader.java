@@ -17,7 +17,6 @@
 package io.jmix.ui.model;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.screen.InstallSubject;
@@ -35,7 +34,7 @@ import java.util.function.Function;
  * Loader of entity collections.
  */
 @InstallSubject("loadDelegate")
-public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLoader {
+public interface CollectionLoader<E> extends BaseCollectionLoader {
 
     /**
      * Returns the container which accepts loaded entities.
@@ -141,7 +140,8 @@ public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLo
      *
      * @see #addPreLoadListener(Consumer)
      */
-    class PreLoadEvent<T extends JmixEntity> extends EventObject {
+    class PreLoadEvent<T> extends EventObject {
+        private static final long serialVersionUID = -5715812944468667667L;
 
         private final LoadContext<T> loadContext;
         private boolean loadPrevented;
@@ -204,7 +204,8 @@ public interface CollectionLoader<E extends JmixEntity> extends BaseCollectionLo
      *
      * @see #addPostLoadListener(Consumer)
      */
-    class PostLoadEvent<T extends JmixEntity> extends EventObject {
+    class PostLoadEvent<T> extends EventObject {
+        private static final long serialVersionUID = 2209762487506284295L;
 
         private final List<T> loadedEntities;
 

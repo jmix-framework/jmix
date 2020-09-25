@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.inputdialog;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -40,7 +39,7 @@ public class InputParameter {
     protected Datatype datatype;
     protected Supplier<Field> field;
     protected Object defaultValue;
-    protected Class<? extends JmixEntity> entityClass;
+    protected Class<?> entityClass;
     protected Class<? extends EnumClass> enumClass;
 
     protected Class datatypeJavaClass;
@@ -188,7 +187,7 @@ public class InputParameter {
     /**
      * @return entity class
      */
-    public Class<? extends JmixEntity> getEntityClass() {
+    public Class<?> getEntityClass() {
         return entityClass;
     }
 
@@ -199,7 +198,7 @@ public class InputParameter {
      * @param entityClass entity class
      * @return input parameter
      */
-    public InputParameter withEntityClass(Class<? extends JmixEntity> entityClass) {
+    public InputParameter withEntityClass(Class<?> entityClass) {
         checkNullDatatype("Entity class cannot be used with a parameter that has already contained Datatype");
         checkNullDatatypeJavaClass("Entity class cannot be used with a parameter that has already contained data type");
         checkNullEnumClass("Entity class cannot be used with a parameter that has already contained enum class");
@@ -328,7 +327,7 @@ public class InputParameter {
      * @param entityClass entity class
      * @return input parameter
      */
-    public static InputParameter entityParameter(String id, Class<? extends JmixEntity> entityClass) {
+    public static InputParameter entityParameter(String id, Class<?> entityClass) {
         return new InputParameter(id).withEntityClass(entityClass);
     }
 

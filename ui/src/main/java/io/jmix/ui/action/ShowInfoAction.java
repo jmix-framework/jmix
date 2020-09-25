@@ -18,7 +18,6 @@ package io.jmix.ui.action;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowConfig;
@@ -63,14 +62,14 @@ public class ShowInfoAction extends BaseAction {
     public void actionPerform(Component component) {
         if (component instanceof ListComponent) {
 
-            JmixEntity selectedItem = ((ListComponent) component).getSingleSelected();
+            Object selectedItem = ((ListComponent) component).getSingleSelected();
             if (selectedItem != null) {
                 showInfo(selectedItem, metadata.getClass(selectedItem), (Component.BelongToFrame) component);
             }
         }
     }
 
-    public void showInfo(JmixEntity entity, MetaClass metaClass, Component.BelongToFrame component) {
+    public void showInfo(Object entity, MetaClass metaClass, Component.BelongToFrame component) {
         Screens screens = ComponentsHelper.getScreenContext(component)
                 .getScreens();
 

@@ -64,7 +64,7 @@ public abstract class BaseContainerSorter implements Sorter {
 
     protected abstract void setItemsToContainer(List list);
 
-    protected Comparator<? extends JmixEntity> createComparator(Sort sort, MetaClass metaClass) {
+    protected Comparator<?> createComparator(Sort sort, MetaClass metaClass) {
         if (sort.getOrders().size() > 1) {
             throw new UnsupportedOperationException("Sort by multiple properties is not supported");
         }

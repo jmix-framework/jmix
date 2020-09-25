@@ -17,7 +17,6 @@
 package io.jmix.ui.component.renderer;
 
 import com.vaadin.ui.renderers.TextRenderer;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -29,7 +28,7 @@ import org.springframework.stereotype.Component;
  */
 @Component(DataGrid.TextRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebTextRenderer extends WebAbstractDataGrid.AbstractRenderer<JmixEntity, Object> implements DataGrid.TextRenderer {
+public class WebTextRenderer extends WebAbstractDataGrid.AbstractRenderer<Object, Object> implements DataGrid.TextRenderer {
 
     public WebTextRenderer() {
         this("");

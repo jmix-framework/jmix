@@ -21,7 +21,6 @@ import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Events;
 import io.jmix.core.Metadata;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.*;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
@@ -40,8 +39,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -264,7 +261,7 @@ public class WebUrlRouting implements UrlRouting {
         Map<String, String> params = new LinkedHashMap<>();
 
         if (isEditor(screen)) {
-            JmixEntity editedEntity = ((EditorScreen) screen).getEditedEntity();
+            Object editedEntity = ((EditorScreen) screen).getEditedEntity();
             if (editedEntity != null) {
                 if (entityStates.isNew(editedEntity)) {
                     params.put("id", NEW_ENTITY_ID);
@@ -356,7 +353,7 @@ public class WebUrlRouting implements UrlRouting {
         String newNested = newState.getNestedRoute();
         boolean sameNestedRoute = Objects.equals(currentNested, newNested)
                 || (StringUtils.isNotEmpty(currentNested) && StringUtils.isNotEmpty(newNested)
-                        && (currentNested.startsWith(newNested) || newNested.startsWith(currentNested + '/')));
+                && (currentNested.startsWith(newNested) || newNested.startsWith(currentNested + '/')));
 
         boolean sameParams = Objects.equals(currentState.getParamsString(), newState.getParamsString());
 
@@ -488,7 +485,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(JmixEntity entity, Map<String, String> urlParams) {
+        public String getEditorRoute(Object entity, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotNullArgument(urlParams, "URL params cannot be null");
 
@@ -499,7 +496,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(JmixEntity entity, String screenId, Map<String, String> urlParams) {
+        public String getEditorRoute(Object entity, String screenId, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotEmptyString(screenId, "Editor screen id cannot be empty");
             checkNotNullArgument(urlParams, "URL params cannot be null");
@@ -510,7 +507,7 @@ public class WebUrlRouting implements UrlRouting {
         }
 
         @Override
-        public String getEditorRoute(JmixEntity entity, Class<? extends Screen> screenClass, Map<String, String> urlParams) {
+        public String getEditorRoute(Object entity, Class<? extends Screen> screenClass, Map<String, String> urlParams) {
             checkNotNullArgument(entity, "Entity cannot be null");
             checkNotNullArgument(screenClass, "Editor screen id cannot be empty");
             checkNotNullArgument(urlParams, "URL params cannot be null");
@@ -529,7 +526,7 @@ public class WebUrlRouting implements UrlRouting {
             return UiDescriptorUtils.getInferredScreenId(uiController, screenClass);
         }
 
-        protected Map<String, String> prepareEditorUrlParams(JmixEntity entity, Map<String, String> urlParams) {
+        protected Map<String, String> prepareEditorUrlParams(Object entity, Map<String, String> urlParams) {
             if (EntityValues.getId(entity) == null) {
                 throw new IllegalArgumentException("Unable to generate route for an entity without id: " + entity);
             }

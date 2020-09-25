@@ -19,7 +19,6 @@ package io.jmix.ui.component.data.options;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
@@ -38,7 +37,7 @@ import java.util.function.Consumer;
  *
  * @param <E> entity type
  */
-public class MapEntityOptions<E extends JmixEntity> extends MapOptions<E> implements Options<E>, EntityOptions<E> {
+public class MapEntityOptions<E> extends MapOptions<E> implements Options<E>, EntityOptions<E> {
 
     private static final Logger log = LoggerFactory.getLogger(MapEntityOptions.class);
 

@@ -16,8 +16,8 @@
 
 package io.jmix.ui.component.table;
 
-import io.jmix.core.*;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.screen.FrameOwner;
@@ -40,7 +40,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
     }
 
     @Override
-    public void onClick(JmixEntity rowItem, String columnId) {
+    public void onClick(Object rowItem, String columnId) {
         Table.Column column = table.getColumn(columnId);
         if (column.getXmlDescriptor() != null) {
             String invokeMethodName = column.getXmlDescriptor().attributeValue("linkInvoke");
@@ -122,7 +122,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         });*/
     }
 
-    protected void handleEditorCommit(JmixEntity editorItem, JmixEntity rowItem, String columnId) {
+    protected void handleEditorCommit(Object editorItem, Object rowItem, String columnId) {
         MetaPropertyPath mpp = metadata.getClass(rowItem).getPropertyPath(columnId);
         if (mpp == null) {
             throw new IllegalStateException(String.format("Unable to find metaproperty %s for class %s",
@@ -156,7 +156,7 @@ public class LinkCellClickListener implements Table.CellClickListener {
         }
     }
 
-    protected void callControllerInvoke(JmixEntity rowItem, String columnId, String invokeMethodName) {
+    protected void callControllerInvoke(Object rowItem, String columnId, String invokeMethodName) {
         FrameOwner controller = table.getFrame().getFrameOwner();
         /* todo legacy-ui
         if (controller instanceof LegacyFragmentAdapter) {

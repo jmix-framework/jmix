@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -30,7 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class WebEntityPicker<V extends JmixEntity> extends WebValuePicker<V> implements EntityPicker<V> {
+public class WebEntityPicker<V> extends WebValuePicker<V> implements EntityPicker<V> {
 
     protected Metadata metadata;
 

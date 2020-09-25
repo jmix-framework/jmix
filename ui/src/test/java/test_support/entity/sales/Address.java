@@ -16,7 +16,6 @@
 
 package test_support.entity.sales;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.Column;
@@ -24,7 +23,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 @ModelObject(name = "test_Address")
-public class Address implements JmixEntity {
+public class Address {
 
     private static final long serialVersionUID = 2116285103670251834L;
 

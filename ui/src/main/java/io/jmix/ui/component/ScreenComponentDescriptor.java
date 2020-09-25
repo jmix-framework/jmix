@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -29,7 +28,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sec$ScreenComponentDescriptor", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ScreenComponentDescriptor implements JmixEntity {
+public class ScreenComponentDescriptor {
 
     @Id
     @JmixGeneratedValue

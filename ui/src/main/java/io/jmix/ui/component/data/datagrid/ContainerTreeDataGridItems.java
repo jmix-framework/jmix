@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.TreeDataGridItems;
@@ -25,7 +24,7 @@ import io.jmix.ui.model.CollectionContainer;
 import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
-public class ContainerTreeDataGridItems<E extends JmixEntity>
+public class ContainerTreeDataGridItems<E>
         extends ContainerDataGridItems<E>
         implements TreeDataGridItems<E> {
 

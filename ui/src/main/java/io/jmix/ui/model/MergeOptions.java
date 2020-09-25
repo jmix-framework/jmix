@@ -16,10 +16,8 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.JmixEntity;
-
 /**
- * Defines options of the {@link DataContext#merge(JmixEntity, MergeOptions)} operation.
+ * Defines options of the {@link DataContext#merge(Object, MergeOptions)} operation.
  */
 public class MergeOptions {
 

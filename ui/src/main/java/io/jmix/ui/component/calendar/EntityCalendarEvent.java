@@ -16,9 +16,9 @@
 
 package io.jmix.ui.component.calendar;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.calendar.EntityCalendarEventProvider;
@@ -27,7 +27,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEvent<V> {
+public class EntityCalendarEvent<E, V> implements CalendarEvent<V> {
 
     protected final E entity;
     protected final EntityCalendarEventProvider provider;
@@ -39,7 +39,7 @@ public class EntityCalendarEvent<E extends JmixEntity, V> implements CalendarEve
         this.provider = provider;
 
         // todo bad practice, use datasource listener instead
-        this.entity.__getEntityEntry().addPropertyChangeListener(this::onPropertyChanged);
+        ((JmixEntity) this.entity).__getEntityEntry().addPropertyChangeListener(this::onPropertyChanged);
     }
 
     protected void onPropertyChanged(EntityPropertyChangeEvent event) {

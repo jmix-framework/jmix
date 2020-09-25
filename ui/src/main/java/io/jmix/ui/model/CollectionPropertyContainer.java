@@ -16,8 +16,6 @@
 
 package io.jmix.ui.model;
 
-import io.jmix.core.JmixEntity;
-
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.List;
 /**
  * Container that holds a collection of entity instances which is a collection property of another entity.
  */
-public interface CollectionPropertyContainer<E extends JmixEntity> extends CollectionContainer<E>, Nested {
+public interface CollectionPropertyContainer<E> extends CollectionContainer<E>, Nested {
 
     /**
      * Returns mutable list of entities. Changes in the list are reflected in the underlying property.

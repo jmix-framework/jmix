@@ -17,7 +17,6 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,7 +28,6 @@ import io.jmix.ui.action.ListAction;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
@@ -58,7 +56,7 @@ import java.util.function.Supplier;
  */
 @StudioAction(category = "List Actions", description = "Adds entities to the list using a lookup screen")
 @ActionType(AddAction.ID)
-public class AddAction<E extends JmixEntity> extends ListAction
+public class AddAction<E> extends ListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
 
     public static final String ID = "add";

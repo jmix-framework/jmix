@@ -25,6 +25,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Component.BelongToFrame;
 import io.jmix.ui.component.Field;
@@ -37,7 +38,6 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.factory.AbstractFieldFactory;
 import io.jmix.ui.component.impl.WebAbstractTable;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
@@ -46,7 +46,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFactory implements TableFieldFactory {
+public class WebTableFieldFactory<E> extends AbstractFieldFactory implements TableFieldFactory {
     protected WebAbstractTable<?, E> webTable;
     protected AccessManager accessManager;
     protected MetadataTools metadataTools;
@@ -69,7 +69,7 @@ public class WebTableFieldFactory<E extends JmixEntity> extends AbstractFieldFac
         Table.Column columnConf = webTable.getColumnsInternal().get(propertyId);
 
         TableDataContainer tableDataContainer = (TableDataContainer) container;
-        JmixEntity entity = (JmixEntity) tableDataContainer.getInternalItem(itemId);
+        Object entity = tableDataContainer.getInternalItem(itemId);
         InstanceContainer instanceContainer = webTable.getInstanceContainer((E) entity);
 
         io.jmix.ui.component.Component columnComponent =

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.CollectionContainer;
@@ -31,7 +30,7 @@ import javax.annotation.Nullable;
  * @see EditorScreenFacet
  * @see LookupScreenFacet
  */
-public interface EntityAwareScreenFacet<E extends JmixEntity> {
+public interface EntityAwareScreenFacet<E> {
 
     /**
      * Sets entity class.

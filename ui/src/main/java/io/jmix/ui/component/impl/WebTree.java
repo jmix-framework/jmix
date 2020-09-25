@@ -33,13 +33,13 @@ import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.StyleGenerator;
 import com.vaadin.ui.components.grid.MultiSelectionModel;
 import io.jmix.core.AccessManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
@@ -50,7 +50,6 @@ import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.component.data.meta.EntityTreeItems;
 import io.jmix.ui.component.tree.TreeDataProvider;
 import io.jmix.ui.component.tree.TreeSourceEventsDelegate;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.sys.ShortcutsDelegate;
 import io.jmix.ui.theme.ThemeConstants;
@@ -77,7 +76,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
 
-public class WebTree<E extends JmixEntity>
+public class WebTree<E>
         extends WebAbstractComponent<JmixTree<E>>
         implements Tree<E>, LookupSelectionChangeNotifier<E>, SecuredActionsHolder,
         HasInnerComponents, InitializingBean, TreeSourceEventsDelegate<E> {
@@ -596,20 +595,22 @@ public class WebTree<E extends JmixEntity>
         component.expandAll();
     }
 
-    @Override
-    public void collapse(Object itemId) {
-        collapse(getItems().getItem(itemId));
-    }
+//    TODO: remove deprecated API (subbotin, gorelov)
+//    @Override
+//    public void collapse(Object itemId) {
+//        collapse(getItems().getItem(itemId));
+//    }
 
     @Override
     public void collapse(E item) {
         component.collapseItemWithChildren(item);
     }
 
-    @Override
-    public void expand(Object itemId) {
-        expand(getItems().getItem(itemId));
-    }
+//    TODO: remove deprecated API (subbotin, gorelov)
+//    @Override
+//    public void expand(Object itemId) {
+//        expand(getItems().getItem(itemId));
+//    }
 
     @Override
     public void expand(E item) {

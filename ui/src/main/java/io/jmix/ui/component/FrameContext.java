@@ -51,7 +51,7 @@ public interface FrameContext {
      *                 or {@link ListComponent}, retrieve its value.
      *                 <br>If the value is null, return it.
      *                 <br>If there is nothing left in the path after the component name, return the value.
-     *                 <br>Else if the value is {@link JmixEntity}, drill down to it and return the value
+     *                 <br>Else if the value is entity, drill down to it and return the value
      *                 of the property by remaining property path.
      *                 <br>If the value is an {@link EnumClass} and remaining
      *                 property path is "id", return EnumClass.getId() value.

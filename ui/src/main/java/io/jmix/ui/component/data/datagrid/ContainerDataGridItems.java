@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Sort;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class ContainerDataGridItems<E extends JmixEntity>
+public class ContainerDataGridItems<E>
         implements EntityDataGridItems<E>, DataGridItems.Sortable<E>, ContainerDataUnit<E> {
 
     private static final Logger log = LoggerFactory.getLogger(ContainerDataGridItems.class);

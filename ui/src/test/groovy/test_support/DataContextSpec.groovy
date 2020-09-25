@@ -21,7 +21,7 @@ import io.jmix.core.EntityStates
 import io.jmix.core.JmixEntity
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.entity.EntitySystemValues
+import io.jmix.core.entity.EntitySystemAccess
 import io.jmix.core.impl.StandardSerialization
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
@@ -74,7 +74,7 @@ class DataContextSpec extends Specification {
         entityStates.makeDetached(entity)
     }
 
-    void makeDetached(JmixEntity... entities) {
+    void makeDetached(Object... entities) {
         entities.each { makeDetached(it) }
     }
 
@@ -96,12 +96,12 @@ class DataContextSpec extends Specification {
     def <T extends Serializable> T makeSaved(T entity) {
 
         T e = reserialize(entity)
-        entityStates.makeDetached((JmixEntity) e)
+        entityStates.makeDetached(e)
 
-        if (EntitySystemValues.isVersionSupported((JmixEntity) e)) {
-            def version = (Integer) EntitySystemValues.getVersion((JmixEntity) e) ?: 0;
+        if (EntitySystemAccess.isVersionSupported(e)) {
+            def version = (Integer) EntitySystemAccess.getVersion(e) ?: 0;
             version++
-            EntitySystemValues.setVersion((JmixEntity) e, version)
+            EntitySystemAccess.setVersion(e, version)
         }
 
         if (e instanceof JmixEntity && e.__getEntityEntry() instanceof EntityEntryAuditable) {

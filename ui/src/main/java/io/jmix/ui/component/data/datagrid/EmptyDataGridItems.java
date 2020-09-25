@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.data.datagrid;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class EmptyDataGridItems<E extends JmixEntity>
+public class EmptyDataGridItems<E>
         implements EntityDataGridItems<E>, DataGridItems.Sortable<E>, EmptyDataUnit {
 
     protected MetaClass metaClass;

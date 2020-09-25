@@ -57,7 +57,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Creates an entity instance using its editor screen")
 @ActionType(CreateAction.ID)
-public class CreateAction<E extends JmixEntity> extends ListAction
+public class CreateAction<E> extends ListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
 
     public static final String ID = "create";
@@ -352,7 +352,7 @@ public class CreateAction<E extends JmixEntity> extends ListAction
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    Object committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });

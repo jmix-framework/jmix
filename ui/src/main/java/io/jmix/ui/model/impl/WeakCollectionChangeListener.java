@@ -17,13 +17,12 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.model.CollectionContainer;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
-public class WeakCollectionChangeListener<E extends JmixEntity>
+public class WeakCollectionChangeListener<E>
         implements Consumer<CollectionContainer.CollectionChangeEvent<E>> {
 
     private WeakReference<Consumer<CollectionContainer.CollectionChangeEvent<E>>> reference;

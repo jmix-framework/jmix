@@ -17,15 +17,13 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.entity.EntityPropertyChangeEvent;
-import io.jmix.core.entity.EntityPropertyChangeListener;
-import io.jmix.core.entity.HasInstanceMetaClass;
+import io.jmix.core.entity.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.HasLoader;
@@ -40,7 +38,7 @@ import java.util.function.Consumer;
 /**
  *
  */
-public class InstanceContainerImpl<E extends JmixEntity> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
+public class InstanceContainerImpl<E> implements InstanceContainer<E>, HasLoader, ItemPropertyChangeNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceContainerImpl.class);
 
@@ -126,15 +124,17 @@ public class InstanceContainerImpl<E extends JmixEntity> implements InstanceCont
         return events.subscribe(ItemChangeEvent.class, (Consumer) listener);
     }
 
-    protected void attachListener(JmixEntity entity) {
+    protected void attachListener(Object entity) {
         if (entity != null) {
-            entity.__getEntityEntry().addPropertyChangeListener(listener);
+            EntityPreconditions.checkEntityType(entity);
+            ((JmixEntity) entity).__getEntityEntry().addPropertyChangeListener(listener);
         }
     }
 
-    protected void detachListener(JmixEntity entity) {
+    protected void detachListener(Object entity) {
         if (entity != null) {
-            entity.__getEntityEntry().removePropertyChangeListener(listener);
+            EntityPreconditions.checkEntityType(entity);
+            ((JmixEntity) entity).__getEntityEntry().removePropertyChangeListener(listener);
         }
     }
 

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioFacet;
 import io.jmix.ui.meta.StudioProperties;
@@ -44,7 +43,7 @@ import java.util.function.Predicate;
                 @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
-public interface LookupScreenFacet<E extends JmixEntity, S extends Screen>
+public interface LookupScreenFacet<E, S extends Screen>
         extends ScreenFacet<S>, EntityAwareScreenFacet<E> {
 
     /**

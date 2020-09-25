@@ -48,6 +48,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
@@ -67,9 +69,10 @@ import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
 import io.jmix.ui.component.renderer.RendererWrapper;
-import io.jmix.ui.component.valueprovider.*;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
+import io.jmix.ui.component.valueprovider.EntityValueProvider;
+import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
+import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
+import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
 import io.jmix.ui.gui.data.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
@@ -105,7 +108,7 @@ import static io.jmix.ui.component.ComponentsHelper.findActionById;
 import static io.jmix.ui.component.Window.Lookup.LOOKUP_ENTER_PRESSED_ACTION_ID;
 import static io.jmix.ui.component.Window.Lookup.LOOKUP_ITEM_CLICK_ACTION_ID;
 
-public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, E extends JmixEntity>
+public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, E>
         extends WebAbstractComponent<C>
         implements DataGrid<E>, SecuredActionsHolder, LookupComponent.LookupSelectionChangeNotifier<E>,
         DataGridItemsEventsDelegate<E>, HasInnerComponents, InitializingBean {
@@ -1458,7 +1461,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         return new ContainerValueSourceProvider<>(instanceContainer);
     }
 
-    protected static class WebDataGridEditorFieldFactory<E extends JmixEntity> implements JmixGridEditorFieldFactory<E> {
+    protected static class WebDataGridEditorFieldFactory<E> implements JmixGridEditorFieldFactory<E> {
 
         protected WebAbstractDataGrid<?, E> dataGrid;
         protected DataGridEditorFieldFactory fieldFactory;
@@ -3068,7 +3071,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         return null;
     }
 
-    public static abstract class AbstractRenderer<T extends JmixEntity, V> implements RendererWrapper<V> {
+    public static abstract class AbstractRenderer<T, V> implements RendererWrapper<V> {
         protected com.vaadin.ui.renderers.Renderer<V> renderer;
         protected WebAbstractDataGrid<?, T> dataGrid;
         protected String nullRepresentation;
@@ -3133,7 +3136,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
     }
 
-    protected static class ColumnImpl<E extends JmixEntity> implements Column<E>, HasXmlDescriptor {
+    protected static class ColumnImpl<E> implements Column<E>, HasXmlDescriptor {
 
         protected final String id;
         protected final MetaPropertyPath propertyPath;

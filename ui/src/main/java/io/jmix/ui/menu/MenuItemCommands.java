@@ -40,6 +40,8 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -176,7 +178,7 @@ public class MenuItemCommands {
         }
 
         //noinspection unchecked
-        JmixEntity entity = dataManager.load(ctx);
+        Object entity = dataManager.load(ctx);
         if (entity == null) {
             throw new RuntimeException(String.format("Unable to load entity of class '%s' with id '%s'",
                     entityClass, entityId));
@@ -271,20 +273,19 @@ public class MenuItemCommands {
             sample.stop(UiMonitoring.createMenuTimer(meterRegistry, item.getId()));
         }
 
-        protected JmixEntity getEntityToEdit(String screenId) {
-            JmixEntity entityItem;
+        protected Object getEntityToEdit(String screenId) {
+            Object entityItem;
 
             if (params.containsKey("item")) {
-                entityItem = (JmixEntity) params.get("item");
+                entityItem = params.get("item");
             } else {
                 Object entityToEdit = controllerProperties.stream()
                         .filter(prop -> "entityToEdit".equals(prop.getName()))
                         .findFirst()
                         .map(UiControllerProperty::getValue)
                         .orElse(null);
-
                 if (entityToEdit instanceof JmixEntity) {
-                    entityItem = (JmixEntity) entityToEdit;
+                    entityItem = entityToEdit;
                 } else {
                     String[] strings = screenId.split("[.]");
                     String metaClassName;

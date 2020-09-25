@@ -53,13 +53,13 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
             if (StringUtils.isNotEmpty(entityClassName)) {
                 DataManager dataManager = (DataManager) applicationContext.getBean(DataManager.NAME);
                 suggestionField.setSearchExecutor((searchString, searchParams) -> {
-                    Class<JmixEntity> entityClass = ReflectionHelper.getClass(entityClassName);
+                    Class<?> entityClass = ReflectionHelper.getClass(entityClassName);
                     if (escapeValue) {
                         searchString = QueryUtils.escapeForLike(searchString);
                     }
                     searchString = applySearchFormat(searchString, searchFormat);
 
-                    FluentLoader<JmixEntity> loader = dataManager.load(entityClass);
+                    FluentLoader<?> loader = dataManager.load(entityClass);
                     if (!Strings.isNullOrEmpty(fetchPlan)) {
                         FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
                         loader.fetchPlan(fetchPlanRepository.getFetchPlan(entityClass, fetchPlan));

@@ -17,7 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.builder.EditMode;
 import io.jmix.ui.builder.EditorBuilder;
@@ -33,7 +32,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unchecked")
-public class WebEditorScreenFacet<E extends JmixEntity, S extends Screen & EditorScreen<E>>
+public class WebEditorScreenFacet<E, S extends Screen & EditorScreen<E>>
         extends WebAbstractEntityAwareScreenFacet<E, S>
         implements EditorScreenFacet<E, S> {
 

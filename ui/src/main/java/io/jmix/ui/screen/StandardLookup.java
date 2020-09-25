@@ -18,7 +18,6 @@ package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -26,8 +25,8 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
@@ -40,7 +39,7 @@ import java.util.function.Predicate;
  *
  * @param <T> type of entity
  */
-public class StandardLookup<T extends JmixEntity> extends Screen implements LookupScreen<T>, MultiSelectLookupScreen {
+public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiSelectLookupScreen {
     protected Consumer<Collection<T>> selectHandler;
     protected Predicate<ValidationContext<T>> selectValidator;
 

@@ -17,7 +17,6 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.TreeItems;
 
@@ -28,36 +27,39 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtonsPanel,
-                                                Component.HasCaption, Component.HasIcon, LookupComponent<E>,
-                                                Component.Focusable, HasContextHelp, HasItemCaptionProvider<E>,
-                                                HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
+        Component.HasCaption, Component.HasIcon, LookupComponent<E>,
+        Component.Focusable, HasContextHelp, HasItemCaptionProvider<E>,
+        HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "tree";
 
-    static <T extends JmixEntity> TypeToken<Tree<T>> of(Class<T> itemClass) {
-        return new TypeToken<Tree<T>>() {};
+    static <T> TypeToken<Tree<T>> of(Class<T> itemClass) {
+        return new TypeToken<Tree<T>>() {
+        };
     }
 
     void expandTree();
 
-    /**
-     * @param itemId the id of item to expand
-     * @deprecated Use {@link #expand(JmixEntity)} instead
-     */
-    @Deprecated
-    void expand(Object itemId);
+//    TODO: remove deprecated API (subbotin, gorelov)
+//    /**
+//     * @param itemId the id of item to expand
+//     * @deprecated Use {@link #expand(JmixEntity)} instead
+//     */
+//    @Deprecated
+//    void expand(Object itemId);
 
     void expand(E item);
 
     void collapseTree();
 
-    /**
-     * @param itemId the id of item to collapse
-     * @deprecated Use {@link #collapse(JmixEntity)} instead
-     */
-    @Deprecated
-    void collapse(Object itemId);
+    //    TODO: remove deprecated API (subbotin, gorelov)
+//    /**
+//     * @param itemId the id of item to collapse
+//     * @deprecated Use {@link #collapse(JmixEntity)} instead
+//     */
+//    @Deprecated
+//    void collapse(Object itemId);
 
     void collapse(E item);
 
@@ -76,12 +78,14 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
     @Override
     @Nullable
     TreeItems<E> getItems();
+
     void setItems(@Nullable TreeItems<E> treeItems);
 
     /**
      * Assign action to be executed on double click inside a tree node.
      */
     void setItemClickAction(@Nullable Action action);
+
     @Nullable
     Action getItemClickAction();
 
@@ -110,7 +114,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * Allows to define different styles for tree items.
      */
     @Deprecated
-    interface StyleProvider<E extends JmixEntity> extends Function<E, String> {
+    interface StyleProvider<E> extends Function<E, String> {
         @Override
         default String apply(E entity) {
             return getStyleName(entity);
@@ -141,6 +145,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * Set action to be executed on Enter key press.
      */
     void setEnterPressAction(@Nullable Action action);
+
     /**
      * @return Enter key press action.
      */
@@ -189,7 +194,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * descriptions for items.
      *
      * @param provider the description generator to use or {@code null} to remove a
-     *                  previously set provider if any
+     *                 previously set provider if any
      */
     void setDescriptionProvider(@Nullable Function<? super E, String> provider);
 
@@ -197,7 +202,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * Sets the description generator that is used for generating HTML tooltip
      * descriptions for items.
      *
-     * @param provider   the description generator to use or {@code null} to remove a
+     * @param provider    the description generator to use or {@code null} to remove a
      *                    previously set provider if any
      * @param contentMode the content mode for row tooltips
      */
@@ -217,7 +222,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * @param <E> Tree data type
      */
     @FunctionalInterface
-    interface DetailsGenerator<E extends JmixEntity> {
+    interface DetailsGenerator<E> {
 
         /**
          * Returns the component which will be used as details for the given item.
@@ -318,7 +323,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      *
      * @param <E> item type
      */
-    class ExpandEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
+    class ExpandEvent<E> extends EventObject implements HasUserOriginated {
 
         protected final E expandedItem;
         protected final boolean userOriginated;
@@ -360,7 +365,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      *
      * @param <E> item type
      */
-    class CollapseEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
+    class CollapseEvent<E> extends EventObject implements HasUserOriginated {
 
         protected final E collapsedItem;
         protected final boolean userOriginated;
@@ -401,7 +406,7 @@ public interface Tree<E extends JmixEntity> extends ListComponent<E>, HasButtons
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
      * selection took place.
      */
-    class SelectionEvent<E extends JmixEntity> extends EventObject implements HasUserOriginated {
+    class SelectionEvent<E> extends EventObject implements HasUserOriginated {
         protected final Set<E> selected;
         protected final Set<E> oldSelection;
         protected final boolean userOriginated;

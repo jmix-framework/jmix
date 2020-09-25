@@ -16,17 +16,16 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
@@ -49,7 +48,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Excludes entities from the list. The excluded entities are not deleted.")
 @ActionType(ExcludeAction.ID)
-public class ExcludeAction<E extends JmixEntity> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
+public class ExcludeAction<E> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ID = "exclude";
 

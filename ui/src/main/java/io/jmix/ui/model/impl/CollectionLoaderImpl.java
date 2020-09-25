@@ -32,7 +32,7 @@ import java.util.function.Function;
 /**
  *
  */
-public class CollectionLoaderImpl<E extends JmixEntity> implements CollectionLoader<E> {
+public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Autowired
     protected DataManager dataManager;

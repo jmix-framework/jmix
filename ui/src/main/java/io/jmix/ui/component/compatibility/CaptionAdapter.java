@@ -41,12 +41,11 @@ public class CaptionAdapter implements Formatter<Object> {
     }
 
     @Override
-    public String apply(Object o) {
-        if (!(o instanceof JmixEntity)) {
+    public String apply(Object entity) {
+        if (!(entity instanceof JmixEntity)) {
             return "";
         }
 
-        JmixEntity entity = (JmixEntity) o;
         if (captionProperty != null) {
 
             if (metadata.getClass(entity).getPropertyPath(captionProperty) == null) {

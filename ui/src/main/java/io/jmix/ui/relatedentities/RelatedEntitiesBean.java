@@ -17,7 +17,6 @@
 package io.jmix.ui.relatedentities;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -96,7 +95,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
             return metaClass;
         }
 
-        Class<? extends JmixEntity> entityClass = builder.getEntityClass();
+        Class<?> entityClass = builder.getEntityClass();
         if (entityClass != null) {
             return metadata.getClass(entityClass);
         }

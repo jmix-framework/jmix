@@ -34,7 +34,7 @@ public interface EditedEntityTransformer {
      * @param container data container where the entity will be added
      * @return transformed instance
      */
-    <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container);
+    <E> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container);
 
     /**
      * Transforms the entity to be added to the given UI field.
@@ -43,5 +43,5 @@ public interface EditedEntityTransformer {
      * @param field UI field where the entity will be displayed
      * @return transformed instance
      */
-    <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field);
+    <E> E transformForField(E editedEntity, HasValue<E> field);
 }

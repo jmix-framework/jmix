@@ -17,7 +17,6 @@
 package io.jmix.ui.builder;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
@@ -66,7 +65,7 @@ public class EditorBuilderProcessor {
     protected List<EditedEntityTransformer> editedEntityTransformers;
 
     @SuppressWarnings("unchecked")
-    public  <E extends JmixEntity, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
+    public  <E, S extends Screen> S buildEditor(EditorBuilder<E> builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -189,7 +188,7 @@ public class EditorBuilderProcessor {
         return (S) screen;
     }
 
-    protected <E extends JmixEntity> E merge(E entity, FrameOwner screen, @Nullable DataContext parentDataContext) {
+    protected <E> E merge(E entity, FrameOwner screen, @Nullable DataContext parentDataContext) {
         if (parentDataContext == null) {
             DataContext thisDataContext = UiControllerUtils.getScreenData(screen).getDataContext();
             if (thisDataContext != null) {
@@ -199,14 +198,14 @@ public class EditorBuilderProcessor {
         return entity;
     }
 
-    protected  <E extends JmixEntity> E transform(E entity, EditorBuilder<E> builder) {
+    protected  <E> E transform(E entity, EditorBuilder<E> builder) {
         if (builder.getTransformation() != null) {
             return builder.getTransformation().apply(entity);
         }
         return entity;
     }
 
-    protected  <E extends JmixEntity> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
+    protected  <E> E transformForCollectionContainer(E entity, CollectionContainer<E> container) {
         E result = entity;
         for (EditedEntityTransformer transformer : editedEntityTransformers) {
             result = transformer.transformForCollectionContainer(result, container);
@@ -214,7 +213,7 @@ public class EditorBuilderProcessor {
         return result;
     }
 
-    protected <E extends JmixEntity> E transformForField(E entity, HasValue<E> field) {
+    protected <E> E transformForField(E entity, HasValue<E> field) {
         E result = entity;
         for (EditedEntityTransformer transformer : editedEntityTransformers) {
             result = transformer.transformForField(result, field);
@@ -222,7 +221,7 @@ public class EditorBuilderProcessor {
         return result;
     }
 
-    protected <E extends JmixEntity> E getCommittedEntity(EditorScreen<E> editorScreen, @Nullable DataContext parentDataContext) {
+    protected <E> E getCommittedEntity(EditorScreen<E> editorScreen, @Nullable DataContext parentDataContext) {
         E editedEntity = editorScreen.getEditedEntity();
         if (parentDataContext != null) {
             E trackedEntity = parentDataContext.find(editedEntity);
@@ -234,7 +233,7 @@ public class EditorBuilderProcessor {
     }
 
     @Nullable
-    protected <E extends JmixEntity> E initEntity(EditorBuilder<E> builder, @Nullable CollectionContainer<E> container) {
+    protected <E> E initEntity(EditorBuilder<E> builder, @Nullable CollectionContainer<E> container) {
         E entity;
 
         boolean oneToOneComposition = false;
@@ -259,7 +258,7 @@ public class EditorBuilderProcessor {
                 initializeNestedEntity(entity, (Nested) container);
             }
             if (oneToOneComposition) {
-                JmixEntity ownerEntity = entityValueSource.getItem();
+                Object ownerEntity = entityValueSource.getItem();
                 MetaProperty inverseProp = entityValueSource.getMetaPropertyPath().getMetaProperty().getInverse();
                 if (inverseProp != null) {
                     EntityValues.setValue(entity, inverseProp.getName(), ownerEntity);
@@ -281,7 +280,7 @@ public class EditorBuilderProcessor {
                 && metaPropertyPath.getMetaProperty().getType() == MetaProperty.Type.COMPOSITION;
     }
 
-    protected <E extends JmixEntity> Screen createScreen(EditorBuilder<E> builder, Screens screens, @Nullable E entity) {
+    protected <E> Screen createScreen(EditorBuilder<E> builder, Screens screens, @Nullable E entity) {
         Screen screen;
 
         if (builder instanceof EditorClassBuilder) {
@@ -331,7 +330,7 @@ public class EditorBuilderProcessor {
         return screen;
     }
 
-    protected <E extends JmixEntity> void initializeNestedEntity(E entity, Nested container) {
+    protected <E> void initializeNestedEntity(E entity, Nested container) {
         InstanceContainer masterContainer = container.getMaster();
         String property = container.getProperty();
 

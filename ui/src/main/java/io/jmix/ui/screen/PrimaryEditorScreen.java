@@ -37,5 +37,5 @@ public @interface PrimaryEditorScreen {
     /**
      * Entity class for which the screen is a default editor.
      */
-    Class<? extends JmixEntity> value();
+    Class<?> value();
 }

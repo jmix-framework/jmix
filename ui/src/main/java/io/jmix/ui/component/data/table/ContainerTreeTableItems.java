@@ -24,7 +24,7 @@ import io.jmix.ui.model.CollectionContainer;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class ContainerTreeTableItems<E extends JmixEntity>
+public class ContainerTreeTableItems<E>
         extends ContainerTableItems<E>
         implements TreeTableItems<E> {
 
@@ -53,8 +53,8 @@ public class ContainerTreeTableItems<E extends JmixEntity>
         if (hierarchyProperty != null) {
             Set<Object> result = new LinkedHashSet<>();
             for (Object id : ids) {
-                JmixEntity item = getItemNN(id);
-                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                Object item = getItemNN(id);
+                Object parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem == null || (showOrphans && container.getItemOrNull(EntityValues.getId(parentItem)) == null))
                     result.add(EntityValues.getId(item));
             }
@@ -68,7 +68,7 @@ public class ContainerTreeTableItems<E extends JmixEntity>
     @Override
     public Object getParent(Object itemId) {
         if (hierarchyProperty != null) {
-            JmixEntity item = getItem(itemId);
+            Object item = getItem(itemId);
             if (item == null)
                 return null;
             else {
@@ -82,7 +82,7 @@ public class ContainerTreeTableItems<E extends JmixEntity>
     @Override
     public Collection<?> getChildren(Object itemId) {
         if (hierarchyProperty != null) {
-            JmixEntity currentItem = getItem(itemId);
+            Object currentItem = getItem(itemId);
             if (currentItem == null)
                 return Collections.emptyList();
 
@@ -90,8 +90,8 @@ public class ContainerTreeTableItems<E extends JmixEntity>
 
             Collection ids = getItemIds();
             for (Object id : ids) {
-                JmixEntity item = getItemNN(id);
-                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                Object item = getItemNN(id);
+                Object parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     res.add(EntityValues.getId(item));
             }
@@ -103,11 +103,11 @@ public class ContainerTreeTableItems<E extends JmixEntity>
 
     @Override
     public boolean isRoot(Object itemId) {
-        JmixEntity item = getItem(itemId);
+        Object item = getItem(itemId);
         if (item == null) return false;
 
         if (hierarchyProperty != null) {
-            JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
+            Object parentItem = EntityValues.getValue(item, hierarchyProperty);
             return (parentItem == null || (showOrphans && container.getItemOrNull(EntityValues.getId(parentItem)) == null));
         } else {
             return true;
@@ -116,15 +116,15 @@ public class ContainerTreeTableItems<E extends JmixEntity>
 
     @Override
     public boolean hasChildren(Object itemId) {
-        JmixEntity currentItem = getItem(itemId);
+        Object currentItem = getItem(itemId);
         if (currentItem == null)
             return false;
 
         if (hierarchyProperty != null) {
             Collection ids = getItemIds();
             for (Object id : ids) {
-                JmixEntity item = getItemNN(id);
-                JmixEntity parentItem = EntityValues.getValue(item, hierarchyProperty);
+                Object item = getItemNN(id);
+                Object parentItem = EntityValues.getValue(item, hierarchyProperty);
                 if (parentItem != null && EntityValues.getId(parentItem).equals(itemId))
                     return true;
             }

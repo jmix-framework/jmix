@@ -16,13 +16,13 @@
 
 package io.jmix.ui.component.data.options;
 
-import io.jmix.core.common.event.Subscription;
 import io.jmix.core.JmixEntity;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.Options;
+import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.OptionsBinding;
 
 import java.util.stream.Stream;
@@ -80,7 +80,7 @@ public class OptionsBinder {
             }
         }
 
-        public <E extends JmixEntity> void bind() {
+        public <E> void bind() {
             if (source instanceof EntityOptions
                     && component instanceof HasValue) {
                 this.componentValueChangeSubscription =
@@ -99,7 +99,7 @@ public class OptionsBinder {
         }
 
         @SuppressWarnings("unchecked")
-        protected void optionsSourceValueChanged(EntityOptions.ValueChangeEvent<? extends JmixEntity> event) {
+        protected void optionsSourceValueChanged(EntityOptions.ValueChangeEvent<?> event) {
             ((HasValue) optionsTarget).setValue(event.getValue());
         }
 
@@ -109,7 +109,7 @@ public class OptionsBinder {
             if (event.getValue() instanceof JmixEntity
                     || event.getValue() == null) {
                 EntityOptions entityOptionsSource = (EntityOptions) this.source;
-                entityOptionsSource.setSelectedItem((JmixEntity) event.getValue());
+                entityOptionsSource.setSelectedItem(event.getValue());
             }
         }
 

@@ -62,7 +62,7 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
             return false;
         }
 
-        JmixEntity singleSelected = target.getSingleSelected();
+        Object singleSelected = target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

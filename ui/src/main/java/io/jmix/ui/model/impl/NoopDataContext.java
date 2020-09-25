@@ -16,7 +16,9 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.EntitySet;
+import io.jmix.core.Metadata;
+import io.jmix.core.SaveContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.sys.VoidSubscription;
 import io.jmix.ui.model.DataContext;
@@ -43,46 +45,46 @@ public class NoopDataContext implements DataContext {
 
     @Nullable
     @Override
-    public <T extends JmixEntity> T find(Class<T> entityClass, Object entityId) {
+    public <T> T find(Class<T> entityClass, Object entityId) {
         return null;
     }
 
     @Override
-    public <T extends JmixEntity> T find(T entity) {
+    public <T> T find(T entity) {
         return null;
     }
 
     @Override
-    public boolean contains(JmixEntity entity) {
+    public boolean contains(Object entity) {
         return false;
     }
 
     @Override
-    public <T extends JmixEntity> T merge(T entity, MergeOptions options) {
+    public <T> T merge(T entity, MergeOptions options) {
         return entity;
     }
 
     @Override
-    public <T extends JmixEntity> T merge(T entity) {
+    public <T> T merge(T entity) {
         return entity;
     }
 
     @Override
-    public EntitySet merge(Collection<? extends JmixEntity> entities, MergeOptions options) {
+    public EntitySet merge(Collection entities, MergeOptions options) {
         return EntitySet.of(entities);
     }
 
     @Override
-    public EntitySet merge(Collection<? extends JmixEntity> entities) {
+    public EntitySet merge(Collection entities) {
         return EntitySet.of(entities);
     }
 
     @Override
-    public void remove(JmixEntity entity) {
+    public void remove(Object entity) {
     }
 
     @Override
-    public void evict(JmixEntity entity) {
+    public void evict(Object entity) {
     }
 
     @Override
@@ -94,7 +96,7 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public <T extends JmixEntity> T create(Class<T> entityClass) {
+    public <T> T create(Class<T> entityClass) {
         return applicationContext.getBean(Metadata.class).create(entityClass);
     }
 
@@ -104,26 +106,26 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public boolean isModified(JmixEntity entity) {
+    public boolean isModified(Object entity) {
         return false;
     }
 
     @Override
-    public void setModified(JmixEntity entity, boolean modified) {
+    public void setModified(Object entity, boolean modified) {
     }
 
     @Override
-    public Set<JmixEntity> getModified() {
+    public Set getModified() {
         return Collections.emptySet();
     }
 
     @Override
-    public boolean isRemoved(JmixEntity entity) {
+    public boolean isRemoved(Object entity) {
         return false;
     }
 
     @Override
-    public Set<JmixEntity> getRemoved() {
+    public Set getRemoved() {
         return Collections.emptySet();
     }
 
@@ -157,11 +159,11 @@ public class NoopDataContext implements DataContext {
     }
 
     @Override
-    public Function<SaveContext, Set<JmixEntity>> getCommitDelegate() {
+    public Function<SaveContext, Set<Object>> getCommitDelegate() {
         return null;
     }
 
     @Override
-    public void setCommitDelegate(Function<SaveContext, Set<JmixEntity>> delegate) {
+    public void setCommitDelegate(Function<SaveContext, Set<Object>> delegate) {
     }
 }

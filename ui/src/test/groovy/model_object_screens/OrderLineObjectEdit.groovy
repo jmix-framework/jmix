@@ -16,7 +16,7 @@
 
 package model_object_screens
 
-import io.jmix.core.JmixEntity
+
 import io.jmix.core.SaveContext
 import io.jmix.ui.component.TextField
 import io.jmix.ui.screen.*
@@ -34,8 +34,8 @@ class OrderLineObjectEdit extends StandardEditor<OrderLineObject> {
     TextField<Double> quantityField
 
     @Install(target = Target.DATA_CONTEXT)
-    private Set<JmixEntity> commitDelegate(SaveContext saveContext) {
-        for (JmixEntity entity : saveContext.getEntitiesToSave()) {
+    private Set<Object> commitDelegate(SaveContext saveContext) {
+        for (Object entity : saveContext.getEntitiesToSave()) {
             TestModelObjectsStorage.getInstance().save(entity)
         }
         return new HashSet<>(saveContext.getEntitiesToSave())

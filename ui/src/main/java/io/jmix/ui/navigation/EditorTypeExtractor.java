@@ -35,7 +35,7 @@ public final class EditorTypeExtractor{
     }
 
     @Nullable
-    public static Class<? extends JmixEntity> extractEntityClass(WindowInfo windowInfo) {
+    public static Class<?> extractEntityClass(WindowInfo windowInfo) {
         return Optional.of(windowInfo)
                 .map(WindowInfo::getControllerClass)
                 .map(ResolvableType::forClass)
@@ -46,7 +46,7 @@ public final class EditorTypeExtractor{
                 .orElse(null);
     }
 
-    private static Optional<Class<? extends JmixEntity>> asEntityClass(Class<?> cls) {
+    private static Optional<Class<?>> asEntityClass(Class<?> cls) {
         if (!JmixEntity.class.isAssignableFrom(cls)) {
             return Optional.empty();
         }
@@ -57,7 +57,7 @@ public final class EditorTypeExtractor{
         if (Modifier.isInterface(modifiers)) {
             return Optional.empty();
         }
-        return Optional.of((Class<? extends JmixEntity>)cls);
+        return Optional.of(cls);
     }
 
 }

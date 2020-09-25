@@ -16,7 +16,7 @@
 
 package model_object_screens
 
-import io.jmix.core.JmixEntity
+
 import io.jmix.core.entity.EntityValues
 
 import javax.annotation.Nullable
@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 class TestModelObjectsStorage {
 
-    private Map<Object, JmixEntity> storage = new ConcurrentHashMap<>()
+    private Map<Object, Object> storage = new ConcurrentHashMap<>()
 
     private static TestModelObjectsStorage INSTANCE = new TestModelObjectsStorage()
 
@@ -36,12 +36,12 @@ class TestModelObjectsStorage {
         return storage.values().findAll { objClass.isAssignableFrom(it.class) }
     }
 
-    void save(JmixEntity entity) {
+    void save(Object entity) {
         storage.put(EntityValues.getId(entity), entity)
     }
 
     @Nullable
-    JmixEntity find(Object id, Class entityClass) {
+    Object find(Object id, Class entityClass) {
         return storage.get(id)
     }
 

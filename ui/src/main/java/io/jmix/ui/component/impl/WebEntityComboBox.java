@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Resource;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.EntityComboBox;
@@ -37,7 +36,6 @@ import io.jmix.ui.widget.JmixPickerField;
 import io.jmix.ui.widget.ShortcutListenerDelegate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -50,7 +48,7 @@ import java.util.stream.Stream;
 import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
 import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
 
-public class WebEntityComboBox<V extends JmixEntity> extends WebEntityPicker<V>
+public class WebEntityComboBox<V> extends WebEntityPicker<V>
         implements EntityComboBox<V>, SecuredActionsHolder {
 
     protected boolean nullOptionVisible = true;

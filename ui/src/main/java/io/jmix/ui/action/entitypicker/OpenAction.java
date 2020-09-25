@@ -17,10 +17,9 @@
 package io.jmix.ui.action.entitypicker;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.EntitySystemValues;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -59,12 +58,12 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
 @ActionType(OpenAction.ID)
-public class OpenAction<E extends JmixEntity> extends BaseAction
+public class OpenAction<E> extends BaseAction
         implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean {
 
     public static final String ID = "entity_open";
 
-    protected EntityPicker<JmixEntity> entityPicker;
+    protected EntityPicker entityPicker;
     protected Icons icons;
 
     protected Messages messages;
@@ -309,9 +308,9 @@ public class OpenAction<E extends JmixEntity> extends BaseAction
         if (!checkFieldValue())
             return;
 
-        JmixEntity entity = entityPicker.getValue();
+        Object entity = entityPicker.getValue();
 
-        if (entity != null && EntitySystemValues.isSoftDeleted(entity)) {
+        if (entity != null && EntityValues.isSoftDeleted(entity)) {
             ScreenContext screenContext = ComponentsHelper.getScreenContext(entityPicker);
             Notifications notifications = screenContext.getNotifications();
 
@@ -342,7 +341,7 @@ public class OpenAction<E extends JmixEntity> extends BaseAction
             editor.addAfterCloseListener(afterCloseEvent -> {
                 CloseAction closeAction = afterCloseEvent.getCloseAction();
                 if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
-                    JmixEntity committedEntity = ((EditorScreen) editor).getEditedEntity();
+                    Object committedEntity = ((EditorScreen) editor).getEditedEntity();
                     afterCommitHandler.accept((E) committedEntity);
                 }
             });
@@ -354,7 +353,6 @@ public class OpenAction<E extends JmixEntity> extends BaseAction
     }
 
     protected boolean checkFieldValue() {
-        JmixEntity entity = entityPicker.getValue();
-        return entity != null;
+        return entityPicker.getValue() != null;
     }
 }

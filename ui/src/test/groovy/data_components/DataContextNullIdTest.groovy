@@ -112,7 +112,7 @@ class DataContextNullIdTest extends DataContextSpec {
         dataContext.contains(merged)
 
         and:
-        Map<Object, JmixEntity> entityMap = dataContext.content.get(TestNullableIdEntity)
+        Map<Object, Object> entityMap = dataContext.content.get(TestNullableIdEntity)
         entityMap.size() == 1
     }
 

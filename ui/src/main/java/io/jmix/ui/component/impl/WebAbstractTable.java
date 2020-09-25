@@ -30,6 +30,7 @@ import com.vaadin.v7.ui.Table.ColumnHeaderMode;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -113,7 +114,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("deprecation")
-public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E extends JmixEntity>
+public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E>
         extends WebAbstractActionsHolderComponent<T>
         implements Table<E>, TableItemsEventsDelegate<E>, LookupSelectionChangeNotifier<E>,
         HasInnerComponents, InstallTargetHandler, InitializingBean, ColumnManager {
@@ -177,7 +178,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     @Nullable
     protected Map<Table.Column, String> requiredColumns; // lazily initialized Map
     @Nullable
-    protected Map<JmixEntity, Object> fieldDatasources; // lazily initialized WeakHashMap;
+    protected Map<Object, Object> fieldDatasources; // lazily initialized WeakHashMap;
 
     protected TableComposition componentComposition;
 
@@ -392,7 +393,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
             setSelectedIds(Collections.singletonList(EntityValues.getId(item)));
         } else {
             Set<Object> itemIds = new LinkedHashSet<>();
-            for (JmixEntity item : items) {
+            for (Object item : items) {
                 if (tableItems.getItem(EntityValues.getId(item)) == null) {
                     throw new IllegalArgumentException("Datasource doesn't contain item to select: " + item);
                 }
@@ -1692,7 +1693,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         }
 
         // detach instance containers from entities explicitly
-        for (Map.Entry<JmixEntity, Object> entry : fieldDatasources.entrySet()) {
+        for (Map.Entry<Object, Object> entry : fieldDatasources.entrySet()) {
             if (entry.getValue() instanceof InstanceContainer) {
                 InstanceContainer container = (InstanceContainer) entry.getValue();
                 container.setItem(null);
@@ -3021,7 +3022,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                         && column.getType() == Boolean.class
                         && column.getFormatter() == null) {
 
-                    JmixEntity item = dataBinding.getTableItems().getItem(itemId);
+                    Object item = dataBinding.getTableItems().getItem(itemId);
                     if (item != null) {
                         Boolean value = (Boolean) column.getValueProvider().apply(item);
                         if (BooleanUtils.isTrue(value)) {
@@ -3050,7 +3051,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 if (propertyPath.getRangeJavaClass() == Boolean.class
                         && column.getFormatter() == null
                         && dataBinding != null) {
-                    JmixEntity item = dataBinding.getTableItems().getItem(itemId);
+                    Object item = dataBinding.getTableItems().getItem(itemId);
                     if (item != null) {
                         Boolean value = EntityValues.getValueEx(item, propertyPath);
                         if (BooleanUtils.isTrue(value)) {
@@ -3187,9 +3188,10 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     @Nullable
-    protected Object getValueExIgnoreUnfetched(@Nullable JmixEntity instance, String[] properties) {
+    protected Object getValueExIgnoreUnfetched(@Nullable Object instance, String[] properties) {
+        EntityPreconditions.checkEntityType(instance);
         Object currentValue = null;
-        JmixEntity currentInstance = instance;
+        Object currentInstance = instance;
         for (String property : properties) {
             if (currentInstance == null) {
                 break;
@@ -3207,7 +3209,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
                 break;
             }
 
-            currentInstance = currentValue instanceof JmixEntity ? (JmixEntity) currentValue : null;
+            currentInstance = currentValue instanceof JmixEntity ? currentValue : null;
         }
         return currentValue;
     }
@@ -3280,7 +3282,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
         }
 
         @Override
-        public String getStyleName(JmixEntity entity, @Nullable String property) {
+        public String getStyleName(Object entity, @Nullable String property) {
             try {
                 return (String) method.invoke(frameOwner, entity, property);
             } catch (IllegalAccessException | InvocationTargetException e) {

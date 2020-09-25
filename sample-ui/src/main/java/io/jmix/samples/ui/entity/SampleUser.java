@@ -15,7 +15,6 @@
  */
 package io.jmix.samples.ui.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -38,7 +37,7 @@ import java.util.UUID;
 @Entity(name = "sample_User")
 @Table(name = "SAMPLE_USER")
 //@Listeners("jmix_UserEntityListener")
-public class SampleUser implements JmixEntity, BaseUser {
+public class SampleUser implements BaseUser {
 
     private static final long serialVersionUID = 5007187642916030394L;
 

@@ -74,7 +74,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
         } else {
             setOptionStyleProvider((item, selected) -> {
                 if (item instanceof JmixEntity) {
-                    return styleProvider.getStyleName((JmixEntity) item, EntityValues.getId(((JmixEntity) item)), selected);
+                    return styleProvider.getStyleName(item, EntityValues.getId((item)), selected);
                 } else {
                     return null;
                 }
@@ -114,6 +114,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      * @param leftColumnCaption
      */
     void setLeftColumnCaption(@Nullable String leftColumnCaption);
+
     /**
      * Return caption of the left column.
      *
@@ -128,6 +129,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      * @param rightColumnCaption
      */
     void setRightColumnCaption(@Nullable String rightColumnCaption);
+
     /**
      * Return caption of the right column.
      *
@@ -155,7 +157,7 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
     @Deprecated
     interface StyleProvider {
         @Deprecated
-        String getStyleName(JmixEntity item, Object property, boolean selected);
+        String getStyleName(Object item, Object property, boolean selected);
     }
 
     /**

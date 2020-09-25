@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.ListEntityOptions;
@@ -32,7 +31,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
+public interface TokenList<V> extends Field<Collection<V>>,
         Component.BelongToFrame, Component.HasCaption, Component.Editable, Component.Focusable,
         HasOptionCaptionProvider<V> {
 
@@ -88,7 +87,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
 
     /**
      * @return options list
-     *
      * @deprecated use {@link TokenList#getOptions()} instead
      */
     @SuppressWarnings("rawtypes")
@@ -165,7 +163,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * Sets lookup screen alias.
      *
      * @param lookupScreen screen alias
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
@@ -175,7 +172,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * Sets params that will be passed to lookup screen.
      *
      * @param params params
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
@@ -345,7 +341,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
 
     /**
      * @return handler that is invoked after lookup screen closing
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Nullable
@@ -356,7 +351,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * Sets handler that is invoked after lookup screen closing.
      *
      * @param handler handler
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated
@@ -364,7 +358,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
 
     /**
      * @return handler that is invoked when an item is selected in lookup screen
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Nullable
@@ -375,7 +368,6 @@ public interface TokenList<V extends JmixEntity> extends Field<Collection<V>>,
      * Sets handler that is invoked when an item is selected in lookup screen.
      *
      * @param handler handler
-     *
      * @deprecated use {@link TokenList#setLookupProvider(Supplier)} instead
      */
     @Deprecated

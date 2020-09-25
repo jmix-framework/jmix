@@ -16,18 +16,17 @@
 
 package io.jmix.ui.action.list;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
@@ -50,7 +49,7 @@ import java.util.function.Consumer;
  */
 @StudioAction(category = "List Actions", description = "Removes an entity instance from the list and from the database")
 @ActionType(RemoveAction.ID)
-public class RemoveAction<E extends JmixEntity> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
+public class RemoveAction<E> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly {
 
     public static final String ID = "remove";
 

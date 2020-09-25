@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
 
-public interface EntityOptions<E extends JmixEntity> extends Options<E>, EntityDataUnit {
+public interface EntityOptions<E> extends Options<E>, EntityDataUnit {
     /**
      * Set current item in the source.
      *

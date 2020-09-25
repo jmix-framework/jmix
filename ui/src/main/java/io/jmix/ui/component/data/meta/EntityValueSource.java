@@ -30,7 +30,7 @@ import java.util.function.Consumer;
  *
  * @param <V> type of value
  */
-public interface EntityValueSource<E extends JmixEntity, V> extends ValueSource<V>, EntityDataUnit {
+public interface EntityValueSource<E, V> extends ValueSource<V>, EntityDataUnit {
     /**
      * @return entity
      */
@@ -54,7 +54,7 @@ public interface EntityValueSource<E extends JmixEntity, V> extends ValueSource<
      *
      * @param <E> entity type
      */
-    class InstanceChangeEvent<E extends JmixEntity> extends EventObject {
+    class InstanceChangeEvent<E> extends EventObject {
         private final E prevItem;
         private final E item;
 

@@ -37,5 +37,5 @@ public @interface PrimaryLookupScreen {
     /**
      * Entity class for which the screen is a default lookup screen.
      */
-    Class<? extends JmixEntity> value();
+    Class<?> value();
 }

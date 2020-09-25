@@ -104,7 +104,7 @@ public class RefreshAction extends ListAction {
             DataContext dataContext = loader.getDataContext();
             if (dataContext != null) {
                 for (Object entity : container.getItems()) {
-                    dataContext.evict((JmixEntity) entity);
+                    dataContext.evict(entity);
                 }
             }
             loader.load();

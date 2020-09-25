@@ -19,7 +19,6 @@ package io.jmix.ui.component.renderer;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
@@ -33,7 +32,7 @@ import javax.annotation.Nullable;
  */
 @org.springframework.stereotype.Component(DataGrid.ComponentRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebComponentRenderer<T extends JmixEntity> extends WebAbstractDataGrid.AbstractRenderer<T, com.vaadin.ui.Component>
+public class WebComponentRenderer<T> extends WebAbstractDataGrid.AbstractRenderer<T, com.vaadin.ui.Component>
         implements DataGrid.ComponentRenderer {
 
     @Override

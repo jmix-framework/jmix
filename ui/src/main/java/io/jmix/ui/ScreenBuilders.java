@@ -16,16 +16,14 @@
 
 package io.jmix.ui;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.builder.*;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.FrameOwner;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
@@ -63,7 +61,7 @@ public class ScreenBuilders {
      * @param origin      invoking screen
      * @see #editor(ListComponent)
      */
-    public <E extends JmixEntity> EditorBuilder<E> editor(Class<E> entityClass, FrameOwner origin) {
+    public <E> EditorBuilder<E> editor(Class<E> entityClass, FrameOwner origin) {
         checkNotNullArgument(entityClass);
         checkNotNullArgument(origin);
 
@@ -91,7 +89,7 @@ public class ScreenBuilders {
      * @param listComponent {@link Table}, {@link DataGrid} or another component containing the list of entities
      * @see #editor(Class, FrameOwner)
      */
-    public <E extends JmixEntity> EditorBuilder<E> editor(ListComponent<E> listComponent) {
+    public <E> EditorBuilder<E> editor(ListComponent<E> listComponent) {
         checkNotNullArgument(listComponent);
         checkNotNullArgument(listComponent.getFrame());
 
@@ -131,7 +129,7 @@ public class ScreenBuilders {
      * @param field {@link EntityPicker}, {@link EntityComboBox} or another picker component
      * @see #editor(Class, FrameOwner)
      */
-    public <E extends JmixEntity> EditorBuilder<E> editor(EntityPicker<E> field) {
+    public <E> EditorBuilder<E> editor(EntityPicker<E> field) {
         checkNotNullArgument(field);
         checkNotNullArgument(field.getFrame());
 
@@ -177,7 +175,7 @@ public class ScreenBuilders {
      * @param origin      invoking screen
      * @param <E>         type of entity
      */
-    public <E extends JmixEntity> LookupBuilder<E> lookup(Class<E> entityClass, FrameOwner origin) {
+    public <E> LookupBuilder<E> lookup(Class<E> entityClass, FrameOwner origin) {
         checkNotNullArgument(entityClass);
         checkNotNullArgument(origin);
 
@@ -198,7 +196,7 @@ public class ScreenBuilders {
      * @param <E>           type of entity
      * @see #lookup(Class, FrameOwner)
      */
-    public <E extends JmixEntity> LookupBuilder<E> lookup(ListComponent<E> listComponent) {
+    public <E> LookupBuilder<E> lookup(ListComponent<E> listComponent) {
         checkNotNullArgument(listComponent);
         checkNotNullArgument(listComponent.getFrame());
 
@@ -230,7 +228,7 @@ public class ScreenBuilders {
      * @param <E>   type of entity
      * @see #lookup(Class, FrameOwner)
      */
-    public <E extends JmixEntity> LookupBuilder<E> lookup(EntityPicker<E> field) {
+    public <E> LookupBuilder<E> lookup(EntityPicker<E> field) {
         checkNotNullArgument(field);
         checkNotNullArgument(field.getFrame());
 

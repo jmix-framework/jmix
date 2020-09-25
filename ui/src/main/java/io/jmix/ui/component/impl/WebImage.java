@@ -106,7 +106,7 @@ public class WebImage<T> extends WebAbstractResourceView<JmixImage> implements I
 
         valueChangeSubscription = valueSource.addValueChangeListener(event -> updateComponent());
         if (valueSource instanceof EntityValueSource) {
-            instanceChangeSubscription = ((EntityValueSource<JmixEntity, T>) valueSource)
+            instanceChangeSubscription = ((EntityValueSource<Object, T>) valueSource)
                     .addInstanceChangeListener(event -> updateComponent());
         }
     }

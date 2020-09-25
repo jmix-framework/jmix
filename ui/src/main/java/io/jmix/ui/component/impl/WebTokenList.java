@@ -48,7 +48,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WebTokenList<V extends JmixEntity>
+public class WebTokenList<V>
         extends WebV8AbstractField<JmixTokenList<V>, Collection<V>, Collection<V>>
         implements TokenList<V>, InitializingBean {
 

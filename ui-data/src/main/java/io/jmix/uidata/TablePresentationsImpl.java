@@ -234,7 +234,7 @@ public class TablePresentationsImpl implements TablePresentations {
     public void commit() {
         if (!needToUpdate.isEmpty() || !needToRemove.isEmpty()) {
             SaveContext ctx = new SaveContext().saving(needToUpdate).removing(needToRemove);
-            Set<JmixEntity> commitResult = dataManager.save(ctx);
+            Set commitResult = dataManager.save(ctx);
             commited(commitResult);
 
             clearCommitList();
@@ -243,8 +243,8 @@ public class TablePresentationsImpl implements TablePresentations {
         }
     }
 
-    public void commited(Set<JmixEntity> entities) {
-        for (JmixEntity entity : entities) {
+    public void commited(Set entities) {
+        for (Object entity : entities) {
             if (entity.equals(def))
                 setDefault((TablePresentation) entity);
             else if (entity.equals(current))

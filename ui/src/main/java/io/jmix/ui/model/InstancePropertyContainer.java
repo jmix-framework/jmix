@@ -21,5 +21,5 @@ import io.jmix.core.JmixEntity;
 /**
  * Container that holds a single instance which is loaded as a property of another entity.
  */
-public interface InstancePropertyContainer<E extends JmixEntity> extends InstanceContainer<E>, Nested {
+public interface InstancePropertyContainer<E> extends InstanceContainer<E>, Nested {
 }

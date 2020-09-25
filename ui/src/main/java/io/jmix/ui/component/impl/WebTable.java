@@ -15,10 +15,9 @@
  */
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.widget.JmixTable;
 
-public class WebTable<E extends JmixEntity> extends WebAbstractTable<JmixTable, E>  {
+public class WebTable<E> extends WebAbstractTable<JmixTable, E> {
     public WebTable() {
         component = createComponent();
     }

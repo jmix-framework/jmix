@@ -20,6 +20,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -39,7 +40,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  *
  */
-public class CollectionContainerImpl<E extends JmixEntity>
+public class CollectionContainerImpl<E>
         extends InstanceContainerImpl<E> implements CollectionContainer<E> {
 
     private static final Logger log = LoggerFactory.getLogger(CollectionContainerImpl.class);
@@ -130,7 +131,7 @@ public class CollectionContainerImpl<E extends JmixEntity>
             if (!entityMetaClass.getJavaClass().isAssignableFrom(entity.getClass())) {
                 throw new IllegalArgumentException("Invalid entity class: " + entity.getClass());
             }
-            if (entity.__getEntityEntry().isEmbeddable()) {
+            if (EntitySystemAccess.isEmbeddable(entity)) {
                 indexKey = IndexKey.of(entityOrId);
             } else {
                 indexKey = IndexKey.ofEntity(entity);
@@ -207,7 +208,7 @@ public class CollectionContainerImpl<E extends JmixEntity>
     public void unmute(UnmuteEventsMode mode) {
         this.listenersEnabled = true;
 
-        if (mode ==  UnmuteEventsMode.FIRE_REFRESH_EVENT) {
+        if (mode == UnmuteEventsMode.FIRE_REFRESH_EVENT) {
             fireCollectionChanged(CollectionChangeType.REFRESH, Collections.emptyList());
         }
     }

@@ -16,7 +16,10 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.model.CollectionContainer;
@@ -35,7 +38,7 @@ public class FetchPlanAwareEntityTransformer implements EditedEntityTransformer 
     private DataManager dataManager;
 
     @Override
-    public <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
+    public <E> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
         FetchPlan fetchPlan = container.getFetchPlan();
         if (fetchPlan != null && !entityStates.isLoadedWithFetchPlan(editedEntity, fetchPlan)) {
             return dataManager.load(Id.of(editedEntity)).fetchPlan(fetchPlan).one();
@@ -45,7 +48,7 @@ public class FetchPlanAwareEntityTransformer implements EditedEntityTransformer 
     }
 
     @Override
-    public <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field) {
+    public <E> E transformForField(E editedEntity, HasValue<E> field) {
         return editedEntity;
     }
 }

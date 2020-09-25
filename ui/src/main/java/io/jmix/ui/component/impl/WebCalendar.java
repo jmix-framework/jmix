@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.v7.ui.components.calendar.CalendarComponentEvents;
 import io.jmix.core.DateTimeTransformations;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
@@ -36,10 +35,10 @@ import io.jmix.ui.component.data.calendar.EntityCalendarEventProvider;
 import io.jmix.ui.widget.JmixCalendar;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.time.DayOfWeek;
 import java.time.Month;
 import java.util.*;
@@ -367,7 +366,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         com.vaadin.v7.ui.components.calendar.event.CalendarEvent calendarEvent = event.getCalendarEvent();
         if (calendarEvent instanceof CalendarEventWrapper) {
             CalendarEvent<V> calendarEventWrapper = ((CalendarEventWrapper<V>) calendarEvent).getCalendarEvent();
-            JmixEntity entity = null;
+            Object entity = null;
             if (calendarEventWrapper instanceof EntityCalendarEvent) {
                 entity = ((EntityCalendarEvent) calendarEventWrapper).getEntity();
             }
@@ -401,7 +400,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         com.vaadin.v7.ui.components.calendar.event.CalendarEvent calendarEvent = event.getCalendarEvent();
         if (calendarEvent instanceof CalendarEventWrapper) {
             CalendarEvent<V> calendarEventWrapper = ((CalendarEventWrapper<V>) calendarEvent).getCalendarEvent();
-            JmixEntity entity = null;
+            Object entity = null;
             if (calendarEventWrapper instanceof EntityCalendarEvent) {
                 entity = ((EntityCalendarEvent) calendarEventWrapper).getEntity();
             }
@@ -436,7 +435,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         com.vaadin.v7.ui.components.calendar.event.CalendarEvent calendarEvent = event.getCalendarEvent();
         CalendarEvent<V> calendarEventWrapper = ((CalendarEventWrapper<V>) calendarEvent).getCalendarEvent();
 
-        JmixEntity entity = null;
+        Object entity = null;
         if (calendarEventWrapper instanceof EntityCalendarEvent) {
             entity = ((EntityCalendarEvent) calendarEventWrapper).getEntity();
         }

@@ -67,7 +67,7 @@ public class ItemTrackingAction extends SecuredListAction {
             return false;
         }
 
-        JmixEntity singleSelected = target.getSingleSelected();
+        Object singleSelected = target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

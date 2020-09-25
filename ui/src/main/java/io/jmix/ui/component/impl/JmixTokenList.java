@@ -22,7 +22,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomField;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.data.ValueSource;
@@ -33,7 +32,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class JmixTokenList<T extends JmixEntity> extends CustomField<Collection<T>> {
+public class JmixTokenList<T> extends CustomField<Collection<T>> {
 
     protected static final String TOKENLIST_STYLENAME = "c-tokenlist";
     protected static final String TOKENLIST_EDITOR_STYLENAME = "c-tokenlist-editor";
@@ -414,7 +413,7 @@ public class JmixTokenList<T extends JmixEntity> extends CustomField<Collection<
 
     protected void doClick(JmixTokenListLabel source) {
         if (owner.itemClickListener != null) {
-            JmixEntity item = componentItems.get(source);
+            Object item = componentItems.get(source);
             if (item != null) {
                 owner.itemClickListener.onClick(item);
             }

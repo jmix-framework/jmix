@@ -165,11 +165,11 @@ public class ScreenValidation {
      * @param item   item to validate
      * @return validation errors
      */
-    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") @Nullable FrameOwner origin, JmixEntity item) {
+    public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") @Nullable FrameOwner origin, Object item) {
         ValidationErrors errors = new ValidationErrors();
 
         Validator validator = beanValidation.getValidator();
-        Set<ConstraintViolation<JmixEntity>> violations = validator.validate(item, UiCrossFieldChecks.class);
+        Set<ConstraintViolation<Object>> violations = validator.validate(item, UiCrossFieldChecks.class);
 
         violations.stream()
                 .filter(violation -> {

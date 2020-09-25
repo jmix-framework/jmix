@@ -32,6 +32,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.omg.CORBA.Object;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -278,7 +279,7 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
     }
 
     protected Field createEntityPicker(MetaClass metaClass) {
-        EntityPicker<JmixEntity> entityPicker = uiComponents.create(EntityPicker.NAME);
+        EntityPicker<Object> entityPicker = uiComponents.create(EntityPicker.NAME);
         entityPicker.setMetaClass(metaClass);
 
         Actions actions = getApplicationContext().getBean(Actions.class);
@@ -292,14 +293,14 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
     }
 
     protected Field createEntityComboBox(MetaClass metaClass) {
-        EntityComboBox<JmixEntity> entityComboBox = uiComponents.create(EntityComboBox.NAME);
+        EntityComboBox<Object> entityComboBox = uiComponents.create(EntityComboBox.NAME);
 
-        Options<JmixEntity> options;
+        Options<Object> options;
 
         DataComponents dataComponents = getApplicationContext().getBean(DataComponents.class);
-        CollectionContainer<JmixEntity> container =
+        CollectionContainer<Object> container =
                 dataComponents.createCollectionContainer(metaClass.getJavaClass());
-        CollectionLoader<JmixEntity> loader = dataComponents.createCollectionLoader();
+        CollectionLoader<Object> loader = dataComponents.createCollectionLoader();
         loader.setQuery("select e from " + metaClass.getName() + " e");
         loader.setFetchPlan(FetchPlan.INSTANCE_NAME);
         loader.setContainer(container);
@@ -323,13 +324,13 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
     @SuppressWarnings("unchecked")
     protected void lookupActionPerformed(Action.ActionPerformedEvent actionPerformedEvent) {
         //noinspection unchecked
-        EntityPicker<JmixEntity> entityPicker = (EntityPicker<JmixEntity>) actionPerformedEvent.getComponent();
+        EntityPicker<Object> entityPicker = (EntityPicker<Object>) actionPerformedEvent.getComponent();
         ScreenBuilders screenBuilders = getApplicationContext().getBean(ScreenBuilders.class);
 
-        LookupBuilder<JmixEntity> builder = screenBuilders.lookup(entityPicker)
+        LookupBuilder<Object> builder = screenBuilders.lookup(entityPicker)
                 .withSelectHandler(items -> {
                     if (CollectionUtils.isNotEmpty(items)) {
-                        for (JmixEntity item : items) {
+                        for (Object item : items) {
                             if (item != null && !valueExists((V) item)) {
                                 this.addValueToLayout((V) item);
                             }

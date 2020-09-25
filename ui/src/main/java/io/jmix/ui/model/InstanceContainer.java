@@ -33,7 +33,7 @@ import java.util.function.Consumer;
  *
  * @see CollectionContainer
  */
-public interface InstanceContainer<E extends JmixEntity> {
+public interface InstanceContainer<E> {
 
     /**
      * Returns the contained entity instance.
@@ -112,7 +112,7 @@ public interface InstanceContainer<E extends JmixEntity> {
     /**
      * Event sent on changing a property value of the contained entity instance.
      */
-    class ItemPropertyChangeEvent<T extends JmixEntity> extends EventObject {
+    class ItemPropertyChangeEvent<T> extends EventObject {
         private final T item;
         private final String property;
         private final Object prevValue;
@@ -181,7 +181,7 @@ public interface InstanceContainer<E extends JmixEntity> {
     /**
      * Event sent when the entity instance selected in the container is replaced with another instance or null.
      */
-    class ItemChangeEvent<T extends JmixEntity> extends EventObject {
+    class ItemChangeEvent<T> extends EventObject {
 
         private final T prevItem;
         private final T item;

@@ -144,9 +144,9 @@ public class ExportAction extends ListAction implements ApplicationContextAware 
 
     protected void doExport(ExportMode exportMode) {
         if (getTarget() instanceof Table) {
-            tableExporter.exportTable(downloader, (Table<JmixEntity>) getTarget(), exportMode);
+            tableExporter.exportTable(downloader, (Table<Object>) getTarget(), exportMode);
         } else if (getTarget() instanceof DataGrid) {
-            tableExporter.exportDataGrid(downloader, (DataGrid<JmixEntity>) getTarget(), exportMode);
+            tableExporter.exportDataGrid(downloader, (DataGrid<Object>) getTarget(), exportMode);
         } else {
             throw new UnsupportedOperationException("Unsupported component for export");
         }

@@ -101,7 +101,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return messageTools.getEntityCaption(metaClass);
     }
 
-    protected String getFileName(Table<JmixEntity> table) {
+    protected String getFileName(Table<Object> table) {
         String fileName = this.fileName;
         if (fileName == null) {
             return getMetaClassName(((ContainerTableItems) table.getItems()).getEntityMetaClass());
@@ -109,7 +109,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return fileName;
     }
 
-    protected String getFileName(DataGrid<JmixEntity> dataGrid) {
+    protected String getFileName(DataGrid<Object> dataGrid) {
         String fileName = this.fileName;
         if (fileName == null) {
             return getMetaClassName(((EntityDataGridItems) dataGrid.getItems()).getEntityMetaClass());
@@ -117,7 +117,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return fileName;
     }
 
-    protected Object getColumnValue(Table table, Table.Column column, JmixEntity instance) {
+    protected Object getColumnValue(Table table, Table.Column column, Object instance) {
         Object cellValue = null;
 
         if (column.getId() instanceof MetaPropertyPath) {
@@ -147,12 +147,12 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return cellValue;
     }
 
-    protected Object getColumnValue(DataGrid dataGrid, DataGrid.Column column, JmixEntity instance) {
+    protected Object getColumnValue(DataGrid dataGrid, DataGrid.Column column, Object instance) {
 
         Object cellValue = null;
 
         MetaPropertyPath propertyPath = null;
-        Function<DataGrid.ColumnGeneratorEvent<JmixEntity>, ?> generator;
+        Function<DataGrid.ColumnGeneratorEvent<Object>, ?> generator;
         if (column.getPropertyPath() != null) {
             propertyPath = column.getPropertyPath();
 
@@ -176,7 +176,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         return cellValue;
     }
 
-    protected Function<JmixEntity, InstanceContainer<JmixEntity>> createInstanceContainerProvider(DataGrid dataGrid, JmixEntity item) {
+    protected Function<Object, InstanceContainer<Object>> createInstanceContainerProvider(DataGrid dataGrid, Object item) {
         return entity -> {
             throw new UnsupportedOperationException("ExcelExporter doesn't provide instance container");
         };
@@ -224,8 +224,7 @@ public abstract class AbstractTableExporter<T extends AbstractTableExporter> imp
         } else if (cellValue instanceof Enum) {
             return messages.getMessage((Enum) cellValue);
         } else if (cellValue instanceof JmixEntity) {
-            JmixEntity entityVal = (JmixEntity) cellValue;
-            return metadataTools.getInstanceName(entityVal);
+            return metadataTools.getInstanceName(cellValue);
         } else {
             return cellValue == null ? "" : cellValue.toString();
         }

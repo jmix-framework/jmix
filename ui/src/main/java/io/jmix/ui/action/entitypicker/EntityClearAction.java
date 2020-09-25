@@ -81,7 +81,7 @@ public class EntityClearAction extends ValueClearAction implements EntityPicker.
         if (value != null && !value.equals(entityPicker.getEmptyValue())
                 && valueSource instanceof EntityValueSource) {
             EntityValueSource entityValueSource = (EntityValueSource) entityPicker.getValueSource();
-            JmixEntity entity = (JmixEntity) entityPicker.getValue();
+            Object entity = entityPicker.getValue();
             if (entityValueSource.getMetaPropertyPath() != null
                     && entityValueSource.getMetaPropertyPath().getMetaProperty().getType() == MetaProperty.Type.COMPOSITION) {
                 FrameOwner screen = entityPicker.getFrame().getFrameOwner();

@@ -16,7 +16,6 @@
 
 package io.jmix.uidata.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -27,6 +26,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -36,7 +36,8 @@ import java.util.UUID;
 @Entity(name = "ui_TablePresentation")
 @Table(name = "UI_TABLE_PRESENTATION")
 @SystemLevel
-public class UiTablePresentation implements JmixEntity, TablePresentation {
+public class UiTablePresentation implements TablePresentation, Serializable {
+    private static final long serialVersionUID = 15523740205131274L;
 
     @Id
     @Column(name = "ID")

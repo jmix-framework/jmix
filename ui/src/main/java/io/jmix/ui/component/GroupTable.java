@@ -16,7 +16,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.gui.data.GroupInfo;
 
@@ -30,12 +29,13 @@ import java.util.Map;
  *
  * @param <E> row item type
  */
-public interface GroupTable<E extends JmixEntity> extends Table<E> {
+public interface GroupTable<E> extends Table<E> {
 
     String NAME = "groupTable";
 
-    static <T extends JmixEntity> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
-        return new TypeToken<GroupTable<T>>() {};
+    static <T> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+        return new TypeToken<GroupTable<T>>() {
+        };
     }
 
     /**
@@ -65,28 +65,33 @@ public interface GroupTable<E extends JmixEntity> extends Table<E> {
     void ungroup();
 
     GroupCellValueFormatter<E> getGroupCellValueFormatter();
+
     void setGroupCellValueFormatter(GroupCellValueFormatter<E> formatter);
 
     void expandAll();
+
     void expand(GroupInfo groupId);
 
     /**
      * Expand all groups for specified item.
      */
-    void expandPath(JmixEntity item);
+    void expandPath(Object item);
 
     void collapseAll();
+
     void collapse(GroupInfo groupId);
 
     boolean isExpanded(GroupInfo groupId);
 
     boolean isFixedGrouping();
+
     void setFixedGrouping(boolean fixedGrouping);
 
     /**
      * @return true if GroupTable shows items count for group
      */
     boolean isShowItemsCountForGroup();
+
     /**
      * Show or hide items count for GroupTable groups. <br>
      * Default value is true.
@@ -105,11 +110,11 @@ public interface GroupTable<E extends JmixEntity> extends Table<E> {
     /**
      * Allows to define different styles for table cells.
      */
-    interface GroupStyleProvider<E extends JmixEntity> extends StyleProvider<E> {
+    interface GroupStyleProvider<E> extends StyleProvider<E> {
         /**
          * Called by {@link GroupTable} to get a style for group row.
          *
-         * @param info   an group represented by the current row
+         * @param info an group represented by the current row
          * @return style name or null to apply the default
          */
         @Nullable

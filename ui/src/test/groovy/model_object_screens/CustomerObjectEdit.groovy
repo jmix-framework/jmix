@@ -32,8 +32,8 @@ class CustomerObjectEdit extends StandardEditor<CustomerObject> {
     TextField<String> nameField
 
     @Install(target = Target.DATA_CONTEXT)
-    private Set<JmixEntity> commitDelegate(SaveContext saveContext) {
-        for (JmixEntity entity : saveContext.getEntitiesToSave()) {
+    private Set<Object> commitDelegate(SaveContext saveContext) {
+        for (Object entity : saveContext.getEntitiesToSave()) {
             TestModelObjectsStorage.getInstance().save(entity)
         }
         return new HashSet<>(saveContext.getEntitiesToSave())

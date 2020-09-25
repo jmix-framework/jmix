@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
@@ -72,6 +71,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * @param closeable closeable flag
      */
     void setCloseable(boolean closeable);
+
     /**
      * @return true if the window can be closed by user with close button or keyboard shortcut
      */
@@ -83,6 +83,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * @param minWidth minimum width
      */
     void setMinWidth(String minWidth);
+
     /**
      * @return previously set minimal CSS width or null
      */
@@ -95,6 +96,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * @param maxWidth maximum width
      */
     void setMaxWidth(String maxWidth);
+
     /**
      * @return previously set maximum CSS width or null
      */
@@ -107,6 +109,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * @param minHeight minimum height
      */
     void setMinHeight(String minHeight);
+
     /**
      * @return previously set minimum CSS height or null
      */
@@ -119,6 +122,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * @param maxHeight maximum height
      */
     void setMaxHeight(String maxHeight);
+
     /**
      * @return previously set maximum CSS height or null
      */
@@ -269,7 +273,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * Only for compatibility with old screens.
      */
     @Deprecated
-    interface Editor<T extends JmixEntity> extends Window, EditorScreen<T>, Window.Committable/*, LegacyFrame TODO: legacy-ui */ {
+    interface Editor<T> extends Window, EditorScreen<T>, Window.Committable/*, LegacyFrame TODO: legacy-ui */ {
         /**
          * Name that is used to register a client type specific screen implementation in
          * {@link UiComponents}
@@ -288,7 +292,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
          *
          * @param item entity instance
          */
-        void setItem(JmixEntity item);
+        void setItem(T item);
 
         /**
          * Called by the framework to validate the screen components and commit changes.
@@ -341,7 +345,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
      * Represents a lookup screen.
      */
     @Deprecated
-    interface Lookup<T extends JmixEntity> extends Window, LookupScreen<T>/*, LegacyFrame TODO: legacy-ui */ {
+    interface Lookup<T> extends Window, LookupScreen<T>/*, LegacyFrame TODO: legacy-ui */ {
 
         String LOOKUP_ITEM_CLICK_ACTION_ID = "lookupItemClickAction";
         String LOOKUP_ENTER_PRESSED_ACTION_ID = "lookupEnterPressed";
@@ -529,7 +533,6 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
 
         /**
          * @return value that describes the event type: close by shortcut / using close button / from breadcrumbs
-         *
          * @see CloseOriginType
          */
         public CloseOrigin getCloseOrigin() {

@@ -17,7 +17,6 @@
 package io.jmix.uiexport.exporter.json;
 
 import com.google.gson.*;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -68,13 +67,13 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
     }
 
     @Override
-    public void exportTable(Downloader downloader, Table<JmixEntity> table, ExportMode exportMode) {
-        Collection<JmixEntity> items = getItems(table, exportMode);
+    public void exportTable(Downloader downloader, Table<Object> table, ExportMode exportMode) {
+        Collection<Object> items = getItems(table, exportMode);
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
-        for (JmixEntity entity : items) {
+        for (Object entity : items) {
             JsonObject jsonObject = new JsonObject();
-            for (Table.Column<JmixEntity> column : table.getColumns()) {
+            for (Table.Column<Object> column : table.getColumns()) {
                 if (column.getId() instanceof MetaPropertyPath) {
                     MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
                     Object columnValue = getColumnValue(table, column, entity);
@@ -95,13 +94,13 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
     }
 
     @Override
-    public void exportDataGrid(Downloader downloader, DataGrid<JmixEntity> dataGrid, ExportMode exportMode) {
-        Collection<JmixEntity> items = getItems(dataGrid, exportMode);
+    public void exportDataGrid(Downloader downloader, DataGrid<Object> dataGrid, ExportMode exportMode) {
+        Collection<Object> items = getItems(dataGrid, exportMode);
         Gson gson = createGsonForSerialization();
         JsonArray jsonElements = new JsonArray();
-        for (JmixEntity entity : items) {
+        for (Object entity : items) {
             JsonObject jsonObject = new JsonObject();
-            for (DataGrid.Column<JmixEntity> column : dataGrid.getColumns()) {
+            for (DataGrid.Column<Object> column : dataGrid.getColumns()) {
                 Object columnValue = getColumnValue(dataGrid, column, entity);
                 MetaPropertyPath metaPropertyPath = metadata.getClass(entity.getClass()).getPropertyPath(column.getId());
                 if (columnValue != null) {
@@ -127,11 +126,11 @@ public class JsonExporter extends AbstractTableExporter<JsonExporter> {
         return gsonBuilder.create();
     }
 
-    protected Collection<JmixEntity> getItems(Table<JmixEntity> table, ExportMode exportMode) {
+    protected Collection<Object> getItems(Table<Object> table, ExportMode exportMode) {
         return ExportMode.ALL == exportMode ? table.getItems().getItems() : table.getSelected();
     }
 
-    protected Collection<JmixEntity> getItems(DataGrid<JmixEntity> dataGrid, ExportMode exportMode) {
+    protected Collection<Object> getItems(DataGrid<Object> dataGrid, ExportMode exportMode) {
         return ExportMode.ALL == exportMode ? dataGrid.getItems().getItems().collect(Collectors.toList()) : dataGrid.getSelected();
     }
 

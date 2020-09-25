@@ -22,6 +22,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.pessimisticlocking.LockManager;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
@@ -31,7 +32,6 @@ import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.DataLoadersHelper;
 import io.jmix.ui.util.OperationResult;
@@ -47,7 +47,7 @@ import java.util.function.Consumer;
  * Displays a list of entities on the left and details of the currently selected instance on the right.
  */
 @ParametersAreNonnullByDefault
-public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardLookup<T> {
+public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
 
     /**
      * Indicates that the screen is in editing mode.
@@ -371,7 +371,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
     /**
      * Pessimistic lock before start of editing, if it is configured for the entity.
      */
-    protected boolean lockIfNeeded(JmixEntity entity) {
+    protected boolean lockIfNeeded(Object entity) {
         Object entityId = EntityValues.getId(entity);
         if (entityId != null) {
             PessimisticLockStatus lockStatus = getLockingSupport().lock(entityId);
@@ -389,7 +389,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      */
     protected void releaseLock() {
         if (justLocked) {
-            JmixEntity entity = getEditContainer().getItemOrNull();
+            Object entity = getEditContainer().getItemOrNull();
             if (entity != null) {
                 getApplicationContext().getBean(LockManager.class).unlock(getLockName(), EntityValues.getId(entity).toString());
             }
@@ -607,7 +607,7 @@ public abstract class MasterDetailScreen<T extends JmixEntity> extends StandardL
      * @param <E> type of entity
      * @see #addInitEntityListener(Consumer)
      */
-    public static class InitEntityEvent<E extends JmixEntity> extends EventObject {
+    public static class InitEntityEvent<E> extends EventObject {
         protected final E entity;
 
         public InitEntityEvent(Screen source, E entity) {

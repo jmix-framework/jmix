@@ -17,7 +17,6 @@
 package io.jmix.ui.builder;
 
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
@@ -35,7 +34,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Lookup screen builder that is not aware of concrete screen class. It's {@link #build()} method returns {@link Screen}.
  */
-public class LookupBuilder<E extends JmixEntity> {
+public class LookupBuilder<E> {
 
     protected final FrameOwner origin;
     protected final Class<E> entityClass;
@@ -141,8 +140,8 @@ public class LookupBuilder<E extends JmixEntity> {
     /**
      * Sets screen id and returns the builder for chaining.
      *
-     * @param screenId  identifier of the lookup screen as specified in the {@code UiController} annotation
-     *                  or {@code screens.xml}.
+     * @param screenId identifier of the lookup screen as specified in the {@code UiController} annotation
+     *                 or {@code screens.xml}.
      */
     public LookupBuilder<E> withScreenId(String screenId) {
         this.screenId = screenId;

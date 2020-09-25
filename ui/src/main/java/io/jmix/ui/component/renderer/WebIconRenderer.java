@@ -19,13 +19,11 @@ package io.jmix.ui.component.renderer;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.renderers.Renderer;
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.widget.renderer.JmixIconRenderer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -35,7 +33,7 @@ import javax.annotation.Nullable;
 
 @Component(DataGrid.IconRenderer.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebIconRenderer<T extends JmixEntity>
+public class WebIconRenderer<T>
         extends WebAbstractDataGrid.AbstractRenderer<T, Resource> implements DataGrid.IconRenderer<T> {
 
     protected Icons icons;

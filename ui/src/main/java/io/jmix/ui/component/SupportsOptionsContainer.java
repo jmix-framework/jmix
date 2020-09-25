@@ -16,10 +16,9 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.model.CollectionContainer;
 
-public interface SupportsOptionsContainer<E extends JmixEntity> {
+public interface SupportsOptionsContainer<E> {
     /**
      * Sets options from the passed {@link CollectionContainer}.
      *

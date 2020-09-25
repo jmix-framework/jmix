@@ -22,11 +22,11 @@ import io.jmix.ui.component.data.TableItems;
 import javax.annotation.Nullable;
 
 /**
- * Interface for table data components bound to {@link JmixEntity} type.
+ * Interface for table data components bound to entity type.
  *
  * @param <E> entity type
  */
-public interface EntityTableItems<E extends JmixEntity> extends TableItems<E>, EntityDataUnit {
+public interface EntityTableItems<E> extends TableItems<E>, EntityDataUnit {
     /**
      * @return the current item contained in the source
      */

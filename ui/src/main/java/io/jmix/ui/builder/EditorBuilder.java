@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
@@ -33,7 +32,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Editor screen builder that is not aware of concrete screen class. It's {@link #build()} method returns {@link Screen}.
  */
-public class EditorBuilder<E extends JmixEntity> {
+public class EditorBuilder<E> {
 
     protected final FrameOwner origin;
     protected final Class<E> entityClass;
@@ -88,7 +87,7 @@ public class EditorBuilder<E extends JmixEntity> {
      * <p>A new entity instance will be created automatically. It can be initialized by code passed to
      * the {@link #withInitializer(Consumer)} method.
      *
-     * @see #newEntity(JmixEntity)
+     * @see #newEntity(Object)
      */
     public EditorBuilder<E> newEntity() {
         this.mode = EditMode.CREATE;
@@ -135,7 +134,7 @@ public class EditorBuilder<E extends JmixEntity> {
     /**
      * Sets code to initialize a new entity instance and returns the builder for chaining.
      * <p>The initializer is invoked only when {@link EditMode} is {@code CREATE}, i.e. when {@link #newEntity()} or
-     * {@link #newEntity(JmixEntity)} methods are invoked on the builder.
+     * {@link #newEntity(Object)} methods are invoked on the builder.
      */
     public EditorBuilder<E> withInitializer(Consumer<E> initializer) {
         this.initializer = initializer;
@@ -278,7 +277,7 @@ public class EditorBuilder<E extends JmixEntity> {
     }
 
     /**
-     * Returns new entity set by {@link #newEntity(JmixEntity)}.
+     * Returns new entity set by {@link #newEntity(Object)}.
      */
     @Nullable
     public E getNewEntity() {
@@ -286,7 +285,7 @@ public class EditorBuilder<E extends JmixEntity> {
     }
 
     /**
-     * Returns entity set by {@link #editEntity(JmixEntity)}.
+     * Returns entity set by {@link #editEntity(Object)}.
      */
     public E getEditedEntity() {
         return editedEntity;
@@ -347,7 +346,7 @@ public class EditorBuilder<E extends JmixEntity> {
     }
 
     /**
-     * Returns builder mode derived from previous calls to {@link #newEntity()} or {@link #editEntity(JmixEntity)}.
+     * Returns builder mode derived from previous calls to {@link #newEntity()} or {@link #editEntity(Object)}.
      */
     public EditMode getMode() {
         return mode;

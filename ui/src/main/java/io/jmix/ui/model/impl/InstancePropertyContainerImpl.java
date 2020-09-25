@@ -16,12 +16,11 @@
 
 package io.jmix.ui.model.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.InstancePropertyContainer;
 
-public class InstancePropertyContainerImpl<E extends JmixEntity>
+public class InstancePropertyContainerImpl<E>
         extends InstanceContainerImpl<E> implements InstancePropertyContainer<E> {
 
     protected InstanceContainer master;

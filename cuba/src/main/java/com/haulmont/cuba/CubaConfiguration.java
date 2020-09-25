@@ -63,11 +63,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -204,19 +200,19 @@ public class CubaConfiguration {
     }
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     public void onApplicationContextRefreshFirst(ContextRefreshedEvent event) {
         AppContext.Internals.setApplicationContext(event.getApplicationContext());
     }
 
     @EventListener
-    @Order(Events.LOWEST_CORE_PRECEDENCE - 10)
+    @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
     public void onApplicationContextRefreshLast(ContextRefreshedEvent event) {
         AppContext.Internals.startContext();
     }
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     public void onApplicationContextClosedEvent(ContextClosedEvent event) {
         AppContext.Internals.onContextClosed(event.getApplicationContext());
     }

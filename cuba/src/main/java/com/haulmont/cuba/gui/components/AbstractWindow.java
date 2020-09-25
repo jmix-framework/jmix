@@ -20,11 +20,12 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.ScreenSettings;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.Events;
+import com.haulmont.cuba.settings.CubaLegacySettings;
+import com.haulmont.cuba.settings.Settings;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.DialogOptions;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
@@ -32,15 +33,13 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
-import com.haulmont.cuba.settings.CubaLegacySettings;
-import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +97,7 @@ public class AbstractWindow extends Screen
         return frame;
     }
 
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     @Subscribe
     protected void init(InitEvent initEvent) {
         Map<String, Object> params = new HashMap<>(0);
@@ -130,13 +129,13 @@ public class AbstractWindow extends Screen
         }
     }
 
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     @Subscribe
     protected void afterShow(AfterShowEvent event) {
         ready();
     }
 
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     @Subscribe
     protected void beforeClose(Screen.BeforeCloseEvent event) {
         CloseAction closeAction = event.getCloseAction();

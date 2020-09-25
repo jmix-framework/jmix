@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.EntityLinkField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -99,6 +100,6 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
 
     @Override
     public int getOrder() {
-        return LOWEST_PLATFORM_PRECEDENCE - 10;
+        return JmixOrder.LOWEST_PRECEDENCE - 10;
     }
 }

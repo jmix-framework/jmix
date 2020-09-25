@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.entity.HasUuid;
 import io.jmix.core.EntityInitializer;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.UuidProvider;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
@@ -36,6 +37,6 @@ public class EntityUuidInitializer implements EntityInitializer, Ordered {
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 10;
+        return JmixOrder.HIGHEST_PRECEDENCE + 10;
     }
 }

@@ -38,7 +38,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.haulmont.cuba.gui.WindowManager.*;
+import static com.haulmont.cuba.gui.WindowManager.OpenType;
 import static java.lang.String.format;
 
 @Component(ScreensLinkHandlerProcessor.NAME)
@@ -203,6 +203,6 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 30;
+        return JmixOrder.HIGHEST_PRECEDENCE + 30;
     }
 }

@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Events;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.UiProperties;
@@ -100,7 +100,7 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
     public void init(Map<String, Object> params) {
     }
 
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     @Subscribe
     protected void init(InitEvent initEvent) {
         Map<String, Object> params = Collections.emptyMap();

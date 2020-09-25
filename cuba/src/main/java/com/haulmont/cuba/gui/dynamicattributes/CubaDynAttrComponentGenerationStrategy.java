@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.dynamicattributes;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.dynattr.AttributeDefinition;
@@ -99,6 +100,6 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 15;
+        return JmixOrder.HIGHEST_PRECEDENCE + 15;
     }
 }

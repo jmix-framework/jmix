@@ -22,6 +22,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.entity.EntitySystemAccess
+import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.impl.InMemoryUserRepository
@@ -106,8 +107,8 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
         newEntityEntry.getDeletedDate() != null
         newEntityEntry.getDeletedBy() == "admin"
 
-        EntitySystemAccess.isSoftDeleted(legacyEntity)
-        EntitySystemAccess.isSoftDeleted(newEntity)
+        EntityValues.isSoftDeleted(legacyEntity)
+        EntityValues.isSoftDeleted(newEntity)
     }
 
 }

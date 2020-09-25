@@ -17,11 +17,11 @@
 package com.haulmont.cuba.web.sys;
 
 import com.google.common.collect.ImmutableMap;
+import com.haulmont.cuba.core.global.EntityLoadInfo;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.LoadContext;
-import com.haulmont.cuba.core.global.EntityLoadInfo;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Window;
@@ -35,12 +35,14 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.sys.UiControllerProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
@@ -126,7 +128,7 @@ public class CubaMenuItemCommands extends MenuItemCommands {
 
                 if (screenId.endsWith(Window.CREATE_WINDOW_SUFFIX)
                         || screenId.endsWith(Window.EDITOR_WINDOW_SUFFIX)) {
-                    return ((WindowManager) screens).createEditor(windowInfo, getEntityToEdit(screenId), getOpenType(descriptor), paramsMap);
+                    return ((WindowManager) screens).createEditor(windowInfo, (JmixEntity) getEntityToEdit(screenId), getOpenType(descriptor), paramsMap);
                 } else {
                     return screens.create(screenId, getOpenMode(descriptor), new MapScreenOptions(paramsMap));
                 }

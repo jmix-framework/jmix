@@ -667,8 +667,8 @@ public class CubaFoldersPane extends VerticalLayout {
 
     public Folder saveFolder(Folder folder) {
         CommitContext commitContext = new CommitContext(Collections.singleton(folder));
-        Set<JmixEntity> res = dataManager.save(commitContext);
-        for (JmixEntity entity : res) {
+        Set<Object> res = dataManager.save(commitContext);
+        for (Object entity : res) {
             if (entity.equals(folder)) {
                 return (Folder) entity;
             }

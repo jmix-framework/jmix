@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens.LaunchMode;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;

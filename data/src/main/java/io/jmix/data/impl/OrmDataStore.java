@@ -1105,8 +1105,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                 if (value != null) {
                     if (property.getRange().getCardinality().isMany()) {
                         @SuppressWarnings("unchecked")
-                        Collection<Entity> collection = (Collection<Entity>) value;
-                        for (Entity element : collection) {
+                        Collection<Object> collection = (Collection<Object>) value;
+                        for (Object element : collection) {
                             em.detach(element);
                         }
                     } else {

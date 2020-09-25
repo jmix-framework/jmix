@@ -50,7 +50,7 @@ public class JmixIsNullExpressionOperator extends ExpressionOperator {
         if (items.size() == 1 && items.get(0) instanceof QueryKeyExpression && !CubaUtil.isSoftDeletion()) {
             QueryKeyExpression expression = (QueryKeyExpression) items.get(0);
             //noinspection unchecked
-            Class<? extends Entity> clazz = expression.getContainingDescriptor().getJavaClass();
+            Class<?> clazz = expression.getContainingDescriptor().getJavaClass();
 
             String deletedDateFieldName = metadataTools.findDeletedDateProperty(clazz);
             if (Objects.equals(deletedDateFieldName, expression.getName())) {

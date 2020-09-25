@@ -75,7 +75,7 @@ public class EntityFetcher {
      *
      * @param fetchPlanName if null, nothing happens
      */
-    public void fetch(Entity instance, @Nullable String fetchPlanName) {
+    public void fetch(Object instance, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
@@ -90,7 +90,7 @@ public class EntityFetcher {
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(Entity instance, @Nullable FetchPlan fetchPlan, boolean optimizeForDetached) {
+    public void fetch(Object instance, @Nullable FetchPlan fetchPlan, boolean optimizeForDetached) {
         if (fetchPlan == null)
             return;
         fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
@@ -104,7 +104,7 @@ public class EntityFetcher {
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
      */
-    public void fetch(Entity instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
+    public void fetch(Object instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
         if (fetchPlanName == null)
             return;
         FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);

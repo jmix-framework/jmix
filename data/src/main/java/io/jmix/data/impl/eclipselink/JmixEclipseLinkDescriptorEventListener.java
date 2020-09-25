@@ -197,7 +197,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void preUpdate(DescriptorEvent event) {
-        Entity entity = (Entity) event.getObject();
+        Object entity = event.getObject();
         if (!(isJustSoftDeleted(entity)) && EntityValues.isAuditSupported(entity)) {
             setUpdateInfo(entity, timeSource.currentTimestamp(), auditInfoProvider.getCurrentUser(), false);
         }

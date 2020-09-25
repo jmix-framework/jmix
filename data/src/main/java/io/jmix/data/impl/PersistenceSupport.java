@@ -164,7 +164,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         ((Entity) entity).__getEntityEntry().setDetached(false);
     }
 
-    public void registerInstance(Entity entity, AbstractSession session) {
+    public void registerInstance(Object entity, AbstractSession session) {
         // Can be called outside of a transaction when fetching lazy attributes
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             return;
@@ -220,8 +220,8 @@ public class PersistenceSupport implements ApplicationContextAware {
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
     }
 
-    protected void fireBeforeDetachEntityListener(Entity entity, String storeName) {
-        if (!(entity.__getEntityEntry().isDetached())) {
+    protected void fireBeforeDetachEntityListener(Object entity, String storeName) {
+        if (!(((Entity) entity).__getEntityEntry().isDetached())) {
             JmixEntityFetchGroup.setAccessLocalUnfetched(false);
             try {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DETACH, storeName);
@@ -297,7 +297,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public void detach(javax.persistence.EntityManager entityManager, Entity entity) {
+    public void detach(javax.persistence.EntityManager entityManager, Object entity) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
 
@@ -305,7 +305,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
         ContainerResourceHolder container = getInstanceContainerResourceHolder(storeName);
         container.unregisterInstance(entity, unitOfWork);
-        if (entity.__getEntityEntry().isNew()) {
+        if (((Entity) entity).__getEntityEntry().isNew()) {
             container.getNewDetachedInstances().add(entity);
         }
 
@@ -381,7 +381,7 @@ public class PersistenceSupport implements ApplicationContextAware {
             instances.add(instance);
         }
 
-        protected void unregisterInstance(Entity instance, UnitOfWork unitOfWork) {
+        protected void unregisterInstance(Object instance, UnitOfWork unitOfWork) {
             Set<Object> instances = unitOfWorkMap.get(unitOfWork);
             if (instances != null) {
                 instances.remove(instance);

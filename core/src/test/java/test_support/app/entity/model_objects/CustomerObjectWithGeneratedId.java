@@ -17,7 +17,7 @@
 package test_support.app.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 @ModelObject
-public class CustomerObjectWithGeneratedId implements JmixEntity {
+public class CustomerObjectWithGeneratedId implements Entity {
 
     @JmixId
     @JmixGeneratedValue
@@ -55,7 +55,7 @@ public class CustomerObjectWithGeneratedId implements JmixEntity {
     // TODO Replace with enhancing - begin
 
     private static class JmixEntityEntry extends BaseEntityEntry {
-        public JmixEntityEntry(JmixEntity source) {
+        public JmixEntityEntry(Entity source) {
             super(source);
         }
 

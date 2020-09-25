@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl.keyvalue;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -45,7 +45,7 @@ public class KeyValueMetaPropertyBuilder {
         MetaProperty.Type type;
         Range range;
         Session metadataSession = metadata.getSession();
-        if (JmixEntity.class.isAssignableFrom(javaClass)) {
+        if (Entity.class.isAssignableFrom(javaClass)) {
             range = new ClassRange(metadataSession.findClass(javaClass));
             type = MetaProperty.Type.ASSOCIATION;
         } else if (EnumClass.class.isAssignableFrom(javaClass)) {

@@ -137,7 +137,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
      * @return this instance for chaining
      */
     public LoadContext<E> setId(Object id) {
-        this.id = id instanceof JmixEntity ? EntityValues.getId(id) : id; // for compatibility with legacy code relying on implicit conversions
+        this.id = id instanceof Entity ? EntityValues.getId(id) : id; // for compatibility with legacy code relying on implicit conversions
         return this;
     }
 

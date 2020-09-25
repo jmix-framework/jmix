@@ -16,18 +16,18 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 public class EntityPreconditions {
 
     public static void checkEntityType(Object entity) {
-        if (!(entity instanceof JmixEntity)) {
+        if (!(entity instanceof Entity)) {
             throw new IllegalStateException(String.format("Unsupported entity type %s", entity.getClass()));
         }
     }
 
     public static void checkEntityType(Object entity, String arg) {
-        if (!(entity instanceof JmixEntity)) {
+        if (!(entity instanceof Entity)) {
             throw new IllegalStateException(String.format("Argument %s has unsupported entity type %s", arg, entity.getClass()));
         }
     }

@@ -20,7 +20,6 @@ import io.jmix.core.DataStore;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.core.ValueLoadContext;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.KeyValueEntity;
 import org.springframework.beans.factory.config.BeanDefinition;

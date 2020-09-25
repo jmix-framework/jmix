@@ -120,7 +120,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                 @Nullable MetaClass metaClass,
                                 EntitySerializationOption... options) {
         context.remove();
-        return (T) createGsonForDeserialization(metaClass, options).fromJson(json, JmixEntity.class);
+        return (T) createGsonForDeserialization(metaClass, options).fromJson(json, Entity.class);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                                         @Nullable MetaClass metaClass,
                                                         EntitySerializationOption... options) {
         context.remove();
-        Type collectionType = new TypeToken<Collection<JmixEntity>>() {
+        Type collectionType = new TypeToken<Collection<Entity>>() {
         }.getType();
         return createGsonForDeserialization(metaClass, options).fromJson(json, collectionType);
     }
@@ -145,7 +145,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             gsonBuilder.setPrettyPrinting();
         }
         gsonBuilder
-                .registerTypeHierarchyAdapter(JmixEntity.class, new EntitySerializer(view, options))
+                .registerTypeHierarchyAdapter(Entity.class, new EntitySerializer(view, options))
                 .registerTypeHierarchyAdapter(Date.class, new DateSerializer())
                 .create();
         if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_NULLS)) {
@@ -156,7 +156,7 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     protected Gson createGsonForDeserialization(@Nullable MetaClass metaClass, EntitySerializationOption... options) {
         return new GsonBuilder()
-                .registerTypeHierarchyAdapter(JmixEntity.class, new EntityDeserializer(metaClass, options))
+                .registerTypeHierarchyAdapter(Entity.class, new EntityDeserializer(metaClass, options))
                 .registerTypeHierarchyAdapter(Date.class, new DateDeserializer())
                 .create();
     }
@@ -179,7 +179,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
     }
 
-    protected class EntitySerializer implements JsonSerializer<JmixEntity> {
+    protected class EntitySerializer implements JsonSerializer<Entity> {
 
         protected boolean compactRepeatedEntities = false;
         protected boolean serializeInstanceName;
@@ -201,11 +201,11 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         @Override
-        public JsonElement serialize(JmixEntity entity, Type typeOfSrc, JsonSerializationContext context) {
+        public JsonElement serialize(Entity entity, Type typeOfSrc, JsonSerializationContext context) {
             return serializeEntity(entity, view, new HashSet<>());
         }
 
-        protected JsonObject serializeEntity(JmixEntity entity, @Nullable FetchPlan view, Set<JmixEntity> cyclicReferences) {
+        protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity.getClass());
             if (!metadataTools.isEmbeddable(metaClass)) {
@@ -249,7 +249,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             return jsonObject;
         }
 
-        protected void writeIdField(JmixEntity entity, JsonObject jsonObject) {
+        protected void writeIdField(Entity entity, JsonObject jsonObject) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
             MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
             if (primaryKeyProperty == null) {
@@ -258,7 +258,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             if (primaryKeyProperty == null)
                 throw new EntitySerializationException("Primary key property not found for entity " + metaClass);
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
-                JsonObject serializedIdEntity = serializeEntity((JmixEntity) EntityValues.getId(entity), null, Collections.emptySet());
+                JsonObject serializedIdEntity = serializeEntity((Entity) EntityValues.getId(entity), null, Collections.emptySet());
                 jsonObject.add("id", serializedIdEntity);
             } else {
                 Datatype idDatatype = datatypeRegistry.get(primaryKeyProperty.getJavaType());
@@ -266,7 +266,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected boolean propertyWritingAllowed(MetaProperty metaProperty, JmixEntity entity) {
+        protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity) {
             return !"id".equals(metaProperty.getName()) &&
                     //todo dynamic attribute
                     (
@@ -277,7 +277,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                     (metadataTools.isPersistent(metaProperty) && entityStates.isLoaded(entity, metaProperty.getName())));
         }
 
-        protected void writeFields(JmixEntity entity, JsonObject jsonObject, @Nullable FetchPlan view, Set<JmixEntity> cyclicReferences) {
+        protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
             MetaClass metaClass = metadata.getClass(entity);
             Collection<MetaProperty> properties = new ArrayList<>(metaClass.getProperties());
 //            if (entity instanceof BaseGenericIdEntity && ((BaseGenericIdEntity) entity).getDynamicAttributes() != null) {
@@ -323,8 +323,8 @@ public class EntitySerializationImpl implements EntitySerialization {
                     } else if (propertyRange.isEnum()) {
                         jsonObject.addProperty(metaProperty.getName(), fieldValue.toString());
                     } else if (propertyRange.isClass()) {
-                        if (fieldValue instanceof JmixEntity) {
-                            JsonObject propertyJsonObject = serializeEntity((JmixEntity) fieldValue,
+                        if (fieldValue instanceof Entity) {
+                            JsonObject propertyJsonObject = serializeEntity((Entity) fieldValue,
                                     viewProperty != null ? viewProperty.getFetchPlan() : null,
                                     new HashSet<>(cyclicReferences));
                             jsonObject.add(metaProperty.getName(), propertyJsonObject);
@@ -351,12 +351,12 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected JsonArray serializeCollection(Collection value, @Nullable FetchPlan view, Set<JmixEntity> cyclicReferences) {
+        protected JsonArray serializeCollection(Collection value, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
             JsonArray jsonArray = new JsonArray();
             value.stream()
-                    .filter(e -> e instanceof JmixEntity)
+                    .filter(e -> e instanceof Entity)
                     .forEach(e -> {
-                        JsonObject jsonObject = serializeEntity((JmixEntity) e, view, new HashSet<>(cyclicReferences));
+                        JsonObject jsonObject = serializeEntity((Entity) e, view, new HashSet<>(cyclicReferences));
                         jsonArray.add(jsonObject);
                     });
             return jsonArray;
@@ -379,7 +379,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
     }
 
-    protected class EntityDeserializer implements JsonDeserializer<JmixEntity> {
+    protected class EntityDeserializer implements JsonDeserializer<Entity> {
 
         protected MetaClass metaClass;
 
@@ -388,8 +388,8 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         @Override
-        public JmixEntity deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            return (JmixEntity) readEntity(jsonElement.getAsJsonObject(), metaClass);
+        public Entity deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return (Entity) readEntity(jsonElement.getAsJsonObject(), metaClass);
         }
 
         protected Object readEntity(JsonObject jsonObject, @Nullable MetaClass metaClass) {
@@ -528,7 +528,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                             throw new EntitySerializationException(String.format("An error occurred while parsing enum. Class [%s]. Value [%s].", propertyType, stringValue));
                         }
                     } else if (propertyRange.isClass()) {
-                        if (JmixEntity.class.isAssignableFrom(propertyType)) {
+                        if (Entity.class.isAssignableFrom(propertyType)) {
                             if (metadataTools.isEmbedded(metaProperty)) {
                                 EntityValues.setValue(entity, propertyName, readEmbeddedEntity(propertyValue.getAsJsonObject(), metaProperty));
                             } else {

@@ -156,8 +156,8 @@ public class MetadataTools {
             return datatype.format(value, currentAuthentication.getLocale());
         } else if (range.isEnum()) {
             return messages.getMessage((Enum) value);
-        } else if (value instanceof JmixEntity) {
-            return getInstanceName((JmixEntity) value);
+        } else if (value instanceof Entity) {
+            return getInstanceName((Entity) value);
         } else if (value instanceof Collection) {
             @SuppressWarnings("unchecked")
             Collection<Object> collection = (Collection<Object>) value;
@@ -178,8 +178,8 @@ public class MetadataTools {
     public String format(@Nullable Object value) {
         if (value == null) {
             return "";
-        } else if (value instanceof JmixEntity) {
-            return getInstanceName((JmixEntity) value);
+        } else if (value instanceof Entity) {
+            return getInstanceName((Entity) value);
         } else if (value instanceof Enum) {
             return messages.getMessage((Enum) value, currentAuthentication.getLocale());
         } else if (value instanceof Collection) {
@@ -927,7 +927,7 @@ public class MetadataTools {
         checkNotNullArgument(visitor, "visitor is null");
         EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributes((JmixEntity) entity, visitor, new HashSet<>());
+        internalTraverseAttributes((Entity) entity, visitor, new HashSet<>());
     }
 
     /**
@@ -944,7 +944,7 @@ public class MetadataTools {
         checkNotNullArgument(visitor, "visitor is null");
         EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, (JmixEntity) entity, visitor, new HashMap<>(), false);
+        internalTraverseAttributesByFetchPlan(fetchPlan, (Entity) entity, visitor, new HashMap<>(), false);
     }
 
     /**
@@ -962,7 +962,7 @@ public class MetadataTools {
         checkNotNullArgument(visitor, "visitor is null");
         EntityPreconditions.checkEntityType(entity);
 
-        internalTraverseAttributesByFetchPlan(fetchPlan, (JmixEntity) entity, visitor, new HashMap<>(), checkLoaded);
+        internalTraverseAttributesByFetchPlan(fetchPlan, (Entity) entity, visitor, new HashMap<>(), checkLoaded);
     }
 
     /**
@@ -1158,7 +1158,7 @@ public class MetadataTools {
 //        }
     }
 
-    protected void internalTraverseAttributes(JmixEntity entity, EntityAttributeVisitor visitor, HashSet<Object> visited) {
+    protected void internalTraverseAttributes(Entity entity, EntityAttributeVisitor visitor, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -1174,10 +1174,10 @@ public class MetadataTools {
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                internalTraverseAttributes((JmixEntity) item, visitor, visited);
+                                internalTraverseAttributes((Entity) item, visitor, visited);
                             }
                         } else {
-                            internalTraverseAttributes((JmixEntity) value, visitor, visited);
+                            internalTraverseAttributes((Entity) value, visitor, visited);
                         }
                     }
                 }
@@ -1215,10 +1215,10 @@ public class MetadataTools {
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
                     for (Object item : ((Collection) value)) {
-                        if (item instanceof JmixEntity)
+                        if (item instanceof Entity)
                             internalTraverseAttributesByFetchPlan(propertyFetchPlan, item, visitor, visited, checkLoaded);
                     }
-                } else if (value instanceof JmixEntity) {
+                } else if (value instanceof Entity) {
                     internalTraverseAttributesByFetchPlan(propertyFetchPlan, value, visitor, visited, checkLoaded);
                 }
             }

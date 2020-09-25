@@ -17,7 +17,7 @@
 package test_support.base.entity;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @ModelObject(name = "base_BaseLockableEntity")
-public class BaseLockableEntity extends BaseUuidEntity implements JmixEntity {
+public class BaseLockableEntity extends BaseUuidEntity implements Entity {
     protected EntityEntry entityEntry;
 
     protected static class LockableEntityEntry extends BaseEntityEntry {

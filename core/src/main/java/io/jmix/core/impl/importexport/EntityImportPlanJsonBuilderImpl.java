@@ -78,7 +78,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                     importPlanBuilder.addLocalProperty(propertyName);
                 }
             } else if (propertyRange.isClass()) {
-                if (JmixEntity.class.isAssignableFrom(propertyType)) {
+                if (Entity.class.isAssignableFrom(propertyType)) {
                     if (metadataTools.isEmbedded(metaProperty)) {
                         MetaClass propertyMetaClass = metadata.getClass(propertyType);
                         JsonElement propertyJsonObject = entry.getValue();

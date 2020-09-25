@@ -17,7 +17,7 @@
 package test_support.app.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.NullableIdEntityEntry;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.impl.EntityInternals;
@@ -26,7 +26,7 @@ import io.jmix.core.metamodel.annotation.ModelObject;
 import javax.annotation.Nullable;
 
 @ModelObject
-public class CustomerObjectWithNullableId implements JmixEntity {
+public class CustomerObjectWithNullableId implements Entity {
 
     @JmixId
     private String id;
@@ -52,7 +52,7 @@ public class CustomerObjectWithNullableId implements JmixEntity {
     // TODO Replace with enhancing - begin
 
     private static class JmixEntityEntry extends NullableIdEntityEntry {
-        public JmixEntityEntry(JmixEntity source) {
+        public JmixEntityEntry(Entity source) {
             super(source);
         }
 

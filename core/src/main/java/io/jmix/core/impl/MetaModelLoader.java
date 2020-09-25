@@ -18,7 +18,7 @@ package io.jmix.core.impl;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
@@ -183,7 +183,7 @@ public class MetaModelLoader {
         if (storeAnn != null) {
             store = stores.get(storeAnn.name());
         } else {
-            if (javaClass.getAnnotation(Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
+            if (javaClass.getAnnotation(javax.persistence.Entity.class) != null || javaClass.getAnnotation(Embeddable.class) != null) {
                 store = stores.get(Stores.MAIN);
             } else {
                 if (javaClass.getAnnotation(MappedSuperclass.class) != null) {
@@ -206,7 +206,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected MetaClassImpl createClass(Session session, Class<?> javaClass) {
-        if (!JmixEntity.class.isAssignableFrom(javaClass)) {
+        if (!Entity.class.isAssignableFrom(javaClass)) {
             return null;
         }
 
@@ -228,7 +228,7 @@ public class MetaModelLoader {
 
     @Nullable
     protected String getMetaClassName(Class<?> javaClass) {
-        Entity entityAnnotation = javaClass.getAnnotation(Entity.class);
+        javax.persistence.Entity entityAnnotation = javaClass.getAnnotation(javax.persistence.Entity.class);
         MappedSuperclass mappedSuperclassAnnotation = javaClass.getAnnotation(MappedSuperclass.class);
 
         ModelObject modelObjectAnnotation = javaClass.getAnnotation(ModelObject.class);
@@ -654,7 +654,7 @@ public class MetaModelLoader {
     }
 
     protected boolean hasJpaAnnotation(Class<?> javaClass) {
-        return javaClass.isAnnotationPresent(Entity.class)
+        return javaClass.isAnnotationPresent(javax.persistence.Entity.class)
                 || javaClass.isAnnotationPresent(Embeddable.class)
                 || javaClass.isAnnotationPresent(MappedSuperclass.class);
     }

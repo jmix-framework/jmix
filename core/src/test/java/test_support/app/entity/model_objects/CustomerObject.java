@@ -17,14 +17,14 @@
 package test_support.app.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.NoIdEntityEntry;
 import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 
 @ModelObject(name = "test_CustomerObject", annotatedPropertiesOnly = true)
-public class CustomerObject implements JmixEntity {
+public class CustomerObject implements Entity {
 
     @ModelProperty(mandatory = true)
     private String name;

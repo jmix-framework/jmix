@@ -23,11 +23,11 @@ public class EntitySystemStateSupport {
 
     public static final String NAME = "core_EntitySystemStateSupport";
 
-    public void copySystemState(JmixEntity src, JmixEntity dst) {
+    public void copySystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
     }
 
-    public void mergeSystemState(JmixEntity src, JmixEntity dst) {
+    public void mergeSystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
     }
 }

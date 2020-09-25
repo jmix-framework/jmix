@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  */
 @SuppressWarnings("unused")
-public interface JmixEntity extends Serializable {
+public interface Entity extends Serializable {
     default EntityEntry __getEntityEntry() {
         throw new UnsupportedOperationException();
     }

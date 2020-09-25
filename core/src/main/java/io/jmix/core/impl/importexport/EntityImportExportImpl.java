@@ -408,7 +408,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(importPlanProperty.getName());
         MetaProperty inverseMetaProperty = metaProperty.getInverse();
-        Collection dstFilteredIds = getFilteredIds((JmixEntity) dstEntity, metaProperty.getName());
+        Collection dstFilteredIds = getFilteredIds((Entity) dstEntity, metaProperty.getName());
         Collection srcFilteredIds = getFilteredIds(srcSecurityState, metaProperty.getName());
         Collection newCollectionValue = createNewCollection(metaProperty);
         CollectionCompare.with()
@@ -459,8 +459,8 @@ public class EntityImportExportImpl implements EntityImportExport {
         Collection collectionValue = EntityValues.getValue(srcEntity, importPlanProperty.getName());
         Collection prevCollectionValue = EntityValues.getValue(dstEntity, importPlanProperty.getName());
         MetaProperty metaProperty = metadata.getClass(srcEntity).getProperty(importPlanProperty.getName());
-        Collection dstFilteredIds = getFilteredIds((JmixEntity) dstEntity, metaProperty.getName());
-        Collection srcFilteredIds = getFilteredIds((JmixEntity) dstEntity, metaProperty.getName());
+        Collection dstFilteredIds = getFilteredIds((Entity) dstEntity, metaProperty.getName());
+        Collection srcFilteredIds = getFilteredIds((Entity) dstEntity, metaProperty.getName());
 
         if (importPlanProperty.getPlan() != null) {
             Collection newCollectionValue = createNewCollection(metaProperty);
@@ -565,7 +565,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         Object entity = referenceInfo.getEntity();
         EntityImportPlanProperty importPlanProperty = referenceInfo.getPlanProperty();
         MetaProperty metaProperty = metadata.getClass(entity).getProperty(importPlanProperty.getName());
-        Collection dstFilteredIds = getFilteredIds((JmixEntity) entity, metaProperty.getName());
+        Collection dstFilteredIds = getFilteredIds((Entity) entity, metaProperty.getName());
         Collection srcFilteredIds = getFilteredIds(referenceInfo.getPrevSecurityState(), metaProperty.getName());
 
         if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_MANY) {
@@ -655,7 +655,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         return fetchPlanBuilder;
     }
 
-    protected Collection getFilteredIds(JmixEntity entity, String propertyName) {
+    protected Collection getFilteredIds(Entity entity, String propertyName) {
         //todo persistenceSecurity
 //        if (entity instanceof BaseGenericIdEntity) {
 //            String storeName = metadataTools.getStoreName(metadata.getClass(entity));

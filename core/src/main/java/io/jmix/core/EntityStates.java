@@ -69,8 +69,8 @@ public class EntityStates {
      */
     public boolean isNew(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof JmixEntity) {
-            return ((JmixEntity) entity).__getEntityEntry().isNew();
+        if (entity instanceof Entity) {
+            return ((Entity) entity).__getEntityEntry().isNew();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isNew is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -90,8 +90,8 @@ public class EntityStates {
      */
     public boolean isManaged(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof JmixEntity) {
-            return ((JmixEntity) entity).__getEntityEntry().isManaged();
+        if (entity instanceof Entity) {
+            return ((Entity) entity).__getEntityEntry().isManaged();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isManaged is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -112,7 +112,7 @@ public class EntityStates {
      */
     public boolean isDetached(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof JmixEntity && ((JmixEntity) entity).__getEntityEntry().isDetached()) {
+        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isDetached()) {
             return true;
         } else {
             if (log.isTraceEnabled()) {
@@ -314,11 +314,11 @@ public class EntityStates {
         EntityPreconditions.checkEntityType(entity);
 
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(entity.getClass());
-        recursivelyConstructCurrentFetchPlan((JmixEntity) entity, fetchPlanBuilder, new HashSet<>());
+        recursivelyConstructCurrentFetchPlan((Entity) entity, fetchPlanBuilder, new HashSet<>());
         return fetchPlanBuilder.build();
     }
 
-    protected void recursivelyConstructCurrentFetchPlan(JmixEntity entity, FetchPlanBuilder builder, HashSet<Object> visited) {
+    protected void recursivelyConstructCurrentFetchPlan(Entity entity, FetchPlanBuilder builder, HashSet<Object> visited) {
         if (visited.contains(entity))
             return;
         visited.add(entity);
@@ -339,10 +339,10 @@ public class EntityStates {
                     if (value != null) {
                         if (value instanceof Collection) {
                             for (Object item : ((Collection) value)) {
-                                recursivelyConstructCurrentFetchPlan((JmixEntity) item, propertyBuilder, visited);
+                                recursivelyConstructCurrentFetchPlan((Entity) item, propertyBuilder, visited);
                             }
                         } else {
-                            recursivelyConstructCurrentFetchPlan((JmixEntity) value, propertyBuilder, visited);
+                            recursivelyConstructCurrentFetchPlan((Entity) value, propertyBuilder, visited);
                         }
                     }
                 }
@@ -362,13 +362,13 @@ public class EntityStates {
      */
     public boolean isDeleted(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof JmixEntity) {
-            JmixEntity jmixEntity = (JmixEntity) entity;
+        if (entity instanceof Entity) {
+            Entity jmixEntity = (Entity) entity;
 
             if (EntityValues.isSoftDeleted(jmixEntity))
                 return true;
 
-            if (((JmixEntity) entity).__getEntityEntry().isRemoved()) {
+            if (((Entity) entity).__getEntityEntry().isRemoved()) {
                 return true;
             }
         }
@@ -391,7 +391,7 @@ public class EntityStates {
         checkNotNullArgument(entity, "entity is null");
         EntityPreconditions.checkEntityType(entity);
 
-        JmixEntity jmixEntity = (JmixEntity) entity;
+        Entity jmixEntity = (Entity) entity;
 
         if (jmixEntity.__getEntityEntry().isManaged())
             throw new IllegalStateException("entity is managed");
@@ -419,7 +419,7 @@ public class EntityStates {
 
         EntityPreconditions.checkEntityType(entity);
 
-        JmixEntity jmixEntity = (JmixEntity) entity;
+        Entity jmixEntity = (Entity) entity;
 
         if (jmixEntity.__getEntityEntry().isManaged())
             throw new IllegalStateException("entity is managed");

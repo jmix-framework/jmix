@@ -16,8 +16,6 @@
 
 package io.jmix.core.impl.importexport;
 
-import io.jmix.core.JmixEntity;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;

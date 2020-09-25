@@ -16,7 +16,7 @@
 
 package io.jmix.core.entity;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.PropertyPath;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -97,7 +97,7 @@ public class EntityValues {
      * {@code car.driver.name}.
      *
      * @param propertyPath path to an attribute
-     * @return attribute value. If any traversing attribute value is null or is not an {@link JmixEntity}, this method
+     * @return attribute value. If any traversing attribute value is null or is not an {@link Entity}, this method
      * stops here and returns this value.
      */
     @Nullable
@@ -112,7 +112,7 @@ public class EntityValues {
      * {@code car.driver.name}.
      *
      * @param propertyPath path to an attribute
-     * @return attribute value. If any traversing attribute value is null or is not an {@link JmixEntity}, this method
+     * @return attribute value. If any traversing attribute value is null or is not an {@link Entity}, this method
      * stops here and returns this value.
      */
     @Nullable
@@ -129,7 +129,7 @@ public class EntityValues {
      * <br> The path must consist of attribute names according to JavaBeans notation, separated by dots, e.g.
      * {@code car.driver.name}.
      * <br> In the example above this method first gets value of {@code car.driver} attribute, and if it is not
-     * null and is an {@link JmixEntity}, sets value of {@code name} attribute in it.
+     * null and is an {@link Entity}, sets value of {@code name} attribute in it.
      * <br> An implementor should first read a current value of the attribute, and then call an appropriate setter
      * method only if the new value differs. This ensures triggering of {@link EntityPropertyChangeListener}s only if the attribute
      * was actually changed.
@@ -146,7 +146,7 @@ public class EntityValues {
      * <br> The path must consist of attribute names according to JavaBeans notation, separated by dots, e.g.
      * {@code car.driver.name}.
      * <br> In the example above this method first gets value of {@code car.driver} attribute, and if it is not
-     * null and is an {@link JmixEntity}, sets value of {@code name} attribute in it.
+     * null and is an {@link Entity}, sets value of {@code name} attribute in it.
      * <br> An implementor should first read a current value of the attribute, and then call an appropriate setter
      * method only if the new value differs. This ensures triggering of {@link EntityPropertyChangeListener}s only if the attribute
      * was actually changed.
@@ -215,7 +215,7 @@ public class EntityValues {
                 break;
             }
 
-            currentEntity = currentValue instanceof JmixEntity ? (JmixEntity) currentValue : null;
+            currentEntity = currentValue instanceof Entity ? (Entity) currentValue : null;
         }
 
         return (T) currentValue;
@@ -233,7 +233,7 @@ public class EntityValues {
         if (a == b) {
             return true;
         }
-        if (a instanceof JmixEntity || a instanceof Collection) {
+        if (a instanceof Entity || a instanceof Collection) {
             return false;
         }
         return a != null && a.equals(b);

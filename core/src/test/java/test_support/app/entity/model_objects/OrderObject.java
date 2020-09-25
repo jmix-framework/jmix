@@ -17,7 +17,7 @@
 package test_support.app.entity.model_objects;
 
 import io.jmix.core.EntityEntry;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.NoIdEntityEntry;
 import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -26,7 +26,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @ModelObject(name = "test_OrderObject")
-public class OrderObject implements JmixEntity {
+public class OrderObject implements Entity {
 
     private LocalDate date;
 

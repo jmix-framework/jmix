@@ -18,7 +18,7 @@ package io.jmix.core.entity;
 
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 
@@ -30,12 +30,12 @@ public class EntitySystemAccess {
     public static <T extends EntityEntry> T getEntityEntry(Object entity) {
         EntityPreconditions.checkEntityType(entity);
         //noinspection unchecked
-        return (T) ((JmixEntity) entity).__getEntityEntry();
+        return (T) ((Entity) entity).__getEntityEntry();
     }
 
     public static <T extends EntityEntry> T getUncheckedEntityEntry(Object entity) {
         //noinspection unchecked
-        return (T) ((JmixEntity) entity).__getEntityEntry();
+        return (T) ((Entity) entity).__getEntityEntry();
     }
 
     public static SecurityState getSecurityState(Object entity) {

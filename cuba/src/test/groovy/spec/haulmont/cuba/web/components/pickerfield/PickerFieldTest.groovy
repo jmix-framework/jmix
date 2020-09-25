@@ -58,7 +58,16 @@ class PickerFieldTest extends UiScreenSpec {
         component.setValue("One")
 
         then:
-        thrown ClassCastException
+        thrown IllegalStateException
+        component.value == null
+
+        when:
+
+        component.setMetaClass(metadata.getClass(User.class))
+        component.setValue("One")
+
+        then:
+        thrown IllegalArgumentException
         component.value == null
 
         when:

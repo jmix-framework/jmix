@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -42,7 +43,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
-    protected QueryStringProcessor queryStringProcessor;
+    protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -121,7 +122,7 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         if (entityId != null) {
             loadContext.setId(entityId);
         } else {
-            String queryString = queryStringProcessor.process(this.query, entityClass);
+            String queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, this.query, entityClass);
             LoadContext.Query query = loadContext.setQueryString(queryString);
             query.setCondition(condition);
             query.setParameters(parameters);

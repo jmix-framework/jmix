@@ -41,7 +41,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Autowired
     protected SorterFactory sorterFactory;
     @Autowired
-    protected QueryStringProcessor queryStringProcessor;
+    protected List<QueryStringProcessor> queryStringProcessors;
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
 
@@ -111,7 +111,7 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
         LoadContext<E> loadContext = new LoadContext<>(container.getEntityMetaClass());
 
-        String queryString = queryStringProcessor.process(this.query, entityClass);
+        String queryString = QueryUtils.applyQueryStringProcessors(queryStringProcessors, this.query, entityClass);
 
         LoadContext.Query query = loadContext.setQueryString(queryString);
 

@@ -18,6 +18,7 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,10 +26,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.io.File;
 
-import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
-
 @Component
-@Order(LOWEST_PLATFORM_PRECEDENCE - 30)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 30)
 public class FileIconProvider implements IconProvider {
 
     protected static final String FILE_PREFIX = "file:";

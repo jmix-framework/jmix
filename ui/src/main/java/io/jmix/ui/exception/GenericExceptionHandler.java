@@ -25,16 +25,6 @@ package io.jmix.ui.exception;
 public interface GenericExceptionHandler extends UiExceptionHandler {
 
     /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} platform handlers.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} platform handlers.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
-
-    /**
      * Handle an exception. Implementation class should either handle the exception and return true, or return false
      * to delegate execution to the next handler in the chain of responsibility.
      *

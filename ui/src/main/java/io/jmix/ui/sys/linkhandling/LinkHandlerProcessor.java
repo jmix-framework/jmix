@@ -28,16 +28,6 @@ import io.jmix.ui.sys.LinkHandler;
 public interface LinkHandlerProcessor {
 
     /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} processors of the platform.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} processors of the platform.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
-
-    /**
      * @return true if action with such request parameters should be handled by this processor.
      */
     boolean canHandle(ExternalLinkContext linkContext);

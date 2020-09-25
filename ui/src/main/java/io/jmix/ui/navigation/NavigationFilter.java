@@ -16,24 +16,10 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.ui.navigation.NavigationState;
-
 /**
  * Marker interface for beans that manage whether some route is allowed navigate to or not.
  */
 public interface NavigationFilter {
-
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} access filters.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} access filters.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
     /**
      * Checks whether {@code fromState} to {@code toState} navigation is allowed or not.

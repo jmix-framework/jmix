@@ -16,6 +16,7 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.navigation.NavigationHandler;
@@ -36,7 +37,7 @@ import java.util.Map;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Order(NavigationHandler.LOWEST_PLATFORM_PRECEDENCE - 20)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 public class ParamsNavigationHandler implements NavigationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ParamsNavigationHandler.class);

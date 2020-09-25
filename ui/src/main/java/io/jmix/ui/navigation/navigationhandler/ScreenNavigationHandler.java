@@ -50,7 +50,7 @@ import static io.jmix.ui.navigation.WebUrlRouting.NEW_ENTITY_ID;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Order(NavigationHandler.LOWEST_PLATFORM_PRECEDENCE - 30)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 30)
 public class ScreenNavigationHandler implements NavigationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenNavigationHandler.class);

@@ -20,7 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import io.jmix.core.Events;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.theme.ThemeConstants;
@@ -28,6 +28,7 @@ import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -35,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class IconsImpl implements Icons {
     protected List<Class<? extends Icon>> iconSets = new ArrayList<>();
 
     @EventListener(ContextRefreshedEvent.class)
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 100)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public void init() {
         String iconSetsProp = uiProperties.getIconsConfig();
         if (StringUtils.isEmpty(iconSetsProp)) {

@@ -54,16 +54,4 @@ public interface LoaderConfig {
      */
     @Nullable
     Class<? extends ComponentLoader> getWindowLoader(Element root);
-
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} icon providers.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} icon providers.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 }

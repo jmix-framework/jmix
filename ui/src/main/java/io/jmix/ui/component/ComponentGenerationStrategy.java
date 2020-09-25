@@ -22,15 +22,6 @@ import javax.annotation.Nullable;
  * A strategy for creating UI components by {@link UiComponentsGenerator}.
  */
 public interface ComponentGenerationStrategy {
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} component factories of the framework.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} component factories of the framework.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
     /**
      * Creates a component according to the given {@link ComponentGenerationContext}.

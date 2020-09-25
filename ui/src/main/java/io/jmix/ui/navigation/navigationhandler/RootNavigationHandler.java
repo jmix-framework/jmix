@@ -16,6 +16,7 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.AppUI;
@@ -47,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Order(NavigationHandler.LOWEST_PLATFORM_PRECEDENCE - 40)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 40)
 public class RootNavigationHandler implements NavigationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(RootNavigationHandler.class);

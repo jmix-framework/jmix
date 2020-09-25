@@ -17,7 +17,7 @@
 package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Events;
+import io.jmix.core.JmixOrder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +102,7 @@ public class WebJarResourceResolver {
     }
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 200)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 200)
     protected void init(ContextRefreshedEvent event) {
         try {
             long start = System.currentTimeMillis();

@@ -22,6 +22,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
-import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
 
 @Component
-@Order(LOWEST_PLATFORM_PRECEDENCE - 40)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 40)
 public class FontAwesomeIconProvider implements IconProvider {
 
     private static final Logger log = LoggerFactory.getLogger(FontAwesomeIconProvider.class);

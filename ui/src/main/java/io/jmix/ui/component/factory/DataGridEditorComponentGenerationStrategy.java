@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.factory;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -97,6 +98,6 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 30;
+        return JmixOrder.HIGHEST_PRECEDENCE + 30;
     }
 }

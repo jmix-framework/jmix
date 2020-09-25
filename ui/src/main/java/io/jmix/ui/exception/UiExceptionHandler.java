@@ -22,15 +22,6 @@ import io.jmix.ui.*;
  * Interface to be implemented by exception handlers defined on GUI level.
  */
 public interface UiExceptionHandler {
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} platform handlers.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} platform handlers.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
     /**
      * Handle an exception. Implementation class should either handle the exception and return true, or return false

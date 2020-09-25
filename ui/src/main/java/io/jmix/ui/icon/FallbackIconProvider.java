@@ -18,16 +18,15 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
-
 @Component
-@Order(LOWEST_PLATFORM_PRECEDENCE - 10)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class FallbackIconProvider implements IconProvider {
 
     @Override

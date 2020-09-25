@@ -17,9 +17,6 @@
 package io.jmix.ui.navigation;
 
 import io.jmix.ui.AppUI;
-import io.jmix.ui.navigation.NavigationState;
-import io.jmix.ui.navigation.ScreenNavigator;
-import io.jmix.ui.navigation.UrlChangeHandler;
 
 /**
  * Classes that implement this interface are intended for handling URL navigation.
@@ -28,18 +25,6 @@ import io.jmix.ui.navigation.UrlChangeHandler;
  * @see ScreenNavigator
  */
 public interface NavigationHandler {
-
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} navigation handlers.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} navigation handlers.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
     /**
      * Performs navigation corresponding the given {@code requestedState}.

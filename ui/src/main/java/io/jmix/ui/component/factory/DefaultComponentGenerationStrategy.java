@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.factory;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -56,6 +57,6 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
 
     @Override
     public int getOrder() {
-        return LOWEST_PLATFORM_PRECEDENCE;
+        return JmixOrder.LOWEST_PRECEDENCE;
     }
 }

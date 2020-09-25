@@ -18,16 +18,16 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.Resource;
 import com.vaadin.server.ThemeResource;
+import io.jmix.core.JmixOrder;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 import static io.jmix.core.common.util.Preconditions.checkNotEmptyString;
-import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
 
 @Component
-@Order(LOWEST_PLATFORM_PRECEDENCE - 20)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 public class ThemeIconProvider implements IconProvider {
 
     protected static final String THEME_PREFIX = "theme:";

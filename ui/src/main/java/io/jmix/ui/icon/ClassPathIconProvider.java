@@ -18,16 +18,15 @@ package io.jmix.ui.icon;
 
 import com.vaadin.server.ClassResource;
 import com.vaadin.server.Resource;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-import static io.jmix.ui.icon.IconProvider.LOWEST_PLATFORM_PRECEDENCE;
-
 @Component
-@Order(LOWEST_PLATFORM_PRECEDENCE - 50)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 50)
 public class ClassPathIconProvider implements IconProvider {
 
     protected static final String CLASSPATH_PREFIX = "classpath:";

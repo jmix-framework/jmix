@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.exception;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.ui.NoSuchScreenException;
 import org.springframework.core.Ordered;
@@ -48,6 +49,6 @@ public class NoSuchScreenHandler extends AbstractGenericExceptionHandler impleme
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 50;
+        return JmixOrder.HIGHEST_PRECEDENCE + 50;
     }
 }

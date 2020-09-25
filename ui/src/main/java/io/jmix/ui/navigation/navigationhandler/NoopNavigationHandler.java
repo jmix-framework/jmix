@@ -16,6 +16,7 @@
 
 package io.jmix.ui.navigation.navigationhandler;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Order(NavigationHandler.LOWEST_PLATFORM_PRECEDENCE - 10)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class NoopNavigationHandler implements NavigationHandler {
 
     private static final Logger log = LoggerFactory.getLogger(NoopNavigationHandler.class);

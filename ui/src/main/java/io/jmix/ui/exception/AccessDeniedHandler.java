@@ -16,6 +16,7 @@
 
 package io.jmix.ui.exception;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
 import org.springframework.core.Ordered;
@@ -43,6 +44,6 @@ public class AccessDeniedHandler extends AbstractGenericExceptionHandler impleme
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 20;
+        return JmixOrder.HIGHEST_PRECEDENCE + 20;
     }
 }

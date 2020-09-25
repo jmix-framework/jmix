@@ -16,18 +16,19 @@
 
 package io.jmix.ui.navigation.accessfilter;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.navigation.NavigationFilter;
 import io.jmix.ui.navigation.NavigationState;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 @Component
-@Order(NavigationFilter.LOWEST_PLATFORM_PRECEDENCE - 10)
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 public class JmixNotFoundScreenFilter implements NavigationFilter {
 
     @Autowired

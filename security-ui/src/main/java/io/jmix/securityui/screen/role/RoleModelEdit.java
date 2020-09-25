@@ -18,7 +18,6 @@ package io.jmix.securityui.screen.role;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.*;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;

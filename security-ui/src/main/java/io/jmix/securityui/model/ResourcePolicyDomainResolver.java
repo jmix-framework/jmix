@@ -17,7 +17,7 @@
 package io.jmix.securityui.model;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.ResourcePolicy;
@@ -182,7 +182,7 @@ public class ResourcePolicyDomainResolver {
             typeArgument = GenericTypeResolver.resolveTypeArgument(controllerClass, LookupScreen.class);
         }
         if (typeArgument != null) {
-            if (JmixEntity.class.isAssignableFrom(typeArgument)) {
+            if (Entity.class.isAssignableFrom(typeArgument)) {
                 MetaClass metaClass = metadata.findClass(typeArgument);
                 if (metaClass != null) {
                     return resolveDomainForEntityPolicy(metaClass.getName());

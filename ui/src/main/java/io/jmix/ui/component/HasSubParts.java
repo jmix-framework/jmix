@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
  * Interface for UI components that provide additional objects for framework as part of component API.
  *
  * @see DataGrid
- * @see FieldGroup
  * @see ActionsHolder
  */
 public interface HasSubParts {

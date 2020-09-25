@@ -111,7 +111,7 @@ public class QueriesControllerManager {
                                    @Nullable Boolean dynamicAttributes,
                                    @Nullable String version,
                                    Map<String, String> params) {
-        LoadContext<JmixEntity> ctx;
+        LoadContext<?> ctx;
         entityName = restControllerUtils.transformEntityNameIfRequired(entityName, version, JsonTransformationDirection.FROM_VERSION);
         try {
             ctx = createQueryLoadContext(entityName, queryName, limit, offset, params);
@@ -125,7 +125,7 @@ public class QueriesControllerManager {
             MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
             ctx.setFetchPlan(restControllerUtils.getView(metaClass, viewName));
         }
-        List<JmixEntity> entities = dataManager.loadList(ctx);
+        List<?> entities = dataManager.loadList(ctx);
         entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
@@ -154,7 +154,7 @@ public class QueriesControllerManager {
 
     protected String _getCount(String entityName, String queryName, String version, Map<String, String> params) {
         entityName = restControllerUtils.transformEntityNameIfRequired(entityName, version, JsonTransformationDirection.FROM_VERSION);
-        LoadContext<JmixEntity> ctx;
+        LoadContext<?> ctx;
         try {
             ctx = createQueryLoadContext(entityName, queryName, null, null, params);
         } catch (ClassNotFoundException | ParseException e) {
@@ -170,7 +170,7 @@ public class QueriesControllerManager {
         return restQueriesConfiguration.getQueries(entityName);
     }
 
-    protected LoadContext<JmixEntity> createQueryLoadContext(String entityName,
+    protected LoadContext<?> createQueryLoadContext(String entityName,
                                                              String queryName,
                                                              @Nullable Integer limit,
                                                              @Nullable Integer offset,
@@ -185,7 +185,7 @@ public class QueriesControllerManager {
                     HttpStatus.NOT_FOUND);
         }
 
-        LoadContext<JmixEntity> ctx = new LoadContext<>(metaClass);
+        LoadContext<?> ctx = new LoadContext<>(metaClass);
         LoadContext.Query query = new LoadContext.Query(queryInfo.getJpql());
 
         if (limit != null) {

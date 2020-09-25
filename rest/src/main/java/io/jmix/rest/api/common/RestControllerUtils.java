@@ -81,7 +81,7 @@ public class RestControllerUtils {
      *
      * @param entity the entity. After the method is executed forbidden attributes will be cleaned.
      */
-    public void applyAttributesSecurity(JmixEntity entity) {
+    public void applyAttributesSecurity(Object entity) {
         metadataTools.traverseAttributes(entity, new FillingInaccessibleAttributesVisitor());
     }
 
@@ -103,7 +103,7 @@ public class RestControllerUtils {
         }
 
         @Override
-        public void visit(JmixEntity entity, MetaProperty property) {
+        public void visit(Object entity, MetaProperty property) {
             //todo:rest
 //            MetaClass metaClass = metadata.getClass(entity.getClass());
 //            ReadEntityQueryContext = accessManager.applyRegisteredConstraints(new CRUDEntityContext());

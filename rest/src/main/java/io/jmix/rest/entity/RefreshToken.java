@@ -16,7 +16,6 @@
 
 package io.jmix.rest.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 
@@ -30,7 +29,7 @@ import java.util.UUID;
 @Entity(name = "sys$RefreshToken")
 @Table(name = "SYS_REFRESH_TOKEN")
 @SystemLevel
-public class RefreshToken implements JmixEntity {
+public class RefreshToken {
 
     @Id
     @Column(name = "ID")

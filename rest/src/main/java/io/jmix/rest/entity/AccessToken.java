@@ -16,7 +16,6 @@
 
 package io.jmix.rest.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 
@@ -30,7 +29,7 @@ import java.util.UUID;
 @Entity(name = "sys$AccessToken")
 @Table(name = "SYS_ACCESS_TOKEN")
 @SystemLevel
-public class AccessToken implements JmixEntity {
+public class AccessToken {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

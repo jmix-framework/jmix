@@ -17,6 +17,7 @@
 package io.jmix.dynattrui.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.DynamicAttributesState;
@@ -47,11 +48,11 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
     private AccessConstraintsRegistry accessConstraintsRegistry;
 
     @Override
-    public <E extends JmixEntity> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
+    public <E> E transformForCollectionContainer(E editedEntity, CollectionContainer<E> container) {
         boolean needDynamicAttributes = false;
         boolean dynamicAttributesAreLoaded = true;
 
-        DynamicAttributesState state = (DynamicAttributesState) editedEntity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+        DynamicAttributesState state = EntitySystemAccess.getExtraState(editedEntity, DynamicAttributesState.class);
         if (state != null) {
             dynamicAttributesAreLoaded = state.getDynamicAttributes() != null;
         }
@@ -82,7 +83,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
     }
 
     @Override
-    public <E extends JmixEntity> E transformForField(E editedEntity, HasValue<E> field) {
+    public <E> E transformForField(E editedEntity, HasValue<E> field) {
         return editedEntity;
     }
 }

@@ -17,7 +17,6 @@
 package test_support.entity;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -38,10 +37,7 @@ import java.util.UUID;
 @Entity(name = "dynattr$UserRole")
 @Table(name = "DYNATTR_USER_ROLE")
 @SystemLevel
-public class UserRole implements JmixEntity {
-
-    private static final long serialVersionUID = 8543853035155300992L;
-
+public class UserRole {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

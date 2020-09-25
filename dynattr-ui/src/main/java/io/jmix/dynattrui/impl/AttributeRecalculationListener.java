@@ -61,7 +61,7 @@ public class AttributeRecalculationListener implements Consumer<HasValue.ValueCh
                 ContainerValueSource<?, ?> valueSource = (ContainerValueSource<?, ?>) ((HasValueSource<?>) component).getValueSource();
                 InstanceContainer<?> container = valueSource.getContainer();
 
-                JmixEntity entity = container.getItem();
+                Object entity = container.getItem();
 
                 EntityValues.setValue(entity, DynAttrUtils.getPropertyFromAttributeCode(attribute.getCode()), valueChangeEvent.getValue());
 

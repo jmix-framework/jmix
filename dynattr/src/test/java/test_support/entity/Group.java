@@ -15,7 +15,6 @@
  */
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -34,9 +33,7 @@ import java.util.UUID;
  */
 @Entity(name = "dynattr$Group")
 @Table(name = "DYNATTR_GROUP")
-public class Group implements JmixEntity {
-    private static final long serialVersionUID = -4581386806900761785L;
-
+public class Group {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

@@ -16,7 +16,6 @@
 
 package io.jmix.dynattr.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.model.Category;
@@ -61,7 +60,7 @@ public class CommonCategoryDefinition implements CategoryDefinition {
     }
 
     @Override
-    public JmixEntity getSource() {
+    public Object getSource() {
         return category;
     }
 }

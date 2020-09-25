@@ -30,10 +30,10 @@ public interface DynAttrManager {
     /**
      * Fetch dynamic attributes from dynamic attributes store for each entity
      */
-    void loadValues(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints);
+    void loadValues(Collection<Object> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints);
 
     /**
      * Store dynamic attributes from the entity to store
      */
-    void storeValues(Collection<JmixEntity> entities, Collection<AccessConstraint<?>> accessConstraints);
+    void storeValues(Collection<Object> entities, Collection<AccessConstraint<?>> accessConstraints);
 }

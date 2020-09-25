@@ -22,6 +22,7 @@ import com.google.common.collect.Multimap;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -43,6 +44,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static io.jmix.core.entity.EntitySystemAccess.*;
 
 //TODO: take into account category
 @Component(DynAttrManager.NAME)
@@ -75,17 +78,17 @@ public class DynAttrManagerImpl implements DynAttrManager {
     protected String dynamicAttributesStore = Stores.MAIN;
 
     @Override
-    public void storeValues(Collection<JmixEntity> entities, Collection<AccessConstraint<?>> accessConstraints) {
+    public void storeValues(Collection<Object> entities, Collection<AccessConstraint<?>> accessConstraints) {
         storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                 .executeWithoutResult(status -> {
-                    for (JmixEntity entity : entities) {
+                    for (Object entity : entities) {
                         doStoreValues(entity, accessConstraints);
                     }
                 });
     }
 
-    public void loadValues(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints) {
-        Multimap<MetaClass, JmixEntity> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
+    public void loadValues(Collection<Object> entities, @Nullable FetchPlan fetchPlan, Collection<AccessConstraint<?>> accessConstraints) {
+        Multimap<MetaClass, Object> entitiesToLoad = collectEntitiesToLoad(entities, fetchPlan);
         if (!entitiesToLoad.isEmpty()) {
             storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
                     .executeWithoutResult(status -> {
@@ -97,9 +100,8 @@ public class DynAttrManagerImpl implements DynAttrManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected void doStoreValues(JmixEntity entity, Collection<AccessConstraint<?>> accessConstraints) {
-        DynamicAttributesState state = (DynamicAttributesState)
-                entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+    protected void doStoreValues(Object entity, Collection<AccessConstraint<?>> accessConstraints) {
+        DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
         if (state != null && state.getDynamicAttributes() != null) {
             EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
@@ -186,12 +188,12 @@ public class DynAttrManagerImpl implements DynAttrManager {
         }
     }
 
-    protected void doFetchValues(MetaClass metaClass, Collection<JmixEntity> entities, Collection<AccessConstraint<?>> accessConstraints) {
+    protected void doFetchValues(MetaClass metaClass, Collection<Object> entities, Collection<AccessConstraint<?>> accessConstraints) {
         if (dynAttrMetadata.getAttributes(metaClass).isEmpty() ||
                 metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
-            for (JmixEntity entity : entities) {
-                DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
-                entity.__getEntityEntry().addExtraState(state);
+            for (Object entity : entities) {
+                DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
+                addExtraState(entity, state);
             }
         } else {
             List<Object> ids = entities.stream()
@@ -216,10 +218,10 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 }
             }
 
-            for (JmixEntity entity : entities) {
+            for (Object entity : entities) {
                 Collection<CategoryAttributeValue> values = allAttributeValues.get(referenceToEntitySupport.getReferenceId(entity));
-                DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
-                entity.__getEntityEntry().addExtraState(state);
+                DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
+                addExtraState(entity, state);
 
                 Map<String, Object> map = new HashMap<>();
                 if (values != null && !values.isEmpty()) {
@@ -360,15 +362,15 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             if (!ids.isEmpty()) {
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
-                List<JmixEntity> resultList = entityManager.createQuery(
+                List<?> resultList = entityManager.createQuery(
                         String.format("select e from %s e where e.%s in :ids", metaClass.getName(), pkName))
                         .setParameter("ids", ids)
                         .setHint(PersistenceHints.FETCH_PLAN, fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.INSTANCE_NAME))
                         .getResultList();
 
 
-                Map<Object, JmixEntity> entityById = new LinkedHashMap<>();
-                for (JmixEntity entity : resultList) {
+                Map<Object, Object> entityById = new LinkedHashMap<>();
+                for (Object entity : resultList) {
                     entityById.put(EntityValues.getId(entity), entity);
                 }
 
@@ -399,18 +401,18 @@ public class DynAttrManagerImpl implements DynAttrManager {
                 .getResultList();
     }
 
-    protected Multimap<MetaClass, JmixEntity> collectEntitiesToLoad(Collection<JmixEntity> entities, @Nullable FetchPlan fetchPlan) {
-        Multimap<MetaClass, JmixEntity> entitiesByType = HashMultimap.create();
+    protected Multimap<MetaClass, Object> collectEntitiesToLoad(Collection<Object> entities, @Nullable FetchPlan fetchPlan) {
+        Multimap<MetaClass, Object> entitiesByType = HashMultimap.create();
         if (fetchPlan != null) {
             Set<Class> dependentClasses = collectEntityClasses(fetchPlan, new HashSet<>()).stream()
                     .filter(aClass -> !dynAttrMetadata.getAttributes(metadata.getClass(aClass)).isEmpty())
                     .collect(Collectors.toSet());
-            for (JmixEntity entity : entities) {
+            for (Object entity : entities) {
                 entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity.getClass())), entity);
                 if (!dependentClasses.isEmpty()) {
                     metadataTools.traverseAttributes(entity, new EntityAttributeVisitor() {
                         @Override
-                        public void visit(JmixEntity visitedEntity, MetaProperty property) {
+                        public void visit(Object visitedEntity, MetaProperty property) {
                             if (dependentClasses.contains(property.getRange().asClass().getJavaClass()) &&
                                     entityStates.isLoaded(visitedEntity, property.getName())) {
                                 Object value = EntityValues.getValue(visitedEntity, property.getName());
@@ -419,12 +421,12 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                         //noinspection rawtypes
                                         for (Object item : ((Collection) value)) {
                                             if (item instanceof JmixEntity) {
-                                                entitiesByType.put(metadata.getClass(item.getClass()), (JmixEntity) item);
+                                                entitiesByType.put(metadata.getClass(item.getClass()), item);
                                             }
                                         }
                                     } else if (value instanceof JmixEntity) {
-                                        if (!((JmixEntity) value).__getEntityEntry().isEmbeddable()) {
-                                            entitiesByType.put(metadata.getClass(value.getClass()), (JmixEntity) value);
+                                        if (!EntitySystemAccess.isEmbeddable(entity)) {
+                                            entitiesByType.put(metadata.getClass(value.getClass()), value);
                                         }
                                     }
                                 }
@@ -440,7 +442,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
             }
         } else if (!entities.isEmpty()) {
-            for (JmixEntity entity : entities) {
+            for (Object entity : entities) {
                 MetaClass metaClass = metadata.getClass(entity.getClass());
                 if (!dynAttrMetadata.getAttributes(metaClass).isEmpty()) {
                     entitiesByType.put(extendedEntities.getOriginalOrThisMetaClass(metaClass), entity);
@@ -492,9 +494,9 @@ public class DynAttrManagerImpl implements DynAttrManager {
         } else if (value instanceof Boolean) {
             cav.setBooleanValue((Boolean) value);
         } else if (value instanceof JmixEntity) {
-            Object referenceId = referenceToEntitySupport.getReferenceId((JmixEntity) value);
+            Object referenceId = referenceToEntitySupport.getReferenceId(value);
             cav.getEntityValue().setObjectEntityId(referenceId);
-            cav.setTransientEntityValue((JmixEntity) value);
+            cav.setTransientEntityValue(value);
         } else if (value instanceof String) {
             cav.setStringValue((String) value);
         } else if (value instanceof List) {

@@ -16,22 +16,24 @@
 
 package io.jmix.dynattr.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.EntityInitializer;
 import io.jmix.dynattr.DynamicAttributes;
 import io.jmix.dynattr.DynamicAttributesState;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
+import static io.jmix.core.entity.EntitySystemAccess.addExtraState;
+import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
+
 @Component(DynAttrEntityStateInitializer.NAME)
 public class DynAttrEntityStateInitializer implements EntityInitializer, Ordered {
     public static final String NAME = "dynattr_DynAttrEntityStateInitializer";
 
     @Override
-    public void initEntity(JmixEntity entity) {
-        DynamicAttributesState state = new DynamicAttributesState(entity.__getEntityEntry());
+    public void initEntity(Object entity) {
+        DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
         state.setDynamicAttributes(new DynamicAttributes());
-        entity.__getEntityEntry().addExtraState(state);
+        addExtraState(entity, state);
     }
 
     @Override

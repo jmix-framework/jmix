@@ -24,12 +24,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.OptionsLoaderType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
@@ -55,7 +55,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     protected static final Pattern COMMON_PARAM_PATTERN = Pattern.compile("\\$\\{(.+?)}");
 
     public interface OptionsLoaderStrategy {
-        List loadOptions(JmixEntity entity, AttributeDefinition attribute, String script);
+        List loadOptions(Object entity, AttributeDefinition attribute, String script);
     }
 
     @PostConstruct
@@ -66,7 +66,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
     }
 
     @Override
-    public List loadOptions(JmixEntity entity, AttributeDefinition attribute) {
+    public List loadOptions(Object entity, AttributeDefinition attribute) {
         AttributeDefinition.Configuration configuration = attribute.getConfiguration();
         String loaderScript = configuration.getOptionsLoaderScript();
 
@@ -84,7 +84,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         return loaderStrategy;
     }
 
-    protected List executeSql(JmixEntity entity, AttributeDefinition attribute, String script) {
+    protected List executeSql(Object entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
             return storeAwareLocator.getTransactionTemplate(Stores.MAIN)
                     .execute(status -> {
@@ -136,22 +136,22 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected Object getQueryParameterValue(String name, Map<String, Object> params) {
         if (ENTITY_QUERY_PARAM.equals(name)) {
-            JmixEntity entity = (JmixEntity) params.get("entity");
+            Object entity = params.get("entity");
             if (entity != null) {
                 return EntityValues.getId(entity);
             }
         } else if (name != null && name.startsWith(ENTITY_FIELD_QUERY_PARAM)) {
-            JmixEntity entity = (JmixEntity) params.get("entity");
+            Object entity = params.get("entity");
             if (entity != null) {
                 String attributePath = name.substring(ENTITY_FIELD_QUERY_PARAM.length());
                 Object value = EntityValues.getValueEx(entity, attributePath);
-                return value instanceof JmixEntity ? EntityValues.getId((JmixEntity) value) : value;
+                return value instanceof JmixEntity ? EntityValues.getId(value) : value;
             }
         }
         return null;
     }
 
-    protected List executeJpql(JmixEntity entity, AttributeDefinition attribute, String script) {
+    protected List executeJpql(Object entity, AttributeDefinition attribute, String script) {
         MetaClass metaClass = metadata.getClass(attribute.getJavaType());
 
         StringBuilder queryString = new StringBuilder(String.format("select e from %s e", metaClass.getName()));
@@ -197,7 +197,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
         }
     }
 
-    protected List executeGroovyScript(JmixEntity entity, AttributeDefinition attribute, String script) {
+    protected List executeGroovyScript(Object entity, AttributeDefinition attribute, String script) {
         if (!Strings.isNullOrEmpty(script)) {
             return (List) scriptEvaluator.evaluate(new StaticScriptSource(script), Collections.singletonMap("entity", entity));
         }

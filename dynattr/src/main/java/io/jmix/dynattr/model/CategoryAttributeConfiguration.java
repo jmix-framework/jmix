@@ -17,7 +17,6 @@
 package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -26,6 +25,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import javax.annotation.Nullable;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sys_CategoryAttributeConfiguration")
 @SystemLevel
-public class CategoryAttributeConfiguration implements JmixEntity {
+public class CategoryAttributeConfiguration implements Serializable {
     private static final long serialVersionUID = 2670605418267938507L;
 
     @Id

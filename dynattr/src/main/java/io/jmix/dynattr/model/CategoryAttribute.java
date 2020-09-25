@@ -20,7 +20,6 @@ package io.jmix.dynattr.model;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
@@ -42,6 +41,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -49,7 +49,7 @@ import java.util.*;
 @Entity(name = "sys_CategoryAttribute")
 @Table(name = "SYS_CATEGORY_ATTR")
 @SystemLevel
-public class CategoryAttribute implements JmixEntity {
+public class CategoryAttribute implements Serializable {
 
     private static final long serialVersionUID = -6959392628534815752L;
 

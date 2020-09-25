@@ -35,6 +35,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
@@ -44,8 +45,7 @@ import java.util.UUID;
 @javax.persistence.Entity(name = "sys_CategoryAttributeValue")
 @Table(name = "SYS_ATTR_VALUE")
 @SystemLevel
-public class CategoryAttributeValue implements JmixEntity {
-
+public class CategoryAttributeValue implements Serializable {
     private static final long serialVersionUID = -2861790889151226985L;
 
     @Id
@@ -124,7 +124,7 @@ public class CategoryAttributeValue implements JmixEntity {
     private ReferenceToEntity entityValue;
 
     @Transient
-    private JmixEntity transientEntityValue;
+    private Object transientEntityValue;
 
     @OneToMany(mappedBy = "parent")
     @OnDelete(DeletePolicy.CASCADE)
@@ -295,11 +295,11 @@ public class CategoryAttributeValue implements JmixEntity {
         this.entityValue = entityValue;
     }
 
-    public JmixEntity getTransientEntityValue() {
+    public Object getTransientEntityValue() {
         return transientEntityValue;
     }
 
-    public void setTransientEntityValue(JmixEntity transientEntityValue) {
+    public void setTransientEntityValue(Object transientEntityValue) {
         this.transientEntityValue = transientEntityValue;
     }
 

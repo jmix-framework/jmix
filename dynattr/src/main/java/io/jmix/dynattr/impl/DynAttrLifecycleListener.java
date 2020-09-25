@@ -38,7 +38,7 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
+    public void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
         Map<String, Object> hints = loadContext.getHints();
         if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             //noinspection unchecked
@@ -47,7 +47,7 @@ public class DynAttrLifecycleListener implements OrmLifecycleListener {
     }
 
     @Override
-    public void onSave(Collection<JmixEntity> entities, SaveContext saveContext) {
+    public void onSave(Collection<Object> entities, SaveContext saveContext) {
         dynAttrManager.storeValues(entities, saveContext.getAccessConstraints());
     }
 }

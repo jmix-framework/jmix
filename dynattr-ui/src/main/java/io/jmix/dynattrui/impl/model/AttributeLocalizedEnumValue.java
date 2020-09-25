@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrui.impl.model;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @ModelObject(name = "sys_AttributeLocalizedEnumValue")
 @SystemLevel
-public class AttributeLocalizedEnumValue implements JmixEntity {
+public class AttributeLocalizedEnumValue {
 
     @Id
     @JmixGeneratedValue

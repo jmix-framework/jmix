@@ -57,7 +57,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;
 
-    protected InstanceContainer<JmixEntity> instanceContainer;
+    protected InstanceContainer<?> instanceContainer;
 
     protected Integer cols;
     protected Integer rows;
@@ -205,7 +205,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         }
     }
 
-    protected void initCategoryField(InstanceContainer<JmixEntity> instanceContainer) {
+    protected void initCategoryField(InstanceContainer<?> instanceContainer) {
         categoryField.setOptionsList(getCategoriesOptionsList());
         categoryField.setValueSource(new ContainerValueSource<>(instanceContainer, "category"));
     }
@@ -250,7 +250,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
         }
     }
 
-    protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<JmixEntity> event) {
+    protected void onInstanceContainerItemChangeEvent(InstanceContainer.ItemChangeEvent<?> event) {
         //TODO: think about category
 //        if (event.getItem() instanceof Categorized
 //                && ((Categorized) event.getItem()).getCategory() == null) {

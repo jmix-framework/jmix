@@ -15,7 +15,6 @@
  */
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -38,10 +37,7 @@ import java.util.UUID;
  */
 @Entity(name = "dynattr$User")
 @Table(name = "DYNATTR_USER")
-public class User implements JmixEntity {
-
-    private static final long serialVersionUID = 5007187642916030394L;
-
+public class User {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue
@@ -327,9 +323,9 @@ public class User implements JmixEntity {
     }
 
     @InstanceName
-    @DependsOnProperties({"login","name"})
-    public String getCaption(){
-        return String.format("%s[%s]",getLogin(),getName());
+    @DependsOnProperties({"login", "name"})
+    public String getCaption() {
+        return String.format("%s[%s]", getLogin(), getName());
     }
 
     public Boolean getChangePasswordAtNextLogon() {

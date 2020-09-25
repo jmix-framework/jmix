@@ -389,7 +389,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
 
     protected void setOptionsLoader(ComboBox lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
         InstanceContainer<?> container = valueSource.getContainer();
-        JmixEntity entity = container.getItemOrNull();
+        Object entity = container.getItemOrNull();
         if (entity != null) {
             List options = optionsLoader.loadOptions(entity, attribute);
             //noinspection unchecked

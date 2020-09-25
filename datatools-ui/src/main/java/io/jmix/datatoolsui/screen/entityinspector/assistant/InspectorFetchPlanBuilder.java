@@ -44,18 +44,18 @@ public class InspectorFetchPlanBuilder {
 
     protected FetchPlanBuilder fetchPlanBuilder;
 
-    protected Class<? extends JmixEntity> entityClass;
+    protected Class<?> entityClass;
     protected MetaClass metaClass;
 
     protected boolean withCollections = false;
     protected boolean withEmbedded = false;
     protected boolean withSystemProperties = false;
 
-    public static InspectorFetchPlanBuilder of(ApplicationContext applicationContext, Class<? extends JmixEntity> entityClass) {
+    public static InspectorFetchPlanBuilder of(ApplicationContext applicationContext, Class<?> entityClass) {
         return applicationContext.getBean(InspectorFetchPlanBuilder.class, entityClass);
     }
 
-    protected InspectorFetchPlanBuilder(Class<? extends JmixEntity> entityClass) {
+    protected InspectorFetchPlanBuilder(Class<?> entityClass) {
         this.entityClass = entityClass;
     }
 

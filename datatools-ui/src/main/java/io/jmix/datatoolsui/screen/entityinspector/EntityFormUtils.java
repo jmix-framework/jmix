@@ -76,7 +76,7 @@ public final class EntityFormUtils {
      * @param item         entity containing property of the given meta property
      * @return true if property require text area component; that is if it either too long or contains line separators
      */
-    public static boolean requireTextArea(MetaProperty metaProperty, JmixEntity item, int maxTextFieldLength) {
+    public static boolean requireTextArea(MetaProperty metaProperty, Object item, int maxTextFieldLength) {
         if (!String.class.equals(metaProperty.getJavaType())) {
             return false;
         }

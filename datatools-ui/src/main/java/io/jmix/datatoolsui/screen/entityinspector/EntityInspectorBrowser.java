@@ -19,7 +19,7 @@ package io.jmix.datatoolsui.screen.entityinspector;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import io.jmix.core.*;
-import io.jmix.core.entity.EntitySystemValues;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -31,6 +31,7 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
@@ -38,7 +39,6 @@ import io.jmix.ui.action.list.RefreshAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
@@ -64,7 +64,7 @@ import static io.jmix.ui.download.DownloadFormat.ZIP;
 @Route("jmixEntityInspector")
 @UiController("entityInspector.browse")
 @UiDescriptor("entity-inspector-browser.xml")
-public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
+public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     public static final int MAX_TEXT_LENGTH = 50;
 
@@ -152,7 +152,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
     }
 
     @Override
-    protected LookupComponent<JmixEntity> getLookupComponent() {
+    protected LookupComponent<Object> getLookupComponent() {
         return entitiesTable;
     }
 
@@ -215,8 +215,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             if (!selectionEvent.getSelected().isEmpty()) {
                 for (Object o : selectionEvent.getSelected()) {
                     if (o instanceof JmixEntity) {
-
-                        if (EntitySystemValues.isSoftDeleted((JmixEntity) o)) {
+                        if (EntityValues.isSoftDeleted(o)) {
                             removeEnabled = false;
                         }
                     }
@@ -311,7 +310,7 @@ public class EntityInspectorBrowser extends StandardLookup<JmixEntity> {
             byte[] fileBytes = importUpload.getValue();
             String fileName = event.getFileName();
             try {
-                Collection<JmixEntity> importedEntities;
+                Collection<Object> importedEntities;
                 if (JSON.getFileExt().equals(Files.getFileExtension(fileName))) {
                     String content = new String(fileBytes, StandardCharsets.UTF_8);
                     importedEntities = entityImportExport.importEntitiesFromJson(content, createEntityImportPlan(selectedMeta));

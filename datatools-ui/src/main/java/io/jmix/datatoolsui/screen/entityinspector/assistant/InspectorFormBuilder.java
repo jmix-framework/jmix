@@ -24,13 +24,13 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
@@ -72,7 +72,6 @@ public class InspectorFormBuilder {
     protected AccessManager accessManager;
 
     private final InstanceContainer container;
-    private JmixEntity entityToEdit;
 
     private String caption = null;
     private Integer maxCaptionLength = 50;
@@ -115,7 +114,7 @@ public class InspectorFormBuilder {
 
     public Form build() {
         MetaClass metaClass = container.getEntityMetaClass();
-        JmixEntity item = getItem();
+        Object item = getItem();
 
         Form form = uiComponents.create(Form.class);
         if (captionWidth != null) {
@@ -165,7 +164,7 @@ public class InspectorFormBuilder {
         return form;
     }
 
-    private JmixEntity getItem() {
+    private Object getItem() {
         return container.getItem();
     }
 

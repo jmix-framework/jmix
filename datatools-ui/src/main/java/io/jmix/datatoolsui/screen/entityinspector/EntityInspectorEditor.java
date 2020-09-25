@@ -27,11 +27,11 @@ import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilde
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.*;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
@@ -127,7 +127,7 @@ public class EntityInspectorEditor extends StandardEditor {
     }
 
     @Override
-    public void setEntityToEdit(JmixEntity entity) {
+    public void setEntityToEdit(Object entity) {
         super.setEntityToEdit(entity);
         container = initMainContainer(entity);
         isNew = entityStates.isNew(entity);
@@ -138,7 +138,7 @@ public class EntityInspectorEditor extends StandardEditor {
         return container;
     }
 
-    private InstanceContainer initMainContainer(JmixEntity entity) {
+    private InstanceContainer initMainContainer(Object entity) {
         InstanceContainer container = dataComponents.createInstanceContainer(entity.getClass());
         if (!entityStates.isNew(entity)) {
             InstanceLoader loader = dataComponents.createInstanceLoader();
@@ -163,7 +163,7 @@ public class EntityInspectorEditor extends StandardEditor {
                 .build();
 
         MetaClass metaClass = container.getEntityMetaClass();
-        JmixEntity item = getEditedEntity();
+        Object item = getEditedEntity();
 
         contentPane.add(form);
 
@@ -175,7 +175,7 @@ public class EntityInspectorEditor extends StandardEditor {
                         addTable(container, metaProperty);
                     } else {
                         if (isEmbedded(metaProperty)) {
-                            JmixEntity propertyValue = EntityValues.getValue(item, metaProperty.getName());
+                            Object propertyValue = EntityValues.getValue(item, metaProperty.getName());
                             if (propertyValue != null) {
                                 propertyValue = dataContext.merge(propertyValue);
                             }
@@ -203,7 +203,7 @@ public class EntityInspectorEditor extends StandardEditor {
     private void createNewItemByMetaClass(Map<String, Object> params) {
         if (params.get("metaClass") != null) {
             MetaClass meta = (MetaClass) params.get("metaClass");
-            JmixEntity item = metadata.create(meta);
+            Object item = metadata.create(meta);
             setEntityToEdit(item);
         }
     }
@@ -335,7 +335,7 @@ public class EntityInspectorEditor extends StandardEditor {
 
         });
         createAction.setNewEntitySupplier(() -> {
-            JmixEntity newItem = metadata.create(metaProperty.getRange().asClass());
+            Object newItem = metadata.create(metaProperty.getRange().asClass());
             MetaProperty inverseProperty = metaProperty.getInverse();
             if (inverseProperty != null) {
                 EntityValues.setValue(newItem, inverseProperty.getName(), getEditedEntity());

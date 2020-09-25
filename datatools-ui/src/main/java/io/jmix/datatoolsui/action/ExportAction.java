@@ -18,7 +18,6 @@ package io.jmix.datatoolsui.action;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.EntityImportExport;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.datatoolsui.screen.entityinspector.EntityInspectorBrowser;
@@ -109,7 +108,7 @@ public class ExportAction extends ItemTrackingAction {
 
     @Override
     public void actionPerform(Component component) {
-        Collection<JmixEntity> selected = table.getSelected();
+        Collection<Object> selected = table.getSelected();
         if (selected.isEmpty()
                 && table.getItems() != null) {
             selected = table.getItems().getItems();

@@ -21,7 +21,7 @@ import io.jmix.ui.Screens.LaunchMode;
 
 import javax.annotation.Nullable;
 
-public interface RelatedEntities<E extends Entity> extends Component,
+public interface RelatedEntities<E> extends Component,
         Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
         Component.Focusable, HasHtmlCaption, HasHtmlDescription {
 

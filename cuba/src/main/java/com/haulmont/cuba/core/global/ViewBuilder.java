@@ -32,17 +32,17 @@ public class ViewBuilder extends FetchPlanBuilder {
 
     public static final String NAME = "cuba_ViewBuilder";
 
-    public static ViewBuilder of(Class<? extends JmixEntity> entityClass) {
+    public static ViewBuilder of(Class<? extends Entity> entityClass) {
         return AppBeans.getPrototype(ViewBuilder.class, entityClass);
     }
 
-    protected ViewBuilder(Class<? extends JmixEntity> entityClass) {
+    protected ViewBuilder(Class<? extends Entity> entityClass) {
         super(entityClass);
     }
 
     @Override
     protected FetchPlan createFetchPlan(Class<?> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
-        return new View((Class<JmixEntity>) entityClass, name, properties, loadPartialEntities);
+        return new View((Class<Entity>) entityClass, name, properties, loadPartialEntities);
     }
 
     public ViewBuilder add(String property) {

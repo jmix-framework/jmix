@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.global.ViewBuilder;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -37,7 +37,7 @@ public class CubaFetchPlanRepository extends FetchPlanRepositoryImpl {
     @Override
     protected FetchPlan deployDefaultFetchPlan(MetaClass metaClass, String name, Set<FetchPlanLoader.FetchPlanInfo> visited) {
         if (View.MINIMAL.equals(name)) {
-            Class<? extends JmixEntity> javaClass = metaClass.getJavaClass();
+            Class<? extends Entity> javaClass = metaClass.getJavaClass();
 
             FetchPlanLoader.FetchPlanInfo info = new FetchPlanLoader.FetchPlanInfo(metaClass, name);
             if (visited.contains(info)) {

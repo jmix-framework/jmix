@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.tx_listener;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import org.springframework.core.Ordered;
@@ -28,7 +28,7 @@ import java.util.Collection;
 public class TestBeforeCommitTxListener2 implements BeforeCommitTransactionListener, Ordered {
 
     @Override
-    public void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities) {
+    public void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities) {
         System.out.println("TestBeforeCommitTxListener2.beforeCommit");
     }
 

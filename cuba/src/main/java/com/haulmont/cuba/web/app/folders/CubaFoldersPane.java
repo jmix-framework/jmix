@@ -50,7 +50,6 @@ import com.vaadin.util.ReflectTools;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.ui.AppUI;

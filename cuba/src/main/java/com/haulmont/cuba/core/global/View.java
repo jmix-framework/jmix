@@ -49,7 +49,7 @@ public class View extends FetchPlan {
      */
     public static class ViewParams {
         protected List<View> src = Collections.emptyList();
-        protected Class<? extends JmixEntity> entityClass;
+        protected Class<? extends Entity> entityClass;
         protected String name;
         protected boolean includeSystemProperties;
 
@@ -62,7 +62,7 @@ public class View extends FetchPlan {
             this.src = sources;
         }
 
-        public ViewParams entityClass(Class<? extends JmixEntity> entityClass) {
+        public ViewParams entityClass(Class<? extends Entity> entityClass) {
             this.entityClass = entityClass;
             return this;
         }
@@ -101,19 +101,19 @@ public class View extends FetchPlan {
 
     private static final long serialVersionUID = 4313784222934349594L;
 
-    public View(Class<? extends JmixEntity> entityClass) {
+    public View(Class<? extends Entity> entityClass) {
         this(new ViewParams().entityClass(entityClass));
     }
 
-    public View(Class<? extends JmixEntity> entityClass, boolean includeSystemProperties) {
+    public View(Class<? extends Entity> entityClass, boolean includeSystemProperties) {
         this(new ViewParams().entityClass(entityClass).includeSystemProperties(includeSystemProperties));
     }
 
-    public View(Class<? extends JmixEntity> entityClass, String name) {
+    public View(Class<? extends Entity> entityClass, String name) {
         this(new ViewParams().entityClass(entityClass).name(name));
     }
 
-    public View(Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
+    public View(Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
         this(new ViewParams().entityClass(entityClass).name(name).includeSystemProperties(includeSystemProperties));
     }
 
@@ -121,11 +121,11 @@ public class View extends FetchPlan {
         this(new ViewParams().src(src).name(name).includeSystemProperties(includeSystemProperties));
     }
 
-    public View(View src, @Nullable Class<? extends JmixEntity> entityClass, String name, boolean includeSystemProperties) {
+    public View(View src, @Nullable Class<? extends Entity> entityClass, String name, boolean includeSystemProperties) {
         this(new ViewParams().src(src).entityClass(entityClass).name(name).includeSystemProperties(includeSystemProperties));
     }
 
-    public View(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+    public View(Class<? extends Entity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
         super(entityClass, name);
         this.loadPartialEntities = loadPartialEntities;
 
@@ -244,7 +244,7 @@ public class View extends FetchPlan {
 
     public static View copy(View fetchPlan) {
         Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
-        return new View((Class<JmixEntity>) fetchPlan.getEntityClass(),
+        return new View((Class<Entity>) fetchPlan.getEntityClass(),
                 fetchPlan.getName(),
                 new LinkedList<>(fetchPlan.getProperties()),
                 fetchPlan.loadPartialEntities());

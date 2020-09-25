@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.UuidProvider;
@@ -54,7 +54,7 @@ public class EntityLoadInfoBuilder {
      * @param viewName view name, can be null
      * @return info instance
      */
-    public EntityLoadInfo create(JmixEntity entity, @Nullable String viewName) {
+    public EntityLoadInfo create(Entity entity, @Nullable String viewName) {
         Objects.requireNonNull(entity, "entity is null");
 
         MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
@@ -71,7 +71,7 @@ public class EntityLoadInfoBuilder {
      * @param entity entity instance
      * @return info instance
      */
-    public EntityLoadInfo create(JmixEntity entity) {
+    public EntityLoadInfo create(Entity entity) {
         return create(entity, null);
     }
 
@@ -96,7 +96,7 @@ public class EntityLoadInfoBuilder {
                 if (metaClass == null) {
                     return null;
                 }
-                JmixEntity entity = (JmixEntity) metadata.create(metaClass);
+                Entity entity = (Entity) metadata.create(metaClass);
                 MetaProperty primaryKeyProp = metadataTools.getPrimaryKeyProperty(metaClass);
                 boolean stringKey = primaryKeyProp != null && primaryKeyProp.getJavaType().equals(String.class);
                 return new EntityLoadInfo(EntityValues.getId(entity), metaClass, null, stringKey, true);
@@ -188,7 +188,7 @@ public class EntityLoadInfoBuilder {
      * @param entity     entity instance
      * @return true if the collection contains an info about the given entity instance. View part of the info is ignored.
      */
-    public boolean contains(Collection<EntityLoadInfo> collection, JmixEntity entity) {
+    public boolean contains(Collection<EntityLoadInfo> collection, Entity entity) {
         Preconditions.checkNotNullArgument(collection, "collection is null");
         Preconditions.checkNotNullArgument(entity, "entity is null");
 

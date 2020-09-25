@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -71,9 +71,9 @@ public class CubaTransactionListenersManager implements
         }
     }
 
-    protected Collection<JmixEntity> castCollection(Collection<Object> collection) {
+    protected Collection<Entity> castCollection(Collection<Object> collection) {
         return collection.stream()
-                .map(o -> (JmixEntity) o)
+                .map(o -> (Entity) o)
                 .collect(Collectors.toList());
     }
 }

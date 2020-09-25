@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.model.impl.AbstractComparator;
@@ -52,7 +52,7 @@ public class EntityValuesComparator<T> extends AbstractComparator<T> {
     @Nullable
     protected Object transformValue(@Nullable T value) {
         Object newValue = value;
-        if (!(value == null || value instanceof Comparable || value instanceof JmixEntity)) {
+        if (!(value == null || value instanceof Comparable || value instanceof Entity)) {
             newValue = value.toString();
         }
         return newValue;

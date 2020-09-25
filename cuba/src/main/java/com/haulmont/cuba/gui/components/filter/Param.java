@@ -283,7 +283,7 @@ public class Param {
     public void setJavaClass(Class javaClass) {
         if (javaClass != null) {
             this.javaClass = javaClass;
-            if (JmixEntity.class.isAssignableFrom(javaClass)) {
+            if (Entity.class.isAssignableFrom(javaClass)) {
                 type = Type.ENTITY;
             } else if (Enum.class.isAssignableFrom(javaClass)) {
                 type = Type.ENUM;
@@ -476,7 +476,7 @@ public class Param {
         return value;
     }
 
-    protected List<JmixEntity> loadEntityList(String[] ids) {
+    protected List<Entity> loadEntityList(String[] ids) {
         MetaClass metaClass = metadata.getClassNN(javaClass);
         //noinspection unchecked
         return dataManager.load(javaClass)
@@ -524,8 +524,8 @@ public class Param {
             case ENTITY:
                 if (v instanceof UUID) {
                     return v.toString();
-                } else if (v instanceof JmixEntity) {
-                    return EntityValues.getId(((JmixEntity) v)).toString();
+                } else if (v instanceof Entity) {
+                    return EntityValues.getId(((Entity) v)).toString();
                 }
 
             case ENUM:
@@ -876,7 +876,7 @@ public class Param {
                 initListEditor(listEditor, valueProperty);
                 return listEditor;
             } else {
-                EntityPicker<JmixEntity> picker = uiComponents.create(EntityPicker.NAME);
+                EntityPicker<Entity> picker = uiComponents.create(EntityPicker.NAME);
                 picker.setMetaClass(metaClass);
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
@@ -885,15 +885,15 @@ public class Param {
 
                 picker.addValueChangeListener(e ->
                         _setValue(e.getValue(), valueProperty));
-                picker.setValue((JmixEntity) _getValue(valueProperty));
+                picker.setValue((Entity) _getValue(valueProperty));
 
                 return picker;
             }
         } else {
             if (inExpr) {
-                CollectionLoader<JmixEntity> loader = createEntityOptionsLoader(metaClass);
+                CollectionLoader<Entity> loader = createEntityOptionsLoader(metaClass);
 
-                CollectionContainer<JmixEntity> container =
+                CollectionContainer<Entity> container =
                         dataComponents.createCollectionContainer(metaClass.getJavaClass());
                 loader.setContainer(container);
 
@@ -916,13 +916,13 @@ public class Param {
 
                 return listEditor;
             } else {
-                CollectionLoader<JmixEntity> loader = createEntityOptionsLoader(metaClass);
+                CollectionLoader<Entity> loader = createEntityOptionsLoader(metaClass);
 
-                CollectionContainer<JmixEntity> container =
+                CollectionContainer<Entity> container =
                         dataComponents.createCollectionContainer(metaClass.getJavaClass());
                 loader.setContainer(container);
 
-                EntityComboBox<JmixEntity> lookup = uiComponents.create(EntityComboBox.NAME);
+                EntityComboBox<Entity> lookup = uiComponents.create(EntityComboBox.NAME);
                 lookup.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
                 lookup.addAction(actions.create(EntityClearAction.ID));
                 lookup.setOptions(new ContainerOptions<>(container));
@@ -930,7 +930,7 @@ public class Param {
                 Consumer<CollectionContainer.CollectionChangeEvent<?>> listener = e -> lookup.setValue(null);
 
                 lookup.addValueChangeListener(e -> _setValue(e.getValue(), valueProperty));
-                lookup.setValue((JmixEntity) _getValue(valueProperty));
+                lookup.setValue((Entity) _getValue(valueProperty));
 
                 if (filterDataContext != null) {
                     filterDataContext.registerCollectionLoader(this, loader);
@@ -942,8 +942,8 @@ public class Param {
         }
     }
 
-    protected CollectionLoader<JmixEntity> createEntityOptionsLoader(MetaClass metaClass) {
-        CollectionLoader<JmixEntity> dataLoader = dataComponents.createCollectionLoader();
+    protected CollectionLoader<Entity> createEntityOptionsLoader(MetaClass metaClass) {
+        CollectionLoader<Entity> dataLoader = dataComponents.createCollectionLoader();
 
         dataLoader.setView(entityView);
 

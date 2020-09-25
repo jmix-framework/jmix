@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableMap;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.LoadContext;
 import io.jmix.ui.Screens;
 import io.jmix.ui.WindowInfo;
@@ -95,14 +95,14 @@ public class CubaMenuItemCommands extends MenuItemCommands {
         return builder.build();
     }
 
-    protected JmixEntity loadEntityInstance(EntityLoadInfo info) {
+    protected Entity loadEntityInstance(EntityLoadInfo info) {
         LoadContext ctx = new LoadContext(info.getMetaClass()).setId(info.getId());
         if (info.getFetchPlanName() != null) {
             ctx.setFetchPlan(fetchPlanRepository.getFetchPlan(info.getMetaClass(), info.getFetchPlanName()));
         }
 
         //noinspection unchecked
-        return (JmixEntity) dataManager.load(ctx);
+        return (Entity) dataManager.load(ctx);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class CubaMenuItemCommands extends MenuItemCommands {
 
                 if (screenId.endsWith(Window.CREATE_WINDOW_SUFFIX)
                         || screenId.endsWith(Window.EDITOR_WINDOW_SUFFIX)) {
-                    return ((WindowManager) screens).createEditor(windowInfo, (JmixEntity) getEntityToEdit(screenId), getOpenType(descriptor), paramsMap);
+                    return ((WindowManager) screens).createEditor(windowInfo, (Entity) getEntityToEdit(screenId), getOpenType(descriptor), paramsMap);
                 } else {
                     return screens.create(screenId, getOpenMode(descriptor), new MapScreenOptions(paramsMap));
                 }

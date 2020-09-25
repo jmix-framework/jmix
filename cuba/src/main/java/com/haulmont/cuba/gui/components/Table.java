@@ -22,7 +22,7 @@ import com.haulmont.cuba.gui.components.data.table.DatasourceTableItems;
 import com.haulmont.cuba.gui.components.data.table.SortableDatasourceTableItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -38,10 +38,10 @@ import java.util.function.Function;
  */
 @Deprecated
 @SuppressWarnings("rawtypes")
-public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
+public interface Table<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Table<E>, HasSettings,
         HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
 
-    static <T extends JmixEntity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
+    static <T extends Entity> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
         return new TypeToken<Table<T>>() {};
     }
 
@@ -78,7 +78,7 @@ public interface Table<E extends JmixEntity> extends ListComponent<E>, io.jmix.u
                 : null;
     }
 
-    class Column<T extends JmixEntity> extends io.jmix.ui.component.Table.Column {
+    class Column<T extends Entity> extends io.jmix.ui.component.Table.Column {
 
         public Column(Object id) {
             super(id);

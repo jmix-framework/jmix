@@ -56,7 +56,7 @@ import com.haulmont.cuba.security.global.UserSession;
 import com.haulmont.cuba.settings.SettingsImpl;
 import io.jmix.core.DataManager;
 import io.jmix.core.EntitySet;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryParser;
 import io.jmix.core.QueryTransformerFactory;
@@ -3036,7 +3036,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         @Override
         public void actionPerform(Component component) {
-            Set<JmixEntity> ownerSelection = target.getSelected();
+            Set<Entity> ownerSelection = target.getSelected();
 
             if (!ownerSelection.isEmpty()) {
                 String entityType;

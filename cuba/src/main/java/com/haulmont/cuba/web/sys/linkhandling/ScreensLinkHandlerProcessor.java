@@ -126,7 +126,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             if (info == null) {
                 log.warn("Invalid item definition: {}", itemStr);
             } else {
-                JmixEntity entity = loadEntityInstance(info);
+                Entity entity = loadEntityInstance(info);
                 if (entity == null) {
                     throw new EntityAccessException();
                 }
@@ -161,7 +161,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             String value = parts[1];
             EntityLoadInfo info = EntityLoadInfo.parse(value);
             if (info != null) {
-                JmixEntity entity = loadEntityInstance(info);
+                Entity entity = loadEntityInstance(info);
                 if (entity != null)
                     params.put(name, entity);
             } else if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {
@@ -173,14 +173,14 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
         return params;
     }
 
-    protected JmixEntity loadEntityInstance(EntityLoadInfo info) {
+    protected Entity loadEntityInstance(EntityLoadInfo info) {
         if (info.isNewEntity()) {
-            return (JmixEntity) metadata.create(info.getMetaClass());
+            return (Entity) metadata.create(info.getMetaClass());
         }
 
         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntityFromLink(info.getMetaClass());
         //noinspection unchecked
-        LoadContext<JmixEntity> ctx = new LoadContext(info.getMetaClass());
+        LoadContext<Entity> ctx = new LoadContext(info.getMetaClass());
         ctx.setQueryString(format("select e from %s e where e.%s = :entityId", info.getMetaClass().getName(), pkName))
                 .setParameter("entityId", info.getId());
         if (info.getViewName() != null) {
@@ -191,7 +191,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
                 log.warn("Unable to find view \"{}\" for entity \"{}\"", info.getViewName(), info.getMetaClass());
             }
         }
-        JmixEntity entity;
+        Entity entity;
         try {
             entity = dataService.load(ctx);
         } catch (Exception e) {

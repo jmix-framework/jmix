@@ -20,7 +20,7 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -203,7 +203,7 @@ public class RemoveAction extends ItemTrackingAction
         }
 
         @SuppressWarnings("unchecked")
-        Set<JmixEntity> selected = target.getSelected();
+        Set<Entity> selected = target.getSelected();
         if (!selected.isEmpty()) {
             if (confirm) {
                 confirmAndRemove(selected);
@@ -213,7 +213,7 @@ public class RemoveAction extends ItemTrackingAction
         }
     }
 
-    protected void confirmAndRemove(Set<JmixEntity> selected) {
+    protected void confirmAndRemove(Set<Entity> selected) {
         Dialogs dialogs = ComponentsHelper.getScreenContext(target.getFrame()).getDialogs();
 
         dialogs.createOptionDialog()
@@ -228,7 +228,7 @@ public class RemoveAction extends ItemTrackingAction
                                     ((Component.Focusable) target).focus();
                                 }
 
-                                Set<JmixEntity> filtered = new HashSet<>(selected);
+                                Set<Entity> filtered = new HashSet<>(selected);
                                 filtered.retainAll(target.getDatasource().getItems());
                                 //noinspection unchecked
                                 target.setSelected(filtered);
@@ -243,7 +243,7 @@ public class RemoveAction extends ItemTrackingAction
                 .show();
     }
 
-    protected void remove(Set<JmixEntity> selected) {
+    protected void remove(Set<Entity> selected) {
         doRemove(selected, autocommit);
 
         // move focus to owner
@@ -325,9 +325,9 @@ public class RemoveAction extends ItemTrackingAction
         this.confirmationTitle = confirmationTitle;
     }
 
-    protected void doRemove(Set<JmixEntity> selected, boolean autocommit) {
+    protected void doRemove(Set<Entity> selected, boolean autocommit) {
         CollectionDatasource datasource = null/*target.getDatasource() TODO: legac-ui*/;
-        for (JmixEntity item : selected) {
+        for (Entity item : selected) {
             datasource.removeItem(item);
         }
 

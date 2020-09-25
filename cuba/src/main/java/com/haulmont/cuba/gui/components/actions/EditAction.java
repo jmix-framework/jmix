@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.PropertyDatasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -47,7 +47,7 @@ import java.util.function.Supplier;
  * Standard list action to edit an entity instance.
  * <p>
  * Action's behaviour can be customized by providing arguments to constructor, setting properties, or overriding
- * methods {@link #afterCommit(JmixEntity)}, {@link #afterWindowClosed(Window)}
+ * methods {@link #afterCommit(Entity)}, {@link #afterWindowClosed(Window)}
  * <p>
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
@@ -86,7 +86,7 @@ public class EditAction extends ItemTrackingAction
         /**
          * @param entity new committed entity instance
          */
-        void handle(JmixEntity entity);
+        void handle(Entity entity);
     }
 
     public interface AfterWindowClosedHandler {
@@ -303,7 +303,7 @@ public class EditAction extends ItemTrackingAction
         return params;
     }
 
-    protected void internalOpenEditor(CollectionDatasource datasource, JmixEntity existingItem,
+    protected void internalOpenEditor(CollectionDatasource datasource, Entity existingItem,
                                       Datasource parentDs, Map<String, Object> params) {
         LegacyFrame frameOwner = (LegacyFrame) target.getFrame().getFrameOwner();
 
@@ -316,10 +316,10 @@ public class EditAction extends ItemTrackingAction
                 }
 
                 if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                    JmixEntity editedItem = window.getItem();
+                    Entity editedItem = window.getItem();
                     if (editedItem != null) {
                         if (parentDs == null) {
-                            editedItem = (JmixEntity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
+                            editedItem = (Entity) AppBeans.get(GuiActionSupport.class).reloadEntityIfNeeded(editedItem, datasource);
                             //noinspection unchecked
                             datasource.updateItem(editedItem);
                         }
@@ -409,7 +409,7 @@ public class EditAction extends ItemTrackingAction
      *
      * @param entity new committed entity instance
      */
-    protected void afterCommit(JmixEntity entity) {
+    protected void afterCommit(Entity entity) {
     }
 
     /**

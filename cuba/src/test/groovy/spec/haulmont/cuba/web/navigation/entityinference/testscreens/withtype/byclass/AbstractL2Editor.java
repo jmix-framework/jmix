@@ -15,9 +15,9 @@
  */
 
 package spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype.byclass;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.screen.StandardEditor;
 
-public abstract class AbstractL2Editor<T extends JmixEntity> extends StandardEditor<T> {
+public abstract class AbstractL2Editor<T extends Entity> extends StandardEditor<T> {
     
 }

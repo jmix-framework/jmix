@@ -27,7 +27,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -193,10 +193,10 @@ public class UpdateDetachedTest {
         p.setTarget("newTarget");
 
         CommitContext commitCtx = new CommitContext(Collections.singleton(p));
-        Set<JmixEntity> entities = dataManager.commit(commitCtx);
+        Set<Entity> entities = dataManager.commit(commitCtx);
 
         Permission result = null;
-        for (JmixEntity entity : entities) {
+        for (Entity entity : entities) {
             if (entity.equals(p))
                 result = (Permission) entity;
         }

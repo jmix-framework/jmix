@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.testsupport;
 
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
@@ -71,12 +71,12 @@ public class TestSupport {
         }
     }
 
-    public void deleteRecord(JmixEntity... entities) {
+    public void deleteRecord(Entity... entities) {
         if (entities == null) {
             return;
         }
 
-        for (JmixEntity entity : entities) {
+        for (Entity entity : entities) {
             if (entity == null) {
                 continue;
             }

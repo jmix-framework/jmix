@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 
 import javax.annotation.Nullable;
@@ -91,7 +91,7 @@ public class EntityLoadInfo {
      * @param fetchPlanName  fetch plan name, can be null
      * @return          info instance
      */
-    public static EntityLoadInfo create(JmixEntity entity, @Nullable String fetchPlanName) {
+    public static EntityLoadInfo create(Entity entity, @Nullable String fetchPlanName) {
         EntityLoadInfoBuilder builder = AppBeans.get(EntityLoadInfoBuilder.NAME);
         return builder.create(entity, fetchPlanName);
     }
@@ -102,7 +102,7 @@ public class EntityLoadInfo {
      * @param entity    entity instance
      * @return          info instance
      */
-    public static EntityLoadInfo create(JmixEntity entity) {
+    public static EntityLoadInfo create(Entity entity) {
         return create(entity, null);
     }
 

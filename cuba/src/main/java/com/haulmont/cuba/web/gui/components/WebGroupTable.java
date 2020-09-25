@@ -23,11 +23,10 @@ import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.settings.binder.CubaGroupTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.web.gui.components.table.TableDelegate;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import com.haulmont.cuba.gui.components.data.table.AggregatableTableItems;
 import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.data.table.ContainerTableItems;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -41,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Deprecated
-public class WebGroupTable<E extends JmixEntity> extends io.jmix.ui.component.impl.WebGroupTable<E>
+public class WebGroupTable<E extends Entity> extends io.jmix.ui.component.impl.WebGroupTable<E>
         implements GroupTable<E> {
 
     protected LegacySettingsDelegate settingsDelegate;

@@ -26,8 +26,7 @@ import com.haulmont.cuba.gui.screen.compatibility.ScreenEditorWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenFragmentWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.ScreenWrapper;
-import io.jmix.core.JmixEntity;
-import io.jmix.ui.AppUI;
+import io.jmix.core.Entity;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications.NotificationType;
@@ -95,7 +94,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType, Datasource parentDs) {
+    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Datasource parentDs) {
         Map<String, Object> params = createParametersMap(windowInfo,
                 Collections.singletonMap(WindowParams.ITEM.name(), item)
         );
@@ -115,7 +114,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType) {
+    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType) {
         Map<String, Object> params = createParametersMap(windowInfo,
                 Collections.singletonMap(WindowParams.ITEM.name(), item)
         );
@@ -132,7 +131,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
     }
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType, Map<String, Object> params) {
+    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params) {
         Screen editor = createEditor(windowInfo, item, openType, params);
 
         editor.show();
@@ -141,7 +140,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
     }
 
     @Override
-    public Screen createEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType,
+    public Screen createEditor(WindowInfo windowInfo, Entity item, OpenType openType,
                                @Nullable Map<String, Object> params) {
         params = createParametersMap(windowInfo, params);
         params.put(WindowParams.ITEM.name(), item);
@@ -161,7 +160,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, JmixEntity item, OpenType openType,
+    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
                                     @Nullable Map<String, Object> params,
                                     Datasource parentDs) {
         params = createParametersMap(windowInfo, params);

@@ -34,7 +34,7 @@ import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescript
 import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowParam;
@@ -149,7 +149,7 @@ public class FilterEditor extends AbstractWindow {
     @Autowired
     private DataManager dataManager;
 
-    protected Set<JmixEntity> modifiedGlobalDefaultFilters = new HashSet<>();
+    protected Set<Entity> modifiedGlobalDefaultFilters = new HashSet<>();
 
     public interface Companion {
         void showComponentName(WindowManager windowManager, String title, String message);

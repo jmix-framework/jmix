@@ -16,16 +16,16 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
 
 import javax.persistence.*;
 
-@Entity(name = "test$StringKeyEntity")
+@javax.persistence.Entity(name = "test$StringKeyEntity")
 @Table(name = "TEST_STRING_KEY")
 @NamePattern("%s|code")
-public class StringKeyEntity implements JmixEntity {
+public class StringKeyEntity implements Entity {
 
     private static final long serialVersionUID = 871701970234815437L;
 

@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.config.ConfigUtil;
 import com.haulmont.cuba.core.config.EnumStore;
 import com.haulmont.cuba.core.config.EnumStoreMode;
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -89,7 +89,7 @@ public abstract class TypeFactory {
                 throw new RuntimeException("Unable to instantiate an type factory", e);
             }
         } else {
-            if (JmixEntity.class.isAssignableFrom(returnType)) {
+            if (Entity.class.isAssignableFrom(returnType)) {
                 return AppBeans.get(ENTITY_FACTORY_BEAN_NAME, TypeFactory.class);
             } else {
                 if (EnumClass.class.isAssignableFrom(returnType)) {

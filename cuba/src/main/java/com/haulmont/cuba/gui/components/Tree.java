@@ -20,7 +20,7 @@ import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.data.TreeItems;
 
@@ -32,9 +32,9 @@ import io.jmix.ui.component.data.TreeItems;
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface Tree<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode {
+public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode {
 
-    static <T extends JmixEntity> TypeToken<Tree<T>> of(Class<T> itemClass) {
+    static <T extends Entity> TypeToken<Tree<T>> of(Class<T> itemClass) {
         return new TypeToken<Tree<T>>() {};
     }
 

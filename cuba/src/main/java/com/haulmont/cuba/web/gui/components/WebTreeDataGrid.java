@@ -33,7 +33,7 @@ import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
-public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
+public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
         implements TreeDataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
@@ -550,7 +550,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static class WebTreeDataGridEditorFieldFactory<E extends JmixEntity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
+    protected static class WebTreeDataGridEditorFieldFactory<E extends Entity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
 
         public WebTreeDataGridEditorFieldFactory(WebAbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
             super(dataGrid, fieldFactory);
@@ -560,7 +560,7 @@ public class WebTreeDataGrid<E extends JmixEntity> extends io.jmix.ui.component.
         protected Field createField(WebAbstractDataGrid.ColumnImpl column, Object bean) {
             if (column instanceof WebDataGrid.ColumnImpl && ((WebDataGrid.ColumnImpl) column).getEditorFieldGenerator() != null) {
                 String fieldPropertyId = String.valueOf(column.getPropertyId());
-                Datasource fieldDataSource = ((WebTreeDataGrid) dataGrid).createItemDatasource((JmixEntity) bean);
+                Datasource fieldDataSource = ((WebTreeDataGrid) dataGrid).createItemDatasource((Entity) bean);
                 return ((WebDataGrid.ColumnImpl) column).getEditorFieldGenerator().createField(fieldDataSource, fieldPropertyId);
             }
             return super.createField(column, bean);

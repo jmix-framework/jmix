@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components.compatibility;
 
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
@@ -51,11 +51,11 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
 
     @Override
     public String apply(Object o) {
-        if (!(o instanceof JmixEntity)) {
+        if (!(o instanceof Entity)) {
             return "";
         }
 
-        JmixEntity entity = (JmixEntity) o;
+        Entity entity = (Entity) o;
         if (captionMode == CaptionMode.PROPERTY
                 && captionProperty != null) {
 

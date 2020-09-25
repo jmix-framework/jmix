@@ -43,7 +43,7 @@ public class CommitContext extends SaveContext {
     /**
      * @param commitInstances changed entities to be committed to the database
      */
-    public CommitContext(JmixEntity... commitInstances) {
+    public CommitContext(Entity... commitInstances) {
         this();
         saving(Arrays.asList(commitInstances));
     }
@@ -72,7 +72,7 @@ public class CommitContext extends SaveContext {
      * @param entity entity instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToCommit(JmixEntity entity) {
+    public CommitContext addInstanceToCommit(Entity entity) {
         saving(entity);
         return this;
     }
@@ -84,7 +84,7 @@ public class CommitContext extends SaveContext {
      * @param fetchPlan fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToCommit(JmixEntity entity, @Nullable FetchPlan fetchPlan) {
+    public CommitContext addInstanceToCommit(Entity entity, @Nullable FetchPlan fetchPlan) {
         saving(entity, fetchPlan);
         return this;
     }
@@ -96,7 +96,7 @@ public class CommitContext extends SaveContext {
      * @param fetchPlanName view which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToCommit(JmixEntity entity, @Nullable String fetchPlanName) {
+    public CommitContext addInstanceToCommit(Entity entity, @Nullable String fetchPlanName) {
         saving(entity, getFetchPlanFromRepository(entity, fetchPlanName));
         return this;
     }
@@ -107,7 +107,7 @@ public class CommitContext extends SaveContext {
      * @param entity entity instance
      * @return this instance for chaining
      */
-    public CommitContext addInstanceToRemove(JmixEntity entity) {
+    public CommitContext addInstanceToRemove(Entity entity) {
         removing(entity);
         return this;
     }
@@ -116,7 +116,7 @@ public class CommitContext extends SaveContext {
      * @return direct reference to collection of changed entities that will be committed to the database.
      * The collection is modifiable.
      */
-    public Collection<JmixEntity> getCommitInstances() {
+    public Collection<Entity> getCommitInstances() {
         return castCollection(getEntitiesToSave());
     }
 
@@ -131,7 +131,7 @@ public class CommitContext extends SaveContext {
      * @return direct reference to collection of entities that will be removed from the database.
      * The collection is modifiable.
      */
-    public Collection<JmixEntity> getRemoveInstances() {
+    public Collection<Entity> getRemoveInstances() {
         return castCollection(getEntitiesToRemove());
     }
 
@@ -175,7 +175,7 @@ public class CommitContext extends SaveContext {
     }
 
     @Nullable
-    private FetchPlan getFetchPlanFromRepository(JmixEntity entity, @Nullable String fetchPlanName) {
+    private FetchPlan getFetchPlanFromRepository(Entity entity, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return null;
         Metadata metadata = AppBeans.get(Metadata.NAME);
@@ -219,10 +219,10 @@ public class CommitContext extends SaveContext {
         NEVER_VALIDATE
     }
 
-    private Collection<JmixEntity> castCollection(Collection<Object> collection) {
+    private Collection<Entity> castCollection(Collection<Object> collection) {
         return collection == null ? null :
                 collection.stream()
-                        .map(o -> (JmixEntity) o)
+                        .map(o -> (Entity) o)
                         .collect(Collectors.toList());
     }
 }

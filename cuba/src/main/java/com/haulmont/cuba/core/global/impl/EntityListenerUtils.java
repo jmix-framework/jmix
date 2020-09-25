@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 
@@ -27,7 +27,7 @@ import java.sql.Connection;
 
 public class EntityListenerUtils {
 
-    public static EntityManager getCurrentEntityManager(JmixEntity entity) {
+    public static EntityManager getCurrentEntityManager(Entity entity) {
         Metadata metadata = AppBeans.get(Metadata.class);
         MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
         String storeName = metadataTools.getStoreName(metadata.getClass(entity));
@@ -35,7 +35,7 @@ public class EntityListenerUtils {
         return persistence.getEntityManager(storeName);
     }
 
-    public static Connection getCurrentConnection(JmixEntity entity) {
+    public static Connection getCurrentConnection(Entity entity) {
         return getCurrentEntityManager(entity).getConnection();
     }
 }

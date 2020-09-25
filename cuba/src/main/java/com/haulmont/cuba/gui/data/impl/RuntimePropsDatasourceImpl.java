@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -170,12 +170,12 @@ public class RuntimePropsDatasourceImpl
     }
 
     @Override
-    public void committed(Set<JmixEntity> entities) {
+    public void committed(Set<Entity> entities) {
         if (!State.VALID.equals(state)) {
             return;
         }
 
-        for (JmixEntity entity : entities) {
+        for (Entity entity : entities) {
             if (entity.equals(mainDs.getItem())) {
                 initMetaClass(entity);
             }
@@ -243,7 +243,7 @@ public class RuntimePropsDatasourceImpl
         );
     }
 
-    protected void initMetaClass(JmixEntity entity) {
+    protected void initMetaClass(Entity entity) {
 
         if (entity == null) {
             category = null;

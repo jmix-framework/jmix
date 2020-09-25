@@ -16,7 +16,7 @@
  */
 package com.haulmont.cuba.gui.data;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.BaseEntityEntry;
@@ -32,15 +32,15 @@ import java.util.UUID;
  * Obsolete. Will be removed in future releases.
  */
 @DisableEnhancing
-public class DynamicAttributesEntity implements JmixEntity {
+public class DynamicAttributesEntity implements Entity {
     private static final long serialVersionUID = -8091230910619941201L;
-    protected JmixEntity mainItem;
+    protected Entity mainItem;
     protected UUID id;
 
     protected EntityEntry entityEntry;
 
     protected static class DynamicAttributesEntityEntry extends BaseEntityEntry {
-        public DynamicAttributesEntityEntry(JmixEntity source) {
+        public DynamicAttributesEntityEntry(Entity source) {
             super(source);
         }
 
@@ -84,7 +84,7 @@ public class DynamicAttributesEntity implements JmixEntity {
         }
     }
 
-    public DynamicAttributesEntity(JmixEntity mainItem) {
+    public DynamicAttributesEntity(Entity mainItem) {
         this.mainItem = mainItem;
         this.id = UuidProvider.createUuid();
     }

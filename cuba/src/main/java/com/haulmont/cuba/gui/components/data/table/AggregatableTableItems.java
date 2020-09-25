@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.data.table;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.TableItems;
 
@@ -28,7 +28,7 @@ import java.util.Map;
  * @deprecated use {@link io.jmix.ui.gui.data.impl.AggregatableDelegate} instead
  */
 @Deprecated
-public interface AggregatableTableItems<E extends JmixEntity> extends TableItems<E> {
+public interface AggregatableTableItems<E extends Entity> extends TableItems<E> {
 
     /**
      * Perform aggregation and return map with formatted string values.

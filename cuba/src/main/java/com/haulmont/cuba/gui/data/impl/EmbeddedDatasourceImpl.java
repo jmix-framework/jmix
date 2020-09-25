@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.EmbeddedDatasource;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class EmbeddedDatasourceImpl<T extends JmixEntity>
+public class EmbeddedDatasourceImpl<T extends Entity>
         extends AbstractDatasource<T>
         implements Datasource<T>, DatasourceImplementation<T>, EmbeddedDatasource<T> {
 
@@ -47,8 +47,8 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
     protected void initParentDsListeners() {
         //noinspection unchecked
         masterDs.addItemChangeListener(e -> {
-            JmixEntity prevValue = getItem(e.getPrevItem());
-            JmixEntity newValue = getItem(e.getItem());
+            Entity prevValue = getItem(e.getPrevItem());
+            Entity newValue = getItem(e.getItem());
             reattachListeners(prevValue, newValue);
 
             fireItemChanged((T) prevValue);
@@ -60,13 +60,13 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
         //noinspection unchecked
         masterDs.addItemPropertyChangeListener(e -> {
             if (e.getProperty().equals(metaProperty.getName()) && !Objects.equals(e.getPrevValue(), e.getValue())) {
-                reattachListeners((JmixEntity) e.getPrevValue(), (JmixEntity) e.getValue());
+                reattachListeners((Entity) e.getPrevValue(), (Entity) e.getValue());
                 fireItemChanged((T) e.getPrevValue());
             }
         });
     }
 
-    protected void reattachListeners(JmixEntity prevItem, JmixEntity item) {
+    protected void reattachListeners(Entity prevItem, Entity item) {
         if (prevItem != item) {
             detachListener(prevItem);
             attachListener(item);
@@ -102,7 +102,7 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
     public T getItem() {
         backgroundWorker.checkUIAccess();
 
-        final JmixEntity item = masterDs.getItem();
+        final Entity item = masterDs.getItem();
         return getItem(item);
     }
 
@@ -114,7 +114,7 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
         return getState() == State.VALID ? getItem() : null;
     }
 
-    protected T getItem(JmixEntity item) {
+    protected T getItem(Entity item) {
         return item == null ? null : (T) EntityValues.getValue(item, metaProperty.getName());
     }
 
@@ -126,7 +126,7 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
             metadata.getTools().copy(item, getItem());
             itemsToUpdate.add(item);
         } else {
-            final JmixEntity parentItem = masterDs.getItem();
+            final Entity parentItem = masterDs.getItem();
             EntityValues.setValue(parentItem, metaProperty.getName(), item);
         }
         setModified(true);
@@ -146,16 +146,16 @@ public class EmbeddedDatasourceImpl<T extends JmixEntity>
     }
 
     @Override
-    public void committed(Set<JmixEntity> entities) {
-        JmixEntity item = masterDs.getItem();
+    public void committed(Set<Entity> entities) {
+        Entity item = masterDs.getItem();
 
-        JmixEntity newItem = null;
-        JmixEntity previousItem = null;
+        Entity newItem = null;
+        Entity previousItem = null;
 
         if (item != null) {
-            Iterator<JmixEntity> commitIter = entities.iterator();
+            Iterator<Entity> commitIter = entities.iterator();
             while (commitIter.hasNext() && (previousItem == null) && (newItem == null)) {
-                JmixEntity commitItem = commitIter.next();
+                Entity commitItem = commitIter.next();
                 if (commitItem.equals(item)) {
                     previousItem = item;
                     newItem = commitItem;

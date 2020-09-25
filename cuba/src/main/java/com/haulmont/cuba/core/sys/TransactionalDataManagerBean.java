@@ -59,14 +59,14 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     protected ApplicationContext applicationContext;
 
     @Override
-    public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
+    public <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
         FluentLoader<E> fluentLoader = applicationContext.getBean(FluentLoader.class, entityClass);
         fluentLoader.setDataManager(dataManager.getDelegate());
         return fluentLoader;
     }
 
     @Override
-    public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+    public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         FluentLoader<E> fluentLoader = applicationContext.getBean(FluentLoader.class, entityId.getEntityClass());
         fluentLoader.setDataManager(dataManager.getDelegate());
         return fluentLoader.id(entityId.getValue());
@@ -88,13 +88,13 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
 
     @Nullable
     @Override
-    public <E extends JmixEntity> E load(LoadContext<E> context) {
+    public <E extends Entity> E load(LoadContext<E> context) {
         context.setJoinTransaction(true);
         return dataManager.load(context);
     }
 
     @Override
-    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
         context.setJoinTransaction(true);
         return dataManager.loadList(context);
     }
@@ -106,21 +106,21 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public EntitySet save(JmixEntity... entities) {
+    public EntitySet save(Entity... entities) {
         CommitContext cc = new CommitContext(entities);
         cc.setJoinTransaction(true);
         return dataManager.commit(cc);
     }
 
     @Override
-    public <E extends JmixEntity> E save(E entity) {
+    public <E extends Entity> E save(E entity) {
         CommitContext cc = new CommitContext(entity);
         cc.setJoinTransaction(true);
         return dataManager.commit(cc).get(entity);
     }
 
     @Override
-    public <E extends JmixEntity> E save(E entity, @Nullable FetchPlan view) {
+    public <E extends Entity> E save(E entity, @Nullable FetchPlan view) {
         CommitContext cc = new CommitContext();
         cc.addInstanceToCommit(entity, view);
         cc.setJoinTransaction(true);
@@ -128,7 +128,7 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public <E extends JmixEntity> E save(E entity, @Nullable String viewName) {
+    public <E extends Entity> E save(E entity, @Nullable String viewName) {
         CommitContext cc = new CommitContext();
         cc.addInstanceToCommit(entity, viewName);
         cc.setJoinTransaction(true);
@@ -136,7 +136,7 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public void remove(JmixEntity entity) {
+    public void remove(Entity entity) {
         CommitContext cc = new CommitContext();
         cc.addInstanceToRemove(entity);
         cc.setJoinTransaction(true);
@@ -144,12 +144,12 @@ public class TransactionalDataManagerBean implements TransactionalDataManager {
     }
 
     @Override
-    public <T extends JmixEntity> T create(Class<T> entityClass) {
+    public <T extends Entity> T create(Class<T> entityClass) {
         return metadata.create(entityClass);
     }
 
     @Override
-    public <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends Entity, K> T getReference(Class<T> entityClass, K id) {
         T entity = metadata.create(entityClass);
         EntityValues.setId(entity, id);
         entityStates.makePatch(entity);

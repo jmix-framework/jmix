@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
-import io.jmix.core.JmixEntity
+import io.jmix.core.Entity
 import io.jmix.core.impl.StandardSerialization
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
@@ -145,7 +145,7 @@ class CompositionTest extends UiScreenSpec {
         order1.orderLines.addAll([orderLine11, orderLine12])
     }
 
-    private mockLoad(JmixEntity loadedEntity) {
+    private mockLoad(Entity loadedEntity) {
         TestServiceProxy.mock(DataService, Mock(DataService) {
             load(_) >> {
                 if (loadedEntity == null) {

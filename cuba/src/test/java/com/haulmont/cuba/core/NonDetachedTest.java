@@ -30,7 +30,7 @@ import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.UuidProvider;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -182,7 +182,7 @@ public class NonDetachedTest {
     }
 
     interface Saver {
-        void save(JmixEntity entity);
+        void save(Entity entity);
     }
 
     private Order loadChangeAndSave(Saver saver) {

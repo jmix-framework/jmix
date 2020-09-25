@@ -75,38 +75,38 @@ public class CubaDataManager implements DataManager {
 
     @Nullable
     @Override
-    public <E extends JmixEntity> E load(LoadContext<E> context) {
+    public <E extends Entity> E load(LoadContext<E> context) {
         return delegate.load(context);
     }
 
     @Override
-    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+    public <E extends Entity> List<E> loadList(LoadContext<E> context) {
         return delegate.loadList(context);
     }
 
     @Override
-    public long getCount(LoadContext<? extends JmixEntity> context) {
+    public long getCount(LoadContext<? extends Entity> context) {
         return delegate.getCount(context);
     }
 
     @Override
-    public <E extends JmixEntity> E reload(E entity, String fetchPlanName) {
+    public <E extends Entity> E reload(E entity, String fetchPlanName) {
         Preconditions.checkNotNullArgument(fetchPlanName, "fetchPlanName is null");
         return reload(entity, fetchPlanRepository.getFetchPlan(entity.getClass(), fetchPlanName));
     }
 
     @Override
-    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan) {
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan) {
         return reload(entity, fetchPlan, null);
     }
 
     @Override
-    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass) {
         return reload(entity, fetchPlan, metaClass, entityHasDynamicAttributes(entity));
     }
 
     @Override
-    public <E extends JmixEntity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
+    public <E extends Entity> E reload(E entity, FetchPlan fetchPlan, @Nullable MetaClass metaClass, boolean loadDynamicAttributes) {
         if (metaClass == null) {
             metaClass = metadata.getSession().getClass(entity.getClass());
         }
@@ -122,7 +122,7 @@ public class CubaDataManager implements DataManager {
         return reloaded;
     }
 
-    protected boolean entityHasDynamicAttributes(JmixEntity entity) {
+    protected boolean entityHasDynamicAttributes(Entity entity) {
         return false;
 
         // todo dynamic attributes
@@ -138,17 +138,17 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public EntitySet commit(JmixEntity... entities) {
+    public EntitySet commit(Entity... entities) {
         return commit(new CommitContext(entities));
     }
 
     @Override
-    public <E extends JmixEntity> E commit(E entity, @Nullable FetchPlan fetchPlan) {
+    public <E extends Entity> E commit(E entity, @Nullable FetchPlan fetchPlan) {
         return commit(new CommitContext().addInstanceToCommit(entity, fetchPlan)).get(entity);
     }
 
     @Override
-    public <E extends JmixEntity> E commit(E entity, @Nullable String fetchPlanName) {
+    public <E extends Entity> E commit(E entity, @Nullable String fetchPlanName) {
         if (fetchPlanName != null) {
             FetchPlan view = fetchPlanRepository.getFetchPlan(metadata.getClass(entity.getClass()), fetchPlanName);
             return commit(entity, view);
@@ -158,20 +158,20 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public <E extends JmixEntity> E commit(E entity) {
+    public <E extends Entity> E commit(E entity) {
         return commit(entity, (FetchPlan) null);
     }
 
     @Override
-    public void remove(JmixEntity entity) {
+    public void remove(Entity entity) {
         CommitContext context = new CommitContext(
-                Collections.<JmixEntity>emptyList(),
+                Collections.<Entity>emptyList(),
                 Collections.singleton(entity));
         commit(context);
     }
 
     @Override
-    public <T extends JmixEntity, K> void remove(Id<T, K> entityId) {
+    public <T extends Entity, K> void remove(Id<T, K> entityId) {
         remove(getReference(entityId));
     }
 
@@ -191,7 +191,7 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public <E extends JmixEntity> FluentLoader<E> load(Class<E> entityClass) {
+    public <E extends Entity> FluentLoader<E> load(Class<E> entityClass) {
         FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityClass);
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
@@ -199,7 +199,7 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public <E extends JmixEntity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
+    public <E extends Entity, K> FluentLoader.ById<E> load(Id<E, K> entityId) {
         FluentLoader<E> loader = applicationContext.getBean(FluentLoader.class, entityId.getEntityClass());
         loader.setDataManager(getDelegate());
         loader.joinTransaction(false);
@@ -221,33 +221,33 @@ public class CubaDataManager implements DataManager {
     }
 
     @Override
-    public <T extends JmixEntity> T create(Class<T> entityClass) {
+    public <T extends Entity> T create(Class<T> entityClass) {
         return delegate.create(entityClass);
     }
 
     @Override
-    public <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id) {
+    public <T extends Entity, K> T getReference(Class<T> entityClass, K id) {
         return delegate.getReference(entityClass, id);
     }
 
     protected void validate(CommitContext context) {
         if (CommitContext.ValidationMode.DEFAULT == context.getValidationMode() && properties.isDataManagerBeanValidation()
                 || CommitContext.ValidationMode.ALWAYS_VALIDATE == context.getValidationMode()) {
-            for (JmixEntity entity : context.getCommitInstances()) {
+            for (Entity entity : context.getCommitInstances()) {
                 validateEntity(entity, context.getValidationGroups());
             }
         }
     }
 
     @Override
-    public <T extends JmixEntity, K> T getReference(Id<T, K> entityId) {
+    public <T extends Entity, K> T getReference(Id<T, K> entityId) {
         Preconditions.checkNotNullArgument(entityId, "entityId is null");
         return getReference(entityId.getEntityClass(), entityId.getValue());
     }
 
-    protected void validateEntity(JmixEntity entity, List<Class> validationGroups) {
+    protected void validateEntity(Entity entity, List<Class> validationGroups) {
         Validator validator = beanValidation.getValidator();
-        Set<ConstraintViolation<JmixEntity>> violations;
+        Set<ConstraintViolation<Entity>> violations;
         if (validationGroups == null || validationGroups.isEmpty()) {
             violations = validator.validate(entity);
         } else {
@@ -273,13 +273,13 @@ public class CubaDataManager implements DataManager {
 
         @Nullable
         @Override
-        public <E extends JmixEntity> E load(LoadContext<E> context) {
+        public <E extends Entity> E load(LoadContext<E> context) {
             context.setAuthorizationRequired(true);
             return dataManager.load(context);
         }
 
         @Override
-        public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+        public <E extends Entity> List<E> loadList(LoadContext<E> context) {
             context.setAuthorizationRequired(true);
             return dataManager.loadList(context);
         }
@@ -292,7 +292,7 @@ public class CubaDataManager implements DataManager {
         }
 
         @Override
-        public long getCount(LoadContext<? extends JmixEntity> context) {
+        public long getCount(LoadContext<? extends Entity> context) {
             context.setAuthorizationRequired(true);
             return dataManager.getCount(context);
         }

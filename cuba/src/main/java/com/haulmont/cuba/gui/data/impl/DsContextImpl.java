@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -126,7 +126,7 @@ public class DsContextImpl implements DsContextImplementation {
 
     @Override
     public boolean commit() {
-        Map<DataSupplier, Collection<Datasource<JmixEntity>>> commitData = collectCommitData();
+        Map<DataSupplier, Collection<Datasource<Entity>>> commitData = collectCommitData();
 
         boolean committed = false;
 
@@ -140,7 +140,7 @@ public class DsContextImpl implements DsContextImplementation {
 
                 fireBeforeCommit(context);
 
-                Set<JmixEntity> committedEntities = dataservice.commit(context);
+                Set<Entity> committedEntities = dataservice.commit(context);
 
                 fireAfterCommit(context, committedEntities);
 
@@ -188,7 +188,7 @@ public class DsContextImpl implements DsContextImplementation {
         return !list.isEmpty();
     }
 
-    protected void notifyAllDsCommited(DataSupplier dataservice, Set<JmixEntity> committedEntities) {
+    protected void notifyAllDsCommited(DataSupplier dataservice, Set<Entity> committedEntities) {
         // Notify all datasources in context
         List<Datasource> datasources = new ArrayList<>();
         for (DsContext childDsContext : children) {
@@ -225,7 +225,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     @Override
-    public void fireAfterCommit(CommitContext context, Set<JmixEntity> committedEntities) {
+    public void fireAfterCommit(CommitContext context, Set<Entity> committedEntities) {
         for (DsContext childDsContext : children) {
             ((DsContextImplementation) childDsContext).fireAfterCommit(context, committedEntities);
         }
@@ -238,23 +238,23 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     protected CommitContext createCommitContext(DataSupplier dataservice,
-                                                Map<DataSupplier, Collection<Datasource<JmixEntity>>> commitData) {
+                                                Map<DataSupplier, Collection<Datasource<Entity>>> commitData) {
         CommitContext context = new CommitContext();
         context.setDiscardCommitted(discardCommitted);
 
-        for (Datasource<JmixEntity> datasource : commitData.get(dataservice)) {
+        for (Datasource<Entity> datasource : commitData.get(dataservice)) {
             if (datasource instanceof DatasourceImplementation) {
-                DatasourceImplementation<JmixEntity> implementation = (DatasourceImplementation) datasource;
+                DatasourceImplementation<Entity> implementation = (DatasourceImplementation) datasource;
 
                 boolean listenersEnabled = implementation.enableListeners(false);
                 try {
-                    for (JmixEntity entity : implementation.getItemsToCreate()) {
+                    for (Entity entity : implementation.getItemsToCreate()) {
                         addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
                     }
-                    for (JmixEntity entity : implementation.getItemsToUpdate()) {
+                    for (Entity entity : implementation.getItemsToUpdate()) {
                         addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
                     }
-                    for (JmixEntity entity : implementation.getItemsToDelete()) {
+                    for (Entity entity : implementation.getItemsToDelete()) {
                         addToContext(entity, datasource, context.getRemoveInstances(), context.getFetchPlans());
                     }
                 } finally {
@@ -269,8 +269,8 @@ public class DsContextImpl implements DsContextImplementation {
 
 
     protected void repairReferences(CommitContext context) {
-        for (JmixEntity entity : context.getCommitInstances()) {
-            for (JmixEntity otherEntity : context.getCommitInstances()) {
+        for (Entity entity : context.getCommitInstances()) {
+            for (Entity otherEntity : context.getCommitInstances()) {
                 if (!entity.equals(otherEntity)) {
                     repairReferences(otherEntity, entity);
                 }
@@ -279,7 +279,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     @SuppressWarnings("unchecked")
-    protected void repairReferences(JmixEntity entity, JmixEntity contextEntity) {
+    protected void repairReferences(Entity entity, Entity contextEntity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaClass contextEntityMetaClass = metadata.getClass(contextEntity.getClass());
 
@@ -313,8 +313,8 @@ public class DsContextImpl implements DsContextImplementation {
         }
     }
 
-    protected void addToContext(JmixEntity entity, Datasource<JmixEntity> datasource,
-                                Collection<JmixEntity> entities, Map<Object, FetchPlan> views) {
+    protected void addToContext(Entity entity, Datasource<Entity> datasource,
+                                Collection<Entity> entities, Map<Object, FetchPlan> views) {
         if (datasource instanceof NestedDatasource) {
             replaceMasterCopies(entity, ((NestedDatasource) datasource));
         }
@@ -325,7 +325,7 @@ public class DsContextImpl implements DsContextImplementation {
 
     // Replace the reference to master entity with actual entity containing in the master datasource,
     // because in case of nested property datasources there may be references to cloned master entities.
-    protected void replaceMasterCopies(JmixEntity entity, NestedDatasource datasource) {
+    protected void replaceMasterCopies(Entity entity, NestedDatasource datasource) {
         Datasource masterDs = datasource.getMaster();
         MetaProperty metaProperty = datasource.getProperty();
         if (masterDs != null && metaProperty != null) {
@@ -338,7 +338,7 @@ public class DsContextImpl implements DsContextImplementation {
                 {
                     Object masterItem = null;
                     if (masterDs instanceof CollectionDatasource) {
-                        JmixEntity value = EntityValues.getValue(entity, inverseProp.getName());
+                        Entity value = EntityValues.getValue(entity, inverseProp.getName());
                         if (value != null) {
                             Object id = EntityValues.getId(value);
                             //noinspection unchecked
@@ -356,7 +356,7 @@ public class DsContextImpl implements DsContextImplementation {
         }
     }
 
-    protected Map<DataSupplier, Collection<Datasource<JmixEntity>>> collectCommitData() {
+    protected Map<DataSupplier, Collection<Datasource<Entity>>> collectCommitData() {
         Collection<Datasource> datasources = new ArrayList<>();
 
         for (DsContext childDsContext : children) {
@@ -364,7 +364,7 @@ public class DsContextImpl implements DsContextImplementation {
         }
         datasources.addAll(datasourceMap.values());
 
-        Map<DataSupplier, Collection<Datasource<JmixEntity>>> commitDatasources = new HashMap<>();
+        Map<DataSupplier, Collection<Datasource<Entity>>> commitDatasources = new HashMap<>();
 
         for (Datasource datasource : datasources) {
             if (Datasource.CommitMode.DATASTORE == datasource.getCommitMode() &&
@@ -372,7 +372,7 @@ public class DsContextImpl implements DsContextImplementation {
                     (datasource.isModified() || !((DatasourceImplementation) datasource).getItemsToCreate().isEmpty())) {
 
                 DataSupplier dataservice = datasource.getDataSupplier();
-                Collection<Datasource<JmixEntity>> collection = commitDatasources.get(dataservice);
+                Collection<Datasource<Entity>> collection = commitDatasources.get(dataservice);
                 if (collection == null) {
                     collection = new ArrayList<>();
                     commitDatasources.put(dataservice, collection);
@@ -417,7 +417,7 @@ public class DsContextImpl implements DsContextImplementation {
                 // but we should listen the first level property
                 String listeningProperty = propertyName.split("\\.")[0];
                 if (listeningProperty.equals(e.getProperty())) {
-                    final JmixEntity item = Datasource.State.VALID.equals(dependFrom.getState()) ? dependFrom.getItem() : null;
+                    final Entity item = Datasource.State.VALID.equals(dependFrom.getState()) ? dependFrom.getItem() : null;
                     if (Objects.equals(item, e.getItem())) {
                         datasource.refresh();
                     }

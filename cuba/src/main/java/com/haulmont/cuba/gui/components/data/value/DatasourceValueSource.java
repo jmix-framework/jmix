@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components.data.value;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.RuntimePropsDatasource;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class DatasourceValueSource<E extends JmixEntity, V> implements EntityValueSource<E, V>, ApplicationContextAware {
+public class DatasourceValueSource<E extends Entity, V> implements EntityValueSource<E, V>, ApplicationContextAware {
     protected final Datasource<E> datasource;
 
     protected MetaPropertyPath metaPropertyPath;

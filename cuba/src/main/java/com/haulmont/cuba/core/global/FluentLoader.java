@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoader<E> {
+public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E> {
 
     public static final String NAME = "core_FluentLoader";
 
@@ -152,7 +152,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
         return new ByQuery<>(this, queryString, parameters, beanFactory);
     }
 
-    public static class ById<E extends JmixEntity> extends io.jmix.core.FluentLoader.ById<E> {
+    public static class ById<E extends Entity> extends io.jmix.core.FluentLoader.ById<E> {
 
         protected ById(io.jmix.core.FluentLoader<E> loader, Object id) {
             super(loader, id);
@@ -235,7 +235,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
         }
     }
 
-    public static class ByIds<E extends JmixEntity> extends io.jmix.core.FluentLoader.ByIds<E> {
+    public static class ByIds<E extends Entity> extends io.jmix.core.FluentLoader.ByIds<E> {
 
         protected ByIds(io.jmix.core.FluentLoader<E> loader, Collection ids) {
             super(loader, ids);
@@ -341,7 +341,7 @@ public class FluentLoader<E extends JmixEntity> extends io.jmix.core.FluentLoade
         }
     }
 
-    public static class ByQuery<E extends JmixEntity> extends io.jmix.core.FluentLoader.ByQuery<E> {
+    public static class ByQuery<E extends Entity> extends io.jmix.core.FluentLoader.ByQuery<E> {
 
         protected ByQuery(io.jmix.core.FluentLoader<E> loader, String queryString, BeanFactory beanFactory) {
             super(loader, queryString, beanFactory);

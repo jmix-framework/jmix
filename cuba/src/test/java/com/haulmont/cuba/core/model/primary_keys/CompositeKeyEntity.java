@@ -16,16 +16,15 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity(name = "test$CompositeKeyEntity")
+@javax.persistence.Entity(name = "test$CompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY")
-public class CompositeKeyEntity implements JmixEntity {
+public class CompositeKeyEntity implements Entity {
 
     private static final long serialVersionUID = -2538345720324624741L;
 

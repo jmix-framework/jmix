@@ -32,7 +32,7 @@ import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
 import com.vaadin.data.ValueProvider;
 import com.vaadin.ui.Grid;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
-public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
+public class WebDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebDataGrid<E> implements DataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected DataGridDelegate dataGridDelegate;
@@ -543,7 +543,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
         }
     }
 
-    protected static class ColumnImpl<E extends JmixEntity>
+    protected static class ColumnImpl<E extends Entity>
             extends WebAbstractDataGrid.ColumnImpl<E>
             implements DataGrid.Column<E> {
 
@@ -629,7 +629,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static class WebDataGridEditorFieldFactory<E extends JmixEntity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
+    protected static class WebDataGridEditorFieldFactory<E extends Entity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
 
         public WebDataGridEditorFieldFactory(WebAbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
             super(dataGrid, fieldFactory);
@@ -639,7 +639,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
         protected Field createField(WebAbstractDataGrid.ColumnImpl column, Object bean) {
             if (column instanceof ColumnImpl && ((ColumnImpl) column).getEditorFieldGenerator() != null) {
                 String fieldPropertyId = String.valueOf(column.getPropertyId());
-                Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource((JmixEntity) bean);
+                Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource((Entity) bean);
                 return ((ColumnImpl) column).getEditorFieldGenerator().createField(fieldDataSource, fieldPropertyId);
             }
             return super.createField(column, bean);

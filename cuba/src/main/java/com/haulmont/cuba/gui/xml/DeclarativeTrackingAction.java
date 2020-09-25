@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.xml;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
@@ -114,7 +114,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
             return false;
         }
 
-        JmixEntity singleSelected = (JmixEntity) target.getSingleSelected();
+        Entity singleSelected = (Entity) target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.listener.AfterInsertEntityListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import com.haulmont.cuba.core.model.primary_keys.IntIdentityEntity;
 import io.jmix.core.Id;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.core.EntityManager;
 import com.haulmont.cuba.core.Persistence;
 import io.jmix.data.event.EntityChangedEvent;
@@ -35,7 +35,6 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -118,12 +117,12 @@ public class TestEntityChangedEventListener implements
     }
 
     @Override
-    public void beforeCommit(EntityManager entityManager, Collection<JmixEntity> managedEntities) {
+    public void beforeCommit(EntityManager entityManager, Collection<Entity> managedEntities) {
         allEvents.add(new EventInfo("BeforeCommitTransactionListener", managedEntities));
     }
 
     @Override
-    public void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities) {
+    public void afterComplete(boolean committed, Collection<Entity> detachedEntities) {
         allEvents.add(new EventInfo("AfterCompleteTransactionListener", new Object[]{committed, detachedEntities}));
     }
 

@@ -62,7 +62,7 @@ public class GuiActionSupport {
      * that is loaded in the given entity instance. The entity is also reloaded if the target datasource requires
      * dynamic attributes and the entity instance does not contain them.
      */
-    public JmixEntity reloadEntityIfNeeded(JmixEntity entity, Datasource targetDatasource) {
+    public Entity reloadEntityIfNeeded(Entity entity, Datasource targetDatasource) {
         boolean needDynamicAttributes = targetDatasource.getLoadDynamicAttributes();
         boolean dynamicAttributesAreLoaded = dynamicAttributesGuiTools.hasDynamicAttributes(entity);
 

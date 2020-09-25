@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.data.impl;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.core.entity.EntityValues;
 
@@ -31,7 +31,7 @@ import java.util.Map;
  * </ul>
  */
 @Deprecated
-public abstract class CustomCollectionDatasource<T extends JmixEntity, K>
+public abstract class CustomCollectionDatasource<T extends Entity, K>
         extends CollectionDatasourceImpl<T, K> {
 
     /**

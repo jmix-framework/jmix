@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components.data.datagrid;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.DataGridItems;
 
@@ -28,7 +28,7 @@ import java.util.Map;
  * @deprecated use {@link io.jmix.ui.gui.data.impl.AggregatableDelegate} instead
  */
 @Deprecated
-public interface AggregatableDataGridItems<E extends JmixEntity> extends DataGridItems<E> {
+public interface AggregatableDataGridItems<E extends Entity> extends DataGridItems<E> {
 
     /**
      * Perform aggregation and return map with formatted string values.

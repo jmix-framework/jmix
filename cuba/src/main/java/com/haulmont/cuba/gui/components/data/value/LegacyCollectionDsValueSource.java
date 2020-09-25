@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -50,7 +50,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * @param <V> value type
  */
 @SuppressWarnings("unchecked")
-public class LegacyCollectionDsValueSource<V extends JmixEntity> implements ValueSource<Collection<V>>, ApplicationContextAware {
+public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSource<Collection<V>>, ApplicationContextAware {
 
     private static final Logger log = LoggerFactory.getLogger(LegacyCollectionDsValueSource.class);
 

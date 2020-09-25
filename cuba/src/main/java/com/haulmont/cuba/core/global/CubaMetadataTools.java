@@ -18,7 +18,6 @@ package com.haulmont.cuba.core.global;
 
 import com.haulmont.cuba.core.entity.HasUuid;
 import com.haulmont.cuba.core.entity.SoftDelete;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 

@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.event.EventRouter;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
 import io.jmix.core.entity.EntityPropertyChangeListener;
@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 @Deprecated
-public abstract class AbstractDatasource<T extends JmixEntity> implements Datasource<T>, DatasourceImplementation<T> {
+public abstract class AbstractDatasource<T extends Entity> implements Datasource<T>, DatasourceImplementation<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDatasource.class);
 
@@ -52,9 +52,9 @@ public abstract class AbstractDatasource<T extends JmixEntity> implements Dataso
 
     private EventRouter eventRouter;
 
-    protected Collection<JmixEntity> itemsToCreate = new HashSet<>();
-    protected Collection<JmixEntity> itemsToUpdate = new HashSet<>();
-    protected Collection<JmixEntity> itemsToDelete = new HashSet<>();
+    protected Collection<Entity> itemsToCreate = new HashSet<>();
+    protected Collection<Entity> itemsToUpdate = new HashSet<>();
+    protected Collection<Entity> itemsToDelete = new HashSet<>();
     protected EntityPropertyChangeListener listener = new ItemListener();
 
     protected boolean listenersEnabled = true;
@@ -243,7 +243,7 @@ public abstract class AbstractDatasource<T extends JmixEntity> implements Dataso
         this.loadDynamicAttributes = value;
     }
 
-    protected void attachListener(JmixEntity item) {
+    protected void attachListener(Entity item) {
         if (item == null) {
             return;
         }
@@ -251,7 +251,7 @@ public abstract class AbstractDatasource<T extends JmixEntity> implements Dataso
         item.__getEntityEntry().addPropertyChangeListener(listener);
     }
 
-    protected void detachListener(JmixEntity item) {
+    protected void detachListener(Entity item) {
         if (item == null) {
             return;
         }

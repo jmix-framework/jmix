@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.app.events;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.annotation.Internal;
 
 import javax.annotation.Nullable;
@@ -85,7 +85,7 @@ public class AttributeChanges {
      * @return Id of the referenced object
      */
     @Nullable
-    public <E extends JmixEntity, K> Id<E, K> getOldReferenceId(String attributeName) {
+    public <E extends Entity, K> Id<E, K> getOldReferenceId(String attributeName) {
         io.jmix.core.Id<E> oldReferenceId = changes.getOldReferenceId(attributeName);
         //noinspection unchecked
         return oldReferenceId == null ? null : Id.of((K)oldReferenceId.getValue(), oldReferenceId.getEntityClass());
@@ -107,7 +107,7 @@ public class AttributeChanges {
      * @param entityClass   class of the attribute
      * @return collection of Ids
      */
-    public <E extends JmixEntity, K> Collection<Id<E, K>> getOldCollection(String attributeName, Class<E> entityClass) {
+    public <E extends Entity, K> Collection<Id<E, K>> getOldCollection(String attributeName, Class<E> entityClass) {
         Collection<io.jmix.core.Id<E>> oldCollection = changes.getOldCollection(attributeName, entityClass);
         if (oldCollection != null) {
             //noinspection unchecked

@@ -16,14 +16,13 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@Entity(name = "test$StringIdEntity")
-public class TestStringIdEntity implements JmixEntity {
+@javax.persistence.Entity(name = "test$StringIdEntity")
+public class TestStringIdEntity implements Entity {
 
     @Id
     @Column(name = "CODE")

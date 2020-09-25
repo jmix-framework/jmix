@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.data.datagrid.DatasourceDataGridItems;
 import com.haulmont.cuba.gui.components.data.datagrid.SortableDatasourceDataGridItems;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
@@ -43,10 +43,10 @@ import java.util.function.Function;
  */
 @SuppressWarnings("rawtypes, unchecked")
 @Deprecated
-public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
+public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.DataGrid<E>,
         HasSettings, HasDataLoadingSettings, HasRowsCount, RowsCount.RowsCountTarget {
 
-    static <T extends JmixEntity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
+    static <T extends Entity> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
         return new TypeToken<DataGrid<T>>() {
         };
     }
@@ -104,7 +104,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @throws IllegalStateException    if the editor is not enabled or already editing an item in buffered mode
      * @throws IllegalArgumentException if datasource doesn't contain item with given id
      * @see #setEditorEnabled(boolean)
-     * @deprecated Use {@link #edit(JmixEntity)}
+     * @deprecated Use {@link #edit(Entity)}
      */
     @Deprecated
     void editItem(Object itemId);
@@ -214,7 +214,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @deprecated use {@link Function} instead
      */
     @Deprecated
-    interface RowStyleProvider<E extends JmixEntity> extends Function<E, String> {
+    interface RowStyleProvider<E extends Entity> extends Function<E, String> {
     }
 
     /**
@@ -223,7 +223,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @deprecated use {@link DataGrid.Column#setStyleProvider(Function)} instead
      */
     @Deprecated
-    interface CellStyleProvider<E extends JmixEntity> {
+    interface CellStyleProvider<E extends Entity> {
         /**
          * Called by {@link io.jmix.ui.component.DataGrid} to get a style for cell.
          *
@@ -260,7 +260,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @deprecated use {@link DataGrid.Column#getDescriptionProvider()} instead
      */
     @Deprecated
-    interface CellDescriptionProvider<E extends JmixEntity> {
+    interface CellDescriptionProvider<E extends Entity> {
 
         /**
          * Called by DataGrid to generate a description (tooltip) for a cell. The
@@ -306,7 +306,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @deprecated use {@link Function} instead
      */
     @Deprecated
-    interface RowDescriptionProvider<E extends JmixEntity> extends Function<E, String> {
+    interface RowDescriptionProvider<E extends Entity> extends Function<E, String> {
     }
 
     /**
@@ -385,7 +385,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @param <E> DataGrid data type
      * @param <T> column data type
      */
-    interface ColumnGenerator<E extends JmixEntity, T> {
+    interface ColumnGenerator<E extends Entity, T> {
         /**
          * Returns value for given event.
          *
@@ -411,7 +411,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @param <T> Column data type
      */
     @Internal
-    interface GenericColumnGenerator<E extends JmixEntity, T> {
+    interface GenericColumnGenerator<E extends Entity, T> {
 
         /**
          * Returns value for given event.
@@ -463,7 +463,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
     /**
      * A column in the DataGrid.
      */
-    interface Column<E extends JmixEntity> extends io.jmix.ui.component.DataGrid.Column<E>, HasFormatter {
+    interface Column<E extends Entity> extends io.jmix.ui.component.DataGrid.Column<E>, HasFormatter {
 
         /**
          * @return the type of value represented by this column
@@ -559,7 +559,7 @@ public interface DataGrid<E extends JmixEntity> extends ListComponent<E>, io.jmi
      * @deprecated Use {@link EditorCloseEvent} instead
      */
     @Deprecated
-    class CubaEditorCloseEvent<E extends JmixEntity> extends EditorCloseEvent<E> {
+    class CubaEditorCloseEvent<E extends Entity> extends EditorCloseEvent<E> {
 
         /**
          * Constructor for a DataGrid editor close event.

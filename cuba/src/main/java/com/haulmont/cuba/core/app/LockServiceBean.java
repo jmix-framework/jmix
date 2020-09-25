@@ -16,7 +16,7 @@
  */
 package com.haulmont.cuba.core.app;
 
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockManager;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,7 @@ public class LockServiceBean implements LockService {
 
     @Nullable
     @Override
-    public LockInfo lock(JmixEntity entity) {
+    public LockInfo lock(Entity entity) {
         return lockManager.lock(entity);
     }
 
@@ -50,7 +50,7 @@ public class LockServiceBean implements LockService {
     }
 
     @Override
-    public void unlock(JmixEntity entity) {
+    public void unlock(Entity entity) {
         lockManager.unlock(entity);
     }
 

@@ -18,7 +18,7 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PickerField;
 import com.vaadin.server.Resource;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.ui.component.impl.WebEntityPicker;
 import io.jmix.ui.theme.HaloTheme;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class WebPickerField<V extends JmixEntity> extends WebEntityPicker<V> implements PickerField<V> {
+public class WebPickerField<V extends Entity> extends WebEntityPicker<V> implements PickerField<V> {
 
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> iconProvider;

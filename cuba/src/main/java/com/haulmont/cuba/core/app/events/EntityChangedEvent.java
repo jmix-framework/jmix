@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -52,7 +52,7 @@ import org.springframework.core.ResolvableTypeProvider;
  * @param <E> entity type
  * @param <K> entity identifier type
  */
-public class EntityChangedEvent<E extends JmixEntity, K> extends ApplicationEvent implements ResolvableTypeProvider {
+public class EntityChangedEvent<E extends Entity, K> extends ApplicationEvent implements ResolvableTypeProvider {
 
     /**
      * Type of the event: {@link #CREATED}, {@link #UPDATED} or {@link #DELETED}.

@@ -30,7 +30,7 @@ import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -315,7 +315,7 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
             componentForEntity = lookupField;
 
             componentForEntity.addValueChangeListener(e -> {
-                JmixEntity selectedEntity = (JmixEntity) e.getValue();
+                Entity selectedEntity = (Entity) e.getValue();
                 if (selectedEntity != null && !valueExists(selectedEntity)) {
                     this.addValueToLayout(selectedEntity, ListEditorHelper.getValueCaption(selectedEntity, itemType,
                             timeZone, optionCaptionProvider));

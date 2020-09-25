@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @param <T>
  */
-public class DatasourceImpl<T extends JmixEntity> extends AbstractDatasource<T> implements DatasourceImplementation<T> {
+public class DatasourceImpl<T extends Entity> extends AbstractDatasource<T> implements DatasourceImplementation<T> {
 
     protected DsContext dsContext;
     protected DataSupplier dataSupplier;
@@ -95,7 +95,7 @@ public class DatasourceImpl<T extends JmixEntity> extends AbstractDatasource<T> 
 
         if (getCommitMode() == CommitMode.DATASTORE) {
             final DataSupplier supplier = getDataSupplier();
-            JmixEntity committedItem = supplier.commit(item, getView());
+            Entity committedItem = supplier.commit(item, getView());
 
             committed(Collections.singleton(committedItem));
 
@@ -241,12 +241,12 @@ public class DatasourceImpl<T extends JmixEntity> extends AbstractDatasource<T> 
     }
 
     @Override
-    public void committed(Set<JmixEntity> entities) {
+    public void committed(Set<Entity> entities) {
         if (!State.VALID.equals(state)) {
             return;
         }
 
-        for (JmixEntity entity : entities) {
+        for (Entity entity : entities) {
             if (entity.equals(item)) {
                 detachListener(item);
                 T prevItem = item;

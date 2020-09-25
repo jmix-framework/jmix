@@ -17,7 +17,7 @@ package com.haulmont.cuba.core;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 import java.sql.Connection;
@@ -38,7 +38,7 @@ public interface EntityManager {
      * @param entity entity instance
      * @throws IllegalArgumentException if not an entity
      */
-    void persist(JmixEntity entity);
+    void persist(Entity entity);
 
     /**
      * Merge the state of the given entity into the current persistence context.
@@ -51,21 +51,21 @@ public interface EntityManager {
      * @return the instance that the state was merged to
      * @throws IllegalArgumentException if instance is not an entity or is a removed entity
      * @see EntityStates#isNew(Object)
-     * @see EntityStates#makePatch(JmixEntity)
+     * @see EntityStates#makePatch(Entity)
      */
-    <T extends JmixEntity> T merge(T entity);
+    <T extends Entity> T merge(T entity);
 
     /**
      * DEPRECATED. Use {@code io.jmix.core.sys.EntityFetcher#fetch(Entity, FetchPlan)} if needed.
      */
     @Deprecated
-    <T extends JmixEntity> T merge(T entity, @Nullable FetchPlan fetchPlan);
+    <T extends Entity> T merge(T entity, @Nullable FetchPlan fetchPlan);
 
     /**
      * DEPRECATED. Use {@code io.jmix.core.sys.EntityFetcher#fetch(Entity, String)} if needed.
      */
     @Deprecated
-    <T extends JmixEntity> T merge(T entity, @Nullable String fetchPlanName);
+    <T extends Entity> T merge(T entity, @Nullable String fetchPlanName);
 
     /**
      * Remove the entity instance.
@@ -74,7 +74,7 @@ public interface EntityManager {
      * @param entity entity instance
      * @throws IllegalArgumentException if not an entity
      */
-    void remove(JmixEntity entity);
+    void remove(Entity entity);
 
     /**
      * Find by primary key.
@@ -86,7 +86,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends JmixEntity, K> T find(Class<T> entityClass, K id);
+    <T extends Entity, K> T find(Class<T> entityClass, K id);
 
     /**
      * Find by primary key.
@@ -102,7 +102,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends JmixEntity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
+    <T extends Entity, K> T find(Class<T> entityClass, K id, FetchPlan... fetchPlans);
 
     /**
      * Find by primary key.
@@ -118,7 +118,7 @@ public interface EntityManager {
      *                                  is not a valid type for that entity's primary key
      */
     @Nullable
-    <T extends JmixEntity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
+    <T extends Entity, K> T find(Class<T> entityClass, K id, String... fetchPlanNames);
 
     /**
      * Get an instance, whose state may be lazily fetched.<br>
@@ -136,7 +136,7 @@ public interface EntityManager {
      *                                                   is not a valid type for that entity's primary key
      * @throws javax.persistence.EntityNotFoundException if the entity state cannot be accessed
      */
-    <T extends JmixEntity, K> T getReference(Class<T> entityClass, K id);
+    <T extends Entity, K> T getReference(Class<T> entityClass, K id);
 
     /**
      * Create an instance of Query for executing a Java Persistence query language statement.
@@ -185,7 +185,7 @@ public interface EntityManager {
      * @param resultClass expected result class
      * @return the new query instance
      */
-    <T extends JmixEntity> TypedQuery<T> createNativeQuery(String sqlString, Class<T> resultClass);
+    <T extends Entity> TypedQuery<T> createNativeQuery(String sqlString, Class<T> resultClass);
 
     /**
      * Reload an entity from DB according to a combined fetch plan defined by the given array of fetch plans.
@@ -198,7 +198,7 @@ public interface EntityManager {
      * @return reloaded entity instance, or null if it has been deleted
      */
     @Nullable
-    <T extends JmixEntity> T reload(T entity, String... fetchPlanNames);
+    <T extends Entity> T reload(T entity, String... fetchPlanNames);
 
     /**
      * Reload an entity from DB according to a combined fetch plan defined by the given array of fetch plans.
@@ -211,14 +211,14 @@ public interface EntityManager {
      * @return reloaded entity instance
      * @throws javax.persistence.EntityNotFoundException if the entity has been deleted
      */
-    <T extends JmixEntity> T reloadNN(T entity, String... fetchPlanNames);
+    <T extends Entity> T reloadNN(T entity, String... fetchPlanNames);
 
     /**
      * Synchronize the persistence context to the underlying database.
      */
     void flush();
 
-    void detach(JmixEntity entity);
+    void detach(Entity entity);
 
     /**
      * @return true if the EntityManager is in SoftDeletion mode
@@ -247,7 +247,7 @@ public interface EntityManager {
      * DEPRECATED since v.6
      */
     @Deprecated
-    void fetch(JmixEntity entity, FetchPlan fetchPlan);
+    void fetch(Entity entity, FetchPlan fetchPlan);
 
     /**
      * DEPRECATED since v.6.
@@ -255,5 +255,5 @@ public interface EntityManager {
      */
     @Deprecated
     @Nullable
-    <T extends JmixEntity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames);
+    <T extends Entity, K> T reload(Class<T> entityClass, K id, String... fetchPlanNames);
 }

@@ -89,7 +89,7 @@ public class DataManagerTest {
         server.setName("localhost");
         server.setRunning(true);
 
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class).setId(id);
 
@@ -97,7 +97,7 @@ public class DataManagerTest {
         assertEquals("localhost", server.getName());
 
         server.setName("krivopustov");
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class DataManagerTest {
         server.setName("localhost");
         server.setRunning(true);
 
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class).setId(id);
 
@@ -121,7 +121,7 @@ public class DataManagerTest {
         server.setName("localhost");
         server.setRunning(true);
 
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class);
         loadContext.setQueryString("select s from " + metadataTools.getEntityName(Server.class) + " s");
@@ -137,7 +137,7 @@ public class DataManagerTest {
         server.setName("localhost");
         server.setRunning(true);
 
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class).setId(id);
 
@@ -161,7 +161,7 @@ public class DataManagerTest {
         server.setName("LocalHost");
         server.setRunning(true);
 
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class);
         loadContext.setQueryString("select s from test$Server s where s.name like :name")
@@ -178,7 +178,7 @@ public class DataManagerTest {
         server.setRunning(true);
 
         DataManager dataManager = AppBeans.get(DataManager.NAME);
-        dataManager.commit(new CommitContext(Collections.<JmixEntity>singleton(server)));
+        dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class);
         loadContext.setQueryString("select s from test$Server s where s.name like :name")
@@ -288,14 +288,14 @@ public class DataManagerTest {
         CommitContext commitContext = new CommitContext(server);
         commitContext.setDiscardCommitted(true);
 
-        Set<JmixEntity> committed = dataManager.commit(commitContext);
+        Set<Entity> committed = dataManager.commit(commitContext);
         assertTrue(committed.isEmpty());
 
         Server saved = dataManager.load(LoadContext.create(Server.class).setId(server.getId()));
         assertNotNull(saved);
     }
 
-    public static class MyLoadContext<E extends JmixEntity> extends LoadContext<E> {
+    public static class MyLoadContext<E extends Entity> extends LoadContext<E> {
 
         private String info;
 

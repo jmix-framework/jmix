@@ -17,13 +17,13 @@
 package com.haulmont.cuba.core.config.type;
 
 import com.haulmont.cuba.core.global.OriginalEntityLoadInfo;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 
 public class EntityStringify extends TypeStringify {
 
     @Override
     public String stringify(Object value) {
-        OriginalEntityLoadInfo entityLoadInfo = OriginalEntityLoadInfo.create((JmixEntity) value);
+        OriginalEntityLoadInfo entityLoadInfo = OriginalEntityLoadInfo.create((Entity) value);
         return entityLoadInfo.toString();
     }
 }

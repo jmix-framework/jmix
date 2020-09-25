@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TokenList;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import com.haulmont.cuba.gui.components.CaptionMode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.DialogWindow;
@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebTokenList<V extends JmixEntity> extends io.jmix.ui.component.impl.WebTokenList<V> implements TokenList<V> {
+public class WebTokenList<V extends Entity> extends io.jmix.ui.component.impl.WebTokenList<V> implements TokenList<V> {
 
     protected OpenType lookupOpenType = OpenType.THIS_TAB;
 

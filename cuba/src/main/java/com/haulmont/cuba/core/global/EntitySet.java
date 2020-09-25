@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.global;
 
 import com.google.common.collect.ForwardingSet;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 
@@ -36,7 +36,7 @@ import java.util.Set;
  * @see #optional(Object)
  * @see #optional(Class, Object)
  */
-public class EntitySet extends ForwardingSet<JmixEntity> implements Serializable {
+public class EntitySet extends ForwardingSet<Entity> implements Serializable {
     private static final long serialVersionUID = 4239884277120360439L;
 
     private Set entities;

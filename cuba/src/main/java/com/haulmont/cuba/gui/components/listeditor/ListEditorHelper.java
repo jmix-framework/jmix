@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.ListEditor;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.InstanceNameProvider;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 
@@ -54,8 +54,8 @@ public class ListEditorHelper {
             return null;
         switch (itemType) {
             case ENTITY:
-                if (v instanceof JmixEntity) {
-                    return AppBeans.get(InstanceNameProvider.class).getInstanceName((JmixEntity) v);
+                if (v instanceof Entity) {
+                    return AppBeans.get(InstanceNameProvider.class).getInstanceName((Entity) v);
                 } else {
                     return v.toString();
                 }

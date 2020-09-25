@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.global;
 
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,7 +61,7 @@ public class EntityStates extends io.jmix.core.EntityStates {
      * @param view   view
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
-    public void checkLoadedWithView(JmixEntity entity, View view) {
+    public void checkLoadedWithView(Entity entity, View view) {
         checkLoadedWithFetchPlan(entity, view);
     }
 
@@ -73,7 +73,7 @@ public class EntityStates extends io.jmix.core.EntityStates {
      * @param viewName view name
      * @throws IllegalArgumentException if at least one of properties is not loaded
      */
-    public void checkLoadedWithView(JmixEntity entity, String viewName) {
+    public void checkLoadedWithView(Entity entity, String viewName) {
         checkLoadedWithFetchPlan(entity, viewName);
     }
 
@@ -84,7 +84,7 @@ public class EntityStates extends io.jmix.core.EntityStates {
      * @param view   view name
      * @return false if at least one of properties is not loaded
      */
-    public boolean isLoadedWithView(JmixEntity entity, View view) {
+    public boolean isLoadedWithView(Entity entity, View view) {
         return isLoadedWithFetchPlan(entity, view);
     }
 
@@ -95,7 +95,7 @@ public class EntityStates extends io.jmix.core.EntityStates {
      * @param viewName view name
      * @return false if at least one of properties is not loaded
      */
-    public boolean isLoadedWithView(JmixEntity entity, String viewName) {
+    public boolean isLoadedWithView(Entity entity, String viewName) {
         return isLoadedWithFetchPlan(entity,viewName);
     }
 
@@ -104,9 +104,9 @@ public class EntityStates extends io.jmix.core.EntityStates {
      * @param entity entity instance
      * @return view
      */
-    public View getCurrentView(JmixEntity entity) {
+    public View getCurrentView(Entity entity) {
         FetchPlan fetchPlan = getCurrentFetchPlan(entity);
-        return new View((Class<JmixEntity>) fetchPlan.getEntityClass(),
+        return new View((Class<Entity>) fetchPlan.getEntityClass(),
                 fetchPlan.getName(),
                 new LinkedList<>(fetchPlan.getProperties()),
                 fetchPlan.loadPartialEntities());

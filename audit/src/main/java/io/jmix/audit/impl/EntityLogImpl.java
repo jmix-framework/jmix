@@ -810,7 +810,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
     @Nullable
     protected Object getValueId(@Nullable Object value) {
-        if (value instanceof JmixEntity) {
+        if (value instanceof Entity) {
             if (EntitySystemAccess.isEmbeddable(value)) {
                 return null;
             } else {
@@ -824,7 +824,7 @@ public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
     protected String stringify(@Nullable Object value, MetaProperty metaProperty) {
         if (value == null)
             return "";
-        else if (value instanceof JmixEntity) {
+        else if (value instanceof Entity) {
             return metadataTools.getInstanceName(value);
         } else if (value instanceof Date) {
             Datatype datatype = metaProperty.getRange().asDatatype();

@@ -244,7 +244,7 @@ public class View extends FetchPlan {
 
     public static View copy(View fetchPlan) {
         Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
-        return new View(fetchPlan.getEntityClass(),
+        return new View((Class<JmixEntity>) fetchPlan.getEntityClass(),
                 fetchPlan.getName(),
                 new LinkedList<>(fetchPlan.getProperties()),
                 fetchPlan.loadPartialEntities());

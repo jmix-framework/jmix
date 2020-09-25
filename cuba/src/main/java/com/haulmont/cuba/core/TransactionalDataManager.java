@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
+import com.haulmont.cuba.core.global.EntitySet;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;

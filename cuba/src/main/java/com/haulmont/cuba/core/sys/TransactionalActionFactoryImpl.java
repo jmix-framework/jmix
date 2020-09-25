@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.TransactionalAction;
 import com.haulmont.cuba.core.global.TransactionalActionFactory;
-import io.jmix.core.EntitySet;
+import com.haulmont.cuba.core.global.EntitySet;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 

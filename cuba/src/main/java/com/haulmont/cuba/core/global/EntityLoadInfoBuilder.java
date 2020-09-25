@@ -16,19 +16,19 @@
 
 package com.haulmont.cuba.core.global;
 
+import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
@@ -96,7 +96,7 @@ public class EntityLoadInfoBuilder {
                 if (metaClass == null) {
                     return null;
                 }
-                JmixEntity entity = metadata.create(metaClass);
+                JmixEntity entity = (JmixEntity) metadata.create(metaClass);
                 MetaProperty primaryKeyProp = metadataTools.getPrimaryKeyProperty(metaClass);
                 boolean stringKey = primaryKeyProp != null && primaryKeyProp.getJavaType().equals(String.class);
                 return new EntityLoadInfo(EntityValues.getId(entity), metaClass, null, stringKey, true);

@@ -16,8 +16,6 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.EntitySet;
-
 import javax.annotation.CheckReturnValue;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -36,8 +34,8 @@ public interface TransactionalAction {
      * <p>Method returns the same instance of {@link TransactionalAction} so
      * it can be used for method chaining.</p>
      *
-     * @param consumer  implementation of {@link Consumer} interface
-     * @return          the same instance to which the method was applied
+     * @param consumer implementation of {@link Consumer} interface
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction onSuccess(Consumer<EntitySet> consumer);
@@ -50,10 +48,10 @@ public interface TransactionalAction {
      * <p>Method returns the same instance of {@link TransactionalAction} so
      * it can be used for method chaining.</p>
      *
-     * @param consumer  implementation of {@link BiConsumer} interface.
-     *                  The first parameter - {@link CommitContext} that was used for unsuccessful commit.
-     *                  The second parameter - {@link Throwable} that was thrown during the commit
-     * @return          the same instance to which the method was applied
+     * @param consumer implementation of {@link BiConsumer} interface.
+     *                 The first parameter - {@link CommitContext} that was used for unsuccessful commit.
+     *                 The second parameter - {@link Throwable} that was thrown during the commit
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction onFail(BiConsumer<CommitContext, Throwable> consumer);
@@ -64,8 +62,8 @@ public interface TransactionalAction {
      * <p>Method returns the same instance of {@link TransactionalAction} so
      * it can be used for method chaining.</p>
      *
-     * @param consumer  implementation of {@link Consumer} interface
-     * @return          the same instance to which the method was applied
+     * @param consumer implementation of {@link Consumer} interface
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction afterCompletion(Consumer<CommitContext> consumer);
@@ -75,8 +73,8 @@ public interface TransactionalAction {
      * <p>Method returns the same instance of {@link TransactionalAction} so
      * it can be used for method chaining.</p>
      *
-     * @param supplier  implementation of {@link Supplier} interface
-     * @return          the same instance to which the method was applied
+     * @param supplier implementation of {@link Supplier} interface
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction withCommitContext(Supplier<CommitContext> supplier);
@@ -89,7 +87,7 @@ public interface TransactionalAction {
      * it can be used for method chaining.</p>
      *
      * @param commitContext contains all required changes (created, updated and deleted entities)
-     * @return              the same instance to which the method was applied
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction withCommitContext(CommitContext commitContext);
@@ -102,7 +100,7 @@ public interface TransactionalAction {
      *      3.1) if the commit was successful then {@code onSuccess} action;
      *      3.2) if the commit was unsuccessful then {@code onFail} action;
      *      4) {@code afterCompletion} action.</pre>
-     <p>If {@code onFail} action is specified (not null) and an exception occurs during {@code commit}
+     * <p>If {@code onFail} action is specified (not null) and an exception occurs during {@code commit}
      * then this exception won't be re-thrown by {@code perform()} method.
      * In this case {@code null} value will be returned as a result</p>
      *
@@ -115,9 +113,9 @@ public interface TransactionalAction {
      * <p>Method returns the same instance of {@link TransactionalAction} so
      * it can be used for method chaining.</p>
      *
-     * @param joinTransaction   defines should {@link CommitContext} be joined to existing transaction or not.
-     *                          Default value = false
-     * @return                  the same instance to which the method was applied
+     * @param joinTransaction defines should {@link CommitContext} be joined to existing transaction or not.
+     *                        Default value = false
+     * @return the same instance to which the method was applied
      */
     @CheckReturnValue
     TransactionalAction setJoinTransaction(boolean joinTransaction);

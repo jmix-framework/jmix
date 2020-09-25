@@ -21,16 +21,17 @@ import com.haulmont.cuba.core.listener.AfterCompleteTransactionListener;
 import com.haulmont.cuba.core.listener.BeforeCommitTransactionListener;
 import io.jmix.core.JmixEntity;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component("jmix_CubaTransactionListenersManager")
 public class CubaTransactionListenersManager implements
@@ -57,16 +58,22 @@ public class CubaTransactionListenersManager implements
     }
 
     @Override
-    public void beforeCommit(String storeName, Collection<JmixEntity> managedEntities) {
+    public void beforeCommit(String storeName, Collection<Object> managedEntities) {
         for (BeforeCommitTransactionListener listener : beforeCommitTxListeners) {
-            listener.beforeCommit(persistence.getEntityManager(storeName), managedEntities);
+            listener.beforeCommit(persistence.getEntityManager(storeName), castCollection(managedEntities));
         }
     }
 
     @Override
-    public void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities) {
+    public void afterComplete(boolean committed, Collection<Object> detachedEntities) {
         for (AfterCompleteTransactionListener listener : afterCompleteTxListeners) {
-            listener.afterComplete(committed, detachedEntities);
+            listener.afterComplete(committed, castCollection(detachedEntities));
         }
+    }
+
+    protected Collection<JmixEntity> castCollection(Collection<Object> collection) {
+        return collection.stream()
+                .map(o -> (JmixEntity) o)
+                .collect(Collectors.toList());
     }
 }

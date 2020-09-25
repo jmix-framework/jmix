@@ -16,20 +16,9 @@
 
 package com.haulmont.cuba.web.sys.linkhandling;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.EntityAccessException;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Metadata;
-import io.jmix.core.ReferenceToEntitySupport;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
 import com.haulmont.cuba.core.global.EntityLoadInfo;
-import io.jmix.core.JmixEntity;
-import io.jmix.ui.App;
-import io.jmix.ui.AppUI;
-import io.jmix.ui.Screens;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
+import io.jmix.core.*;
+import io.jmix.ui.*;
 import io.jmix.ui.exception.AccessDeniedHandler;
 import io.jmix.ui.exception.EntityAccessExceptionHandler;
 import io.jmix.ui.exception.NoSuchScreenHandler;
@@ -42,10 +31,10 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,7 +175,7 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
 
     protected JmixEntity loadEntityInstance(EntityLoadInfo info) {
         if (info.isNewEntity()) {
-            return metadata.create(info.getMetaClass());
+            return (JmixEntity) metadata.create(info.getMetaClass());
         }
 
         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntityFromLink(info.getMetaClass());

@@ -18,10 +18,13 @@ package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.entity.contracts.Id;
-import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.EntitySet;
 import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;
+import com.haulmont.cuba.core.global.*;
+import io.jmix.core.EntityStates;
+import io.jmix.core.Metadata;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -130,7 +133,8 @@ public class CubaDataManager implements DataManager {
     @Override
     public EntitySet commit(CommitContext context) {
         validate(context);
-        return delegate.save(context);
+        io.jmix.core.EntitySet entitySet = delegate.save(context);
+        return new EntitySet(entitySet);
     }
 
     @Override

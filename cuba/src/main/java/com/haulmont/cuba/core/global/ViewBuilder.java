@@ -41,8 +41,8 @@ public class ViewBuilder extends FetchPlanBuilder {
     }
 
     @Override
-    protected FetchPlan createFetchPlan(Class<? extends JmixEntity> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
-        return new View(entityClass, name, properties, loadPartialEntities);
+    protected FetchPlan createFetchPlan(Class<?> entityClass, String name, List<FetchPlanProperty> properties, boolean loadPartialEntities) {
+        return new View((Class<JmixEntity>) entityClass, name, properties, loadPartialEntities);
     }
 
     public ViewBuilder add(String property) {

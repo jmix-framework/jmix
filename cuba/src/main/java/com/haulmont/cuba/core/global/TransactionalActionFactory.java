@@ -16,8 +16,6 @@
 
 package com.haulmont.cuba.core.global;
 
-import io.jmix.core.EntitySet;
-
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

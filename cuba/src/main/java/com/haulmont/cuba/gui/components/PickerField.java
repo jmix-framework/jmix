@@ -727,10 +727,10 @@ public interface PickerField<V extends JmixEntity> extends Field<V>, EntityPicke
 
         protected JmixEntity initEntity() {
             EntityValueSource entityValueSource = (EntityValueSource) pickerField.getValueSource();
-            JmixEntity entity = AppBeans.get(Metadata.class).create(
+            JmixEntity entity = (JmixEntity) AppBeans.get(Metadata.class).create(
                     entityValueSource.getMetaPropertyPath().getMetaProperty().getRange().asClass());
 
-            JmixEntity ownerEntity = entityValueSource.getItem();
+            JmixEntity ownerEntity = (JmixEntity) entityValueSource.getItem();
             MetaProperty inverseProp = entityValueSource.getMetaPropertyPath().getMetaProperty().getInverse();
             if (inverseProp != null) {
                 EntityValues.setValue(entity, inverseProp.getName(), ownerEntity);

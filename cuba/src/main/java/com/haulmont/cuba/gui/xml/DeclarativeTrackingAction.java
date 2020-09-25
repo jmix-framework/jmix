@@ -114,7 +114,7 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
             return false;
         }
 
-        JmixEntity singleSelected = target.getSingleSelected();
+        JmixEntity singleSelected = (JmixEntity) target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }

@@ -100,7 +100,7 @@ public class CubaMenuItemCommands extends MenuItemCommands {
         }
 
         //noinspection unchecked
-        return dataManager.load(ctx);
+        return (JmixEntity) dataManager.load(ctx);
     }
 
     @Override

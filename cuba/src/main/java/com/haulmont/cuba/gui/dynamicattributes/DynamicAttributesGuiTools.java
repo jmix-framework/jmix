@@ -48,6 +48,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static io.jmix.core.entity.EntitySystemAccess.getExtraState;
 import static java.lang.String.format;
 
 @Component(DynamicAttributesGuiTools.NAME)
@@ -94,7 +95,7 @@ public class DynamicAttributesGuiTools {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
         Collection<AttributeDefinition> attributes = dynAttrMetadata.getAttributes(metaClass);
 
-        DynamicAttributesState state = (DynamicAttributesState) item.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+        DynamicAttributesState state = getExtraState(item, DynamicAttributesState.class);
         if (state != null) {
             DynamicAttributes dynamicAttributes = state.getDynamicAttributes();
             if (dynamicAttributes == null) {
@@ -132,12 +133,11 @@ public class DynamicAttributesGuiTools {
                 .setFetchPlan(fetchPlan)
                 .setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .setId(EntityValues.getId(entity));
-        JmixEntity reloadedEntity = dataManager.load(loadContext);
+        JmixEntity reloadedEntity = (JmixEntity) dataManager.load(loadContext);
         if (reloadedEntity != null) {
-            DynamicAttributesState state = (DynamicAttributesState) entity.
-                    __getEntityEntry().getExtraState(DynamicAttributesState.class);
-            DynamicAttributesState reloadedState = (DynamicAttributesState) reloadedEntity.
-                    __getEntityEntry().getExtraState(DynamicAttributesState.class);
+            DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
+            DynamicAttributesState reloadedState = getExtraState(reloadedEntity, DynamicAttributesState.class);
+
             if (state != null && reloadedState != null) {
                 //noinspection ConstantConditions
                 state.setDynamicAttributes(reloadedState.getDynamicAttributes());
@@ -146,7 +146,7 @@ public class DynamicAttributesGuiTools {
     }
 
     public boolean hasDynamicAttributes(JmixEntity entity) {
-        DynamicAttributesState state = (DynamicAttributesState) entity.__getEntityEntry().getExtraState(DynamicAttributesState.class);
+        DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
         if (state != null) {
             return state.getDynamicAttributes() != null;
         }
@@ -247,12 +247,12 @@ public class DynamicAttributesGuiTools {
         if (attribute.getDefaultValue() != null) {
             if (attribute.getDataType() == AttributeType.ENTITY) {
                 MetaClass entityMetaClass = metadata.getClassNN(attribute.getJavaType());
-                LoadContext<JmixEntity> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
+                LoadContext<Object> lc = new LoadContext<>(entityMetaClass).setFetchPlan(
                         fetchPlanRepository.getFetchPlan(entityMetaClass, FetchPlan.INSTANCE_NAME));
                 String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(entityMetaClass);
                 lc.setQueryString(format("select e from %s e where e.%s = :entityId", entityMetaClass.getName(), pkName))
                         .setParameter("entityId", attribute.getDefaultValue());
-                JmixEntity defaultEntity = dataManager.load(lc);
+                JmixEntity defaultEntity = (JmixEntity) dataManager.load(lc);
                 EntityValues.setValue(item, propertyName, defaultEntity);
             } else if (attribute.isCollection()) {
                 List<Object> list = new ArrayList<>();

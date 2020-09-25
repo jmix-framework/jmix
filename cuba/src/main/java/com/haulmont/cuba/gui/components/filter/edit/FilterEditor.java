@@ -32,7 +32,7 @@ import com.haulmont.cuba.gui.components.filter.GroupType;
 import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
 import com.haulmont.cuba.security.entity.FilterEntity;
-import io.jmix.core.DataManager;
+import com.haulmont.cuba.core.global.DataManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.JmixEntity;
 import io.jmix.core.common.datastruct.Node;
@@ -304,7 +304,7 @@ public class FilterEditor extends AbstractWindow {
                 Node<AbstractCondition> selectedNode = conditions.getNode(item);
                 selectedNode.addChild(newNode);
                 refreshConditionsDs();
-                conditionsTree.expand(item.getId());
+                conditionsTree.expand(item);
             } else {
                 conditions.getRootNodes().add(new Node<>(condition));
                 refreshConditionsDs();
@@ -376,7 +376,7 @@ public class FilterEditor extends AbstractWindow {
                     new Action[]{
                             new DialogAction(DialogAction.Type.YES, Action.Status.PRIMARY).withHandler(e -> {
                                 otherDefaultFilters.forEach(otherDefaultFilter -> otherDefaultFilter.setGlobalDefault(false));
-                                modifiedGlobalDefaultFilters = dataManager.save(new CommitContext(otherDefaultFilters));
+                                modifiedGlobalDefaultFilters = dataManager.commit(new CommitContext(otherDefaultFilters));
                                 close(COMMIT_ACTION_ID);
                             }),
                             new DialogAction(DialogAction.Type.NO, Action.Status.NORMAL).withHandler(e -> {

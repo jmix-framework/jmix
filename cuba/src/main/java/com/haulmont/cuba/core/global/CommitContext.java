@@ -16,11 +16,11 @@
 package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
-import io.jmix.core.JmixEntity;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * DTO that contains information about currently committed entities.
@@ -79,8 +79,8 @@ public class CommitContext extends SaveContext {
     /**
      * Adds an entity to be committed to the database.
      *
-     * @param entity entity instance
-     * @param fetchPlan   fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
+     * @param entity    entity instance
+     * @param fetchPlan fetch plan which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
     public CommitContext addInstanceToCommit(JmixEntity entity, @Nullable FetchPlan fetchPlan) {
@@ -91,7 +91,7 @@ public class CommitContext extends SaveContext {
     /**
      * Adds an entity to be committed to the database.
      *
-     * @param entity   entity instance
+     * @param entity        entity instance
      * @param fetchPlanName view which is used in merge operation to ensure all required attributes are loaded in the returned instance
      * @return this instance for chaining
      */
@@ -116,7 +116,7 @@ public class CommitContext extends SaveContext {
      * The collection is modifiable.
      */
     public Collection<JmixEntity> getCommitInstances() {
-        return getEntitiesToSave();
+        return castCollection(getEntitiesToSave());
     }
 
     /**
@@ -131,7 +131,7 @@ public class CommitContext extends SaveContext {
      * The collection is modifiable.
      */
     public Collection<JmixEntity> getRemoveInstances() {
-        return getEntitiesToRemove();
+        return castCollection(getEntitiesToRemove());
     }
 
     /**
@@ -166,9 +166,8 @@ public class CommitContext extends SaveContext {
      * Sets {@link ValidationMode} for commit context.
      * Validation type is responsible for whether entity bean validation will be applied on {@link DataManager} level.
      *
-     * @see BeanValidation
-     *
      * @param validationMode validation type
+     * @see BeanValidation
      */
     public void setValidationMode(ValidationMode validationMode) {
         this.validationMode = validationMode;
@@ -185,7 +184,6 @@ public class CommitContext extends SaveContext {
 
     /**
      * @return groups targeted for validation.
-     *
      * @see javax.validation.Validator#validate(Object, Class[])
      */
     public List<Class> getValidationGroups() {
@@ -195,9 +193,8 @@ public class CommitContext extends SaveContext {
     /**
      * Sets groups targeted for validation.
      *
-     * @see javax.validation.Validator#validate(Object, Class[])
-     *
      * @param validationGroups {@code Set} of groups
+     * @see javax.validation.Validator#validate(Object, Class[])
      */
     public void setValidationGroups(List<Class> validationGroups) {
         this.validationGroups = validationGroups;
@@ -219,5 +216,12 @@ public class CommitContext extends SaveContext {
          * Do not validate.
          */
         NEVER_VALIDATE
+    }
+
+    private Collection<JmixEntity> castCollection(Collection<Object> collection) {
+        return collection == null ? null :
+                collection.stream()
+                        .map(o -> (JmixEntity) o)
+                        .collect(Collectors.toList());
     }
 }

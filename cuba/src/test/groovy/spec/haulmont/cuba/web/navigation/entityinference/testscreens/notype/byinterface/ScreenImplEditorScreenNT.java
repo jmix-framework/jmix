@@ -16,18 +16,17 @@
 
 package spec.haulmont.cuba.web.navigation.entityinference.testscreens.notype.byinterface;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.Screen;
 
 public class ScreenImplEditorScreenNT extends Screen implements EditorScreen {
 
     @Override
-    public void setEntityToEdit(JmixEntity entity) {
+    public void setEntityToEdit(Object entity) {
     }
 
     @Override
-    public JmixEntity getEditedEntity() {
+    public Object getEditedEntity() {
         return null;
     }
 

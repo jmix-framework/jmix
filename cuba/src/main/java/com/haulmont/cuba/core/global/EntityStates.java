@@ -106,7 +106,7 @@ public class EntityStates extends io.jmix.core.EntityStates {
      */
     public View getCurrentView(JmixEntity entity) {
         FetchPlan fetchPlan = getCurrentFetchPlan(entity);
-        return new View(fetchPlan.getEntityClass(),
+        return new View((Class<JmixEntity>) fetchPlan.getEntityClass(),
                 fetchPlan.getName(),
                 new LinkedList<>(fetchPlan.getProperties()),
                 fetchPlan.loadPartialEntities());

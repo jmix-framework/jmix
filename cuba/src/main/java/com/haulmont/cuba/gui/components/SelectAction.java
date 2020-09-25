@@ -97,7 +97,8 @@ public class SelectAction extends AbstractAction {
         MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
         for (Object obj : selected) {
             if (obj instanceof JmixEntity) {
-                metadataTools.traverseAttributes((JmixEntity) obj, (entity, property) -> entity.__getEntityEntry().removeAllListeners());
+                metadataTools.traverseAttributes(obj,
+                        (entity, property) -> ((JmixEntity) entity).__getEntityEntry().removeAllListeners());
             }
         }
     }

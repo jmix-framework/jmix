@@ -56,12 +56,7 @@ import io.jmix.ui.widget.JmixGridEditorFieldFactory;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -519,7 +514,7 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected Map<String, String> __aggregate() {
-        if (getItems() instanceof  AggregatableDataGridItems) {
+        if (getItems() instanceof AggregatableDataGridItems) {
             List<AggregationInfo> aggregationInfos = getAggregationInfos();
             Map<AggregationInfo, String> aggregationInfoMap = ((AggregatableDataGridItems) getItems()).aggregate(
                     aggregationInfos.toArray(new AggregationInfo[0]),
@@ -641,10 +636,10 @@ public class WebDataGrid<E extends JmixEntity> extends io.jmix.ui.component.impl
         }
 
         @Override
-        protected Field createField(WebAbstractDataGrid.ColumnImpl column, JmixEntity bean) {
+        protected Field createField(WebAbstractDataGrid.ColumnImpl column, Object bean) {
             if (column instanceof ColumnImpl && ((ColumnImpl) column).getEditorFieldGenerator() != null) {
                 String fieldPropertyId = String.valueOf(column.getPropertyId());
-                Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource(bean);
+                Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource((JmixEntity) bean);
                 return ((ColumnImpl) column).getEditorFieldGenerator().createField(fieldDataSource, fieldPropertyId);
             }
             return super.createField(column, bean);

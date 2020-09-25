@@ -18,13 +18,9 @@ package com.haulmont.cuba.core;
 
 import com.google.common.base.Strings;
 import com.haulmont.cuba.core.entity.contracts.Id;
-import com.haulmont.cuba.core.global.CommitContext;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.TransactionalAction;
-import com.haulmont.cuba.core.global.TransactionalActionFactory;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.model.sales.Product;
 import com.haulmont.cuba.core.testsupport.CoreTest;
-import io.jmix.core.EntitySet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

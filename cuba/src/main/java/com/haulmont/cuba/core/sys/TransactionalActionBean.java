@@ -18,8 +18,8 @@ package com.haulmont.cuba.core.sys;
 
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.EntitySet;
 import com.haulmont.cuba.core.global.TransactionalAction;
-import io.jmix.core.EntitySet;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -90,15 +90,13 @@ public class TransactionalActionBean implements TransactionalAction {
             if (onSuccessAction != null) {
                 onSuccessAction.accept(resultSet);
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             if (onFailAction == null) {
                 throw e;
             }
             resultSet = null;
             onFailAction.accept(commitContext, e);
-        }
-        finally {
+        } finally {
             if (afterCommitAction != null) {
                 afterCommitAction.accept(commitContext);
             }

@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
-import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -159,7 +159,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
     @Nullable
     @Override
-    public <E extends JmixEntity> E load(LoadContext<E> context) {
+    public <E> E load(LoadContext<E> context) {
         if (log.isDebugEnabled()) {
             log.debug("load: store={}, metaClass={}, id={}, view={}", storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
         }
@@ -212,12 +212,13 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             }
 
             if (result != null) {
-                referencesCollector = entityAttributesEraser.collectErasingReferences(result, entity -> {
-                    InMemoryCrudEntityContext childEntityContext =
-                            new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
-                    accessManager.applyConstraints(childEntityContext, accessConstraints);
-                    return childEntityContext.isReadPermitted(entity);
-                });
+                referencesCollector = entityAttributesEraser.collectErasingReferences(Collections.singletonList(result),
+                        entity -> {
+                            InMemoryCrudEntityContext childEntityContext =
+                                    new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
+                            accessManager.applyConstraints(childEntityContext, accessConstraints);
+                            return childEntityContext.isReadPermitted(entity);
+                        });
                 fireLoadListeners(Collections.singletonList(result), context, fetchPlan);
             }
 
@@ -243,7 +244,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <E extends JmixEntity> List<E> loadList(LoadContext<E> context) {
+    public <E> List<E> loadList(LoadContext<E> context) {
         if (log.isDebugEnabled())
             log.debug("loadList: store=" + storeName + ", metaClass=" + context.getEntityMetaClass() + ", view=" + context.getFetchPlan()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
@@ -313,7 +314,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     accessManager.applyConstraints(childEntityContext, accessConstraints);
                     return childEntityContext.isReadPermitted(entity);
                 });
-                fireLoadListeners((List<JmixEntity>) resultList, context, fetchPlan);
+                fireLoadListeners(resultList, context, fetchPlan);
             }
 
             if (context.isJoinTransaction()) {
@@ -338,7 +339,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return resultList;
     }
 
-    protected <E extends JmixEntity> MetaClass getEffectiveMetaClassFromContext(LoadContext<E> context) {
+    protected <E> MetaClass getEffectiveMetaClassFromContext(LoadContext<E> context) {
         return extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
     }
 
@@ -347,8 +348,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return pkProperty == null || pkProperty.getRange().isClass();
     }
 
-    protected <E extends
-            JmixEntity> List<E> loadListBySingleIds(LoadContext<E> context, @Nullable Predicate<JmixEntity> filteringPredicate, EntityManager em, FetchPlan fetchPlan) {
+    protected <E> List<E> loadListBySingleIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan fetchPlan) {
         LoadContext<?> contextCopy = context.copy();
         contextCopy.setIds(Collections.emptyList());
 
@@ -371,7 +371,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends JmixEntity> List<E> loadListByBatchesOfIds(LoadContext<E> context, @Nullable Predicate<JmixEntity> filteringPredicate, EntityManager em, FetchPlan view, int batchSize) {
+    protected <E> List<E> loadListByBatchesOfIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan view, int batchSize) {
         List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
 
         List<E> entities = new ArrayList<>(context.getIds().size());
@@ -394,7 +394,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    protected <E extends JmixEntity> List<E> checkAndReorderLoadedEntities(List<?> ids, List<E> entities, MetaClass metaClass) {
+    protected <E> List<E> checkAndReorderLoadedEntities(List<?> ids, List<E> entities, MetaClass metaClass) {
         List<E> result = new ArrayList<>(ids.size());
         Map<Object, E> idToEntityMap = entities.stream().collect(Collectors.toMap(e -> getId(e), Function.identity()));
         for (Object id : ids) {
@@ -408,7 +408,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @Override
-    public long getCount(LoadContext<? extends JmixEntity> context) {
+    public long getCount(LoadContext<?> context) {
         if (log.isDebugEnabled())
             log.debug("getCount: store=" + storeName + ", metaClass=" + context.getEntityMetaClass()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
@@ -438,7 +438,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
         accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
 
-        Predicate<JmixEntity> filteringPredicate = inMemoryEntityContext.readPredicate();
+        Predicate filteringPredicate = inMemoryEntityContext.readPredicate();
 
         if (filteringPredicate != null) {
             List resultList;
@@ -495,13 +495,13 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @Override
-    public Set<JmixEntity> save(SaveContext context) {
+    public Set<?> save(SaveContext context) {
         log.debug("save: store={}, entitiesToSave={}, entitiesToRemove={}", storeName, context.getEntitiesToSave(), context.getEntitiesToRemove());
 
         Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
 
-        Set<JmixEntity> saved = new HashSet<>();
-        List<JmixEntity> persisted = new ArrayList<>();
+        Set saved = new HashSet<>();
+        List persisted = new ArrayList<>();
 
         SavedEntitiesHolder savedEntitiesHolder = null;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
@@ -518,7 +518,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     em.setProperty(PersistenceHints.SOFT_DELETION, false);
 
                 // persist new
-                for (JmixEntity entity : context.getEntitiesToSave()) {
+                for (Object entity : context.getEntitiesToSave()) {
                     if (entityStates.isNew(entity)) {
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
@@ -536,23 +536,23 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
                         if (!context.isDiscardSaved()) {
                             FetchPlan fetchPlan = getFetchPlanFromContextOrNull(context, entity);
-                            entityFetcher.fetch(entity, fetchPlan, true);
+                            entityFetcher.fetch((JmixEntity) entity, fetchPlan, true);
                         }
                     }
                 }
 
                 // merge the rest - instances can be detached or not
-                for (JmixEntity entity : context.getEntitiesToSave()) {
+                for (Object entity : context.getEntitiesToSave()) {
                     if (!entityStates.isNew(entity)) {
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
                         assertToken(accessConstraints, entity);
-                        entityAttributesEraser.restoreAttributes(entity);
+                        entityAttributesEraser.restoreAttributes((JmixEntity) entity);
 
-                        JmixEntity merged = em.merge(entity);
+                        Object merged = em.merge(entity);
                         saved.add(merged);
 
-                        entityFetcher.fetch(merged, getFetchPlanFromContext(context, entity));
+                        entityFetcher.fetch((JmixEntity) merged, getFetchPlanFromContext(context, entity));
 
                         InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
                         accessManager.applyConstraints(new InMemoryCrudEntityContext(metaClass), accessConstraints);
@@ -567,15 +567,15 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                 fireSaveListeners(context.getEntitiesToSave(), context);
 
                 // remove
-                for (JmixEntity entity : context.getEntitiesToRemove()) {
+                for (Object entity : context.getEntitiesToRemove()) {
                     MetaClass metaClass = metadata.getClass(entity.getClass());
 
                     assertToken(accessConstraints, entity);
-                    entityAttributesEraser.restoreAttributes(entity);
-                    JmixEntity e;
-                    if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
+                    entityAttributesEraser.restoreAttributes((JmixEntity) entity);
+                    Object e;
+                    if (EntityValues.isSoftDeletionSupported(entity)) {
                         e = em.merge(entity);
-                        entityFetcher.fetch(e, getFetchPlanFromContext(context, entity));
+                        entityFetcher.fetch((JmixEntity) e, getFetchPlanFromContext(context, entity));
                     } else {
                         e = em.merge(entity);
                     }
@@ -635,7 +635,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                                 Id.of(info.getEntity()), info.getType(), info.getChanges(), info.getOriginalMetaClass()));
                     }
 
-                    for (JmixEntity entity : saved) {
+                    for (Object entity : saved) {
                         detachEntity(em, entity, getFetchPlanFromContextOrNull(context, entity), true);
                     }
 
@@ -673,7 +673,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 //            }
 //        }
 
-        Set<JmixEntity> resultEntities = savedEntitiesHolder.getEntities(saved);
+        Set<Object> resultEntities = savedEntitiesHolder.getEntities(saved);
 
         reloadIfUnfetched(resultEntities, context);
 
@@ -690,11 +690,11 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return context.isDiscardSaved() ? Collections.emptySet() : resultEntities;
     }
 
-    protected void reloadIfUnfetched(Set<JmixEntity> resultEntities, SaveContext context) {
+    protected void reloadIfUnfetched(Set<Object> resultEntities, SaveContext context) {
         if (context.getFetchPlans().isEmpty())
             return;
 
-        List<JmixEntity> entitiesToReload = resultEntities.stream()
+        List<Object> entitiesToReload = resultEntities.stream()
                 .filter(entity -> {
                     FetchPlan fetchPlan = context.getFetchPlans().get(entity);
                     return fetchPlan != null && !entityStates.isLoadedWithFetchPlan(entity, fetchPlan);
@@ -706,10 +706,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             try {
                 EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
-                for (JmixEntity entity : entitiesToReload) {
+                for (Object entity : entitiesToReload) {
                     FetchPlan fetchPlan = context.getFetchPlans().get(entity);
                     log.debug("Reloading {} according to the requested fetchPlan", entity);
-                    JmixEntity reloadedEntity = em.find(entity.getClass(), getId(entity),
+                    Object reloadedEntity = em.find(entity.getClass(), getId(entity),
                             PersistenceHints.builder().withFetchPlan(fetchPlan).build());
                     resultEntities.remove(entity);
                     if (reloadedEntity != null) {
@@ -806,7 +806,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return entities;
     }
 
-    protected FetchPlan getFetchPlanFromContext(SaveContext context, JmixEntity entity) {
+    protected FetchPlan getFetchPlanFromContext(SaveContext context, Object entity) {
         FetchPlan view = context.getFetchPlans().get(entity);
         if (view == null) {
             view = fetchPlanRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
@@ -816,7 +816,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @Nullable
-    protected FetchPlan getFetchPlanFromContextOrNull(SaveContext context, JmixEntity entity) {
+    protected FetchPlan getFetchPlanFromContextOrNull(SaveContext context, Object entity) {
         return context.getFetchPlans().get(entity);
     }
 
@@ -887,9 +887,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends
-            JmixEntity> List<E> getResultList(LoadContext<E> context, Query query, @Nullable Predicate<JmixEntity> filteringPredicate,
-                                              boolean ensureDistinct) {
+    protected <E> List<E> getResultList(LoadContext<E> context, Query query, @Nullable Predicate<E> filteringPredicate,
+                                        boolean ensureDistinct) {
         List<E> list = executeQuery(query, false);
         int initialSize = list.size();
         if (initialSize == 0) {
@@ -920,10 +919,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends JmixEntity> List<E> getResultListIteratively(LoadContext<E> context, Query query,
-                                                                      @Nullable Predicate<JmixEntity> filteredPredicate,
-                                                                      Collection<E> filteredList,
-                                                                      int initialSize) {
+    protected <E> List<E> getResultListIteratively(LoadContext<E> context, Query query,
+                                                   @Nullable Predicate<E> filteredPredicate,
+                                                   Collection<E> filteredList,
+                                                   int initialSize) {
         int requestedFirst = context.getQuery().getFirstResult();
         int requestedMax = context.getQuery().getMaxResults();
 
@@ -979,7 +978,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E extends JmixEntity> List<E> executeQuery(Query query, boolean singleResult) {
+    protected <E> List<E> executeQuery(Query query, boolean singleResult) {
         List<E> list;
         try {
             if (singleResult) {
@@ -1012,7 +1011,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
         Map<MetaClass, CrudEntityContext> accessCache = new HashMap<>();
 
-        for (JmixEntity entity : context.getEntitiesToSave()) {
+        for (Object entity : context.getEntitiesToSave()) {
             if (entity == null)
                 continue;
 
@@ -1033,7 +1032,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             }
         }
 
-        for (JmixEntity entity : context.getEntitiesToRemove()) {
+        for (Object entity : context.getEntitiesToRemove()) {
             if (entity == null)
                 continue;
 
@@ -1090,8 +1089,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return txManager.getTransaction(def);
     }
 
-    protected <E extends JmixEntity> void detachEntity(EntityManager em, @Nullable E rootEntity,
-                                                       @Nullable FetchPlan fetchPlan, boolean loadedOnly) {
+    protected <E> void detachEntity(EntityManager em, @Nullable E rootEntity,
+                                    @Nullable FetchPlan fetchPlan, boolean loadedOnly) {
         if (rootEntity == null)
             return;
 
@@ -1118,7 +1117,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         });
     }
 
-    protected void fireLoadListeners(Collection<JmixEntity> entities, LoadContext<?> context, FetchPlan effectiveFetchPlan) {
+    protected void fireLoadListeners(Collection entities, LoadContext<?> context, FetchPlan effectiveFetchPlan) {
         if (ormLifecycleListeners != null) {
             for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
                 //noinspection unchecked
@@ -1127,7 +1126,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    protected void fireSaveListeners(Collection<JmixEntity> entities, SaveContext saveContext) {
+    protected void fireSaveListeners(Collection<Object> entities, SaveContext saveContext) {
         if (ormLifecycleListeners != null) {
             for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
                 lifecycleListener.onSave(entities, saveContext);
@@ -1135,7 +1134,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    protected void assertToken(Collection<AccessConstraint<?>> accessConstraints, JmixEntity entity) {
+    protected void assertToken(Collection<AccessConstraint<?>> accessConstraints, Object entity) {
         //TODO: use InMemoryCRUD entity context
 
 //        @Override
@@ -1179,13 +1178,13 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     protected boolean hasInMemoryPredicates(LoadContext<?> context) {
-         return collectEntityClasses(context).stream()
-                 .anyMatch(entityClass -> {
-                     InMemoryCrudEntityContext crudContext =
-                             new InMemoryCrudEntityContext(entityClass);
-                     accessManager.applyConstraints(crudContext, context.getAccessConstraints());
-                     return crudContext.readPredicate() != null;
-                 });
+        return collectEntityClasses(context).stream()
+                .anyMatch(entityClass -> {
+                    InMemoryCrudEntityContext crudContext =
+                            new InMemoryCrudEntityContext(entityClass);
+                    accessManager.applyConstraints(crudContext, context.getAccessConstraints());
+                    return crudContext.readPredicate() != null;
+                });
     }
 
     protected Collection<MetaClass> collectEntityClasses(LoadContext<?> context) {

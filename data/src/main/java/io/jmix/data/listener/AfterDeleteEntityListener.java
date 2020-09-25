@@ -15,18 +15,17 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
 /**
  * Defines the contract for handling of entities after they have been deleted or marked as deleted in DB.
  */
-public interface AfterDeleteEntityListener<T extends JmixEntity> {
+public interface AfterDeleteEntityListener<T> {
 
     /**
      * Executes after the object has been deleted or marked as deleted in DB.
      * <p>
      * Modification of the entity state or using {@code EntityManager} is impossible here.
      *
-     * @param entity        deleted entity
+     * @param entity deleted entity
      */
     void onAfterDelete(T entity);
 }

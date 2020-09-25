@@ -15,19 +15,16 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
-
 /**
  * Defines the contract for handling of entities before they have been deleted or
  * marked as deleted in DB.
- *
  */
-public interface BeforeDeleteEntityListener<T extends JmixEntity> {
+public interface BeforeDeleteEntityListener<T> {
 
     /**
      * Executes before the object has been deleted or marked as deleted in DB.
      *
-     * @param entity        deleted entity instance
+     * @param entity deleted entity instance
      */
     void onBeforeDelete(T entity);
 }

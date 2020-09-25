@@ -16,7 +16,6 @@
 
 package test_support.entity.soft_delete;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.Column;
@@ -27,9 +26,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_ANNOTATED_UUID_ENTITY")
 @Entity(name = "test_AnnotatedUuidEntity")
-public class AnnotatedUuidEntity implements JmixEntity {
-    private static final long serialVersionUID = -8038621963186188071L;
-
+public class AnnotatedUuidEntity {
     @Id
     @JmixGeneratedValue
     @Column(name = "ID")

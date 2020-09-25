@@ -16,7 +16,6 @@
 
 package test_support.entity.auditing;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -28,9 +27,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_NOT_AUDITABLE")
 @Entity(name = "test_NotAuditable")
-public class NotAuditableSubclass implements JmixEntity {
-    private static final long serialVersionUID = -7383950720335219425L;
-
+public class NotAuditableSubclass {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

@@ -15,14 +15,13 @@
  */
 package test_support.entity.entity_extension;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 import javax.persistence.*;
 
 @Embeddable
 @ModelObject(name = "exttest_Address")
-public class Address implements JmixEntity {
+public class Address {
 
     @Column(name = "CITY")
     private String city;

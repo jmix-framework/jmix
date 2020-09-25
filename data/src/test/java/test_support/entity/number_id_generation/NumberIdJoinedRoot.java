@@ -17,7 +17,6 @@
 package test_support.entity.number_id_generation;
 
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.*;
@@ -26,8 +25,7 @@ import javax.persistence.*;
 @DiscriminatorValue("R")
 @Table(name = "TEST_NUMBER_ID_JOINED_ROOT")
 @Entity(name = "test$NumberIdJoinedRoot")
-public class NumberIdJoinedRoot implements JmixEntity {
-
+public class NumberIdJoinedRoot {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

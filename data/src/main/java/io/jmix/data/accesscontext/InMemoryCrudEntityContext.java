@@ -16,7 +16,6 @@
 
 package io.jmix.data.accesscontext;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.context.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
@@ -25,10 +24,10 @@ import java.util.function.Predicate;
 public class InMemoryCrudEntityContext implements AccessContext {
     protected final MetaClass entityClass;
 
-    protected Predicate<JmixEntity> createPredicate;
-    protected Predicate<JmixEntity> readPredicate;
-    protected Predicate<JmixEntity> updatePredicate;
-    protected Predicate<JmixEntity> deletePredicate;
+    protected Predicate createPredicate;
+    protected Predicate readPredicate;
+    protected Predicate updatePredicate;
+    protected Predicate deletePredicate;
 
     public InMemoryCrudEntityContext(MetaClass entityClass) {
         this.entityClass = entityClass;
@@ -38,15 +37,15 @@ public class InMemoryCrudEntityContext implements AccessContext {
         return entityClass;
     }
 
-    public boolean isCreatePermitted(JmixEntity entity) {
+    public boolean isCreatePermitted(Object entity) {
         return createPredicate == null || createPredicate.test(entity);
     }
 
-    public Predicate<JmixEntity> createPredicate() {
+    public Predicate createPredicate() {
         return createPredicate;
     }
 
-    public void addCreatePredicate(Predicate<JmixEntity> predicate) {
+    public void addCreatePredicate(Predicate predicate) {
         if (this.createPredicate == null) {
             this.createPredicate = predicate;
         } else {
@@ -54,15 +53,15 @@ public class InMemoryCrudEntityContext implements AccessContext {
         }
     }
 
-    public boolean isReadPermitted(JmixEntity entity) {
+    public boolean isReadPermitted(Object entity) {
         return readPredicate == null || readPredicate.test(entity);
     }
 
-    public Predicate<JmixEntity> readPredicate() {
+    public Predicate readPredicate() {
         return readPredicate;
     }
 
-    public void addReadPredicate(Predicate<JmixEntity> predicate) {
+    public void addReadPredicate(Predicate predicate) {
         if (this.readPredicate == null) {
             this.readPredicate = predicate;
         } else {
@@ -70,15 +69,15 @@ public class InMemoryCrudEntityContext implements AccessContext {
         }
     }
 
-    public boolean isUpdatePermitted(JmixEntity entity) {
+    public boolean isUpdatePermitted(Object entity) {
         return updatePredicate == null || updatePredicate.test(entity);
     }
 
-    public Predicate<JmixEntity> updatePredicate() {
+    public Predicate updatePredicate() {
         return updatePredicate;
     }
 
-    public void addUpdatePredicate(Predicate<JmixEntity> predicate) {
+    public void addUpdatePredicate(Predicate predicate) {
         if (this.updatePredicate == null) {
             this.updatePredicate = predicate;
         } else {
@@ -86,15 +85,15 @@ public class InMemoryCrudEntityContext implements AccessContext {
         }
     }
 
-    public boolean isDeletePermitted(JmixEntity entity) {
+    public boolean isDeletePermitted(Object entity) {
         return deletePredicate == null || deletePredicate.test(entity);
     }
 
-    public Predicate<JmixEntity> deletePredicate() {
+    public Predicate deletePredicate() {
         return deletePredicate;
     }
 
-    public void addDeletePredicate(Predicate<JmixEntity> predicate) {
+    public void addDeletePredicate(Predicate predicate) {
         if (this.deletePredicate == null) {
             this.deletePredicate = predicate;
         } else {

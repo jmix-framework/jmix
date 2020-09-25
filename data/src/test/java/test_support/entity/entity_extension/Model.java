@@ -16,7 +16,6 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
@@ -29,7 +28,7 @@ import java.util.UUID;
 
 @Entity(name = "exttest_Model")
 @Table(name = "EXTTEST_MODEL")
-public class Model implements JmixEntity {
+public class Model {
 
     @Id
     @Column(name = "ID")
@@ -100,7 +99,7 @@ public class Model implements JmixEntity {
     }
 
     @InstanceName
-    @DependsOnProperties({"manufacturer","name"})
+    @DependsOnProperties({"manufacturer", "name"})
     public String getInstanceName() {
         return manufacturer + ": " + name;
     }

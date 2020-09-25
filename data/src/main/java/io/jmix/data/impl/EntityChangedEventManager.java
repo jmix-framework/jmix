@@ -17,6 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -111,7 +112,7 @@ public class EntityChangedEventManager {
         return holder;
     }
 
-    public void beforeFlush(Collection<JmixEntity> instances) {
+    public void beforeFlush(Collection<Object> instances) {
         log.trace("beforeFlush {}", instances);
         List<EntityChangedEventInfo> infoList = internalCollect(instances);
         AccumulatedInfoHolder holder = getAccumulatedInfoHolder();
@@ -136,16 +137,16 @@ public class EntityChangedEventManager {
         return list1;
     }
 
-    public List<EntityChangedEventInfo> collect(Collection<JmixEntity> entities) {
+    public List<EntityChangedEventInfo> collect(Collection<Object> entities) {
         log.trace("collect {}", entities);
         AccumulatedInfoHolder holder = getAccumulatedInfoHolder();
         List<EntityChangedEventInfo> infoList = internalCollect(entities);
         return merge(holder.accumulatedList, infoList);
     }
 
-    public List<EntityChangedEventInfo> internalCollect(Collection<JmixEntity> entities) {
+    public List<EntityChangedEventInfo> internalCollect(Collection<Object> entities) {
         List<EntityChangedEventInfo> list = new ArrayList<>();
-        for (JmixEntity entity : entities) {
+        for (Object entity : entities) {
 
             PublishingInfo info = infoCache.computeIfAbsent(entity.getClass(), aClass -> {
                 MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -165,7 +166,7 @@ public class EntityChangedEventManager {
             if (info.publish) {
                 EntityChangedEvent.Type type = null;
                 AttributeChanges attributeChanges = null;
-                if (info.onCreated && entity.__getEntityEntry().isNew()) {
+                if (info.onCreated && ((JmixEntity) entity).__getEntityEntry().isNew()) {
                     type = EntityChangedEvent.Type.CREATED;
                     attributeChanges = getEntityAttributeChanges(entity, false);
                 } else {
@@ -206,7 +207,7 @@ public class EntityChangedEventManager {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    private AttributeChanges getEntityAttributeChanges(@Nullable JmixEntity entity, @Nullable ObjectChangeSet changeSet) {
+    private AttributeChanges getEntityAttributeChanges(@Nullable Object entity, @Nullable ObjectChangeSet changeSet) {
         if (changeSet == null)
             return null;
         Set<AttributeChanges.Change> changes = new HashSet<>();
@@ -219,11 +220,11 @@ public class EntityChangedEventManager {
             } else {
                 Object oldValue = changeRecord.getOldValue();
                 if (oldValue instanceof JmixEntity) {
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of((JmixEntity) oldValue)));
+                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of(oldValue)));
                 } else if (oldValue instanceof Collection) {
-                    Collection<JmixEntity> coll = (Collection<JmixEntity>) oldValue;
+                    Collection<Object> coll = (Collection<Object>) oldValue;
                     Collection<Id> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
-                    for (JmixEntity item : coll) {
+                    for (Object item : coll) {
                         idColl.add(Id.of(item));
                     }
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), idColl));
@@ -313,7 +314,7 @@ public class EntityChangedEventManager {
 //    }
 
     @SuppressWarnings("unchecked")
-    private AttributeChanges getEntityAttributeChanges(JmixEntity entity, boolean deleted) {
+    private AttributeChanges getEntityAttributeChanges(Object entity, boolean deleted) {
         Set<AttributeChanges.Change> changes = new HashSet<>();
         Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
 
@@ -321,16 +322,15 @@ public class EntityChangedEventManager {
             Object value = EntityValues.getValue(entity, property.getName());
             if (deleted) {
                 if (value instanceof JmixEntity) {
-                    boolean isEmbeddable = ((JmixEntity) value).__getEntityEntry().isEmbeddable();
-                    if (isEmbeddable) {
-                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges((JmixEntity) value, true));
+                    if (EntitySystemAccess.isEmbeddable(entity)) {
+                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), Id.of((JmixEntity) value)));
+                        changes.add(new AttributeChanges.Change(property.getName(), Id.of(value)));
                     }
                 } else if (value instanceof Collection) {
-                    Collection<JmixEntity> coll = (Collection<JmixEntity>) value;
+                    Collection<Object> coll = (Collection<Object>) value;
                     Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
-                    for (JmixEntity item : coll) {
+                    for (Object item : coll) {
                         idColl.add(Id.of(item));
                     }
                     changes.add(new AttributeChanges.Change(property.getName(), idColl));

@@ -16,8 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
-
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -25,10 +23,7 @@ import javax.persistence.Table;
 
 @Entity(name = "test_TestCompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY_ENTITY")
-public class TestCompositeKeyEntity implements JmixEntity {
-
-    private static final long serialVersionUID = -2538345720324624741L;
-
+public class TestCompositeKeyEntity {
     @EmbeddedId
     private TestEntityKey id;
 

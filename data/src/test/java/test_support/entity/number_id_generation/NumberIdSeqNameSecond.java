@@ -17,7 +17,6 @@
 package test_support.entity.number_id_generation;
 
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ import javax.persistence.*;
 @DiscriminatorValue("R")
 @Table(name = "TEST_NUMBER_ID_SEQ_NAME_SECOND")
 @Entity(name = "test$NumberIdSeqNameSecond")
-public class NumberIdSeqNameSecond implements JmixEntity {
+public class NumberIdSeqNameSecond {
 
     @Id
     @Column(name = "ID")

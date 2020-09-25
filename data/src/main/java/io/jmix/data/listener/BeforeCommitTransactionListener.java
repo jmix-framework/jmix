@@ -35,5 +35,5 @@ public interface BeforeCommitTransactionListener {
      * @param storeName data store name
      * @param managedEntities   current persistence context, i.e. a collection of entities in Managed state
      */
-    void beforeCommit(String storeName, Collection<JmixEntity> managedEntities);
+    void beforeCommit(String storeName, Collection<Object> managedEntities);
 }

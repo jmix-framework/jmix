@@ -17,6 +17,7 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
@@ -31,7 +32,7 @@ import java.lang.reflect.Field;
 public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
 
-    protected JmixEntity parentEntity;
+    protected Object parentEntity;
     protected String propertyName;
     protected Object entityId;
     protected Class valueClass;
@@ -40,7 +41,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixWrappingValueHolder(JmixEntity parentEntity, String propertyName, Class valueClass, Object entityId,
+    public JmixWrappingValueHolder(Object parentEntity, String propertyName, Class valueClass, Object entityId,
                                    DataManager dataManager, Metadata metadata, MetadataTools metadataTools) {
         this.parentEntity = parentEntity;
         this.propertyName = propertyName;
@@ -71,7 +72,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                 value = dataManager.load(lc);
                 EntityAttributeVisitor av = new EntityAttributeVisitor() {
                     @Override
-                    public void visit(JmixEntity entity, MetaProperty property) {
+                    public void visit(Object entity, MetaProperty property) {
                         if (property.getRange().asClass().getJavaClass().isAssignableFrom(parentEntity.getClass())) {
                             visitEntity(entity, property, parentEntity);
                         }
@@ -119,7 +120,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
                 if (value != null) {
                     metadataTools.traverseAttributes((JmixEntity) value, av);
                 } else {
-                    SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                    SecurityState parentState = EntitySystemAccess.getSecurityState(parentEntity);
                     parentState.addErasedId(propertyName, entityId);
                 }
             }

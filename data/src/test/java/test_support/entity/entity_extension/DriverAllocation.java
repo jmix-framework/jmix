@@ -16,7 +16,6 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
@@ -28,8 +27,7 @@ import java.util.UUID;
 
 @Entity(name = "exttest_DriverAllocation")
 @Table(name = "EXTTEST_DRIVER_ALLOC")
-public class DriverAllocation implements JmixEntity {
-
+public class DriverAllocation {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

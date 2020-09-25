@@ -16,7 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.*;
@@ -25,7 +24,7 @@ import java.util.UUID;
 
 @Entity(name = "test_TestConverterEntity")
 @Table(name = "TEST_CONVERTER_ENTITY")
-public class TestConverterEntity implements JmixEntity {
+public class TestConverterEntity {
 
     @Id
     @Column(name = "ID")

@@ -5,7 +5,6 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -17,8 +16,7 @@ import java.util.UUID;
 
 @ModelObject(name = "test_Mem1Customer")
 @Store(name = "mem1")
-public class Mem1Customer implements JmixEntity {
-
+public class Mem1Customer {
     @Id
     @JmixGeneratedValue
     protected UUID id;

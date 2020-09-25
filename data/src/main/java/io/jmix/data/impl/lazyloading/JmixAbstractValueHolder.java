@@ -16,8 +16,8 @@
 
 package io.jmix.data.impl.lazyloading;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -91,7 +91,7 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
         this.isInstantiated = true;
     }
 
-    protected void visitEntity(JmixEntity entity, MetaProperty property, JmixEntity parentEntity) {
+    protected void visitEntity(Object entity, MetaProperty property, Object parentEntity) {
         switch (property.getRange().getCardinality()) {
             case ONE_TO_ONE:
             case MANY_TO_ONE:
@@ -107,7 +107,7 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
                         }
                     } else if (fieldInstance instanceof JmixWrappingValueHolder) {
                         JmixWrappingValueHolder vh = (JmixWrappingValueHolder) fieldInstance;
-                        if (vh.getEntityId() != null && vh.getEntityId().equals(parentEntity.__getEntityEntry().getEntityId())) {
+                        if (vh.getEntityId() != null && vh.getEntityId().equals(EntityValues.getId(parentEntity))) {
                             vh.setValue(parentEntity);
                         }
                     }
@@ -117,7 +117,7 @@ public abstract class JmixAbstractValueHolder implements ValueHolderInterface, W
                 break;
             case ONE_TO_MANY:
             case MANY_TO_MANY:
-                IndirectCollection fieldValue = entity.__getEntityEntry().getAttributeValue(property.getName());
+                IndirectCollection fieldValue = EntityValues.getValue(entity, property.getName());
                 if (fieldValue != null && fieldValue.getValueHolder() instanceof JmixCollectionValueHolder) {
                     JmixCollectionValueHolder vh = (JmixCollectionValueHolder) fieldValue.getValueHolder();
                     vh.setRootEntity(parentEntity);

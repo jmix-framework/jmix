@@ -17,16 +17,12 @@
 package test_support.entity;
 
 
-import io.jmix.core.JmixEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
-public class TestEntityKey implements JmixEntity {
-    private static final long serialVersionUID = -7240469493134421919L;
-
+public class TestEntityKey {
     @Column(name = "TENANT")
     private Integer tenant;
 

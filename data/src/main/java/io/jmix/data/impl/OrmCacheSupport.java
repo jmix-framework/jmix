@@ -54,7 +54,7 @@ public class OrmCacheSupport {
      * @param entity  which is being updated and can potentially be an element of a collection
      * @param changes changes in the entity. Null when creating and removing the entity.
      */
-    public void evictMasterEntity(JmixEntity entity, @Nullable EntityAttributeChanges changes) {
+    public void evictMasterEntity(Object entity, @Nullable EntityAttributeChanges changes) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass() || property.getRange().getCardinality().isMany())
@@ -81,7 +81,7 @@ public class OrmCacheSupport {
 
     private void evictEntity(Object entity) {
         if (entity instanceof JmixEntity && !entityStates.isNew(entity)) {
-            String storeName = metadata.getClass((JmixEntity) entity).getStore().getName();
+            String storeName = metadata.getClass(entity).getStore().getName();
             EntityManagerFactory entityManagerFactory = storeAwareLocator.getEntityManagerFactory(storeName);
             JpaCache cache = (JpaCache) entityManagerFactory.getCache();
             cache.evict(entity, true);

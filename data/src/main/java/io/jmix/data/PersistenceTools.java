@@ -16,9 +16,12 @@
 
 package io.jmix.data;
 
-import io.jmix.core.*;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -85,10 +88,11 @@ public class PersistenceTools {
      *
      * @param entity entity instance
      * @return dirty attribute names
-     * @see #isDirty(JmixEntity, String...)
+     * @see #isDirty(Object, String...)
      */
-    public Set<String> getDirtyFields(JmixEntity entity) {
+    public Set<String> getDirtyFields(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
+        EntityPreconditions.checkEntityType(entity);
 
         if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
             return Collections.emptySet();
@@ -116,11 +120,12 @@ public class PersistenceTools {
      * <br> If the entity is not persistent or not in the Managed state, returns false.
      *
      * @param entity entity instance
-     * @see #getDirtyFields(JmixEntity)
-     * @see #isDirty(JmixEntity, String...)
+     * @see #getDirtyFields(Object)
+     * @see #isDirty(Object, String...)
      */
-    public boolean isDirty(JmixEntity entity) {
+    public boolean isDirty(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
+        EntityPreconditions.checkEntityType(entity);
 
         if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
             return false;
@@ -139,9 +144,11 @@ public class PersistenceTools {
      *
      * @param entity     entity instance
      * @param attributes attributes to check
-     * @see #getDirtyFields(JmixEntity)
+     * @see #getDirtyFields(Object)
      */
-    public boolean isDirty(JmixEntity entity, String... attributes) {
+    public boolean isDirty(Object entity, String... attributes) {
+        EntityPreconditions.checkEntityType(entity);
+
         Set<String> dirtyFields = getDirtyFields(entity);
         for (String attribute : attributes) {
             if (dirtyFields.contains(attribute))
@@ -153,18 +160,18 @@ public class PersistenceTools {
     /**
      * Returns an old value of an attribute changed in the current transaction. The entity must be in the Managed state.
      * For enum attributes returns enum id. <br>
-     * You can check if the value has been changed using {@link #isDirty(JmixEntity, String...)} method.
+     * You can check if the value has been changed using {@link #isDirty(Object, String...)} method.
      *
      * @param entity    entity instance
      * @param attribute attribute name
      * @return an old value stored in the database. For a new entity returns null.
      * @throws IllegalArgumentException if the entity is not persistent or not in the Managed state
-     * @see #getOldEnumValue(JmixEntity, String)
-     * @see #isDirty(JmixEntity, String...)
-     * @see #getDirtyFields(JmixEntity)
+     * @see #getOldEnumValue(Object, String)
+     * @see #isDirty(Object, String...)
+     * @see #getDirtyFields(Object)
      */
     @Nullable
-    public Object getOldValue(JmixEntity entity, String attribute) {
+    public Object getOldValue(Object entity, String attribute) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         if (!(entity instanceof ChangeTracker))
@@ -189,7 +196,7 @@ public class PersistenceTools {
                         MetaProperty metaProperty = metadata.getClass(entity).getProperty(attribute);
                         if (metadataTools.isSoftDeletable(metaProperty.getRange().asClass().getJavaClass())) {
                             Collection oldValue = (Collection) changeRecord.getOldValue();
-                            Collection<JmixEntity> filteredValue;
+                            Collection<Object> filteredValue;
                             Class<?> propertyType = metaProperty.getJavaType();
                             if (List.class.isAssignableFrom(propertyType)) {
                                 filteredValue = new ArrayList<>();
@@ -199,11 +206,9 @@ public class PersistenceTools {
                                 throw new RuntimeException(String.format("Could not instantiate collection with class [%s].", propertyType));
                             }
                             for (Object item : oldValue) {
-                                EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) ((JmixEntity) item).__getEntityEntry();
-                                if (!softDeleteEntry.isDeleted() ||
-                                        softDeleteEntry.isDeleted() && isDirty((JmixEntity) item,
-                                                metadataTools.getDeletedDateProperty((JmixEntity) item))) {
-                                    filteredValue.add((JmixEntity) item);
+                                boolean isDeleted = EntityValues.isSoftDeleted(item);
+                                if (!isDeleted || isDirty(item, metadataTools.getDeletedDateProperty(item))) {
+                                    filteredValue.add(item);
                                 }
                             }
                             return filteredValue;
@@ -221,7 +226,7 @@ public class PersistenceTools {
     /**
      * Returns an old value of an enum attribute changed in the current transaction. The entity must be in the Managed state.
      * <p>
-     * Unlike {@link #getOldValue(JmixEntity, String)}, returns enum value and not its id.
+     * Unlike {@link #getOldValue(Object, String)}, returns enum value and not its id.
      *
      * @param entity    entity instance
      * @param attribute attribute name
@@ -229,7 +234,9 @@ public class PersistenceTools {
      * @throws IllegalArgumentException if the entity is not persistent or not in the Managed state
      */
     @Nullable
-    public EnumClass getOldEnumValue(JmixEntity entity, String attribute) {
+    public EnumClass getOldEnumValue(Object entity, String attribute) {
+        EntityPreconditions.checkEntityType(entity);
+
         Object value = getOldValue(entity, attribute);
         if (value == null)
             return null;
@@ -279,7 +286,7 @@ public class PersistenceTools {
      * @throws IllegalStateException    if the entity is not in Managed state
      * @throws RuntimeException         if anything goes wrong when retrieving the ID
      */
-    public RefId getReferenceId(JmixEntity entity, String property) {
+    public RefId getReferenceId(Object entity, String property) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaProperty metaProperty = metaClass.getProperty(property);
 
@@ -296,7 +303,7 @@ public class PersistenceTools {
                     return RefId.createNotLoaded(property);
                 else {
                     if (entityStates.isLoaded(entity, property)) {
-                        JmixEntity refEntity = getValue(entity, property);
+                        Object refEntity = getValue(entity, property);
                         return RefId.create(property, refEntity == null ? null : getId(refEntity));
                     } else {
                         return RefId.createNotLoaded(property);
@@ -357,10 +364,10 @@ public class PersistenceTools {
      *
      * @param entities instances to remove from the database.
      */
-    public void deleteRecord(JmixEntity... entities) {
+    public void deleteRecord(Object... entities) {
         if (entities == null)
             return;
-        for (JmixEntity entity : entities) {
+        for (Object entity : entities) {
             if (entity == null)
                 continue;
 
@@ -392,7 +399,7 @@ public class PersistenceTools {
     }
 
     /**
-     * A wrapper for the reference ID value returned by {@link #getReferenceId(JmixEntity, String)} method.
+     * A wrapper for the reference ID value returned by {@link #getReferenceId(Object, String)} method.
      *
      * @see #isLoaded()
      * @see #getValue()

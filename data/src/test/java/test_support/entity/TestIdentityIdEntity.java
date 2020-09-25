@@ -16,15 +16,11 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
-
 import javax.persistence.*;
 
 @Entity(name = "test_IdentityIdEntity")
 @Table(name = "TEST_IDENTITY_ID_ENTITY")
-public class TestIdentityIdEntity implements JmixEntity {
-    private static final long serialVersionUID = 146993228195491648L;
-
+public class TestIdentityIdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")

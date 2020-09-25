@@ -5,7 +5,6 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.Store;
@@ -18,7 +17,7 @@ import javax.persistence.Table;
 @Entity(name = "test_Db1Foo")
 @Table(name = "FOO")
 @Store(name = "db1")
-public class Db1Foo implements JmixEntity {
+public class Db1Foo {
 
     @Id
     @Column(name = "ID")

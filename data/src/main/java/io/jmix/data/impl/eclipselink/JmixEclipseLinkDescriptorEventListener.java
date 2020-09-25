@@ -21,8 +21,8 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
-import io.jmix.core.entity.EntityEntryAuditable;
-import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityListenerManager;
@@ -71,10 +71,10 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Autowired
     protected MetadataTools metadataTools;
 
-    protected boolean isJustSoftDeleted(JmixEntity entity) {
-        if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete) {
-            EntityEntrySoftDelete entry = (EntityEntrySoftDelete) entity.__getEntityEntry();
-            return entry.isDeleted() && persistenceTools.isDirty(entity, metadataTools.getDeletedDateProperty(entity));
+    protected boolean isJustSoftDeleted(Object entity) {
+        if (EntityValues.isSoftDeletionSupported(entity)) {
+            return EntityValues.isSoftDeleted(entity)
+                    && persistenceTools.isDirty(entity, metadataTools.getDeletedDateProperty(entity));
         }
         return false;
     }
@@ -135,7 +135,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void postInsert(DescriptorEvent event) {
-        JmixEntity entity = (JmixEntity) event.getSource();
+        Object entity = event.getSource();
         String storeName = persistenceSupport.getStorageName(event.getSession());
         entityListenerManager.fireListener(entity, EntityListenerType.AFTER_INSERT, storeName);
         persistenceSupport.getSavedInstances(storeName).add(entity);
@@ -158,7 +158,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Override
     public void postUpdate(DescriptorEvent event) {
         String storeName = persistenceSupport.getStorageName(event.getSession());
-        JmixEntity entity = (JmixEntity) event.getSource();
+        Object entity = event.getSource();
         if (isJustSoftDeleted(entity)) {
             entityListenerManager.fireListener(entity, EntityListenerType.AFTER_DELETE, storeName);
         } else {
@@ -180,13 +180,14 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void prePersist(DescriptorEvent event) {
-        JmixEntity entity = (JmixEntity) event.getObject();
-        Date ts = timeSource.currentTimestamp();
-        BaseUser user = auditInfoProvider.getCurrentUser();
+        Object entity = event.getObject();
 
-        if (entity.__getEntityEntry() instanceof EntityEntryAuditable) {
-            setCreateInfo((EntityEntryAuditable) entity.__getEntityEntry(), ts, user);
-            setUpdateInfo((EntityEntryAuditable) entity.__getEntityEntry(), ts, user, true);
+        Date currentDate = timeSource.currentTimestamp();
+        BaseUser currentUser = auditInfoProvider.getCurrentUser();
+
+        if (EntityValues.isAuditSupported(entity)) {
+            setCreateInfo(entity, currentDate, currentUser);
+            setUpdateInfo(entity, currentDate, currentUser, true);
         }
     }
 
@@ -197,58 +198,55 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Override
     public void preUpdate(DescriptorEvent event) {
         JmixEntity entity = (JmixEntity) event.getObject();
-        if (!(isJustSoftDeleted(entity)) && entity.__getEntityEntry() instanceof EntityEntryAuditable) {
-            setUpdateInfo((EntityEntryAuditable) entity.__getEntityEntry(),
-                    timeSource.currentTimestamp(),
-                    auditInfoProvider.getCurrentUser(),
-                    false);
+        if (!(isJustSoftDeleted(entity)) && EntityValues.isAuditSupported(entity)) {
+            setUpdateInfo(entity, timeSource.currentTimestamp(), auditInfoProvider.getCurrentUser(), false);
         }
     }
 
-    protected void setCreateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user) {
-        if (auditable.getCreatedDateClass() != null) {
-            Class<?> dateClass = auditable.getCreatedDateClass();
-            if (auditConversionService.canConvert(ts.getClass(), dateClass)) {
-                auditable.setCreatedDate(auditConversionService.convert(ts, dateClass));
+    protected void setCreateInfo(Object entity, Date currentDate, @Nullable BaseUser currentUser) {
+        Class<?> createdDateClass = EntitySystemAccess.getCreatedDateClass(entity);
+        if (createdDateClass != null) {
+            if (auditConversionService.canConvert(currentDate.getClass(), createdDateClass)) {
+                EntityValues.setCreatedDate(entity, auditConversionService.convert(currentDate, createdDateClass));
             } else {
-                logger.error("Cannot find converter from java.util.Date to " + dateClass.getName());
+                logger.debug("Cannot find converter from java.util.Date to {}", createdDateClass);
             }
         }
 
-        if (auditable.getCreatedByClass() != null) {
-            if (user != null) {
-                Class<?> byClass = auditable.getCreatedByClass();
-                if (auditConversionService.canConvert(user.getClass(), byClass)) {
-                    auditable.setCreatedBy(auditConversionService.convert(user, byClass));
+        Class<?> createdByClass = EntitySystemAccess.getCreatedByClass(entity);
+        if (createdByClass != null) {
+            if (currentUser != null) {
+                if (auditConversionService.canConvert(currentUser.getClass(), createdByClass)) {
+                    EntityValues.setCreatedBy(entity, auditConversionService.convert(currentUser, createdByClass));
                 } else {
-                    logger.error("Cannot find converter from " + user.getClass().getName() + " to " + byClass.getName());
+                    logger.debug("Cannot find converter from {} to {}", currentUser.getClass().getName(), createdByClass);
                 }
             } else {
-                auditable.setCreatedBy(null);
+                EntityValues.setCreatedBy(entity, null);
             }
         }
     }
 
-    protected void setUpdateInfo(EntityEntryAuditable auditable, Date ts, @Nullable BaseUser user, boolean dateOnly) {
-        if (auditable.getLastModifiedDateClass() != null) {
-            Class<?> dateClass = auditable.getLastModifiedDateClass();
-            if (auditConversionService.canConvert(ts.getClass(), dateClass)) {
-                auditable.setLastModifiedDate(auditConversionService.convert(ts, dateClass));
+    protected void setUpdateInfo(Object entity, Date currentDate, @Nullable BaseUser user, boolean dateOnly) {
+        Class<?> lastModifiedDateClass = EntitySystemAccess.getLastModifiedDateClass(entity);
+        if (lastModifiedDateClass != null) {
+            if (auditConversionService.canConvert(currentDate.getClass(), lastModifiedDateClass)) {
+                EntityValues.setLastModifiedDate(entity, auditConversionService.convert(currentDate, lastModifiedDateClass));
             } else {
-                logger.error("Cannot find converter from java.util.Date to " + dateClass.getName());
+                logger.debug("Cannot find converter from java.util.Date to {}", lastModifiedDateClass.getName());
             }
         }
 
-        if (auditable.getLastModifiedByClass() != null && !dateOnly) {
+        Class<?> lastModifiedByClass = EntitySystemAccess.getLastModifiedByClass(entity);
+        if (lastModifiedByClass != null && !dateOnly) {
             if (user != null) {
-                Class<?> byClass = auditable.getLastModifiedByClass();
-                if (auditConversionService.canConvert(user.getClass(), byClass)) {
-                    auditable.setLastModifiedBy(auditConversionService.convert(user, byClass));
+                if (auditConversionService.canConvert(user.getClass(), lastModifiedByClass)) {
+                    EntityValues.setLastModifiedBy(entity, auditConversionService.convert(user, lastModifiedByClass));
                 } else {
-                    logger.error("Cannot find converter from " + user.getClass().getName() + " to " + byClass.getName());
+                    logger.debug("Cannot find converter from {} to {}", user.getClass().getName(), lastModifiedByClass);
                 }
             } else {
-                auditable.setLastModifiedBy(null);
+                EntityValues.setLastModifiedBy(entity, null);
             }
         }
     }

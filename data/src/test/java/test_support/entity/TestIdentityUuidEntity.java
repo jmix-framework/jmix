@@ -16,7 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 
 import javax.persistence.*;
@@ -24,10 +23,7 @@ import java.util.UUID;
 
 @Entity(name = "test_IdentityUuidEntity")
 @Table(name = "TEST_IDENTITY_UUID_ENTITY")
-public class TestIdentityUuidEntity implements JmixEntity {
-
-    private static final long serialVersionUID = 146993228195491648L;
-
+public class TestIdentityUuidEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")

@@ -16,7 +16,6 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.*;
-import io.jmix.core.entity.EntityEntrySoftDelete;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
@@ -47,7 +46,7 @@ public class DeletePolicyProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DeletePolicyProcessor.class);
 
-    protected JmixEntity entity;
+    protected Object entity;
     protected MetaClass metaClass;
     protected String primaryKeyName;
 
@@ -74,11 +73,11 @@ public class DeletePolicyProcessor {
 
     protected EntityManager entityManager;
 
-    public JmixEntity getEntity() {
+    public Object getEntity() {
         return entity;
     }
 
-    public void setEntity(JmixEntity entity) {
+    public void setEntity(Object entity) {
         this.entity = entity;
         this.metaClass = metadata.getClass(entity.getClass());
         primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
@@ -165,16 +164,16 @@ public class DeletePolicyProcessor {
                     break;
                 case CASCADE:
                     if (property.getRange().getCardinality().isMany()) {
-                        Collection<JmixEntity> value = getCollection(property);
+                        Collection<Object> value = getCollection(property);
                         if (value != null && !value.isEmpty()) {
-                            for (JmixEntity e : value) {
+                            for (Object e : value) {
                                 entityManager.remove(e);
                             }
                         }
                     } else {
-                        JmixEntity value = getReference(entity, property);
+                        Object value = getReference(entity, property);
                         if (value != null && checkIfEntityBelongsToMaster(property, value)) {
-                            if (!(value.__getEntityEntry() instanceof EntityEntrySoftDelete)) {
+                            if (!(EntityValues.isSoftDeletionSupported(value))) {
                                 if (entityStates.isLoaded(entity, property.getName())) {
                                     EntityValues.setValue(entity, property.getName(), null);
                                     entityManager.remove(value);
@@ -190,12 +189,12 @@ public class DeletePolicyProcessor {
                 case UNLINK:
                     if (property.getRange().getCardinality().isMany()) {
                         if (metadataTools.isOwningSide(property)) {
-                            Collection<JmixEntity> value = EntityValues.getValue(entity, property.getName());
+                            Collection<Object> value = EntityValues.getValue(entity, property.getName());
                             if (value != null) {
                                 value.clear();
                             }
                         } else if (property.getInverse() != null) {
-                            Collection<JmixEntity> value = getCollection(property);
+                            Collection<Object> value = getCollection(property);
                             if (value != null) {
                                 value.forEach(e -> setReferenceNull(e, property.getInverse()));
                             }
@@ -206,7 +205,7 @@ public class DeletePolicyProcessor {
                         if (metadataTools.isOwningSide(property)) {
                             setReferenceNull(entity, property);
                         } else {
-                            JmixEntity value = getReference(entity, property);
+                            Object value = getReference(entity, property);
                             if (value != null && property.getInverse() != null) {
                                 setReferenceNull(value, property.getInverse());
                             }
@@ -217,7 +216,7 @@ public class DeletePolicyProcessor {
         }
     }
 
-    protected void hardDeleteNotLoadedReference(JmixEntity entity, MetaProperty property, JmixEntity reference) {
+    protected void hardDeleteNotLoadedReference(Object entity, MetaProperty property, Object reference) {
         persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
             try {
                 String column = metadataTools.getDatabaseColumn(property);
@@ -244,7 +243,7 @@ public class DeletePolicyProcessor {
         return storeAwareLocator.getJdbcTemplate(metaClass.getStore().getName());
     }
 
-    protected void setReferenceNull(JmixEntity entity, MetaProperty property) {
+    protected void setReferenceNull(Object entity, MetaProperty property) {
         Range range = property.getRange();
         if (metadataTools.isOwningSide(property) && !range.getCardinality().isMany()) {
             if (entityStates.isLoaded(entity, property.getName())) {
@@ -255,7 +254,7 @@ public class DeletePolicyProcessor {
         }
     }
 
-    protected void hardSetReferenceNull(JmixEntity entity, MetaProperty property) {
+    protected void hardSetReferenceNull(Object entity, MetaProperty property) {
         persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
             MetaClass entityMetaClass = metadata.getClass(entity.getClass());
             while (!entityMetaClass.equals(property.getDomain())) {
@@ -282,7 +281,7 @@ public class DeletePolicyProcessor {
     }
 
     @Nullable
-    protected JmixEntity getReference(JmixEntity entity, MetaProperty property) {
+    protected Object getReference(Object entity, MetaProperty property) {
         if (entityStates.isLoaded(entity, property.getName()))
             return EntityValues.getValue(entity, property.getName());
         else {
@@ -292,14 +291,14 @@ public class DeletePolicyProcessor {
             query.setParameter(1, EntityValues.getId(entity));
             List list = query.getResultList();
             Object refEntity = list.isEmpty() ? null : list.get(0);
-            return (JmixEntity) refEntity;
+            return refEntity;
         }
     }
 
-    protected boolean checkIfEntityBelongsToMaster(MetaProperty property, JmixEntity entityToRemove) {
+    protected boolean checkIfEntityBelongsToMaster(MetaProperty property, Object entityToRemove) {
         MetaProperty inverseProperty = property.getInverse();
         if (inverseProperty != null && !inverseProperty.getRange().getCardinality().isMany()) {
-            JmixEntity master = EntityValues.getValue(entityToRemove, inverseProperty.getName());
+            Object master = EntityValues.getValue(entityToRemove, inverseProperty.getName());
             return entity.equals(master);
         } else {
             return true;
@@ -310,7 +309,7 @@ public class DeletePolicyProcessor {
         MetaProperty inverseProperty = property.getInverse();
         if (inverseProperty == null) {
             log.warn("Inverse property not found for property {}", property);
-            Collection<JmixEntity> value = EntityValues.getValue(entity, property.getName());
+            Collection<Object> value = EntityValues.getValue(entity, property.getName());
             return value == null || value.isEmpty();
         }
 
@@ -324,16 +323,16 @@ public class DeletePolicyProcessor {
         query.setParameter(1, EntityValues.getId(entity));
         query.setMaxResults(1);
         @SuppressWarnings("unchecked")
-        List<JmixEntity> list = query.getResultList();
+        List<Object> list = query.getResultList();
 
         return list.isEmpty();
     }
 
-    protected Collection<JmixEntity> getCollection(MetaProperty property) {
+    protected Collection<Object> getCollection(MetaProperty property) {
         MetaProperty inverseProperty = property.getInverse();
         if (inverseProperty == null) {
             log.warn("Inverse property not found for property {}", property);
-            Collection<JmixEntity> value = EntityValues.getValue(entity, property.getName());
+            Collection<Object> value = EntityValues.getValue(entity, property.getName());
             return value == null ? Collections.emptyList() : value;
         }
 
@@ -344,7 +343,7 @@ public class DeletePolicyProcessor {
         Query query = entityManager.createQuery(qlStr);
         query.setParameter(1, EntityValues.getId(entity));
         @SuppressWarnings("unchecked")
-        List<JmixEntity> list = query.getResultList();
+        List<Object> list = query.getResultList();
 
         // If the property is not loaded, it means it was not modified and further check is not needed
         if (!entityStates.isLoaded(entity, property.getName())) {
@@ -352,9 +351,9 @@ public class DeletePolicyProcessor {
         }
         // Check whether the collection items still belong to the master entity, because they could be changed in the
         // current transaction that did not affect the database yet
-        List<JmixEntity> result = new ArrayList<>(list.size());
-        for (JmixEntity item : list) {
-            JmixEntity master = EntityValues.getValue(item, invPropName);
+        List<Object> result = new ArrayList<>(list.size());
+        for (Object item : list) {
+            Object master = EntityValues.getValue(item, invPropName);
             if (entity.equals(master))
                 result.add(item);
         }
@@ -385,8 +384,8 @@ public class DeletePolicyProcessor {
         Query query = entityManager.createQuery(qstr);
         query.setParameter(1, EntityValues.getId(entity));
         @SuppressWarnings("unchecked")
-        List<JmixEntity> list = query.getResultList();
-        for (JmixEntity e : list) {
+        List<Object> list = query.getResultList();
+        for (Object e : list) {
             entityManager.remove(e);
         }
     }
@@ -400,8 +399,8 @@ public class DeletePolicyProcessor {
             Query query = entityManager.createQuery(qstr);
             query.setParameter(1, EntityValues.getId(entity));
             @SuppressWarnings("unchecked")
-            List<JmixEntity> list = query.getResultList();
-            for (JmixEntity e : list) {
+            List<Object> list = query.getResultList();
+            for (Object e : list) {
                 if (property.getRange().getCardinality().isMany()) {
                     Collection<?> collection = EntityValues.getValue(e, property.getName());
                     if (collection != null) {

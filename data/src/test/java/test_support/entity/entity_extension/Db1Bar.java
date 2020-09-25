@@ -17,7 +17,6 @@
 package test_support.entity.entity_extension;
 
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Store;
 
@@ -27,7 +26,7 @@ import java.util.UUID;
 @Entity(name = "exttest_Bar")
 @Table(name = "EXTTEST_BAR")
 @Store(name = "db1")
-public class Db1Bar implements JmixEntity {
+public class Db1Bar {
 
     @Id
     @Column(name = "ID")

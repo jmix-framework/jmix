@@ -5,7 +5,6 @@
 
 package test_support.entity.multidb;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
@@ -17,8 +16,7 @@ import javax.persistence.Id;
 
 @ModelObject(name = "test_Mem1LongIdEntity")
 @Store(name = "mem1")
-public class Mem1LongIdEntity implements JmixEntity {
-
+public class Mem1LongIdEntity {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

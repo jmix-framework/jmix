@@ -16,7 +16,6 @@
 
 package test_support.entity.entity_extension;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -26,7 +25,7 @@ import java.util.UUID;
 
 @Entity(name = "exttest_Plant")
 @Table(name = "EXTTEST_PLANT")
-public class Plant implements JmixEntity {
+public class Plant {
 
     @Id
     @Column(name = "ID")
@@ -39,8 +38,8 @@ public class Plant implements JmixEntity {
 
     @ManyToMany
     @JoinTable(name = "EXTTEST_PLANT_MODEL_LINK",
-        joinColumns = @JoinColumn(name = "PLANT_ID"),
-        inverseJoinColumns = @JoinColumn(name = "MODEL_ID"))
+            joinColumns = @JoinColumn(name = "PLANT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "MODEL_ID"))
     protected Set<Model> models;
 
     @ManyToOne(fetch = FetchType.LAZY)

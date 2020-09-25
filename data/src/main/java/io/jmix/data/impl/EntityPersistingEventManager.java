@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.Events;
 import io.jmix.core.ExtendedEntities;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.event.EntityPersistingEvent;
@@ -39,10 +38,10 @@ public class EntityPersistingEventManager {
     @Autowired
     protected ExtendedEntities extendedEntities;
 
-    public void publishEvent(JmixEntity entity) {
+    public void publishEvent(Object entity) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        EntityPersistingEvent<JmixEntity> event = new EntityPersistingEvent<>(this, entity, originalMetaClass);
+        EntityPersistingEvent<?> event = new EntityPersistingEvent<>(this, entity, originalMetaClass);
         events.publish(event);
     }
 }

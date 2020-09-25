@@ -18,6 +18,8 @@ package io.jmix.data.impl;
 
 import com.google.common.collect.Iterables;
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityPreconditions;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -25,7 +27,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import static java.lang.String.format;
@@ -43,15 +47,11 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     protected MetadataTools metadataTools;
 
     @Override
-    public ReferencesCollector collectErasingReferences(JmixEntity entity, Predicate<JmixEntity> predicate) {
-        return collectErasingReferences(Collections.singletonList(entity), predicate);
-    }
-
-    @Override
-    public ReferencesCollector collectErasingReferences(Collection<? extends JmixEntity> entityList, Predicate<JmixEntity> predicate) {
-        Set<JmixEntity> visited = new LinkedHashSet<>();
+    public ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate) {
+        Set<Object> visited = new LinkedHashSet<>();
         ReferencesCollector referencesCollector = new ReferencesCollector();
-        for (JmixEntity entity : entityList) {
+        for (Object entity : entityList) {
+            EntityPreconditions.checkEntityType(entity);
             traverseEntities(entity, visited, (e, reference, propertyName) -> {
                 if (!predicate.test(reference)) {
                     referencesCollector.addReference(e, reference, propertyName);
@@ -64,18 +64,18 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     }
 
     public void eraseReferences(EntityAttributesEraser.ReferencesCollector referencesCollector) {
-        for (JmixEntity entity : referencesCollector.getEntities()) {
+        for (Object entity : referencesCollector.getEntities()) {
             for (String attribute : referencesCollector.getAttributes(entity)) {
-                Collection<JmixEntity> references = referencesCollector.getReferencesByAttribute(entity, attribute);
+                Collection<Object> references = referencesCollector.getReferencesByAttribute(entity, attribute);
 
-                for (JmixEntity reference : references) {
-                    entity.__getEntityEntry().getSecurityState().addErasedId(attribute, EntityValues.getId(reference));
+                for (Object reference : references) {
+                    EntitySystemAccess.getSecurityState(entity).addErasedId(attribute, EntityValues.getId(reference));
                 }
 
                 Object value = EntityValues.getValue(entity, attribute);
                 if (value instanceof Collection) {
                     @SuppressWarnings("unchecked")
-                    Collection<JmixEntity> entities = (Collection<JmixEntity>) value;
+                    Collection<Object> entities = (Collection<Object>) value;
                     entities.removeAll(references);
                 } else if (value instanceof JmixEntity) {
                     if (references.contains(value)) {
@@ -86,8 +86,8 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         }
     }
 
-    public void restoreAttributes(JmixEntity entity) {
-        SecurityState securityState = entity.__getEntityEntry().getSecurityState();
+    public void restoreAttributes(Object entity) {
+        SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (String attrName : securityState.getErasedAttributes()) {
             Collection<Object> ids = securityState.getErasedIds(attrName);
@@ -103,7 +103,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void restoreCollectionAttribute(JmixEntity entity, MetaProperty metaProperty, Collection ids) {
+    protected void restoreCollectionAttribute(Object entity, MetaProperty metaProperty, Collection ids) {
         Collection items = EntityValues.getValue(entity, metaProperty.getName());
         if (items == null) {
             throw new RuntimeException(
@@ -112,20 +112,20 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
         }
         for (Object id : ids) {
             MetaClass metaClass = metaProperty.getRange().asClass();
-            JmixEntity reference = dataManager.getReference(metaClass.getJavaClass(), id);
+            Object reference = dataManager.getReference(metaClass.getJavaClass(), id);
             items.add(reference);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void restoreSingleAttribute(JmixEntity entity, MetaProperty metaProperty, Collection<Object> ids) {
+    protected void restoreSingleAttribute(Object entity, MetaProperty metaProperty, Collection<Object> ids) {
         Object id = Iterables.getFirst(ids, null);
         assert id != null;
-        JmixEntity reference = dataManager.getReference((Class<JmixEntity>) metaProperty.getJavaType(), id);
+        Object reference = dataManager.getReference((Class<?>) metaProperty.getJavaType(), id);
         EntityValues.setValue(entity, metaProperty.getName(), reference);
     }
 
-    protected void traverseEntities(JmixEntity entity, Set<JmixEntity> visited, Visitor visitor) {
+    protected void traverseEntities(Object entity, Set<Object> visited, Visitor visitor) {
         if (visited.contains(entity)) {
             return;
         }
@@ -137,15 +137,14 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (value instanceof Collection<?>) {
                     //noinspection unchecked
-                    for (JmixEntity item : (Collection<JmixEntity>) value) {
+                    for (Object item : (Collection<Object>) value) {
                         if (visitor.visit(entity, item, property.getName())) {
                             traverseEntities(item, visited, visitor);
                         }
                     }
                 } else if (value instanceof JmixEntity) {
-                    JmixEntity valueEntity = (JmixEntity) value;
-                    if (visitor.visit(entity, valueEntity, property.getName())) {
-                        traverseEntities(valueEntity, visited, visitor);
+                    if (visitor.visit(entity, value, property.getName())) {
+                        traverseEntities(value, visited, visitor);
                     }
                 }
             }
@@ -157,6 +156,6 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     }
 
     protected interface Visitor {
-        boolean visit(JmixEntity entity, JmixEntity reference, String propertyName);
+        boolean visit(Object entity, Object reference, String propertyName);
     }
 }

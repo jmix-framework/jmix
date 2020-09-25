@@ -16,8 +16,6 @@
 
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
-
 import java.util.Collection;
 
 /**
@@ -31,9 +29,10 @@ public interface AfterCompleteTransactionListener {
 
     /**
      * Invoked after transaction completion.
-     * @param committed         true if the transaction was committed
-     * @param detachedEntities  collection of entities in Detached state
-     *                          that made up the persistence context of the completed transaction
+     *
+     * @param committed        true if the transaction was committed
+     * @param detachedEntities collection of entities in Detached state
+     *                         that made up the persistence context of the completed transaction
      */
-    void afterComplete(boolean committed, Collection<JmixEntity> detachedEntities);
+    void afterComplete(boolean committed, Collection<Object> detachedEntities);
 }

@@ -17,6 +17,7 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
@@ -31,7 +32,7 @@ import java.lang.reflect.Field;
 public class JmixSingleValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = -9161805285177725933L;
 
-    protected JmixEntity parentEntity;
+    protected Object parentEntity;
     protected String propertyName;
     protected String inversePropertyName;
     protected Class valueClass;
@@ -41,7 +42,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixSingleValueHolder(JmixEntity parentEntity, String propertyName, String inversePropertyName,
+    public JmixSingleValueHolder(Object parentEntity, String propertyName, String inversePropertyName,
                                  Class valueClass, DataManager dataManager, FetchPlanBuilder fetchPlanBuilder,
                                  Metadata metadata, MetadataTools metadataTools) {
         this.parentEntity = parentEntity;
@@ -54,7 +55,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
         this.metadataTools = metadataTools;
     }
 
-    public JmixEntity getParentEntity() {
+    public Object getParentEntity() {
         return parentEntity;
     }
 
@@ -74,11 +75,11 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
                     lc.setSoftDeletion(false);
                     lc.setHints(plc.getHints());
                     lc.setAccessConstraints(plc.getAccessConstraints());
-                    JmixEntity result = dataManager.load(lc);
+                    Object result = dataManager.load(lc);
                     value = EntityValues.getValue(result, propertyName);
                     if (value == null) {
-                        SecurityState resultState = result.__getEntityEntry().getSecurityState();
-                        SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                        SecurityState resultState = EntitySystemAccess.getSecurityState(result);
+                        SecurityState parentState = EntitySystemAccess.getSecurityState(parentEntity);
                         parentState.addErasedIds(propertyName, resultState.getErasedIds(propertyName));
                     }
                 } else {
@@ -95,7 +96,7 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
 
                 EntityAttributeVisitor av = new EntityAttributeVisitor() {
                     @Override
-                    public void visit(JmixEntity entity, MetaProperty property) {
+                    public void visit(Object entity, MetaProperty property) {
                         if (property.getRange().asClass().getJavaClass().isAssignableFrom(parentEntity.getClass())) {
                             visitEntity(entity, property, parentEntity);
                         }

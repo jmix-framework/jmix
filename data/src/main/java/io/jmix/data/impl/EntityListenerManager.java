@@ -15,7 +15,6 @@
  */
 package io.jmix.data.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.data.PersistenceTools;
@@ -78,10 +77,10 @@ public class EntityListenerManager {
     }
 
     protected static class ListenerExecution {
-        private final JmixEntity entity;
+        private final Object entity;
         private final EntityListenerType type;
 
-        public ListenerExecution(JmixEntity entity, EntityListenerType type) {
+        public ListenerExecution(Object entity, EntityListenerType type) {
             this.entity = entity;
             this.type = type;
         }
@@ -112,7 +111,7 @@ public class EntityListenerManager {
 
     protected Map<Key, List> cache = new ConcurrentHashMap<>();
 
-    protected Map<Class<? extends JmixEntity>, Set<String>> dynamicListeners = new ConcurrentHashMap<>();
+    protected Map<Class<?>, Set<String>> dynamicListeners = new ConcurrentHashMap<>();
 
     protected ReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -126,7 +125,7 @@ public class EntityListenerManager {
      * @param entityClass   entity
      * @param listenerClass listener class
      */
-    public void addListener(Class<? extends JmixEntity> entityClass, Class<?> listenerClass) {
+    public void addListener(Class<?> entityClass, Class<?> listenerClass) {
         lock.writeLock().lock();
         try {
             Set<String> set = dynamicListeners.get(entityClass);
@@ -148,7 +147,7 @@ public class EntityListenerManager {
      * @param entityClass   entity
      * @param listenerClass listener class
      */
-    public void removeListener(Class<? extends JmixEntity> entityClass, Class<?> listenerClass) {
+    public void removeListener(Class<?> entityClass, Class<?> listenerClass) {
         lock.writeLock().lock();
         try {
             Set<String> set = dynamicListeners.get(entityClass);
@@ -168,7 +167,7 @@ public class EntityListenerManager {
      * @param entityClass      entity
      * @param listenerBeanName listener bean name
      */
-    public void addListener(Class<? extends JmixEntity> entityClass, String listenerBeanName) {
+    public void addListener(Class<?> entityClass, String listenerBeanName) {
         lock.writeLock().lock();
         try {
             Set<String> set = dynamicListeners.get(entityClass);
@@ -190,7 +189,7 @@ public class EntityListenerManager {
      * @param entityClass      entity
      * @param listenerBeanName listener bean name
      */
-    public void removeListener(Class<? extends JmixEntity> entityClass, String listenerBeanName) {
+    public void removeListener(Class<?> entityClass, String listenerBeanName) {
         lock.writeLock().lock();
         try {
             Set<String> set = dynamicListeners.get(entityClass);
@@ -205,7 +204,7 @@ public class EntityListenerManager {
     }
 
     @SuppressWarnings("unchecked")
-    public void fireListener(JmixEntity entity, EntityListenerType type, String storeName) {
+    public void fireListener(Object entity, EntityListenerType type, String storeName) {
         if (!enabled)
             return;
 
@@ -276,7 +275,7 @@ public class EntityListenerManager {
         this.enabled = enable;
     }
 
-    protected void logExecution(EntityListenerType type, JmixEntity entity) {
+    protected void logExecution(EntityListenerType type, Object entity) {
         if (log.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder();
             sb.append("Executing ").append(type).append(" entity listener for ")
@@ -297,7 +296,7 @@ public class EntityListenerManager {
         }
     }
 
-    protected List<?> getListener(Class<? extends JmixEntity> entityClass, EntityListenerType type) {
+    protected List<?> getListener(Class<?> entityClass, EntityListenerType type) {
         Key key = new Key(entityClass, type);
 
         lock.readLock().lock();
@@ -314,7 +313,7 @@ public class EntityListenerManager {
         }
     }
 
-    protected List<?> findListener(Class<? extends JmixEntity> entityClass, EntityListenerType type) {
+    protected List<?> findListener(Class<?> entityClass, EntityListenerType type) {
         log.trace("get listener {} for class {}", type, entityClass.getName());
         List<String> names = getDeclaredListeners(entityClass);
         if (names.isEmpty()) {
@@ -358,7 +357,7 @@ public class EntityListenerManager {
         return result;
     }
 
-    protected List<String> getDeclaredListeners(Class<? extends JmixEntity> entityClass) {
+    protected List<String> getDeclaredListeners(Class<?> entityClass) {
         List<String> listeners = new ArrayList<>();
 
         List<Class<?>> superclasses = ClassUtils.getAllSuperclasses(entityClass);

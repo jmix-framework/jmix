@@ -16,7 +16,6 @@
 
 package test_support.entity.equality;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -26,7 +25,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_NGFOO")
 @Entity(name = "test_NGFoo")
-public class NGFoo implements JmixEntity {
+public class NGFoo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

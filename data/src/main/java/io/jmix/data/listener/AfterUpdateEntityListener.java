@@ -15,18 +15,17 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
 /**
  * Defines the contract for handling of entities after they have been updated in DB.
  */
-public interface AfterUpdateEntityListener<T extends JmixEntity> {
+public interface AfterUpdateEntityListener<T> {
 
     /**
      * Executes after the object has been updated in DB.
      * <p>
      * Modification of the entity state or using {@code EntityManager} is impossible here.
      *
-     * @param entity        updated entity
+     * @param entity updated entity
      */
     void onAfterUpdate(T entity);
 }

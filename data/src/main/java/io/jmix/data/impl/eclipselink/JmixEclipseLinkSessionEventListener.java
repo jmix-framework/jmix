@@ -22,7 +22,7 @@ import io.jmix.core.JmixEntity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.datastruct.Pair;
-import io.jmix.core.entity.EntityEntrySoftDelete;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.JmixSettersEnhanced;
 import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
@@ -108,16 +108,15 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
                 desc.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
 
 
-                Class<? extends JmixEntity> entityClass = desc.getJavaClass();
+                Class<?> entityClass = desc.getJavaClass();
 
                 if (metadataTools.isSoftDeletable(entityClass)) {
                     String fieldName = metadataTools.findDeletedDateProperty(entityClass);
                     desc.getQueryManager().setAdditionalCriteria("this." + fieldName + " is null");
 
                     desc.setDeletePredicate(entity -> {
-                        if (((JmixEntity) entity).__getEntityEntry() instanceof EntityEntrySoftDelete) {
-                            EntityEntrySoftDelete entityEntry = (EntityEntrySoftDelete) ((JmixEntity) entity).__getEntityEntry();
-                            return entityStates.isLoaded(entity, fieldName) && entityEntry.isDeleted();
+                        if (EntityValues.isSoftDeletionSupported(entity)) {
+                            return entityStates.isLoaded(entity, fieldName) && EntityValues.isSoftDeleted(entity);
                         }
                         return false;
                     });

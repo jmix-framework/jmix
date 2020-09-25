@@ -19,8 +19,7 @@ package io.jmix.data.impl;
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.EntityEntrySoftDelete;
-import io.jmix.core.entity.EntitySystemValues;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -99,27 +98,26 @@ public class JmixEntityManager implements EntityManager {
             return delegate.merge(object);
         }
 
-        JmixEntity entity = (JmixEntity) object;
-
-        if (entityStates.isManaged(entity))
+        if (entityStates.isManaged(object)) {
             return object;
+        }
 
         String storeName = support.getStorageName(delegate.unwrap(UnitOfWork.class));
-        entityListenerMgr.fireListener(entity, EntityListenerType.BEFORE_ATTACH, storeName);
+        entityListenerMgr.fireListener(object, EntityListenerType.BEFORE_ATTACH, storeName);
 
-        if ((entityStates.isNew(entity) || !entityStates.isDetached(entity)) && EntityValues.getId(entity) != null) {
+        if ((entityStates.isNew(object) || !entityStates.isDetached(object)) && EntityValues.getId(object) != null) {
             // if a new instance is passed to merge(), we suppose it is persistent but "not detached"
-            JmixEntity destEntity = findOrCreate(entity.getClass(), EntityValues.getId(entity));
-            deepCopyIgnoringNulls(entity, destEntity, Sets.newIdentityHashSet());
+            Object destEntity = findOrCreate(object.getClass(), EntityValues.getId(object));
+            deepCopyIgnoringNulls(object, destEntity, Sets.newIdentityHashSet());
             if (entityStates.isNew(destEntity)) {
-                entityPersistingEventMgr.publishEvent(destEntity);
+                entityPersistingEventMgr.publishEvent(object);
             }
             return (T) destEntity;
         }
 
-        JmixEntity merged = internalMerge(entity);
+        T merged = internalMerge(object);
         support.registerInstance(merged, this);
-        return (T) merged;
+        return merged;
     }
 
     @Override
@@ -136,17 +134,18 @@ public class JmixEntityManager implements EntityManager {
             entity = internalMerge(entity);
         }
 
-        if (entity.__getEntityEntry() instanceof EntityEntrySoftDelete && PersistenceHints.isSoftDeletion(delegate)) {
-            EntityEntrySoftDelete softDeleteEntry = (EntityEntrySoftDelete) entity.__getEntityEntry();
+        if (EntityValues.isSoftDeletionSupported(entity) && PersistenceHints.isSoftDeletion(delegate)) {
+            Class<?> deletedDateClass = EntitySystemAccess.getDeletedDateClass(entity);
+            Class<?> deletedByClass = EntitySystemAccess.getDeletedByClass(entity);
 
-            softDeleteEntry.setDeletedDate(auditConverter.convert(
-                    timeSource.currentTimestamp(),
-                    softDeleteEntry.getDeletedDateClass()));
+            if (deletedDateClass != null) {
+                EntityValues.setDeletedDate(entity,
+                        auditConverter.convert(timeSource.currentTimestamp(), deletedDateClass));
+            }
 
-            if (softDeleteEntry.getDeletedByClass() != null) {
-                softDeleteEntry.setDeletedBy(auditConverter.convert(
-                        auditInfoProvider.getCurrentUser(),
-                        softDeleteEntry.getDeletedByClass()));
+            if (deletedByClass != null) {
+                EntityValues.setDeletedBy(entity,
+                        auditConverter.convert(auditInfoProvider.getCurrentUser(), deletedByClass));
             }
         } else {
             delegate.remove(entity);
@@ -449,7 +448,7 @@ public class JmixEntityManager implements EntityManager {
 
         T entity = delegate.find(javaClass, realId, lockMode, properties);
 
-        if (entity != null && EntitySystemValues.isSoftDeleted((JmixEntity) entity)
+        if (entity != null && EntityValues.isSoftDeleted((JmixEntity) entity)
                 && isSoftDeletion(properties))
             return null; // in case of entity cache
         else
@@ -473,7 +472,7 @@ public class JmixEntityManager implements EntityManager {
         return (T) query.getSingleResultOrNull();
     }
 
-    private <T extends JmixEntity> T internalMerge(T entity) {
+    private <T> T internalMerge(T entity) {
         try {
             CubaUtil.setSoftDeletion(false);
             CubaUtil.setOriginalSoftDeletion(false);
@@ -507,8 +506,8 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends JmixEntity> T findOrCreate(Class<T> entityClass, Object id) {
-        JmixEntity reloadedRef = find(entityClass, id);
+    protected <T> T findOrCreate(Class<T> entityClass, Object id) {
+        Object reloadedRef = find(entityClass, id);
         if (reloadedRef == null) {
             reloadedRef = metadata.create(entityClass);
             EntityValues.setId(reloadedRef, id);
@@ -520,7 +519,7 @@ public class JmixEntityManager implements EntityManager {
     /**
      * Copies all property values from source to dest excluding null values.
      */
-    protected void deepCopyIgnoringNulls(JmixEntity source, JmixEntity dest, Set<JmixEntity> visited) {
+    protected void deepCopyIgnoringNulls(Object source, Object dest, Set<Object> visited) {
         if (visited.contains(source))
             return;
         visited.add(source);
@@ -554,8 +553,8 @@ public class JmixEntityManager implements EntityManager {
                         continue;
                     }
                     @SuppressWarnings("unchecked")
-                    Collection<JmixEntity> srcCollection = (Collection) value;
-                    Collection<JmixEntity> dstCollection = EntityValues.getValue(dest, name);
+                    Collection<Object> srcCollection = (Collection) value;
+                    Collection<Object> dstCollection = EntityValues.getValue(dest, name);
                     if (dstCollection == null)
                         throw new RuntimeException("Collection is null: " + srcProperty);
                     boolean equal = srcCollection.size() == dstCollection.size();
@@ -568,32 +567,30 @@ public class JmixEntityManager implements EntityManager {
                     }
                     if (!equal) {
                         dstCollection.clear();
-                        for (JmixEntity srcRef : srcCollection) {
-                            JmixEntity reloadedRef = findOrCreate(srcRef.getClass(), EntityValues.getId(srcRef));
+                        for (Object srcRef : srcCollection) {
+                            Object reloadedRef = findOrCreate(srcRef.getClass(), EntityValues.getId(srcRef));
                             dstCollection.add(reloadedRef);
                             deepCopyIgnoringNulls(srcRef, reloadedRef, visited);
                         }
                     }
                 } else {
-                    JmixEntity srcRef = (JmixEntity) value;
-                    JmixEntity destRef = EntityValues.getValue(dest, name);
-                    if (srcRef.equals(destRef)) {
-                        deepCopyIgnoringNulls(srcRef, destRef, visited);
+                    Object destRef = EntityValues.getValue(dest, name);
+                    if (value.equals(destRef)) {
+                        deepCopyIgnoringNulls(value, destRef, visited);
                     } else {
-                        JmixEntity reloadedRef = findOrCreate(srcRef.getClass(), EntityValues.getId(srcRef));
+                        Object reloadedRef = findOrCreate(value.getClass(), EntityValues.getId(value));
                         EntityValues.setValue(dest, name, reloadedRef);
-                        deepCopyIgnoringNulls(srcRef, reloadedRef, visited);
+                        deepCopyIgnoringNulls(value, reloadedRef, visited);
                     }
                 }
             } else if (metadataTools.isEmbedded(srcProperty)) {
-                JmixEntity srcRef = (JmixEntity) value;
-                JmixEntity destRef = EntityValues.getValue(dest, name);
+                Object destRef = EntityValues.getValue(dest, name);
                 if (destRef != null) {
-                    deepCopyIgnoringNulls(srcRef, destRef, visited);
+                    deepCopyIgnoringNulls(value, destRef, visited);
                 } else {
-                    JmixEntity newRef = metadata.create(srcProperty.getRange().asClass().getJavaClass());
+                    Object newRef = metadata.create(srcProperty.getRange().asClass().getJavaClass());
                     EntityValues.setValue(dest, name, newRef);
-                    deepCopyIgnoringNulls(srcRef, newRef, visited);
+                    deepCopyIgnoringNulls(value, newRef, visited);
                 }
             } else {
                 EntityValues.setValue(dest, name, value);

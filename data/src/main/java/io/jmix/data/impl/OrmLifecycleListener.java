@@ -38,7 +38,7 @@ public interface OrmLifecycleListener {
      * @param changes object describing changes in the entity attributes - null for {@code CREATE} and {@code DELETE}
      *                change types
      */
-    default void onEntityChange(JmixEntity entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    default void onEntityChange(Object entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
     }
 
     /**
@@ -52,12 +52,12 @@ public interface OrmLifecycleListener {
     /**
      * Invoked when entities are loaded from ORM store
      */
-    default void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
+    default void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
     }
 
     /**
      * Invoked when entities are saved in ORM store
      */
-    default void onSave(Collection<JmixEntity> entities, SaveContext saveContext) {
+    default void onSave(Collection<Object> entities, SaveContext saveContext) {
     }
 }

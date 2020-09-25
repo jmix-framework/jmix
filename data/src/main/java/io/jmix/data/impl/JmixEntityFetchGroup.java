@@ -69,7 +69,7 @@ public final class JmixEntityFetchGroup extends EntityFetchGroup {
 
     protected boolean cannotAccessUnfetched(FetchGroupTracker entity) {
         if (Boolean.FALSE.equals(accessLocalUnfetched.get()) && entity instanceof JmixEntity) {
-            return entityStates != null && !entityStates.isLoadedWithFetchPlan((JmixEntity) entity, FetchPlan.LOCAL);
+            return entityStates != null && !entityStates.isLoadedWithFetchPlan(entity, FetchPlan.LOCAL);
         }
         return false;
     }

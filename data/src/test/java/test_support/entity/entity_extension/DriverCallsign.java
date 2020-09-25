@@ -16,7 +16,6 @@
 
 package test_support.entity.entity_extension;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
@@ -25,8 +24,7 @@ import java.util.UUID;
 
 @Entity(name = "exttest_DriverCallsign")
 @Table(name = "EXTTEST_DRIVER_CALLSIGN")
-public class DriverCallsign implements JmixEntity {
-
+public class DriverCallsign {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

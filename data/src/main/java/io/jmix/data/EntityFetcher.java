@@ -17,14 +17,14 @@
 package io.jmix.data;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.persistence.Basic;
@@ -64,7 +64,7 @@ public class EntityFetcher {
      *
      * @param fetchPlan if null, nothing happens
      */
-    public void fetch(JmixEntity instance, @Nullable FetchPlan fetchPlan) {
+    public void fetch(Object instance, @Nullable FetchPlan fetchPlan) {
         if (fetchPlan == null)
             return;
         fetch(instance, fetchPlan, new HashMap<>(), false);
@@ -85,7 +85,7 @@ public class EntityFetcher {
     /**
      * Fetch instance by fetch plan.
      *
-     * @param fetchPlan if null, nothing happens
+     * @param fetchPlan           if null, nothing happens
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
@@ -99,7 +99,7 @@ public class EntityFetcher {
     /**
      * Fetch instance by fetch plan.
      *
-     * @param fetchPlanName if null, nothing happens
+     * @param fetchPlanName       if null, nothing happens
      * @param optimizeForDetached if true, detached objects encountered in the graph will be first checked whether all
      *                            required attributes are already loaded, and reloaded only when needed.
      *                            If the argument is false, all detached objects are reloaded anyway.
@@ -112,7 +112,7 @@ public class EntityFetcher {
     }
 
     @SuppressWarnings("unchecked")
-    protected void fetch(JmixEntity entity, FetchPlan fetchPlan, Map<JmixEntity, Set<FetchPlan>> visited, boolean optimizeForDetached) {
+    protected void fetch(Object entity, FetchPlan fetchPlan, Map<Object, Set<FetchPlan>> visited, boolean optimizeForDetached) {
         Set<FetchPlan> fetchPlans = visited.get(entity);
         if (fetchPlans == null) {
             fetchPlans = new HashSet<>();
@@ -139,40 +139,38 @@ public class EntityFetcher {
                 if (value instanceof Collection) {
                     for (Object item : new ArrayList(((Collection) value))) {
                         if (item instanceof JmixEntity) {
-                            JmixEntity e = (JmixEntity) item;
-                            if (entityStates.isDetached(e)) {
-                                fetchReloaded(e, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                            if (entityStates.isDetached(item)) {
+                                fetchReloaded(item, propertyFetchPlan, visited, optimizeForDetached, managed -> {
                                     if (value instanceof List) {
                                         List list = (List) value;
-                                        list.set(list.indexOf(e), managed);
+                                        list.set(list.indexOf(item), managed);
                                     } else {
                                         Collection collection = (Collection) value;
-                                        collection.remove(e);
+                                        collection.remove(item);
                                         collection.add(managed);
                                     }
                                 });
                             } else {
-                                fetch((JmixEntity) item, propertyFetchPlan, visited, optimizeForDetached);
+                                fetch(item, propertyFetchPlan, visited, optimizeForDetached);
                             }
                         }
                     }
                 } else if (value instanceof JmixEntity) {
-                    JmixEntity e = (JmixEntity) value;
-                    boolean isEmbeddable =  e.__getEntityEntry().isEmbeddable();
+                    boolean isEmbeddable = EntitySystemAccess.isEmbeddable(value);
                     if (!metaProperty.isReadOnly() && entityStates.isDetached(value) && !isEmbeddable) {
-                        fetchReloaded(e, propertyFetchPlan, visited, optimizeForDetached, managed -> {
+                        fetchReloaded(value, propertyFetchPlan, visited, optimizeForDetached, managed -> {
                             EntityValues.setValue(entity, property.getName(), managed);
                         });
                     } else {
-                        fetch(e, propertyFetchPlan, visited, optimizeForDetached);
+                        fetch(value, propertyFetchPlan, visited, optimizeForDetached);
                     }
                 }
             }
         }
     }
 
-    protected void fetchReloaded(JmixEntity entity, FetchPlan fetchPlan, Map<JmixEntity, Set<FetchPlan>> visited, boolean optimizeForDetached,
-                                 Consumer<JmixEntity> managedEntityConsumer) {
+    protected void fetchReloaded(Object entity, FetchPlan fetchPlan, Map<Object, Set<FetchPlan>> visited, boolean optimizeForDetached,
+                                 Consumer<Object> managedEntityConsumer) {
         if (!optimizeForDetached || needReloading(entity, fetchPlan)) {
             if (log.isTraceEnabled()) {
                 log.trace("Object " + entity + " is detached, loading it");
@@ -181,7 +179,7 @@ public class EntityFetcher {
             if (storeName != null) {
                 storeAwareLocator.getTransactionTemplate(storeName).executeWithoutResult(transactionStatus -> {
                     EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                    JmixEntity managed = em.find(entity.getClass(), EntityValues.getId(entity));
+                    Object managed = em.find(entity.getClass(), EntityValues.getId(entity));
                     if (managed != null) { // the instance here can be null if it has been deleted
                         managedEntityConsumer.accept(managed);
                         fetch(managed, fetchPlan, visited, optimizeForDetached);
@@ -191,7 +189,7 @@ public class EntityFetcher {
         }
     }
 
-    protected boolean needReloading(JmixEntity entity, FetchPlan fetchPlan) {
+    protected boolean needReloading(Object entity, FetchPlan fetchPlan) {
         return !entityStates.isLoadedWithFetchPlan(entity, fetchPlan);
     }
 

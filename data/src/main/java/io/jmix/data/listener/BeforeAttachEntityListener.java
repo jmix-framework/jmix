@@ -15,18 +15,15 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
-
 /**
  * Defines the contract for handling entities right before they are attached to an EntityManager on merge operation.
- *
  */
-public interface BeforeAttachEntityListener<T extends JmixEntity> {
+public interface BeforeAttachEntityListener<T> {
 
     /**
      * Executes before the object is attached to an EntityManager on merge operation.
      *
-     * @param entity        detached entity
+     * @param entity detached entity
      */
     void onBeforeAttach(T entity);
 }

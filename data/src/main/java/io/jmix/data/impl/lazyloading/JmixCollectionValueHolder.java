@@ -17,6 +17,7 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.impl.SerializationContext;
@@ -30,16 +31,16 @@ import java.util.*;
 public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = -8280038568067316785L;
 
-    protected JmixEntity parentEntity;
+    protected Object parentEntity;
     protected String propertyName;
-    protected JmixEntity rootEntity;
+    protected Object rootEntity;
 
     protected transient DataManager dataManager;
     protected transient FetchPlanBuilder fetchPlanBuilder;
     protected transient Metadata metadata;
     protected transient MetadataTools metadataTools;
 
-    public JmixCollectionValueHolder(String propertyName, JmixEntity parentEntity, DataManager dataManager,
+    public JmixCollectionValueHolder(String propertyName, Object parentEntity, DataManager dataManager,
                                      FetchPlanBuilder fetchPlanBuilder, Metadata metadata, MetadataTools metadataTools) {
         this.propertyName = propertyName;
         this.parentEntity = parentEntity;
@@ -49,11 +50,11 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
         this.metadataTools = metadataTools;
     }
 
-    public void setRootEntity(JmixEntity rootEntity) {
+    public void setRootEntity(Object rootEntity) {
         this.rootEntity = rootEntity;
     }
 
-    public JmixEntity getRootEntity() {
+    public Object getRootEntity() {
         return rootEntity;
     }
 
@@ -71,16 +72,16 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
                 if (plc.getAccessConstraints() != null && !plc.getAccessConstraints().isEmpty()) {
                     lc.setAccessConstraints(plc.getAccessConstraints());
                 }
-                JmixEntity result = dataManager.load(lc);
+                JmixEntity result = (JmixEntity) dataManager.load(lc);
 
                 this.value = EntityValues.getValue(result, propertyName);
-                SecurityState resultState = result.__getEntityEntry().getSecurityState();
-                SecurityState parentState = parentEntity.__getEntityEntry().getSecurityState();
+                SecurityState resultState = EntitySystemAccess.getSecurityState(result);
+                SecurityState parentState = EntitySystemAccess.getSecurityState(parentEntity);
                 Collection ids = resultState.getErasedIds(propertyName);
                 if (ids != null && !ids.isEmpty()) {
                     parentState.addErasedIds(propertyName, ids);
                 }
-                JmixEntity rootEntity = getRootEntity();
+                Object rootEntity = getRootEntity();
                 if (rootEntity != null) {
                     if (value instanceof List) {
                         for (ListIterator iterator = ((List) value).listIterator(); iterator.hasNext(); ) {
@@ -118,7 +119,7 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
 
                 EntityAttributeVisitor av = new EntityAttributeVisitor() {
                     @Override
-                    public void visit(JmixEntity entity, MetaProperty property) {
+                    public void visit(Object entity, MetaProperty property) {
                         if (rootEntity != null && rootEntity.equals(entity)) {
                             return;
                         }
@@ -144,9 +145,9 @@ public class JmixCollectionValueHolder extends JmixAbstractValueHolder {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         BeanFactory beanFactory = SerializationContext.getThreadLocalBeanFactory();
-        dataManager = (DataManager) beanFactory.getBean(DataManager.NAME);
+        dataManager = beanFactory.getBean(DataManager.class);
         fetchPlanBuilder = beanFactory.getBean(FetchPlanBuilder.class, parentEntity.getClass());
-        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
-        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
+        metadata = beanFactory.getBean(Metadata.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
     }
 }

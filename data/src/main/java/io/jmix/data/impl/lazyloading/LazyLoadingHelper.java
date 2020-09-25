@@ -63,14 +63,14 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
     protected BeanFactory beanFactory;
 
     @Override
-    public void onLoad(Collection<JmixEntity> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
-        for (JmixEntity item : entities) {
+    public void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
+        for (Object item : entities) {
             replaceValueHolders(item, loadContext, effectiveFetchPlan);
         }
     }
 
-    public void replaceValueHolders(JmixEntity instance, LoadContext loadContext, FetchPlan fetchPlan/*List<FetchPlan> fetchPlans*/) {
-        Map<JmixEntity, Set<FetchPlan>> collectedFetchPlans = new HashMap<>();
+    public void replaceValueHolders(Object instance, LoadContext loadContext, FetchPlan fetchPlan/*List<FetchPlan> fetchPlans*/) {
+        Map<Object, Set<FetchPlan>> collectedFetchPlans = new HashMap<>();
 
         if (fetchPlan != null) {
             collectFetchPlans(instance, fetchPlan, collectedFetchPlans);
@@ -82,7 +82,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                 .filter(ac -> ac instanceof InMemoryConstraint)
                 .collect(Collectors.toList());
 
-        for (Map.Entry<JmixEntity, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
+        for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
             for (MetaProperty property : metaClass.getProperties()) {
                 if (property.getRange().isClass() && !isPropertyContainedInFetchPlans(property, entry.getValue())) {
@@ -92,7 +92,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
         }
     }
 
-    protected void replaceValueHoldersInternal(JmixEntity instance, MetaProperty property, boolean softDeletion,
+    protected void replaceValueHoldersInternal(Object instance, MetaProperty property, boolean softDeletion,
                                                Map<String, Serializable> hints, List<AccessConstraint<?>> constraints) {
         if (entityStates.isLoaded(instance, property.getName())) {
             return;
@@ -227,7 +227,7 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
         }
     }
 
-    protected void collectFetchPlans(JmixEntity instance, FetchPlan fetchPlan, Map<JmixEntity, Set<FetchPlan>> collectedFetchPlans) {
+    protected void collectFetchPlans(Object instance, FetchPlan fetchPlan, Map<Object, Set<FetchPlan>> collectedFetchPlans) {
         Set<FetchPlan> fetchPlans = collectedFetchPlans.get(instance);
         if (fetchPlans == null) {
             fetchPlans = new HashSet<>();
@@ -250,11 +250,11 @@ public class LazyLoadingHelper implements OrmLifecycleListener {
                 if (value instanceof Collection) {
                     for (Object item : new ArrayList(((Collection) value))) {
                         if (item instanceof JmixEntity) {
-                            collectFetchPlans((JmixEntity) item, propertyFetchPlan, collectedFetchPlans);
+                            collectFetchPlans(item, propertyFetchPlan, collectedFetchPlans);
                         }
                     }
                 } else if (value instanceof JmixEntity) {
-                    collectFetchPlans((JmixEntity) value, propertyFetchPlan, collectedFetchPlans);
+                    collectFetchPlans(value, propertyFetchPlan, collectedFetchPlans);
                 }
             }
         }

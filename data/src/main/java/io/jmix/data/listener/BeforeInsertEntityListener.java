@@ -15,18 +15,15 @@
  */
 package io.jmix.data.listener;
 
-import io.jmix.core.JmixEntity;
-
 /**
  * Defines the contract for handling entities before they have been inserted into DB.
- *
  */
-public interface BeforeInsertEntityListener<T extends JmixEntity> {
+public interface BeforeInsertEntityListener<T> {
 
     /**
      * Executes before the object has been inserted into DB.
      *
-     * @param entity        inserted entity instance
+     * @param entity inserted entity instance
      */
     void onBeforeInsert(T entity);
 }

@@ -16,7 +16,6 @@
 
 package io.jmix.data.event;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
 
@@ -122,7 +121,7 @@ public class AttributeChanges {
      * @return Id of the referenced object
      */
     @Nullable
-    public <E extends JmixEntity> Id<E> getOldReferenceId(String attributeName) {
+    public <E> Id<E> getOldReferenceId(String attributeName) {
         return getOldValue(attributeName);
     }
 
@@ -142,7 +141,7 @@ public class AttributeChanges {
      * @param entityClass   class of the attribute
      * @return collection of Ids
      */
-    public <E extends JmixEntity> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
+    public <E> Collection<Id<E>> getOldCollection(String attributeName, Class<E> entityClass) {
         return getOldValue(attributeName);
     }
 
@@ -155,8 +154,8 @@ public class AttributeChanges {
     public String toString() {
         return "AttributeChanges{"
                 + getAttributes().stream()
-                        .map(name -> name + ": " + getOldValue(name))
-                        .collect(Collectors.joining(","))
+                .map(name -> name + ": " + getOldValue(name))
+                .collect(Collectors.joining(","))
                 + '}';
     }
 

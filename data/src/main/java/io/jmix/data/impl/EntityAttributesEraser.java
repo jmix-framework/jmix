@@ -18,7 +18,6 @@ package io.jmix.data.impl;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import io.jmix.core.JmixEntity;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,48 +28,46 @@ import java.util.function.Predicate;
 public interface EntityAttributesEraser {
     String NAME = "data_EntityAttributesEraser";
 
-    ReferencesCollector collectErasingReferences(JmixEntity entity, Predicate<JmixEntity> predicate);
-
-    ReferencesCollector collectErasingReferences(Collection<? extends JmixEntity> entityList, Predicate<JmixEntity> predicate);
+    ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate);
 
     void eraseReferences(EntityAttributesEraser.ReferencesCollector referencesCollector);
 
-    void restoreAttributes(JmixEntity entity);
+    void restoreAttributes(Object entity);
 
     class ReferencesCollector {
-        protected Map<JmixEntity, ReferencesByEntity> references = new HashMap<>();
+        protected Map<Object, ReferencesByEntity> references = new HashMap<>();
 
         protected static class ReferencesByEntity {
-            protected final Multimap<String, JmixEntity> referencesByAttributes = HashMultimap.create();
+            protected final Multimap<String, Object> referencesByAttributes = HashMultimap.create();
 
             public Collection<String> getAttributes() {
                 return referencesByAttributes.keySet();
             }
 
-            public Collection<JmixEntity> getReferences(String attribute) {
+            public Collection<Object> getReferences(String attribute) {
                 return referencesByAttributes.get(attribute);
             }
 
-            public void addReference(String attribute, JmixEntity reference) {
+            public void addReference(String attribute, Object reference) {
                 referencesByAttributes.put(attribute, reference);
             }
         }
 
-        public Collection<JmixEntity> getEntities() {
+        public Collection<Object> getEntities() {
             return references.keySet();
         }
 
-        public Collection<String> getAttributes(JmixEntity entity) {
+        public Collection<String> getAttributes(Object entity) {
             ReferencesByEntity referencesByEntity = references.get(entity);
             return referencesByEntity == null ? Collections.emptyList() : referencesByEntity.getAttributes();
         }
 
-        public Collection<JmixEntity> getReferencesByAttribute(JmixEntity entity, String attribute) {
+        public Collection<Object> getReferencesByAttribute(Object entity, String attribute) {
             ReferencesByEntity referencesByEntity = references.get(entity);
             return referencesByEntity == null ? Collections.emptyList() : referencesByEntity.getReferences(attribute);
         }
 
-        public void addReference(JmixEntity entity, JmixEntity reference, String propertyName) {
+        public void addReference(Object entity, Object reference, String propertyName) {
             ReferencesByEntity referencesByEntity = references.computeIfAbsent(entity, e -> new ReferencesByEntity());
             referencesByEntity.addReference(propertyName, reference);
         }

@@ -16,22 +16,22 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.event.AttributeChanges;
 import io.jmix.data.event.EntityChangedEvent;
 
-import static io.jmix.data.event.EntityChangedEvent.Type.*;
+import static io.jmix.data.event.EntityChangedEvent.Type.CREATED;
+import static io.jmix.data.event.EntityChangedEvent.Type.DELETED;
 
 public class EntityChangedEventInfo {
     private final Object source;
-    private final JmixEntity entity;
+    private final Object entity;
     private EntityChangedEvent.Type type;
     private final AttributeChanges changes;
     private MetaClass originalMetaClass;
 
     public EntityChangedEventInfo(Object source,
-                                  JmixEntity entity,
+                                  Object entity,
                                   EntityChangedEvent.Type type,
                                   AttributeChanges changes,
                                   MetaClass originalMetaClass) {
@@ -46,7 +46,7 @@ public class EntityChangedEventInfo {
         return source;
     }
 
-    public JmixEntity getEntity() {
+    public Object getEntity() {
         return entity;
     }
 

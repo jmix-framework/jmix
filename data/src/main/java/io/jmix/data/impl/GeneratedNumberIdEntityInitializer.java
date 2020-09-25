@@ -92,6 +92,6 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 5;
+        return JmixOrder.HIGHEST_PRECEDENCE + 5;
     }
 }

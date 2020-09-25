@@ -145,7 +145,7 @@ public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
             if (entity != null) {
                 String attributePath = name.substring(ENTITY_FIELD_QUERY_PARAM.length());
                 Object value = EntityValues.getValueEx(entity, attributePath);
-                return value instanceof JmixEntity ? EntityValues.getId(value) : value;
+                return value instanceof Entity ? EntityValues.getId(value) : value;
             }
         }
         return null;

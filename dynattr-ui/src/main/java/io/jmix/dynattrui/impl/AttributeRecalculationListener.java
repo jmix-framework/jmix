@@ -16,7 +16,6 @@
 
 package io.jmix.dynattrui.impl;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrUtils;

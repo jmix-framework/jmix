@@ -17,7 +17,7 @@
 package io.jmix.dynattrui.panel;
 
 import com.google.common.base.Strings;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -266,7 +266,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param instanceContainer {@link InstanceContainer} object with editing entity
      */
-    public void setInstanceContainer(InstanceContainer<JmixEntity> instanceContainer) {
+    public void setInstanceContainer(InstanceContainer<Entity> instanceContainer) {
         this.instanceContainer = instanceContainer;
         propertiesForm.setValueSourceProvider(new ContainerValueSourceProvider<>(instanceContainer));
         initCategoryField(instanceContainer);

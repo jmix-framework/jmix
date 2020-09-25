@@ -420,11 +420,11 @@ public class DynAttrManagerImpl implements DynAttrManager {
                                     if (value instanceof Collection) {
                                         //noinspection rawtypes
                                         for (Object item : ((Collection) value)) {
-                                            if (item instanceof JmixEntity) {
+                                            if (item instanceof Entity) {
                                                 entitiesByType.put(metadata.getClass(item.getClass()), item);
                                             }
                                         }
-                                    } else if (value instanceof JmixEntity) {
+                                    } else if (value instanceof Entity) {
                                         if (!EntitySystemAccess.isEmbeddable(entity)) {
                                             entitiesByType.put(metadata.getClass(value.getClass()), value);
                                         }
@@ -493,7 +493,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
             cav.setDecimalValue((BigDecimal) value);
         } else if (value instanceof Boolean) {
             cav.setBooleanValue((Boolean) value);
-        } else if (value instanceof JmixEntity) {
+        } else if (value instanceof Entity) {
             Object referenceId = referenceToEntitySupport.getReferenceId(value);
             cav.getEntityValue().setObjectEntityId(referenceId);
             cav.setTransientEntityValue(value);

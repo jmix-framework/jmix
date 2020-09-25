@@ -19,7 +19,6 @@ package io.jmix.dynattrui.impl;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import org.springframework.context.ApplicationContext;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;

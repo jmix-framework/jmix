@@ -18,7 +18,6 @@
 package io.jmix.dynattr;
 
 import io.jmix.core.FetchPlan;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.constraint.AccessConstraint;
 
 import javax.annotation.Nullable;

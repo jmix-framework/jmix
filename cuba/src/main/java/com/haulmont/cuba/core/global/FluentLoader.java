@@ -21,7 +21,7 @@ import io.jmix.core.FetchPlanBuilder;
 import io.jmix.core.Entity;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.persistence.TemporalType;
 import java.io.Serializable;
@@ -142,14 +142,14 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
      * Sets the query text.
      */
     public ByQuery<E> query(String queryString) {
-        return new ByQuery<>(this, queryString, beanFactory);
+        return new ByQuery<>(this, queryString, applicationContext);
     }
 
     /**
      * Sets the query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
      */
     public ByQuery<E> query(String queryString, Object... parameters) {
-        return new ByQuery<>(this, queryString, parameters, beanFactory);
+        return new ByQuery<>(this, queryString, parameters, applicationContext);
     }
 
     public static class ById<E extends Entity> extends io.jmix.core.FluentLoader.ById<E> {
@@ -343,12 +343,12 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
 
     public static class ByQuery<E extends Entity> extends io.jmix.core.FluentLoader.ByQuery<E> {
 
-        protected ByQuery(io.jmix.core.FluentLoader<E> loader, String queryString, BeanFactory beanFactory) {
-            super(loader, queryString, beanFactory);
+        protected ByQuery(io.jmix.core.FluentLoader<E> loader, String queryString, ApplicationContext applicationContext) {
+            super(loader, queryString, applicationContext);
         }
 
-        protected ByQuery(io.jmix.core.FluentLoader<E> loader, String queryString, Object[] positionalParams, BeanFactory beanFactory) {
-            super(loader, queryString, positionalParams, beanFactory);
+        protected ByQuery(io.jmix.core.FluentLoader<E> loader, String queryString, Object[] positionalParams, ApplicationContext applicationContext) {
+            super(loader, queryString, positionalParams, applicationContext);
         }
 
         @Override

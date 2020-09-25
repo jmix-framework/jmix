@@ -162,7 +162,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         for (MetaClass metaClass : metadata.getClasses()) {
             if (readPermitted(metaClass)) {
                 Class javaClass = metaClass.getJavaClass();
-                if (JmixEntity.class.isAssignableFrom(javaClass) && isNotAbstract(javaClass)) {
+                if (Entity.class.isAssignableFrom(javaClass) && isNotAbstract(javaClass)) {
                     options.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")", metaClass);
                 }
             }
@@ -214,7 +214,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             boolean removeEnabled = true;
             if (!selectionEvent.getSelected().isEmpty()) {
                 for (Object o : selectionEvent.getSelected()) {
-                    if (o instanceof JmixEntity) {
+                    if (o instanceof Entity) {
                         if (EntityValues.isSoftDeleted(o)) {
                             removeEnabled = false;
                         }

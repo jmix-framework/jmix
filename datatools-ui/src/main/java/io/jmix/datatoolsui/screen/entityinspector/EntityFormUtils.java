@@ -16,7 +16,6 @@
 
 package io.jmix.datatoolsui.screen.entityinspector;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 

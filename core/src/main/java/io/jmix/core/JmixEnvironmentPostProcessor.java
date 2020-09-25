@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Internal
-@Order(Events.HIGHEST_CORE_PRECEDENCE)
+@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class JmixEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override

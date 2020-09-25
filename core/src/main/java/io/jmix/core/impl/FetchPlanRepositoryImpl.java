@@ -157,7 +157,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     }
 
     @EventListener(ContextRefreshedEvent.class)
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 40)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 40)
     public void reset() {
         initialized = false;
     }

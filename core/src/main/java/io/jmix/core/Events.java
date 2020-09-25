@@ -26,19 +26,6 @@ import org.springframework.context.ApplicationEventPublisher;
 public interface Events {
     String NAME = "core_Events";
 
-    // todo move to JmixCoreConfiguration
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} listeners added by the platform.
-     */
-    int HIGHEST_CORE_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} or
-     * {@link org.springframework.core.annotation.Order} listeners added by the platform.
-     */
-    int LOWEST_CORE_PRECEDENCE = 1000;
-
     /**
      * Notify all <strong>matching</strong> listeners registered with this application of an application event.
      * Events may be framework event (such as RequestHandledEvent) or application-specific event.

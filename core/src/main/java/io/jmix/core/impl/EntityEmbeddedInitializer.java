@@ -16,9 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.EntityInitializer;
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -53,6 +51,6 @@ public class EntityEmbeddedInitializer implements EntityInitializer, Ordered {
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE + 20;
+        return JmixOrder.HIGHEST_PRECEDENCE + 20;
     }
 }

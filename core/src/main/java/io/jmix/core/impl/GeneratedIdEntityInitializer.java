@@ -16,9 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.EntityInitializer;
-import io.jmix.core.Metadata;
-import io.jmix.core.UuidProvider;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -51,6 +49,6 @@ public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered 
 
     @Override
     public int getOrder() {
-        return HIGHEST_PLATFORM_PRECEDENCE;
+        return JmixOrder.HIGHEST_PRECEDENCE;
     }
 }

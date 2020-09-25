@@ -16,7 +16,7 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.Events;
+import io.jmix.core.JmixOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class LoggingConfigurer {
     private Environment environment;
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 10)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
     public void initDefaultLogLevels(ContextRefreshedEvent event) {
         LoggingSystem loggingSystem = LoggingSystem.get(this.getClass().getClassLoader());
 

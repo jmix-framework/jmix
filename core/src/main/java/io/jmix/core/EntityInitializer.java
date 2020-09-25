@@ -16,16 +16,10 @@
 
 package io.jmix.core;
 
+/**
+ * Interface to be implemented by beans that initialize new entity instances created via {@link Metadata#create(Class)}.
+ */
 public interface EntityInitializer {
-    /**
-     * Defines the highest precedence for {@link org.springframework.core.Ordered} providers of the platform.
-     */
-    int HIGHEST_PLATFORM_PRECEDENCE = 100;
-
-    /**
-     * Defines the lowest precedence for {@link org.springframework.core.Ordered} providers of the platform.
-     */
-    int LOWEST_PLATFORM_PRECEDENCE = 1000;
 
     void initEntity(Object entity);
 }

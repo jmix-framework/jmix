@@ -17,7 +17,7 @@
 package io.jmix.core.security.impl;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Events;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.impl.logging.LogMdc;
 import io.jmix.core.security.Authenticator;
 import io.jmix.core.security.AuthenticatorSupport;
@@ -25,6 +25,7 @@ import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
@@ -34,7 +35,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Component(Authenticator.NAME)
 public class AuthenticatorImpl extends AuthenticatorSupport implements Authenticator {
@@ -45,13 +45,13 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
     protected AuthenticationManager authenticationManager;
 
     @EventListener
-    @Order(Events.HIGHEST_CORE_PRECEDENCE + 5)
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 5)
     protected void beginServerSessionOnStartup(ContextRefreshedEvent event) {
         begin();
     }
 
     @EventListener
-    @Order(Events.LOWEST_CORE_PRECEDENCE - 5)
+    @Order(JmixOrder.LOWEST_PRECEDENCE - 5)
     protected void endServerSessionOnStartup(ContextRefreshedEvent event) {
         end();
     }

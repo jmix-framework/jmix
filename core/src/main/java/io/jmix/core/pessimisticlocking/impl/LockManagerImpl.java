@@ -148,7 +148,7 @@ public class LockManagerImpl implements LockManager {
 
     @Nullable
     @Override
-    public LockInfo lock(Entity entity) {
+    public LockInfo lock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -165,7 +165,7 @@ public class LockManagerImpl implements LockManager {
     }
 
     @Override
-    public void unlock(Entity entity) {
+    public void unlock(Object entity) {
         Preconditions.checkNotNullArgument(entity, "entity is null");
 
         MetaClass metaClass = metadata.getClass(entity.getClass());

@@ -16,8 +16,8 @@
 
 package io.jmix.data.impl.eclipselink;
 
-import io.jmix.core.EntityStates;
 import io.jmix.core.Entity;
+import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.BaseUser;
@@ -45,6 +45,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.List;
+
+import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
 @Component(JmixEclipseLinkDescriptorEventListener.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -99,7 +101,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Override
     public void postBuild(DescriptorEvent event) {
         if (event.getObject() instanceof Entity) {
-            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
+            getUncheckedEntityEntry(event.getObject()).setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();
@@ -114,7 +116,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
         // in shared cache mode, postBuild event is missed, so we repeat it here
         if (event.getObject() instanceof Entity) {
             ((Entity) event.getObject()).__copyEntityEntry();
-            ((Entity) event.getObject()).__getEntityEntry().setNew(false);
+            getUncheckedEntityEntry(event.getObject()).setNew(false);
         }
         if (event.getObject() instanceof FetchGroupTracker) {
             FetchGroupTracker entity = (FetchGroupTracker) event.getObject();

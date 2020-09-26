@@ -56,6 +56,9 @@ import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
+import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
+
 @Component(PersistenceSupport.NAME)
 public class PersistenceSupport implements ApplicationContextAware {
 
@@ -161,7 +164,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         getInstanceContainerResourceHolder(getStorageName(unitOfWork)).registerInstanceForUnitOfWork(entity, unitOfWork);
 
-        ((Entity) entity).__getEntityEntry().setDetached(false);
+        getEntityEntry(entity).setDetached(false);
     }
 
     public void registerInstance(Object entity, AbstractSession session) {
@@ -221,7 +224,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     }
 
     protected void fireBeforeDetachEntityListener(Object entity, String storeName) {
-        if (!(((Entity) entity).__getEntityEntry().isDetached())) {
+        if (!getEntityEntry(entity).isDetached()) {
             JmixEntityFetchGroup.setAccessLocalUnfetched(false);
             try {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DETACH, storeName);
@@ -239,7 +242,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                     && EntityValues.isSoftDeleted(entity);
 
         } else {
-            return ((Entity) entity).__getEntityEntry().isRemoved();
+            return getEntityEntry(entity).isRemoved();
         }
     }
 
@@ -305,7 +308,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
         ContainerResourceHolder container = getInstanceContainerResourceHolder(storeName);
         container.unregisterInstance(entity, unitOfWork);
-        if (((Entity) entity).__getEntityEntry().isNew()) {
+        if (getEntityEntry(entity).isNew()) {
             container.getNewDetachedInstances().add(entity);
         }
 
@@ -314,9 +317,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     protected void makeDetached(Object instance) {
         if (instance instanceof Entity) {
-            ((Entity) instance).__getEntityEntry().setNew(false);
-            ((Entity) instance).__getEntityEntry().setManaged(false);
-            ((Entity) instance).__getEntityEntry().setDetached(true);
+            getUncheckedEntityEntry(instance).setNew(false);
+            getUncheckedEntityEntry(instance).setManaged(false);
+            getUncheckedEntityEntry(instance).setDetached(true);
         }
         if (instance instanceof FetchGroupTracker) {
             ((FetchGroupTracker) instance)._persistence_setSession(null);
@@ -371,7 +374,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 log.trace("ContainerResourceHolder.registerInstanceForUnitOfWork: instance = " +
                         instance + ", UnitOfWork = " + unitOfWork);
 
-            ((Entity) instance).__getEntityEntry().setManaged(true);
+            getEntityEntry(instance).setManaged(true);
 
             Set<Object> instances = unitOfWorkMap.get(unitOfWork);
             if (instances == null) {
@@ -450,26 +453,25 @@ public class PersistenceSupport implements ApplicationContextAware {
             Set<String> typeNames = new HashSet<>();
             for (Object instance : instances) {
                 if (instance instanceof Entity) {
-                    Entity entity = (Entity) instance;
 
                     if (readOnly) {
                         AttributeChangeListener changeListener =
-                                (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
+                                (AttributeChangeListener) ((ChangeTracker) instance)._persistence_getPropertyChangeListener();
                         if (changeListener != null && changeListener.hasChanges())
-                            throw new IllegalStateException("Changed instance " + entity + " in read-only transaction");
+                            throw new IllegalStateException("Changed instance " + instance + " in read-only transaction");
                     }
 
                     // if cache is enabled, the entity can have EntityFetchGroup instead of JmixEntityFetchGroup
                     if (instance instanceof FetchGroupTracker) {
-                        FetchGroupTracker fetchGroupTracker = (FetchGroupTracker) entity;
+                        FetchGroupTracker fetchGroupTracker = (FetchGroupTracker) instance;
                         FetchGroup fetchGroup = fetchGroupTracker._persistence_getFetchGroup();
                         if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
                             fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
                     }
-                    if (entity.__getEntityEntry().isNew()) {
-                        typeNames.add(metadata.getClass(entity).getName());
+                    if (getEntityEntry(instance).isNew()) {
+                        typeNames.add(metadata.getClass(instance).getName());
                     }
-                    fireBeforeDetachEntityListener(entity, container.getStoreName());
+                    fireBeforeDetachEntityListener(instance, container.getStoreName());
                 }
             }
 
@@ -505,15 +507,15 @@ public class PersistenceSupport implements ApplicationContextAware {
                 for (Object instance : instances) {
                     if (instance instanceof Entity) {
                         if (status == TransactionSynchronization.STATUS_COMMITTED) {
-                            if (((Entity) instance).__getEntityEntry().isNew()) {
+                            if (getEntityEntry(instance).isNew()) {
                                 // new instances become not new and detached only if the transaction was committed
-                                ((Entity) instance).__getEntityEntry().setNew(false);
+                                getEntityEntry(instance).setNew(false);
                             }
                         } else { // commit failed or the transaction was rolled back
                             makeDetached(instance);
                             for (Object entity : container.getNewDetachedInstances()) {
-                                ((Entity) entity).__getEntityEntry().setNew(true);
-                                ((Entity) entity).__getEntityEntry().setDetached(false);
+                                getEntityEntry(entity).setNew(true);
+                                getEntityEntry(entity).setDetached(false);
                             }
                         }
                     }
@@ -529,7 +531,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         private void detachAll() {
             Collection<Object> instances = container.getAllInstances();
             for (Object instance : instances) {
-                if (((Entity) instance).__getEntityEntry().isNew()) {
+                if (getEntityEntry(instance).isNew()) {
                     container.getNewDetachedInstances().add(instance);
                 }
             }
@@ -580,7 +582,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 
         @Override
         public boolean visit(Object entity) {
-            if (((Entity) entity).__getEntityEntry().isNew()
+            if (getEntityEntry(entity).isNew()
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
 
@@ -623,7 +625,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 // add changes after listener
                 changes.addChanges(entity);
 
-                if (((Entity) entity).__getEntityEntry().isNew()) {
+                if (getEntityEntry(entity).isNew()) {
 
                     // it can happen if flush was performed, so the entity is still New but was saved
                     fireEntityChange(entity, EntityChangeType.CREATE, null);

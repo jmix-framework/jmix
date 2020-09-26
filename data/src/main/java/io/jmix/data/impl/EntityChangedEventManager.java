@@ -41,6 +41,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
+
 @Component(EntityChangedEventManager.NAME)
 public class EntityChangedEventManager {
 
@@ -166,7 +168,7 @@ public class EntityChangedEventManager {
             if (info.publish) {
                 EntityChangedEvent.Type type = null;
                 AttributeChanges attributeChanges = null;
-                if (info.onCreated && ((Entity) entity).__getEntityEntry().isNew()) {
+                if (info.onCreated && getEntityEntry(entity).isNew()) {
                     type = EntityChangedEvent.Type.CREATED;
                     attributeChanges = getEntityAttributeChanges(entity, false);
                 } else {

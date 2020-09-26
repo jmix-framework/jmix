@@ -17,8 +17,8 @@
 package io.jmix.data.impl;
 
 import com.google.common.collect.Sets;
-import io.jmix.core.*;
 import io.jmix.core.Entity;
+import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
@@ -44,6 +44,8 @@ import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.metamodel.Metamodel;
 import java.lang.reflect.Field;
 import java.util.*;
+
+import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
 public class JmixEntityManager implements EntityManager {
 
@@ -122,14 +124,13 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public void remove(Object object) {
-        log.debug("remove {}", object);
+    public void remove(Object entity) {
+        log.debug("remove {}", entity);
 
-        if (!(object instanceof Entity)) {
-            delegate.remove(object);
+        if (!(entity instanceof Entity)) {
+            delegate.remove(entity);
             return;
         }
-        Entity entity = (Entity) object;
 
         if (entityStates.isDetached(entity)) {
             entity = internalMerge(entity);
@@ -150,7 +151,7 @@ public class JmixEntityManager implements EntityManager {
             }
         } else {
             delegate.remove(entity);
-            entity.__getEntityEntry().setRemoved(true);
+            getEntityEntry(entity).setRemoved(true);
         }
     }
 

@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.global.impl.CubaMetadata;
 import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
+import com.haulmont.cuba.core.sys.CubaNumberIdCache;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
@@ -40,6 +41,7 @@ import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.data.DataConfiguration;
+import io.jmix.data.impl.NumberIdCache;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
@@ -127,6 +129,11 @@ public class CubaConfiguration {
     @Bean(MetaModelLoader.NAME)
     protected MetaModelLoader metaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
         return new CubaMetaModelLoader(datatypes, stores, formatStringsRegistry);
+    }
+
+    @Bean(NumberIdCache.NAME)
+    protected NumberIdCache numberIdCache() {
+        return new CubaNumberIdCache();
     }
 
     @Bean("cuba_UiControllers")

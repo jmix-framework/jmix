@@ -20,10 +20,11 @@ import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.components.TwinColumn;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.loader.TwinColumnLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class CubaTwinColumnLoader extends TwinColumnLoader {
@@ -32,6 +33,8 @@ public class CubaTwinColumnLoader extends TwinColumnLoader {
     @Override
     public void loadComponent() {
         super.loadComponent();
+
+        loadColumns((TwinColumn) resultComponent, element);
 
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
@@ -53,7 +56,14 @@ public class CubaTwinColumnLoader extends TwinColumnLoader {
     }
 
     @Override
-    protected void loadCaptionProperty(TwinColumn resultComponent, Element element) {
+    protected void loadCaptionProperty(io.jmix.ui.component.TwinColumn resultComponent, Element element) {
         ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
+    }
+
+    protected void loadColumns(TwinColumn resultComponent, Element element) {
+        String columns = element.attributeValue("columns");
+        if (!StringUtils.isEmpty(columns)) {
+            resultComponent.setColumns(Integer.parseInt(columns));
+        }
     }
 }

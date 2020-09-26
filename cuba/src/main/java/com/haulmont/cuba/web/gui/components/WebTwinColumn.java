@@ -18,11 +18,27 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.TwinColumn;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 @Deprecated
 public class WebTwinColumn<V> extends io.jmix.ui.component.impl.WebTwinColumn<V> implements TwinColumn<V> {
+
+    protected int columns;
+
+    @Override
+    public int getColumns() {
+        return columns;
+    }
+
+    @Override
+    public void setColumns(int columns) {
+        this.columns = columns;
+        // see Vaadin 7 com.vaadin.ui.TwinColSelect#setColumns(int) for formula
+        component.setWidth((columns * 2 + 4) + columns + "em");
+    }
+
     @Override
     public void addValidator(Consumer<? super Collection<V>> validator) {
         addValidator(validator::accept);
@@ -31,5 +47,10 @@ public class WebTwinColumn<V> extends io.jmix.ui.component.impl.WebTwinColumn<V>
     @Override
     public void removeValidator(Consumer<Collection<V>> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public void setOptionStyleProvider(@Nullable OptionStyleProvider<V> optionStyleProvider) {
+        setOptionStyleProvider((item) -> optionStyleProvider.getStyleName(item, component.isSelected(item)));
     }
 }

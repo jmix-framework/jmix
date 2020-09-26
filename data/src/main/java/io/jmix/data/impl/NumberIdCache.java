@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package io.jmix.data.impl;
@@ -20,6 +19,7 @@ package io.jmix.data.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Intermediate cache for generated ids of entities with long/integer PK.
- * The cache size is determined by the {@code cuba.numberIdCacheSize} app property.
+ * The cache size is determined by the {@code jmix.data.numberIdCacheSize} property.
  */
 @Component(NumberIdCache.NAME)
 public class NumberIdCache {
@@ -48,10 +48,10 @@ public class NumberIdCache {
     protected NumberIdWorker numberIdWorker;
     @Autowired
     protected DataProperties dataProperties;
-
-    protected ConcurrentMap<String, Generator> cache = new ConcurrentHashMap<>();
     @Autowired
     private MetadataTools metadataTools;
+
+    protected ConcurrentMap<String, Generator> cache = new ConcurrentHashMap<>();
 
     protected class Generator {
         protected long counter;
@@ -94,6 +94,22 @@ public class NumberIdCache {
         }
     }
 
+    protected static class SequenceParams {
+
+        public final String name;
+        public final boolean cached;
+
+        public SequenceParams() {
+            name = null;
+            cached = true;
+        }
+
+        public SequenceParams(@Nullable String name, boolean cached) {
+            this.name = name;
+            this.cached = cached;
+        }
+    }
+
     /**
      * Generates next id.
      *
@@ -102,32 +118,40 @@ public class NumberIdCache {
      */
     public Long createLongId(String entityName) {
         MetaClass metaClass = metadata.findClass(entityName);
-        final boolean cached;
-        final String sequenceName;
+        SequenceParams sequenceParams;
         if (metaClass != null) {
-            Optional<MetaProperty> generatedIdPropertyOpt = metaClass.getProperties().stream()
-                    .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedValue.class))
-                    .findFirst();
-            if (generatedIdPropertyOpt.isPresent()) {
-                Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedValue.class);
-                sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
-                cached = sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"));
-            } else {
-                cached = true;
-                sequenceName = null;
-            }
+            sequenceParams = getSequenceParams(metaClass);
         } else {
-            cached = true;
-            sequenceName = null;
+            sequenceParams = new SequenceParams();
         }
 
-        Generator gen = cache.computeIfAbsent(getCacheKey(entityName, sequenceName), s -> new Generator(entityName, sequenceName, cached));
+        Generator gen = cache.computeIfAbsent(
+                getCacheKey(entityName, sequenceParams.name),
+                s -> new Generator(entityName, sequenceParams.name, sequenceParams.cached)
+        );
         return gen.getNext();
+    }
+
+    protected SequenceParams getSequenceParams(MetaClass metaClass) {
+        Optional<MetaProperty> generatedIdPropertyOpt = metaClass.getProperties().stream()
+                .filter(property -> property.getAnnotatedElement().isAnnotationPresent(JmixGeneratedValue.class))
+                .findFirst();
+        if (generatedIdPropertyOpt.isPresent()) {
+            Map<String, Object> attributes = metadataTools.getMetaAnnotationAttributes(generatedIdPropertyOpt.get().getAnnotations(), JmixGeneratedValue.class);
+            String sequenceName = Strings.emptyToNull((String) attributes.get("sequenceName"));
+            return new SequenceParams(
+                    sequenceName,
+                    sequenceName == null || Boolean.TRUE.equals(attributes.get("sequenceCache"))
+            );
+        } else {
+            return new SequenceParams();
+        }
     }
 
     /**
      * INTERNAL. Used by tests.
      */
+    @Internal
     public void reset() {
         cache.clear();
     }

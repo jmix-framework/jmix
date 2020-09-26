@@ -40,9 +40,7 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     protected OptionsBinding<V> optionsBinding;
 
     protected Function<? super V, String> optionCaptionProvider;
-    protected OptionStyleProvider<V> optionStyleProvider;
-
-    protected int columns;
+    protected Function<? super V, String> optionStyleProvider;
 
     protected MetadataTools metadataTools;
 
@@ -187,18 +185,6 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    public int getColumns() {
-        return columns;
-    }
-
-    @Override
-    public void setColumns(int columns) {
-        this.columns = columns;
-        // see Vaadin 7 com.vaadin.ui.TwinColSelect#setColumns(int) for formula
-        component.setWidth((columns * 2 + 4) + columns + "em");
-    }
-
-    @Override
     public int getRows() {
         return component.getRows();
     }
@@ -209,19 +195,26 @@ public class WebTwinColumn<V> extends WebV8AbstractField<JmixTwinColSelect<V>, S
     }
 
     @Override
-    public void setOptionStyleProvider(@Nullable OptionStyleProvider<V> optionStyleProvider) {
-        this.optionStyleProvider = optionStyleProvider;
+    public void setOptionStyleProvider(@Nullable Function<? super V, String> optionStyleProvider) {
+        if (this.optionStyleProvider != optionStyleProvider) {
+            this.optionStyleProvider = optionStyleProvider;
 
-        if (optionStyleProvider != null) {
-            component.setOptionStyleProvider(optionStyleProvider::getStyleName);
-        } else {
-            component.setOptionStyleProvider(null);
+            component.setOptionStyleProvider(this::generateItemStylename);
         }
     }
 
     @Nullable
+    protected String generateItemStylename(V item) {
+        if (optionStyleProvider == null) {
+            return null;
+        }
+
+        return this.optionStyleProvider.apply(item);
+    }
+
+    @Nullable
     @Override
-    public OptionStyleProvider<V> getOptionStyleProvider() {
+    public Function<? super V, String> getOptionStyleProvider() {
         return optionStyleProvider;
     }
 

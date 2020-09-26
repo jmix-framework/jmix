@@ -15,9 +15,6 @@
  */
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
-import io.jmix.core.entity.EntityValues;
-
 import javax.annotation.Nullable;
 import java.util.Collection;
 
@@ -26,30 +23,9 @@ import java.util.Collection;
  *
  * @param <V> value and options type for the component
  */
-public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component.Focusable {
+public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component.Focusable, HasOptionStyleProvider<V> {
 
     String NAME = "twinColumn";
-
-    /**
-     * Gets the number of columns for the component.
-     *
-     * @see #setWidth(String)
-     * @deprecated "Columns" does not reflect the exact number of characters that will be displayed. Use
-     * {@link #getWidth()} instead.
-     */
-    @Deprecated
-    int getColumns();
-
-    /**
-     * Sets the width of the component so that it displays approximately the given number of letters in each of the
-     * two selects.
-     *
-     * @param columns the number of columns to set.
-     * @deprecated "Columns" does not reflect the exact number of characters that will be displayed. Use
-     * {@link #setWidth(String)} instead.
-     */
-    @Deprecated
-    void setColumns(int columns);
 
     /**
      * @return the number of visible rows
@@ -62,25 +38,6 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      * @param rows number of visible rows
      */
     void setRows(int rows);
-
-    /**
-     * @param styleProvider style provider
-     * @deprecated use {@link #setOptionStyleProvider(OptionStyleProvider)} instead
-     */
-    @Deprecated
-    default void setStyleProvider(@Nullable StyleProvider styleProvider) {
-        if (styleProvider == null) {
-            setOptionStyleProvider(null);
-        } else {
-            setOptionStyleProvider((item, selected) -> {
-                if (item instanceof Entity) {
-                    return styleProvider.getStyleName(item, EntityValues.getId((item)), selected);
-                } else {
-                    return null;
-                }
-            });
-        }
-    }
 
     /**
      * Allows you to configure whether items should be reordered after selection.
@@ -137,42 +94,4 @@ public interface TwinColumn<V> extends OptionsField<Collection<V>, V>, Component
      */
     @Nullable
     String getRightColumnCaption();
-
-    /**
-     * Sets option style provider. It defines a style for each value.
-     *
-     * @param optionStyleProvider option style provider function
-     */
-    void setOptionStyleProvider(@Nullable OptionStyleProvider<V> optionStyleProvider);
-
-    /**
-     * @return option style provider function
-     */
-    @Nullable
-    OptionStyleProvider<V> getOptionStyleProvider();
-
-    /**
-     * @deprecated use {@link #setOptionStyleProvider(OptionStyleProvider)}
-     */
-    @Deprecated
-    interface StyleProvider {
-        @Deprecated
-        String getStyleName(Object item, Object property, boolean selected);
-    }
-
-    /**
-     * @param <V> option type
-     */
-    interface OptionStyleProvider<V> {
-
-        /**
-         * Handles style name for the item.
-         *
-         * @param item     item to create style name
-         * @param selected is item selected
-         * @return style name for the item
-         */
-        @Nullable
-        String getStyleName(V item, boolean selected);
-    }
 }

@@ -41,7 +41,6 @@ public class TwinColumnLoader extends AbstractFieldLoader<TwinColumn> {
         super.loadComponent();
         loadOptionsContainer(resultComponent, element);
 
-        loadColumns(resultComponent, element);
         loadRows(resultComponent, element);
 
         loadCaptionProperty(resultComponent, element);
@@ -65,13 +64,6 @@ public class TwinColumnLoader extends AbstractFieldLoader<TwinColumn> {
             }
             //noinspection unchecked
             component.setOptions(new ContainerOptions((CollectionContainer) container));
-        }
-    }
-
-    protected void loadColumns(TwinColumn resultComponent, Element element) {
-        String columns = element.attributeValue("columns");
-        if (!StringUtils.isEmpty(columns)) {
-            resultComponent.setColumns(Integer.parseInt(columns));
         }
     }
 

@@ -16,10 +16,10 @@
 
 package io.jmix.ui.component.calendar;
 
-import io.jmix.core.Entity;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityPropertyChangeEvent;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.data.calendar.EntityCalendarEventProvider;
 import org.apache.commons.lang3.BooleanUtils;
@@ -39,7 +39,7 @@ public class EntityCalendarEvent<E, V> implements CalendarEvent<V> {
         this.provider = provider;
 
         // todo bad practice, use datasource listener instead
-        ((Entity) this.entity).__getEntityEntry().addPropertyChangeListener(this::onPropertyChanged);
+        EntitySystemAccess.addPropertyChangeListener(this.entity, this::onPropertyChanged);
     }
 
     protected void onPropertyChanged(EntityPropertyChangeEvent event) {

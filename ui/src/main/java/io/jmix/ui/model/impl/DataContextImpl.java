@@ -20,10 +20,7 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.EntityPreconditions;
-import io.jmix.core.entity.EntityPropertyChangeEvent;
-import io.jmix.core.entity.EntityPropertyChangeListener;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.*;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -224,7 +221,7 @@ public class DataContextImpl implements DataContext {
 
             mergeState(entity, managed, mergedMap, isRoot, options);
 
-            ((Entity) managed).__getEntityEntry().addPropertyChangeListener(propertyChangeListener);
+            EntitySystemAccess.addPropertyChangeListener(managed, propertyChangeListener);
 
             if (entityStates.isNew(managed)) {
                 modifiedInstances.add(managed);
@@ -316,7 +313,7 @@ public class DataContextImpl implements DataContext {
                         setPropertyValue(dstEntity, property, managedRef, false);
                         if (metadataTools.isEmbedded(property)) {
                             EmbeddedPropertyChangeListener listener = new EmbeddedPropertyChangeListener(dstEntity);
-                            ((Entity) managedRef).__getEntityEntry().addPropertyChangeListener(listener);
+                            EntitySystemAccess.addPropertyChangeListener(managedRef, listener);
                             embeddedPropertyListeners.computeIfAbsent(dstEntity, e -> new HashMap<>()).put(propertyName, listener);
                         }
                     } else {
@@ -542,15 +539,14 @@ public class DataContextImpl implements DataContext {
     }
 
     protected void removeListeners(Object entity) {
-        EntityPreconditions.checkEntityType(entity);
-        ((Entity) entity).__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
+        EntitySystemAccess.removePropertyChangeListener(entity, propertyChangeListener);
         Map<String, EmbeddedPropertyChangeListener> listenerMap = embeddedPropertyListeners.get(entity);
         if (listenerMap != null) {
             for (Map.Entry<String, EmbeddedPropertyChangeListener> entry : listenerMap.entrySet()) {
-                Entity embedded = EntityValues.getValue(entity, entry.getKey());
+                Object embedded = EntityValues.getValue(entity, entry.getKey());
                 if (embedded != null) {
-                    embedded.__getEntityEntry().removePropertyChangeListener(entry.getValue());
-                    embedded.__getEntityEntry().removePropertyChangeListener(propertyChangeListener);
+                    EntitySystemAccess.removePropertyChangeListener(embedded, entry.getValue());
+                    EntitySystemAccess.removePropertyChangeListener(embedded, propertyChangeListener);
                 }
             }
             embeddedPropertyListeners.remove(entity);

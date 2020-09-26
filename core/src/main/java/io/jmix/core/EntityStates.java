@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
 /**
  * Provides information about entities states.
@@ -70,7 +71,7 @@ public class EntityStates {
     public boolean isNew(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof Entity) {
-            return ((Entity) entity).__getEntityEntry().isNew();
+            return getUncheckedEntityEntry(entity).isNew();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isNew is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -91,7 +92,7 @@ public class EntityStates {
     public boolean isManaged(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof Entity) {
-            return ((Entity) entity).__getEntityEntry().isManaged();
+            return getUncheckedEntityEntry(entity).isManaged();
         } else {
             if (log.isTraceEnabled()) {
                 log.trace("EntityStates.isManaged is called for unsupported type '{}'. Stacktrace:\n{}",
@@ -112,7 +113,7 @@ public class EntityStates {
      */
     public boolean isDetached(Object entity) {
         checkNotNullArgument(entity, "entity is null");
-        if (entity instanceof Entity && ((Entity) entity).__getEntityEntry().isDetached()) {
+        if (entity instanceof Entity && getUncheckedEntityEntry(entity).isDetached()) {
             return true;
         } else {
             if (log.isTraceEnabled()) {
@@ -363,12 +364,10 @@ public class EntityStates {
     public boolean isDeleted(Object entity) {
         checkNotNullArgument(entity, "entity is null");
         if (entity instanceof Entity) {
-            Entity jmixEntity = (Entity) entity;
-
-            if (EntityValues.isSoftDeleted(jmixEntity))
+            if (EntityValues.isSoftDeleted(entity))
                 return true;
 
-            if (((Entity) entity).__getEntityEntry().isRemoved()) {
+            if (getUncheckedEntityEntry(entity).isRemoved()) {
                 return true;
             }
         }
@@ -391,13 +390,11 @@ public class EntityStates {
         checkNotNullArgument(entity, "entity is null");
         EntityPreconditions.checkEntityType(entity);
 
-        Entity jmixEntity = (Entity) entity;
-
-        if (jmixEntity.__getEntityEntry().isManaged())
+        if (getUncheckedEntityEntry(entity).isManaged())
             throw new IllegalStateException("entity is managed");
 
-        jmixEntity.__getEntityEntry().setNew(false);
-        jmixEntity.__getEntityEntry().setDetached(true);
+        getUncheckedEntityEntry(entity).setNew(false);
+        getUncheckedEntityEntry(entity).setDetached(true);
     }
 
     /**
@@ -419,12 +416,10 @@ public class EntityStates {
 
         EntityPreconditions.checkEntityType(entity);
 
-        Entity jmixEntity = (Entity) entity;
-
-        if (jmixEntity.__getEntityEntry().isManaged())
+        if (getUncheckedEntityEntry(entity).isManaged())
             throw new IllegalStateException("entity is managed");
 
-        jmixEntity.__getEntityEntry().setNew(false);
-        jmixEntity.__getEntityEntry().setDetached(false);
+        getUncheckedEntityEntry(entity).setNew(false);
+        getUncheckedEntityEntry(entity).setDetached(false);
     }
 }

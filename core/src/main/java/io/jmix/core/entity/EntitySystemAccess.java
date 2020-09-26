@@ -16,9 +16,9 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
-import io.jmix.core.Entity;
 
 import javax.annotation.Nullable;
 
@@ -96,5 +96,13 @@ public class EntitySystemAccess {
     public static <T extends EntityEntryExtraState> T getExtraState(Object entity, Class<?> extraStateType) {
         //noinspection unchecked
         return (T) getEntityEntry(entity).getExtraState(extraStateType);
+    }
+
+    public static void addPropertyChangeListener(Object entity, EntityPropertyChangeListener listener) {
+        getEntityEntry(entity).addPropertyChangeListener(listener);
+    }
+
+    public static void removePropertyChangeListener(Object entity, EntityPropertyChangeListener listener) {
+        getEntityEntry(entity).removePropertyChangeListener(listener);
     }
 }

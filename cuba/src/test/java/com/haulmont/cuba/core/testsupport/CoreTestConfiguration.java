@@ -20,7 +20,10 @@ import com.haulmont.cuba.CubaConfiguration;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
+import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -32,6 +35,7 @@ import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -49,6 +53,11 @@ import javax.sql.DataSource;
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-core-app.properties")
 public class CoreTestConfiguration {
+
+    @Bean
+    public MessageSource messageSource(JmixModules modules, Resources resources) {
+        return new JmixMessageSource(modules, resources);
+    }
 
     @Bean
     @Primary

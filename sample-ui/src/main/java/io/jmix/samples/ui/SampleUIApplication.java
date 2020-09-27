@@ -17,6 +17,7 @@
 package io.jmix.samples.ui;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.annotation.MessageSourceBasenames;
 import io.jmix.core.security.Authenticator;
 import io.jmix.samples.ui.entity.SampleUser;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -30,6 +31,7 @@ import org.springframework.context.event.EventListener;
 import javax.sql.DataSource;
 
 @SpringBootApplication
+@MessageSourceBasenames({"io/jmix/samples/ui/mymessages"})
 public class SampleUIApplication {
 
 

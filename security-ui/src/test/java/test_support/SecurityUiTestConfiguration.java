@@ -16,7 +16,10 @@
 
 package test_support;
 
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
+import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -28,6 +31,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -46,6 +50,11 @@ import java.util.Collections;
 @PropertySource("classpath:/test_support/test-app.properties")
 //@JmixModule(dependsOn = {JmixSecurityConfiguration.class, JmixDataConfiguration.class})
 public class SecurityUiTestConfiguration {
+
+    @Bean
+    public MessageSource messageSource(JmixModules modules, Resources resources) {
+        return new JmixMessageSource(modules, resources);
+    }
 
     @Bean
     DataSource dataSource() {

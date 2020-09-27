@@ -16,8 +16,11 @@
 
 package test_support;
 
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -28,6 +31,7 @@ import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -45,6 +49,11 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
 public class SecurityTestConfiguration {
+
+    @Bean
+    public MessageSource messageSource(JmixModules modules, Resources resources) {
+        return new JmixMessageSource(modules, resources);
+    }
 
     @Bean
     DataSource dataSource() {

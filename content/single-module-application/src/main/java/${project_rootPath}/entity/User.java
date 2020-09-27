@@ -1,6 +1,5 @@
 package ${project_rootPackage}.entity;
 
-import io.jmix.core.JmixEntity;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;

@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class KeyCombination {
-    private static final String SHORTCUT_PREFIX = "shortcut.";
     private static final Modifier[] EMPTY_MODIFIERS = new Modifier[0];
 
     private final Key key;
@@ -50,12 +49,8 @@ public class KeyCombination {
 
             int modifiersCnt = keys.length;
 
-            //try {
             key = Key.valueOf(keys[modifiersCnt - 1]);
             --modifiersCnt;
-            /*} catch (IllegalArgumentException e) {
-                //ignore
-            }*/
             modifiers = new Modifier[modifiersCnt];
             for (int i = 0; i < modifiersCnt; i++) {
                 modifiers[i] = Modifier.valueOf(keys[i]);
@@ -68,22 +63,22 @@ public class KeyCombination {
     }
 
     public String format() {
-        // todo implement
-        /*Messages messages = AppBeans.get(Messages.NAME);
         StringBuilder sb = new StringBuilder();
         if (modifiers != null) {
             for (Modifier modifier : modifiers) {
                 if (sb.length() > 0) {
                     sb.append("+");
                 }
-                sb.append(messages.getMainMessage(SHORTCUT_PREFIX + modifier.name()));
+                sb.append(modifier.getName());
             }
         }
         if (sb.length() > 0) {
             sb.append("+");
         }
-        sb.append(messages.getMainMessage(SHORTCUT_PREFIX + key.name()));*/
-        return ""; // sb.toString();
+        if (key != null) {
+            sb.append(key.getName());
+        }
+        return sb.toString();
     }
 
     public KeyCombination(@Nullable Key key, @Nullable Modifier... modifiers) {
@@ -105,27 +100,27 @@ public class KeyCombination {
     }
 
     public enum Key {
-        ENTER(13, '\n'),
-        ESCAPE(27),
-        PAGE_UP(33),
-        PAGE_DOWN(34),
-        TAB(9, '\t'),
-        ARROW_LEFT(37),
-        ARROW_UP(38),
-        ARROW_RIGHT(39),
-        ARROW_DOWN(40),
-        BACKSPACE(8),
-        BACKSLASH(220, 0x5C),
-        DELETE(46, 0x7F),
-        INSERT(45, 0x9B),
-        END(35),
-        HOME(36),
-        SPACEBAR(32),
+        ENTER(13, '\n', "Enter"),
+        ESCAPE(27, "Esc"),
+        PAGE_UP(33, "Page Up"),
+        PAGE_DOWN(34, "Page Dn"),
+        TAB(9, '\t', "Tab"),
+        ARROW_LEFT(37, "Left"),
+        ARROW_UP(38, "Up"),
+        ARROW_RIGHT(39, "Right"),
+        ARROW_DOWN(40, "Down"),
+        BACKSPACE(8, "Backspace"),
+        BACKSLASH(220, 0x5C, "\\"),
+        DELETE(46, 0x7F, "Del"),
+        INSERT(45, 0x9B, "Ins"),
+        END(35, "End"),
+        HOME(36, "Home"),
+        SPACEBAR(32, "Space"),
 
-        PLUS(107),
-        MINUS(109),
-        DIVIDE(111),
-        MULTIPLY(106),
+        PLUS(107, "Num +"),
+        MINUS(109, "Num -"),
+        DIVIDE(111, "Num /"),
+        MULTIPLY(106, "Num *"),
 
         F1(112),
         F2(113),
@@ -167,39 +162,49 @@ public class KeyCombination {
         Y(89),
         Z(90),
 
-        KEY0(48),
-        KEY1(49),
-        KEY2(50),
-        KEY3(51),
-        KEY4(52),
-        KEY5(53),
-        KEY6(54),
-        KEY7(55),
-        KEY8(56),
-        KEY9(57),
+        KEY0(48, "0"),
+        KEY1(49, "1"),
+        KEY2(50, "2"),
+        KEY3(51, "3"),
+        KEY4(52, "4"),
+        KEY5(53, "5"),
+        KEY6(54, "6"),
+        KEY7(55, "7"),
+        KEY8(56, "8"),
+        KEY9(57, "9"),
 
-        NUM0(96),
-        NUM1(97),
-        NUM2(98),
-        NUM3(99),
-        NUM4(100),
-        NUM5(101),
-        NUM6(102),
-        NUM7(103),
-        NUM8(104),
-        NUM9(105);
+        NUM0(96, "Num 0"),
+        NUM1(97, "Num 1"),
+        NUM2(98, "Num 2"),
+        NUM3(99, "Num 3"),
+        NUM4(100, "Num 4"),
+        NUM5(101, "Num 5"),
+        NUM6(102, "Num 6"),
+        NUM7(103, "Num 7"),
+        NUM8(104, "Num 8"),
+        NUM9(105, "Num 9");
 
         private int code;
         private int virtualKey;
+        private String name;
 
         Key(int code) {
-            this.code = code;
-            this.virtualKey = code;
+            this(code, code);
         }
 
         Key(int code, int virtualKey) {
             this.code = code;
             this.virtualKey = virtualKey;
+        }
+
+        Key(int code, String name) {
+            this(code);
+            this.name = name;
+        }
+
+        Key(int code, int virtualKey, String name) {
+            this(code, virtualKey);
+            this.name = name;
         }
 
         public int getCode() {
@@ -209,21 +214,36 @@ public class KeyCombination {
         public int getVirtualKey() {
             return virtualKey;
         }
+
+        public String getName() {
+            return name != null ? name : this.name();
+        }
     }
 
     public enum Modifier {
-        SHIFT(16),
-        CTRL(17),
-        ALT(18);
+        SHIFT(16, "Shift"),
+        CTRL(17, "Ctrl"),
+        ALT(18, "Alt");
 
         private int code;
+
+        private String name;
 
         Modifier(int code) {
             this.code = code;
         }
 
+        Modifier(int code, String name) {
+            this(code);
+            this.name = name;
+        }
+
         public int getCode() {
             return code;
+        }
+
+        public String getName() {
+            return name != null ? name : this.name();
         }
 
         public static int[] codes(@Nullable Modifier... modifiers) {

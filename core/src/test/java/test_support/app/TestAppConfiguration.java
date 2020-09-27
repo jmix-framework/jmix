@@ -1,14 +1,10 @@
 package test_support.app;
 
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.annotation.MessageSourceBasenames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.cache.support.SimpleCacheManager;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -19,17 +15,11 @@ import test_support.TestBean;
 @Configuration
 @JmixModule
 @PropertySource("classpath:/test_support/app/app.properties")
+@MessageSourceBasenames({"test_support/app/some_messages"})
 public class TestAppConfiguration {
 
     @Autowired
     Environment environment;
-
-    @Bean
-    MessageSource messageSource(JmixModules modules, Resources resources) {
-        JmixMessageSource messageSource = new JmixMessageSource(modules, resources);
-        messageSource.addBasenames("test_support/app/some_messages");
-        return messageSource;
-    }
 
     @Bean
     @Primary

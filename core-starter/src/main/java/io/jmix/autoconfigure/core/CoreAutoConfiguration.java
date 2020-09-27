@@ -17,9 +17,13 @@
 package io.jmix.autoconfigure.core;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
+import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.pessimisticlocking.LockManager;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,6 +36,12 @@ import javax.cache.configuration.MutableConfiguration;
 @Configuration
 @Import({CoreConfiguration.class})
 public class CoreAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MessageSource messageSource(JmixModules modules, Resources resources) {
+        return new JmixMessageSource(modules, resources);
+    }
 
     @Bean
     @ConditionalOnMissingBean(type = "org.springframework.scripting.ScriptEvaluator")

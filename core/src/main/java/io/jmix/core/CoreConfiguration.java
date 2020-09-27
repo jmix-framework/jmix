@@ -17,19 +17,14 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.core.annotation.Order;
 
 /**
  * Configuration of the core module.
@@ -55,11 +50,6 @@ public class CoreConfiguration {
     @Bean("core_Modules")
     public JmixModules modules(JmixModulesProcessor processor) {
         return processor.getJmixModules();
-    }
-
-    @Bean
-    public MessageSource messageSource(JmixModules modules, Resources resources) {
-        return new JmixMessageSource(modules, resources);
     }
 
     @Bean

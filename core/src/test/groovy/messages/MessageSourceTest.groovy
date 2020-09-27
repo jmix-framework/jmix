@@ -28,10 +28,11 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.base.TestBaseConfiguration
 
 import static test_support.TestLocales.*
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class MessageSourceTest extends Specification {
 
 

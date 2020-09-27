@@ -19,6 +19,7 @@ package io.jmix.core.impl;
 import io.jmix.core.JmixModuleDescriptor;
 import io.jmix.core.JmixModules;
 import io.jmix.core.LocaleResolver;
+import io.jmix.core.Resources;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
@@ -29,12 +30,12 @@ import java.util.Locale;
 
 public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
 
-    private ResourceLoader resourceLoader;
+    private Resources resources;
 
-    public JmixMessageSource(JmixModules modules, ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
+    public JmixMessageSource(JmixModules modules, Resources resources) {
+        this.resources = resources;
         setDefaultEncoding("UTF-8");
-        setResourceLoader(resourceLoader);
+        setResourceLoader(resources);
         setFallbackToSystemLocale(false);
 
         ListIterator<JmixModuleDescriptor> iterator = modules.getAll().listIterator(modules.getAll().size());
@@ -51,7 +52,7 @@ public class JmixMessageSource extends ReloadableResourceBundleMessageSource {
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
         // Always use the resource loader provided in constructor. Otherwise it gets overridden by ApplicationContext.
-        super.setResourceLoader(this.resourceLoader);
+        super.setResourceLoader(this.resources);
     }
 
     @Override

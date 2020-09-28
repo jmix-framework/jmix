@@ -1080,7 +1080,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
     protected void initShowInfoAction() {
         UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
-        accessManager.applyRegisteredConstraints(new UiShowEntityInfoContext());
+        accessManager.applyRegisteredConstraints(showInfoContext);
 
         if (showInfoContext.isPermitted()) {
             if (getAction(ShowInfoAction.ACTION_ID) == null) {

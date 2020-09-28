@@ -22,14 +22,16 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
 
 @Component("core_EntityDetector")
 public class EntityDetector implements ClasspathScanCandidateDetector {
 
     @Override
     public boolean isCandidate(MetadataReader metadataReader) {
-        return (metadataReader.getAnnotationMetadata().hasAnnotation(Entity.class.getName())
-                || metadataReader.getAnnotationMetadata().hasAnnotation(ModelObject.class.getName()))
-                || metadataReader.getAnnotationMetadata().hasAnnotation(Embeddable.class.getName());
+        return metadataReader.getAnnotationMetadata().hasAnnotation(Entity.class.getName())
+                || metadataReader.getAnnotationMetadata().hasAnnotation(ModelObject.class.getName())
+                || metadataReader.getAnnotationMetadata().hasAnnotation(Embeddable.class.getName())
+                || metadataReader.getAnnotationMetadata().hasAnnotation(MappedSuperclass.class.getName());
     }
 }

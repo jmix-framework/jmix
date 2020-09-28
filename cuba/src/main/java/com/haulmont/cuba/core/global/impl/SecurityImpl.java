@@ -56,7 +56,7 @@ public class SecurityImpl implements Security {
     @Override
     public boolean isEntityOpPermitted(MetaClass metaClass, EntityOp entityOp) {
         CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(new CrudEntityContext(metaClass));
+        accessManager.applyRegisteredConstraints(entityContext);
 
         switch (entityOp) {
             case CREATE:

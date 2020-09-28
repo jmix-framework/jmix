@@ -54,6 +54,8 @@ class EnhancingAction implements Action<Task> {
             }
         }
 
+        constructPersistenceXml(project, classNames, sourceSet)
+
         runEclipseLinkEnhancing(project, classNames, sourceSet)
 
         runJmixEnhancing(project, classNames + nonMappedClassNames, sourceSet)
@@ -99,22 +101,37 @@ class EnhancingAction implements Action<Task> {
         return false
     }
 
-    protected void runEclipseLinkEnhancing(Project project, List<String> classNames, sourceSet) {
+    protected void constructPersistenceXml(Project project, List<String> classNames, sourceSet) {
         if (!classNames.isEmpty()) {
+            Set<String> libraryEntities = [] as Set<String>
 
-            def conf = project.configurations.findByName(sourceSet.getCompileClasspathConfigurationName())
-            if (!findEclipseLink(conf.resolvedConfiguration.firstLevelModuleDependencies)) {
-                project.logger.info("EclipseLink not found in classpath, EclipseLink enhancer will not run")
-                return
+            def jars = sourceSet.compileClasspath.asList().findAll { it.name.endsWith('.jar') }
+            jars.each { lib ->
+                def ztree = project.zipTree(lib)
+                ztree.toList().findAll { it.name.endsWith("persistence.xml") }.each {
+                    Node doc = new XmlParser().parse(it)
+
+                    List<String> currentEntities = doc.'persistence-unit'.'class'.collect { it.text() }
+                    libraryEntities.addAll(currentEntities)
+
+                    project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.")
+                }
             }
+
+            libraryEntities.removeAll(classNames)
+
+            project.logger.info("Constructing META-INF/persitence.xml for ${project.displayName}. Library entities: $libraryEntities")
 
             File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/META-INF/persistence.xml")
             file.parentFile.mkdirs()
             file.withWriter { writer ->
                 def xml = new MarkupBuilder(writer)
-                xml.persistence(version: '2', xmlns: 'http://java.sun.com/xml/ns/persistence') {
+                xml.persistence(version: '2.0', xmlns: 'http://java.sun.com/xml/ns/persistence') {
                     'persistence-unit'(name: 'jmix') {
                         classNames.each { String name ->
+                            'class'(name)
+                        }
+                        libraryEntities.each { String name ->
                             'class'(name)
                         }
                         //'exclude-unlisted-classes'()
@@ -123,6 +140,25 @@ class EnhancingAction implements Action<Task> {
                         }
                     }
                 }
+            }
+
+            if ('main'.equals(sourceSetName)) {
+                project.jar {
+                    from("$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/") {
+                        include "META-INF/persistence.xml"
+                    }
+                }
+            }
+        }
+    }
+
+    protected void runEclipseLinkEnhancing(Project project, List<String> classNames, sourceSet) {
+        if (!classNames.isEmpty()) {
+
+            def conf = project.configurations.findByName(sourceSet.getCompileClasspathConfigurationName())
+            if (!findEclipseLink(conf.resolvedConfiguration.firstLevelModuleDependencies)) {
+                project.logger.info("EclipseLink not found in classpath, EclipseLink enhancer will not run")
+                return
             }
 
             project.logger.lifecycle "Running EclipseLink enhancer in $project for $sourceSet"

@@ -527,7 +527,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                         persisted.add(entity);
 
                         InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
-                        accessManager.applyConstraints(new InMemoryCrudEntityContext(metaClass), accessConstraints);
+                        accessManager.applyConstraints(crudContext, accessConstraints);
 
                         if (!crudContext.isCreatePermitted(entity)) {
                             throw new RowLevelSecurityException(String.format("Create is not permitted for entity %s", entity),
@@ -552,10 +552,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                         Object merged = em.merge(entity);
                         saved.add(merged);
 
-                        entityFetcher.fetch((Entity) merged, getFetchPlanFromContext(context, entity));
+                        entityFetcher.fetch(merged, getFetchPlanFromContext(context, entity));
 
                         InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
-                        accessManager.applyConstraints(new InMemoryCrudEntityContext(metaClass), accessConstraints);
+                        accessManager.applyConstraints(crudContext, accessConstraints);
 
                         if (!crudContext.isUpdatePermitted(entity)) {
                             throw new RowLevelSecurityException(String.format("Update is not permitted for entity %s", entity),
@@ -581,7 +581,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     }
 
                     InMemoryCrudEntityContext crudContext = new InMemoryCrudEntityContext(metaClass);
-                    accessManager.applyConstraints(new InMemoryCrudEntityContext(metaClass), accessConstraints);
+                    accessManager.applyConstraints(crudContext, accessConstraints);
 
                     if (!crudContext.isDeletePermitted(entity)) {
                         throw new RowLevelSecurityException(String.format("Delete is not permitted for entity %s", entity),

@@ -188,11 +188,13 @@ public class InspectorFormBuilder {
         if (!attributeContext.isViewPermitted())
             return;
 
-        UiEntityContext entityContext = new UiEntityContext(range.asClass());
-        accessManager.applyRegisteredConstraints(entityContext);
-
-        if (range.isClass() && !entityContext.isViewPermitted())
-            return;
+        if (range.isClass()) {
+            UiEntityContext entityContext = new UiEntityContext(range.asClass());
+            accessManager.applyRegisteredConstraints(entityContext);
+            if (!entityContext.isViewPermitted()) {
+                return;
+            }
+        }
 
         ValueSource valueSource = new ContainerValueSource<>(container, metaProperty.getName());
 

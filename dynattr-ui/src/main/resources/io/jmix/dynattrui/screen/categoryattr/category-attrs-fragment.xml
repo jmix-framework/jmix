@@ -18,7 +18,7 @@
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
         <collection id="categoryAttributesDc"
-                    class="io.jmix.dynattr.impl.model.CategoryAttribute"
+                    class="io.jmix.dynattr.model.CategoryAttribute"
                     provided="true"/>
     </data>
     <layout spacing="true" expand="categoryAttrsTable">

@@ -19,7 +19,7 @@
         caption="msg://editorCaption">
     <data>
         <instance id="categoryAttributeDc"
-                  class="io.jmix.dynattr.impl.model.CategoryAttribute">
+                  class="io.jmix.dynattr.model.CategoryAttribute">
             <fetchPlan extends="_local">
                 <property name="category" fetchPlan="_local">
                     <property name="categoryAttrs" fetchPlan="_local">
@@ -89,7 +89,7 @@
                                 </actions>
                             </entityPicker>
                             <hbox id="enumerationBox" spacing="true" expand="enumerationField"
-                                  caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.enumeration">
+                                  caption="msg://io.jmix.dynattr.model/CategoryAttribute.enumeration">
                                 <textField id="enumerationField" dataContainer="categoryAttributeDc"
                                            property="enumeration" required="true"
                                            requiredMessage="msg://enumerationField.required" editable="false"/>

@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-@ModelObject(name = "test$ReferenceToEntity")
+@ModelObject(name = "data_ReferenceToEntity")
 @SystemLevel
 public class ReferenceToEntity implements Serializable {
     private static final long serialVersionUID = -3667689055952380345L;

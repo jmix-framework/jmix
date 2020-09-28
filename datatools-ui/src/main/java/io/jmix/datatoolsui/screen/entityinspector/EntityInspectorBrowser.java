@@ -404,7 +404,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     protected boolean readPermitted(MetaClass metaClass) {
         UiEntityContext entityContext = new UiEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(new UiEntityContext(metaClass));
+        accessManager.applyRegisteredConstraints(entityContext);
         return entityContext.isViewPermitted();
     }
 }

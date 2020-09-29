@@ -25,7 +25,6 @@ import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
@@ -93,13 +92,11 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
     }
 
     @Override
-    protected io.jmix.ui.component.DataGrid.Column loadColumn(io.jmix.ui.component.DataGrid component,
-                                                              Element element,
-                                                              MetaClass metaClass) {
-        DataGrid.Column column = (DataGrid.Column) super.loadColumn(component, element, metaClass);
-        column.setGeneratedType(loadGeneratedType(element));
-        column.setFormatter(loadFormatter(element));
-        return column;
+    protected void loadColumnVisualDisplay(io.jmix.ui.component.DataGrid.Column column, Element columnElement) {
+        ((DataGrid.Column) column).setGeneratedType(loadGeneratedType(columnElement));
+        ((DataGrid.Column) column).setFormatter(loadFormatter(columnElement));
+
+        super.loadColumnVisualDisplay(column, columnElement);
     }
 
     @Nullable
@@ -122,7 +119,8 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
     protected io.jmix.ui.component.DataGrid.Renderer loadRenderer(Element columnElement) {
         io.jmix.ui.component.DataGrid.Renderer renderer = super.loadRenderer(columnElement);
         if (renderer == null && columnElement.element("renderer") != null) {
-            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getClassManager(), applicationContext);
+            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"),
+                    context, getClassManager(), applicationContext);
         }
 
         return renderer;

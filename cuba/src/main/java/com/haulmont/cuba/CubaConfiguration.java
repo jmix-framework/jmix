@@ -30,6 +30,7 @@ import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
+import com.haulmont.cuba.web.sys.CubaFragments;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import com.haulmont.cuba.web.sys.CubaScreens;
 import com.vaadin.spring.annotation.UIScope;
@@ -45,6 +46,7 @@ import io.jmix.data.impl.NumberIdCache;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.ui.Fragments;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiConfiguration;
@@ -99,6 +101,12 @@ public class CubaConfiguration {
     @UIScope
     protected Screens getScreens() {
         return new CubaScreens();
+    }
+
+    @Bean(Fragments.NAME)
+    @UIScope
+    protected Fragments getFragments() {
+        return new CubaFragments();
     }
 
     @Bean(Messages.NAME)

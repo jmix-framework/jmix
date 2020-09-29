@@ -18,17 +18,14 @@ package spec.haulmont.cuba.web.components.datagrid.screens;
 
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.web.model.sample.RendererEntity;
-import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController
 @UiDescriptor("datagrid-renderers-screen.xml")
-@LoadDataBeforeShow
 public class DataGridRenderersScreen extends Screen {
     @Autowired
     protected DataGrid<RendererEntity> renderersDataGrid;

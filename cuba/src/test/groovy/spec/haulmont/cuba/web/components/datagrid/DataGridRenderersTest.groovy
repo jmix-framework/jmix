@@ -21,9 +21,7 @@ import io.jmix.ui.component.DataGrid
 import io.jmix.ui.component.renderer.*
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridRenderersScreen
-import spock.lang.Ignore
 
-@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataGridRenderersTest extends UiScreenSpec {
 

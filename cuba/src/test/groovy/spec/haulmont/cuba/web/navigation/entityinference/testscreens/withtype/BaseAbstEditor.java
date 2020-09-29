@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,10 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.frames.screens;
+package spec.haulmont.cuba.web.navigation.entityinference.testscreens.withtype;
 
-import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.gui.components.AbstractEditor;
+import com.haulmont.cuba.core.model.common.User;
 
-import java.util.Map;
-
-public class TestOpenFrameScreen extends AbstractWindow {
-
-    protected LegacyUserBrowseTest userBrowse;
-
-    @Override
-    public void init(Map<String, Object> params) {
-        super.init(params);
-
-        userBrowse = (LegacyUserBrowseTest) openFrame(getWindow(), "test_LegacyUserBrowse");
-    }
-
-    public LegacyUserBrowseTest getUserBrowse() {
-        return userBrowse;
-    }
+public class BaseAbstEditor extends AbstractEditor<User> {
 }

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright (c) 2008-2019 Haulmont.
   ~
@@ -15,13 +14,15 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         xmlns:c="http://jmix.io/schema/ui/jpql-condition"
         caption="Owners">
     <data readOnly="true">
         <collection id="ownersDc"
-                    class="com.haulmont.cuba.core.model.Owner"
-                    fetchPlan="owner-with-category-view">
+                    class="com.haulmont.cuba.core.model.Owner">
+            <view extends="_local">
+                <property name="category" view="_local"/>
+            </view>
             <loader id="ownersDl">
                 <query>
                     <![CDATA[select e from test_PetclinicOwner e]]>
@@ -51,17 +52,18 @@
             <refresh loader="ownersDl" onScreenEvent="Init"/>
             <refresh loader="petsDl" param="owner" onContainerItemChanged="ownersDc"/>
             <refresh loader="ownersDl" param="category" onComponentValueChanged="categoryFilterField"/>
-            <refresh loader="ownersDl" param="name" onComponentValueChanged="nameFilterField" likeClause="CASE_INSENSITIVE"/>
+            <refresh loader="ownersDl" param="name" onComponentValueChanged="nameFilterField"
+                     likeClause="CASE_INSENSITIVE"/>
         </dataLoadCoordinator>
     </facets>
     <layout expand="split"
             spacing="true">
-<!--        todo filter -->
-<!--        <filter id="filter"-->
-<!--                applyTo="ownersTable"-->
-<!--                dataLoader="ownersDl">-->
-<!--            <properties include=".*"/>-->
-<!--        </filter>-->
+        <!--        todo filter -->
+        <!--        <filter id="filter"-->
+        <!--                applyTo="ownersTable"-->
+        <!--                dataLoader="ownersDl">-->
+        <!--            <properties include=".*"/>-->
+        <!--        </filter>-->
         <split id="split" orientation="horizontal" width="100%">
             <groupTable id="ownersTable"
                         width="100%"
@@ -71,7 +73,6 @@
                     <column id="email"/>
                     <column id="category"/>
                 </columns>
-                <pagination/>
                 <buttonsPanel id="buttonsPanel"
                               alwaysVisible="true">
                     <entityPicker id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>

@@ -16,14 +16,10 @@
 
 package spec.haulmont.cuba.web.components.grouptable
 
-
 import io.jmix.ui.component.GroupTable
-import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.grouptable.screens.GroupTableLoadColumnsByIncludeScreen
-import spock.lang.Ignore
 
-@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
 
@@ -32,9 +28,7 @@ class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
     }
 
     def "load columns by includeAll"() {
-        def screens = vaadinUi.screens
-        def mainWindow = screens.create("main", OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def groupTableScreen = screens.create(GroupTableLoadColumnsByIncludeScreen)
         groupTableScreen.show()
@@ -48,9 +42,7 @@ class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
     }
 
     def "load columns by includeAll with system properties"() {
-        def screens = vaadinUi.screens
-        def mainWindow = screens.create("main", OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def groupTableScreen = screens.create(GroupTableLoadColumnsByIncludeScreen)
         groupTableScreen.show()
@@ -64,9 +56,7 @@ class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
     }
 
     def "exclude columns"() {
-        def screens = vaadinUi.screens
-        def mainWindow = screens.create("main", OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def groupTableScreen = screens.create(GroupTableLoadColumnsByIncludeScreen)
         groupTableScreen.show()
@@ -144,6 +134,6 @@ class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
         def columnList = groupTable.getColumns()
 
         then:
-        columnList.size() == 12
+        columnList.size() == 3
     }
 }

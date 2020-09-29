@@ -22,7 +22,6 @@ import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridLoadColumnsByIncludeScreen
 import spock.lang.Ignore
 
-@Ignore
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataGridLoadColumnsByIncludeTest extends UiScreenSpec {
 
@@ -140,6 +139,6 @@ class DataGridLoadColumnsByIncludeTest extends UiScreenSpec {
         def columnList = dataGrid.getColumns()
 
         then:
-        columnList.size() == 12
+        columnList.size() == 3
     }
 }

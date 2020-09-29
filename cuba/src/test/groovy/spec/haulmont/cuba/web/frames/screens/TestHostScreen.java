@@ -17,13 +17,14 @@
 package spec.haulmont.cuba.web.frames.screens;
 
 import com.haulmont.cuba.gui.components.AbstractWindow;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class TestHostScreen extends AbstractWindow {
 
-    /*@Autowired
-    protected UserBrowser userBrowse;
+    @Autowired
+    protected LegacyUserBrowseTest userBrowse;
 
-    public UserBrowser getUserBrowse() {
+    public LegacyUserBrowseTest getUserBrowse() {
         return userBrowse;
-    }*/
+    }
 }

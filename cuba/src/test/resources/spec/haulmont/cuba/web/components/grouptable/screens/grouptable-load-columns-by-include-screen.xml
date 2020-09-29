@@ -14,33 +14,33 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window">
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd">
     <data>
         <collection id="customersSystemDc"
-                    class="com.haulmont.cuba.web.testmodel.sales.Customer"
-                    fetchPlan="customer-with-systems">
+                    class="com.haulmont.cuba.core.model.sales.Customer"
+                    view="customer-with-systems">
             <loader id="customersLd">
                 <query><![CDATA[select e from test$Customer e]]></query>
             </loader>
         </collection>
 
         <collection id="customersWithoutSystemDc"
-                    class="com.haulmont.cuba.web.testmodel.sales.Customer"
-                    fetchPlan="customer-without-systems">
+                    class="com.haulmont.cuba.core.model.sales.Customer"
+                    view="customer-without-systems">
             <loader id="customersLd">
                 <query><![CDATA[select e from test$Customer e]]></query>
             </loader>
         </collection>
 
         <collection id="customersWithoutViewDc"
-                    class="com.haulmont.cuba.web.testmodel.sales.Customer">
+                    class="com.haulmont.cuba.core.model.sales.Customer">
             <loader id="customersLd">
                 <query><![CDATA[select e from test$Customer e]]></query>
             </loader>
         </collection>
 
         <collection id="goodsInfoDc"
-                    class="com.haulmont.cuba.web.testmodel.sample.GoodInfo"/>
+                    class="com.haulmont.cuba.web.model.sample.GoodInfo"/>
     </data>
 
     <layout spacing="true">

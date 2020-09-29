@@ -16,24 +16,15 @@
 
 package spec.haulmont.cuba.web.components
 
-import com.haulmont.cuba.gui.components.BulkEditor
-import com.haulmont.cuba.gui.components.FieldGroup
-import com.haulmont.cuba.gui.components.ListEditor
-import com.haulmont.cuba.gui.components.OptionsGroup
-import com.haulmont.cuba.gui.components.SearchField
-import com.haulmont.cuba.gui.components.SearchPickerField
-import com.haulmont.cuba.gui.components.OptionsList
-import com.haulmont.cuba.gui.components.RowsCount
+import com.haulmont.cuba.gui.components.*
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane
+import com.haulmont.cuba.web.gui.components.CubaDataLoadCoordinator
+import com.haulmont.cuba.web.gui.components.CubaInputDialogFacet
 import io.jmix.ui.Facets
-import io.jmix.ui.component.*
-import io.jmix.ui.component.impl.JavaScriptComponent
-import io.jmix.ui.component.mainwindow.*
-import spec.haulmont.cuba.web.UiScreenSpec
-import spock.lang.Ignore
-import spock.lang.Unroll
-
+import io.jmix.ui.component.RelatedEntities
 import org.springframework.beans.factory.annotation.Autowired
+import spec.haulmont.cuba.web.UiScreenSpec
+import spock.lang.Unroll
 
 @SuppressWarnings("GroovyAccessibility")
 class CreateComponentTest extends UiScreenSpec {
@@ -41,7 +32,6 @@ class CreateComponentTest extends UiScreenSpec {
     @Autowired
     Facets facets
 
-    @Ignore
     @Unroll
     def "create standard UI component: '#name' with UiComponents"() {
         expect:
@@ -49,103 +39,29 @@ class CreateComponentTest extends UiScreenSpec {
 
         where:
         name << [
-                RootWindow.NAME,
-                TabWindow.NAME,
-                DialogWindow.NAME,
-                Fragment.NAME,
-
-                HBoxLayout.NAME,
-                VBoxLayout.NAME,
-                GridLayout.NAME,
-                ScrollBoxLayout.NAME,
-                HtmlBoxLayout.NAME,
-                FlowBoxLayout.NAME,
-                CssLayout.NAME,
-
-                Button.NAME,
-                LinkButton.NAME,
-                Label.NAME,
-                Link.NAME,
-                CheckBox.NAME,
-                GroupBoxLayout.NAME,
-                SourceCodeEditor.NAME,
-                TextField.NAME,
-                PasswordField.NAME,
-
-                ResizableTextArea.NAME,
-                TextArea.NAME,
-                RichTextArea.NAME,
-                MaskedField.NAME,
-
-                Table.NAME,
-                TreeTable.NAME,
-                GroupTable.NAME,
-                DataGrid.NAME,
-                TreeDataGrid.NAME,
-                DateField.NAME,
-                TimeField.NAME,
-                ComboBox.NAME,
                 SearchField.NAME,
-                EntityPicker.NAME,
-                SuggestionField.NAME,
-                EntitySuggestionField.NAME,
-                ColorPicker.NAME,
-                EntityComboBox.NAME,
                 SearchPickerField.NAME,
                 OptionsGroup.NAME,
-                CheckBoxGroup.NAME,
-                RadioButtonGroup.NAME,
                 OptionsList.NAME,
-                MultiSelectList.NAME,
-                SingleSelectList.NAME,
+                PickerField.NAME,
+                LookupField.NAME,
+                LookupPickerField.NAME,
+
                 FileUploadField.NAME,
                 FileMultiUploadField.NAME,
-                CurrencyField.NAME,
-                SplitPanel.NAME,
-                Tree.NAME,
-                TabSheet.NAME,
-                Accordion.NAME,
-                Calendar.NAME,
-                Embedded.NAME,
-                Image.NAME,
-                BrowserFrame.NAME,
-                // Filter.NAME, todo filter
-                ButtonsPanel.NAME,
-                PopupButton.NAME,
-                PopupView.NAME,
+                Filter.NAME,
 
                 FieldGroup.NAME,
-                TokenList.NAME,
-                TwinColumn.NAME,
-                ProgressBar.NAME,
                 RowsCount.NAME,
-                Pagination.NAME,
-                TablePagination.NAME,
                 RelatedEntities.NAME,
-                BulkEditor.NAME,
-                DatePicker.NAME,
-                ListEditor.NAME,
-                CapsLockIndicator.NAME,
-                Form.NAME,
+                // BulkEditor.NAME, todo bulk editor
+                // ListEditor.NAME, todo list editor
 
-                EntityLinkField.NAME,
-
-                AppMenu.NAME,
-                AppWorkArea.NAME,
-                LogoutButton.NAME,
-                NewWindowButton.NAME,
-                UserIndicator.NAME,
-                UserActionsButton.NAME,
-                FoldersPane.NAME,
+                // FoldersPane.NAME, todo folders pane
                 // FtsField.NAME, todo
-                TimeZoneIndicator.NAME,
-                SideMenu.NAME,
-
-                JavaScriptComponent.NAME
         ]
     }
 
-    @Ignore
     @Unroll
     def "create standard facet: '#facet' with Facets"() {
         given:
@@ -157,8 +73,8 @@ class CreateComponentTest extends UiScreenSpec {
         where:
 
         facet << [
-                Timer.class,
-                ClipboardTrigger.class
+                CubaDataLoadCoordinator,
+                CubaInputDialogFacet,
         ]
     }
 }

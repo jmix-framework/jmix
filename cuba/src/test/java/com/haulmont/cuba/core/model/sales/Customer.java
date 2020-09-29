@@ -16,11 +16,15 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
-import io.jmix.core.metamodel.datatype.impl.EnumUtils;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.entity.annotation.EmbeddedParameters;
+import io.jmix.core.metamodel.annotation.InstanceName;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -30,10 +34,22 @@ import javax.persistence.Table;
 public class Customer extends StandardEntity {
 
     @Column(name = "NAME")
+    @InstanceName
     private String name;
+
+    @Column(name = "EMAIL")
+    private String email;
 
     @Column(name = "STATUS")
     private String status;
+
+    @Embedded
+    @EmbeddedParameters
+    @AttributeOverrides({
+            @AttributeOverride(name = "city", column = @Column(name = "ADDRESS_CITY")),
+            @AttributeOverride(name = "zip", column = @Column(name = "ADDRESS_ZIP"))
+    })
+    protected Address address;
 
     public String getName() {
         return name;
@@ -43,11 +59,27 @@ public class Customer extends StandardEntity {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Status getStatus() {
-        return EnumUtils.fromId(Status.class, status, null);
+        return status == null ? null : Status.fromId(status);
     }
 
     public void setStatus(Status status) {
-        this.status = status.getId();
+        this.status = status == null ? null : status.getId();
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

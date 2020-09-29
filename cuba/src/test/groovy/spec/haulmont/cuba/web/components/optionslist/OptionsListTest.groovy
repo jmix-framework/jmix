@@ -27,10 +27,10 @@ import com.haulmont.cuba.gui.data.DsBuilder
 import com.haulmont.cuba.gui.data.impl.DatasourceImpl
 import io.jmix.core.FetchPlan
 import io.jmix.ui.component.Component
-import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
-import spec.haulmont.cuba.web.components.optionslist.screens.OptionsListTestWindow
-import spock.lang.Ignore
+import spec.haulmont.cuba.web.components.optionslist.screens.OptionsListTestScreen
+
+import java.util.function.Consumer
 
 class OptionsListTest extends UiScreenSpec {
 
@@ -40,60 +40,47 @@ class OptionsListTest extends UiScreenSpec {
     }
 
     def 'List value is propagated to ValueSource from multiselect OptionsList'() {
-        def screens = vaadinUi.screens
+        showMainScreen()
 
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
-
-        def screen = createLegacyScreen()
+        def screen = screens.create(OptionsListTestScreen)
         screen.show()
 
         def optionsList = screen.optionsList as OptionsList<List<OrderLine>, OrderLine>
-        def orderLine = screen.allOrderLinesDs.items.iterator().next()
-        def orderLinesDs = screen.orderLinesDs
+        def orderLine = screen.allOrderLinesDc.getItems().get(0)
+        def orderLinesDc = screen.orderLinesDc
 
         when: 'List value is set to OptionsList'
         optionsList.setValue([orderLine])
 
         then: 'ValueSource is updated'
-        orderLinesDs.items.size() == 1 && orderLinesDs.items.contains(orderLine)
+        orderLinesDc.items.size() == 1 && orderLinesDc.items.contains(orderLine)
     }
 
-    /*
-     * Most likely nested collection datasource cannot correctly notify component about collection changed
-     */
-    @Ignore
     def 'List value is propagated to multiselect OptionsList from ValueSource'() {
-        def screens = vaadinUi.screens
+        showMainScreen()
 
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
-
-        def screen = createLegacyScreen()
+        def screen = screens.create(OptionsListTestScreen)
         screen.show()
 
         def optionsList = screen.optionsList as OptionsList<List<OrderLine>, OrderLine>
-        def orderLine = screen.allOrderLinesDs.getItems().iterator().next()
+        def orderLine = screen.allOrderLinesDc.getItems().get(0)
 
         when: 'List value is set to ValueSource'
-        screen.orderLinesDs.addItem(orderLine)
+        screen.orderLinesDc.mutableItems.add(orderLine)
 
         then: 'OptionsList is updated'
         optionsList.value.size() == 1 && optionsList.value.contains(orderLine)
     }
 
     def 'Set value is propagated to ValueSource from multiselect OptionsList'() {
-        def screens = vaadinUi.screens
+        showMainScreen()
 
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
-
-        def screen = createLegacyScreen()
+        def screen = screens.create(OptionsListTestScreen)
         screen.show()
 
         def optionsList = screen.setOptionsList as OptionsList<Set<Product>, Product>
-        def product = screen.allProductsDs.items.iterator().next()
-        def catalog = screen.catalogDs.item
+        def product = screen.allProductsDc.items.get(0)
+        def catalog = screen.catalogDc.item
 
         when: 'Set value is set to OptionsList'
         optionsList.setValue(Collections.singleton(product))
@@ -103,41 +90,87 @@ class OptionsListTest extends UiScreenSpec {
     }
 
     def 'Value is propagated to ValueSource from single select OptionsList'() {
-        def screens = vaadinUi.screens
+        showMainScreen()
 
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
-
-        def screen = createLegacyScreen()
+        def screen = screens.create(OptionsListTestScreen)
         screen.show()
 
         def optionsList = screen.singleOptionsList
-        def product = screen.allProductsDs.items.iterator().next()
+        def product = screen.allProductsDc.items.get(0)
 
         when: 'A value is set to single select OptionsList'
         optionsList.setValue(product)
 
         then: 'Property container is updated'
-        screen.productDs.item == product
+        screen.productDc.item == product
     }
 
     def 'Value is propagated to single select OptionsList from ValueSource'() {
-        def screens = vaadinUi.screens
+        showMainScreen()
 
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
-
-        def screen = createLegacyScreen()
+        def screen = screens.create(OptionsListTestScreen)
         screen.show()
 
         def singleOptionsList = screen.singleOptionsList
-        def product = screen.allProductsDs.items.iterator().next()
+        def product = screen.allProductsDc.items.get(0)
 
         when: 'A value is set to property container'
-        screen.orderLineDs.item.product = product
+        screen.orderLineDc.item.product = product
 
         then: 'Single select OptionsList is updated'
         singleOptionsList.value == product
+    }
+
+    def 'ValueChangeEvent is fired exactly once for OptionsList'() {
+        showMainScreen()
+
+        def screen = screens.create(OptionsListTestScreen)
+        screen.show()
+
+        def optionsList = screen.optionsList as OptionsList<List<OrderLine>, OrderLine>
+        def requiredOptionsList = screen.requiredOptionsList as OptionsList<List<OrderLine>, OrderLine>
+        def singleOptionsList = screen.singleOptionsList as OptionsList<Product, Product>
+
+        def valueChangeListener = Mock(Consumer)
+        def requiredValueChangeListener = Mock(Consumer)
+        def singleValueChangeListener = Mock(Consumer)
+
+        optionsList.addValueChangeListener(valueChangeListener)
+        requiredOptionsList.addValueChangeListener(requiredValueChangeListener)
+        singleOptionsList.addValueChangeListener(singleValueChangeListener)
+
+        def order = screen.orderDc.item
+        def orderLine = screen.orderLineDc.item
+
+        def olOption = screen.allOrderLinesDc.items.get(0)
+        def secondOlOption = screen.allOrderLinesDc.items.get(1)
+
+        def productOption = screen.allProductsDc.items.get(0)
+
+        when: 'A value is set to OptionsList'
+        optionsList.setValue([olOption])
+        singleOptionsList.setValue(productOption)
+
+        then: 'ValueChangeEvent is fired once'
+        1 * valueChangeListener.accept(_)
+        1 * requiredValueChangeListener.accept(_)
+        1 * singleValueChangeListener.accept(_)
+
+        when: 'ValueSource is changed'
+        screen.orderLinesDc.mutableItems.add(secondOlOption)
+
+        then: 'ValueChangeEvent is fired once'
+        1 * valueChangeListener.accept(_)
+        1 * requiredValueChangeListener.accept(_)
+
+        when: 'Entity property value is set to null'
+        order.orderLines = null
+        orderLine.product = null
+
+        then: 'ValueChangeEvent is fired once'
+        1 * valueChangeListener.accept(_)
+        1 * requiredValueChangeListener.accept(_)
+        1 * singleValueChangeListener.accept(_)
     }
 
     def testNew() {
@@ -289,9 +322,5 @@ class OptionsListTest extends UiScreenSpec {
 
         then:
         g2 == component.value
-    }
-
-    protected OptionsListTestWindow createLegacyScreen() {
-        return screens.create("optionslist-test-screen", OpenMode.NEW_TAB)
     }
 }

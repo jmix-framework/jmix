@@ -29,6 +29,7 @@ import java.util.List;
 /**
  * Generic filter component.
  */
+@Deprecated
 public interface Filter extends HasMargin, Component.BelongToFrame, HasNamedComponents, HasSettings, HasDataLoadingSettings, Component.HasCaption, HasContextHelp,
         Component.HasIcon, Collapsable, Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 

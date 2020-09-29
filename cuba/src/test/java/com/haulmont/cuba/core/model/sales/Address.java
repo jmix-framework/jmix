@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2018 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,35 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.core.Entity;
+import io.jmix.core.metamodel.annotation.ModelObject;
 
-import javax.annotation.Nullable;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-public enum Status implements EnumClass<String> {
+@Embeddable
+@ModelObject(name = "test_Address")
+public class Address implements Entity {
 
-    OK("O"),
-    NOT_OK("N");
+    @Column(name = "CITY")
+    protected String city;
 
-    private String id;
+    @Column(name = "ZIP", length = 10)
+    protected String zip;
 
-    Status(String id) {
-        this.id = id;
+    public String getCity() {
+        return city;
     }
 
-    @Override
-    public String getId() {
-        return id;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    @Nullable
-    public static Status fromId(String id) {
-        for (Status at : Status.values()) {
-            if (at.getId().equals(id)) {
-                return at;
-            }
-        }
-        return null;
+    public String getZip() {
+        return zip;
+    }
+
+    public void setZip(String zip) {
+        this.zip = zip;
     }
 }

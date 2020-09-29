@@ -92,13 +92,11 @@ public class CubaDataGridLoader extends DataGridLoader {
     }
 
     @Override
-    protected io.jmix.ui.component.DataGrid.Column loadColumn(io.jmix.ui.component.DataGrid component,
-                                                              Element element,
-                                                              MetaClass metaClass) {
-        DataGrid.Column column = (DataGrid.Column) super.loadColumn(component, element, metaClass);
-        column.setGeneratedType(loadGeneratedType(element));
-        column.setFormatter(loadFormatter(element));
-        return column;
+    protected void loadColumnVisualDisplay(io.jmix.ui.component.DataGrid.Column column, Element columnElement) {
+        ((DataGrid.Column) column).setGeneratedType(loadGeneratedType(columnElement));
+        ((DataGrid.Column) column).setFormatter(loadFormatter(columnElement));
+
+        super.loadColumnVisualDisplay(column, columnElement);
     }
 
     @Nullable
@@ -121,7 +119,8 @@ public class CubaDataGridLoader extends DataGridLoader {
     protected io.jmix.ui.component.DataGrid.Renderer loadRenderer(Element columnElement) {
         io.jmix.ui.component.DataGrid.Renderer renderer = super.loadRenderer(columnElement);
         if (renderer == null && columnElement.element("renderer") != null) {
-            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"), context, getClassManager(), applicationContext);
+            renderer = ComponentLoaderHelper.loadLegacyRenderer(columnElement.element("renderer"),
+                    context, getClassManager(), applicationContext);
         }
 
         return renderer;

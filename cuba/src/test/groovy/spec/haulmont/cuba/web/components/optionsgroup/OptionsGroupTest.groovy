@@ -19,10 +19,8 @@ package spec.haulmont.cuba.web.components.optionsgroup
 import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Product
 import com.haulmont.cuba.gui.components.OptionsGroup
-import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.optionsgroup.screens.OptionsGroupTestScreen
-import spock.lang.Ignore
 
 import java.util.function.Consumer
 
@@ -34,10 +32,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'List value is propagated to ValueSource from multiselect OptionsGroup'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def screen = screens.create(OptionsGroupTestScreen)
         screen.show()
@@ -55,10 +50,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'List value is propagated to multiselect OptionsGroup from ValueSource'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def screen = screens.create(OptionsGroupTestScreen)
         screen.show()
@@ -74,10 +66,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'Set value is propagated to ValueSource from multiselect OptionsGroup'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def screen = screens.create(OptionsGroupTestScreen)
         screen.show()
@@ -94,10 +83,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'Value is propagated to ValueSource from single select OptionsGroup'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def screen = screens.create(OptionsGroupTestScreen)
         screen.show()
@@ -113,10 +99,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'Value is propagated to single select OptionsGroup from ValueSource'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def screen = screens.create(OptionsGroupTestScreen)
         screen.show()
@@ -132,10 +115,7 @@ class OptionsGroupTest extends UiScreenSpec {
     }
 
     def 'ValueChangeEvent is fired exactly once for OptionsGroup'() {
-        def screens = vaadinUi.screens
-
-        def mainWindow = screens.create('main', OpenMode.ROOT)
-        screens.show(mainWindow)
+        showMainScreen()
 
         def testScreen = screens.create(OptionsGroupTestScreen)
         testScreen.show()

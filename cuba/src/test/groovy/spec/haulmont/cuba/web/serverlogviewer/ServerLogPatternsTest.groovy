@@ -21,6 +21,7 @@ import spock.lang.Specification
 @SuppressWarnings("GroovyAccessibility")
 class ServerLogPatternsTest extends Specification {
 
+    // todo implement ServerLogWindow
     /*@Shared
     ServerLogWindow serverLog
 

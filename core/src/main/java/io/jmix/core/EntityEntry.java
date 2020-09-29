@@ -96,7 +96,7 @@ public interface EntityEntry extends Serializable {
     void removeAllListeners();
 
     /**
-     * Copies the state.
+     * Copies the state of entity entry.
      */
     void copy(@Nullable EntityEntry entry);
 

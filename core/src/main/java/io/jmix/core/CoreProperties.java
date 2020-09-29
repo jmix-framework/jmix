@@ -45,6 +45,8 @@ public class CoreProperties {
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
     int dom4jMaxPoolSize;
     int dom4jMaxBorrowWaitMillis;
+    boolean entitySerializationSecurityTokenRequired;
+    String entitySerializationSecurityTokenEncryptionKey;
 
     public CoreProperties(
             String webContextName,
@@ -61,8 +63,11 @@ public class CoreProperties {
             @DefaultValue("100") int dom4jMaxPoolSize,
             @DefaultValue("1000") int dom4jMaxBorrowWaitMillis,
             @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey,
-            String defaultFileStorage
-    ) {
+            String defaultFileStorage,
+            @DefaultValue("false")
+            boolean entitySerializationSecurityTokenRequired,
+            @DefaultValue("KEY")
+            String entitySerializationSecurityTokenEncryptionKey) {
         this.webContextName = webContextName;
         this.webHostName = webHostName;
         this.webPort = webPort;
@@ -87,6 +92,9 @@ public class CoreProperties {
         this.idGenerationForEntitiesInAdditionalDataStoresEnabled = idGenerationForEntitiesInAdditionalDataStoresEnabled;
         this.dom4jMaxPoolSize = dom4jMaxPoolSize;
         this.dom4jMaxBorrowWaitMillis = dom4jMaxBorrowWaitMillis;
+
+        this.entitySerializationSecurityTokenRequired = entitySerializationSecurityTokenRequired;
+        this.entitySerializationSecurityTokenEncryptionKey = entitySerializationSecurityTokenEncryptionKey;
     }
 
     /**
@@ -171,5 +179,16 @@ public class CoreProperties {
      */
     public String getAnonymousAuthenticationTokenKey() {
         return anonymousAuthenticationTokenKey;
+    }
+
+    /**
+     * @return true if entity serialization uses security token data for deserialization entities with row level security
+     */
+    public boolean isEntitySerializationSecurityTokenRequired() {
+        return entitySerializationSecurityTokenRequired;
+    }
+
+    public String getEntitySerializationSecurityTokenEncryptionKey() {
+        return entitySerializationSecurityTokenEncryptionKey;
     }
 }

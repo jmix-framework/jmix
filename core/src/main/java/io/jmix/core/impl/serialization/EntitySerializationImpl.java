@@ -56,17 +56,17 @@ public class EntitySerializationImpl implements EntitySerialization {
     @Autowired
     protected Metadata metadata;
 
-//    @Autowired
-//    protected DynamicAttributes dynamicAttributes;
-
-    @Autowired
-    protected CoreRestProperties coreRestProperties;
-
     @Autowired
     protected EntityStates entityStates;
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
+
+    @Autowired
+    protected EntitySerializationTokenManager tokenManager;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     protected ThreadLocal<EntitySerializationContext> context =
             ThreadLocal.withInitial(EntitySerializationContext::new);
@@ -236,14 +236,11 @@ public class EntitySerializationImpl implements EntitySerialization {
                 writeFields(entity, jsonObject, view, cyclicReferences);
             }
 
-            if (coreRestProperties.isRequiresSecurityToken()) {
-                //TODO:jmix-core#18
-//                if (securityState != null) {
-//                    byte[] securityToken = securityState.getSecurityToken();
-//                    if (securityToken != null) {
-//                        jsonObject.addProperty("__securityToken", Base64.getEncoder().encodeToString(securityToken));
-//                    }
-//                }
+            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
+                String securityToken = tokenManager.generateSecurityToken(entity);
+                if (securityToken != null) {
+                    jsonObject.addProperty("__securityToken", securityToken);
+                }
             }
 
             return jsonObject;
@@ -267,7 +264,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity) {
-            return !"id".equals(metaProperty.getName()) &&
+            return !"id" .equals(metaProperty.getName()) &&
                     //todo dynamic attribute
                     (
 //                    DynamicAttributesUtils.isDynamicAttribute(metaProperty) ||
@@ -426,7 +423,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                             throw new EntitySerializationException(e);
                         }
                     }
-                } else if (!"id".equals(primaryKeyProperty.getName())) {
+                } else if (!"id" .equals(primaryKeyProperty.getName())) {
                     //pk may be in another field, not "id"
                     JsonElement pkElement = jsonObject.get(primaryKeyProperty.getName());
                     if (pkElement != null && pkElement.isJsonPrimitive()) {
@@ -445,13 +442,11 @@ public class EntitySerializationImpl implements EntitySerialization {
                 EntityValues.setId(entity, pkValue);
             }
 
-            if (coreRestProperties.isRequiresSecurityToken()) {
-                //TODO:jmix-core#18
-//                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
-//                if (securityTokenJonPrimitive != null) {
-//                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
-//                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
-//                }
+            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
+                JsonPrimitive securityTokenPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
+                if (securityTokenPrimitive != null) {
+                    tokenManager.restoreSecurityToken(entity, securityTokenPrimitive.getAsString());
+                }
             }
 
             Table<Object, MetaClass, Object> processedEntities = context.get().getProcessedEntities();
@@ -468,7 +463,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyReadRequired(String propertyName) {
-            return !"id".equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken".equals(propertyName);
+            return !"id" .equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken" .equals(propertyName);
         }
 
         protected void readFields(JsonObject jsonObject, Object entity) {
@@ -517,13 +512,11 @@ public class EntitySerializationImpl implements EntitySerialization {
                         }
 //                        }
                         EntityValues.setValue(entity, propertyName, value);
-//                        entity.setValue(propertyName, value);
                     } else if (propertyRange.isEnum()) {
                         String stringValue = propertyValue.getAsString();
                         try {
                             Enum enumValue = Enum.valueOf((Class<Enum>) propertyType, stringValue);
                             EntityValues.setValue(entity, propertyName, enumValue);
-//                            entity.setValue(propertyName, enumValue);
                         } catch (Exception e) {
                             throw new EntitySerializationException(String.format("An error occurred while parsing enum. Class [%s]. Value [%s].", propertyType, stringValue));
                         }
@@ -548,7 +541,6 @@ public class EntitySerializationImpl implements EntitySerialization {
                         } else if (Collection.class.isAssignableFrom(propertyType)) {
                             Collection entities = readCollection(propertyValue.getAsJsonArray(), metaProperty);
                             EntityValues.setValue(entity, propertyName, entities);
-//                            entity.setValue(propertyName, entities);
                         }
                     }
                 } else {
@@ -584,14 +576,14 @@ public class EntitySerializationImpl implements EntitySerialization {
             Object entity = metadata.create(metaClass);
             clearFields(entity);
             readFields(jsonObject, entity);
-            if (coreRestProperties.isRequiresSecurityToken()) {
-                //TODO:jmix-core#18
-//                JsonPrimitive securityTokenJonPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
-//                if (securityTokenJonPrimitive != null) {
-//                    byte[] securityToken = Base64.getDecoder().decode(securityTokenJonPrimitive.getAsString());
-//                    entity.__getEntityEntry().getSecurityState().setSecurityToken(securityToken);
-//                }
+
+            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
+                String securityToken = tokenManager.generateSecurityToken(entity);
+                if (securityToken != null) {
+                    jsonObject.addProperty("__securityToken", securityToken);
+                }
             }
+
             return entity;
         }
 

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.sys;
 
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.ClassManager;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.Fragment;
@@ -32,10 +31,12 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
@@ -164,7 +165,7 @@ public class FragmentHelper {
         protected ApplicationContext applicationContext;
 
         public FragmentLoaderInitTask(Fragment fragment, ScreenOptions options,
-                                      ComponentLoaderContext fragmentLoaderContext, ApplicationContext applicationContext) {
+                                      @Nullable ComponentLoaderContext fragmentLoaderContext, ApplicationContext applicationContext) {
             this.fragment = fragment;
             this.options = options;
             this.fragmentLoaderContext = fragmentLoaderContext;
@@ -186,11 +187,13 @@ public class FragmentHelper {
             fireEvent(frameOwner, ScreenFragment.AfterInitEvent.class,
                     new ScreenFragment.AfterInitEvent(frameOwner, options));
 
-            List<UiControllerProperty> properties = fragmentLoaderContext.getProperties();
-            if (!properties.isEmpty()) {
-                UiControllerPropertyInjector propertyInjector =
-                        (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME, frameOwner, properties);
-                propertyInjector.inject();
+            if (fragmentLoaderContext != null) {
+                List<UiControllerProperty> properties = fragmentLoaderContext.getProperties();
+                if (!properties.isEmpty()) {
+                    UiControllerPropertyInjector propertyInjector =
+                            (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME, frameOwner, properties);
+                    propertyInjector.inject();
+                }
             }
 
             FragmentContextImpl fragmentContext = (FragmentContextImpl) fragment.getContext();

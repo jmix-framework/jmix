@@ -35,4 +35,8 @@
         <property name="group" fetchPlan="_instance_name"/>
     </fetchPlan>
 
+    <fetchPlan class="test_support.entity.sales.Customer" name="customer-local-with-address" extends="_local">
+        <property name="address" fetchPlan="_local"/>
+    </fetchPlan>
+
 </fetchPlans>

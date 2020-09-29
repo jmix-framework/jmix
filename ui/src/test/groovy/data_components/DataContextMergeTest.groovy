@@ -26,14 +26,13 @@ import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.MergeOptions
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
 import org.eclipse.persistence.queries.FetchGroupTracker
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
 import test_support.entity.TestIdentityIdEntity
 import test_support.entity.TestJpaLifecycleCallbacksEntity
 import test_support.entity.TestReadOnlyPropertyEntity
 import test_support.entity.sales.*
 import test_support.entity.sec.User
-
-import org.springframework.beans.factory.annotation.Autowired
 
 class DataContextMergeTest extends DataContextSpec {
 
@@ -786,7 +785,8 @@ class DataContextMergeTest extends DataContextSpec {
         order3.customer != null
 
         cleanup:
-        dataManager.remove(order3, customer1)
+
+        dataManager.remove(order3, order2, order1, customer1)
     }
 
     def "committed new entity has reference loaded"() {

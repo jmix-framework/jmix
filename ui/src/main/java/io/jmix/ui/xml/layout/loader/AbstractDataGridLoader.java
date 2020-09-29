@@ -576,11 +576,15 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
             column.setMaximumWidth(maximumWidth);
         }
 
-        column.setRenderer(loadRenderer(element));
+        loadColumnVisualDisplay(column, element);
 
         loadAggregation(column, element);
 
         return column;
+    }
+
+    protected void loadColumnVisualDisplay(DataGrid.Column column, Element columnElement) {
+        column.setRenderer(loadRenderer(columnElement));
     }
 
     @Nullable

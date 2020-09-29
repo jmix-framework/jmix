@@ -21,7 +21,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import test_support.entity.BaseEntity;
+import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
  */
 @Entity(name = "sec$User")
 @Table(name = "SEC_USER")
-public class User extends BaseEntity {
+public class User extends TestBaseEntity {
 
     private static final long serialVersionUID = 5007187642916030394L;
 

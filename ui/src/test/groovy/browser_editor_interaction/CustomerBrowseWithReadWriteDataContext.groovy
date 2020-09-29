@@ -16,25 +16,25 @@
 
 package browser_editor_interaction
 
-
 import io.jmix.ui.component.GroupTable
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.model.DataContext
-import io.jmix.ui.screen.*
+import io.jmix.ui.screen.LookupComponent
+import io.jmix.ui.screen.StandardLookup
+import io.jmix.ui.screen.UiController
+import io.jmix.ui.screen.UiDescriptor
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.entity.sales.Customer
-
-import javax.inject.Inject
 
 @UiController('test_Customer.browse')
 @UiDescriptor('customer-browse-with-readwrite-datacontext.xml')
 @LookupComponent('customersTable')
 class CustomerBrowseWithReadWriteDataContext extends StandardLookup<Customer> {
 
-    @Inject
+    @Autowired
     GroupTable<Customer> customersTable
 
-    @Inject
+    @Autowired
     DataContext dataContext
 
     @Autowired

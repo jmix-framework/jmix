@@ -16,10 +16,6 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.EntityEntry;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.NoIdEntityEntry;
-import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
@@ -27,7 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @ModelObject(name = "test_OrderObject")
-public class OrderObject implements Entity {
+public class OrderObject extends TestBaseModelObject {
 
     private LocalDate date;
 
@@ -69,34 +65,4 @@ public class OrderObject implements Entity {
     public void setLines(List<OrderLineObject> lines) {
         this.lines = lines;
     }
-
-    // TODO Replace with enhancing - begin
-
-    private EntityEntry _jmixEntityEntry = new NoIdEntityEntry(this);
-
-    @Override
-    public EntityEntry __getEntityEntry() {
-        return _jmixEntityEntry;
-    }
-
-    @Override
-    public void __copyEntityEntry() {
-        NoIdEntityEntry newEntry = new NoIdEntityEntry(this);
-        newEntry.copy(_jmixEntityEntry);
-        _jmixEntityEntry = newEntry;
-    }
-
-    public boolean equals(Object var1) {
-        return EntityInternals.equals(this, var1);
-    }
-
-    public int hashCode() {
-        return EntityInternals.hashCode(this);
-    }
-
-    public String toString() {
-        return EntityInternals.toString(this);
-    }
-
-    // TODO Replace with enhancing - end
 }

@@ -17,7 +17,7 @@
 package test_support.entity.sales;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import test_support.entity.BaseEntity;
+import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @Entity(name = "test_Product")
 @Table(name = "TEST_PRODUCT")
-public class Product extends BaseEntity {
+public class Product extends TestBaseEntity {
 
     private static final long serialVersionUID = -7245110045640511010L;
 

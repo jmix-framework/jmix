@@ -18,7 +18,6 @@ package entity_fields
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
-import io.jmix.core.Metadata
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
@@ -30,24 +29,19 @@ import io.jmix.ui.component.EntityPicker
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
+import test_support.entity.sales.screen.OrderEdit
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class FormFieldTest extends ScreenSpecification {
-
-    @Autowired
-    JdbcTemplate jdbc
     @Autowired
     ScreenBuilders screenBuilders
     @Autowired
     DataManager dataManager
-    @Autowired
-    Metadata metadata
     @Autowired
     UiProperties properties
 
@@ -58,7 +52,7 @@ class FormFieldTest extends ScreenSpecification {
 
     @Override
     void setup() {
-        exportScreensPackages(['entity_fields'])
+        exportScreensPackages(['test_support.entity.sales.screen'])
 
         customer1 = dataManager.save(new Customer(name: 'c1', address: new Address()))
         customer2 = dataManager.save(new Customer(name: 'c2', address: new Address()))
@@ -71,8 +65,7 @@ class FormFieldTest extends ScreenSpecification {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 
-        jdbc.update('delete from TEST_ORDER')
-        jdbc.update('delete from TEST_CUSTOMER')
+        dataManager.remove(order, customer1, customer2)
     }
 
     def "entityComboBox is specified in properties"() {

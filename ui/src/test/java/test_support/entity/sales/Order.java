@@ -20,7 +20,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import test_support.entity.BaseEntity;
+import test_support.entity.TestBaseEntity;
 import test_support.entity.sec.User;
 
 import javax.persistence.*;
@@ -30,7 +30,7 @@ import java.util.List;
 
 @Entity(name = "test_Order")
 @Table(name = "TEST_ORDER")
-public class Order extends BaseEntity {
+public class Order extends TestBaseEntity {
 
     private static final long serialVersionUID = -7408892681168157038L;
 
@@ -105,8 +105,10 @@ public class Order extends BaseEntity {
     }
 
     @InstanceName
-    public String getCaption(){
-        return String.format("No %s for %s",getNumber(),getCustomer().getName());
+    public String getCaption() {
+        return getCustomer() != null
+                ? String.format("No %s for %s", getNumber(), getCustomer().getName())
+                : String.format("No %s", getNumber());
     }
 
     @Override

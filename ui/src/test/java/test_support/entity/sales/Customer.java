@@ -19,14 +19,19 @@ package test_support.entity.sales;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.pessimisticlocking.PessimisticLock;
-import test_support.entity.BaseEntity;
+import test_support.entity.TestBaseEntity;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity(name = "test_Customer")
 @Table(name = "TEST_CUSTOMER")
 @PessimisticLock(timeoutSec = 60)
-public class Customer extends BaseEntity {
+public class Customer extends TestBaseEntity {
 
     private static final long serialVersionUID = -5023394946853765350L;
 
@@ -79,14 +84,4 @@ public class Customer extends BaseEntity {
     public void setAddress(Address address) {
         this.address = address;
     }
-
-//    @Override
-//    public String toString() {
-//        return "Customer{" +
-//                "id=" + id +
-//                ", version=" + version +
-//                ", name='" + name + '\'' +
-//                ", status='" + status + '\'' +
-//                "}@" + Integer.toHexString(System.identityHashCode(this));
-//    }
 }

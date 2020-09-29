@@ -26,8 +26,12 @@ import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
-import io.jmix.ui.sys.*;
+import io.jmix.ui.sys.FragmentContextImpl;
+import io.jmix.ui.sys.FragmentHelper;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInitTask;
+import io.jmix.ui.sys.ScreenContextImpl;
+import io.jmix.ui.sys.ScreenXmlLoader;
+import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +42,12 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
-import static io.jmix.ui.screen.UiControllerUtils.*;
+import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
+import static io.jmix.ui.screen.UiControllerUtils.setFrame;
+import static io.jmix.ui.screen.UiControllerUtils.setHostController;
+import static io.jmix.ui.screen.UiControllerUtils.setScreenContext;
+import static io.jmix.ui.screen.UiControllerUtils.setScreenData;
+import static io.jmix.ui.screen.UiControllerUtils.setWindowId;
 import static io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
 import static io.jmix.ui.sys.FragmentHelper.NAME;
 
@@ -60,7 +69,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         String fragmentId;
         if (element.attributeValue("id") != null) {
             fragmentId = element.attributeValue("id");
-        } else if (screenId != null){
+        } else if (screenId != null) {
             fragmentId = screenId;
         } else {
             fragmentId = src;
@@ -207,9 +216,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
         ScreenOptions options = parentContext.getOptions();
         parentContext.addInjectTask(new FragmentLoaderInjectTask(resultComponent, options, applicationContext));
-        if (innerContext != null) {
-            parentContext.addInitTask(new FragmentLoaderInitTask(resultComponent, options, innerContext, applicationContext));
-        }
+        parentContext.addInitTask(new FragmentLoaderInitTask(resultComponent, options, innerContext, applicationContext));
     }
 
     protected List<UiControllerProperty> loadProperties(Element element) {

@@ -28,8 +28,9 @@ import io.jmix.ui.screen.EditorScreen
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import pessimistic_locking.screen.CustomerEdit
+import pessimistic_locking.screen.CustomerMasterDetail
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Address
 import test_support.entity.sales.Customer
@@ -37,8 +38,6 @@ import test_support.entity.sales.Customer
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class PessimisticLockEditScreenTest extends ScreenSpecification {
 
-    @Autowired
-    JdbcTemplate jdbc
     @Autowired
     ScreenBuilders screenBuilders
     @Autowired
@@ -51,10 +50,6 @@ class PessimisticLockEditScreenTest extends ScreenSpecification {
     @Override
     void setup() {
         exportScreensPackages(['pessimistic_locking'])
-    }
-
-    void cleanup() {
-        jdbc.update('delete from TEST_CUSTOMER')
     }
 
     def "entity is locked by edit screen"() {
@@ -94,6 +89,9 @@ class PessimisticLockEditScreenTest extends ScreenSpecification {
 
         then: "third editor can save changes"
         editor3.getWindow().getActionNN(EditorScreen.WINDOW_COMMIT_AND_CLOSE).enabled
+
+        cleanup:
+        dataManager.remove(customer)
     }
 
     def "entity is locked by master-detail screen"() {
@@ -135,5 +133,8 @@ class PessimisticLockEditScreenTest extends ScreenSpecification {
 
         then:
         screen3.actionsPane.visible
+
+        cleanup:
+        dataManager.remove(customer)
     }
 }

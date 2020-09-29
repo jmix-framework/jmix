@@ -26,11 +26,15 @@ import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.ui.menu.MenuBuilder;
+import io.jmix.ui.menu.MenuConfig;
+import io.jmix.ui.menu.SideMenuBuilder;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
@@ -39,11 +43,15 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
+import test_support.bean.TestAppMenuBuilder;
+import test_support.bean.TestMenuConfig;
+import test_support.bean.TestSideMenuBuilder;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
+@ComponentScan
 @PropertySource("classpath:/test_support/test-ui-app.properties")
 @JmixModule(dependsOn = {CoreConfiguration.class, CoreSecurityConfiguration.class})
 public class UiTestConfiguration {
@@ -90,5 +98,21 @@ public class UiTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    public MenuConfig menuConfig() {
+        return new TestMenuConfig();
+    }
+
+    @Bean
+    public SideMenuBuilder sideMenuBuilder() {
+        return new TestSideMenuBuilder();
+    }
+
+    @Bean
+    @Primary
+    public MenuBuilder appMenuBuilder() {
+        return new TestAppMenuBuilder();
     }
 }

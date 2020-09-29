@@ -16,10 +16,6 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.EntityEntry;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.NoIdEntityEntry;
-import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -27,7 +23,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import javax.validation.constraints.NotNull;
 
 @ModelObject(name = "test_CustomerObject", annotatedPropertiesOnly = true)
-public class CustomerObject implements Entity {
+public class CustomerObject extends TestBaseModelObject {
 
     @ModelProperty(mandatory = true)
     @InstanceName
@@ -51,34 +47,4 @@ public class CustomerObject implements Entity {
     public void setAnObject(Object anObject) {
         this.anObject = anObject;
     }
-
-    // TODO Replace with enhancing - begin
-
-    private EntityEntry _jmixEntityEntry = new NoIdEntityEntry(this);
-
-    @Override
-    public EntityEntry __getEntityEntry() {
-        return _jmixEntityEntry;
-    }
-
-    @Override
-    public void __copyEntityEntry() {
-        NoIdEntityEntry newEntry = new NoIdEntityEntry(this);
-        newEntry.copy(_jmixEntityEntry);
-        _jmixEntityEntry = newEntry;
-    }
-
-    public boolean equals(Object var1) {
-        return EntityInternals.equals(this, var1);
-    }
-
-    public int hashCode() {
-        return EntityInternals.hashCode(this);
-    }
-
-    public String toString() {
-        return EntityInternals.toString(this);
-    }
-
-    // TODO Replace with enhancing - end
 }

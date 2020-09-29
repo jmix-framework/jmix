@@ -20,7 +20,7 @@ import javax.persistence.*;
 
 @Entity(name = "test_JpaLifecycleCallbacksEntity")
 @Table(name = "TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY")
-public class TestJpaLifecycleCallbacksEntity extends BaseEntity {
+public class TestJpaLifecycleCallbacksEntity extends TestBaseEntity {
 
     private static final long serialVersionUID = -4655299292272704686L;
 

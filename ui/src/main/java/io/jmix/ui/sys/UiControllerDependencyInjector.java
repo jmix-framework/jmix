@@ -323,6 +323,15 @@ public class UiControllerDependencyInjector {
                 }
             } else {
                 switch (annotation.target()) {
+                    case CONTROLLER:
+                        Object componentTarget = findMethodTarget(frame, target);
+                        if (!(componentTarget instanceof Fragment)) {
+                            throw new UnsupportedOperationException(
+                                    "Unsupported @Subscribe target " + annotation.target() + ". It is not a Fragment.");
+                        }
+                        eventTarget = ((Fragment) componentTarget).getFrameOwner();
+                        break;
+
                     case COMPONENT:
                         // component event
                         eventTarget = findMethodTarget(frame, target);

@@ -137,7 +137,7 @@ public class WebFragments implements Fragments {
         Frame parentFrame = getFrame(parent);
 
         // fake parent loader context
-        ComponentLoaderContext loaderContext = new ComponentLoaderContext(options);
+        ComponentLoaderContext loaderContext = createComponentLoaderContext(options);
 
         FragmentContextImpl frameContext = new FragmentContextImpl(fragment, loaderContext);
         frameContext.setManualInitRequired(true);
@@ -151,7 +151,7 @@ public class WebFragments implements Fragments {
 
         // load XML if needed
         if (windowInfo.getTemplate() != null) {
-            ComponentLoaderContext innerContext = new ComponentLoaderContext(options);
+            ComponentLoaderContext innerContext = createComponentLoaderContext(options);
             innerContext.setMessagesPack(fragmentHelper.getMessagePack(windowInfo.getTemplate()));
             innerContext.setCurrentFrameId(windowInfo.getId());
             innerContext.setFullFrameId(windowInfo.getId());
@@ -205,5 +205,9 @@ public class WebFragments implements Fragments {
         loaderContext.executePostInitTasks();
 
         fragmentContext.setInitialized(true);
+    }
+
+    protected ComponentLoaderContext createComponentLoaderContext(ScreenOptions options) {
+        return new ComponentLoaderContext(options);
     }
 }

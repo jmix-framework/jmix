@@ -23,18 +23,21 @@ import io.jmix.data.PersistenceTools
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.KeyValueContainer
 import io.jmix.ui.model.KeyValueInstanceLoader
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
 import test_support.entity.Foo
 
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
 import java.util.function.Function
 
 class KeyValueInstanceLoaderTest extends DataContextSpec {
 
-    @Autowired DataManager dataManager
-    @Autowired DataComponents factory
-    @Autowired PersistenceTools persistenceTools
+    @Autowired
+    DataManager dataManager
+    @Autowired
+    DataComponents factory
+    @Autowired
+    PersistenceTools persistenceTools
 
     def "successful load"() {
         KeyValueInstanceLoader loader = factory.createKeyValueInstanceLoader()

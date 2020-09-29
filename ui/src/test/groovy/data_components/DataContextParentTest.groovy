@@ -17,9 +17,10 @@
 package data_components
 
 import io.jmix.core.EntityStates
-
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
+import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Unroll
 import test_support.DataContextSpec
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
@@ -27,15 +28,14 @@ import test_support.entity.sales.OrderLineParam
 import test_support.entity.sec.Role
 import test_support.entity.sec.User
 import test_support.entity.sec.UserRole
-import spock.lang.Unroll
-
-import org.springframework.beans.factory.annotation.Autowired
 
 @SuppressWarnings("GroovyAssignabilityCheck")
 class DataContextParentTest extends DataContextSpec {
 
-    @Autowired DataComponents factory
-    @Autowired EntityStates entityStates
+    @Autowired
+    DataComponents factory
+    @Autowired
+    EntityStates entityStates
 
     def "child context creation and merging instance from parent"() throws Exception {
 

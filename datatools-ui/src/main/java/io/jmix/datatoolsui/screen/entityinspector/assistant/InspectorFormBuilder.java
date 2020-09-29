@@ -185,7 +185,7 @@ public class InspectorFormBuilder {
         UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaClass, metaProperty.getName());
         accessManager.applyRegisteredConstraints(attributeContext);
 
-        if (!attributeContext.isViewPermitted())
+        if (!attributeContext.canViewPermitted())
             return;
 
         if (range.isClass()) {

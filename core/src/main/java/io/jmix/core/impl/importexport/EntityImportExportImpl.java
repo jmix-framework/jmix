@@ -76,8 +76,6 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    protected EntitySerializationTokenManager tokenManager;
-
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 

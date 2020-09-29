@@ -260,7 +260,7 @@ public class AddAction<E> extends ListAction
                     new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(attributeContext);
 
-            if (!attributeContext.isModifyPermitted()) {
+            if (!attributeContext.canModifyPermitted()) {
                 return false;
             }
         }

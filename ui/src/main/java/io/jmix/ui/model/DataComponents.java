@@ -103,7 +103,7 @@ public class DataComponents {
         accessManager.applyRegisteredConstraints(attributeContext);
 
         if (entityContext.isViewPermitted()
-                && attributeContext.isViewPermitted()) {
+                && attributeContext.canViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
                 Object item = masterContainer.getItemOrNull();
                 container.setItem(item != null ? EntityValues.getValue(item, property) : null);
@@ -147,7 +147,7 @@ public class DataComponents {
         UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(masterContainer.getEntityMetaClass(), property);
         accessManager.applyRegisteredConstraints(attributeContext);
 
-        if (attributeContext.isViewPermitted()
+        if (attributeContext.canViewPermitted()
                 && entityContext.isViewPermitted()) {
             masterContainer.addItemChangeListener(e -> {
                 Object item = masterContainer.getItemOrNull();

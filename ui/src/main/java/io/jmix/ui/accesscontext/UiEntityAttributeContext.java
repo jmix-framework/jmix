@@ -38,7 +38,7 @@ public class UiEntityAttributeContext implements AccessContext {
         return propertyPath;
     }
 
-    public boolean isModifyPermitted() {
+    public boolean canModifyPermitted() {
         return modifyPermitted;
     }
 
@@ -46,7 +46,7 @@ public class UiEntityAttributeContext implements AccessContext {
         this.modifyPermitted = false;
     }
 
-    public boolean isViewPermitted() {
+    public boolean canViewPermitted() {
         return viewPermitted;
     }
 

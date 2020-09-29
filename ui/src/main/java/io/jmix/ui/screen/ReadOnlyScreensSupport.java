@@ -125,8 +125,8 @@ public class ReadOnlyScreensSupport {
                 UiEntityAttributeContext attributeContext = new UiEntityAttributeContext(metaPropertyPath);
                 accessManager.applyRegisteredConstraints(attributeContext);
 
-                if (!attributeContext.isModifyPermitted()
-                        || !attributeContext.isViewPermitted()) {
+                if (!attributeContext.canModifyPermitted()
+                        || !attributeContext.canViewPermitted()) {
                     shouldBeEditable = false;
                 }
             }

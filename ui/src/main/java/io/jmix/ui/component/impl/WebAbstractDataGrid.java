@@ -1949,7 +1949,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                         UiEntityAttributeContext attributeContext =
                                 new UiEntityAttributeContext(metaClass, propertyPath.toString());
                         accessManager.applyRegisteredConstraints(attributeContext);
-                        return attributeContext.isViewPermitted();
+                        return attributeContext.canViewPermitted();
                     }
                     return true;
                 })
@@ -3540,7 +3540,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                         new UiEntityAttributeContext(metaClass, propertyPath.toString());
                 owner.accessManager.applyRegisteredConstraints(attributeContext);
 
-                return attributeContext.isModifyPermitted();
+                return attributeContext.canModifyPermitted();
             }
             return true;
         }

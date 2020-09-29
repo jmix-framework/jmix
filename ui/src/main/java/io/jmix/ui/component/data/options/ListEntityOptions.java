@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -88,7 +89,7 @@ public class ListEntityOptions<E> extends ListOptions<E> implements Options<E>, 
     @Nullable
     @Override
     public MetaClass getEntityMetaClass() {
-        MetaClass metaClass;
+        MetaClass metaClass = null;
         if (selectedItem != null) {
             metaClass = metadata.getClass(selectedItem);
         } else {
@@ -96,8 +97,14 @@ public class ListEntityOptions<E> extends ListOptions<E> implements Options<E>, 
             if (!itemsCollection.isEmpty()) {
                 metaClass = metadata.getClass(itemsCollection.get(0));
             } else {
-                Class<E> entityClass = (Class<E>) ((ParameterizedType) itemsCollection.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-                metaClass = metadata.getClass(entityClass);
+                Type collectionType = itemsCollection.getClass().getGenericSuperclass();
+                if (collectionType instanceof ParameterizedType
+                        && ((ParameterizedType) collectionType).getActualTypeArguments().length > 0) {
+                    Type entityType = ((ParameterizedType) collectionType).getActualTypeArguments()[0];
+                    if (entityType instanceof Class) {
+                        metaClass = metadata.getClass((Class<?>) entityType);
+                    }
+                }
             }
         }
         return metaClass;

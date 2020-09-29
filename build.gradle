@@ -136,7 +136,6 @@ dependencies {
         api 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.7-1-jmix'
         api 'org.eclipse.persistence:org.eclipse.persistence.extension:2.7.7'
         api 'org.glassfish:javax.el:3.0.1-b10'
-        api 'org.json:json:20180813'
 
         api "com.vaadin:vaadin-server:$vaadinVersion"
         api "com.vaadin:vaadin-compatibility-server:$vaadinVersion"

@@ -18,27 +18,32 @@ package io.jmix.securityui.screen.role;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
 import io.jmix.core.Metadata;
 import io.jmix.security.model.*;
+import io.jmix.security.role.RoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
 import io.jmix.securitydata.entity.RoleEntity;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.securityui.model.RoleModel;
+import io.jmix.securityui.model.RoleModelConverter;
 import io.jmix.securityui.model.RowLevelPolicyModel;
 import io.jmix.securityui.screen.resourcepolicy.*;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.list.EditAction;
-import io.jmix.ui.action.list.ViewAction;
+import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.PopupButton;
+import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
@@ -51,17 +56,46 @@ import java.util.stream.Collectors;
 @Route(value = "roles/edit", parentPrefix = "roles")
 public class RoleModelEdit extends StandardEditor<RoleModel> {
 
+    private static final Logger log = LoggerFactory.getLogger(RoleModelEdit.class);
+
     @Named("resourcePoliciesTable.edit")
     private EditAction<ResourcePolicyModel> resourcePoliciesTableEdit;
 
     @Named("resourcePoliciesTable.view")
     private ViewAction<ResourcePolicyModel> resourcePoliciesTableView;
 
+    @Named("resourcePoliciesTable.remove")
+    private RemoveAction<ResourcePolicyModel> resourcePoliciesTableRemove;
+
+    @Named("rowLevelPoliciesTable.create")
+    private CreateAction<RowLevelPolicyModel> rowLevelPoliciesTableCreate;
+
     @Named("rowLevelPoliciesTable.view")
     private ViewAction<RowLevelPolicyModel> rowLevelPoliciesTableView;
 
     @Named("rowLevelPoliciesTable.edit")
     private EditAction<RowLevelPolicyModel> rowLevelPoliciesTableEdit;
+
+    @Named("rowLevelPoliciesTable.remove")
+    private RemoveAction<RowLevelPolicyModel> rowLevelPoliciesTableRemove;
+
+    @Named("childRolesTable.add")
+    private AddAction<RoleModel> childRolesTableAdd;
+
+    @Named("childRolesTable.remove")
+    private RemoveAction<RoleModel> childRolesTableRemove;
+
+    @Autowired
+    private CollectionContainer<RoleModel> childRolesDc;
+
+    @Autowired
+    private TabSheet policiesTabSheet;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private RoleModelConverter roleModelConverter;
 
     @Autowired
     private GroupTable<ResourcePolicyModel> resourcePoliciesTable;
@@ -84,6 +118,9 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
     private TextField<String> sourceField;
 
     @Autowired
+    private TextField<RoleType> roleTypeField;
+
+    @Autowired
     private MessageBundle messageBundle;
 
     @Autowired
@@ -98,21 +135,96 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         this.openedByCreateAction = openedByCreateAction;
     }
 
+    @Install(to = "childRolesDl", target = Target.DATA_LOADER)
+    private List<RoleModel> childRolesDlLoadDelegate(LoadContext<RoleModel> loadContext) {
+        RoleModel editedRoleModel = getEditedEntity();
+        if (editedRoleModel.getChildRoles() == null || editedRoleModel.getChildRoles().isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<RoleModel> childRoleModels = new ArrayList<>();
+        for (String code : editedRoleModel.getChildRoles()) {
+            Role child = roleRepository.getRoleByCode(code);
+            if (child != null) {
+                childRoleModels.add(roleModelConverter.createRoleModel(child));
+            } else {
+                log.warn("Role {} was not found while collecting child roles for aggregated role {}",
+                        editedRoleModel.getCode(), code);
+            }
+        }
+        return childRoleModels;
+    }
+
+    @Subscribe(id = "childRolesDc", target = Target.DATA_CONTAINER)
+    public void onChildRolesDcCollectionChange(CollectionContainer.CollectionChangeEvent<RoleModel> event) {
+        RoleModel editedEntity = getEditedEntity();
+        if (getEditedEntity().getRoleType() != RoleType.AGGREGATED) {
+            return;
+        }
+        if (event.getChangeType() == CollectionChangeType.ADD_ITEMS ||
+                event.getChangeType() == CollectionChangeType.REMOVE_ITEMS) {
+            List<ResourcePolicyModel> resourcePolicies = new ArrayList<>();
+            List<RowLevelPolicyModel> rowLevelPolicies = new ArrayList<>();
+            Set<String> resourceIds = new HashSet<>();
+            Set<String> rowLevelIds = new HashSet<>();
+            for (RoleModel childRole : childRolesDc.getItems()) {
+                for (ResourcePolicyModel resourcePolicy : childRole.getResourcePolicies()) {
+                    String uniqueKey = resourcePolicy.getCustomProperties().get("uniqueKey");
+                    if (uniqueKey == null) {
+                        resourcePolicies.add(resourcePolicy);
+                    } else if (!resourceIds.contains(uniqueKey)) {
+                        resourceIds.add(uniqueKey);
+                        resourcePolicies.add(resourcePolicy);
+                    }
+                }
+                for (RowLevelPolicyModel rowLevelPolicy : childRole.getRowLevelPolicies()) {
+                    String uniqueKey = rowLevelPolicy.getCustomProperties().get("uniqueKey");
+                    if (uniqueKey == null) {
+                        rowLevelPolicies.add(rowLevelPolicy);
+                    } else if (!rowLevelIds.contains(uniqueKey)) {
+                        rowLevelIds.add(uniqueKey);
+                        rowLevelPolicies.add(rowLevelPolicy);
+                    }
+                }
+            }
+            editedEntity.setResourcePolicies(resourcePolicies);
+            editedEntity.setRowLevelPolicies(rowLevelPolicies);
+        }
+    }
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         boolean isDatabaseSource = isDatabaseSource();
-        setReadOnly(!isDatabaseSource());
-        if (!isDatabaseSource) {
+        setReadOnly(!isDatabaseSource);
+        RoleType roleType = getEditedEntity().getRoleType();
+        boolean isAggregated = roleType == RoleType.AGGREGATED;
+        if (isDatabaseSource) {
+            if (!isAggregated) {
+                policiesTabSheet.removeTab("childRolesTab");
+                if (roleType == RoleType.RESOURCE) {
+                    policiesTabSheet.removeTab("rowLevelPoliciesTab");
+                } else if (roleType == RoleType.ROW_LEVEL) {
+                    policiesTabSheet.removeTab("resourcePoliciesTab");
+                }
+            }
+        } else {
+            childRolesTableAdd.setVisible(false);
+            childRolesTableRemove.setVisible(false);
+            policiesTabSheet.setSelectedTab("resourcePoliciesTab");
             resourcePoliciesTable.setItemClickAction(resourcePoliciesTableView);
             rowLevelPoliciesTable.setItemClickAction(rowLevelPoliciesTableView);
         }
-        resourcePoliciesTableEdit.setVisible(isDatabaseSource);
-        resourcePoliciesTableView.setVisible(!isDatabaseSource);
-        createResourcePolicyPopupBtn.setEnabled(isDatabaseSource);
-        createResourcePolicyPopupBtn.getActions().forEach(action -> action.setEnabled(isDatabaseSource));
+        childRolesTableRemove.setConfirmation(false);
+        roleTypeField.setVisible(isDatabaseSource);
+        resourcePoliciesTableEdit.setVisible(isDatabaseSource && !isAggregated);
+        resourcePoliciesTableRemove.setVisible(isDatabaseSource && !isAggregated);
+        resourcePoliciesTableView.setVisible(!isDatabaseSource || isAggregated);
+        createResourcePolicyPopupBtn.setEnabled(isDatabaseSource && !isAggregated);
+        createResourcePolicyPopupBtn.getActions().forEach(action -> action.setEnabled(isDatabaseSource && !isAggregated));
 
-        rowLevelPoliciesTableEdit.setVisible(isDatabaseSource);
-        rowLevelPoliciesTableView.setVisible(!isDatabaseSource);
+        rowLevelPoliciesTableCreate.setVisible(isDatabaseSource && !isAggregated);
+        rowLevelPoliciesTableRemove.setVisible(isDatabaseSource && !isAggregated);
+        rowLevelPoliciesTableEdit.setVisible(isDatabaseSource && !isAggregated);
+        rowLevelPoliciesTableView.setVisible(!isDatabaseSource || isAggregated);
 
         //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove
         //all entities from dataContext.modifiedInstances collection
@@ -288,6 +400,7 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         roleEntity = dataContext.merge(roleEntity);
         roleEntity.setName(roleModel.getName());
         roleEntity.setCode(roleModel.getCode());
+        roleEntity.setRoleType(roleModel.getRoleType());
 
         boolean roleModelModified = modifiedInstances.stream()
                 .anyMatch(entity -> entity instanceof RoleModel);
@@ -296,56 +409,65 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
             roleEntity = dataContext.merge(roleEntity);
         }
 
-        List<ResourcePolicyModel> resourcePolicyModels = modifiedInstances.stream()
-                .filter(entity -> entity instanceof ResourcePolicyModel)
-                .map(entity -> (ResourcePolicyModel) entity)
-                .collect(Collectors.toList());
+        if (roleModel.getRoleType() == RoleType.RESOURCE) {
+            List<ResourcePolicyModel> resourcePolicyModels = modifiedInstances.stream()
+                    .filter(entity -> entity instanceof ResourcePolicyModel)
+                    .map(entity -> (ResourcePolicyModel) entity)
+                    .collect(Collectors.toList());
 
-        for (ResourcePolicyModel policyModel : resourcePolicyModels) {
-            String databaseId = policyModel.getCustomProperties().get("databaseId");
-            ResourcePolicyEntity policyEntity;
-            if (!Strings.isNullOrEmpty(databaseId)) {
-                UUID entityId = UUID.fromString(databaseId);
-                policyEntity = dataManager.load(ResourcePolicyEntity.class)
-                        .id(entityId)
-                        .one();
-            } else {
-                policyEntity = metadata.create(ResourcePolicyEntity.class);
-                policyEntity.setRole(roleEntity);
+            for (ResourcePolicyModel policyModel : resourcePolicyModels) {
+                String databaseId = policyModel.getCustomProperties().get("databaseId");
+                ResourcePolicyEntity policyEntity;
+                if (!Strings.isNullOrEmpty(databaseId)) {
+                    UUID entityId = UUID.fromString(databaseId);
+                    policyEntity = dataManager.load(ResourcePolicyEntity.class)
+                            .id(entityId)
+                            .one();
+                } else {
+                    policyEntity = metadata.create(ResourcePolicyEntity.class);
+                    policyEntity.setRole(roleEntity);
+                }
+                policyEntity = dataContext.merge(policyEntity);
+                policyEntity.setType(policyModel.getType());
+                policyEntity.setResource(policyModel.getResource());
+                policyEntity.setAction(policyModel.getAction());
+                policyEntity.setEffect(policyModel.getEffect());
+                policyEntity.setScope(policyModel.getScope() != null ?
+                        policyModel.getScope() :
+                        ResourcePolicy.DEFAULT_SCOPE);
             }
-            policyEntity = dataContext.merge(policyEntity);
-            policyEntity.setType(policyModel.getType());
-            policyEntity.setResource(policyModel.getResource());
-            policyEntity.setAction(policyModel.getAction());
-            policyEntity.setEffect(policyModel.getEffect());
-            policyEntity.setScope(policyModel.getScope() != null ?
-                    policyModel.getScope() :
-                    ResourcePolicy.DEFAULT_SCOPE);
-        }
+        } else if (roleModel.getRoleType() == RoleType.ROW_LEVEL) {
+            List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()
+                    .filter(entity -> entity instanceof RowLevelPolicyModel)
+                    .map(entity -> (RowLevelPolicyModel) entity)
+                    .collect(Collectors.toList());
 
-        List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()
-                .filter(entity -> entity instanceof RowLevelPolicyModel)
-                .map(entity -> (RowLevelPolicyModel) entity)
-                .collect(Collectors.toList());
-
-        for (RowLevelPolicyModel policyModel : rowLevelPolicyModels) {
-            String databaseId = policyModel.getCustomProperties().get("databaseId");
-            RowLevelPolicyEntity policyEntity;
-            if (!Strings.isNullOrEmpty(databaseId)) {
-                UUID entityId = UUID.fromString(databaseId);
-                policyEntity = dataManager.load(RowLevelPolicyEntity.class)
-                        .id(entityId)
-                        .one();
-            } else {
-                policyEntity = metadata.create(RowLevelPolicyEntity.class);
-                policyEntity.setRole(roleEntity);
+            for (RowLevelPolicyModel policyModel : rowLevelPolicyModels) {
+                String databaseId = policyModel.getCustomProperties().get("databaseId");
+                RowLevelPolicyEntity policyEntity;
+                if (!Strings.isNullOrEmpty(databaseId)) {
+                    UUID entityId = UUID.fromString(databaseId);
+                    policyEntity = dataManager.load(RowLevelPolicyEntity.class)
+                            .id(entityId)
+                            .one();
+                } else {
+                    policyEntity = metadata.create(RowLevelPolicyEntity.class);
+                    policyEntity.setRole(roleEntity);
+                }
+                policyEntity = dataContext.merge(policyEntity);
+                policyEntity.setEntityName(policyModel.getEntityName());
+                policyEntity.setAction(policyModel.getAction());
+                policyEntity.setType(policyModel.getType());
+                policyEntity.setWhereClause(policyModel.getWhereClause());
+                policyEntity.setJoinClause(policyModel.getJoinClause());
             }
-            policyEntity = dataContext.merge(policyEntity);
-            policyEntity.setEntityName(policyModel.getEntityName());
-            policyEntity.setAction(policyModel.getAction());
-            policyEntity.setType(policyModel.getType());
-            policyEntity.setWhereClause(policyModel.getWhereClause());
-            policyEntity.setJoinClause(policyModel.getJoinClause());
+        } else if (roleModel.getRoleType() == RoleType.AGGREGATED) {
+            Set<String> childRoles = new HashSet<>();
+            for (RoleModel child : childRolesDc.getItems()) {
+                childRoles.add(child.getCode());
+            }
+            roleModel.setChildRoles(childRoles);
+            roleEntity.setChildRoles(childRoles);
         }
     }
 

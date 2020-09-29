@@ -42,6 +42,8 @@ public class RoleModelConverter {
         roleModel.setCode(role.getCode());
         roleModel.setName(role.getName());
         roleModel.setSource(role.getSource());
+        roleModel.setRoleType(role.getRoleType());
+        roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());
 
         List<ResourcePolicyModel> resourcePolicyModels = role.getResourcePolicies().stream()

@@ -24,6 +24,9 @@
             <collection id="resourcePoliciesDc" property="resourcePolicies"/>
             <collection id="rowLevelPoliciesDc" property="rowLevelPolicies"/>
         </instance>
+        <collection id="childRolesDc" class="io.jmix.securityui.model.RoleModel">
+            <loader id="childRolesDl"/>
+        </collection>
     </data>
     <facets>
         <dataLoadCoordinator auto="true"/>
@@ -36,9 +39,28 @@
             </column>
             <column width="350px">
                 <textField id="sourceField" caption="msg://io.jmix.securityui.model/RoleModel.source" editable="false"/>
+                <textField id="roleTypeField" property="roleType" editable="false"/>
             </column>
         </form>
         <tabSheet id="policiesTabSheet">
+            <tab id="childRolesTab" caption="msg://io.jmix.securityui.model/RoleModel.childRoles" margin="true,false,false,false" spacing="true">
+                <groupTable id="childRolesTable" dataContainer="childRolesDc" width="100%" height="100%">
+                    <actions>
+                        <action id="add" type="add"/>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="name"/>
+                        <column id="code"/>
+                        <column id="source"/>
+                        <column id="roleType"/>
+                    </columns>
+                    <buttonsPanel>
+                        <button action="childRolesTable.add"/>
+                        <button action="childRolesTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </tab>
             <tab id="resourcePoliciesTab" caption="msg://io.jmix.securityui.model/RoleModel.resourcePolicies"
                  spacing="true" margin="true;false;false;false;">
                 <groupTable id="resourcePoliciesTable" dataContainer="resourcePoliciesDc" width="100%" height="100%">

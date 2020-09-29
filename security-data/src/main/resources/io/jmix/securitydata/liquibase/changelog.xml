@@ -44,6 +44,8 @@
                 <constraints nullable="false"/>
             </column>
             <column name="SCOPE" type="varchar(255)"/>
+            <column name="ROLE_TYPE" type="varchar(50)"/>
+            <column name="CHILD_ROLES" type="clob"/>
         </createTable>
 
         <createTable tableName="SEC_RESOURCE_POLICY_ENTITY">

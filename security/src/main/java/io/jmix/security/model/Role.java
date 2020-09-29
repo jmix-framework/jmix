@@ -16,10 +16,7 @@
 
 package io.jmix.security.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class is a container for security policies.
@@ -41,8 +38,10 @@ public class Role {
     private String name;
     private String code;
     private String source;
+    private RoleType roleType;
     private Collection<ResourcePolicy> resourcePolicies = new ArrayList<>();
     private Collection<RowLevelPolicy> rowLevelPolicies = new ArrayList<>();
+    private Set<String> childRoles;
     private Map<String, String> customProperties = new HashMap<>();
 
     public String getName() {
@@ -69,6 +68,14 @@ public class Role {
         this.source = source;
     }
 
+    public RoleType getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
     public Collection<ResourcePolicy> getResourcePolicies() {
         return resourcePolicies;
     }
@@ -83,6 +90,14 @@ public class Role {
 
     public void setRowLevelPolicies(Collection<RowLevelPolicy> rowLevelPolicies) {
         this.rowLevelPolicies = rowLevelPolicies;
+    }
+
+    public Set<String> getChildRoles() {
+        return childRoles;
+    }
+
+    public void setChildRoles(Set<String> childRoles) {
+        this.childRoles = childRoles;
     }
 
     public Map<String, String> getCustomProperties() {

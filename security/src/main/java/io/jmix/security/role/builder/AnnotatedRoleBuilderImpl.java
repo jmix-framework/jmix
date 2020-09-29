@@ -20,15 +20,14 @@ import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicy;
+import io.jmix.security.role.annotation.ImportRoles;
 import io.jmix.security.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.role.builder.extractor.RowLevelPolicyExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component(AnnotatedRoleBuilder.NAME)
 public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
@@ -55,6 +54,12 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         io.jmix.security.role.annotation.Role roleAnnotation = roleClass.getAnnotation(io.jmix.security.role.annotation.Role.class);
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
         Set<RowLevelPolicy> rowLevelPolicies = new HashSet<>();
+        Set<String> childRoles = new HashSet<>();
+
+        ImportRoles[] aggregateAnnotations = roleClass.getAnnotationsByType(ImportRoles.class);
+        for (ImportRoles aggregateAnnotation : aggregateAnnotations) {
+            childRoles.addAll(Arrays.asList(aggregateAnnotation.roleCodes()));
+        }
 
         Method[] methods = roleClass.getMethods();
         for (Method method : methods) {
@@ -72,6 +77,7 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
         role.setCode(roleAnnotation.code());
         role.setResourcePolicies(resourcePolicies);
         role.setRowLevelPolicies(rowLevelPolicies);
+        role.setChildRoles(childRoles);
         role.setSource(RoleSource.ANNOTATED_CLASS);
         return role;
     }

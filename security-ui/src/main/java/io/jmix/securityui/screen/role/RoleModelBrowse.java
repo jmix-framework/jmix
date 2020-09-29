@@ -18,9 +18,11 @@ package io.jmix.securityui.screen.role;
 
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
+import io.jmix.security.model.RoleType;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.securityui.model.RoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
+import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.model.CollectionContainer;
@@ -55,6 +57,9 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
     @Autowired
     private MessageBundle messageBundle;
 
+    @Autowired
+    private ScreenBuilders screenBuilders;
+
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         reloadRoles();
@@ -80,9 +85,46 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
         return isDatabaseRoleSelected();
     }
 
-    @Install(to = "roleModelsTable.create", subject = "initializer")
-    private void roleModelsTableCreateInitializer(RoleModel roleModel) {
-        roleModel.setSource(RoleSource.DATABASE);
+    @Subscribe("roleModelsTable.createResourceRole")
+    public void onRoleModelsTableCreateResourceRole(Action.ActionPerformedEvent event) {
+        RoleModelEdit editor = screenBuilders.editor(roleModelsTable)
+                .withScreenClass(RoleModelEdit.class)
+                .newEntity()
+                .withInitializer(roleModel -> {
+                    roleModel.setSource(RoleSource.DATABASE);
+                    roleModel.setRoleType(RoleType.RESOURCE);
+                })
+                .build();
+        editor.setOpenedByCreateAction(true);
+        editor.show();
+    }
+
+    @Subscribe("roleModelsTable.createRowLevelRole")
+    public void onRoleModelsTableCreateRowLevelRole(Action.ActionPerformedEvent event) {
+        RoleModelEdit editor = screenBuilders.editor(roleModelsTable)
+                .withScreenClass(RoleModelEdit.class)
+                .newEntity()
+                .withInitializer(roleModel -> {
+                    roleModel.setSource(RoleSource.DATABASE);
+                    roleModel.setRoleType(RoleType.ROW_LEVEL);
+                })
+                .build();
+        editor.setOpenedByCreateAction(true);
+        editor.show();
+    }
+
+    @Subscribe("roleModelsTable.createAggregatedRole")
+    public void onRoleModelsTableCreateAggregatedRole(Action.ActionPerformedEvent event) {
+        RoleModelEdit editor = screenBuilders.editor(roleModelsTable)
+                .withScreenClass(RoleModelEdit.class)
+                .newEntity()
+                .withInitializer(roleModel -> {
+                    roleModel.setSource(RoleSource.DATABASE);
+                    roleModel.setRoleType(RoleType.AGGREGATED);
+                })
+                .build();
+        editor.setOpenedByCreateAction(true);
+        editor.show();
     }
 
     private boolean isDatabaseRoleSelected() {
@@ -97,10 +139,5 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
     @Install(to = "roleModelsTable.source", subject = "valueProvider")
     private Object roleModelsTableSourceValueProvider(RoleModel roleModel) {
         return messageBundle.getMessage("roleSource." + roleModel.getSource());
-    }
-
-    @Install(to = "roleModelsTable.create", subject = "screenConfigurer")
-    private void roleModelsTableCreateScreenConfigurer(Screen screen) {
-        ((RoleModelEdit) screen).setOpenedByCreateAction(true);
     }
 }

@@ -21,8 +21,7 @@ import io.jmix.security.role.annotation.ExplicitResourcePolicies;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.*;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 @Component(ExplicitResourcePolicyExtractor.NAME)
 public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor {
@@ -36,7 +35,18 @@ public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor 
             if (annotation != null) {
                 if (isMethodReturnCollectionOfResourcePolicies(method)) {
                     try {
-                        return (Collection<ResourcePolicy>) method.invoke(null);
+                        Set<ResourcePolicy> resourcePolicies = new HashSet<>();
+                        Collection<ResourcePolicy> definedPolicies = (Collection<ResourcePolicy>) method.invoke(null);
+                        for (ResourcePolicy definedPolicy : definedPolicies) {
+                            ResourcePolicy resourcePolicy = new ResourcePolicy(definedPolicy.getType(),
+                                    definedPolicy.getResource(),
+                                    definedPolicy.getAction(),
+                                    definedPolicy.getEffect(),
+                                    definedPolicy.getScope(),
+                                    Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                            resourcePolicies.add(resourcePolicy);
+                        }
+                        return resourcePolicies;
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException("Cannot evaluate resource policies", e);
                     }

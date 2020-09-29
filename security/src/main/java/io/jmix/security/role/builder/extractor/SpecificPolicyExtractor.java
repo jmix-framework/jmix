@@ -22,9 +22,7 @@ import io.jmix.security.role.annotation.SpecificPolicy;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component(SpecificPolicyExtractor.NAME)
 public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
@@ -37,7 +35,9 @@ public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
         SpecificPolicy[] policyAnnotations = method.getAnnotationsByType(SpecificPolicy.class);
         for (SpecificPolicy policyAnnotation : policyAnnotations) {
             for (String resource : policyAnnotation.resources()) {
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.SPECIFIC, resource);
+                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.SPECIFIC,
+                        resource,
+                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
                 resourcePolicies.add(resourcePolicy);
             }
         }

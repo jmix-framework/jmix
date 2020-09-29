@@ -24,9 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component(JpqlRowLevelPolicyExtractor.NAME)
 public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
@@ -46,7 +44,10 @@ public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
         for (JpqlRowLevelPolicy annotation : annotations) {
             Class<?> entityClass = annotation.entityClass();
             MetaClass metaClass = metadata.getClass(entityClass);
-            RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(), annotation.where(), annotation.join());
+            RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(),
+                    annotation.where(),
+                    annotation.join(),
+                    Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
             policies.add(rowLevelPolicy);
         }
         return policies;

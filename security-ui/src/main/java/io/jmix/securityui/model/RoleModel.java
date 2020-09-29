@@ -20,12 +20,10 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.security.model.RoleType;
 
 import javax.persistence.Id;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Non-persistent entity used to display roles in UI
@@ -46,6 +44,9 @@ public class RoleModel {
     @ModelProperty
     private String source;
 
+    @ModelProperty
+    private RoleType roleType;
+
     @Composition
     @ModelProperty
     private Collection<ResourcePolicyModel> resourcePolicies;
@@ -56,6 +57,9 @@ public class RoleModel {
 
     @ModelProperty
     private Map<String, String> customProperties = new HashMap<>();
+
+    @ModelProperty
+    private Set<String> childRoles;
 
     public UUID getId() {
         return id;
@@ -89,6 +93,14 @@ public class RoleModel {
         this.name = name;
     }
 
+    public RoleType getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType;
+    }
+
     public Collection<ResourcePolicyModel> getResourcePolicies() {
         return resourcePolicies;
     }
@@ -103,6 +115,14 @@ public class RoleModel {
 
     public void setRowLevelPolicies(Collection<RowLevelPolicyModel> rowLevelPolicies) {
         this.rowLevelPolicies = rowLevelPolicies;
+    }
+
+    public Set<String> getChildRoles() {
+        return childRoles;
+    }
+
+    public void setChildRoles(Set<String> childRoles) {
+        this.childRoles = childRoles;
     }
 
     public Map<String, String> getCustomProperties() {

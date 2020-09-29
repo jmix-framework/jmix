@@ -32,7 +32,10 @@ import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -54,7 +57,7 @@ public class DatabaseRoleProvider implements RoleProvider {
 //                .query("select r from sec_RoleEntity r")
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
-                            .addAll("name", "code", "scope")
+                            .addAll("name", "code", "scope", "roleType", "childRoles")
                             .add("rowLevelPolicies", FetchPlan.BASE)
                             .add("resourcePolicies", FetchPlan.BASE);
                 })
@@ -72,7 +75,7 @@ public class DatabaseRoleProvider implements RoleProvider {
                 .parameter("code", code)
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
-                            .addAll("name", "code")
+                            .addAll("name", "code", "roleType", "childRoles")
                             .add("rowLevelPolicies", FetchPlan.BASE)
                             .add("resourcePolicies", FetchPlan.BASE);
                 })
@@ -86,17 +89,25 @@ public class DatabaseRoleProvider implements RoleProvider {
         role.setName(roleEntity.getName());
         role.setCode(roleEntity.getCode());
         role.setSource(RoleSource.DATABASE);
+        role.setRoleType(roleEntity.getRoleType());
+        role.setChildRoles(roleEntity.getChildRoles());
         role.getCustomProperties().put("databaseId", roleEntity.getId().toString());
 
         List<ResourcePolicyEntity> resourcePolicyEntities = roleEntity.getResourcePolicies();
         if (resourcePolicyEntities != null) {
             List<ResourcePolicy> resourcePolicies = resourcePolicyEntities.stream()
-                    .map(entity -> new ResourcePolicy(entity.getType(),
-                            entity.getResource(),
-                            entity.getAction(),
-                            entity.getEffect(),
-                            entity.getScope(),
-                            Collections.singletonMap("databaseId", entity.getId().toString())))
+                    .map(entity -> {
+                        String id = entity.getId().toString();
+                        Map<String, String> customProperties = new HashMap<>();
+                        customProperties.put("databaseId", id);
+                        customProperties.put("uniqueKey", id);
+                        return new ResourcePolicy(entity.getType(),
+                                entity.getResource(),
+                                entity.getAction(),
+                                entity.getEffect(),
+                                entity.getScope(),
+                                customProperties);
+                    })
                     .collect(Collectors.toList());
             role.setResourcePolicies(resourcePolicies);
         }
@@ -105,17 +116,21 @@ public class DatabaseRoleProvider implements RoleProvider {
         if (rowLevelPolicyEntities != null) {
             List<RowLevelPolicy> rowLevelPolicies = rowLevelPolicyEntities.stream()
                     .map(policyEntity -> {
+                                String id = policyEntity.getId().toString();
+                                Map<String, String> customProperties = new HashMap<>();
+                                customProperties.put("databaseId", id);
+                                customProperties.put("uniqueKey", id);
                                 switch (policyEntity.getType()) {
                                     case JPQL:
                                         return new RowLevelPolicy(policyEntity.getEntityName(),
                                                 policyEntity.getWhereClause(),
                                                 policyEntity.getJoinClause(),
-                                                Collections.singletonMap("databaseId", policyEntity.getId().toString()));
+                                                customProperties);
                                     case PREDICATE:
                                         return new RowLevelPolicy(policyEntity.getEntityName(),
                                                 policyEntity.getAction(),
                                                 createPredicateFromScript(policyEntity.getScript()),
-                                                Collections.singletonMap("databaseId", policyEntity.getId().toString()));
+                                                customProperties);
                                     default:
                                         throw new RuntimeException("Unknown row level policy type " + policyEntity.getType());
                                 }

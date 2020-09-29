@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.security.model.RoleType;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Table(name = "SEC_ROLE_ENTITY")
@@ -83,6 +85,9 @@ public class RoleEntity implements Serializable {
     @Column(name = "SCOPE")
     private @NotNull String scope;
 
+    @Column(name = "ROLE_TYPE", length = 50)
+    private @NotNull String roleType;
+
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "role")
@@ -92,6 +97,11 @@ public class RoleEntity implements Serializable {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "role")
     private List<RowLevelPolicyEntity> rowLevelPolicies;
+
+    @Lob
+    @Column(name = "CHILD_ROLES")
+    @Convert(converter = AggregatedRoleChildrenConverter.class)
+    private Set<String> childRoles;
 
     public UUID getId() {
         return id;
@@ -173,6 +183,14 @@ public class RoleEntity implements Serializable {
         this.rowLevelPolicies = rowLevelPolicies;
     }
 
+    public Set<String> getChildRoles() {
+        return childRoles;
+    }
+
+    public void setChildRoles(Set<String> childRoles) {
+        this.childRoles = childRoles;
+    }
+
     public String getCode() {
         return code;
     }
@@ -195,5 +213,13 @@ public class RoleEntity implements Serializable {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public RoleType getRoleType() {
+        return roleType == null ? null : RoleType.fromId(roleType);
+    }
+
+    public void setRoleType(RoleType roleType) {
+        this.roleType = roleType == null ? null : roleType.getId();
     }
 }

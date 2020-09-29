@@ -26,9 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 
 @Component(PredicateRowLevelPolicyExtractor.NAME)
@@ -59,7 +57,10 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }
-                RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(), action, predicate);
+                RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(),
+                        action,
+                        predicate,
+                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
                 policies.add(rowLevelPolicy);
             }
         }

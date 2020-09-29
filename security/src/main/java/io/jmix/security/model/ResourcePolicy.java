@@ -51,6 +51,10 @@ public class ResourcePolicy {
         this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT);
     }
 
+    public ResourcePolicy(String type, String resource, Map<String, String> customProperties) {
+        this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT, customProperties);
+    }
+
     public ResourcePolicy(String type, String resource, String action) {
         this(type, resource, action, DEFAULT_EFFECT);
     }

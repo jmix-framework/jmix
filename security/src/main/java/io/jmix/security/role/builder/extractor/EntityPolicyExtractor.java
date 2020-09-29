@@ -30,10 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component(EntityPolicyExtractor.NAME)
 public class EntityPolicyExtractor implements ResourcePolicyExtractor {
@@ -81,7 +78,8 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
                         entityName,
                         action.getId(),
                         ResourcePolicy.DEFAULT_EFFECT,
-                        scope);
+                        scope,
+                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
                 resourcePolicies.add(resourcePolicy);
             }
         }

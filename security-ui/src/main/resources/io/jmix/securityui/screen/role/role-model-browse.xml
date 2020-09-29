@@ -31,7 +31,9 @@
                     dataContainer="roleModelsDc"
                     presentations="true">
             <actions>
-                <action id="create" type="create"/>
+                <action id="createResourceRole" caption="msg://RoleModelBrowse.createResourceRole"/>
+                <action id="createRowLevelRole" caption="msg://RoleModelBrowse.createRowLevelRole"/>
+                <action id="createAggregatedRole" caption="msg://RoleModelBrowse.createAggregatedRole"/>
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
                 <action id="refresh" type="refresh"/>
@@ -40,11 +42,22 @@
                 <column id="name"/>
                 <column id="code"/>
                 <column id="source"/>
+                <column id="roleType"/>
             </columns>
             <pagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
-                <button id="createBtn" action="roleModelsTable.create"/>
+                <popupButton id="createBtn" caption="msg://RoleModelBrowse.create"
+                             stylename="primary" icon="CREATE_ACTION">
+                    <actions>
+                        <action id="roleModelsTable.createResourceRole"
+                                caption="msg://RoleModelBrowse.createResourceRole"/>
+                        <action id="roleModelsTable.createRowLevelRole"
+                                caption="msg://RoleModelBrowse.createRowLevelRole"/>
+                        <action id="roleModelsTable.createAggregatedRole"
+                                caption="msg://RoleModelBrowse.createAggregatedRole"/>
+                    </actions>
+                </popupButton>
                 <button id="editBtn" action="roleModelsTable.edit"/>
                 <button id="removeBtn" action="roleModelsTable.remove"/>
                 <button id="refreshBtn" action="roleModelsTable.refresh"/>

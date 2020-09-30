@@ -16,6 +16,7 @@
 
 package io.jmix.core.security;
 
+import io.jmix.core.MessageTools;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,6 +29,13 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 public class CoreAuthenticationProvider extends DaoAuthenticationProvider {
 
+    protected MessageTools messageTools;
+
+    public CoreAuthenticationProvider(MessageTools messageTools) {
+        super();
+        this.messageTools = messageTools;
+    }
+
     @Override
     protected Authentication createSuccessAuthentication(Object principal, Authentication authentication, UserDetails user) {
         if (!(user instanceof BaseUser)) {
@@ -37,6 +45,8 @@ public class CoreAuthenticationProvider extends DaoAuthenticationProvider {
         Object details = authentication.getDetails();
         if (details instanceof ClientDetails) {
             result.setLocale(((ClientDetails) details).getLocale());
+        } else {
+            result.setLocale(messageTools.getDefaultLocale());
         }
         return result;
     }

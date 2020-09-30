@@ -17,6 +17,7 @@
 package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.MessageTools;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +49,14 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MessageTools messageTools;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
-        CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider();
+        CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider(messageTools);
         userAuthenticationProvider.setUserDetailsService(userRepository);
         userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
         auth.authenticationProvider(userAuthenticationProvider);

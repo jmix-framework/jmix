@@ -43,7 +43,6 @@ dependencies {
     api 'org.springframework.data:spring-data-commons'
     api 'org.aspectj:aspectjweaver'
 
-    api 'javax.inject:javax.inject'
     api 'org.apache.commons:commons-collections4'
     api 'commons-io:commons-io'
     api 'org.apache.commons:commons-text'

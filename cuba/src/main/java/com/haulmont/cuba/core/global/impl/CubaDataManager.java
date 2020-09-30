@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.global.EntitySet;
 import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.*;
@@ -31,6 +32,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.EntityValidationException;
+import io.jmix.dynattr.DynamicAttributesState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +46,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static io.jmix.core.entity.EntitySystemAccess.getExtraState;
+
 @Component(DataManager.NAME)
 public class CubaDataManager implements DataManager {
-
-    private static final Logger log = LoggerFactory.getLogger(CubaDataManager.class);
 
     @Autowired
     protected io.jmix.core.DataManager delegate;
@@ -123,11 +125,11 @@ public class CubaDataManager implements DataManager {
     }
 
     protected boolean entityHasDynamicAttributes(Entity entity) {
+        DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
+        if (state != null) {
+            return state.getDynamicAttributes() != null;
+        }
         return false;
-
-        // todo dynamic attributes
-//        return entity instanceof BaseGenericIdEntity
-//                && ((BaseGenericIdEntity) entity).getDynamicAttributes() != null;
     }
 
     @Override

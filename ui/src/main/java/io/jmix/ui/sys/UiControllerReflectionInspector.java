@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.WindowParam;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
@@ -300,6 +301,10 @@ public class UiControllerReflectionInspector {
 
         if (element.isAnnotationPresent(Autowired.class)) {
             return Autowired.class;
+        }
+
+        if (element.isAnnotationPresent(WindowParam.class)) {
+            return WindowParam.class;
         }
 
         return null;

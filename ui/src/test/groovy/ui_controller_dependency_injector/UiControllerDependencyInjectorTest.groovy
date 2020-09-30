@@ -18,12 +18,15 @@ package ui_controller_dependency_injector
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Messages
+import io.jmix.core.common.util.ParamsMap
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.Screens
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Button
 import io.jmix.ui.component.formatter.NumberFormatter
+import io.jmix.ui.screen.MapScreenOptions
+import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import ui_controller_dependency_injector.screen.AutowireToFieldsTestScreen
 import ui_controller_dependency_injector.screen.AutowireToSettersTestScreen
+import ui_controller_dependency_injector.screen.WindowParamTestScreen
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class UiControllerDependencyInjectorTest extends ScreenSpecification {
@@ -84,5 +88,27 @@ class UiControllerDependencyInjectorTest extends ScreenSpecification {
 
         screen.numberFormatterProvider instanceof ObjectProvider
         screen.numberFormatterProvider.getObject() instanceof NumberFormatter
+    }
+
+    def "Dependency injector supports window parameters"() {
+        showTestMainScreen()
+
+        when: "Screen is loaded"
+
+        def params = ParamsMap.of('defaultParam', 'default',
+                'requiredParam', 'required',
+                'namedParam', 'named')
+
+        WindowParamTestScreen screen = getScreens().create(WindowParamTestScreen,
+                OpenMode.NEW_TAB,
+                new MapScreenOptions(params))
+                .show() as WindowParamTestScreen
+
+        then: "All params should be loaded"
+
+        screen.defaultParam == 'default'
+        screen.requiredParam == 'required'
+        screen.optionalParam == null
+        screen.namedParam == 'named'
     }
 }

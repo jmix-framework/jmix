@@ -19,9 +19,17 @@ package io.jmix.ui.sys;
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Events;
+import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Component.HasXmlDescriptor;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Facet;
+import io.jmix.ui.component.Fragment;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.FrameContext;
+import io.jmix.ui.component.HasComponents;
+import io.jmix.ui.component.HasSubParts;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
@@ -33,7 +41,12 @@ import io.jmix.ui.sys.UiControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.ui.sys.UiControllerReflectionInspector.InjectElement;
 import io.jmix.ui.sys.UiControllerReflectionInspector.ScreenIntrospectionData;
 import io.jmix.ui.sys.compatibility.LegacyDependencyResolver;
-import io.jmix.ui.sys.delegate.*;
+import io.jmix.ui.sys.delegate.InstalledBiFunction;
+import io.jmix.ui.sys.delegate.InstalledConsumer;
+import io.jmix.ui.sys.delegate.InstalledFunction;
+import io.jmix.ui.sys.delegate.InstalledProxyHandler;
+import io.jmix.ui.sys.delegate.InstalledRunnable;
+import io.jmix.ui.sys.delegate.InstalledSupplier;
 import io.jmix.ui.sys.event.UiEventListenerMethodAdapter;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -56,8 +69,14 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.invoke.MethodHandle;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.lang.reflect.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -472,10 +491,14 @@ public class UiControllerDependencyInjector {
             if (element.isAnnotationPresent(Qualifier.class)) {
                 name = element.getAnnotation(Qualifier.class).value();
             }
+        } else if (annotationClass == WindowParam.class) {
+            name = element.getAnnotation(WindowParam.class).name();
         }
 
         boolean required = true;
-        if (element.isAnnotationPresent(Autowired.class)) {
+        if (element.isAnnotationPresent(WindowParam.class)) {
+            required = element.getAnnotation(WindowParam.class).required();
+        } else if (element.isAnnotationPresent(Autowired.class)) {
             required = element.getAnnotation(Autowired.class).required();
         }
 
@@ -532,7 +555,14 @@ public class UiControllerDependencyInjector {
     protected Object getInjectedInstance(Class<?> type, String name, Class annotationClass, AnnotatedElement element) {
         Frame frame = UiControllerUtils.getFrame(frameOwner);
 
-        if (ScreenFragment.class.isAssignableFrom(type)) {
+        if (annotationClass == WindowParam.class) {
+            if (options instanceof MapScreenOptions) {
+                return ((MapScreenOptions) options).getParams().get(name);
+            }
+            // Injecting a parameter
+            return null;
+
+        } else if (ScreenFragment.class.isAssignableFrom(type)) {
             // Injecting inner fragment controller
             Component fragment = frame.getComponent(name);
             if (fragment == null) {

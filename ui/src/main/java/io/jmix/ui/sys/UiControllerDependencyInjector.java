@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -467,6 +468,10 @@ public class UiControllerDependencyInjector {
             name = element.getAnnotation(Named.class).value();
         } else if (annotationClass == Resource.class) {
             name = element.getAnnotation(Resource.class).name();
+        } else if (annotationClass == Autowired.class) {
+            if (element.isAnnotationPresent(Qualifier.class)) {
+                name = element.getAnnotation(Qualifier.class).value();
+            }
         }
 
         boolean required = true;

@@ -19,12 +19,12 @@ package io.jmix.uidata.settings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.ui.settings.component.ComponentSettings;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +38,7 @@ public class ComponentSettingsRegistry implements InitializingBean {
 
     public static final String NAME = "uidata_ComponentSettingsRegistry";
 
-    @Inject
+    @Autowired
     protected List<ComponentSettingsBinder> binders;
 
     protected Map<Class<? extends Component>, Class<? extends ComponentSettings>> settingsClasses = new ConcurrentHashMap<>();

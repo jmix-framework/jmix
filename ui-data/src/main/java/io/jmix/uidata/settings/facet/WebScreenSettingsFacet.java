@@ -30,9 +30,9 @@ import io.jmix.uidata.settings.ScreenSettings;
 import io.jmix.uidata.settings.ScreenSettingsManager;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -50,10 +50,10 @@ public class WebScreenSettingsFacet extends WebAbstractFacet implements ScreenSe
     protected Consumer<SettingsContext> applyDataLoadingSettingsDelegate;
     protected Consumer<SettingsContext> saveSettingsDelegate;
 
-    @Inject
+    @Autowired
     protected ScreenSettingsManager settingsManager;
 
-    @Inject
+    @Autowired
     protected BeanFactory beanFactory;
 
     @Override

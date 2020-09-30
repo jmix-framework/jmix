@@ -17,21 +17,21 @@
 package io.jmix.uidata.settings;
 
 import io.jmix.core.annotation.Internal;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.ComponentSettings.HasSettingsPresentation;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
-import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
 import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
-import javax.inject.Inject;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -48,10 +48,10 @@ public class ScreenSettingsManager {
 
     public static final String NAME = "uidata_ScreenSettingsManager";
 
-    @Inject
+    @Autowired
     protected ComponentSettingsRegistry settingsRegistry;
 
-    @Inject
+    @Autowired
     protected ApplicationContext applicationContext;
 
     /**

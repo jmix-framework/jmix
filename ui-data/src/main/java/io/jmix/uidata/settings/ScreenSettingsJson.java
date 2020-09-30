@@ -24,12 +24,12 @@ import io.jmix.uidata.UiSettingsCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
 import java.util.Optional;
 
 /**
@@ -42,7 +42,7 @@ public class ScreenSettingsJson extends AbstractScreenSettings {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenSettingsJson.class);
 
-    @Inject
+    @Autowired
     protected UiSettingsCache settingsCache;
 
     protected JsonArray root;

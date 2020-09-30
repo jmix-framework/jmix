@@ -64,30 +64,13 @@ class FormFieldTest extends ScreenSpecification {
         mainScreen = showTestMainScreen()
     }
 
+    @Override
     void cleanup() {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 
         jdbc.update('delete from TEST_ORDER')
         jdbc.update('delete from TEST_CUSTOMER')
-    }
-
-    def "entityComboBox is specified in properties"() {
-        properties.getEntityFieldType().put('test_Customer', EntityComboBox.NAME)
-
-        when:
-        def editor = showOrderEdit()
-
-        then:
-        fieldIsEntityComboBox(editor.customerField, 2, [])
-
-        when: "specify actions in properties"
-        def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
-        properties.getEntityFieldActions().put('test_Customer', actionIds)
-        editor = showOrderEdit()
-
-        then:
-        fieldIsEntityComboBox(editor.customerField, 2, actionIds)
     }
 
     def "entityPicker is specified in properties"() {
@@ -109,7 +92,7 @@ class FormFieldTest extends ScreenSpecification {
         fieldIsEntityPicker(editor.customerField, actionIds)
     }
 
-    def "component is not specified in properties"() {
+    def "entityPicker is not specified in properties"() {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 
@@ -128,7 +111,25 @@ class FormFieldTest extends ScreenSpecification {
         fieldIsEntityPicker(editor.customerField, actionIds)
     }
 
-    def "component is not specified in properties, field with options"() {
+    def "entityComboBox is specified in properties"() {
+        properties.getEntityFieldType().put('test_Customer', EntityComboBox.NAME)
+
+        when:
+        def editor = showOrderEdit()
+
+        then:
+        fieldIsEntityComboBox(editor.customerField, 2, [])
+
+        when: "specify actions in properties"
+        def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
+        properties.getEntityFieldActions().put('test_Customer', actionIds)
+        editor = showOrderEdit()
+
+        then:
+        fieldIsEntityComboBox(editor.customerField, 2, actionIds)
+    }
+
+    def "entityComboBox is not specified in properties, field with options"() {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 

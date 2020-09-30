@@ -17,7 +17,6 @@
 package com.haulmont.cuba.core.global.impl;
 
 import com.haulmont.cuba.core.global.Security;
-import io.jmix.core.AccessManager;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -27,8 +26,10 @@ import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.PermissionType;
-import io.jmix.data.accesscontext.CrudEntityContext;
-import io.jmix.ui.accesscontext.UiShowScreenContext;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
+import io.jmix.securityui.constraint.UiPolicyStore;
+import io.jmix.securityui.constraint.UiSecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,29 +45,33 @@ public class SecurityImpl implements Security {
     protected ExtendedEntities extendedEntities;
 
     @Autowired
-    protected AccessManager accessManager;
+    protected PolicyStore policyStore;
+
+    @Autowired
+    protected UiPolicyStore uiPolicyStore;
+
+    @Autowired
+    protected SecureOperations secureOperations;
+
+    @Autowired
+    protected UiSecureOperations uiSecureOperations;
 
     @Override
     public boolean isScreenPermitted(String windowAlias) {
-        UiShowScreenContext showScreenContext = new UiShowScreenContext(windowAlias);
-        accessManager.applyRegisteredConstraints(showScreenContext);
-        return showScreenContext.isPermitted();
+        return uiSecureOperations.isScreenPermitted(windowAlias, uiPolicyStore);
     }
 
     @Override
     public boolean isEntityOpPermitted(MetaClass metaClass, EntityOp entityOp) {
-        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyRegisteredConstraints(entityContext);
-
         switch (entityOp) {
             case CREATE:
-                return entityContext.isCreatePermitted();
+                return secureOperations.isEntityCreatePermitted(metaClass, policyStore);
             case READ:
-                return entityContext.isReadPermitted();
+                return secureOperations.isEntityReadPermitted(metaClass, policyStore);
             case UPDATE:
-                return entityContext.isUpdatePermitted();
+                return secureOperations.isEntityUpdatePermitted(metaClass, policyStore);
             case DELETE:
-                return entityContext.isDeletePermitted();
+                return secureOperations.isEntityDeletePermitted(metaClass, policyStore);
         }
         return false;
     }
@@ -78,13 +83,13 @@ public class SecurityImpl implements Security {
 
     @Override
     public boolean isEntityAttrPermitted(MetaClass metaClass, String property, EntityAttrAccess access) {
-        //TODO: think about attribute context
         switch (access) {
             case MODIFY:
-
-
+                return secureOperations.isEntityAttrUpdatePermitted(metaClass.getPropertyPath(property), policyStore);
+            case VIEW:
+                return secureOperations.isEntityAttrReadPermitted(metaClass.getPropertyPath(property), policyStore);
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -127,8 +132,7 @@ public class SecurityImpl implements Security {
 
     @Override
     public boolean isSpecificPermitted(String name) {
-
-        return true;
+        return secureOperations.isSpecificPermitted(name, policyStore);
     }
 
     @Override

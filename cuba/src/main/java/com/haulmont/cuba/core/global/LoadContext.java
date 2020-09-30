@@ -16,10 +16,7 @@
 package com.haulmont.cuba.core.global;
 
 
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
-import io.jmix.core.Sort;
+import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
@@ -197,14 +194,6 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
         return this;
     }
 
-//  TODO Fedorov - fix compilation
-
-//    @Override
-//    public LoadContext<E> setHint(String hintName, Object value) {
-//        super.setHint(hintName, value);
-//        return this;
-//    }
-
     /**
      * Returns true if the entity's dynamic attributes are loaded.
      */
@@ -216,7 +205,7 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
      * Set to true to load the entity's dynamic attributes. Dynamic attributes are not loaded by default.
      */
     public LoadContext<E> setLoadDynamicAttributes(boolean loadDynamicAttributes) {
-        super.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+        super.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, loadDynamicAttributes);
         return this;
     }
 
@@ -227,7 +216,11 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
     }
 
     public LoadContext<E> setAuthorizationRequired(boolean authorizationRequired) {
-        //TODO: fix API usage with access constraints
+        if (authorizationRequired) {
+            setAccessConstraints(AppBeans.get(AccessConstraintsRegistry.class).getConstraints());
+        } else {
+            setAccessConstraints(Collections.emptyList());
+        }
         return this;
     }
 

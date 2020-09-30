@@ -75,6 +75,9 @@ public class CubaDataManager implements DataManager {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    @Autowired
+    protected AccessConstraintsRegistry accessConstraintsRegistry;
+
     @Nullable
     @Override
     public <E extends Entity> E load(LoadContext<E> context) {
@@ -276,33 +279,31 @@ public class CubaDataManager implements DataManager {
         @Nullable
         @Override
         public <E extends Entity> E load(LoadContext<E> context) {
-            context.setAuthorizationRequired(true);
+            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
             return dataManager.load(context);
         }
 
         @Override
         public <E extends Entity> List<E> loadList(LoadContext<E> context) {
-            context.setAuthorizationRequired(true);
+            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
             return dataManager.loadList(context);
         }
 
         @Override
         public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-            //TODO: fix API usage with access constraints
-            //context.setAuthorizationRequired(true);
+            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
             return dataManager.loadValues(context);
         }
 
         @Override
         public long getCount(LoadContext<? extends Entity> context) {
-            context.setAuthorizationRequired(true);
+            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
             return dataManager.getCount(context);
         }
 
         @Override
         public EntitySet commit(CommitContext context) {
-            //TODO: fix API usage with access constraints
-            //context.setAuthorizationRequired(true);
+            context.setAccessConstraints(accessConstraintsRegistry.getConstraints());
             return dataManager.commit(context);
         }
     }

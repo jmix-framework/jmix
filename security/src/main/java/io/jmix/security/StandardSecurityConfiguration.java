@@ -17,6 +17,7 @@
 package io.jmix.security;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.MessageTools;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
 import io.jmix.core.security.JmixSessionAuthenticationStrategy;
@@ -87,12 +88,15 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Autowired
     private SessionRegistry sessionRegistry;
 
+    @Autowired
+    private MessageTools messageTools;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
         SecuredAuthenticationProvider securedAuthenticationProvider = new SecuredAuthenticationProvider(roleRepository,
-                roleAssignmentRepository);
+                roleAssignmentRepository, messageTools);
         securedAuthenticationProvider.setUserDetailsService(userRepository);
         securedAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
         auth.authenticationProvider(securedAuthenticationProvider);

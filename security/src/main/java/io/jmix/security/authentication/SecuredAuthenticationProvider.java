@@ -16,6 +16,7 @@
 
 package io.jmix.security.authentication;
 
+import io.jmix.core.MessageTools;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.security.model.ResourcePolicy;
@@ -40,10 +41,14 @@ public class SecuredAuthenticationProvider extends DaoAuthenticationProvider {
 
     protected RoleRepository roleRepository;
     protected RoleAssignmentRepository roleAssignmentRepository;
+    protected MessageTools messageTools;
 
-    public SecuredAuthenticationProvider(RoleRepository roleRepository, RoleAssignmentRepository roleAssignmentRepository) {
+    public SecuredAuthenticationProvider(RoleRepository roleRepository,
+                                         RoleAssignmentRepository roleAssignmentRepository,
+                                         MessageTools messageTools) {
         this.roleRepository = roleRepository;
         this.roleAssignmentRepository = roleAssignmentRepository;
+        this.messageTools = messageTools;
     }
 
     @Override
@@ -74,6 +79,8 @@ public class SecuredAuthenticationProvider extends DaoAuthenticationProvider {
         Object details = authentication.getDetails();
         if (details instanceof ClientDetails) {
             resultAuthentication.setLocale(((ClientDetails) details).getLocale());
+        } else {
+            resultAuthentication.setLocale(messageTools.getDefaultLocale());
         }
 
         return resultAuthentication;

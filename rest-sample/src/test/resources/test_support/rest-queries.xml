@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<queries xmlns="http://schemas.haulmont.com/cuba/rest-queries.xsd">
+    <query name="carByVin" entity="ref_Car" view="carEdit">
+        <jpql><![CDATA[select c from ref_Car c where c.vin = :vin]]></jpql>
+        <params>
+            <param name="vin" type="java.lang.String"/>
+        </params>
+    </query>
+    <query name="userByLogin" entity="sec$User" view="user-with-group">
+        <jpql><![CDATA[select u from sec$User u where u.login = :login]]></jpql>
+        <params>
+            <param name="login" type="java.lang.String"/>
+        </params>
+    </query>
+    <query name="currentUser" entity="sec$User" view="_local" cacheable="true" anonymousAllowed="true">
+        <jpql><![CDATA[select u from sec$User u where u.id = :session$userId]]></jpql>
+    </query>
+    <query name="allColours" entity="ref$Colour" view="_local">
+        <jpql><![CDATA[select u from ref$Colour u order by u.name]]></jpql>
+    </query>
+    <query name="coloursByNames" entity="ref$Colour" view="_local">
+        <jpql><![CDATA[select u from ref$Colour u where u.name in :names order by u.name]]></jpql>
+        <params>
+            <param name="names" type="java.lang.String[]"/>
+        </params>
+    </query>
+    <query name="coloursByIds" entity="ref$Colour" view="_local">
+        <jpql><![CDATA[select u from ref$Colour u where u.id in :ids order by u.name]]></jpql>
+        <params>
+            <param name="ids" type="java.util.UUID[]"/>
+        </params>
+    </query>
+    <query name="coloursFromThreeToFive" entity="ref$Colour" view="_local" limit="3" offset="2">
+        <jpql><![CDATA[select u from ref$Colour u order by u.name]]></jpql>
+    </query>
+    <query name="getDriversByStatus" entity="ref$Driver" view="_local">
+        <jpql><![CDATA[select u from ref$Driver u where u.status = :status]]></jpql>
+        <params>
+            <param name="status" type="io.jmix.samples.rest.entity.driver.DriverStatus"/>
+        </params>
+    </query>
+</queries>

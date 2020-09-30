@@ -1,0 +1,16 @@
+{
+  "vin": "123",
+  "repairs": [
+    {
+      "description": "Repair 1",
+      "date": "2016-06-08"
+    },
+    {
+      "description": "Repair 2",
+      "date": "2016-06-20"
+    }
+  ],
+  "model": {
+    "id": "$MODEL_ID$"
+  }
+}

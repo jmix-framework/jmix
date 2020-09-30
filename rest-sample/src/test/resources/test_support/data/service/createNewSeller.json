@@ -1,0 +1,5 @@
+{
+  "name": "$NAME$",
+  "contractStartDate": "$CONTRACT_START_DATE$",
+  "contractEndDate": "$CONTRACT_END_DATE$"
+}

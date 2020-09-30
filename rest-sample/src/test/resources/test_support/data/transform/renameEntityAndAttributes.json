@@ -1,0 +1,9 @@
+{
+  "_entityName": "ref$OldCar",
+  "oldVin": "VIN-01",
+  "model": {
+    "_entityName": "ref$OldModel",
+    "oldName": "Audi",
+    "manufacturer": "Audi Manufacturer"
+  }
+}

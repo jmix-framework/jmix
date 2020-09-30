@@ -1,0 +1,13 @@
+{
+  "id": "$DRIVER_ID$",
+  "allocations": [
+    {
+      "id": "$ALLOCATION_ID$",
+      "car": {
+        "id": "$CAR_ID$"
+      },
+      "__securityToken": "$ALLOCATION_SECURITY_TOKEN$"
+    }
+  ],
+  "__securityToken": "$SECURITY_TOKEN$"
+}

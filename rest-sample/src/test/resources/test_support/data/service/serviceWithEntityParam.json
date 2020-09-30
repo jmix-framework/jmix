@@ -1,0 +1,24 @@
+{
+  "car": {
+    "id": "$CAR_ID$",
+    "vin": "$CAR_VIN$",
+    "colour": {
+      "id": "$COLOUR_ID$",
+      "name": "$COLOUR_NAME$"
+    },
+    "driverAllocations": [
+      {
+        "id": "$DRIVER_ALLOCATION_ID_1$"
+      }
+    ],
+    "repairs": [
+      {
+        "id": "$REPAIR_ID_1$"
+      },
+      {
+        "id": "$REPAIR_ID_2$"
+      }
+    ]
+  },
+  "vin": "$CAR_NEW_VIN$"
+}

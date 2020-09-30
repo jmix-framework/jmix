@@ -1,0 +1,12 @@
+{
+  "cars": [
+    {
+      "id": "$CAR_ID_1$",
+      "oldVin": "$CAR_VIN_1$"
+    },
+    {
+      "id": "$CAR_ID_2$",
+      "oldVin": "$CAR_VIN_2$"
+    }
+  ]
+}

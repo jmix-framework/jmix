@@ -1,0 +1,16 @@
+{
+  "_entityName": "ref_Car",
+  "vin": "VIN-01",
+  "repairs": [
+    {
+      "_entityName": "ref$OldRepair",
+      "oldDescription": "Repair 1",
+      "date": "2017-01-01"
+    },
+    {
+      "_entityName": "ref$OldRepair",
+      "oldDescription": "Repair 2",
+      "date": "2017-01-02"
+    }
+  ]
+}

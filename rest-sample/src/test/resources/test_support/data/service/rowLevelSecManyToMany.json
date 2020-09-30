@@ -1,0 +1,9 @@
+{
+  "id": "$PLANT_ID$",
+  "models": [
+    {
+      "id": "$MODEL_ID$"
+    }
+  ],
+  "__securityToken": "$SECURITY_TOKEN$"
+}

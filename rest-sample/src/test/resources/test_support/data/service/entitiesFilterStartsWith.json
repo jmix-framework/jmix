@@ -1,0 +1,9 @@
+{
+  "conditions": [
+    {
+      "property": "vin",
+      "operator": "startsWith",
+      "value": "VW"
+    }
+  ]
+}

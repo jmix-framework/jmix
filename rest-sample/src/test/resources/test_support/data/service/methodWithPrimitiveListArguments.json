@@ -1,0 +1,12 @@
+{
+  "stringList": [
+    "str1",
+    "str2"
+  ],
+  "intArray": [
+    1,
+    2,
+    3
+  ],
+  "intArgument": 1
+}

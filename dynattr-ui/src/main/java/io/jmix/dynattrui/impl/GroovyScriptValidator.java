@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.AbstractValidator;
+import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -35,7 +36,7 @@ import java.util.Collections;
  * GroovyScript validator runs a custom Groovy script. If the script returns any object,
  * then {@link ValidationException} is thrown. {@code scriptResult.toString()} is used as error message.
  * <p>
- * For error message it uses Groovy string and it is possible to use '$value' key for formatted output.
+ * For error message it uses template string and it is possible to use '${value}' key for formatted output.
  * <p>
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
@@ -80,6 +81,11 @@ public class GroovyScriptValidator<T> extends AbstractValidator<T> {
     @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
+    }
+
+    @Autowired
+    public void setStringSubstitutor(StringSubstitutor substitutor) {
+        this.substitutor = substitutor;
     }
 
     @Autowired

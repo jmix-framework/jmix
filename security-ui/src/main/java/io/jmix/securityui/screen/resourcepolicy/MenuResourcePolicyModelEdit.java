@@ -25,7 +25,6 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -37,7 +36,7 @@ public class MenuResourcePolicyModelEdit extends StandardEditor<ResourcePolicyMo
     @Autowired
     private ComboBox<String> menuField;
 
-    @Inject
+    @Autowired
     private MenuConfig menuConfig;
 
     @Autowired

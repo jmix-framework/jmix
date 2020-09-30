@@ -45,8 +45,8 @@ import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.inject.Named;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,31 +58,40 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
 
     private static final Logger log = LoggerFactory.getLogger(RoleModelEdit.class);
 
-    @Named("resourcePoliciesTable.edit")
+    @Autowired
+    @Qualifier("resourcePoliciesTable.edit")
     private EditAction<ResourcePolicyModel> resourcePoliciesTableEdit;
 
-    @Named("resourcePoliciesTable.view")
+    @Autowired
+    @Qualifier("resourcePoliciesTable.view")
     private ViewAction<ResourcePolicyModel> resourcePoliciesTableView;
 
-    @Named("resourcePoliciesTable.remove")
+    @Autowired
+    @Qualifier("resourcePoliciesTable.remove")
     private RemoveAction<ResourcePolicyModel> resourcePoliciesTableRemove;
 
-    @Named("rowLevelPoliciesTable.create")
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.create")
     private CreateAction<RowLevelPolicyModel> rowLevelPoliciesTableCreate;
 
-    @Named("rowLevelPoliciesTable.view")
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.view")
     private ViewAction<RowLevelPolicyModel> rowLevelPoliciesTableView;
 
-    @Named("rowLevelPoliciesTable.edit")
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.edit")
     private EditAction<RowLevelPolicyModel> rowLevelPoliciesTableEdit;
 
-    @Named("rowLevelPoliciesTable.remove")
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.remove")
     private RemoveAction<RowLevelPolicyModel> rowLevelPoliciesTableRemove;
 
-    @Named("childRolesTable.add")
+    @Autowired
+    @Qualifier("childRolesTable.add")
     private AddAction<RoleModel> childRolesTableAdd;
 
-    @Named("childRolesTable.remove")
+    @Autowired
+    @Qualifier("childRolesTable.remove")
     private RemoveAction<RoleModel> childRolesTableRemove;
 
     @Autowired

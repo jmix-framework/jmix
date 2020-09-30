@@ -24,7 +24,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class ResourcePolicyEditorUtils {
     @Autowired
     private MessageTools messageTools;
 
-    @Inject
+    @Autowired
     private Messages messages;
 
     public Map<String, String> getEntityOptionsMap() {

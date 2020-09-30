@@ -68,21 +68,9 @@ public class SaveSetWindow extends AbstractWindow {
     @Override
     public void init(Map<String, Object> params) {
         super.init(params);
-        initParams(params);
 
         ThemeConstants themeConstants = App.getInstance().getThemeConstants();
         folderSelect.setWidth(themeConstants.get("cuba.web.save-set-window.folderSelect.width"));
-    }
-
-    protected void initParams(Map<String, Object> params) {
-        foldersPane = (CubaFoldersPane) params.get("foldersPane");
-        ids = (Set) params.get("items");
-        componentPath = (String) params.get("componentPath");
-        componentId = (String) params.get("componentId");
-        entityType = (String) params.get("entityType");
-        entityClass = (String) params.get("entityClass");
-        query = (String) params.get("query");
-        username = (String) params.get("username");
     }
 
     @Subscribe("createNew")

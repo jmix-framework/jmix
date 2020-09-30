@@ -32,7 +32,7 @@ public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperat
     protected final String resourceName;
 
     protected SecureOperations secureOperations;
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
 
     public SpecificConstraintImpl(Class<SpecificOperationAccessContext> contextClass, String resourceName) {
         this.contextClass = contextClass;
@@ -45,7 +45,7 @@ public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperat
     }
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

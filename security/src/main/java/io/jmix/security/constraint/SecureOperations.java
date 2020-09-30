@@ -22,17 +22,17 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 public interface SecureOperations {
     String NAME = "sec_SecureOperations";
 
-    boolean isEntityCreatePermitted(MetaClass metaClass, ResourcePolicyStore policyStore);
+    boolean isEntityCreatePermitted(MetaClass metaClass, PolicyStore policyStore);
 
-    boolean isEntityReadPermitted(MetaClass metaClass, ResourcePolicyStore policyStore);
+    boolean isEntityReadPermitted(MetaClass metaClass, PolicyStore policyStore);
 
-    boolean isEntityUpdatePermitted(MetaClass metaClass, ResourcePolicyStore policyStore);
+    boolean isEntityUpdatePermitted(MetaClass metaClass, PolicyStore policyStore);
 
-    boolean isEntityDeletePermitted(MetaClass metaClass, ResourcePolicyStore policyStore);
+    boolean isEntityDeletePermitted(MetaClass metaClass, PolicyStore policyStore);
 
-    boolean isEntityAttrReadPermitted(MetaPropertyPath propertyPath, ResourcePolicyStore policyStore);
+    boolean isEntityAttrReadPermitted(MetaPropertyPath propertyPath, PolicyStore policyStore);
 
-    boolean isEntityAttrUpdatePermitted(MetaPropertyPath propertyPath, ResourcePolicyStore policyStore);
+    boolean isEntityAttrUpdatePermitted(MetaPropertyPath propertyPath, PolicyStore policyStore);
 
-    boolean isSpecificPermitted(String resourceName, ResourcePolicyStore policyStore);
+    boolean isSpecificPermitted(String resourceName, PolicyStore policyStore);
 }

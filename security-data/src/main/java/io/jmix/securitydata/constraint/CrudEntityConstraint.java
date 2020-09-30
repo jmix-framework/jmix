@@ -18,7 +18,7 @@ package io.jmix.securitydata.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.data.accesscontext.CrudEntityContext;
-import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -30,11 +30,11 @@ import org.springframework.stereotype.Component;
 public class CrudEntityConstraint implements EntityOperationConstraint<CrudEntityContext> {
     public static final String NAME = "sec_CrudEntityConstraint";
 
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
     protected SecureOperations secureOperations;
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

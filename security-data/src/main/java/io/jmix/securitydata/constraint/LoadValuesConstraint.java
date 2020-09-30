@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
-import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -35,7 +35,7 @@ public class LoadValuesConstraint implements EntityOperationConstraint<LoadValue
     public static final String NAME = "sec_LoadValuesConstraint";
 
     protected SecureOperations secureOperations;
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
 
     @Autowired
     public void setSecureOperations(SecureOperations secureOperations) {
@@ -43,7 +43,7 @@ public class LoadValuesConstraint implements EntityOperationConstraint<LoadValue
     }
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

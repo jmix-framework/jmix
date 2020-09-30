@@ -22,7 +22,7 @@ import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.Collection;
 
-public interface ResourcePolicyStore {
+public interface PolicyStore {
 
     Collection<RowLevelPolicy> getRowLevelPolicies(MetaClass entityClass);
 

@@ -31,7 +31,7 @@ public class ImportEntityConstraint implements EntityOperationConstraint<ImportE
     public static final String NAME = "sec_ImportEntityConstraint";
 
     protected SecureOperations secureOperations;
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
 
     @Autowired
     public void setSecureOperations(SecureOperations secureOperations) {
@@ -39,7 +39,7 @@ public class ImportEntityConstraint implements EntityOperationConstraint<ImportE
     }
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

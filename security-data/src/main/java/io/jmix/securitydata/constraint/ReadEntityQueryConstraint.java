@@ -19,7 +19,7 @@ package io.jmix.securitydata.constraint;
 import com.google.common.base.Strings;
 import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
-import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,11 @@ import org.springframework.stereotype.Component;
 public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQueryContext> {
     public static final String NAME = "sec_ReadEntityQueryConstraint";
 
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
     protected PredefinedQueryParameters predefinedQueryParameters;
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

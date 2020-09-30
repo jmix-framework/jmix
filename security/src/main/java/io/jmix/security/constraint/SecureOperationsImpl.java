@@ -30,27 +30,27 @@ import java.util.Objects;
 @Component(SecureOperations.NAME)
 public class SecureOperationsImpl implements SecureOperations {
 
-    public boolean isEntityCreatePermitted(MetaClass metaClass, ResourcePolicyStore policyStore) {
+    public boolean isEntityCreatePermitted(MetaClass metaClass, PolicyStore policyStore) {
         return isEntityOperationPermitted(metaClass, EntityPolicyAction.CREATE, policyStore);
     }
 
     @Override
-    public boolean isEntityReadPermitted(MetaClass metaClass, ResourcePolicyStore policyStore) {
+    public boolean isEntityReadPermitted(MetaClass metaClass, PolicyStore policyStore) {
         return isEntityOperationPermitted(metaClass, EntityPolicyAction.READ, policyStore);
     }
 
     @Override
-    public boolean isEntityUpdatePermitted(MetaClass metaClass, ResourcePolicyStore policyContainer) {
+    public boolean isEntityUpdatePermitted(MetaClass metaClass, PolicyStore policyContainer) {
         return isEntityOperationPermitted(metaClass, EntityPolicyAction.UPDATE, policyContainer);
     }
 
     @Override
-    public boolean isEntityDeletePermitted(MetaClass metaClass, ResourcePolicyStore policyContainer) {
+    public boolean isEntityDeletePermitted(MetaClass metaClass, PolicyStore policyContainer) {
         return isEntityOperationPermitted(metaClass, EntityPolicyAction.DELETE, policyContainer);
     }
 
     protected boolean isEntityOperationPermitted(MetaClass metaClass, EntityPolicyAction entityPolicyAction,
-                                                 ResourcePolicyStore policyStore) {
+                                                 PolicyStore policyStore) {
 
         boolean result = policyStore.getEntityResourcePolicies(metaClass).stream()
                 .anyMatch(policy -> isEntityOperationPermitted(policy, entityPolicyAction));
@@ -70,7 +70,7 @@ public class SecureOperationsImpl implements SecureOperations {
     }
 
     @Override
-    public boolean isEntityAttrReadPermitted(MetaPropertyPath metaPropertyPath, ResourcePolicyStore policyStore) {
+    public boolean isEntityAttrReadPermitted(MetaPropertyPath metaPropertyPath, PolicyStore policyStore) {
         for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
             if (!isEntityAttrPermitted(metaProperty.getDomain(), metaProperty.getName(),
                     EntityAttributePolicyAction.READ, policyStore)) {
@@ -81,7 +81,7 @@ public class SecureOperationsImpl implements SecureOperations {
     }
 
     @Override
-    public boolean isEntityAttrUpdatePermitted(MetaPropertyPath metaPropertyPath, ResourcePolicyStore policyStore) {
+    public boolean isEntityAttrUpdatePermitted(MetaPropertyPath metaPropertyPath, PolicyStore policyStore) {
         for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
             if (!isEntityAttrPermitted(metaProperty.getDomain(), metaProperty.getName(),
                     EntityAttributePolicyAction.UPDATE, policyStore)) {
@@ -94,7 +94,7 @@ public class SecureOperationsImpl implements SecureOperations {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isEntityAttrPermitted(MetaClass metaClass, String name,
                                             EntityAttributePolicyAction policyAction,
-                                            ResourcePolicyStore policyStore) {
+                                            PolicyStore policyStore) {
 
         boolean result = policyStore.getEntityAttributesResourcePolicies(metaClass, name).stream()
                 .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
@@ -117,7 +117,7 @@ public class SecureOperationsImpl implements SecureOperations {
     }
 
     @Override
-    public boolean isSpecificPermitted(String resourceName, ResourcePolicyStore policyStore) {
+    public boolean isSpecificPermitted(String resourceName, PolicyStore policyStore) {
         boolean result = policyStore.getSpecificResourcePolicies(resourceName).stream()
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
 

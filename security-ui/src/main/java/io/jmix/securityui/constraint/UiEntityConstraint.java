@@ -18,7 +18,7 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.security.constraint.SecureOperations;
-import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.PolicyStore;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -30,11 +30,11 @@ import org.springframework.stereotype.Component;
 public class UiEntityConstraint implements EntityOperationConstraint<UiEntityContext> {
     public static final String NAME = "sec_UiEntityConstraint";
 
-    protected ResourcePolicyStore policyStore;
+    protected PolicyStore policyStore;
     protected SecureOperations entityOperations;
 
     @Autowired
-    public void setPolicyStore(ResourcePolicyStore policyStore) {
+    public void setPolicyStore(PolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 

@@ -13,8 +13,8 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import test_support.SecuritySpecification
-import test_support.annotated_role_builder.TestLazyLoadingRole
+import test_support.SecurityDataSpecification
+import test_support.role.TestLazyLoadingRole
 import test_support.entity.ManyToManyFirstEntity
 import test_support.entity.ManyToManySecondEntity
 import test_support.entity.ManyToOneEntity
@@ -22,7 +22,7 @@ import test_support.entity.OneToManyEntity
 
 import javax.sql.DataSource
 
-class DataManagerLazyLoadingTest extends SecuritySpecification {
+class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     @Autowired
     DataManager dataManager
 

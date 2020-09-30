@@ -14,49 +14,53 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securitydata.constraint;
 
-import io.jmix.core.constraint.InMemoryConstraint;
-import io.jmix.data.accesscontext.InMemoryCrudEntityContext;
+import com.google.common.base.Strings;
+import io.jmix.core.constraint.RowLevelConstraint;
+import io.jmix.data.accesscontext.ReadEntityQueryContext;
+import io.jmix.security.constraint.ResourcePolicyStore;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
-import io.jmix.security.model.RowLevelPolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(InMemoryCrudEntityConstraint.NAME)
+@Component(ReadEntityQueryConstraint.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class InMemoryCrudEntityConstraint implements InMemoryConstraint<InMemoryCrudEntityContext> {
-    public static final String NAME = "sec_InMemoryCrudEntityConstraint";
+public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQueryContext> {
+    public static final String NAME = "sec_ReadEntityQueryConstraint";
 
     protected ResourcePolicyStore policyStore;
+    protected PredefinedQueryParameters predefinedQueryParameters;
 
     @Autowired
     public void setPolicyStore(ResourcePolicyStore policyStore) {
         this.policyStore = policyStore;
     }
 
-    @Override
-    public Class<InMemoryCrudEntityContext> getContextType() {
-        return InMemoryCrudEntityContext.class;
+    @Autowired
+    public void setPredefinedQueryParameters(PredefinedQueryParameters predefinedQueryParameters) {
+        this.predefinedQueryParameters = predefinedQueryParameters;
     }
 
     @Override
-    public void applyTo(InMemoryCrudEntityContext context) {
+    public Class<ReadEntityQueryContext> getContextType() {
+        return ReadEntityQueryContext.class;
+    }
+
+    @Override
+    public void applyTo(ReadEntityQueryContext context) {
         for (RowLevelPolicy policy : policyStore.getRowLevelPolicies(context.getEntityClass())) {
-            if (policy.getType() == RowLevelPolicyType.PREDICATE) {
-                if (policy.getAction() == RowLevelPolicyAction.CREATE) {
-                    context.addCreatePredicate(policy.getPredicate());
-                } else if (policy.getAction() == RowLevelPolicyAction.READ) {
-                    context.addReadPredicate(policy.getPredicate());
-                } else if (policy.getAction() == RowLevelPolicyAction.UPDATE) {
-                    context.addUpdatePredicate(policy.getPredicate());
-                } else if (policy.getAction() == RowLevelPolicyAction.DELETE) {
-                    context.addDeletePredicate(policy.getPredicate());
+            if (policy.getAction() == RowLevelPolicyAction.READ) {
+                if (!Strings.isNullOrEmpty(policy.getWhereClause()) || !Strings.isNullOrEmpty(policy.getJoinClause())) {
+                    context.addJoinAndWhere(policy.getJoinClause(), policy.getWhereClause());
                 }
             }
+        }
+        if (predefinedQueryParameters != null) {
+            context.setQueryParamsProvider(param -> predefinedQueryParameters.getParameterValue(param));
         }
     }
 }

@@ -17,12 +17,11 @@
 package io.jmix.autoconfigure.security;
 
 import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class})
+@Import({CoreConfiguration.class, SecurityConfiguration.class})
 public class SecurityAutoConfiguration {
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securitydata.constraint;
 
 
 import io.jmix.core.security.CurrentAuthentication;

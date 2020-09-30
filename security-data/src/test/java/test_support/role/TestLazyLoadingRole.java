@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.annotated_role_builder;
+package test_support.role;
 
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.RowLevelPolicyAction;

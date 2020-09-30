@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securitydata.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

@@ -29,13 +29,13 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import test_support.SecuritySpecification
-import test_support.annotated_role_builder.TestDataManagerEntityOperationsRole
+import test_support.SecurityDataSpecification
+import test_support.role.TestDataManagerEntityOperationsRole
 import test_support.entity.TestOrder
 
 import javax.sql.DataSource
 
-class DataManagerEntityOperationsTest extends SecuritySpecification {
+class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     @Autowired
     DataManager dataManager
 

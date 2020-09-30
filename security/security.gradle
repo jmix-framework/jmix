@@ -25,9 +25,6 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
 
-    //todo MG remove data dependency from security module
-    api 'io.jmix.data:jmix-data'
-
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

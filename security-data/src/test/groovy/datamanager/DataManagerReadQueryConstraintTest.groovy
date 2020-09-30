@@ -16,7 +16,6 @@
 
 package datamanager
 
-
 import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
@@ -30,13 +29,13 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import test_support.SecuritySpecification
-import test_support.annotated_role_builder.TestDataManagerReadQueryRole
+import test_support.SecurityDataSpecification
+import test_support.role.TestDataManagerReadQueryRole
 import test_support.entity.TestOrder
 
 import javax.sql.DataSource
 
-class DataManagerReadQueryConstraintTest extends SecuritySpecification {
+class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
     @Autowired
     DataManager dataManager
 

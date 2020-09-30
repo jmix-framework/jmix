@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package entity;
+package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 

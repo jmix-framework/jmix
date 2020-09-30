@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securitydata.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -22,6 +22,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
+import io.jmix.security.constraint.ResourcePolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

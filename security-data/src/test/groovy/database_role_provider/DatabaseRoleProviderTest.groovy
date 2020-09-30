@@ -16,7 +16,7 @@
 
 package database_role_provider
 
-import entity.TestOrder
+import test_support.entity.TestOrder
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext

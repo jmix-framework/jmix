@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package test_support.annotated_role_builder;
+package test_support.role;
 
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityPolicy;
+import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
 import io.jmix.security.role.annotation.Role;
 import test_support.entity.TestOrder;
 
-@Role(name = TestDataManagerEntityOperationsRole.NAME, code = TestDataManagerEntityOperationsRole.NAME)
-public interface TestDataManagerEntityOperationsRole {
-    String NAME = "TestDataManagerEntityOperationsRole";
+@Role(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
+public interface TestDataManagerReadQueryRole {
+    String NAME = "TestDataManagerReadQueryRole";
 
     @EntityPolicy(entityClass = TestOrder.class,
-            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
+            actions = {EntityPolicyAction.READ})
+    @JpqlRowLevelPolicy(entityClass = TestOrder.class, where = "{E}.number like 'allowed_%'")
     void order();
 }

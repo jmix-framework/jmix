@@ -17,23 +17,37 @@
 package io.jmix.core.security.impl;
 
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.AuthenticationResolver;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.authentication.CoreAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 @Component(CurrentAuthentication.NAME)
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
+    @Autowired(required = false)
+    protected List<AuthenticationResolver> authenticationResolvers;
+
     @Nullable
     @Override
     public Authentication getAuthentication() {
-        return SecurityContextHelper.getAuthentication();
+        Authentication authentication = SecurityContextHelper.getAuthentication();
+        if (authentication != null && authenticationResolvers != null) {
+            return authenticationResolvers.stream()
+                    .filter(resolver -> resolver.supports(authentication))
+                    .findFirst()
+                    .map(resolver -> resolver.resolveAuthentication(authentication))
+                    .orElse(authentication);
+        }
+        return authentication;
     }
 
     @Override

@@ -35,6 +35,8 @@ dependencies {
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'
 
+    api 'javax.inject:javax.inject'
+
     testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 
     testImplementation 'org.apache.commons:commons-dbcp2'

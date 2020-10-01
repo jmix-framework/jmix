@@ -45,7 +45,7 @@ class SoftDeleteTest extends DataSpec {
 
     def setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
         authenticator.begin()
     }
 

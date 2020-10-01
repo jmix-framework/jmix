@@ -21,6 +21,7 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -37,6 +38,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -48,6 +50,10 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = DataConfiguration.class)
 public class DataTestConfiguration {
+
+    @EnableWebSecurity
+    static class TestSecurityConfiguration extends CoreSecurityConfiguration {
+    }
 
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {

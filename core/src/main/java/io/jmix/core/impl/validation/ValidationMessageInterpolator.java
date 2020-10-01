@@ -64,7 +64,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
     }
 
     @Override
-    public String interpolate(String messageTemplate, Context context, @Nullable Locale locale) {
+    public String interpolate(String messageTemplate, Context context, Locale locale) {
         String interpolatedMessage = messageTemplate;
         try {
             interpolatedMessage = interpolateMessage(messageTemplate, context, locale);
@@ -74,7 +74,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
         return interpolatedMessage;
     }
 
-    protected String interpolateMessage(String messageTemplate, Context context, @Nullable Locale locale) {
+    protected String interpolateMessage(String messageTemplate, Context context, Locale locale) {
         String resolvedMessage = interpolateMessage(messageTemplate, locale);
 
         TokenCollector tokenCollector = new TokenCollector(resolvedMessage, InterpolationTermType.PARAMETER);

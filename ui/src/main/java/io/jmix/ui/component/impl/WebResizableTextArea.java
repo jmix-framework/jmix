@@ -77,17 +77,6 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
         return wrapper;
     }
 
-    @Override
-    public boolean isResizable() {
-        return getResizableDirection() != ResizeDirection.NONE;
-    }
-
-    @Override
-    public void setResizable(boolean resizable) {
-        ResizeDirection value = resizable ? ResizeDirection.BOTH : ResizeDirection.NONE;
-        setResizableDirection(value);
-    }
-
     @Nullable
     @Override
     public String getCaption() {
@@ -166,11 +155,6 @@ public class WebResizableTextArea<V> extends WebAbstractTextArea<JmixTextArea, V
     @Override
     public Subscription addResizeListener(Consumer<ResizeEvent> listener) {
         return getEventHub().subscribe(ResizeEvent.class, listener);
-    }
-
-    @Override
-    public void removeResizeListener(Consumer<ResizeEvent> listener) {
-        unsubscribe(ResizeEvent.class, listener);
     }
 
     @Override

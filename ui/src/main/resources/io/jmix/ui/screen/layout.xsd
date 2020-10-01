@@ -1943,7 +1943,6 @@
 
                 <xs:attribute name="stylename" type="textAreaStylename"/>
                 <xs:attribute name="maxLength" type="xs:int"/>
-                <xs:attribute name="resizable" type="xs:boolean"/>
                 <xs:attribute name="resizableDirection" type="resizableDirection"/>
                 <xs:attribute name="trim" type="xs:boolean"/>
                 <xs:attribute name="inputPrompt" type="resourceString"/>

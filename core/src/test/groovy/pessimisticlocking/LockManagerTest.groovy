@@ -21,21 +21,18 @@ import io.jmix.core.Metadata
 import io.jmix.core.pessimisticlocking.LockInfo
 import io.jmix.core.pessimisticlocking.LockManager
 import io.jmix.core.security.impl.AuthenticatorImpl
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
-
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.LockableChildEntity
 import test_support.app.entity.LockableParentEntity
-
-import org.springframework.beans.factory.annotation.Autowired
+import test_support.base.TestBaseConfiguration
 
 import static org.junit.jupiter.api.Assertions.assertNotNull
 import static org.junit.jupiter.api.Assertions.assertNull
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAppConfiguration])
-@TestPropertySource(properties = ["jmix.securityImplementation = core"])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAppConfiguration])
 class LockManagerTest extends Specification {
 
     @Autowired

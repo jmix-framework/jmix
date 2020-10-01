@@ -26,12 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 import test_support.base.TestBaseConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
-@TestPropertySource(properties = ["jmix.securityImplementation = core"])
 class AuthenticatorTest extends Specification {
 
     @Autowired
@@ -44,7 +42,7 @@ class AuthenticatorTest extends Specification {
 
     def setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
     }
 
     def cleanup() {

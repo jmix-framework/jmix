@@ -34,9 +34,11 @@ import test_support.app.entity.Owner
 import io.jmix.core.security.Authenticator
 
 import org.springframework.beans.factory.annotation.Autowired
+import test_support.base.TestBaseConfiguration
+
 import java.util.stream.Collectors
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class InstanceNameTest extends Specification {
 
     @Autowired

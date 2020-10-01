@@ -19,29 +19,38 @@ package io.jmix.core.security;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configuration
-@Conditional(OnCoreSecurityImplementation.class)
-@EnableWebSecurity
-@Order(100)
-public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
-
-//    @Autowired
-//    protected UserSessionCleanupInterceptor userSessionCleanupInterceptor;
+/**
+ * This security configuration can be used in test or simple projects, for example:
+ * <pre>
+ * &#64;SpringBootApplication
+ * public class SampleApplication {
+ *    // ...
+ *
+ *    &#64;EnableWebSecurity
+ *    static class SecurityConfiguration extends CoreSecurityConfiguration {
+ *
+ *        &#64;Override
+ *        public UserRepository userRepository() {
+ * 	        InMemoryUserRepository repository = new InMemoryUserRepository();
+* 	        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
+ * 	        return repository;
+ *        }
+ *    }
+ * }
+ * </pre>
+ */
+public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private CoreProperties coreProperties;
@@ -54,11 +63,11 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
+        auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
 
         CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider(messageTools);
-        userAuthenticationProvider.setUserDetailsService(userRepository);
-        userAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
+        userAuthenticationProvider.setUserDetailsService(userRepository());
+        userAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         auth.authenticationProvider(userAuthenticationProvider);
     }
 
@@ -68,19 +77,13 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
                 .anonymous(anonymousConfigurer -> {
-                    BaseUser anonymousUser = userRepository.getAnonymousUser();
+                    BaseUser anonymousUser = userRepository().getAnonymousUser();
                     anonymousConfigurer.principal(anonymousUser);
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                 })
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
     }
-
-    //todo MG why?
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(userSessionCleanupInterceptor);
-//    }
 
     @Bean(name = "core_authenticationManager")
     @Override
@@ -89,7 +92,12 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter impl
     }
 
     @Bean(name = "core_PasswordEncoder")
-    public PasswordEncoder getPasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean(name = "core_UserRepository")
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
     }
 }

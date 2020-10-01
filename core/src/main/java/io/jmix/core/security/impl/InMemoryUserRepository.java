@@ -20,13 +20,11 @@ import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component(UserRepository.NAME)
 public class InMemoryUserRepository implements UserRepository {
 
     protected CoreUser systemUser;
@@ -63,7 +61,7 @@ public class InMemoryUserRepository implements UserRepository {
                 .collect(Collectors.toList());
     }
 
-    public void createUser(BaseUser user) {
+    public void addUser(BaseUser user) {
         users.add(user);
     }
 

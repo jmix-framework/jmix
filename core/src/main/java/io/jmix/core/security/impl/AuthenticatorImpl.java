@@ -41,23 +41,31 @@ public class AuthenticatorImpl extends AuthenticatorSupport implements Authentic
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatorImpl.class);
 
-    @Autowired
+    @Autowired(required = false)
     protected AuthenticationManager authenticationManager;
 
     @EventListener
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 5)
     protected void beginServerSessionOnStartup(ContextRefreshedEvent event) {
-        begin();
+        if (authenticationManager != null) {
+            begin();
+        }
     }
 
     @EventListener
     @Order(JmixOrder.LOWEST_PRECEDENCE - 5)
     protected void endServerSessionOnStartup(ContextRefreshedEvent event) {
-        end();
+        if (authenticationManager != null) {
+            end();
+        }
     }
 
     @Override
     public Authentication begin(@Nullable String login) {
+        if (authenticationManager == null) {
+            throw new IllegalStateException("AuthenticationManager is not defined");
+        }
+
         Authentication authentication;
 
         if (!Strings.isNullOrEmpty(login)) {

@@ -17,7 +17,6 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.security.CoreSecurityConfiguration;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -33,7 +32,6 @@ import org.springframework.core.PriorityOrdered;
  * before {@code @Conditional} annotations that depend on {@code @JmixProperty} values.
  */
 @Configuration
-@Import(CoreSecurityConfiguration.class)
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {})

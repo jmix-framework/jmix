@@ -27,14 +27,12 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import spock.lang.Ignore
 import spock.lang.Specification
-
 import test_support.addon1.TestAddon1Configuration
+import test_support.base.TestBaseConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration])
-@TestPropertySource(properties = ["jmix.securityImplementation = core"])
+@ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration, TestAddon1Configuration])
 class CoreSecurityImplTest extends Specification {
 
     @Autowired
@@ -47,10 +45,10 @@ class CoreSecurityImplTest extends Specification {
     InMemoryUserRepository userRepository
 
     def "authentication as admin"() {
-        when:
-
         def admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
+
+        when:
 
         def authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken('admin', 'admin123'))

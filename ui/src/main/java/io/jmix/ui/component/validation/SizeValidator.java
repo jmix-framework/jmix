@@ -20,6 +20,7 @@ import io.jmix.core.common.util.ParamsMap;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ import java.util.Map;
 /**
  * Size validator is applicable for Collections and String values. It checks that value is in a specific range.
  * <p>
- * For error message it uses Groovy string and it is possible to use following keys for formatted output: 'value', 'min' and 'max'.
+ * For error message it uses template string and it is possible to use following keys for formatted output: 'value', 'min' and 'max'.
  * <p>
  * Note, that size validator for Collection doesn't use key 'value' for output error message.
  * <p>
@@ -59,11 +60,11 @@ public class SizeValidator<T> extends AbstractValidator<T> {
 
     /**
      * Constructor for custom error message. This message can contain following keys formatted output:
-     * '$value', '$min', and '$max'.
+     * '${value}', '${min}', and '${max}'.
      * <p>
-     * Example: "The '$value' length must be between $min and $max".
+     * Example: "The '${value}' length must be between '${min}' and '${max}'".
      * <p>
-     * Note, that message for Collection doesn't use '$value' key for output error message.
+     * Note, that message for Collection doesn't use '${value}' key for output error message.
      *
      * @param message error message
      */
@@ -74,6 +75,11 @@ public class SizeValidator<T> extends AbstractValidator<T> {
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setStringSubstitutor(StringSubstitutor substitutor) {
+        this.substitutor = substitutor;
     }
 
     /**

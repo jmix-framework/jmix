@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.number.NumberConstraint;
+import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 /**
  * Min validator checks that value must be greater than or equal to the specified minimum.
  * <p>
- * For error message it uses Groovy string and it is possible to use '$value' and '$min' keys for formatted output.
+ * For error message it uses template string and it is possible to use '${value}' and '${min}' keys for formatted output.
  * <p>
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
@@ -57,9 +58,9 @@ public class MinValidator<T extends Number> extends AbstractValidator<T> {
     }
 
     /**
-     * Constructor with custom error message. This message can contain '$value' and '$min' keys for formatted output.
+     * Constructor with custom error message. This message can contain '${value}' and '${min}' keys for formatted output.
      * <p>
-     * Example: "Value '$value' should be greater than or equal to '$min'".
+     * Example: "Value '${value}' should be greater than or equal to '${min}'".
      *
      * @param min     min value
      * @param message error message
@@ -82,6 +83,11 @@ public class MinValidator<T extends Number> extends AbstractValidator<T> {
     @Autowired
     public void setCurrentAuthentication(CurrentAuthentication currentAuthentication) {
         this.currentAuthentication = currentAuthentication;
+    }
+
+    @Autowired
+    public void setStringSubstitutor(StringSubstitutor substitutor) {
+        this.substitutor = substitutor;
     }
 
     /**

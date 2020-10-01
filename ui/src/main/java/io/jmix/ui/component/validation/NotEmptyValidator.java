@@ -29,7 +29,7 @@ import java.util.Collection;
 /**
  * NotEmpty validator checks that value is not null and not empty.
  * <p>
- * For error message it uses Groovy string and it is possible to use '$value' keys for formatted output.
+ * For error message it uses template string and it is possible to use '${value}' keys for formatted output.
  * <p>
  * Note, that size validator for Collection doesn't use key 'value' for output error message.
  * <p>

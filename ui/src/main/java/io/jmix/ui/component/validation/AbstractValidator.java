@@ -16,15 +16,15 @@
 
 package io.jmix.ui.component.validation;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.security.CurrentAuthentication;
-import org.apache.commons.lang3.NotImplementedException;
+import io.jmix.ui.substitutor.StringSubstitutor;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * Main class for validators.
@@ -36,6 +36,7 @@ public abstract class AbstractValidator<T> implements Validator<T> {
     protected Messages messages;
     protected CurrentAuthentication currentAuthentication;
     protected DatatypeRegistry datatypeRegistry;
+    protected StringSubstitutor substitutor;
 
     protected String message;
 
@@ -48,7 +49,7 @@ public abstract class AbstractValidator<T> implements Validator<T> {
     }
 
     /**
-     * Sets custom error message that will be used instead of default message. For error message it uses Groovy string
+     * Sets custom error message that will be used instead of default message. For error message it uses template string
      * and it is possible to use values in message. Each validator has its own value keys for formatted output. See
      * JavaDocs for specific validator.
      *
@@ -60,24 +61,13 @@ public abstract class AbstractValidator<T> implements Validator<T> {
 
     /**
      * @param errorMessage error message
-     * @param values       values map
+     * @param valuesMap    values map
      * @return message with inserted values
      */
-    protected String getTemplateErrorMessage(@Nullable String errorMessage, Map<String, Object> values) {
-// todo VM
-        throw new NotImplementedException("");
-
-//        if (!Strings.isNullOrEmpty(errorMessage)) {
-//            StringWriter writer = new StringWriter();
-//            try {
-//                GStringTemplateEngine engine = new GStringTemplateEngine();
-//                engine.createTemplate(errorMessage).make(values).writeTo(writer);
-//                return writer.toString();
-//            } catch (ClassNotFoundException | IOException e) {
-//                throw new IllegalStateException(e);
-//            }
-//        }
-//        return errorMessage;
+    protected String getTemplateErrorMessage(@Nullable String errorMessage, Map<String, Object> valuesMap) {
+        return !Strings.isNullOrEmpty(errorMessage)
+                ? substitutor.substitute(errorMessage, valuesMap)
+                : "";
     }
 
     protected String formatValue(Object value) {

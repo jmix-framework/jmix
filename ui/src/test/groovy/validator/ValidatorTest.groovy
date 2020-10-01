@@ -26,7 +26,6 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
 import io.jmix.ui.component.validation.*
 import io.jmix.ui.testassist.spec.ScreenSpecification
-import org.junit.Ignore
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -38,7 +37,6 @@ import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.util.Calendar
 
-@Ignore
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class ValidatorTest extends ScreenSpecification {
 
@@ -134,7 +132,7 @@ class ValidatorTest extends ScreenSpecification {
         noExceptionThrown()
 
         when: "set custom message"
-        def customMessage = 'min = $min max = $max'
+        def customMessage = 'min = ${min} max = ${max}'
         sizeValidator.setMessage(customMessage)
         textField.setValue(invalidValue)
         textField.validate()

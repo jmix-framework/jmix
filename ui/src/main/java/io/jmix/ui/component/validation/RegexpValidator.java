@@ -21,6 +21,7 @@ import io.jmix.core.common.util.Preconditions;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.substitutor.StringSubstitutor;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
  * <p>
  * The regular expression follows the Java regular expression conventions.
  * <p>
- * For error message it uses Groovy string and it is possible to use '$value' key for formatted output.
+ * For error message it uses template string and it is possible to use '${value}' key for formatted output.
  * <p>
  * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
  * for example:
@@ -58,8 +59,8 @@ public class RegexpValidator extends AbstractValidator<String> {
     }
 
     /**
-     * Constructor for regexp value and custom error message. This message can contain '$value' key for formatted output.
-     * Example: "Invalid value '$value'".
+     * Constructor for regexp value and custom error message. This message can contain '${value}' key for formatted output.
+     * Example: "Invalid value '${value}'".
      *
      * @param regexp  regular expression
      * @param message error message
@@ -74,6 +75,11 @@ public class RegexpValidator extends AbstractValidator<String> {
     @Autowired
     protected void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    @Autowired
+    public void setStringSubstitutor(StringSubstitutor substitutor) {
+        this.substitutor = substitutor;
     }
 
     @Override

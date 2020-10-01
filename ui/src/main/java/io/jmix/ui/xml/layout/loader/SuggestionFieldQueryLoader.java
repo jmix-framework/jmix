@@ -21,10 +21,12 @@ import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.FluentLoader;
 import io.jmix.core.QueryUtils;
+import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.substitutor.StringSubstitutor;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
@@ -63,9 +65,9 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
                         FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
                         loader.fetchPlan(fetchPlanRepository.getFetchPlan(entityClass, fetchPlan));
                     }
-                    loader.query(stringQuery)
-                            .parameter("searchString", searchString);
-                    return loader.list();
+                    return loader.query(stringQuery)
+                            .parameter("searchString", searchString)
+                            .list();
                 });
             } else {
                 throw new GuiDevelopmentException(String.format("Field 'entityClass' is empty in component %s.",
@@ -76,15 +78,8 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
     protected String applySearchFormat(String searchString, String format) {
         if (StringUtils.isNotEmpty(format)) {
-            // todo GStringTemplateEngine
-//            GStringTemplateEngine engine = new GStringTemplateEngine();
-//            StringWriter writer = new StringWriter();
-//            try {
-//                engine.createTemplate(format).make(ParamsMap.of("searchString", searchString)).writeTo(writer);
-//                return writer.toString();
-//            } catch (ClassNotFoundException | IOException e) {
-//                throw new IllegalStateException(e);
-//            }
+            StringSubstitutor substitutor = (StringSubstitutor) applicationContext.getBean(StringSubstitutor.NAME);
+            searchString = substitutor.substitute(format, ParamsMap.of("searchString", searchString));
         }
         return searchString;
     }

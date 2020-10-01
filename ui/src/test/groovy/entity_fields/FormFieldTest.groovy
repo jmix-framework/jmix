@@ -29,7 +29,6 @@ import io.jmix.ui.component.EntityPicker
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Address
@@ -45,8 +44,6 @@ class FormFieldTest extends ScreenSpecification {
     DataManager dataManager
     @Autowired
     UiProperties properties
-    @Autowired
-    JdbcTemplate jdbc
 
     private Customer customer1
     private Customer customer2
@@ -69,9 +66,7 @@ class FormFieldTest extends ScreenSpecification {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 
-        jdbc.update('delete from TEST_ORDER_LINE')
-        jdbc.update('delete from TEST_ORDER')
-        jdbc.update('delete from TEST_CUSTOMER')
+        dataManager.remove(order, customer1, customer2)
     }
 
     def "entityPicker is specified in properties"() {
@@ -119,7 +114,7 @@ class FormFieldTest extends ScreenSpecification {
         def editor = showOrderEdit()
 
         then:
-        fieldIsEntityComboBox(editor.customerField, 2, [])
+        fieldIsEntityComboBox(editor.customerField, [])
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
@@ -127,7 +122,7 @@ class FormFieldTest extends ScreenSpecification {
         editor = showOrderEdit()
 
         then:
-        fieldIsEntityComboBox(editor.customerField, 2, actionIds)
+        fieldIsEntityComboBox(editor.customerField, actionIds)
     }
 
     def "entityComboBox is not specified in properties, field with options"() {
@@ -138,7 +133,7 @@ class FormFieldTest extends ScreenSpecification {
         def editor = showOrderEdit()
 
         then:
-        fieldIsEntityComboBox(editor.customerFieldWithOptions, 1, [])
+        fieldIsEntityComboBox(editor.customerFieldWithOptions, [])
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
@@ -146,7 +141,7 @@ class FormFieldTest extends ScreenSpecification {
         editor = showOrderEdit()
 
         then:
-        fieldIsEntityComboBox(editor.customerFieldWithOptions, 1, actionIds)
+        fieldIsEntityComboBox(editor.customerFieldWithOptions, actionIds)
     }
 
     private OrderEdit showOrderEdit() {
@@ -159,10 +154,9 @@ class FormFieldTest extends ScreenSpecification {
         return editor
     }
 
-    private void fieldIsEntityComboBox(def field, int optionsCount, List actionIds) {
+    private void fieldIsEntityComboBox(def field, List actionIds) {
         assert field instanceof EntityComboBox
         EntityComboBox comboBox = (EntityComboBox) field
-        assert comboBox.options.getOptions().count() == optionsCount
         assert comboBox.actions.collect { it.id } == actionIds
     }
 

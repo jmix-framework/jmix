@@ -36,24 +36,12 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
 
     @Override
     public boolean supports(Element element) {
-        return isNotLegacyScreen(element)
-                && loaders.containsKey(element.getName());
+        return loaders.containsKey(element.getName());
     }
 
     @Override
     public Class<? extends ComponentLoader> getLoader(Element element) {
         return getLoader(element.getName());
-    }
-
-    protected boolean isNotLegacyScreen(Element element) {
-        // is screen
-        Element window = getRootElement("window", element);
-        if (window != null) {
-            return window.attribute("class") == null;
-        }
-        // is fragment
-        return getRootElement("fragment", element) != null
-                || "fragment".equals(element.getName());
     }
 
     public Class<? extends ComponentLoader> getWindowLoader() {
@@ -62,19 +50,12 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
 
     @Override
     public Class<? extends ComponentLoader> getWindowLoader(Element root) {
-        if (isNotLegacyScreen(root)) {
-            return windowLoader;
-        }
-
-        return null;
+        return windowLoader;
     }
 
     @Override
     public Class<? extends ComponentLoader> getFragmentLoader(Element root) {
-        if (isNotLegacyScreen(root))
-            return fragmentLoader;
-
-        return null;
+        return fragmentLoader;
     }
 
     @Nullable

@@ -29,7 +29,7 @@ dependencies {
     implementation 'io.jmix.data:jmix-data-starter'
     implementation 'io.jmix.security:jmix-security-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
-    implementation 'io.jmix.rest:jmix-rest-starter'
+    implementation project(':rest-starter')
     implementation 'io.jmix.ui:jmix-ui-starter'
     implementation 'io.jmix.ui:jmix-ui-data-starter'
 

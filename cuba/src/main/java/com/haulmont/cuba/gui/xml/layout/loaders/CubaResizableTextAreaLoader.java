@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ResizableTextArea;
@@ -32,6 +33,8 @@ public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
         super.loadComponent();
 
         if (resultComponent instanceof ResizableTextArea) {
+            loadResizable((ResizableTextArea) resultComponent, element);
+
             ComponentLoaderHelper.loadSettingsEnabled((ResizableTextArea) resultComponent, element);
         }
 
@@ -47,5 +50,12 @@ public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
+    }
+
+    protected void loadResizable(ResizableTextArea component, Element element) {
+        String resizable = element.attributeValue("resizable");
+        if (!Strings.isNullOrEmpty(resizable)) {
+            component.setResizable(Boolean.parseBoolean(resizable));
+        }
     }
 }

@@ -17,6 +17,9 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.common.event.Subscription;
+
+import java.util.function.Consumer;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -28,4 +31,23 @@ import com.haulmont.cuba.gui.data.Datasource;
 public interface ResizableTextArea<V> extends TextArea<V>, io.jmix.ui.component.ResizableTextArea<V>, HasSettings {
 
     String NAME = io.jmix.ui.component.ResizableTextArea.NAME;
+
+    /**
+     * @deprecated Use {@link io.jmix.ui.component.ResizableTextArea#setResizableDirection(ResizeDirection)} instead.
+     */
+    @Deprecated
+    void setResizable(boolean resizable);
+
+    /**
+     * @deprecated Use {@link io.jmix.ui.component.ResizableTextArea#getResizableDirection()} instead.
+     */
+    @Deprecated
+    boolean isResizable();
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeResizeListener(Consumer<ResizeEvent> listener);
 }

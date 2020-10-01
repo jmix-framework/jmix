@@ -39,11 +39,17 @@ public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResiza
 
     @Override
     public void applySettings(Element element) {
-        settingsDelegate.applySettings(element);
+        if (isResizable()) {
+            settingsDelegate.applySettings(element);
+        }
     }
 
     @Override
     public boolean saveSettings(Element element) {
+        if (!isResizable()) {
+            return false;
+        }
+
         return settingsDelegate.saveSettings(element);
     }
 
@@ -74,5 +80,21 @@ public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResiza
     @Override
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public boolean isResizable() {
+        return getResizableDirection() != ResizeDirection.NONE;
+    }
+
+    @Override
+    public void setResizable(boolean resizable) {
+        ResizeDirection value = resizable ? ResizeDirection.BOTH : ResizeDirection.NONE;
+        setResizableDirection(value);
+    }
+
+    @Override
+    public void removeResizeListener(Consumer<ResizableTextArea.ResizeEvent> listener) {
+        unsubscribe(ResizableTextArea.ResizeEvent.class, listener);
     }
 }

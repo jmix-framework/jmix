@@ -76,9 +76,6 @@ public class EntitiesControllerManager {
     protected AccessManager accessManager;
 
     @Autowired
-    protected BeanValidation beanValidation;
-
-    @Autowired
     protected RestControllerUtils restControllerUtils;
 
     @Autowired

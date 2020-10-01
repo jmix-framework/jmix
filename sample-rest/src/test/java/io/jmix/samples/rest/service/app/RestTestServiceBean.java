@@ -32,9 +32,6 @@ public class RestTestServiceBean implements RestTestService {
     @Autowired
     protected Metadata metadata;
 
-//    @Autowired
-//    protected Persistence persistence;
-
     @Autowired
     protected DataManager dataManager;
 

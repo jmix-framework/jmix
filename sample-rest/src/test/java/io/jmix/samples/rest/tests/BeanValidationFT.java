@@ -76,7 +76,7 @@ public class BeanValidationFT extends AbstractRestControllerFT {
 
             ReadContext ctx = parseResponse(response);
 
-            assertEquals("must not be null", ctx.read("$[0].message"));
+            assertEquals("may not be null", ctx.read("$[0].message"));
             assertEquals("name", ctx.read("$[0].path"));
         }
     }
@@ -123,8 +123,6 @@ public class BeanValidationFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo validation
-    @Disabled
     @Test
     public void commitInvalidClassLevelValidators() throws Exception {
         String json = getFileContent("currency-invalid-code-ban.json", null);

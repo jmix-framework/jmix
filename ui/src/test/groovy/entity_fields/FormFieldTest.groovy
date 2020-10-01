@@ -69,6 +69,7 @@ class FormFieldTest extends ScreenSpecification {
         properties.getEntityFieldType().remove('test_Customer')
         properties.getEntityFieldActions().remove('test_Customer')
 
+        jdbc.update('delete from TEST_ORDER_LINE')
         jdbc.update('delete from TEST_ORDER')
         jdbc.update('delete from TEST_CUSTOMER')
     }

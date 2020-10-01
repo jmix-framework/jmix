@@ -20,8 +20,6 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.validation.group.RestApiChecks;
-import io.jmix.samples.rest.validation.TestCurrencyClassConstraint;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,7 +31,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.UUID;
 
-@TestCurrencyClassConstraint(groups = RestApiChecks.class)
+//@TestCurrencyClassConstraint(groups = RestApiChecks.class)
 @Entity(name = "ref$Currency")
 @Table(name = "REF_CURRENCY")
 public class Currency {

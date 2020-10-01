@@ -23,7 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
@@ -65,8 +65,8 @@ public class LoginScreen extends Screen {
     @Autowired
     private ScreenBuilders screenBuilders;
 
-    @Autowired
-    private CompositeSessionAuthenticationStrategy authenticationStrategy;
+    @Autowired(required = false)
+    private SessionAuthenticationStrategy authenticationStrategy;
 
     @Subscribe
     private void onInit(InitEvent event) {
@@ -130,6 +130,8 @@ public class LoginScreen extends Screen {
         VaadinServletResponse response = VaadinServletResponse.getCurrent();
         request.setAttribute(DEFAULT_PARAMETER, rememberMeCheckBox.isChecked());
 
-        authenticationStrategy.onAuthentication(authentication, request, response);
+        if (authenticationStrategy != null) {
+            authenticationStrategy.onAuthentication(authentication, request, response);
+        }
     }
 }

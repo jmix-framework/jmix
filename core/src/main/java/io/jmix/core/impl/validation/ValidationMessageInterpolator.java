@@ -18,6 +18,7 @@ package io.jmix.core.impl.validation;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.security.CurrentAuthentication;
 import org.hibernate.validator.internal.engine.messageinterpolation.InterpolationTerm;
 import org.hibernate.validator.internal.engine.messageinterpolation.InterpolationTermType;
 import org.hibernate.validator.internal.engine.messageinterpolation.parser.Token;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.el.ExpressionFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.ValidationException;
@@ -44,6 +46,8 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
     protected Messages messages;
     @Autowired
     protected MessageTools messageTools;
+    @Autowired
+    protected CurrentAuthentication currentAuthentication;
 
     protected ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
 
@@ -60,7 +64,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
     }
 
     @Override
-    public String interpolate(String messageTemplate, Context context, Locale locale) {
+    public String interpolate(String messageTemplate, Context context, @Nullable Locale locale) {
         String interpolatedMessage = messageTemplate;
         try {
             interpolatedMessage = interpolateMessage(messageTemplate, context, locale);
@@ -70,7 +74,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
         return interpolatedMessage;
     }
 
-    protected String interpolateMessage(String messageTemplate, Context context, Locale locale) {
+    protected String interpolateMessage(String messageTemplate, Context context, @Nullable Locale locale) {
         String resolvedMessage = interpolateMessage(messageTemplate, locale);
 
         TokenCollector tokenCollector = new TokenCollector(resolvedMessage, InterpolationTermType.PARAMETER);
@@ -143,5 +147,9 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
 
     protected String removeCurlyBraces(String parameter) {
         return parameter.substring(1, parameter.length() - 1);
+    }
+
+    protected Locale getUserLocale() {
+        return currentAuthentication.isSet() ? currentAuthentication.getLocale() : Locale.getDefault();
     }
 }

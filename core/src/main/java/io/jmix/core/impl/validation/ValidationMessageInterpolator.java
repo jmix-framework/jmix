@@ -60,7 +60,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
 
     @Override
     public String interpolate(String messageTemplate, Context context) {
-        return interpolate(messageTemplate, context, null);
+        return interpolate(messageTemplate, context, getUserLocale());
     }
 
     @Override

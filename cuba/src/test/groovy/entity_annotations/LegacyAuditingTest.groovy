@@ -48,7 +48,7 @@ class LegacyAuditingTest extends CoreTestSpecification {
 
     def setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
     }
 
     def cleanup() {

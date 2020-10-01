@@ -21,7 +21,6 @@ import com.haulmont.cuba.core.model.entity_annotations.LegacySoftDeleteEntity
 import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
-import io.jmix.core.entity.EntitySystemAccess
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.impl.CoreUser
@@ -46,7 +45,7 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
 
     def setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
         authenticator.begin("admin")
     }
 

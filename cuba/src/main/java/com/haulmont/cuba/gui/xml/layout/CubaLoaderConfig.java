@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.CheckBox;
@@ -55,16 +56,15 @@ import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.xml.layout.BaseLoaderConfig;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderConfig;
-import io.jmix.ui.xml.layout.loader.FileMultiUploadFieldLoader;
-import io.jmix.ui.xml.layout.loader.FragmentLoader;
-import io.jmix.ui.xml.layout.loader.GridLayoutLoader;
-import io.jmix.ui.xml.layout.loader.WindowLoader;
+import io.jmix.ui.xml.layout.loader.*;
 import org.dom4j.Element;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
+@Order(JmixOrder.LOWEST_PRECEDENCE - 20)
 @Component(CubaLoaderConfig.NAME)
 public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 

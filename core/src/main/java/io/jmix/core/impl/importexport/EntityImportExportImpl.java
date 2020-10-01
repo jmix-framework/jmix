@@ -20,7 +20,6 @@ import io.jmix.core.*;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
-import io.jmix.core.impl.serialization.EntitySerializationTokenManager;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -68,7 +67,7 @@ public class EntityImportExportImpl implements EntityImportExport {
     protected FetchPlans fetchPlans;
 
     @Autowired
-    protected BeanValidation beanValidation;
+    protected Validator validator;
 
     @Autowired
     protected Stores stores;
@@ -243,7 +242,6 @@ public class EntityImportExportImpl implements EntityImportExport {
         }
 
         if (validate) {
-            Validator validator = beanValidation.getValidator();
             for (Object entity : saveContext.getEntitiesToSave()) {
                 Set<ConstraintViolation<Object>> violations = validator.validate(entity, Default.class, RestApiChecks.class);
                 if (!violations.isEmpty()) {
@@ -297,7 +295,7 @@ public class EntityImportExportImpl implements EntityImportExport {
             MetaProperty metaProperty = metaClass.getProperty(propertyName);
 
             if (metaProperty.getRange().isDatatype()) {
-                if (!"version" .equals(metaProperty.getName())) {
+                if (!"version".equals(metaProperty.getName())) {
                     EntityValues.setValue(dstEntity, propertyName, EntityValues.getValue(srcEntity, propertyName));
                 } else if (optimisticLocking) {
                     EntityValues.setValue(dstEntity, propertyName, EntityValues.getValue(srcEntity, propertyName));
@@ -503,7 +501,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         for (EntityImportPlanProperty vp : importPlanProperty.getPlan().getProperties()) {
             MetaProperty mp = embeddedAttrMetaClass.getProperty(vp.getName());
-            if ((mp.getRange().isDatatype() && !"version" .equals(mp.getName())) || mp.getRange().isEnum()) {
+            if ((mp.getRange().isDatatype() && !"version".equals(mp.getName())) || mp.getRange().isEnum()) {
                 EntityValues.setValue(dstEmbeddedEntity, vp.getName(), EntityValues.getValue(srcEmbeddedEntity, vp.getName()));
             } else if (mp.getRange().isClass()) {
                 FetchPlan fetchPlanProperty = fetchPlan.getProperty(propertyName) != null ? fetchPlan.getProperty(propertyName).getFetchPlan() : null;

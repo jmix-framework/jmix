@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl;
+package io.jmix.core.impl.validation;
 
-import io.jmix.core.*;
-import io.jmix.core.security.CurrentAuthentication;
-import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.hibernate.validator.cfg.ConstraintMapping;
 import org.hibernate.validator.cfg.context.ConstraintDefinitionContext;
@@ -26,100 +23,32 @@ import org.hibernate.validator.internal.constraintvalidators.bv.time.future.*;
 import org.hibernate.validator.internal.constraintvalidators.bv.time.futureorpresent.*;
 import org.hibernate.validator.internal.constraintvalidators.bv.time.past.*;
 import org.hibernate.validator.internal.constraintvalidators.bv.time.pastorpresent.*;
-import org.springframework.stereotype.Component;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import javax.validation.ClockProvider;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Locale;
 
-import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+public class JmixLocalValidatorFactoryBean extends LocalValidatorFactoryBean {
+    protected ClockProvider clockProvider;
 
-@Component(BeanValidation.NAME)
-public class BeanValidationImpl implements BeanValidation {
-
-    public static final ValidationOptions NO_VALIDATION_OPTIONS = new ValidationOptions();
-
-    @Autowired
-    protected Messages messages;
-    @Autowired
-    protected MessageTools messageTools;
-    @Autowired
-    protected Metadata metadata;
-    @Autowired
-    protected TimeSource timeSource;
-    @Autowired
-    protected CurrentAuthentication currentAuthentication;
-    @Autowired
-    protected EntityStates entityStates;
-
-    @Override
-    public Validator getValidator() {
-        Locale locale = getCurrentLocale();
-
-        return getValidatorWithDefaultFactory(locale);
+    public void setClockProvider(ClockProvider clockProvider) {
+        this.clockProvider = clockProvider;
     }
 
     @Override
-    public Validator getValidator(ConstraintMapping constraintMapping) {
-        checkNotNullArgument(constraintMapping);
+    protected void postProcessConfiguration(javax.validation.Configuration<?> configuration) {
+        super.postProcessConfiguration(configuration);
 
-        return getValidator(constraintMapping, NO_VALIDATION_OPTIONS);
-    }
-
-    @Override
-    public Validator getValidator(@Nullable ConstraintMapping constraintMapping, ValidationOptions options) {
-        checkNotNullArgument(options);
-
-        if (constraintMapping == null
-                && options.getFailFast() == null
-                && options.getLocale() != null) {
-            return getValidatorWithDefaultFactory(options.getLocale());
+        if (clockProvider != null) {
+            configuration.clockProvider(clockProvider);
         }
 
-        Locale locale;
-        if (options.getLocale() != null) {
-            locale = options.getLocale();
-        } else {
-            locale = getCurrentLocale();
-        }
-
-        HibernateValidatorConfiguration configuration = getValidatorFactoryConfiguration(locale);
-        if (options.getFailFast() != null) {
-            configuration.failFast(options.getFailFast());
-        }
-        if (constraintMapping != null) {
-            configuration.addMapping(constraintMapping);
-        }
-
-        ValidatorFactory factory = configuration.buildValidatorFactory();
-        return factory.getValidator();
-    }
-
-    protected Validator getValidatorWithDefaultFactory(Locale locale) {
-        HibernateValidatorConfiguration configuration = getValidatorFactoryConfiguration(locale);
-        ValidatorFactory factory = configuration.buildValidatorFactory();
-        return factory.getValidator();
-    }
-
-    protected HibernateValidatorConfiguration getValidatorFactoryConfiguration(Locale locale) {
-        HibernateValidatorConfiguration configuration = Validation.byProvider(HibernateValidator.class)
-                .configure()
-
-                // todo custom options
-                /*.clockProvider(new CubaValidationTimeProvider(timeSource))
-                .traversableResolver(new CubaValidationTraversableResolver(metadata, entityStates))
-                .messageInterpolator(new CubaValidationMessagesInterpolator(messages, locale))*/;
-
-        ConstraintMapping constraintMapping = configuration.createConstraintMapping();
+        ConstraintMapping constraintMapping = ((HibernateValidatorConfiguration) configuration).createConstraintMapping();
 
         //Hibernate validators doesn't support java.sql.Date.
         //Replace standard validators for java.util.Date with support java.sql.Date
@@ -128,25 +57,13 @@ public class BeanValidationImpl implements BeanValidation {
         registerFutureValidators(constraintMapping.constraintDefinition(Future.class));
         registerFutureOrPresentValidators(constraintMapping.constraintDefinition(FutureOrPresent.class));
 
-        configuration.addMapping(constraintMapping);
-
-        return configuration;
-    }
-
-    protected Locale getCurrentLocale() {
-        Locale locale;
-        if (currentAuthentication.isSet()) {
-            locale = currentAuthentication.getLocale();
-        } else {
-            locale = messageTools.getDefaultLocale();
-        }
-        return locale;
+        ((HibernateValidatorConfiguration) configuration).addMapping(constraintMapping);
     }
 
     protected void registerPastValidators(ConstraintDefinitionContext<Past> context) {
         context.includeExistingValidators(false)
                 .validatedBy(PastValidatorForCalendar.class)
-                .validatedBy(CubaPastValidatorForDate.class)
+                .validatedBy(JmixPastValidatorForDate.class)
                 // Java 8 date/time API validators
                 .validatedBy(PastValidatorForHijrahDate.class)
                 .validatedBy(PastValidatorForInstant.class)
@@ -167,7 +84,7 @@ public class BeanValidationImpl implements BeanValidation {
     protected void registerPastOrPresentValidators(ConstraintDefinitionContext<PastOrPresent> context) {
         context.includeExistingValidators(false)
                 .validatedBy(PastOrPresentValidatorForCalendar.class)
-                .validatedBy(CubaPastOrPresentValidatorForDate.class)
+                .validatedBy(JmixPastOrPresentValidatorForDate.class)
                 // Java 8 date/time API validators
                 .validatedBy(PastOrPresentValidatorForHijrahDate.class)
                 .validatedBy(PastOrPresentValidatorForInstant.class)
@@ -188,7 +105,7 @@ public class BeanValidationImpl implements BeanValidation {
     protected void registerFutureValidators(ConstraintDefinitionContext<Future> context) {
         context.includeExistingValidators(false)
                 .validatedBy(FutureValidatorForCalendar.class)
-                .validatedBy(CubaFutureValidatorForDate.class)
+                .validatedBy(JmixFutureValidatorForDate.class)
                 // Java 8 date/time API validators
                 .validatedBy(FutureValidatorForHijrahDate.class)
                 .validatedBy(FutureValidatorForInstant.class)
@@ -209,7 +126,7 @@ public class BeanValidationImpl implements BeanValidation {
     protected void registerFutureOrPresentValidators(ConstraintDefinitionContext<FutureOrPresent> context) {
         context.includeExistingValidators(false)
                 .validatedBy(FutureOrPresentValidatorForCalendar.class)
-                .validatedBy(CubaFutureOrPresentValidatorForDate.class)
+                .validatedBy(JmixFutureOrPresentValidatorForDate.class)
                 // Java 8 date/time API validators
                 .validatedBy(FutureOrPresentValidatorForHijrahDate.class)
                 .validatedBy(FutureOrPresentValidatorForInstant.class)
@@ -227,8 +144,8 @@ public class BeanValidationImpl implements BeanValidation {
                 .validatedBy(FutureOrPresentValidatorForZonedDateTime.class);
     }
 
-    protected static class CubaPastValidatorForDate extends PastValidatorForDate {
-        public CubaPastValidatorForDate() {
+    protected static class JmixPastValidatorForDate extends PastValidatorForDate {
+        public JmixPastValidatorForDate() {
         }
 
         @Override
@@ -241,8 +158,8 @@ public class BeanValidationImpl implements BeanValidation {
         }
     }
 
-    protected static class CubaPastOrPresentValidatorForDate extends PastOrPresentValidatorForDate {
-        public CubaPastOrPresentValidatorForDate() {
+    protected static class JmixPastOrPresentValidatorForDate extends PastOrPresentValidatorForDate {
+        public JmixPastOrPresentValidatorForDate() {
         }
 
         @Override
@@ -255,8 +172,8 @@ public class BeanValidationImpl implements BeanValidation {
         }
     }
 
-    protected static class CubaFutureValidatorForDate extends FutureValidatorForDate {
-        public CubaFutureValidatorForDate() {
+    protected static class JmixFutureValidatorForDate extends FutureValidatorForDate {
+        public JmixFutureValidatorForDate() {
         }
 
         @Override
@@ -269,8 +186,8 @@ public class BeanValidationImpl implements BeanValidation {
         }
     }
 
-    protected static class CubaFutureOrPresentValidatorForDate extends FutureOrPresentValidatorForDate {
-        public CubaFutureOrPresentValidatorForDate() {
+    protected static class JmixFutureOrPresentValidatorForDate extends FutureOrPresentValidatorForDate {
+        public JmixFutureOrPresentValidatorForDate() {
         }
 
         @Override

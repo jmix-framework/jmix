@@ -33,7 +33,7 @@ public class EntityValidationException extends ConstraintViolationException {
     @Override
     public String toString() {
         return getMessage() + getConstraintViolations().stream()
-                .map( cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage() )
-                .collect( Collectors.joining( ", " ) );
+                .map(cv -> cv == null ? "null" : cv.getPropertyPath() + ": " + cv.getMessage())
+                .collect(Collectors.joining(", "));
     }
 }

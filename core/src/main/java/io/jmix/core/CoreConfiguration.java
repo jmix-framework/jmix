@@ -17,6 +17,9 @@
 package io.jmix.core;
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.impl.validation.JmixLocalValidatorFactoryBean;
+import io.jmix.core.impl.validation.ValidationClockProvider;
+import io.jmix.core.impl.validation.ValidationTraversableResolver;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -24,6 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+
+import javax.validation.MessageInterpolator;
 
 /**
  * Configuration of the core module.
@@ -53,5 +59,18 @@ public class CoreConfiguration {
     @Bean
     public MeterRegistry simpleMeterRegistry() {
         return new SimpleMeterRegistry();
+    }
+
+    @Bean
+    public static LocalValidatorFactoryBean defaultValidator(ValidationClockProvider clockProvider,
+                                                             ValidationTraversableResolver traversableResolver,
+                                                             MessageInterpolator messageInterpolator) {
+        JmixLocalValidatorFactoryBean validatorFactory = new JmixLocalValidatorFactoryBean();
+
+        validatorFactory.setClockProvider(clockProvider);
+        validatorFactory.setTraversableResolver(traversableResolver);
+        validatorFactory.setMessageInterpolator(messageInterpolator);
+
+        return validatorFactory;
     }
 }

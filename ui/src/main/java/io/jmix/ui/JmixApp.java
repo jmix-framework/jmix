@@ -17,18 +17,15 @@
 package io.jmix.ui;
 
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.LoginException;
-import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.util.OperationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collections;
 
 @Component(App.NAME)
@@ -36,9 +33,6 @@ import java.util.Collections;
 public class JmixApp extends App {
 
     private Logger log = LoggerFactory.getLogger(JmixApp.class);
-
-    @Autowired
-    protected UserRepository userRepository;
 
     @Override
     public void loginOnStart() throws LoginException {

@@ -17,6 +17,8 @@
 package io.jmix.samples.rest;
 
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.transformer.RepairJsonTransformerFromVersion;
 import io.jmix.samples.rest.transformer.RepairJsonTransformerToVersion;
@@ -49,5 +51,10 @@ public class JmixRestTestConfiguration {
         dataSource.setUsername("sa");
         dataSource.setPassword("");
         return dataSource;
+    }
+
+    @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
     }
 }

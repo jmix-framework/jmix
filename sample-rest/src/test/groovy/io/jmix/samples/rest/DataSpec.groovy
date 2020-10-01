@@ -59,7 +59,7 @@ class DataSpec extends Specification {
 
     void setup() {
         admin = new CoreUser(userLogin, "{noop}$userPassword", "Admin")
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
         RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class)
         roleAssignmentEntity.setRoleCode("system-full-access")
         roleAssignmentEntity.setUsername(admin.getUsername())

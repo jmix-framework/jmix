@@ -68,7 +68,7 @@ public abstract class AbstractRestControllerFT {
     @BeforeEach
     public void setUp() throws Exception {
         admin = new CoreUser("admin", "{noop}admin123");
-        userRepository.createUser(admin);
+        userRepository.addUser(admin);
 
         RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
         roleAssignmentEntity.setRoleCode("system-full-access");

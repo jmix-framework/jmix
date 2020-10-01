@@ -60,7 +60,7 @@ public class OAuthTokenFT {
     @BeforeEach
     public void setUp() {
         admin = new CoreUser("admin", "{noop}admin123", "Admin");
-        userRepository.createUser(admin);
+        userRepository.addUser(admin);
         baseUrl = "http://localhost:" + port + "/rest";
     }
 

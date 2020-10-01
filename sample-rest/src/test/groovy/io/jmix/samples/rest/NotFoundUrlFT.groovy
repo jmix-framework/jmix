@@ -32,7 +32,7 @@ class NotFoundUrlFT extends Specification {
 
     void setup() {
         admin = new CoreUser('admin', '{noop}admin123', 'Admin')
-        userRepository.createUser(admin)
+        userRepository.addUser(admin)
         baseUrl = "http://localhost:" + port + "/rest/"
     }
 

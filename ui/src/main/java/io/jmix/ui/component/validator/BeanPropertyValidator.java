@@ -16,20 +16,20 @@
 
 package io.jmix.ui.component.validator;
 
-import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.HasValue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.validation.Validator;
 
 /**
- * Validator that applies JSR 303 rules for {@link HasValue} instance using {@link BeanValidation}. <br>
- * Automatically added on data binding if property enclosing class has {@link BeanValidation} constraints.
+ * Validator that applies JSR 303 rules for {@link HasValue} instance. <br>
+ * Automatically added on data binding if property enclosing class has validation constraints.
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Component(BeanPropertyValidator.NAME)
@@ -61,7 +61,7 @@ public class BeanPropertyValidator extends AbstractBeanValidator {
     }
 
     @Autowired
-    protected void setBeanValidation(BeanValidation beanValidation) {
-        this.beanValidation = beanValidation;
+    protected void setValidator(Validator validator) {
+        this.validator = validator;
     }
 }

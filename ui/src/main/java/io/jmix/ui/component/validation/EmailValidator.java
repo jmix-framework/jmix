@@ -16,7 +16,6 @@
 package io.jmix.ui.component.validation;
 
 
-import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.ui.component.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ import java.util.List;
  * <pre>
  *     &lt;bean id="ui_EmailValidator" class="io.jmix.ui.component.validation.EmailValidator" scope="prototype"/&gt;
  *     </pre>
-*/
+ */
 @Component(EmailValidator.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailValidator extends AbstractValidator<String> {
@@ -55,8 +54,8 @@ public class EmailValidator extends AbstractValidator<String> {
     }
 
     @Autowired
-    protected void setValidator(BeanValidation beanValidation) {
-        validator = beanValidation.getValidator();
+    protected void setValidator(Validator validator) {
+        this.validator = validator;
     }
 
     @Override

@@ -18,7 +18,6 @@ package io.jmix.ui.component.data.value;
 
 import com.google.common.base.Strings;
 import io.jmix.core.AccessManager;
-import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
@@ -60,7 +59,7 @@ public class ValueBinder {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected BeanValidation beanValidation;
+    protected javax.validation.Validator validator;
     @Autowired
     protected ApplicationContext applicationContext;
     @Autowired
@@ -137,7 +136,6 @@ public class ValueBinder {
         Class enclosingJavaClass = propertyEnclosingMetaClass.getJavaClass();
 
         if (enclosingJavaClass != KeyValueEntity.class) {
-            javax.validation.Validator validator = beanValidation.getValidator();
             BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
 
             if (beanDescriptor.isBeanConstrained()) {

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.validator;
 
-import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -42,7 +41,7 @@ public class AbstractBeanValidator implements io.jmix.ui.component.validation.Va
     protected Metadata metadata;
     protected Messages messages;
     protected MessageTools messageTools;
-    protected BeanValidation beanValidation;
+    protected Validator validator;
 
     protected AbstractBeanValidator(Class beanClass, String beanProperty) {
         this.beanClass = beanClass;
@@ -83,8 +82,6 @@ public class AbstractBeanValidator implements io.jmix.ui.component.validation.Va
 
     @Override
     public void accept(Object value) {
-        Validator validator = beanValidation.getValidator();
-
         Class[] groups = this.validationGroups;
         if (groups == null || groups.length == 0) {
             groups = new Class[]{Default.class, UiComponentChecks.class};
@@ -109,7 +106,7 @@ public class AbstractBeanValidator implements io.jmix.ui.component.validation.Va
     }
 
     public String getDefaultErrorMessage() {
-        MetaClass metaClass = metadata.findClass(beanClass);
+        MetaClass metaClass = metadata.getClass(beanClass);
 
         return messages.formatMessage("validation.defaultMsg",
                 messageTools.getPropertyCaption(metaClass, beanProperty));

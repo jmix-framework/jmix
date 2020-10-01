@@ -17,7 +17,6 @@
 package io.jmix.ui.screen;
 
 import com.google.common.collect.Iterables;
-import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Dialogs;
@@ -59,7 +58,7 @@ public class ScreenValidation {
     @Autowired
     protected Icons icons;
     @Autowired
-    protected BeanValidation beanValidation;
+    protected Validator validator;
 
     /**
      * Validates UI components by invoking their {@link Validatable#validate()}.
@@ -167,7 +166,6 @@ public class ScreenValidation {
     public ValidationErrors validateCrossFieldRules(@SuppressWarnings("unused") @Nullable FrameOwner origin, Object item) {
         ValidationErrors errors = new ValidationErrors();
 
-        Validator validator = beanValidation.getValidator();
         Set<ConstraintViolation<Object>> violations = validator.validate(item, UiCrossFieldChecks.class);
 
         violations.stream()

@@ -46,6 +46,9 @@ import io.jmix.data.impl.NumberIdCache;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.security.SecurityConfiguration;
+import io.jmix.securitydata.SecurityDataConfiguration;
+import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiComponents;
@@ -78,9 +81,10 @@ import java.util.Collections;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class,
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class,
-        UiDataConfiguration.class})
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class
+})
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class CubaConfiguration {
 

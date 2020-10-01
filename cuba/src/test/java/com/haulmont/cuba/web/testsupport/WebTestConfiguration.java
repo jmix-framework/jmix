@@ -21,10 +21,15 @@ import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
 import com.haulmont.cuba.core.testsupport.TestEventsListener;
 import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider;
+import com.haulmont.cuba.core.testsupport.TestSecureOperations;
 import com.haulmont.cuba.core.testsupport.TestUserSessionSource;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.constraint.SecureOperations;
+import io.jmix.securitydata.SecurityDataConfiguration;
+import io.jmix.securityui.SecurityUiConfiguration;
+import io.jmix.securityui.constraint.UiSecureOperations;
 import io.jmix.ui.UiComponents;
 import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +45,10 @@ import javax.sql.DataSource;
 @Import({
         SecurityConfiguration.class,
         UiDataConfiguration.class,
-        CubaConfiguration.class})
+        CubaConfiguration.class,
+        SecurityConfiguration.class,
+        SecurityDataConfiguration.class,
+        SecurityUiConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-web-app.properties")
 public class WebTestConfiguration {
 
@@ -75,6 +83,16 @@ public class WebTestConfiguration {
     @Bean
     TestEventsListener testEventsListener() {
         return new TestEventsListener();
+    }
+
+    @Bean(name = "sec_SecureOperations")
+    public SecureOperations secureOperations() {
+        return new TestSecureOperations();
+    }
+
+    @Bean(name = "sec_UiSecureOperations")
+    public UiSecureOperations uiSecureOperations() {
+        return new TestUiSecureOperations();
     }
 
 //    @Bean

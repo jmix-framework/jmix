@@ -32,6 +32,10 @@ import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.constraint.SecureOperations;
+import io.jmix.securitydata.SecurityDataConfiguration;
+import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -50,7 +54,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @Import({CoreConfiguration.class, CubaConfiguration.class, DataConfiguration.class, UiConfiguration.class,
-        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class})
+        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class,
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-core-app.properties")
 public class CoreTestConfiguration {
 
@@ -114,5 +119,10 @@ public class CoreTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean(name = "sec_SecureOperations")
+    public SecureOperations secureOperations() {
+        return new TestSecureOperations();
     }
 }

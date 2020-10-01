@@ -23,7 +23,6 @@ import com.haulmont.cuba.core.global.EntitySet;
 import com.haulmont.cuba.core.global.FluentLoader;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.*;
-import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.*;
@@ -33,8 +32,6 @@ import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.validation.EntityValidationException;
 import io.jmix.dynattr.DynamicAttributesState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -187,7 +184,7 @@ public class CubaDataManager implements DataManager {
 
     @Override
     public DataManager secure() {
-        return new Secure(this, metadata);
+        return new Secure(this, metadata, accessConstraintsRegistry);
     }
 
     @Override
@@ -266,9 +263,10 @@ public class CubaDataManager implements DataManager {
 
         private DataManager dataManager;
 
-        public Secure(DataManager dataManager, Metadata metadata) {
+        public Secure(DataManager dataManager, Metadata metadata, AccessConstraintsRegistry accessConstraintsRegistry) {
             this.dataManager = dataManager;
             this.metadata = metadata;
+            this.accessConstraintsRegistry = accessConstraintsRegistry;
         }
 
         @Override

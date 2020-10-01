@@ -17,7 +17,6 @@ package com.haulmont.cuba.gui.components.validators;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.Field;
-import io.jmix.core.BeanValidation;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
@@ -45,8 +44,7 @@ public class EmailValidator implements Field.Validator {
     public EmailValidator() {
         messages = AppBeans.get(Messages.class);
         messageTools = AppBeans.get(MessageTools.class);
-        validator = AppBeans.get(BeanValidation.class)
-                .getValidator();
+        validator = AppBeans.get(Validator.class);
     }
 
     public EmailValidator(Element element, String messagesPack) {

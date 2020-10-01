@@ -26,7 +26,10 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.EntityCopyUtils;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
-import io.jmix.core.*;
+import io.jmix.core.Entity;
+import io.jmix.core.EntityAccessException;
+import io.jmix.core.EntityStates;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -51,7 +54,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
-import javax.validation.Path;
 import javax.validation.Validator;
 import java.util.Collection;
 import java.util.Set;
@@ -403,19 +405,14 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     public void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (crossFieldValidate && errors.isEmpty()) {
-            BeanValidation beanValidation = (BeanValidation) getApplicationContext().getBean(BeanValidation.NAME);
-
-            Validator validator = beanValidation.getValidator();
+            Validator validator = getApplicationContext().getBean(Validator.class);
             Set<ConstraintViolation<Entity>> violations = validator.validate(getItem(), UiCrossFieldChecks.class);
 
-            violations.stream()
-                    .filter(violation -> {
-                        Path propertyPath = violation.getPropertyPath();
-
-                        Path.Node lastNode = Iterables.getLast(propertyPath);
-                        return lastNode.getKind() == ElementKind.BEAN;
-                    })
-                    .forEach(violation -> errors.add(violation.getMessage()));
+            for (ConstraintViolation<Entity> violation : violations) {
+                if (Iterables.getLast(violation.getPropertyPath()).getKind() == ElementKind.BEAN) {
+                    errors.add(violation.getMessage());
+                }
+            }
         }
     }
 

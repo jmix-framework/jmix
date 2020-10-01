@@ -67,7 +67,7 @@ public class CubaDataManager implements DataManager {
     protected CubaProperties properties;
 
     @Autowired
-    protected BeanValidation beanValidation;
+    protected Validator validator;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -248,7 +248,6 @@ public class CubaDataManager implements DataManager {
     }
 
     protected void validateEntity(Entity entity, List<Class> validationGroups) {
-        Validator validator = beanValidation.getValidator();
         Set<ConstraintViolation<Entity>> violations;
         if (validationGroups == null || validationGroups.isEmpty()) {
             violations = validator.validate(entity);
@@ -261,7 +260,7 @@ public class CubaDataManager implements DataManager {
 
     private static class Secure extends CubaDataManager {
 
-        private DataManager dataManager;
+        private final DataManager dataManager;
 
         public Secure(DataManager dataManager, Metadata metadata, AccessConstraintsRegistry accessConstraintsRegistry) {
             this.dataManager = dataManager;

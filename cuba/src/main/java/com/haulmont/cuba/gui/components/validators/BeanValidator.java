@@ -17,12 +17,14 @@
 package com.haulmont.cuba.gui.components.validators;
 
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.BeanValidation;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.validator.AbstractBeanValidator;
 import io.jmix.ui.component.validator.BeanPropertyValidator;
+
+import javax.validation.Validator;
+
 
 /**
  * Validator that applies JSR303 rules for {@link Field} instance using {@link BeanValidation}.
@@ -46,6 +48,6 @@ public class BeanValidator extends AbstractBeanValidator {
     protected void init() {
         this.messages = AppBeans.get(Messages.NAME);
         this.metadata = AppBeans.get(Metadata.NAME);
-        this.beanValidation = AppBeans.get(BeanValidation.NAME);
+        this.validator = AppBeans.get(Validator.class);
     }
 }

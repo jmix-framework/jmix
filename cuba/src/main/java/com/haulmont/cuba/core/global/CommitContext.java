@@ -168,7 +168,6 @@ public class CommitContext extends SaveContext {
      * Validation type is responsible for whether entity bean validation will be applied on {@link DataManager} level.
      *
      * @param validationMode validation type
-     * @see BeanValidation
      */
     public void setValidationMode(ValidationMode validationMode) {
         this.validationMode = validationMode;

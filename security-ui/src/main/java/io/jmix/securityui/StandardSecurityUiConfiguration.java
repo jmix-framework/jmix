@@ -16,16 +16,13 @@
 
 package io.jmix.securityui;
 
-import io.jmix.security.OnStandardSecurityImplementation;
 import io.jmix.securityui.constraint.UiSecurityConstraintsRegistration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan
-@Conditional(OnStandardSecurityImplementation.class)
 public class StandardSecurityUiConfiguration {
     @Bean(name = UiSecurityConstraintsRegistration.NAME)
     public UiSecurityConstraintsRegistration constraintsRegistration() {

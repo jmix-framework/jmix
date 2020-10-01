@@ -29,8 +29,8 @@ import io.jmix.security.constraint.SecurityConstraintsRegistration;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -54,10 +54,6 @@ import java.util.List;
 
 import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
-@Configuration
-@ComponentScan
-@ConfigurationPropertiesScan
-@Conditional(OnStandardSecurityImplementation.class)
 @EnableWebSecurity
 public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter {
 

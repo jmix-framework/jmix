@@ -22,4 +22,8 @@ dependencies {
     api project(':security')
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.jmix.core:jmix-core-starter'
+    testImplementation 'io.jmix.data:jmix-data'
 }

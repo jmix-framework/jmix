@@ -46,7 +46,7 @@ class AuthenticationTest extends SecuritySpecification {
 
     def setup() {
         user1 = new CoreUser("user1", "{noop}123", "user1")
-        userRepository.createUser(user1)
+        userRepository.addUser(user1)
     }
 
     def cleanup() {

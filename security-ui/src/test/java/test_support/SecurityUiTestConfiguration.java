@@ -21,6 +21,8 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
@@ -50,6 +52,11 @@ import java.util.Collections;
 @PropertySource("classpath:/test_support/test-app.properties")
 //@JmixModule(dependsOn = {JmixSecurityConfiguration.class, JmixDataConfiguration.class})
 public class SecurityUiTestConfiguration {
+
+    @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
+    }
 
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {

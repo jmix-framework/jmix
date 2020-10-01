@@ -22,11 +22,9 @@ import io.jmix.security.SecurityConfiguration
 import io.jmix.securityui.SecurityUiConfiguration
 import io.jmix.ui.UiConfiguration
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 
 @ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, UiConfiguration,
         SecurityUiConfiguration, SecurityUiTestConfiguration])
-@TestPropertySource(properties = ["jmix.securityImplementation = standard"])
 class SecurityUiSpecification extends Specification {
 }

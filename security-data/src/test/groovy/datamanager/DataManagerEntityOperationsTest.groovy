@@ -70,10 +70,10 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
 
     def setup() {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
-        userRepository.createUser(user1)
+        userRepository.addUser(user1)
 
         user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2")
-        userRepository.createUser(user2)
+        userRepository.addUser(user2)
         roleAssignmentProvider.addAssignment(new RoleAssignment(user2.username, TestDataManagerEntityOperationsRole.NAME))
 
         order = metadata.create(TestOrder)

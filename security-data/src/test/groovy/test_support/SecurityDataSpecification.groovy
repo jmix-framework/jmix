@@ -23,12 +23,10 @@ import io.jmix.securitydata.SecurityDataConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 
 @ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration,
         SecurityDataConfiguration, SecurityDataTestConfiguration])
-@TestPropertySource(properties = ["jmix.securityImplementation = standard"])
 class SecurityDataSpecification extends Specification {
 
     @Autowired

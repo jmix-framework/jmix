@@ -21,6 +21,8 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -49,6 +51,11 @@ import javax.sql.DataSource;
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
 public class SecurityTestConfiguration {
+
+    @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
+    }
 
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {

@@ -54,7 +54,7 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
 
     def setup() {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
-        userRepository.createUser(user1)
+        userRepository.addUser(user1)
         roleAssignmentProvider.addAssignment(new RoleAssignment(user1.username, TestLazyLoadingRole.NAME))
 
         prepareManyToOne()

@@ -15,22 +15,21 @@
  */
 package io.jmix.ui.xml.layout;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.xml.layout.loader.FragmentLoader;
 import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @Component(LayoutLoaderConfig.NAME)
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
 
     public static final String NAME = "ui_LayoutLoaderConfig";
-
-    private static final Logger log = LoggerFactory.getLogger(LayoutLoaderConfig.class);
 
     protected Class<? extends WindowLoader> windowLoader = WindowLoader.class;
     protected Class<? extends FragmentLoader> fragmentLoader = FragmentLoader.class;
@@ -57,16 +56,6 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
                 || "fragment".equals(element.getName());
     }
 
-    /**
-     * @deprecated use custom implementation of {@link LoaderConfig} that will be resolved by {@link LoaderResolver}.
-     */
-    @Deprecated
-    public void registerLoader(String tagName, Class<? extends ComponentLoader> aClass) {
-        log.debug("LayoutLoaderConfig#registerLoader is deprecated. Use your own implementation of LoaderConfig");
-
-        loaders.put(tagName, aClass);
-    }
-
     public Class<? extends ComponentLoader> getWindowLoader() {
         return windowLoader;
     }
@@ -91,18 +80,6 @@ public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig
     @Nullable
     public Class<? extends ComponentLoader> getLoader(String name) {
         return loaders.get(name);
-    }
-
-    public void registerWindowLoader(Class<? extends WindowLoader> loader) {
-        windowLoader = loader;
-    }
-
-    public void registerFragmentLoader(Class<? extends FragmentLoader> loader) {
-        fragmentLoader = loader;
-    }
-
-    protected void register(String tagName, Class<? extends ComponentLoader> loaderClass) {
-        loaders.put(tagName, loaderClass);
     }
 
     @Nullable

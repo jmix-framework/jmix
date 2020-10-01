@@ -20,13 +20,14 @@ import org.dom4j.Element;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
 @Component(LoaderResolver.NAME)
 public class LoaderResolver {
-
     public static final String NAME = "ui_LoaderResolver";
 
     @Autowired

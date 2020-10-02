@@ -17,6 +17,8 @@ package io.jmix.ui.exception;
 
 import com.vaadin.server.ErrorEvent;
 import com.vaadin.ui.Window;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.security.SecurityContextHelper;
@@ -33,6 +35,8 @@ import java.net.SocketException;
  * This exception handler comes into play if no other handler in the chain has handled the exception.
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultExceptionHandler.class);
 
     protected ApplicationContext applicationContext;
 
@@ -74,6 +78,8 @@ public class DefaultExceptionHandler implements ExceptionHandler {
         }
 
         if (t != null) {
+            log.error("Unhandled exception", t);
+
             //todo MG
             if (SecurityContextHelper.getAuthentication() != null) {
                 showDialog(app, ui, t);

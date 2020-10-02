@@ -17,6 +17,7 @@ import io.jmix.samples.rest.exception.CustomHttpClientErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Nonnull;
 import javax.validation.constraints.Pattern;
@@ -170,13 +171,12 @@ public class RestTestServiceBean implements RestTestService {
     }
 
     @Override
-    public int validatedMethod(@Pattern(regexp = "\\d+") String code) {
+    public int validatedMethod(String code) {
         return 0;
     }
 
-    @Nonnull
     @Override
-    public String validatedMethodResult(@Pattern(regexp = "\\d+") String code) {
+    public String validatedMethodResult(String code) {
         if ("100".equals(code)) {
             throw new CustomValidationException("Epic fail!");
         }

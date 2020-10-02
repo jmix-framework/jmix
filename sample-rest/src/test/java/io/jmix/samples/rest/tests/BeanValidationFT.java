@@ -169,8 +169,6 @@ public class BeanValidationFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo validation
-    @Disabled
     @Test
     public void callInvalidService() throws Exception {
         String requestBody = getFileContent("service-invalid-call.json", null);
@@ -181,23 +179,18 @@ public class BeanValidationFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
 
             assertEquals("must match \"\\d+\"", ctx.read("$[0].message"));
-            assertEquals("validatedMethod.arg0", ctx.read("$[0].path"));
+            assertEquals("validatedMethod.code", ctx.read("$[0].path"));
             assertEquals("AA", ctx.read("$[0].invalidValue"));
         }
     }
 
-    //todo validation
-    @Disabled
     @Test
     public void callInvalidServiceResult() throws Exception {
         String requestBody = getFileContent("service-valid-call.json", null);
         String url = baseUrl + "/services/" + RestTestService.NAME + "/validatedMethodResult";
 
         try (CloseableHttpResponse response = sendPost(url, oauthToken, requestBody, null)) {
-            assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-
-            assertEquals("Server error", ctx.read("$.error"));
+            assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
         }
     }
 

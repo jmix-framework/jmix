@@ -24,8 +24,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.validation.CustomValidationException;
-import io.jmix.core.validation.MethodParametersValidationException;
-import io.jmix.core.validation.MethodResultValidationException;
 import io.jmix.data.RowLevelSecurityException;
 import io.jmix.rest.api.exception.ConstraintViolationInfo;
 import io.jmix.rest.api.exception.ErrorInfo;
@@ -77,24 +75,6 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(errorInfo, e.getHttpStatus());
     }
 
-    @ExceptionHandler(MethodResultValidationException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorInfo> handleMethodResultValidationException(MethodResultValidationException e) {
-        log.error("MethodResultValidationException in service", e);
-        ErrorInfo errorInfo = new ErrorInfo("Server error", "");
-        return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(MethodParametersValidationException.class)
-    @ResponseBody
-    public ResponseEntity<List<ConstraintViolationInfo>> handleMethodParametersViolation(MethodParametersValidationException e) {
-        log.debug("MethodParametersValidationException: {}, violations:\n{}", e.getMessage(), e.getConstraintViolations());
-
-        List<ConstraintViolationInfo> violationInfos = getConstraintViolationInfos(e.getConstraintViolations());
-
-        return new ResponseEntity<>(violationInfos, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseBody
     public ResponseEntity<List<ConstraintViolationInfo>> handleConstraintViolation(ConstraintViolationException e) {
@@ -139,20 +119,6 @@ public class RestControllerExceptionHandler {
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleException(Exception e) {
         log.error("Exception in REST controller", e);
-        @SuppressWarnings("unchecked")
-        List<Throwable> list = ExceptionUtils.getThrowableList(e);
-        for (Throwable throwable : list) {
-            // todo RemoteException
-//            if (throwable instanceof RemoteException) {
-//                RemoteException remoteException = (RemoteException) throwable;
-//                for (RemoteException.Cause cause : remoteException.getCauses()) {
-//                    if (Objects.equals("javax.persistence.OptimisticLockException", cause.getClassName())) {
-//                        ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", cause.getMessage());
-//                        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
-//                    }
-//                }
-//            }
-        }
         ErrorInfo errorInfo = new ErrorInfo("Server error", "");
         return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }

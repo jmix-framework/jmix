@@ -21,6 +21,7 @@ import java.util.UUID;
 /**
  * Service is used in functional tests
  */
+@Validated
 public interface RestTestService {
 
     String NAME = "jmix_RestTestService";
@@ -67,10 +68,8 @@ public interface RestTestService {
 
     String methodWithPojoCollectionParameter2(List<TestPojo> pojoCollection);
 
-    @Validated
     int validatedMethod(@Pattern(regexp = "\\d+") String code);
 
-    @Validated
     @NotNull
     String validatedMethodResult(@Pattern(regexp = "\\d+") String code);
 

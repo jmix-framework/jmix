@@ -26,6 +26,7 @@ import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -215,11 +216,12 @@ public class RestServicesConfiguration {
         }
 
         Object service = beanFactory.getBean(serviceName);
+        Class<?> serviceClass = AopUtils.isAopProxy(service) ? AopUtils.getTargetClass(service) : service.getClass();
         Method serviceMethod = null;
         //the service object we get here is proxy. To get methods with type information
         //we need tp know actual interfaces implemented by the service (this is required when parameterized
         //collection of entities is passed as an argument)
-        Class<?>[] serviceInterfaces = service.getClass().getInterfaces();
+        Class<?>[] serviceInterfaces = serviceClass.getInterfaces();
         if (serviceInterfaces.length == 0) {
             log.error("Service {} doesn't implement any interface. It cannot be user for the REST API", serviceName);
             return null;

@@ -19,13 +19,14 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.Calendar;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.impl.CollectionDsHelper;
+import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
-import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
 import io.jmix.ui.component.calendar.ContainerCalendarEventProvider;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 @Deprecated
 public class WebCalendar<V> extends io.jmix.ui.component.impl.WebCalendar<V> implements Calendar<V> {
@@ -76,5 +77,45 @@ public class WebCalendar<V> extends io.jmix.ui.component.impl.WebCalendar<V> imp
             }
         }
         return null;
+    }
+
+    @Override
+    public void removeDateClickListener(Consumer<CalendarDateClickEvent<V>> listener) {
+        internalRemoveDateClickListener(listener);
+    }
+
+    @Override
+    public void removeEventClickListener(Consumer<CalendarEventClickEvent<V>> listener) {
+        internalRemoveEventClickListener(listener);
+    }
+
+    @Override
+    public void removeEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener) {
+        internalRemoveEventResizeListener(listener);
+    }
+
+    @Override
+    public void removeEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener) {
+        internalRemoveEventMoveListener(listener);
+    }
+
+    @Override
+    public void removeWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener) {
+        internalRemoveWeekClickListener(listener);
+    }
+
+    @Override
+    public void removeForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener) {
+        internalRemoveForwardClickListener(listener);
+    }
+
+    @Override
+    public void removeBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener) {
+        internalRemoveBackwardClickListener(listener);
+    }
+
+    @Override
+    public void removeRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener) {
+        internalRemoveRangeSelectListener(listener);
     }
 }

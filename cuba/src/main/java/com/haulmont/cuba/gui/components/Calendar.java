@@ -19,9 +19,11 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.web.gui.components.calendar.EntityCalendarEventProvider;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -49,4 +51,60 @@ public interface Calendar<V> extends io.jmix.ui.component.Calendar<V> {
     @Nullable
     @Deprecated
     CollectionDatasource getDatasource();
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeDateClickListener(Consumer<CalendarDateClickEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeEventClickListener(Consumer<CalendarEventClickEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener);
 }

@@ -39,9 +39,6 @@ public class RestAuthUtils {
     @Autowired
     protected CoreProperties coreProperties;
 
-    @Autowired
-    protected MessageTools messageTools;
-
     private static final Logger log = LoggerFactory.getLogger(RestAuthUtils.class);
 
     /**

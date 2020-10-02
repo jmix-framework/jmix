@@ -126,10 +126,8 @@ public class ExternalOAuthTokenGranter extends AbstractTokenGranter implements O
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
         String externalPrincipal = tokenRequest.getRequestParameters().get("username");
-        String sessionId = tokenRequest.getRequestParameters().get(JmixUserAuthenticationProvider.SESSION_ID_DETAILS_ATTRIBUTE);
 
         Preconditions.checkState(externalPrincipal != null);
-        Preconditions.checkState(sessionId != null);
 
         OAuth2Request storedOAuth2Request = requestFactory.createOAuth2Request(client, tokenRequest);
         ExternalAuthenticationToken authentication = new ExternalAuthenticationToken(externalPrincipal,
@@ -140,9 +138,10 @@ public class ExternalOAuthTokenGranter extends AbstractTokenGranter implements O
         if (details == null) {
             details = new HashMap<>();
         }
-        details.put(JmixUserAuthenticationProvider.SESSION_ID_DETAILS_ATTRIBUTE, sessionId);
+
         details.put(USERNAME_DETAILS_ATTRIBUTE, externalPrincipal);
         details.put(GRANT_TYPE_DETAILS_ATTRIBUTE, GRANT_TYPE);
+
         authentication.setDetails(details);
 
         return new OAuth2Authentication(storedOAuth2Request, authentication);

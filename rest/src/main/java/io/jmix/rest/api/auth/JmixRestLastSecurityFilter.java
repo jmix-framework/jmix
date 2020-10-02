@@ -39,7 +39,7 @@ import java.io.IOException;
  *
  * <ul>
  *     <li>logs all REST API methods access</li>
- *     <li>parses the request locale and sets it to the {@link UserInvocationContext}</li>
+ *     <li>parses the request locale and sets it to the authentication</li>
  * </ul>
  */
 public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
@@ -93,9 +93,10 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null) {
                 String tokenValue = "";
-                if (authentication instanceof JmixAnonymousAuthenticationToken) {
-                    tokenValue = "anonymous";
-                }
+                //TODO: test anonymous user
+//                if (authentication instanceof JmixAnonymousAuthenticationToken) {
+//                    tokenValue = "anonymous";
+//                }
                 if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
                     tokenValue = ((OAuth2AuthenticationDetails) authentication.getDetails()).getTokenValue();
                 }
@@ -109,11 +110,11 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Method parses the request locale and sets it to the {@link UserInvocationContext}
+     * Method parses the request locale and sets it to the authentication
      */
     protected void parseRequestLocale(ServletRequest request) {
         // todo UserInvocationContext
-//        Locale locale = restAuthUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
+        //Locale locale = restAuthUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
 //        if (locale != null) {
 //            SecurityContext securityContext = AppContext.getSecurityContext();
 //            if (securityContext != null) {

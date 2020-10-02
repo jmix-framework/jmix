@@ -43,6 +43,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set start date for the calendar range.
      */
     void setStartDate(@Nullable V date);
+
     /**
      * @return the start date for the calendar range.
      */
@@ -53,6 +54,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set end date for the calendar's range.
      */
     void setEndDate(@Nullable V date);
+
     /**
      * @return the last date for the calendar range.
      */
@@ -63,6 +65,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set timezone.
      */
     void setTimeZone(TimeZone zone);
+
     /**
      * @return timezone.
      */
@@ -72,6 +75,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set format for time. 12H/24H.
      */
     void setTimeFormat(TimeFormat format);
+
     /**
      * @return enumeration of ite format.
      */
@@ -81,6 +85,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set first day of the week to show.
      */
     void setFirstVisibleDayOfWeek(int firstDay);
+
     /**
      * @return first showed day of the week.
      */
@@ -90,6 +95,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set last day of the week to show.
      */
     void setLastVisibleDayOfWeek(int lastDay);
+
     /**
      * @return last showed day of the week.
      */
@@ -99,6 +105,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set first hour of the day to show.
      */
     void setFirstVisibleHourOfDay(int firstHour);
+
     /**
      * @return first showed hour of the day.
      */
@@ -108,6 +115,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set last hour of the day to show.
      */
     void setLastVisibleHourOfDay(int lastHour);
+
     /**
      * @return last showed hour of the day.
      */
@@ -119,9 +127,8 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Pass {@code null} to use a day of week defined by current locale.
      * </p>
      *
-     * @param dayOfWeek
-     *            any of java.util.Calendar.SUNDAY ... java.util.Calendar.SATURDAY
-     *            or null to revert to default first day of week by locale
+     * @param dayOfWeek any of java.util.Calendar.SUNDAY ... java.util.Calendar.SATURDAY
+     *                  or null to revert to default first day of week by locale
      */
     void setFirstDayOfWeek(Integer dayOfWeek);
 
@@ -129,6 +136,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set date caption format for the weekly view.
      */
     void setWeeklyCaptionFormat(String dateFormatPattern);
+
     /**
      * @return date pattern of captions.
      */
@@ -141,6 +149,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * @see ContainerCalendarEventProvider
      */
     void setEventProvider(@Nullable CalendarEventProvider calendarEventProvider);
+
     /**
      * @return calendar event provider.
      */
@@ -150,6 +159,7 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
      * Set visibility for the backward and forward buttons.
      */
     void setNavigationButtonsVisible(boolean value);
+
     /**
      * @return backward and forward buttons visibility.
      */
@@ -188,26 +198,12 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     Subscription addDateClickListener(Consumer<CalendarDateClickEvent<V>> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeDateClickListener(Consumer<CalendarDateClickEvent<V>> listener);
-
-    /**
      * Adds a listener that is invoked when the user clicks on an event.
      *
      * @param listener a listener to add
      * @return a registration object for removing an event listener
      */
     Subscription addEventClickListener(Consumer<CalendarEventClickEvent<V>> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEventClickListener(Consumer<CalendarEventClickEvent<V>> listener);
 
     /**
      * Adds a listener that is invoked when the user changes an event duration.
@@ -218,26 +214,12 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     Subscription addEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener);
-
-    /**
      * Adds a listener that is invoked when the user changes an event position.
      *
      * @param listener a listener to add
      * @return a registration object for removing an event listener
      */
     Subscription addEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener);
 
     /**
      * Adds a listener that is invoked when the user clicks on a week number.
@@ -248,26 +230,12 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     Subscription addWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener);
-
-    /**
      * Adds a listener that is invoked when the user clicks forward navigation button.
      *
      * @param listener a listener to add
      * @return a registration object for removing an event listener
      */
     Subscription addForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener);
 
     /**
      * Adds a listener that is invoked when the user clicks backward navigation button.
@@ -278,26 +246,12 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
     Subscription addBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener);
-
-    /**
      * Adds a listener that is invoked when the user drag-marks day or time cells using mouse.
      *
      * @param listener a listener to add
      * @return a registration object for removing an event listener
      */
     Subscription addRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener);
 
     /**
      * Adds a listener that is invoked when the user clicks on an empty space in the day.
@@ -323,14 +277,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         protected V newEnd;
         protected Object entity;
 
-        @Deprecated
-        public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart) {
-            super(calendar);
-
-            this.calendarEvent = calendarEvent;
-            this.newStart = newStart;
-        }
-
         public CalendarEventMoveEvent(Calendar<V> calendar, CalendarEvent<V> calendarEvent, V newStart, @Nullable Object entity) {
             super(calendar);
 
@@ -353,15 +299,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         @Override
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
-        }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
         }
 
         public CalendarEvent<V> getCalendarEvent() {
@@ -410,15 +347,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
         }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
-        }
     }
 
     /**
@@ -448,15 +376,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         @Override
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
-        }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
         }
     }
 
@@ -494,15 +413,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
         }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
-        }
     }
 
     /**
@@ -520,15 +430,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         @Override
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
-        }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
         }
     }
 
@@ -573,15 +474,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         }
 
         /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
-        }
-
-        /**
          * @return the event start date
          */
         @Nullable
@@ -622,15 +514,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         }
 
         /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
-        }
-
-        /**
          * @return a week number
          */
         public int getWeek() {
@@ -666,15 +549,6 @@ public interface Calendar<V> extends Component.BelongToFrame, Component.HasCapti
         @Override
         public Calendar<V> getSource() {
             return (Calendar<V>) super.getSource();
-        }
-
-        /**
-         * @return an event source
-         * @deprecated Use {@link #getSource()} instead
-         */
-        @Deprecated
-        public Calendar<V> getCalendar() {
-            return getSource();
         }
 
         @Nullable

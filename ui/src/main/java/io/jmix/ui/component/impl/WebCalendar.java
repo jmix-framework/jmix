@@ -335,8 +335,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addDateClickListener(Consumer<CalendarDateClickEvent<V>> listener) {
         component.setHandler(this::onDateClick);
-
-        return getEventHub().subscribe(CalendarDateClickEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarDateClickEvent.class, (Consumer) listener);
+        return () -> internalRemoveDateClickListener(listener);
     }
 
     protected void onDateClick(CalendarComponentEvents.DateClickEvent event) {
@@ -346,8 +346,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         publish(CalendarDateClickEvent.class, calendarDateClickEvent);
     }
 
-    @Override
-    public void removeDateClickListener(Consumer<CalendarDateClickEvent<V>> listener) {
+    protected void internalRemoveDateClickListener(Consumer<CalendarDateClickEvent<V>> listener) {
         unsubscribe(CalendarDateClickEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarDateClickEvent.class)) {
@@ -358,8 +357,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addEventClickListener(Consumer<CalendarEventClickEvent<V>> listener) {
         component.setHandler(this::onEventClick);
-
-        return getEventHub().subscribe(CalendarEventClickEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarEventClickEvent.class, (Consumer) listener);
+        return () -> internalRemoveEventClickListener(listener);
     }
 
     protected void onEventClick(CalendarComponentEvents.EventClick event) {
@@ -379,8 +378,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         }
     }
 
-    @Override
-    public void removeEventClickListener(Consumer<CalendarEventClickEvent<V>> listener) {
+    protected void internalRemoveEventClickListener(Consumer<CalendarEventClickEvent<V>> listener) {
         unsubscribe(CalendarEventClickEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarEventClickEvent.class)) {
@@ -391,8 +389,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener) {
         component.setHandler(this::onEventResize);
-
-        return getEventHub().subscribe(CalendarEventResizeEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarEventResizeEvent.class, (Consumer) listener);
+        return () -> internalRemoveEventResizeListener(listener);
     }
 
 
@@ -415,8 +413,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         }
     }
 
-    @Override
-    public void removeEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener) {
+    protected void internalRemoveEventResizeListener(Consumer<CalendarEventResizeEvent<V>> listener) {
         unsubscribe(CalendarEventResizeEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarEventResizeEvent.class)) {
@@ -427,8 +424,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener) {
         component.setHandler(this::onEventMove);
-
-        return getEventHub().subscribe(CalendarEventMoveEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarEventMoveEvent.class, (Consumer) listener);
+        return () -> internalRemoveEventMoveListener(listener);
     }
 
     protected void onEventMove(CalendarComponentEvents.MoveEvent event) {
@@ -462,8 +459,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         return null;
     }
 
-    @Override
-    public void removeEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener) {
+    protected void internalRemoveEventMoveListener(Consumer<CalendarEventMoveEvent<V>> listener) {
         unsubscribe(CalendarEventMoveEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarEventMoveEvent.class)) {
@@ -474,8 +470,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener) {
         component.setHandler(this::onWeekClick);
-
-        return getEventHub().subscribe(CalendarWeekClickEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarWeekClickEvent.class, (Consumer) listener);
+        return () -> internalRemoveWeekClickListener(listener);
     }
 
     protected void onWeekClick(CalendarComponentEvents.WeekClick event) {
@@ -486,8 +482,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         publish(CalendarWeekClickEvent.class, calendarWeekClickEvent);
     }
 
-    @Override
-    public void removeWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener) {
+    protected void internalRemoveWeekClickListener(Consumer<CalendarWeekClickEvent<V>> listener) {
         unsubscribe(CalendarWeekClickEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarWeekClickEvent.class)) {
@@ -498,8 +493,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener) {
         component.setHandler(this::onForward);
-
-        return getEventHub().subscribe(CalendarForwardClickEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarForwardClickEvent.class, (Consumer) listener);
+        return () -> internalRemoveForwardClickListener(listener);
     }
 
     protected void onForward(CalendarComponentEvents.ForwardEvent event) {
@@ -508,8 +503,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         publish(CalendarForwardClickEvent.class, calendarForwardClickEvent);
     }
 
-    @Override
-    public void removeForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener) {
+    protected void internalRemoveForwardClickListener(Consumer<CalendarForwardClickEvent<V>> listener) {
         unsubscribe(CalendarForwardClickEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarForwardClickEvent.class)) {
@@ -520,8 +514,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener) {
         component.setHandler(this::onBackward);
-
-        return getEventHub().subscribe(CalendarBackwardClickEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarBackwardClickEvent.class, (Consumer) listener);
+        return () -> internalRemoveBackwardClickListener(listener);
     }
 
     protected void onBackward(CalendarComponentEvents.BackwardEvent event) {
@@ -529,8 +523,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         publish(CalendarBackwardClickEvent.class, calendarBackwardClickEvent);
     }
 
-    @Override
-    public void removeBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener) {
+    protected void internalRemoveBackwardClickListener(Consumer<CalendarBackwardClickEvent<V>> listener) {
         unsubscribe(CalendarBackwardClickEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarBackwardClickEvent.class)) {
@@ -541,8 +534,8 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     @Override
     public Subscription addRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener) {
         component.setHandler(this::onRangeSelect);
-
-        return getEventHub().subscribe(CalendarRangeSelectEvent.class, (Consumer) listener);
+        getEventHub().subscribe(CalendarRangeSelectEvent.class, (Consumer) listener);
+        return () -> internalRemoveRangeSelectListener(listener);
     }
 
     protected void onRangeSelect(CalendarComponentEvents.RangeSelectEvent event) {
@@ -553,8 +546,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
         publish(CalendarRangeSelectEvent.class, calendarRangeSelectEvent);
     }
 
-    @Override
-    public void removeRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener) {
+    protected void internalRemoveRangeSelectListener(Consumer<CalendarRangeSelectEvent<V>> listener) {
         unsubscribe(CalendarRangeSelectEvent.class, (Consumer) listener);
 
         if (!hasSubscriptions(CalendarRangeSelectEvent.class)) {

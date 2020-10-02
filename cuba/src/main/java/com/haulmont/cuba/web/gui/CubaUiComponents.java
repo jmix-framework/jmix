@@ -17,12 +17,12 @@
 package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
+import com.haulmont.cuba.gui.components.PopupView;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.web.gui.components.*;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebFoldersPane;
-import io.jmix.ui.component.*;
 import io.jmix.ui.component.BrowserFrame;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.CheckBox;
@@ -55,6 +55,7 @@ import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;
 import io.jmix.ui.component.TwinColumn;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.WebGridLayout;
 import io.jmix.ui.sys.WebUiComponents;
 
@@ -81,7 +82,7 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(SuggestionField.NAME, WebSuggestionField.class);
         classes.put(Slider.NAME, WebSlider.class);
         classes.put(CurrencyField.NAME, WebCurrencyField.class);
-        classes.put(com.haulmont.cuba.gui.components.FileUploadField.NAME, WebFileUploadField.class);
+        classes.put(FileUploadField.NAME, WebFileUploadField.class);
         classes.put(FileMultiUploadField.NAME, WebFileMultiUploadField.class);
         classes.put(ColorPicker.NAME, WebColorPicker.class);
         classes.put(TimeField.NAME, WebTimeField.class);
@@ -116,5 +117,6 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(Accordion.NAME, WebAccordion.class);
 
         classes.put(FoldersPane.NAME, WebFoldersPane.class);
+        classes.put(PopupView.NAME, WebPopupView.class);
     }
 }

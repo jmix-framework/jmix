@@ -16,13 +16,13 @@
 
 package io.jmix.ui.component.impl;
 
+import com.vaadin.shared.Registration;
+import com.vaadin.ui.Label;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.PopupView;
 import io.jmix.ui.widget.JmixPopupView;
-import com.vaadin.shared.Registration;
-import com.vaadin.ui.Label;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -47,11 +47,10 @@ public class WebPopupView extends WebAbstractComponent<JmixPopupView> implements
                     publish(PopupVisibilityEvent.class, new PopupVisibilityEvent(this))
             );
         }
-        return () -> removePopupVisibilityListener(listener);
+        return () -> internalRemovePopupVisibilityListener(listener);
     }
 
-    @Override
-    public void removePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener) {
+    protected void internalRemovePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener) {
         unsubscribe(PopupVisibilityEvent.class, listener);
 
         if (!hasSubscriptions(PopupVisibilityEvent.class)) {

@@ -166,13 +166,6 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
     Subscription addPopupVisibilityListener(Consumer<PopupVisibilityEvent> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener);
-
-    /**
      * Event sent when the visibility of the popup changes.
      */
     class PopupVisibilityEvent extends EventObject {
@@ -183,15 +176,6 @@ public interface PopupView extends Component.HasCaption, Component.BelongToFrame
         @Override
         public PopupView getSource() {
             return (PopupView) super.getSource();
-        }
-
-        /**
-         * @return popup view
-         * @deprecated Use {@link #getSource()}
-         */
-        @Deprecated
-        public PopupView getPopupView() {
-            return getSource();
         }
 
         public boolean isPopupVisible() {

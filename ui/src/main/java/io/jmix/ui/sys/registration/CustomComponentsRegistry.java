@@ -16,7 +16,6 @@
 
 package io.jmix.ui.sys.registration;
 
-import io.jmix.core.Events;
 import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.sys.WebUiComponents;

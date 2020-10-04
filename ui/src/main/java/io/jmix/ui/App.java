@@ -22,7 +22,6 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import io.jmix.core.CoreProperties;
-import io.jmix.core.Events;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.security.LoginException;
@@ -94,8 +93,6 @@ public abstract class App {
     @Autowired
     protected MessageTools messageTools;
 
-    @Autowired
-    protected Events events;
     @Autowired
     protected ApplicationContext applicationContext;
     @Autowired
@@ -595,7 +592,7 @@ public abstract class App {
     public void closeWindowsInternal(boolean fireEvent) {
         if (fireEvent) {
             AppUI ui = AppUI.getCurrent();
-            events.publish(new CloseWindowsInternalEvent(ui.getScreens()));
+            applicationContext.publishEvent(new CloseWindowsInternalEvent(ui.getScreens()));
         }
 
         removeAllWindows();

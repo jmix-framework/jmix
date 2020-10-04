@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationEvent;
  * Event that is fired on each web page refresh.
  * The event can be handled only in screen controllers of the active AppUI.
  */
-public class UIRefreshEvent extends ApplicationEvent implements UiEvent {
+public class UIRefreshEvent extends ApplicationEvent {
     public UIRefreshEvent(AppUI source) {
         super(source);
     }

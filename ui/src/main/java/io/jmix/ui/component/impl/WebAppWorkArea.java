@@ -24,7 +24,6 @@ import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
-import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;
@@ -748,8 +747,7 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     }
 
     protected void fireTabChangedEvent(TabSheetBehaviour tabSheet) {
-        applicationContext.getBean(Events.class)
-                .publish(new WorkAreaTabChangedEvent(tabSheet, this));
+        applicationContext.publishEvent(new WorkAreaTabChangedEvent(tabSheet, this));
     }
 
     // todo dragdroplayouts

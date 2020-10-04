@@ -16,7 +16,6 @@
 
 package io.jmix.ui.navigation;
 
-import io.jmix.core.Events;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiProperties;
@@ -27,10 +26,10 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -44,9 +43,6 @@ public class RedirectHandler {
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
 
     protected static final String REDIRECT_PARAM = "redirectTo";
-
-    @Autowired
-    protected Events events;
 
     @Autowired
     protected UiProperties uiProperties;

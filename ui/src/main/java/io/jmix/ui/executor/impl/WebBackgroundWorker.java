@@ -19,7 +19,6 @@ package io.jmix.ui.executor.impl;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
-import io.jmix.core.Events;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
@@ -30,8 +29,8 @@ import io.jmix.ui.executor.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -62,7 +61,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
     @Autowired
     protected TimeSource timeSource;
 
@@ -124,7 +123,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
 
         // create task handler
         TaskHandlerImpl<T, V> taskHandler = new TaskHandlerImpl<>(
-                getUIAccessor(), taskExecutor, watchDog, events, currentAuthentication.getUser(), timeSource);
+                getUIAccessor(), taskExecutor, watchDog, applicationEventPublisher, currentAuthentication.getUser(), timeSource);
         taskExecutor.setTaskHandler(taskHandler);
 
         return taskHandler;
@@ -291,7 +290,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
 
                     if (!handled) {
                         log.error("Unhandled exception in background task", e);
-                        events.publish(new BackgroundTaskUnhandledExceptionEvent(this, runnableTask, e));
+                        applicationEventPublisher.publishEvent(new BackgroundTaskUnhandledExceptionEvent(this, runnableTask, e));
                     }
                 }
             } finally {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.event;
+package ui_events;
 
-/**
- * Marker interface for events that are sent to UIs screens.
- * UiEvent events are passed only to {@link org.springframework.context.event.EventListener} methods declared in UI
- * controllers of windows and frames and they can be fired only from UI thread using
- * {@link io.jmix.core.Events} bean.
- *
- * @see io.jmix.core.Events
- * @see org.springframework.context.event.EventListener
- * @see org.springframework.core.annotation.Order
- */
-public interface UiEvent {
+import org.springframework.context.ApplicationEvent;
 
+public class TestUiEvent extends ApplicationEvent {
+
+    private final String msg;
+
+    public TestUiEvent(Object source, String msg) {
+        super(source);
+        this.msg = msg;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
 }

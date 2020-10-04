@@ -17,18 +17,11 @@
 package io.jmix.ui.sys.vaadin;
 
 import com.vaadin.server.*;
-import com.vaadin.server.communication.AtmospherePushConnection;
-import com.vaadin.server.communication.FileUploadHandler;
-import com.vaadin.server.communication.HeartbeatHandler;
-import com.vaadin.server.communication.ServletBootstrapHandler;
-import com.vaadin.server.communication.ServletUIInitHandler;
-import com.vaadin.server.communication.UidlRequestHandler;
-import com.vaadin.server.communication.UidlWriter;
+import com.vaadin.server.communication.*;
 import com.vaadin.spring.server.SpringVaadinServletService;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.ui.App;
 import io.jmix.ui.UiProperties;
@@ -40,7 +33,7 @@ import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
@@ -66,30 +59,30 @@ public class JmixVaadinServletService extends SpringVaadinServletService
     protected boolean testMode;
     protected boolean performanceTestMode;
 
-    protected Events events;
+    protected ApplicationContext applicationContext;
     protected Messages messages;
     protected WebJarResourceResolver resolver;
     protected Environment environment;
     protected ThemeVariantsProvider themeVariantsProvider;
 
     public JmixVaadinServletService(VaadinServlet servlet, DeploymentConfiguration deploymentConfiguration,
-                                    String serviceUrl, BeanFactory beanFactory)
+                                    String serviceUrl, ApplicationContext applicationContext)
             throws ServiceException {
         super(servlet, deploymentConfiguration, serviceUrl);
 
-        this.events = beanFactory.getBean(Events.class);
+        this.applicationContext = applicationContext;
         this.serviceUrl = serviceUrl;
 
-        uiProperties = beanFactory.getBean(UiProperties.class);
+        uiProperties = applicationContext.getBean(UiProperties.class);
         testMode = uiProperties.isTestMode();
         performanceTestMode = uiProperties.isPerformanceTestMode();
 
-        this.messages = beanFactory.getBean(Messages.class);
-        this.environment = beanFactory.getBean(Environment.class);
-        this.resolver = beanFactory.getBean(WebJarResourceResolver.class);
+        this.messages = applicationContext.getBean(Messages.class);
+        this.environment = applicationContext.getBean(Environment.class);
+        this.resolver = applicationContext.getBean(WebJarResourceResolver.class);
 
-        if (beanFactory.containsBean(ThemeVariantsProvider.NAME)) {
-            themeVariantsProvider = (ThemeVariantsProvider) beanFactory.getBean(ThemeVariantsProvider.NAME);
+        if (applicationContext.containsBean(ThemeVariantsProvider.NAME)) {
+            themeVariantsProvider = (ThemeVariantsProvider) applicationContext.getBean(ThemeVariantsProvider.NAME);
         }
 
         addSessionInitListener(event -> {
@@ -102,7 +95,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
             log.debug("HttpSession {} initialized, timeout={}sec",
                     httpSession, wrappedSession.getMaxInactiveInterval());
 
-            events.publish(new WebSessionInitializedEvent(event.getSession()));
+            this.applicationContext.publishEvent(new WebSessionInitializedEvent(event.getSession()));
         });
 
         addSessionDestroyListener(event -> {
@@ -116,7 +109,7 @@ public class JmixVaadinServletService extends SpringVaadinServletService
                 app.cleanupBackgroundTasks();
             }
 
-            events.publish(new WebSessionDestroyedEvent(event.getSession()));
+            this.applicationContext.publishEvent(new WebSessionDestroyedEvent(event.getSession()));
         });
 
     }

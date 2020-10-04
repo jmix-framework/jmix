@@ -20,7 +20,7 @@ import com.vaadin.server.*;
 import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.spring.internal.VaadinSessionScope;
 import com.vaadin.spring.server.SpringVaadinServlet;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +30,16 @@ import java.util.List;
 // Exposes JmixUIProvider with customized widgetset lookup
 public class JmixVaadinServlet extends SpringVaadinServlet {
 
-    protected BeanFactory beanFactory;
+    protected ApplicationContext applicationContext;
 
-    public JmixVaadinServlet(BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
+    public JmixVaadinServlet(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
     protected VaadinServletService createServletService(DeploymentConfiguration deploymentConfiguration)
             throws ServiceException {
-        JmixVaadinServletService service = new JmixVaadinServletService(this, deploymentConfiguration, getServiceUrlPath(), beanFactory);
+        JmixVaadinServletService service = new JmixVaadinServletService(this, deploymentConfiguration, getServiceUrlPath(), applicationContext);
         service.init();
         return service;
     }

@@ -18,7 +18,6 @@ package io.jmix.ui.sys;
 
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.Events;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
@@ -470,10 +469,8 @@ public class UiControllerDependencyInjector {
         List<Method> eventListenerMethods = screenIntrospectionData.getEventListenerMethods();
 
         if (!eventListenerMethods.isEmpty()) {
-            Events events = (Events) applicationContext.getBean(Events.NAME);
-
             List<ApplicationListener> listeners = eventListenerMethods.stream()
-                    .map(m -> new UiEventListenerMethodAdapter(frameOwner, clazz, m, events))
+                    .map(m -> new UiEventListenerMethodAdapter(frameOwner, clazz, m, applicationContext))
                     .collect(Collectors.toList());
 
             UiControllerUtils.setUiEventListeners(frameOwner, listeners);

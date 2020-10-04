@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.event.screen;
+package ui_events
 
-import io.jmix.ui.Screens;
-import org.springframework.context.ApplicationEvent;
+import io.jmix.ui.component.Label
+import io.jmix.ui.screen.Screen
+import io.jmix.ui.screen.UiController
+import io.jmix.ui.screen.UiDescriptor
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.event.EventListener
 
-/**
- * Application event which is fired when the framework closes all windows. For instance, when the user logs out.
- */
-public class CloseWindowsInternalEvent extends ApplicationEvent {
+@UiController('UiEventTestScreen')
+@UiDescriptor('ui-event-test-screen.xml')
+class UiEventTestScreen extends Screen {
 
-    public CloseWindowsInternalEvent(Screens screens) {
-        super(screens);
-    }
+    @Autowired
+    Label<String> receiverLab
 
-    @Override
-    public Screens getSource() {
-        return (Screens) super.getSource();
+    @EventListener
+    void onEvent(TestUiEvent event) {
+        receiverLab.setValue(event.getMsg())
     }
 }

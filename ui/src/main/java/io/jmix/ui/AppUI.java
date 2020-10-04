@@ -24,7 +24,6 @@ import com.vaadin.server.*;
 import com.vaadin.shared.ui.ui.Transport;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
@@ -52,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Nullable;
@@ -74,8 +74,13 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     @Autowired
     protected Messages messages;
+
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    protected UiEventPublisher uiEventPublisher;
+
     @Autowired
     protected UiProperties uiProperties;
 
@@ -90,6 +95,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     @Autowired
     protected IconResolver iconResolver;
+
     @Autowired
     protected WebJarResourceResolver webJarResourceResolver;
 
@@ -289,7 +295,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     }
 
     protected void publishAppInitializedEvent(App app) {
-        events.publish(new AppInitializedEvent(app));
+        eventPublisher.publishEvent(new AppInitializedEvent(app));
     }
 
     protected void showCriticalExceptionMessage(@SuppressWarnings("unused") Exception exception) {
@@ -353,7 +359,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     protected void refresh(VaadinRequest request) {
         super.refresh(request);
         urlChangeHandler.restoreState();
-        events.publish(new UIRefreshEvent(this));
+        uiEventPublisher.publishEvent(new UIRefreshEvent(this));
      }
 
     @Override

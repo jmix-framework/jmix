@@ -16,7 +16,6 @@
 
 package io.jmix.ui.executor.impl;
 
-import io.jmix.core.Events;
 import io.jmix.core.TimeSource;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.BaseUser;
@@ -26,6 +25,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 
 import javax.annotation.Nullable;
 
@@ -39,7 +39,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private UIAccessor uiAccessor;
     private final TaskExecutor<T, V> taskExecutor;
     private final WatchDog watchDog;
-    private Events events;
+    private ApplicationEventPublisher applicationEventPublisher;
     private TimeSource timeSource;
 
     private volatile boolean started = false;
@@ -50,12 +50,12 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private Subscription afterDetachSubscription;
     private final BaseUser user;
 
-    public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog, Events events,
+    public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog, ApplicationEventPublisher applicationEventPublisher,
                            BaseUser user, TimeSource timeSource) {
         this.uiAccessor = uiAccessor;
         this.taskExecutor = taskExecutor;
         this.watchDog = watchDog;
-        this.events = events;
+        this.applicationEventPublisher = applicationEventPublisher;
         this.timeSource = timeSource;
 
         this.user = user;
@@ -209,7 +209,7 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
                 boolean handled = task.handleTimeoutException();
                 if (!handled) {
                     log.error("Unhandled timeout exception in background task. Task: " + task.toString());
-                    events.publish(new BackgroundTaskTimeoutEvent(this, task));
+                    applicationEventPublisher.publishEvent(new BackgroundTaskTimeoutEvent(this, task));
                 }
             }
 

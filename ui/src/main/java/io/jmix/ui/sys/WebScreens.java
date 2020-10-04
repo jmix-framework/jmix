@@ -19,7 +19,6 @@ import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Layout;
 import io.jmix.core.AccessManager;
-import io.jmix.core.Events;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.security.AccessDeniedException;
@@ -113,8 +112,6 @@ public class WebScreens implements Screens {
     protected ScreenViewsLoader screenViewsLoader;
     @Autowired
     protected MeterRegistry meterRegistry;
-    @Autowired
-    protected Events events;
     @Autowired
     protected AccessManager accessManager;
 
@@ -376,7 +373,7 @@ public class WebScreens implements Screens {
 
         Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 
-        events.publish(new BeforeShowScreenEvent(screen));
+        applicationContext.publishEvent(new BeforeShowScreenEvent(screen));
 
         fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
@@ -414,7 +411,7 @@ public class WebScreens implements Screens {
 
         userActionsLog.trace("Screen {} {} opened", screen.getId(), screen.getClass());
 
-        events.publish(new AfterShowScreenEvent(screen));
+        applicationContext.publishEvent(new AfterShowScreenEvent(screen));
 
         changeUrl(screen);
 

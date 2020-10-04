@@ -17,10 +17,10 @@
 package io.jmix.ui.sys.event;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Events;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.context.event.GenericApplicationListener;
@@ -55,13 +55,13 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     private final List<ResolvableType> declaredEventTypes;
     private final int order;
 
-    private Events events;
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public UiEventListenerMethodAdapter(Object instance, Class<?> targetClass, Method method, Events events) {
+    public UiEventListenerMethodAdapter(Object instance, Class<?> targetClass, Method method, ApplicationEventPublisher applicationEventPublisher) {
         checkNotNullArgument(targetClass);
         checkNotNullArgument(method);
         checkNotNullArgument(instance);
-        checkNotNullArgument(events);
+        checkNotNullArgument(applicationEventPublisher);
 
         Method targetMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
         EventListener ann = AnnotatedElementUtils.findMergedAnnotation(targetMethod, EventListener.class);
@@ -73,11 +73,11 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         this.instanceRef = new WeakReference<>(instance);
         this.method = method;
         this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-        this.events = events;
+        this.applicationEventPublisher = applicationEventPublisher;
 
         this.declaredEventTypes = resolveDeclaredEventTypes(method, ann);
         if (!ann.condition().isEmpty()) {
-            throw new UnsupportedOperationException("@EventListener condition is not supported for UiEvents");
+            throw new UnsupportedOperationException("@EventListener condition is not supported by UiEventPublisher");
         }
         this.order = resolveOrder(method);
     }
@@ -199,9 +199,9 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
     protected void publishEvent(Object instance, @Nullable Object event) {
         if (event != null) {
             if (event instanceof ApplicationEvent) {
-                this.events.publish((ApplicationEvent) event);
+                this.applicationEventPublisher.publishEvent((ApplicationEvent) event);
             } else {
-                this.events.publish(new PayloadApplicationEvent<>(instance, event));
+                this.applicationEventPublisher.publishEvent(new PayloadApplicationEvent<>(instance, event));
             }
         }
     }
@@ -212,7 +212,7 @@ public class UiEventListenerMethodAdapter implements GenericApplicationListener 
         }
         String condition = getCondition();
         if (!Strings.isNullOrEmpty(condition)) {
-            throw new UnsupportedOperationException("@EventListener condition is not supported for UiEvents");
+            throw new UnsupportedOperationException("@EventListener condition is not supported for UiEventPublisher");
         }
         return true;
     }

@@ -19,7 +19,6 @@ package io.jmix.ui.navigation;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.EntityStates;
-import io.jmix.core.Events;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.*;
@@ -60,8 +59,6 @@ public class WebUrlRouting implements UrlRouting {
 
     private static final Logger log = LoggerFactory.getLogger(WebUrlRouting.class);
 
-    @Autowired
-    protected Events events;
     @Autowired
     protected UiProperties uiProperties;
     @Autowired

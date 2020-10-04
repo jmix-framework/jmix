@@ -18,7 +18,6 @@ package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * This security configuration can be used in test or simple projects, for example:
@@ -67,7 +64,6 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider(messageTools);
         userAuthenticationProvider.setUserDetailsService(userRepository());
-        userAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         auth.authenticationProvider(userAuthenticationProvider);
     }
 
@@ -76,11 +72,10 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
-                .anonymous(anonymousConfigurer -> {
-                    BaseUser anonymousUser = userRepository().getAnonymousUser();
-                    anonymousConfigurer.principal(anonymousUser);
-                    anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
-                })
+                .anonymous().principal(userRepository().getAnonymousUser()).key(coreProperties.getAnonymousAuthenticationTokenKey())
+                .and()
+                .logout().logoutSuccessUrl("/#login")
+                .and()
                 .csrf().disable()
                 .headers().frameOptions().sameOrigin();
     }
@@ -89,11 +84,6 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Bean(name = "core_PasswordEncoder")
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean(name = "core_UserRepository")

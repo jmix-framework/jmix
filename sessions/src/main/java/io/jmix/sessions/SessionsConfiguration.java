@@ -17,24 +17,18 @@
 package io.jmix.sessions;
 
 import io.jmix.core.CoreConfiguration;
-import io.jmix.core.Events;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.*;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.session.MapSessionRepository;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.session.web.http.SessionRepositoryFilter;
-
-import java.util.HashMap;
 
 @Configuration
 @ComponentScan
@@ -45,11 +39,11 @@ public class SessionsConfiguration<S extends Session> {
     protected HttpSessionIdResolver sessionIdResolver;
 
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     public SessionRepositoryWrapper<S> sessionRepositoryWrapper(SessionRepository<S> sessionRepository) {
         SessionRepositoryWrapper<S> sessionRepositoryWrapper = new SessionRepositoryWrapper<>(
-                sessionRegistry(), events, sessionRepository);
+                sessionRegistry(), applicationEventPublisher, sessionRepository);
         sessionRepositoryWrapper.addAttributePersistenceValidators(new VaadinSessionAttributesValidator());
         return sessionRepositoryWrapper;
     }
@@ -62,7 +56,7 @@ public class SessionsConfiguration<S extends Session> {
     @Bean
     public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> springSessionRepositoryFilter(
             @Autowired SessionRepository<S> sessionRepository,
-            @Autowired Events events) {
+            @Autowired ApplicationEventPublisher applicationEventPublisher) {
         SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> sessionRepositoryFilter
                 = new SessionRepositoryFilter<>(sessionRepositoryWrapper(sessionRepository));
         sessionRepositoryFilter.setHttpSessionIdResolver(sessionIdResolver);

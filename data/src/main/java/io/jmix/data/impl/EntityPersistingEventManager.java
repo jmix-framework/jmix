@@ -16,12 +16,12 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Events;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.event.EntityPersistingEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component(EntityPersistingEventManager.NAME)
@@ -30,7 +30,7 @@ public class EntityPersistingEventManager {
     public static final String NAME = "data_EntityPersistingEventManager";
 
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     protected Metadata metadata;
@@ -42,6 +42,6 @@ public class EntityPersistingEventManager {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
         EntityPersistingEvent<?> event = new EntityPersistingEvent<>(this, entity, originalMetaClass);
-        events.publish(event);
+        applicationEventPublisher.publishEvent(event);
     }
 }

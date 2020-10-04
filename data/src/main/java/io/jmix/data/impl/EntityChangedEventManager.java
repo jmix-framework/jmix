@@ -32,6 +32,7 @@ import org.eclipse.persistence.sessions.changesets.ObjectChangeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
@@ -58,7 +59,7 @@ public class EntityChangedEventManager {
     protected PersistenceSupport persistenceSupport;
 
     @Autowired
-    private Events eventPublisher;
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private ExtendedEntities extendedEntities;
@@ -203,7 +204,7 @@ public class EntityChangedEventManager {
     public void publish(Collection<EntityChangedEvent> events) {
         log.trace("publish {}", events);
         for (EntityChangedEvent event : events) {
-            eventPublisher.publish(event);
+            eventPublisher.publishEvent(event);
         }
     }
 

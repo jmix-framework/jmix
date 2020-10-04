@@ -16,12 +16,12 @@
 
 package io.jmix.rest.api.controller;
 
-import io.jmix.core.Events;
 import io.jmix.rest.api.auth.OAuthTokenRevoker;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.OAuthTokenRevokedResponseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
@@ -47,7 +47,7 @@ public class OAuthTokenController {
     protected RestTokenMasker tokenMasker;
 
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     @PostMapping("/rest/oauth/revoke")
     public ResponseEntity revokeToken(@RequestParam("token") String token,
@@ -78,10 +78,10 @@ public class OAuthTokenController {
             log.debug("No token with value {} was revoked.", tokenMasker.maskToken(token));
         }
 
-        if (events != null) {
+        if (applicationEventPublisher != null) {
             OAuthTokenRevokedResponseEvent event = new OAuthTokenRevokedResponseEvent(token, revokedTokenValue);
 
-            events.publish(event);
+            applicationEventPublisher.publishEvent(event);
 
             if (event.getResponseEntity() != null) {
                 return event.getResponseEntity();

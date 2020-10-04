@@ -30,8 +30,6 @@ dependencies {
     implementation 'io.jmix.security:jmix-security-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
     implementation project(':rest-starter')
-    implementation 'io.jmix.ui:jmix-ui-starter'
-    implementation 'io.jmix.ui:jmix-ui-data-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
@@ -41,6 +39,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
+    implementation 'javax.inject:javax.inject'
     implementation 'org.apache.commons:commons-dbcp2'
 
     runtimeOnly 'org.hsqldb:hsqldb'

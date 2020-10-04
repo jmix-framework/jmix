@@ -16,11 +16,11 @@
 
 package io.jmix.rest.api.auth;
 
-import io.jmix.core.Events;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.OAuthTokenRevokedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -43,7 +43,7 @@ public class OAuthTokenRevoker {
     protected TokenStore tokenStore;
 
     @Autowired
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     protected RestTokenMasker tokenMasker;
@@ -77,8 +77,8 @@ public class OAuthTokenRevoker {
             tokenStore.removeAccessToken(accessToken);
             log.debug("Access token removed: {}", tokenMasker.maskToken(token));
 
-            if (events != null) {
-                events.publish(new OAuthTokenRevokedEvent(accessToken, revocationInitiator));
+            if (applicationEventPublisher != null) {
+                applicationEventPublisher.publishEvent(new OAuthTokenRevokedEvent(accessToken, revocationInitiator));
             }
 
             return accessToken.getValue();

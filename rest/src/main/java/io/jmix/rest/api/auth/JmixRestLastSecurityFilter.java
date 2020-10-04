@@ -17,12 +17,12 @@
 package io.jmix.rest.api.auth;
 
 import com.google.common.base.Strings;
-import io.jmix.core.Events;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.AfterRestInvocationEvent;
 import io.jmix.rest.api.event.BeforeRestInvocationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -46,11 +46,11 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JmixRestLastSecurityFilter.class);
 
-    protected Events events;
+    protected ApplicationEventPublisher applicationEventPublisher;
     protected RestTokenMasker restTokenMasker;
 
-    public JmixRestLastSecurityFilter(Events events, RestTokenMasker restTokenMasker) {
-        this.events = events;
+    public JmixRestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher, RestTokenMasker restTokenMasker) {
+        this.applicationEventPublisher = applicationEventPublisher;
         this.restTokenMasker = restTokenMasker;
     }
 
@@ -61,9 +61,9 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
 
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (events != null && authentication != null) {
+            if (applicationEventPublisher != null && authentication != null) {
                 BeforeRestInvocationEvent beforeInvocationEvent = new BeforeRestInvocationEvent(authentication, request, response);
-                events.publish(beforeInvocationEvent);
+                applicationEventPublisher.publishEvent(beforeInvocationEvent);
 
                 boolean invocationPrevented = beforeInvocationEvent.isInvocationPrevented();
 
@@ -74,7 +74,7 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
                         log.debug("REST API invocation prevented by BeforeRestInvocationEvent handler");
                     }
                 } finally {
-                    events.publish(new AfterRestInvocationEvent(authentication, request, response, invocationPrevented));
+                    applicationEventPublisher.publishEvent(new AfterRestInvocationEvent(authentication, request, response, invocationPrevented));
                 }
             } else {
                 filterChain.doFilter(request, response);

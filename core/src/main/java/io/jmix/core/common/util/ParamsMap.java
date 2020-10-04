@@ -18,6 +18,7 @@ package io.jmix.core.common.util;
 
 import com.google.common.collect.ImmutableMap;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ public final class ParamsMap {
     private ParamsMap() {
     }
 
-    private static void put(ImmutableMap.Builder<String, Object> builder, String key, Object value) {
+    private static void put(ImmutableMap.Builder<String, Object> builder, String key, @Nullable Object value) {
         if (key == null) {
             throw new IllegalArgumentException("key should not be null");
         }
@@ -126,7 +127,7 @@ public final class ParamsMap {
         return ImmutableMap.<String, Object>builder().putAll(internalMap).build();
     }
 
-    public ParamsMap pair(String paramName, Object paramValue) {
+    public ParamsMap pair(String paramName, @Nullable Object paramValue) {
         if (paramName == null) {
             throw new IllegalArgumentException("paramName should not be null");
         }

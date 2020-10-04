@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.app.events.AttributeChanges;
 import com.haulmont.cuba.core.app.events.EntityChangedEvent;
 import com.haulmont.cuba.core.entity.contracts.Id;
 import io.jmix.core.Entity;
-import io.jmix.core.Events;
+import com.haulmont.cuba.core.global.Events;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

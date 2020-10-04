@@ -19,6 +19,7 @@ import com.haulmont.cuba.core.Transaction
 import com.haulmont.cuba.core.TransactionalDataManager
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.Events
 import com.haulmont.cuba.core.model.primary_keys.IntIdentityEntity
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.OrderLine

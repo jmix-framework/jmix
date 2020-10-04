@@ -19,7 +19,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.sys.events.AppContextInitializedEvent;
 import com.haulmont.cuba.core.sys.events.AppContextStartedEvent;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
-import io.jmix.core.Events;
+import com.haulmont.cuba.core.global.Events;
 import io.jmix.core.annotation.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

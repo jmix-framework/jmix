@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.EntityStates
-import io.jmix.core.Events
+import com.haulmont.cuba.core.global.Events
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification

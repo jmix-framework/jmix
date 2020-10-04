@@ -120,14 +120,4 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
         }
         datatypeById.put(id, datatype);
     }
-
-//    @EventListener
-//    @Order(Events.HIGHEST_CORE_PRECEDENCE + 20)
-//    private void onContextRefresh(ContextRefreshedEvent event) {
-//        ApplicationContext context = event.getApplicationContext();
-//        Map<String, Datatype> beansMap = context.getBeansOfType(Datatype.class);
-//        for (Datatype datatype : beansMap.values()) {
-//            register(datatype, datatype.getId(), DatatypeDefUtils.isDefaultForClass(datatype));
-//        }
-//    }
 }

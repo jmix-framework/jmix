@@ -16,19 +16,37 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Stores;
+import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
+import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 
 public class JmixEntityManagerFactoryBean extends LocalContainerEntityManagerFactoryBean {
 
+    private String storeName;
+    private DbmsSpecifics dbmsSpecifics;
+
     public JmixEntityManagerFactoryBean(String storeName,
                                         DataSource dataSource,
                                         PersistenceConfigProcessor persistenceConfigProcessor,
-                                        JpaVendorAdapter jpaVendorAdapter) {
+                                        JpaVendorAdapter jpaVendorAdapter,
+                                        DbmsSpecifics dbmsSpecifics) {
+        this.storeName = storeName;
+        this.dbmsSpecifics = dbmsSpecifics;
         setPersistenceXmlLocation("file:" + persistenceConfigProcessor.create(storeName));
         setDataSource(dataSource);
         setJpaVendorAdapter(jpaVendorAdapter);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws PersistenceException {
+        super.afterPropertiesSet();
+
+        if (!Stores.isMain(storeName))
+            getJpaPropertyMap().put(PersistenceSupport.PROP_NAME, storeName);
+        getJpaPropertyMap().putAll(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
     }
 }

@@ -605,8 +605,15 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     public void paintContent(PaintTarget target) throws PaintException {
         super.paintContent(target);
 
-        String lastHistoryOp = getUrlRouting().getLastHistoryOperation();
-        target.addAttribute(AppUIConstants.LAST_HISTORY_OP, lastHistoryOp);
+        if (isVaadinSessionOpen()) {
+            String lastHistoryOp = getUrlRouting().getLastHistoryOperation();
+            target.addAttribute(AppUIConstants.LAST_HISTORY_OP, lastHistoryOp);
+        }
+    }
+
+    protected boolean isVaadinSessionOpen() {
+        return getSession() != null
+                && getSession().getState() == VaadinSession.State.OPEN;
     }
 
     /**

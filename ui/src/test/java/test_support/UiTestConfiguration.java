@@ -31,6 +31,7 @@ import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.ui.menu.MenuBuilder;
 import io.jmix.ui.menu.MenuConfig;
 import io.jmix.ui.menu.SideMenuBuilder;
@@ -40,11 +41,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -79,9 +76,11 @@ public class UiTestConfiguration {
 
     @Bean
     @Primary
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
+                                                                PersistenceConfigProcessor processor,
+                                                                JpaVendorAdapter jpaVendorAdapter,
+                                                                DbmsSpecifics dbmsSpecifics) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics);
     }
 
     @Bean

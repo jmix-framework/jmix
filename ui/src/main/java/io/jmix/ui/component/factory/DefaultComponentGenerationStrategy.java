@@ -33,15 +33,16 @@ import javax.annotation.Nullable;
 
 @org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "ui_DefaultMetaComponentStrategy";
+    public static final String NAME = "ui_DefaultComponentGenerationStrategy";
 
     @Autowired
     public DefaultComponentGenerationStrategy(Messages messages,
+                                              UiComponents uiComponents,
                                               EntityFieldCreationSupport entityFieldCreationSupport,
                                               Metadata metadata,
                                               MetadataTools metadataTools,
                                               Icons icons) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Autowired

@@ -40,27 +40,23 @@ import javax.annotation.Nullable;
 @SuppressWarnings("rawtypes")
 @org.springframework.stereotype.Component(DataGridEditorComponentGenerationStrategy.NAME)
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "jmix_DataGridEditorMetaComponentStrategy";
+    public static final String NAME = "ui_DataGridEditorComponentGenerationStrategy";
 
     @Autowired
     public DataGridEditorComponentGenerationStrategy(Messages messages,
+                                                     UiComponents uiComponents,
                                                      EntityFieldCreationSupport entityFieldCreationSupport,
                                                      Metadata metadata,
                                                      MetadataTools metadataTools,
                                                      Icons icons) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
-    }
-
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Nullable
     @Override
     public Component createComponent(ComponentGenerationContext context) {
-        if (context.getComponentClass() == null
-                || !DataGrid.class.isAssignableFrom(context.getComponentClass())) {
+        if (context.getTargetClass() == null
+                || !DataGrid.class.isAssignableFrom(context.getTargetClass())) {
             return null;
         }
 

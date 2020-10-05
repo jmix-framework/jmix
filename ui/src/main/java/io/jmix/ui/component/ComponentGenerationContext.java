@@ -26,18 +26,19 @@ import javax.annotation.Nullable;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Contains information for {@link ComponentGenerationStrategy} when creating components using {@link UiComponentsGenerator}.
+ * Contains information for {@link ComponentGenerationStrategy} when creating
+ * components using {@link UiComponentsGenerator}.
  */
 @SuppressWarnings("rawtypes")
 public class ComponentGenerationContext {
 
-    protected MetaClass metaClass;
-    protected String property;
+    protected final MetaClass metaClass;
+    protected final String property;
 
     protected ValueSource valueSource;
     protected Options options;
     protected Element xmlDescriptor;
-    protected Class componentClass;
+    protected Class<?> targetClass;
 
     /**
      * Creates an instance of ComponentGenerationContext.
@@ -61,32 +62,10 @@ public class ComponentGenerationContext {
     }
 
     /**
-     * Sets the entity for which the component is created, using fluent API method.
-     *
-     * @param metaClass the entity for which the component is created
-     * @return this object
-     */
-    public ComponentGenerationContext setMetaClass(MetaClass metaClass) {
-        this.metaClass = metaClass;
-        return this;
-    }
-
-    /**
      * @return the entity attribute for which the component is created
      */
     public String getProperty() {
         return property;
-    }
-
-    /**
-     * Sets the entity attribute for which the component is created, using fluent API method.
-     *
-     * @param property the entity attribute for which the component is created
-     * @return this object
-     */
-    public ComponentGenerationContext setProperty(String property) {
-        this.property = property;
-        return this;
     }
 
     /**
@@ -147,21 +126,22 @@ public class ComponentGenerationContext {
     }
 
     /**
-     * @return a component class for which a component is created
+     * @return a target class for which a component is created
      */
     @Nullable
-    public Class getComponentClass() {
-        return componentClass;
+    public Class<?> getTargetClass() {
+        return targetClass;
     }
 
     /**
-     * Sets a component class for which a component is created, using fluent API method.
+     * Sets a target class for which a component is created, using fluent API method.
+     * For instance, a target class can be a component or a screen.
      *
-     * @param componentClass a component class for which a component is created
+     * @param targetClass a target class for which a component is created
      * @return this object
      */
-    public ComponentGenerationContext setComponentClass(@Nullable Class componentClass) {
-        this.componentClass = componentClass;
+    public ComponentGenerationContext setTargetClass(@Nullable Class<?> targetClass) {
+        this.targetClass = targetClass;
         return this;
     }
 }

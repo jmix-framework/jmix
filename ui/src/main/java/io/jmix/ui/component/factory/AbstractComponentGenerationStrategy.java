@@ -56,11 +56,13 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Icons icons;
 
     public AbstractComponentGenerationStrategy(Messages messages,
+                                               UiComponents uiComponents,
                                                EntityFieldCreationSupport entityFieldCreationSupport,
                                                Metadata metadata,
                                                MetadataTools metadataTools,
                                                Icons icons) {
         this.messages = messages;
+        this.uiComponents = uiComponents;
         this.entityFieldCreationSupport = entityFieldCreationSupport;
         this.metadata = metadata;
         this.metadataTools = metadataTools;

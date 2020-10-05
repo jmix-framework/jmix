@@ -52,7 +52,7 @@ public abstract class AbstractFieldFactory implements FieldFactory {
                 .setValueSource(valueSource)
                 .setOptions(getOptions(valueSource, property))
                 .setXmlDescriptor(xmlDescriptor)
-                .setComponentClass(Table.class);
+                .setTargetClass(Table.class);
 
         return componentsGenerator.generate(context);
     }

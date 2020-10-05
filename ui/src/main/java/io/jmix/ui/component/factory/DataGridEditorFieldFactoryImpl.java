@@ -42,7 +42,7 @@ public class DataGridEditorFieldFactoryImpl implements DataGridEditorFieldFactor
 
         ComponentGenerationContext context = new ComponentGenerationContext(metaClass, property)
                 .setValueSource(valueSource)
-                .setComponentClass(DataGrid.class);
+                .setTargetClass(DataGrid.class);
 
         Component component = uiComponentsGenerator.generate(context);
         if (component instanceof Field) {

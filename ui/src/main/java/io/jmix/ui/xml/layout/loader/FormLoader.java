@@ -263,7 +263,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
         MetaClass metaClass = container.getEntityMetaClass();
 
         ComponentGenerationContext context = new ComponentGenerationContext(metaClass, property);
-        context.setComponentClass(Form.class);
+        context.setTargetClass(Form.class);
         context.setValueSource(new ContainerValueSource<>(container, property));
         context.setXmlDescriptor(element);
 

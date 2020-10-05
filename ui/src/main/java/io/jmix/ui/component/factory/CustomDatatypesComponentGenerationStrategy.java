@@ -43,11 +43,12 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
 
     @Autowired
     public CustomDatatypesComponentGenerationStrategy(Messages messages,
+                                                      UiComponents uiComponents,
                                                       EntityFieldCreationSupport entityFieldCreationSupport,
                                                       Metadata metadata,
                                                       MetadataTools metadataTools,
                                                       Icons icons) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Autowired

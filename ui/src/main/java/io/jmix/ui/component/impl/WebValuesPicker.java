@@ -90,4 +90,10 @@ public class WebValuesPicker<V> extends WebValuePicker<Collection<V>> implements
             publish(ValueChangeEvent.class, event);
         }
     }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty()
+                || CollectionUtils.isEmpty(getValue());
+    }
 }

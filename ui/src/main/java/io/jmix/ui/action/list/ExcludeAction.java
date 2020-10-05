@@ -192,7 +192,7 @@ public class ExcludeAction<E> extends SecuredListAction implements Action.Adjust
                     new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(attributeContext);
 
-            boolean attrPermitted = attributeContext.canModifyPermitted();
+            boolean attrPermitted = attributeContext.canModify();
             if (!attrPermitted) {
                 return false;
             }

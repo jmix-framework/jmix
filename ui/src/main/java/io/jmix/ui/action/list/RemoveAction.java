@@ -208,7 +208,7 @@ public class RemoveAction<E> extends SecuredListAction implements Action.AdjustW
                     new UiEntityAttributeContext(masterMetaClass, metaProperty.getName());
             accessManager.applyRegisteredConstraints(entityAttributeContext);
 
-            if (!entityAttributeContext.canModifyPermitted()) {
+            if (!entityAttributeContext.canModify()) {
                 return false;
             }
         }

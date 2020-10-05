@@ -141,7 +141,7 @@ public class WebTableFieldFactory<E> extends AbstractFieldFactory implements Tab
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 editable.setEditable(editable.isEditable()
-                        && attributeContext.canModifyPermitted());
+                        && attributeContext.canModify());
             }
         }
     }

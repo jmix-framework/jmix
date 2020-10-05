@@ -92,12 +92,12 @@ public class ValueBinder {
                 accessManager.applyRegisteredConstraints(attributeContext);
 
                 if (component instanceof Component.Editable) {
-                    if (!attributeContext.canModifyPermitted()) {
+                    if (!attributeContext.canModify()) {
                         ((Component.Editable) component).setEditable(false);
                     }
                 }
 
-                if (!attributeContext.canViewPermitted()) {
+                if (!attributeContext.canView()) {
                     component.setVisible(false);
                 }
             }

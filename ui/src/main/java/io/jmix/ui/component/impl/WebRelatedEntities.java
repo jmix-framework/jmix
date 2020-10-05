@@ -208,7 +208,7 @@ public class WebRelatedEntities<E> extends WebPopupButton
         accessManager.applyRegisteredConstraints(attributeContext);
 
         return entityContext.isViewPermitted()
-                && attributeContext.canViewPermitted()
+                && attributeContext.canView()
                 && (excludePattern == null
                 || !excludePattern.matcher(metaProperty.getName()).matches());
     }

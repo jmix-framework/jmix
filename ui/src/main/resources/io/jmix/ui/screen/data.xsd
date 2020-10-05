@@ -172,7 +172,6 @@
             <xs:element name="property" type="propertyType"/>
         </xs:sequence>
         <xs:attribute name="extends"/>
-        <xs:attribute name="systemProperties" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="propertyType">

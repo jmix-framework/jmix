@@ -17,6 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.server.Resource;
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbstractComponent;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
@@ -58,7 +59,6 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     protected Icons icons;
 
     protected boolean postInitTaskAdded;
-    protected boolean componentTabChangeListenerInitialized;
 
     protected ComponentLoader.Context context;
     protected Map<String, Tab> tabs = new HashMap<>(4);
@@ -66,6 +66,8 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     protected Map<com.vaadin.ui.Component, ComponentDescriptor> tabMapping = new LinkedHashMap<>(4);
 
     protected Set<com.vaadin.ui.Component> lazyTabs;
+
+    protected Registration selectedTabChangeListenerRegistration;
 
     public WebAccordion() {
         component = createComponent();
@@ -495,8 +497,8 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     protected void initComponentTabChangeListener() {
         // init component SelectedTabChangeListener only when needed, making sure it is
         // after all lazy tabs listeners
-        if (!componentTabChangeListenerInitialized) {
-            component.addSelectedTabChangeListener(event -> {
+        if (selectedTabChangeListenerRegistration == null) {
+            selectedTabChangeListenerRegistration = component.addSelectedTabChangeListener(event -> {
                 if (context instanceof ComponentLoader.ComponentContext) {
                     ((ComponentLoader.ComponentContext) context).executeInjectTasks();
                     ((ComponentLoader.ComponentContext) context).executeInitTasks();
@@ -524,7 +526,6 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
                             .warn("Please specify Frame for Accordion");
                 }
             });
-            componentTabChangeListenerInitialized = true;
         }
     }
 
@@ -535,13 +536,18 @@ public class WebAccordion extends WebAbstractComponent<JmixAccordion>
     @Override
     public Subscription addSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
         initComponentTabChangeListener();
-
-        return getEventHub().subscribe(SelectedTabChangeEvent.class, listener);
+        getEventHub().subscribe(SelectedTabChangeEvent.class, listener);
+        return () -> internalRemoveSelectedTabChangeListener(listener);
     }
 
-    @Override
-    public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
-        getEventHub().unsubscribe(SelectedTabChangeEvent.class, listener);
+    protected void internalRemoveSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
+        unsubscribe(SelectedTabChangeEvent.class, listener);
+
+        if (!hasSubscriptions(SelectedTabChangeEvent.class)
+                && selectedTabChangeListenerRegistration != null) {
+            selectedTabChangeListenerRegistration.remove();
+            selectedTabChangeListenerRegistration = null;
+        }
     }
 
     @Override

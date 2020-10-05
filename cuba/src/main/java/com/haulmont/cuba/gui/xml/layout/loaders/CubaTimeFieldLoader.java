@@ -17,11 +17,20 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.TimeField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.TimeFieldLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class CubaTimeFieldLoader extends TimeFieldLoader {
+
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
+
+        loadShowSeconds((TimeField) resultComponent, element);
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
@@ -32,5 +41,12 @@ public class CubaTimeFieldLoader extends TimeFieldLoader {
                 .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setValueSource);
+    }
+
+    protected void loadShowSeconds(TimeField resultComponent, Element element) {
+        String showSeconds = element.attributeValue("showSeconds");
+        if (StringUtils.isNotEmpty(showSeconds)) {
+            resultComponent.setShowSeconds(Boolean.parseBoolean(showSeconds));
+        }
     }
 }

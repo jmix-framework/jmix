@@ -31,4 +31,14 @@ public class WebTimeField<V> extends io.jmix.ui.component.impl.WebTimeField<V> i
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
     }
+
+    @Override
+    public boolean getShowSeconds() {
+        return getResolution() == Resolution.SEC;
+    }
+
+    @Override
+    public void setShowSeconds(boolean showSeconds) {
+        setResolution(showSeconds ? Resolution.SEC : Resolution.MIN);
+    }
 }

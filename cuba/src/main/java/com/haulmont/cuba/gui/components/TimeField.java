@@ -37,4 +37,20 @@ public interface TimeField<V> extends Field<V>, io.jmix.ui.component.TimeField<V
     TypeToken<TimeField<java.sql.Time>> TYPE_TIME = new TypeToken<TimeField<java.sql.Time>>(){};
     TypeToken<TimeField<LocalTime>> TYPE_LOCALTIME = new TypeToken<TimeField<LocalTime>>(){};
     TypeToken<TimeField<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TimeField<OffsetTime>>(){};
+
+    /**
+     * @return whether the TimeField should display seconds
+     *
+     * @deprecated Use either {@link #getResolution()} or {@link #getFormat()}
+     */
+    @Deprecated
+    boolean getShowSeconds();
+
+    /**
+     * Sets whether the TimeField should display seconds.
+     *
+     * @deprecated Use either {@link #setResolution(Resolution)} or {@link #setFormat(String)}
+     */
+    @Deprecated
+    void setShowSeconds(boolean showSeconds);
 }

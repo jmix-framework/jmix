@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.EntityLinkField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.TimeField;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -40,7 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Component(CubaDefaultComponentGenerationStrategy.NAME)
 public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGenerationStrategy {
-    public static final String NAME = "cuba_DefaultMetaComponentStrategy";
+    public static final String NAME = "cuba_DefaultComponentGenerationStrategy";
 
     @Autowired
     public CubaDefaultComponentGenerationStrategy(Messages messages,
@@ -103,5 +104,21 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
     @Override
     public int getOrder() {
         return JmixOrder.LOWEST_PRECEDENCE - 10;
+    }
+
+    @Override
+    protected Component createTimeField(ComponentGenerationContext context) {
+        TimeField timeField = uiComponents.create(TimeField.class);
+        setValueSource(timeField, context);
+
+        Element xmlDescriptor = context.getXmlDescriptor();
+        if (xmlDescriptor != null) {
+            String showSeconds = xmlDescriptor.attributeValue("showSeconds");
+            if (Boolean.parseBoolean(showSeconds)) {
+                timeField.setResolution(TimeField.Resolution.SEC);
+            }
+        }
+
+        return timeField;
     }
 }

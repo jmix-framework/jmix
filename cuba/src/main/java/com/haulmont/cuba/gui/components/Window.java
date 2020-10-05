@@ -17,6 +17,8 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
+import io.jmix.ui.screen.StandardCloseAction;
+import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
 
@@ -25,5 +27,22 @@ public interface Window extends io.jmix.ui.component.Window {
     interface HasFoldersPane {
         @Nullable
         FoldersPane getFoldersPane();
+    }
+
+    /**
+     * Close the screen.
+     * <br> If the window has uncommitted changes in its {@link com.haulmont.cuba.gui.data.DsContext},
+     * and force=false, the confirmation dialog will be shown.
+     *
+     * @param actionId action ID that will be propagated to attached {@link CloseListener}s.
+     *                 Use {@link #COMMIT_ACTION_ID} if some changes have just been committed, or
+     *                 {@link #CLOSE_ACTION_ID} otherwise. These constants are recognized by various mechanisms of the
+     *                 framework.
+     * @param force    if true, no confirmation dialog will be shown even if the screen has uncommitted changes
+     */
+    @Deprecated
+    default boolean close(String actionId, boolean force) {
+        OperationResult result = getFrameOwner().close(new StandardCloseAction(actionId, !force));
+        return result.getStatus() == OperationResult.Status.SUCCESS;
     }
 }

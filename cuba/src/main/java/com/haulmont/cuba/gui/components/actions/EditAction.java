@@ -464,7 +464,7 @@ public class EditAction extends ItemTrackingAction
      * BulkEditor integration options.
      * <br>
      * If integration {@link BulkEditorIntegration#isEnabled()} and user selects
-     * multiple rows in {@link io.jmix.ui.component.ListComponent} then action will show {@link BulkEditor} window.
+     * multiple rows in {@link ListComponent} then action will show {@link BulkEditor} window.
      */
     public static class BulkEditorIntegration {
         protected boolean enabled = false;

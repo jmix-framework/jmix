@@ -22,6 +22,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasHtmlCaption;
 import io.jmix.ui.component.HasHtmlDescription;
 import io.jmix.ui.component.HasHtmlSanitizer;
+import io.jmix.ui.app.bulk.ColumnsMode;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.Map;
 /**
  * Use {@code BulkEditAction} in new screens instead.
  *
- * see io.jmix.ui.BulkEditors
+ * see io.jmix.ui.bulk.BulkEditors
  */
 public interface BulkEditor extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
                                     Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
@@ -59,7 +60,7 @@ public interface BulkEditor extends Component, Component.HasCaption, Component.B
     void setListComponent(ListComponent listComponent);
 
     Map<String, Field.Validator> getFieldValidators();
-    void setFieldValidators(Map<String, Field.Validator> fieldValidators);
+    void setFieldValidators(Map <String, Field.Validator> fieldValidators);
 
     List<Field.Validator> getModelValidators();
     void setModelValidators(List<Field.Validator> modelValidators);
@@ -68,16 +69,18 @@ public interface BulkEditor extends Component, Component.HasCaption, Component.B
     boolean isLoadDynamicAttributes();
 
     /**
-     * @return the number of editor columns
+     * @return columns mode which defines the number of editor columns
      */
-    int getColumns();
+    ColumnsMode getColumnsMode();
 
     /**
-     * Sets the number of editor columns.
+     * Sets the columns mode which defines the number of editor columns.
      *
-     * @param columns the number of editor columns
+     * @param columnsMode columns mode
+     * @see ColumnsMode#ONE_COLUMN
+     * @see ColumnsMode#TWO_COLUMNS
      */
-    void setColumns(int columns);
+    void setColumnsMode(ColumnsMode columnsMode);
 
     /**
      * Sets the given <code>constraintOperationType</code> to the BulkEditAction.

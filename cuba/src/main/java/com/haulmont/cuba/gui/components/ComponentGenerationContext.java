@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.ValueSource;
 
@@ -31,6 +32,8 @@ public class ComponentGenerationContext extends io.jmix.ui.component.ComponentGe
     protected Datasource datasource;
     @Deprecated
     protected CollectionDatasource optionsDatasource;
+    @Deprecated
+    protected Class<? extends Component> componentClass;
 
     /**
      * Creates an instance of ComponentGenerationContext.
@@ -87,5 +90,27 @@ public class ComponentGenerationContext extends io.jmix.ui.component.ComponentGe
     public ComponentGenerationContext setOptionsDatasource(CollectionDatasource optionsDatasource) {
         this.optionsDatasource = optionsDatasource;
         return this;
+    }
+
+    /**
+     * @return a component class for which a component is created
+     */
+    @Nullable
+    @Deprecated
+    public Class<? extends Component> getComponentClass() {
+        return Component.class.isAssignableFrom(targetClass)
+                ? (Class<? extends Component>) targetClass
+                : null;
+    }
+
+    /**
+     * Sets a component class for which a component is created, using fluent API method.
+     *
+     * @param componentClass a component class for which a component is created
+     * @return this object
+     */
+    @Deprecated
+    public ComponentGenerationContext setComponentClass(@Nullable Class<? extends Component> componentClass) {
+        return (ComponentGenerationContext) setTargetClass(componentClass);
     }
 }

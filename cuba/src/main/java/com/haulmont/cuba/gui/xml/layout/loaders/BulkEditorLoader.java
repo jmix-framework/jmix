@@ -30,6 +30,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -178,14 +179,10 @@ public class BulkEditorLoader extends AbstractComponentLoader<BulkEditor> {
     }
 
     protected void loadColumns(BulkEditor component, Element element) {
-        String value = element.attributeValue("columns");
+        String value = element.attributeValue("columnsMode");
         if (StringUtils.isNotEmpty(value)) {
-            int columns = Integer.parseInt(value);
-            if (columns <= 0) {
-                throw new GuiDevelopmentException("The number of BulkEditor columns must be greater than zero",
-                        context);
-            }
-            component.setColumns(columns);
+            ColumnsMode columnsMode = ColumnsMode.valueOf(value);
+            component.setColumnsMode(columnsMode);
         }
     }
 

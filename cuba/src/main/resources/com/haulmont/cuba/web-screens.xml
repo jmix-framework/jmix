@@ -27,6 +27,8 @@
             template="/com/haulmont/cuba/gui/app/core/file/file-upload-dialog.xml"/>
     <screen id="list-editor-popup"
             template="/com/haulmont/cuba/gui/components/listeditor/list-editor-popup.xml"/>
+    <screen id="bulkEditor"
+            template="/com/haulmont/cuba/gui/app/core/bulk/bulk-edit.xml"/>
     <screen id="saveSetInFolder"
             template="/com/haulmont/cuba/web/app/folders/save-set-window.xml"/>
 </screen-config>

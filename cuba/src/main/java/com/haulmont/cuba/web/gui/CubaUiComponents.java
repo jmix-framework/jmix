@@ -17,9 +17,9 @@
 package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
-import com.haulmont.cuba.gui.components.PopupView;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.PopupView;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.web.gui.components.*;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebFoldersPane;
@@ -118,5 +118,6 @@ public class CubaUiComponents extends WebUiComponents {
 
         classes.put(FoldersPane.NAME, WebFoldersPane.class);
         classes.put(PopupView.NAME, WebPopupView.class);
+        classes.put(BulkEditor.NAME, WebBulkEditor.class);
     }
 }

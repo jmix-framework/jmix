@@ -33,6 +33,7 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.OpenMode;
@@ -67,7 +68,7 @@ public class BulkEditAction extends ItemTrackingAction
     protected List<Field.Validator> modelValidators;
     protected Boolean loadDynamicAttributes;
     protected Boolean useConfirmDialog;
-    protected int columns;
+    protected ColumnsMode columnsMode;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
 
@@ -152,12 +153,12 @@ public class BulkEditAction extends ItemTrackingAction
         return useConfirmDialog;
     }
 
-    public int getColumns() {
-        return columns;
+    public ColumnsMode getColumnsMode() {
+        return columnsMode;
     }
 
-    public void setColumns(int columns) {
-        this.columns = columns;
+    public void setColumnsMode(ColumnsMode columnsMode) {
+        this.columnsMode = columnsMode;
     }
 
     @Override
@@ -210,7 +211,7 @@ public class BulkEditAction extends ItemTrackingAction
                 .pair("modelValidators", modelValidators)
                 .pair("loadDynamicAttributes", loadDynamicAttributes)
                 .pair("useConfirmDialog", useConfirmDialog)
-                .pair("columns", columns)
+                .pair("columnsMode", columnsMode)
                 .create();
 
         WindowManager wm = ((WindowManager) getScreenContext(target.getFrame()).getScreens());

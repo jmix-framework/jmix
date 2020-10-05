@@ -26,6 +26,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
@@ -43,11 +44,12 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
 
     @Autowired
     public CubaDefaultComponentGenerationStrategy(Messages messages,
+                                                  UiComponents uiComponents,
                                                   EntityFieldCreationSupport entityFieldCreationSupport,
                                                   Metadata metadata,
                                                   MetadataTools metadataTools,
                                                   Icons icons) {
-        super(messages, entityFieldCreationSupport, metadata, metadataTools, icons);
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
     }
 
     @Override

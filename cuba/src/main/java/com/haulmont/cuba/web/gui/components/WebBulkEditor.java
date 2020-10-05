@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.BulkEditAction;
 import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.component.impl.WebButton;
 
 import java.util.Collections;
@@ -40,7 +41,7 @@ public class WebBulkEditor extends WebButton implements BulkEditor {
     protected ConstraintOperationType constraintOperationType;
     protected boolean loadDynamicAttributes = true;
     protected boolean useConfirmDialog = true;
-    protected int columns = 2;
+    protected ColumnsMode columnsMode = ColumnsMode.TWO_COLUMNS;
 
     @Override
     public OpenType getOpenType() {
@@ -135,7 +136,7 @@ public class WebBulkEditor extends WebButton implements BulkEditor {
             bulkEditAction.setConstraintOperationType(constraintOperationType);
             bulkEditAction.setLoadDynamicAttributes(loadDynamicAttributes);
             bulkEditAction.setUseConfirmDialog(useConfirmDialog);
-            bulkEditAction.setColumns(columns);
+            bulkEditAction.setColumnsMode(columnsMode);
 
             listComponent.addAction(bulkEditAction);
         }
@@ -204,15 +205,15 @@ public class WebBulkEditor extends WebButton implements BulkEditor {
     }
 
     @Override
-    public int getColumns() {
-        return columns;
+    public ColumnsMode getColumnsMode() {
+        return columnsMode;
     }
 
     @Override
-    public void setColumns(int columns) {
-        this.columns = columns;
+    public void setColumnsMode(ColumnsMode columnsMode) {
+        this.columnsMode = columnsMode;
         if (bulkEditAction != null) {
-            bulkEditAction.setColumns(columns);
+            bulkEditAction.setColumnsMode(columnsMode);
         }
     }
 }

@@ -268,9 +268,10 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
         Element xmlDescriptor = context.getXmlDescriptor();
         if (xmlDescriptor != null) {
-            String showSeconds = xmlDescriptor.attributeValue("showSeconds");
-            if (Boolean.parseBoolean(showSeconds)) {
-                timeField.setResolution(TimeField.Resolution.SEC);
+            String resolution = xmlDescriptor.attributeValue("resolution");
+            if (StringUtils.isNotEmpty(resolution)) {
+                TimeField.Resolution res = TimeField.Resolution.valueOf(resolution);
+                timeField.setResolution(res);
             }
         }
 

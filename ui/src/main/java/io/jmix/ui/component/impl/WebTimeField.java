@@ -102,16 +102,6 @@ public class WebTimeField<V> extends WebV8AbstractField<JmixTimeFieldWrapper, Lo
     }
 
     @Override
-    public boolean getShowSeconds() {
-        return fromVaadinTimeResolution(component.getResolution()) == Resolution.SEC;
-    }
-
-    @Override
-    public void setShowSeconds(boolean showSeconds) {
-        setResolution(Resolution.SEC);
-    }
-
-    @Override
     public void focus() {
         component.focus();
     }

@@ -57,22 +57,6 @@ public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Compon
     void setResolution(Resolution resolution);
 
     /**
-     * @return whether the TimeField should display seconds
-     *
-     * @deprecated Use either {@link #getResolution()} or {@link #getFormat()}
-     */
-    @Deprecated
-    boolean getShowSeconds();
-
-    /**
-     * Sets whether the TimeField should display seconds.
-     *
-     * @deprecated Use either {@link #setResolution(Resolution)} or {@link #setFormat(String)}
-     */
-    @Deprecated
-    void setShowSeconds(boolean showSeconds);
-
-    /**
      * Returns the time format of the TimeField.
      *
      * @return time format

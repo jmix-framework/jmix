@@ -34,7 +34,6 @@ public class TimeFieldLoader extends AbstractFieldLoader<TimeField> {
 
         loadResolution(resultComponent, element);
         loadTimeFormat(resultComponent, element);
-        loadShowSeconds(resultComponent, element);
         loadTimeMode(resultComponent, element);
 
         loadDatatype(resultComponent, element);
@@ -56,13 +55,6 @@ public class TimeFieldLoader extends AbstractFieldLoader<TimeField> {
         if (StringUtils.isNotEmpty(timeFormat)) {
             timeFormat = loadResourceString(timeFormat);
             resultComponent.setFormat(timeFormat);
-        }
-    }
-
-    protected void loadShowSeconds(TimeField resultComponent, Element element) {
-        String showSeconds = element.attributeValue("showSeconds");
-        if (StringUtils.isNotEmpty(showSeconds)) {
-            resultComponent.setShowSeconds(Boolean.parseBoolean(showSeconds));
         }
     }
 

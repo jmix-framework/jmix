@@ -2077,7 +2077,6 @@
                 <xs:sequence>
                     <xs:element name="validators" minOccurs="0" type="dateValidatorsType"/>
                 </xs:sequence>
-                <xs:attribute name="showSeconds" type="xs:boolean"/>
                 <xs:attribute name="timeFormat" type="xs:string"/>
                 <xs:attribute name="resolution" type="timeFieldResolution"/>
                 <xs:attribute name="datatype" type="timeDatatypeEnum"/>
@@ -2926,7 +2925,6 @@
         <xs:attribute name="optionsDatasource" type="xs:string"/>
         <xs:attribute name="captionProperty" type="xs:string"/>
         <xs:attribute name="field" type="xs:string"/>
-        <xs:attribute name="showSeconds" type="xs:string"/>
         <xs:attribute name="required" type="xs:boolean"/>
         <xs:attribute name="mask" type="xs:string"/>
         <xs:attribute name="valueMode" type="maskedFieldValueMode"/>

@@ -223,7 +223,7 @@ public class EntityInspectorEditor extends StandardEditor {
         accessManager.applyRegisteredConstraints(attributeContext);
 
         //don't show empty table if the user don't have permissions on the attribute or the entity
-        if (!attributeContext.canViewPermitted() ||
+        if (!attributeContext.canView() ||
                 !entityContext.isViewPermitted()) {
             return;
         }

@@ -27,6 +27,7 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
+import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -74,9 +75,11 @@ public class SecurityUiTestConfiguration {
 
     @Bean
     @Primary
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
+                                                                PersistenceConfigProcessor processor,
+                                                                JpaVendorAdapter jpaVendorAdapter,
+                                                                DbmsSpecifics dbmsSpecifics) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics);
     }
 
     @Bean

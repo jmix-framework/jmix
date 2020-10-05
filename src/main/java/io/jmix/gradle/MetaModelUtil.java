@@ -18,9 +18,12 @@ package io.jmix.gradle;
 
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class MetaModelUtil {
@@ -41,6 +44,7 @@ public class MetaModelUtil {
     public static final String ENTITY_ANNOTATION_TYPE = "javax.persistence.Entity";
     public static final String EMBEDDABLE_ANNOTATION_TYPE = "javax.persistence.Embeddable";
     public static final String CONVERTER_ANNOTATION_TYPE = "javax.persistence.Converter";
+    public static final String STORE_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.Store";
 
     public static final String GET_ENTITY_ENTRY_METHOD_NAME = "__getEntityEntry";
     public static final String COPY_ENTITY_ENTRY_METHOD_NAME = "__copyEntityEntry";
@@ -214,4 +218,12 @@ public class MetaModelUtil {
         AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctField.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
         return annotationsAttribute != null && annotationsAttribute.getAnnotation(annotationType) != null;
     }
+
+    @Nullable
+    public static String findStoreName(CtClass ctClass) {
+        AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+        Annotation annotation = annotationsAttribute.getAnnotation(STORE_ANNOTATION_TYPE);
+        return annotation == null ? null : ((StringMemberValue) annotation.getMemberValue("name")).getValue();
+    }
+
 }

@@ -16,22 +16,29 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.HasSettings;
+import com.haulmont.cuba.settings.CubaLegacySettings;
+import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
-import com.haulmont.cuba.settings.CubaLegacySettings;
-import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
-public class WebAccordion extends io.jmix.ui.component.impl.WebAccordion {
+public class WebAccordion extends io.jmix.ui.component.impl.WebAccordion implements Accordion {
+
+    @Override
+    public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
+        internalRemoveSelectedTabChangeListener(listener);
+    }
 
     @Override
     protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent, Element descriptor, ComponentLoader loader) {

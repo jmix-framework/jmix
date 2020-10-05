@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui;
 
+import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileUploadField;

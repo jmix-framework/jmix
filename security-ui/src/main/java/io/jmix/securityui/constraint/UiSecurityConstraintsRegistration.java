@@ -18,6 +18,7 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
 import io.jmix.security.constraint.SpecificConstraintImpl;
+import io.jmix.ui.accesscontext.UiBulkEditContext;
 import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
 import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
@@ -44,6 +45,9 @@ public class UiSecurityConstraintsRegistration {
 
         accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
                 UiShowExceptionDetailsContext.class, "cuba.gui.showExceptionDetails"));
+
+        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class,
+                UiBulkEditContext.class, "cuba.gui.bulkEdit"));
 
         accessConstraintsRegistry.register(beanFactory.getBean(UiShowScreenConstraint.class));
 

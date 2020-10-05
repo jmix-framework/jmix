@@ -24,6 +24,7 @@ import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
+import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
@@ -60,9 +61,11 @@ public class JmixDynAttrTestConfiguration {
 
     @Bean
     @Primary
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
+    LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
+                                                                PersistenceConfigProcessor processor,
+                                                                JpaVendorAdapter jpaVendorAdapter,
+                                                                DbmsSpecifics dbmsSpecifics) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics);
     }
 
     @Bean

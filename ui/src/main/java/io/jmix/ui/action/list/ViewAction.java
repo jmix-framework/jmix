@@ -53,7 +53,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  */
 @StudioAction(category = "List Actions", description = "Opens an editor screen for an entity instance in read-only mode")
 @ActionType(ViewAction.ID)
-public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpeningAction {
+public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpeningAction, Action.ExecutableAction {
 
     public static final String ID = "view";
 
@@ -268,6 +268,7 @@ public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpe
      * Executes the action.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public void execute() {
         if (target == null) {
             throw new IllegalStateException("ViewAction target is not set");

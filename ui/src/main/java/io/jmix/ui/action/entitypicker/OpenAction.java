@@ -59,7 +59,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
 @StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
 @ActionType(OpenAction.ID)
 public class OpenAction<E> extends BaseAction
-        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean {
+        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,
+        Action.ExecutableAction {
 
     public static final String ID = "entity_open";
 
@@ -304,6 +305,7 @@ public class OpenAction<E> extends BaseAction
      * Executes the action.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public void execute() {
         if (!checkFieldValue())
             return;

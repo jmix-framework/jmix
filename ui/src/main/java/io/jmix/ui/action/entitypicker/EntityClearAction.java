@@ -71,6 +71,7 @@ public class EntityClearAction extends ValueClearAction implements EntityPicker.
     /**
      * Executes the action.
      */
+    @Override
     public void execute() {
         EntityPicker entityPicker = getEntityPicker();
 

@@ -58,7 +58,7 @@ import java.util.function.Supplier;
 @StudioAction(category = "List Actions", description = "Adds entities to the list using a lookup screen")
 @ActionType(AddAction.ID)
 public class AddAction<E> extends ListAction
-        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
+        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {
 
     public static final String ID = "add";
 
@@ -282,6 +282,7 @@ public class AddAction<E> extends ListAction
      * Executes the action.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void execute() {
         if (target == null) {
             throw new IllegalStateException("AddAction target is not set");

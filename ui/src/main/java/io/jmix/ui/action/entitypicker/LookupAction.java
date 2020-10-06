@@ -58,7 +58,8 @@ import java.util.function.Supplier;
 @StudioAction(category = "EntityPicker Actions", description = "Sets an entity to the entity picker using the entity lookup screen")
 @ActionType(LookupAction.ID)
 public class LookupAction<E> extends BaseAction
-        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean {
+        implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,
+        Action.ExecutableAction {
 
     public static final String ID = "entity_lookup";
 
@@ -299,6 +300,7 @@ public class LookupAction<E> extends BaseAction
      * Executes the action.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void execute() {
         MetaClass metaClass = entityPicker.getMetaClass();
         if (metaClass == null) {

@@ -18,6 +18,7 @@ package io.jmix.ui.action.valuepicker;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
@@ -37,7 +38,8 @@ import javax.annotation.Nullable;
  */
 @StudioAction(category = "ValuePicker Actions", description = "Clears the value picker value")
 @ActionType(ValueClearAction.ID)
-public class ValueClearAction extends BaseAction implements ValuePicker.ValuePickerAction, InitializingBean {
+public class ValueClearAction extends BaseAction implements ValuePicker.ValuePickerAction, InitializingBean,
+        Action.ExecutableAction {
 
     public static final String ID = "value_clear";
 
@@ -130,6 +132,7 @@ public class ValueClearAction extends BaseAction implements ValuePicker.ValuePic
      * Executes the action.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void execute() {
         // Set the value as if the user had set it
         valuePicker.setValueFromUser(valuePicker.getEmptyValue());

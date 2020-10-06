@@ -17,6 +17,7 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.Messages;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
@@ -41,7 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @StudioAction(category = "List Actions", description = "Reloads a list of entities from the database")
 @ActionType(RefreshAction.ID)
-public class RefreshAction extends ListAction {
+public class RefreshAction extends ListAction implements Action.ExecutableAction {
 
     public static final String ID = "refresh";
 
@@ -77,6 +78,7 @@ public class RefreshAction extends ListAction {
     /**
      * Executes the action.
      */
+    @Override
     public void execute() {
         if (target == null) {
             throw new IllegalStateException("RefreshAction target is not set");

@@ -55,7 +55,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
 @StudioAction(category = "List Actions", description = "Edits an entity instance using its editor screen")
 @ActionType(EditAction.ID)
 public class EditAction<E> extends SecuredListAction
-        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
+        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {
 
     public static final String ID = "edit";
 
@@ -325,6 +325,7 @@ public class EditAction<E> extends SecuredListAction
      * Executes the action.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public void execute() {
         if (target == null) {
             throw new IllegalStateException("EditAction target is not set");

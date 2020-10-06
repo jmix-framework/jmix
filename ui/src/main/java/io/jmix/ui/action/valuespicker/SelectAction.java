@@ -19,6 +19,7 @@ package io.jmix.ui.action.valuespicker;
 import io.jmix.core.Messages;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.app.valuespicker.selectvalue.SelectValueController;
@@ -51,7 +52,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
         category = "ValuesPicker Actions",
         description = "Sets a value to the values picker using the selection screen")
 @ActionType(SelectAction.ID)
-public class SelectAction<V> extends BaseAction implements ValuePickerAction, InitializingBean {
+public class SelectAction<V> extends BaseAction implements ValuePickerAction, InitializingBean,
+        Action.ExecutableAction {
 
     public static final String ID = "values_select";
     public static final String DEFAULT_SELECT_VALUE_SCREEN = "selectValueDialog";
@@ -203,6 +205,7 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     /**
      * Executes the action.
      */
+    @Override
     public void execute() {
         ScreenBuilder builder = screenBuilders.screen(valuesPicker.getFrame().getFrameOwner());
         builder = screenInitializer.initBuilder(builder);

@@ -21,6 +21,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.accesscontext.UiBulkEditContext;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.bulk.BulkEditors;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
@@ -55,7 +56,7 @@ import static io.jmix.ui.component.ComponentsHelper.getScreenContext;
  */
 @StudioAction(category = "List Actions", description = "Opens an editor for changing attribute values for several entity instances at once")
 @ActionType(BulkEditAction.ID)
-public class BulkEditAction extends SecuredListAction {
+public class BulkEditAction extends SecuredListAction implements Action.ExecutableAction {
 
     public static final String ID = "bulkEdit";
 
@@ -253,6 +254,7 @@ public class BulkEditAction extends SecuredListAction {
      * Executes the action.
      */
     @SuppressWarnings("unchecked")
+    @Override
     public void execute() {
         if (!(target.getItems() instanceof EntityDataUnit)) {
             throw new IllegalStateException("BulkEditAction target Items is null " +

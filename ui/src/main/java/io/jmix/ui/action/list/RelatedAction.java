@@ -38,7 +38,7 @@ import java.util.function.Supplier;
 //@StudioAction(category = "List Actions", description = "")
 @ActionType(RelatedAction.ID)
 public class RelatedAction extends SecuredListAction
-        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction {
+        implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {
 
     public static final String ID = "related";
 
@@ -136,6 +136,7 @@ public class RelatedAction extends SecuredListAction
         }
     }
 
+    @Override
     public void execute() {
         if (target == null) {
             throw new IllegalStateException("RelatedAction target is not set");

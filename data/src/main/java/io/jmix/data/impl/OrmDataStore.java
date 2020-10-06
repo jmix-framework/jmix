@@ -514,8 +514,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
                 checkCRUDConstraints(context);
 
-                if (!context.isSoftDeletion())
-                    em.setProperty(PersistenceHints.SOFT_DELETION, false);
+                boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
                 // persist new
                 for (Object entity : context.getEntitiesToSave()) {
@@ -612,6 +612,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     //                    }
                     //                }
                 }
+
+                em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
 
                 if (!context.isDiscardSaved()) {
                     referencesCollector = entityAttributesEraser.collectErasingReferences(saved, e -> {

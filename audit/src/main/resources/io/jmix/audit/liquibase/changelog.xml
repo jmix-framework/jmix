@@ -31,7 +31,7 @@
                              foreignKeyName="FK_AUDIT_LOGGED_ATTR_ENTITY"
                              references="AUDIT_LOGGED_ENTITY(ID)"/>
             </column>
-            <column name="NAME" type="varchar(50)"/>
+            <column name="NAME" type="varchar(255)"/>
         </createTable>
 
         <addUniqueConstraint

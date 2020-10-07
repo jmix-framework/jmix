@@ -54,7 +54,7 @@ public class LoggedAttribute implements Serializable {
     @JoinColumn(name = "ENTITY_ID", nullable = false)
     private LoggedEntity entity;
 
-    @Column(name = "NAME", length = 50)
+    @Column(name = "NAME")
     private String name;
 
     public UUID getId() {

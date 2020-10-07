@@ -53,7 +53,7 @@ public class FetchGroupManager {
     private MetadataTools metadataTools;
 
     @Autowired
-    private FetchPlanRepository viewRepository;
+    private FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     private ExtendedEntities extendedEntities;
@@ -426,7 +426,7 @@ public class FetchGroupManager {
                     FetchGroupField field = createFetchGroupField(entityClass, parentField, dependsOnProperty);
                     fetchGroupFields.add(field);
                     if (dependsOnMetaProp.getRange().isClass()) {
-                        FetchPlan dependsOnPropFetchPlan = viewRepository.getFetchPlan(dependsOnMetaProp.getRange().asClass(), FetchPlan.INSTANCE_NAME);
+                        FetchPlan dependsOnPropFetchPlan = fetchPlanRepository.getFetchPlan(dependsOnMetaProp.getRange().asClass(), FetchPlan.INSTANCE_NAME);
                         processFetchPlan(dependsOnPropFetchPlan, field, fetchGroupFields, useFetchGroup);
                     }
                 }

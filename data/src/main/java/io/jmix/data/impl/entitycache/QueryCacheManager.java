@@ -66,7 +66,7 @@ public class QueryCacheManager {
      * Get query results from query cache by specified {@code queryKey}
      */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getResultListFromCache(QueryKey queryKey, List<FetchPlan> views) {
+    public <T> List<T> getResultListFromCache(QueryKey queryKey, List<FetchPlan> fetchPlans) {
         log.debug("Looking for query in cache: {}", queryKey.printDescription());
         List<T> resultList = null;
         QueryResult queryResult = queryCache.get(queryKey);
@@ -79,7 +79,7 @@ public class QueryCacheManager {
                 log.warn("Using cacheable query without entity cache for {}", queryResult.getType());
             }
             for (Object id : queryResult.getResult()) {
-                resultList.add(em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(views).build()));
+                resultList.add(em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(fetchPlans).build()));
             }
         } else {
             log.debug("Query results are not found in cache: {}", queryKey.printDescription());
@@ -92,7 +92,7 @@ public class QueryCacheManager {
      * If query is cached and no results found exception is thrown
      */
     @SuppressWarnings("unchecked")
-    public <T> T getSingleResultFromCache(QueryKey queryKey, List<FetchPlan> views) {
+    public <T> T getSingleResultFromCache(QueryKey queryKey, List<FetchPlan> fetchPlans) {
         log.debug("Looking for query in cache: {}", queryKey.printDescription());
         QueryResult queryResult = queryCache.get(queryKey);
         if (queryResult != null) {
@@ -108,7 +108,7 @@ public class QueryCacheManager {
             String storeName = metadataTools.getStoreName(metaClass);
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object id : queryResult.getResult()) {
-                return (T) em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(views).build());
+                return (T) em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(fetchPlans).build());
             }
         }
         log.debug("Query results are not found in cache: {}", queryKey.printDescription());

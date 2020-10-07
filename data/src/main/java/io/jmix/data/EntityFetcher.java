@@ -48,7 +48,7 @@ public class EntityFetcher {
     protected Metadata metadata;
 
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected EntityStates entityStates;
@@ -78,7 +78,7 @@ public class EntityFetcher {
     public void fetch(Object instance, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return;
-        FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(instance.getClass(), fetchPlanName);
         fetch(instance, fetchPlan, new HashMap<>(), false);
     }
 
@@ -107,7 +107,7 @@ public class EntityFetcher {
     public void fetch(Object instance, @Nullable String fetchPlanName, boolean optimizeForDetached) {
         if (fetchPlanName == null)
             return;
-        FetchPlan fetchPlan = viewRepository.getFetchPlan(instance.getClass(), fetchPlanName);
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(instance.getClass(), fetchPlanName);
         fetch(instance, fetchPlan, new HashMap<>(), optimizeForDetached);
     }
 

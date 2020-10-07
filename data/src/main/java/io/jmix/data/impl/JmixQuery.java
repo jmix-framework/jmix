@@ -66,7 +66,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected ExtendedEntities extendedEntities;
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
     protected PersistenceSupport support;
     protected EntityChangedEventManager entityChangedEventManager;
     protected FetchGroupManager fetchGroupMgr;
@@ -103,7 +103,7 @@ public class JmixQuery<E> implements TypedQuery<E> {
         metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
         metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
         extendedEntities = (ExtendedEntities) beanFactory.getBean(ExtendedEntities.NAME);
-        viewRepository = (FetchPlanRepository) beanFactory.getBean(FetchPlanRepository.NAME);
+        fetchPlanRepository = (FetchPlanRepository) beanFactory.getBean(FetchPlanRepository.NAME);
         support = (PersistenceSupport) beanFactory.getBean(PersistenceSupport.NAME);
         entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
         fetchGroupMgr = (FetchGroupManager) beanFactory.getBean(FetchGroupManager.NAME);

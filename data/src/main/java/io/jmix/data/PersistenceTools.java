@@ -268,7 +268,7 @@ public class PersistenceTools {
     /**
      * Returns an ID of directly referenced entity without loading it from DB.
      * <p>
-     * If the view does not contain the reference and {@link FetchPlan#loadPartialEntities()} is true,
+     * If the fetchPlan does not contain the reference and {@link FetchPlan#loadPartialEntities()} is true,
      * the returned {@link RefId} will have {@link RefId#isLoaded()} = false.
      *
      * <p>Usage example:

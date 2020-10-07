@@ -161,7 +161,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     @Override
     public <E> E load(LoadContext<E> context) {
         if (log.isDebugEnabled()) {
-            log.debug("load: store={}, metaClass={}, id={}, view={}", storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
+            log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}", storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
         }
 
         final MetaClass metaClass = getEffectiveMetaClassFromContext(context);
@@ -246,7 +246,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     @SuppressWarnings("unchecked")
     public <E> List<E> loadList(LoadContext<E> context) {
         if (log.isDebugEnabled())
-            log.debug("loadList: store=" + storeName + ", metaClass=" + context.getEntityMetaClass() + ", view=" + context.getFetchPlan()
+            log.debug("loadList: store=" + storeName + ", metaClass=" + context.getEntityMetaClass() + ", fetchPlan=" + context.getFetchPlan()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
                     + ", query=" + context.getQuery()
                     + (context.getQuery() == null || context.getQuery().getFirstResult() == 0 ? "" : ", first=" + context.getQuery().getFirstResult())
@@ -371,7 +371,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     @SuppressWarnings("unchecked")
-    protected <E> List<E> loadListByBatchesOfIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan view, int batchSize) {
+    protected <E> List<E> loadListByBatchesOfIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan fetchPlan, int batchSize) {
         List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
 
         List<E> entities = new ArrayList<>(context.getIds().size());
@@ -380,7 +380,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             contextCopy.setIds(partition);
 
             Query query = createQuery(em, contextCopy, false, false);
-            query.setHint(PersistenceHints.FETCH_PLAN, view);
+            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
             List<E> list = executeQuery(query, false);
             entities.addAll(list);
         }
@@ -809,12 +809,12 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     protected FetchPlan getFetchPlanFromContext(SaveContext context, Object entity) {
-        FetchPlan view = context.getFetchPlans().get(entity);
-        if (view == null) {
-            view = fetchPlanRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
+        FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(entity.getClass(), FetchPlan.LOCAL);
         }
 
-        return view;
+        return fetchPlan;
     }
 
     @Nullable

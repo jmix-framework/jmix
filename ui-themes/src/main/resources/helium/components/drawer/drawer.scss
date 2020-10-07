@@ -1,0 +1,44 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin he-drawer($primary-stylename: jmix-drawer) {
+  .#{$primary-stylename} {
+
+    .jmix-drawer-header {
+      color: var(--sidemenu-title-color);
+      background: var(--sidemenu-title-background-color);
+    }
+
+    .jmix-drawer-footer {
+      background-color: var(--sidemenu-collapsible-controls-panel-background-color);
+    }
+
+    .jmix-drawer-button {
+      color: var(--sidemenu-collapsible-collapse-button-color);
+      background: var(--sidemenu-collapsible-collapse-button-background-color);
+
+      &:hover {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-hover-background-color);
+      }
+
+      &:active {
+        color: var(--sidemenu-collapsible-collapse-button-color);
+        background: var(--sidemenu-collapsible-collapse-button-active-background-color);
+      }
+    }
+  }
+}

@@ -5,13 +5,10 @@
         <collection id="usersDc"
                     class="io.jmix.samples.ui.entity.SampleUser">
             <fetchPlan>
+                <property name="id"/>
                 <property name="username"/>
                 <property name="firstName"/>
                 <property name="lastName"/>
-                <property name="middleName"/>
-                <property name="email"/>
-                <property name="language"/>
-                <property name="timeZone"/>
             </fetchPlan>
             <loader id="usersDl">
                 <query>
@@ -20,11 +17,10 @@
             </loader>
         </collection>
     </data>
-    <dialogMode height="600"
-                width="800"/>
-    <layout spacing="true" expand="usersTable">
-        <label value="Users"/>
-        <comboBox caption="Select Role"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout spacing="true" expand="usersTable" width="100%">
         <groupTable id="usersTable"
                     width="100%"
                     dataContainer="usersDc">
@@ -34,15 +30,11 @@
                 <action id="remove" type="remove"/>
             </actions>
             <columns>
-                <column id="name"/>
+                <column id="username"/>
                 <column id="firstName"/>
                 <column id="lastName"/>
-                <column id="middleName"/>
-                <column id="email"/>
-                <column id="language"/>
-                <column id="timeZone"/>
             </columns>
-            <rowsCount/>
+            <pagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="usersTable.create"/>

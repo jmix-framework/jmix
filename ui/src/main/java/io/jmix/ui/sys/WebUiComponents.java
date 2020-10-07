@@ -137,6 +137,7 @@ public class WebUiComponents implements UiComponents {
 
         classes.put(AppMenu.NAME, WebAppMenu.class);
         classes.put(AppWorkArea.NAME, WebAppWorkArea.class);
+        classes.put(Drawer.NAME, WebDrawer.class);
         classes.put(UserActionsButton.NAME, WebUserActionsButton.class);
         classes.put(LogoutButton.NAME, WebLogoutButton.class);
         classes.put(NewWindowButton.NAME, WebNewWindowButton.class);

@@ -53,10 +53,6 @@ public class SampleUser implements BaseUser {
     @Column(name = "PASSWORD")
     protected String password;
 
-    //todo remove?
-    @Column(name = "NAME")
-    protected String name;
-
     @Column(name = "FIRST_NAME")
     protected String firstName;
 
@@ -136,14 +132,6 @@ public class SampleUser implements BaseUser {
         this.password = password;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -201,13 +189,12 @@ public class SampleUser implements BaseUser {
         /*}*/
         MessageFormat fmt = new MessageFormat(pattern);
         return StringUtils.trimToEmpty(fmt.format(new Object[]{
-                StringUtils.trimToEmpty(username),
-                StringUtils.trimToEmpty(name)
+                StringUtils.trimToEmpty(username)
         }));
     }
 
     @Override
     public String getDisplayName() {
-        return name;
+        return username;
     }
 }

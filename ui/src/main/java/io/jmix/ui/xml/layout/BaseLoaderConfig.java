@@ -17,13 +17,7 @@
 package io.jmix.ui.xml.layout;
 
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.mainwindow.AppMenu;
-import io.jmix.ui.component.mainwindow.LogoutButton;
-import io.jmix.ui.component.mainwindow.NewWindowButton;
-import io.jmix.ui.component.mainwindow.SideMenu;
-import io.jmix.ui.component.mainwindow.TimeZoneIndicator;
-import io.jmix.ui.component.mainwindow.UserActionsButton;
-import io.jmix.ui.component.mainwindow.UserIndicator;
+import io.jmix.ui.component.mainwindow.*;
 import io.jmix.ui.xml.layout.loader.*;
 
 import java.util.Map;
@@ -119,6 +113,7 @@ public abstract class BaseLoaderConfig {
 
         loaders.put(AppMenu.NAME, AppMenuLoader.class);
         loaders.put(AppWorkArea.NAME, AppWorkAreaLoader.class);
+        loaders.put(Drawer.NAME, DrawerLoader.class);
         loaders.put(UserActionsButton.NAME, UserActionsButtonLoader.class);
         loaders.put(LogoutButton.NAME, LogoutButtonLoader.class);
         loaders.put(NewWindowButton.NAME, NewWindowButtonLoader.class);

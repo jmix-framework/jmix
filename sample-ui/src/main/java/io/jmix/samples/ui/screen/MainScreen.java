@@ -16,22 +16,22 @@
 
 package io.jmix.samples.ui.screen;
 
-import com.vaadin.server.WebBrowser;
 import io.jmix.core.Messages;
-import io.jmix.ui.*;
+import io.jmix.ui.ScreenTools;
+import io.jmix.ui.Screens;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.dev.LayoutAnalyzerContextMenuProvider;
-import io.jmix.ui.component.mainwindow.AppMenu;
+import io.jmix.ui.component.mainwindow.Drawer;
 import io.jmix.ui.component.mainwindow.SideMenu;
-import io.jmix.ui.component.mainwindow.UserIndicator;
-import io.jmix.ui.screen.*;
-import io.jmix.ui.widget.JmixCollapsibleMenuLayoutExtension;
-import io.jmix.ui.widget.JmixCssActionsLayout;
+import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-
-import static io.jmix.ui.component.ComponentsHelper.setStyleName;
 
 /**
  * Base class for a controller of application Main screen.
@@ -40,122 +40,44 @@ import static io.jmix.ui.component.ComponentsHelper.setStyleName;
 @UiController("main")
 public class MainScreen extends Screen implements Window.HasWorkArea {
 
-    public static final String SIDEMENU_COLLAPSED_STATE = "sidemenuCollapsed";
-    public static final String SIDEMENU_COLLAPSED_STYLENAME = "collapsed";
-
     protected static final String APP_LOGO_IMAGE = "application.logoImage";
 
-    public MainScreen() {
-        addInitListener(this::initComponents);
-    }
+    @Autowired
+    private Image logoImage;
+    @Autowired
+    private Messages messages;
+    @Autowired
+    private ScreenTools screenTools;
+    @Autowired
+    private Screens screens;
+    @Autowired
+    private LayoutAnalyzerContextMenuProvider layoutAnalyzerContextMenuProvider;
+    @Autowired
+    private Drawer drawer;
+    @Autowired
+    private Button collapseDrawerButton;
 
-    protected void initComponents(@SuppressWarnings("unused") InitEvent e) {
+    @Subscribe
+    public void onInit(InitEvent event) {
         initLogoImage();
-        initFtsField();
-        initUserIndicator();
-        initMenu();
         initLayoutAnalyzerContextMenu();
     }
 
-    protected void initUserIndicator() {
-        UserIndicator userIndicator = getUserIndicator();
-        if (userIndicator != null) {
-            boolean authenticated = AppUI.getCurrent().hasAuthenticatedSession();
-            userIndicator.setVisible(authenticated);
-        }
+    @Subscribe
+    protected void onAfterShow(AfterShowEvent event) {
+        screenTools.openDefaultScreen(screens);
     }
 
     protected void initLogoImage() {
-        Image logoImage = getLogoImage();
-        String logoImagePath = getApplicationContext().getBean(Messages.class)
-                .getMessage(APP_LOGO_IMAGE);
-
-        if (logoImage != null
-                && StringUtils.isNotBlank(logoImagePath)
+        String logoImagePath = messages.getMessage(APP_LOGO_IMAGE);
+        if (StringUtils.isNotBlank(logoImagePath)
                 && !APP_LOGO_IMAGE.equals(logoImagePath)) {
             logoImage.setSource(ThemeResource.class).setPath(logoImagePath);
         }
     }
 
-    protected void initFtsField() {
-        // TODO fts
-        /*FtsField ftsField = getFtsField();
-        if (ftsField != null && !FtsConfigHelper.getEnabled()) {
-            ftsField.setVisible(false);
-        }*/
-    }
-
     protected void initLayoutAnalyzerContextMenu() {
-        Image logoImage = getLogoImage();
-        if (logoImage != null) {
-            LayoutAnalyzerContextMenuProvider laContextMenuProvider =
-                    (LayoutAnalyzerContextMenuProvider) getApplicationContext().getBean(LayoutAnalyzerContextMenuProvider.NAME);
-            laContextMenuProvider.initContextMenu(this, logoImage);
-        }
-    }
-
-    protected void initMenu() {
-        Component menu = getAppMenu();
-        if (menu == null) {
-            menu = getSideMenu();
-        }
-
-        if (menu != null) {
-            ((Component.Focusable) menu).focus();
-        }
-
-        initCollapsibleMenu();
-    }
-
-    protected void initCollapsibleMenu() {
-        Component sideMenuContainer = getWindow().getComponent("sideMenuContainer");
-        if (sideMenuContainer instanceof CssLayout) {
-            Component sideMenuLayout = getWindow().getComponent("horizontalWrap");
-            if (sideMenuLayout instanceof  CssLayout) {
-                sideMenuLayout.withUnwrapped(JmixCssActionsLayout.class, JmixCollapsibleMenuLayoutExtension::new);
-            }
-
-            if (isMobileDevice()) {
-                setSideMenuCollapsed(true);
-            } else {
-                String menuCollapsedCookie = App.getInstance()
-                        .getCookieValue(SIDEMENU_COLLAPSED_STATE);
-
-                boolean menuCollapsed = Boolean.parseBoolean(menuCollapsedCookie);
-
-                setSideMenuCollapsed(menuCollapsed);
-            }
-
-            initCollapseMenuControls();
-        }
-    }
-
-    protected void initCollapseMenuControls() {
-        Button collapseMenuButton = getCollapseMenuButton();
-        if (collapseMenuButton != null) {
-            collapseMenuButton.addClickListener(event ->
-                    setSideMenuCollapsed(!isMenuCollapsed()));
-        }
-
-        Button settingsButton = getSettingsButton();
-        if (settingsButton != null) {
-            settingsButton.addClickListener(event ->
-                    openSettingsScreen());
-        }
-
-        Button loginButton = getLoginButton();
-        if (loginButton != null) {
-            loginButton.addClickListener(event ->
-                    openLoginScreen());
-        }
-    }
-
-    @Subscribe
-    protected void onAfterShow(AfterShowEvent event) {
-        Screens screens = UiControllerUtils.getScreenContext(this)
-                .getScreens();
-        getApplicationContext().getBean(ScreenTools.class)
-                .openDefaultScreen(screens);
+        layoutAnalyzerContextMenuProvider.initContextMenu(this, logoImage);
     }
 
     @Nullable
@@ -164,104 +86,13 @@ public class MainScreen extends Screen implements Window.HasWorkArea {
         return (AppWorkArea) getWindow().getComponent("workArea");
     }
 
-    @Nullable
-    public UserIndicator getUserIndicator() {
-        return (UserIndicator) getWindow().getComponent("userIndicator");
-    }
-
-    @Nullable
-    protected Button getCollapseMenuButton() {
-        return (Button) getWindow().getComponent("collapseMenuButton");
-    }
-
-    @Nullable
-    protected Button getSettingsButton() {
-        return (Button) getWindow().getComponent("settingsButton");
-    }
-
-    @Nullable
-    protected Button getLoginButton() {
-        return (Button) getWindow().getComponent("loginButton");
-    }
-
-    @Nullable
-    protected Image getLogoImage() {
-        return (Image) getWindow().getComponent("logoImage");
-    }
-
-    // TODO fts
-    /*@Nullable
-    protected FtsField getFtsField() {
-        return (FtsField) getWindow().getComponent("ftsField");
-    }*/
-
-    @Nullable
-    protected AppMenu getAppMenu() {
-        return (AppMenu) getWindow().getComponent("appMenu");
-    }
-
-    @Nullable
-    protected SideMenu getSideMenu() {
-        return (SideMenu) getWindow().getComponent("sideMenu");
-    }
-
-    @Nullable
-    protected Component getTitleBar() {
-        return getWindow().getComponent("titleBar");
-    }
-
-    protected void openLoginScreen() {
-        String loginScreenId = getApplicationContext().getBean(UiProperties.class).getLoginScreenId();
-
-        UiControllerUtils.getScreenContext(this)
-                .getScreens()
-                .create(loginScreenId, OpenMode.ROOT)
-                .show();
-    }
-
-    protected void openSettingsScreen() {
-        UiControllerUtils.getScreenContext(this)
-                .getScreens()
-                .create("settings", OpenMode.NEW_TAB)
-                .show();
-    }
-
-    protected void setSideMenuCollapsed(boolean collapsed) {
-        Component sideMenuContainer = getWindow().getComponent("sideMenuContainer");
-        CssLayout sideMenuPanel = (CssLayout) getWindow().getComponent("sideMenuPanel");
-        Button collapseMenuButton = getCollapseMenuButton();
-
-        setStyleName(sideMenuContainer, SIDEMENU_COLLAPSED_STYLENAME, collapsed);
-        setStyleName(sideMenuPanel, SIDEMENU_COLLAPSED_STYLENAME, collapsed);
-
-        if (collapseMenuButton != null) {
-            Messages messages = getApplicationContext().getBean(Messages.class);
-            if (collapsed) {
-                collapseMenuButton.setCaption(messages.getMessage("menuExpandGlyph"));
-                collapseMenuButton.setDescription(messages.getMessage("sideMenuExpand"));
-            } else {
-                collapseMenuButton.setCaption(messages.getMessage("menuCollapseGlyph"));
-                collapseMenuButton.setDescription(messages.getMessage("sideMenuCollapse"));
-            }
+    @Subscribe("collapseDrawerButton")
+    public void onCollapseDrawerButtonClick(Button.ClickEvent event) {
+        drawer.toggle();
+        if (drawer.isCollapsed()) {
+            collapseDrawerButton.setIconFromSet(JmixIcon.CHEVRON_RIGHT);
+        } else {
+            collapseDrawerButton.setIconFromSet(JmixIcon.CHEVRON_LEFT);
         }
-
-        App.getInstance()
-                .addCookie(SIDEMENU_COLLAPSED_STATE, String.valueOf(collapsed));
-    }
-
-    protected boolean isMenuCollapsed() {
-        CssLayout sideMenuPanel = (CssLayout) getWindow().getComponent("sideMenuPanel");
-        return sideMenuPanel != null
-                && sideMenuPanel.getStyleName() != null
-                && sideMenuPanel.getStyleName().contains(SIDEMENU_COLLAPSED_STYLENAME);
-    }
-
-    protected boolean isMobileDevice() {
-        WebBrowser browser = AppUI.getCurrent()
-                .getPage()
-                .getWebBrowser();
-
-        return browser.getScreenWidth() < 500
-                || browser.getScreenHeight() < 800;
     }
 }

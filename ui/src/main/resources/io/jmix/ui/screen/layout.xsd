@@ -3934,6 +3934,16 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="drawerComponent">
+        <xs:sequence>
+            <xs:group ref="layoutOrComponent"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasStyle"/>
+        <xs:attributeGroup ref="hasCss"/>
+        <xs:attribute name="expandOnHover" type="xs:boolean"/>
+    </xs:complexType>
+
     <xs:complexType name="timeZoneIndicatorComponent">
         <xs:complexContent>
             <xs:extension base="baseMainElement">
@@ -4081,6 +4091,7 @@
                 <xs:element name="userIndicator" type="userIndicatorComponent"/>
                 <xs:element name="timeZoneIndicator" type="timeZoneIndicatorComponent"/>
                 <xs:element name="workArea" type="workAreaComponent"/>
+                <xs:element name="drawer" type="drawerComponent"/>
                 <xs:element name="sideMenu" type="sideMenuComponent"/>
                 <xs:element name="menu" type="menuComponent"/>
             </xs:choice>

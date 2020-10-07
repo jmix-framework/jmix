@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package io.jmix.samples.ui.screen.user;
 
 import io.jmix.samples.ui.entity.SampleUser;
-import io.jmix.ui.screen.LookupComponent;
-import io.jmix.ui.screen.StandardLookup;
+import io.jmix.ui.screen.EditedEntityContainer;
+import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@UiController("sample_User.browse")
-@UiDescriptor("sample-user-browse.xml")
-@LookupComponent("usersTable")
-public class SampleUserBrowse extends StandardLookup<SampleUser> {
 
+@UiController("sample_User.edit")
+@UiDescriptor("sample-user-edit.xml")
+@EditedEntityContainer("userDc")
+public class SampleUserEdit extends StandardEditor<SampleUser> {
 }

@@ -420,41 +420,7 @@ $cuba-sidemenu-submenu-background-color: $cuba-sidemenu-background-color !defaul
       }
     }
 
-    .c-sidemenu-collapse-button {
-      $bg-color: #2b2b2b;
-
-      width: $cuba-sidemenu-layout-collapsed-width;
-      height: $cuba-sidemenu-layout-collapsed-width;
-      margin-right: auto;
-      padding: 0;
-
-      font-size: 2em;
-      color: valo-font-color($bg-color, 0.40);
-
-      border: none;
-      border-radius: 0;
-      background: $bg-color;
-      box-shadow: none;
-
-      &:hover {
-        color: $cuba-menubar-menuitem-text-selected-color;
-      }
-
-      &::before {
-        height: 100%;
-      }
-
-      &::after {
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      }
-
-      @if $cuba-sidemenu-layout-collapse-enabled == false {
-        display: none;
-      }
-    }
+    @include drawer-collapse-button($button-stylename: c-sidemenu-collapse-button, $font-size: 2em);
 
     $buttons-width: 30px;
 

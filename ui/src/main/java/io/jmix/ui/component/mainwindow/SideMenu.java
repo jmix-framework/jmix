@@ -16,11 +16,13 @@
 
 package io.jmix.ui.component.mainwindow;
 
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.menu.MenuConfig;
 
 import javax.annotation.Nullable;
+import java.util.EventObject;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -180,6 +182,15 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
      * @return true if a submenu is collapsing when another parent menu item is clicked
      */
     boolean isShowSingleExpandedMenu();
+
+
+    /**
+     * Adds a listener that will be fired when leaf (non-expandable) menu item is clicked.
+     *
+     * @param listener a listener to add
+     * @return a {@link Subscription} object
+     */
+    Subscription addItemSelectListener(Consumer<ItemSelectEvent> listener);
 
     /**
      * Menu item
@@ -373,5 +384,28 @@ public interface SideMenu extends Component.BelongToFrame, Component.Focusable {
          * @throws IllegalArgumentException if not found
          */
         MenuItem getParentNN();
+    }
+
+    /**
+     * Event that is fired when menu item is selected (screen will be opened).
+     * Event is not triggered when item is containing children (i.e. being expanded).
+     */
+    class ItemSelectEvent extends EventObject {
+
+        protected final MenuItem menuItem;
+
+        public ItemSelectEvent(SideMenu source, MenuItem menuItem) {
+            super(source);
+            this.menuItem = menuItem;
+        }
+
+        public MenuItem getMenuItem() {
+            return menuItem;
+        }
+
+        @Override
+        public SideMenu getSource() {
+            return (SideMenu) super.getSource();
+        }
     }
 }

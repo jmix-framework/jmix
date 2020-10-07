@@ -1,0 +1,131 @@
+/*!
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin halo-drawer($primary-stylename: jmix-drawer) {
+
+  .#{$primary-stylename}-layout {
+    display: flex;
+    height: 100%;
+
+    // Have to override explicit width to make collapsing work correctly
+    .c-main-tabsheet > .v-tabsheet-content,
+    .c-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel,
+    .c-main-tabsheet > .v-tabsheet-content > .v-tabsheet-tabsheetpanel > .v-scrollable {
+      width: 100% !important;
+    }
+
+    .c-workarea {
+      flex-grow: 1;
+      flex-shrink: 1;
+      z-index: 0;
+      min-width: 100px;
+    }
+  }
+
+  .#{$primary-stylename} {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    outline: none;
+    width: $cuba-sidemenu-layout-expanded-width;
+    @include cuba-sidemenu-collapsed(false);
+
+    &.collapsed {
+      width: $cuba-sidemenu-layout-collapsed-width;
+      overflow: hidden;
+      @include cuba-sidemenu-collapsed(true);
+    }
+
+    &.collapsed.expand-on-hover:hover {
+      width: $cuba-sidemenu-layout-expanded-width;
+      @include cuba-sidemenu-collapsed(false);
+    }
+
+    .jmix-drawer-header {
+      $logo-size: 20px;
+
+      background: $cuba-sidemenu-title-background-color;
+
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: center;
+
+      height: 40px;
+      // consider 1px right border
+      padding: 0 floor(($cuba-sidemenu-layout-collapsed-width - $logo-size) / 2);
+
+      .app-icon {
+        height: $logo-size;
+        width: $logo-size;
+        flex-shrink: 0;
+
+        margin-right: $v-layout-spacing-horizontal;
+      }
+
+      .app-title {
+        font-size: $cuba-sidemenu-title-font-size;
+        font-weight: $cuba-sidemenu-title-font-weight;
+
+        width: $cuba-sidemenu-layout-expanded-width -
+        3 * $v-layout-spacing-horizontal - $logo-size;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .jmix-drawer-content {
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+
+    .jmix-drawer-footer {
+      background: $cuba-sidemenu-title-background-color;
+    }
+
+    @include drawer-collapse-button()
+  }
+}
+
+@mixin drawer-collapse-button($button-stylename: jmix-drawer-collapse-button, $font-size: 1.2em) {
+  .#{$button-stylename} {
+    width: $cuba-sidemenu-layout-collapsed-width;
+    height: $cuba-sidemenu-layout-collapsed-width;
+    margin-right: auto;
+    padding: 0;
+
+    font-size: $font-size;
+
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    &::before {
+      height: 100%;
+    }
+
+    &::after {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    @if $cuba-sidemenu-layout-collapse-enabled == false {
+      display: none;
+    }
+  }
+}

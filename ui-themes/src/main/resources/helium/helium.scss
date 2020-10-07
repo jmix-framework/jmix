@@ -57,6 +57,7 @@
 @import "components/radiobuttongroup/radiobuttongroup";
 @import "components/richtextarea/richtextarea";
 @import "components/sidemenu/sidemenu";
+@import "components/drawer/drawer";
 @import "components/slider/slider";
 @import "components/sourcecodeeditor/sourcecodeeditor";
 @import "components/suggestionfield/suggestionfield";
@@ -138,6 +139,7 @@
   @include he-maskedfield;
   @include he-resizabletextarea;
   @include he-sidemenu;
+  @include he-drawer;
   @include he-sourcecodeeditor;
   @include he-suggestionfield;
   @include he-searchselect;

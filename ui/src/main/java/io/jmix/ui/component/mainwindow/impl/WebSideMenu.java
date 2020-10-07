@@ -18,6 +18,7 @@ package io.jmix.ui.component.mainwindow.impl;
 
 import com.vaadin.server.ClientConnector;
 import com.vaadin.server.Resource;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Button;
@@ -344,6 +345,11 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
         return component.isShowSingleExpandedMenu();
     }
 
+    @Override
+    public Subscription addItemSelectListener(Consumer<ItemSelectEvent> listener) {
+        return getEventHub().subscribe(ItemSelectEvent.class, listener);
+    }
+
     protected static class MenuItemImpl implements MenuItem {
         protected WebSideMenu menu;
         protected String id;
@@ -577,6 +583,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
 
         @SuppressWarnings("unused")
         protected void menuSelected(JmixSideMenu.MenuItemTriggeredEvent event) {
+            this.menu.getEventHub().publish(ItemSelectEvent.class, new ItemSelectEvent(this.menu, this));
             this.command.accept(this);
         }
     }

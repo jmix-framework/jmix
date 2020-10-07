@@ -77,6 +77,7 @@
 @import "components/resizabletextarea/resizabletextarea";
 @import "components/draganddrop/draganddrop";
 @import "components/sidemenu/sidemenu";
+@import "components/drawer/drawer";
 @import "components/fileuploadwrapper/fileuploadwrapper";
 @import "components/suggestionfield/suggestionfield";
 @import "components/image/image";
@@ -189,6 +190,7 @@
   @include halo-cuba-contextmenu-button;
   @include halo-cuba-searchselect;
   @include halo-cuba-sidemenu;
+  @include halo-drawer;
   @include halo-cuba-multiupload;
   @include halo-cuba-entitylinkfield;
   @include halo-cuba-fieldgrouplayout;

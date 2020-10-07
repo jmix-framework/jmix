@@ -29,17 +29,17 @@ public class FetchPlanProperty implements Serializable {
 
     private String name;
 
-    private FetchPlan view;
+    private FetchPlan fetchPlan;
 
     private FetchMode fetchMode = FetchMode.AUTO;
 
-    public FetchPlanProperty(String name, @Nullable FetchPlan view) {
-        this(name, view, FetchMode.AUTO);
+    public FetchPlanProperty(String name, @Nullable FetchPlan fetchPlan) {
+        this(name, fetchPlan, FetchMode.AUTO);
     }
 
-    public FetchPlanProperty(String name, @Nullable FetchPlan view, FetchMode fetchMode) {
+    public FetchPlanProperty(String name, @Nullable FetchPlan fetchPlan, FetchMode fetchMode) {
         this.name = name;
-        this.view = view;
+        this.fetchPlan = fetchPlan;
         this.fetchMode = fetchMode;
     }
 
@@ -55,7 +55,7 @@ public class FetchPlanProperty implements Serializable {
      */
     @Nullable
     public FetchPlan getFetchPlan() {
-        return view;
+        return fetchPlan;
     }
 
     /**

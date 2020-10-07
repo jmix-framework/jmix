@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * new LoadContext.Query("select u from sec$User u where u.login like :login")
  * .setParameter("login", "a%")
  * .setMaxResults(10))
- * .setView("user.browse");
+ * .setFetchPlan("user.browse");
  * List&lt;User&gt; users = dataManager.loadList(context);
  * </pre>
  * <p>
@@ -109,7 +109,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * @return view that is used for loading entities
+     * @return fetchPlan that is used for loading entities
      */
     @Nullable
     public FetchPlan getFetchPlan() {
@@ -117,7 +117,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * @param fetchPlan view that is used for loading entities
+     * @param fetchPlan fetchPlan that is used for loading entities
      * @return this instance for chaining
      */
     public LoadContext<E> setFetchPlan(FetchPlan fetchPlan) {
@@ -226,7 +226,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     /**
      * @return whether to load partial entities. When true (which is by default), some local attributes can be unfetched
      * according to {@link #setFetchPlan(FetchPlan)}.
-     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
+     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the fetchPlan is passed to {@link DataManager}.
      */
     public boolean isLoadPartialEntities() {
         return loadPartialEntities;
@@ -235,7 +235,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     /**
      * Whether to load partial entities. When true (which is by default), some local attributes can be unfetched
      * according to {@link #setFetchPlan(FetchPlan)}.
-     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the view is passed to {@link DataManager}.
+     * <p>The state of {@link FetchPlan#loadPartialEntities()} is ignored when the fetchPlan is passed to {@link DataManager}.
      */
     public LoadContext<E> setLoadPartialEntities(boolean loadPartialEntities) {
         this.loadPartialEntities = loadPartialEntities;
@@ -287,7 +287,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     @Override
     public String toString() {
         return String.format(
-                "LoadContext{metaClass=%s, query=%s, view=%s, id=%s, softDeletion=%s, partialEntities=%s}",
+                "LoadContext{metaClass=%s, query=%s, fetchPlan=%s, id=%s, softDeletion=%s, partialEntities=%s}",
                 metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities
         );
     }

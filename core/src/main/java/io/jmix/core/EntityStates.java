@@ -45,7 +45,7 @@ public class EntityStates {
     protected PersistentAttributesLoadChecker checker;
 
     @Autowired
-    protected FetchPlanRepository viewRepository;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -174,20 +174,20 @@ public class EntityStates {
             }
 
             if (metaProperty.getRange().isClass()) {
-                FetchPlan propertyView = property.getFetchPlan();
+                FetchPlan propertyFetchPlan = property.getFetchPlan();
 
-                if (propertyView != null && metadataTools.isPersistent(metaProperty)) {
+                if (propertyFetchPlan != null && metadataTools.isPersistent(metaProperty)) {
                     Object value = EntityValues.getValue(entity, metaProperty.getName());
 
                     if (value != null) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {
-                            checkLoadedWithFetchPlan(value, propertyView, visited);
+                            checkLoadedWithFetchPlan(value, propertyFetchPlan, visited);
                         } else {
                             @SuppressWarnings("unchecked")
                             Collection collection = (Collection) value;
 
                             for (Object item : collection) {
-                                checkLoadedWithFetchPlan(item, propertyView, visited);
+                                checkLoadedWithFetchPlan(item, propertyFetchPlan, visited);
                             }
                         }
                     }
@@ -225,7 +225,7 @@ public class EntityStates {
     public void checkLoadedWithFetchPlan(Object entity, String fetchPlanName) {
         checkNotNullArgument(fetchPlanName);
 
-        checkLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
+        checkLoadedWithFetchPlan(entity, fetchPlanRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
     }
 
     protected boolean isLoadedWithFetchPlan(Object entity, FetchPlan fetchPlan, Set visited) {
@@ -301,7 +301,7 @@ public class EntityStates {
         checkNotNullArgument(fetchPlanName);
         EntityPreconditions.checkEntityType(entity);
 
-        return isLoadedWithFetchPlan(entity, viewRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
+        return isLoadedWithFetchPlan(entity, fetchPlanRepository.getFetchPlan(metadata.getClass(entity), fetchPlanName));
     }
 
     /**

@@ -89,10 +89,10 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @Override
     public String toJson(Object entity,
-                         @Nullable FetchPlan view,
+                         @Nullable FetchPlan fetchPlan,
                          EntitySerializationOption... options) {
         context.remove();
-        return createGsonForSerialization(view, options).toJson(entity);
+        return createGsonForSerialization(fetchPlan, options).toJson(entity);
     }
 
     @Override
@@ -102,10 +102,10 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @Override
     public String toJson(Collection<?> entities,
-                         @Nullable FetchPlan view,
+                         @Nullable FetchPlan fetchPlan,
                          EntitySerializationOption... options) {
         context.remove();
-        return createGsonForSerialization(view, options).toJson(entities);
+        return createGsonForSerialization(fetchPlan, options).toJson(entities);
     }
 
     @Override
@@ -139,13 +139,13 @@ public class EntitySerializationImpl implements EntitySerialization {
         return createGsonForDeserialization(null, options).fromJson(json, type);
     }
 
-    protected Gson createGsonForSerialization(@Nullable FetchPlan view, EntitySerializationOption... options) {
+    protected Gson createGsonForSerialization(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         if (ArrayUtils.contains(options, EntitySerializationOption.PRETTY_PRINT)) {
             gsonBuilder.setPrettyPrinting();
         }
         gsonBuilder
-                .registerTypeHierarchyAdapter(Entity.class, new EntitySerializer(view, options))
+                .registerTypeHierarchyAdapter(Entity.class, new EntitySerializer(fetchPlan, options))
                 .registerTypeHierarchyAdapter(Date.class, new DateSerializer())
                 .create();
         if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_NULLS)) {
@@ -184,10 +184,10 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected boolean compactRepeatedEntities = false;
         protected boolean serializeInstanceName;
         protected boolean doNotSerializeReadOnlyProperties = false;
-        protected FetchPlan view;
+        protected FetchPlan fetchPlan;
 
-        public EntitySerializer(@Nullable FetchPlan view, EntitySerializationOption... options) {
-            this.view = view;
+        public EntitySerializer(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
+            this.fetchPlan = fetchPlan;
             if (options != null) {
                 for (EntitySerializationOption option : options) {
                     if (option == EntitySerializationOption.COMPACT_REPEATED_ENTITIES)
@@ -202,10 +202,10 @@ public class EntitySerializationImpl implements EntitySerialization {
 
         @Override
         public JsonElement serialize(Entity entity, Type typeOfSrc, JsonSerializationContext context) {
-            return serializeEntity(entity, view, new HashSet<>());
+            return serializeEntity(entity, fetchPlan, new HashSet<>());
         }
 
-        protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
+        protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity.getClass());
             if (!metadataTools.isEmbeddable(metaClass)) {
@@ -224,16 +224,16 @@ public class EntitySerializationImpl implements EntitySerialization {
                     Table<Object, MetaClass, Object> processedObjects = context.get().getProcessedEntities();
                     if (processedObjects.get(EntityValues.getId(entity), metaClass) == null) {
                         processedObjects.put(EntityValues.getId(entity), metaClass, entity);
-                        writeFields(entity, jsonObject, view, cyclicReferences);
+                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
                     }
                 } else {
                     if (!cyclicReferences.contains(entity)) {
                         cyclicReferences.add(entity);
-                        writeFields(entity, jsonObject, view, cyclicReferences);
+                        writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
                     }
                 }
             } else {
-                writeFields(entity, jsonObject, view, cyclicReferences);
+                writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
             }
 
             if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
@@ -274,7 +274,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                                     (metadataTools.isPersistent(metaProperty) && entityStates.isLoaded(entity, metaProperty.getName())));
         }
 
-        protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
+        protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             MetaClass metaClass = metadata.getClass(entity);
             Collection<MetaProperty> properties = new ArrayList<>(metaClass.getProperties());
 //            if (entity instanceof BaseGenericIdEntity && ((BaseGenericIdEntity) entity).getDynamicAttributes() != null) {
@@ -285,12 +285,12 @@ public class EntitySerializationImpl implements EntitySerialization {
 //            }
             for (MetaProperty metaProperty : properties) {
                 if (propertyWritingAllowed(metaProperty, entity)) {
-                    FetchPlanProperty viewProperty = null;
+                    FetchPlanProperty fetchPlanProperty = null;
                     //todo dynamic attribute
 //                    if (!DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-//                        if (view != null) {
-//                            viewProperty = view.getProperty(metaProperty.getName());
-//                            if (viewProperty == null) continue;
+//                        if (fetchPlan != null) {
+//                            fetchPlanProperty = fetchPlan.getProperty(metaProperty.getName());
+//                            if (fetchPlanProperty == null) continue;
 //                        }
 //
 //                        if (!entityStates.isNew(entity)
@@ -322,12 +322,12 @@ public class EntitySerializationImpl implements EntitySerialization {
                     } else if (propertyRange.isClass()) {
                         if (fieldValue instanceof Entity) {
                             JsonObject propertyJsonObject = serializeEntity((Entity) fieldValue,
-                                    viewProperty != null ? viewProperty.getFetchPlan() : null,
+                                    fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
                                     new HashSet<>(cyclicReferences));
                             jsonObject.add(metaProperty.getName(), propertyJsonObject);
                         } else if (fieldValue instanceof Collection) {
                             JsonArray jsonArray = serializeCollection((Collection) fieldValue,
-                                    viewProperty != null ? viewProperty.getFetchPlan() : null,
+                                    fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
                                     new HashSet<>(cyclicReferences));
                             jsonObject.add(metaProperty.getName(), jsonArray);
                         }
@@ -348,12 +348,12 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected JsonArray serializeCollection(Collection value, @Nullable FetchPlan view, Set<Entity> cyclicReferences) {
+        protected JsonArray serializeCollection(Collection value, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonArray jsonArray = new JsonArray();
             value.stream()
                     .filter(e -> e instanceof Entity)
                     .forEach(e -> {
-                        JsonObject jsonObject = serializeEntity((Entity) e, view, new HashSet<>(cyclicReferences));
+                        JsonObject jsonObject = serializeEntity((Entity) e, fetchPlan, new HashSet<>(cyclicReferences));
                         jsonArray.add(jsonObject);
                     });
             return jsonArray;

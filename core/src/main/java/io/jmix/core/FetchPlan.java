@@ -25,10 +25,10 @@ import java.util.*;
 /**
  * Class to declare a graph of objects that must be retrieved from the database.
  * <p>
- * A view can be constructed in Java code or defined in XML and deployed
+ * A fetchPlan can be constructed in Java code or defined in XML and deployed
  * to the {@link FetchPlanRepository} for recurring usage.
  * </p>
- * There are the following predefined view types:
+ * There are the following predefined fetchPlan types:
  * <ul>
  * <li>{@link #LOCAL}</li>
  * <li>{@link #INSTANCE_NAME}</li>
@@ -77,14 +77,14 @@ public class FetchPlan implements Serializable {
         }
     }
     /**
-     * @return entity class this view belongs to
+     * @return entity class this fetchPlan belongs to
      */
     public Class<?> getEntityClass() {
         return entityClass;
     }
 
     /**
-     * @return view name, unique within an entity
+     * @return fetchPlan name, unique within an entity
      */
     public String getName() {
         return name;
@@ -102,9 +102,9 @@ public class FetchPlan implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FetchPlan view = (FetchPlan) o;
+        FetchPlan fetchPlan = (FetchPlan) o;
 
-        return entityClass.equals(view.entityClass) && name.equals(view.name);
+        return entityClass.equals(fetchPlan.entityClass) && name.equals(fetchPlan.name);
     }
 
     @Override
@@ -120,10 +120,10 @@ public class FetchPlan implements Serializable {
     }
 
     /**
-     * Get directly owned view property by name.
+     * Get directly owned fetchPlan property by name.
      *
      * @param name property name
-     * @return view property instance or null if it is not found
+     * @return fetchPlan property instance or null if it is not found
      */
     @Nullable
     public FetchPlanProperty getProperty(String name) {
@@ -131,7 +131,7 @@ public class FetchPlan implements Serializable {
     }
 
     /**
-     * Check if a directly owned property with the given name exists in the view.
+     * Check if a directly owned property with the given name exists in the fetchPlan.
      *
      * @param name property name
      * @return true if such property found
@@ -141,7 +141,7 @@ public class FetchPlan implements Serializable {
     }
 
     /**
-     * If true, the view affects loading of local attributes. If false, only reference attributes are affected and
+     * If true, the fetchPlan affects loading of local attributes. If false, only reference attributes are affected and
      * local are always loaded.
      */
     public boolean loadPartialEntities() {

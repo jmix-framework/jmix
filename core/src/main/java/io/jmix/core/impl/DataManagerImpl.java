@@ -132,9 +132,9 @@ public class DataManagerImpl implements DataManager {
 
             SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
             sc.saving(entity);
-            FetchPlan view = context.getFetchPlans().get(entity);
-            if (view != null)
-                sc.getFetchPlans().put(entity, view);
+            FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+            if (fetchPlan != null)
+                sc.getFetchPlans().put(entity, fetchPlan);
         }
         for (Object entity : context.getEntitiesToRemove()) {
             MetaClass metaClass = metadata.getClass(entity.getClass());
@@ -142,9 +142,9 @@ public class DataManagerImpl implements DataManager {
 
             SaveContext sc = storeToContextMap.computeIfAbsent(storeName, key -> createSaveContext(context));
             sc.removing(entity);
-            FetchPlan view = context.getFetchPlans().get(entity);
-            if (view != null)
-                sc.getFetchPlans().put(entity, view);
+            FetchPlan fetchPlan = context.getFetchPlans().get(entity);
+            if (fetchPlan != null)
+                sc.getFetchPlans().put(entity, fetchPlan);
         }
 
         Set result = new LinkedHashSet<>();
@@ -288,13 +288,13 @@ public class DataManagerImpl implements DataManager {
         return repeatRequired;
     }
 
-    protected void readCrossDataStoreReferences(Collection<?> entities, FetchPlan view, MetaClass metaClass,
+    protected void readCrossDataStoreReferences(Collection<?> entities, FetchPlan fetchPlan, MetaClass metaClass,
                                                 boolean joinTransaction) {
-        if (stores.getAdditional().isEmpty() || entities.isEmpty() || view == null)
+        if (stores.getAdditional().isEmpty() || entities.isEmpty() || fetchPlan == null)
             return;
 
         CrossDataStoreReferenceLoader crossDataStoreReferenceLoader = crossDataStoreReferenceLoaderProvider.getObject(
-                metaClass, view, joinTransaction);
+                metaClass, fetchPlan, joinTransaction);
         crossDataStoreReferenceLoader.processEntities(entities);
     }
 

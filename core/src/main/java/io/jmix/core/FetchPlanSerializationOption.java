@@ -27,14 +27,14 @@ public enum FetchPlanSerializationOption {
      * with just a fetch plan name. For example fetch plan for {@code customerGroup2} is defined with a string:
      * <pre>
      * {
-     *  "name": "test.customer-view",
-     *  "entity": "ref$Customer",
+     *  "name": "customer-fp",
+     *  "entity": "sample_Customer",
      *  "properties": [
      *      "name",
      *      {
      *          "name": "customerGroup",
-     *          "view": {
-     *              "name": "test.customerGroup-view",
+     *          "fetchPlan": {
+     *              "name": "customerGroup-fp",
      *              "properties": [
      *                  "id",
      *                  "createdBy",
@@ -45,7 +45,7 @@ public enum FetchPlanSerializationOption {
      *      },
      *      {
      *          "name": "customerGroup2",
-     *          "view": "test.customerGroup-view"
+     *          "fetchPlan": "customerGroup-fp"
      *      }
      *  ]
      * }

@@ -64,7 +64,7 @@ public class CrossDataStoreReferenceLoader {
 
     public CrossDataStoreReferenceLoader(MetaClass metaClass, FetchPlan fetchPlan, boolean joinTransaction) {
         Preconditions.checkNotNullArgument(metaClass, "metaClass is null");
-        Preconditions.checkNotNullArgument(fetchPlan, "view is null");
+        Preconditions.checkNotNullArgument(fetchPlan, "fetchPlan is null");
         this.metaClass = metaClass;
         this.fetchPlan = fetchPlan;
         this.joinTransaction = joinTransaction;
@@ -72,20 +72,20 @@ public class CrossDataStoreReferenceLoader {
 
     public Map<Class<?>, List<CrossDataStoreProperty>> getCrossPropertiesMap() {
         Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap = new HashMap<>();
-        traverseView(fetchPlan, crossPropertiesMap, Sets.newIdentityHashSet());
+        traverseFetchPlan(fetchPlan, crossPropertiesMap, Sets.newIdentityHashSet());
         return crossPropertiesMap;
     }
 
-    private void traverseView(FetchPlan view, Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<FetchPlan> visited) {
-        if (visited.contains(view))
+    private void traverseFetchPlan(FetchPlan fetchPlan, Map<Class<?>, List<CrossDataStoreProperty>> crossPropertiesMap, Set<FetchPlan> visited) {
+        if (visited.contains(fetchPlan))
             return;
-        visited.add(view);
+        visited.add(fetchPlan);
 
         String storeName = metadataTools.getStoreName(metaClass);
 
-        Class<?> entityClass = view.getEntityClass();
-        for (FetchPlanProperty viewProperty : view.getProperties()) {
-            MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(viewProperty.getName());
+        Class<?> entityClass = fetchPlan.getEntityClass();
+        for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
+            MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(fetchPlanProperty.getName());
             if (metaProperty.getRange().isClass()) {
                 MetaClass propertyMetaClass = metaProperty.getRange().asClass();
                 if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), storeName)) {
@@ -99,11 +99,11 @@ public class CrossDataStoreReferenceLoader {
                     }
                     List<CrossDataStoreProperty> crossProperties = crossPropertiesMap.computeIfAbsent(entityClass, k -> new ArrayList<>());
                     if (crossProperties.stream().noneMatch(aProp -> aProp.property == metaProperty))
-                        crossProperties.add(new CrossDataStoreProperty(metaProperty, viewProperty));
+                        crossProperties.add(new CrossDataStoreProperty(metaProperty, fetchPlanProperty));
                 }
-                FetchPlan propertyView = viewProperty.getFetchPlan();
-                if (propertyView != null) {
-                    traverseView(propertyView, crossPropertiesMap, visited);
+                FetchPlan propertyFetchPlan = fetchPlanProperty.getFetchPlan();
+                if (propertyFetchPlan != null) {
+                    traverseFetchPlan(propertyFetchPlan, crossPropertiesMap, visited);
                 }
             }
         }

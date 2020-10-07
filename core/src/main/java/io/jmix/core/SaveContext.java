@@ -106,10 +106,10 @@ public class SaveContext implements Serializable {
     }
 
     /**
-     * Enables defining a view for each committed entity. These views are used in merge operation to ensure all
+     * Enables defining a fetchPlan for each committed entity. These fetchPlans are used in merge operation to ensure all
      * required attributes are loaded in returned instances.
      *
-     * @return mutable map of entities to their views
+     * @return mutable map of entities to their fetchPlans
      */
     public Map<Object, FetchPlan> getFetchPlans() {
         return fetchPlans;

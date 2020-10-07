@@ -3,6 +3,7 @@ package ${project_rootPackage}.entity;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -138,8 +139,10 @@ public class User implements BaseUser {
     }
 
     @InstanceName
+    @DependsOnProperties({"firstName", "lastName", "username"})
     @Override
     public String getDisplayName() {
-        return String.join(" ", firstName, lastName);
+        return String.format("%s %s [%s]", (firstName != null ? firstName : ""),
+                (lastName != null ? lastName : ""), username);
     }
 }

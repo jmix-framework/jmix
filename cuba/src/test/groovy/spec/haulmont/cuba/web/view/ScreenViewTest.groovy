@@ -66,7 +66,7 @@ class ScreenViewTest extends UiScreenSpec {
         then: "view has inlined views"
 
         groupViewProperty != null
-        groupViewProperty.view.properties.find { it.name == "name" } != null
+        groupViewProperty.fetchPlan.properties.find { it.name == "name" } != null
 
         when:
 
@@ -75,7 +75,7 @@ class ScreenViewTest extends UiScreenSpec {
         then: "view has properties with deployed views"
 
         userRolesViewProperty != null
-        userRolesViewProperty.view.name == "user.edit"
-        userRolesViewProperty.view.properties.find { it.name == "role" } != null
+        userRolesViewProperty.fetchPlan.name == "user.edit"
+        userRolesViewProperty.fetchPlan.properties.find { it.name == "role" } != null
     }
 }

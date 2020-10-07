@@ -27,6 +27,12 @@
     </changeSet>
 
     <changeSet id="2" author="${project_name}">
+        <createIndex indexName="IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME" tableName="${project_idPrefix.toUpperCase()}_USER" unique="true">
+            <column name="USERNAME"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="3" author="${project_name}">
 
         <insert tableName="${project_idPrefix.toUpperCase()}_USER">
             <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
@@ -38,7 +44,7 @@
 
     </changeSet>
 
-    <changeSet id="3" author="${project_name}">
+    <changeSet id="4" author="${project_name}">
 
         <insert tableName="SEC_ROLE_ASSIGNMENT_ENTITY">
             <column name="ID" value="6c9e420a-2b7a-4c42-8654-a9027ee14083"/>

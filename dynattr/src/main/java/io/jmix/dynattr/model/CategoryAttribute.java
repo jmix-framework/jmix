@@ -50,11 +50,7 @@ import java.util.*;
 @Table(name = "SYS_CATEGORY_ATTR")
 @SystemLevel
 public class CategoryAttribute implements Serializable {
-
     private static final long serialVersionUID = -6959392628534815752L;
-
-    public static final int NAME_FIELD_LENGTH = 255;
-    public static final int CODE_FIELD_LENGTH = 50;
 
     @Id
     @Column(name = "ID")
@@ -96,10 +92,10 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "CATEGORY_ENTITY_TYPE")
     private String categoryEntityType;
 
-    @Column(name = "NAME", length = NAME_FIELD_LENGTH, nullable = false)
+    @Column(name = "NAME", nullable = false)
     private String name;
 
-    @Column(name = "CODE", length = CODE_FIELD_LENGTH, nullable = false)
+    @Column(name = "CODE", nullable = false)
     private String code;
 
     @Column(name = "DESCRIPTION")

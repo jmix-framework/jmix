@@ -49,7 +49,7 @@
 
             <column name="CATEGORY_ENTITY_TYPE" type="varchar(1000)"/>
             <column name="NAME" type="varchar(255)"/>
-            <column name="CODE" type="varchar(100)">
+            <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="DESCRIPTION" type="varchar(1000)"/>
@@ -105,7 +105,7 @@
             <column name="CATEGORY_ATTR_ID" type="uuid">
                 <constraints foreignKeyName="SYS_ATTR_VALUE_CATEGORY_ATTR_ID" references="SYS_CATEGORY_ATTR(ID)" nullable="false"/>
             </column>
-            <column name="CODE" type="varchar(100)">
+            <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 

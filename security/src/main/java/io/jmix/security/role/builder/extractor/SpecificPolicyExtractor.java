@@ -35,9 +35,10 @@ public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
         SpecificPolicy[] policyAnnotations = method.getAnnotationsByType(SpecificPolicy.class);
         for (SpecificPolicy policyAnnotation : policyAnnotations) {
             for (String resource : policyAnnotation.resources()) {
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.SPECIFIC,
-                        resource,
-                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SPECIFIC, resource)
+                        .withPolicyGroup(method.getName())
+                        .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
+                        .build();
                 resourcePolicies.add(resourcePolicy);
             }
         }

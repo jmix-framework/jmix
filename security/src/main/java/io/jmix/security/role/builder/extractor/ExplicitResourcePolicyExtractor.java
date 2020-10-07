@@ -38,12 +38,13 @@ public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor 
                         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
                         Collection<ResourcePolicy> definedPolicies = (Collection<ResourcePolicy>) method.invoke(null);
                         for (ResourcePolicy definedPolicy : definedPolicies) {
-                            ResourcePolicy resourcePolicy = new ResourcePolicy(definedPolicy.getType(),
-                                    definedPolicy.getResource(),
-                                    definedPolicy.getAction(),
-                                    definedPolicy.getEffect(),
-                                    definedPolicy.getScope(),
-                                    Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                            ResourcePolicy resourcePolicy = ResourcePolicy.builder(definedPolicy.getType(), definedPolicy.getResource())
+                                    .withAction(definedPolicy.getAction())
+                                    .withScope(definedPolicy.getScope())
+                                    .withEffect(definedPolicy.getEffect())
+                                    .withPolicyGroup(definedPolicy.getPolicyGroup())
+                                    .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
+                                    .build();
                             resourcePolicies.add(resourcePolicy);
                         }
                         return resourcePolicies;

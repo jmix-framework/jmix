@@ -78,7 +78,7 @@
                     </actions>
                     <columns>
                         <group>
-                            <column id="domain"/>
+                            <column id="policyGroup"/>
                         </group>
                         <column id="type"/>
                         <column id="resource"/>

@@ -85,6 +85,9 @@ public class ResourcePolicyEntity implements Serializable {
     @Column(name = "SCOPE_")
     private String scope;
 
+    @Column(name = "POLICY_GROUP")
+    private String policyGroup;
+
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
@@ -200,5 +203,13 @@ public class ResourcePolicyEntity implements Serializable {
 
     public void setScope(String scope) {
         this.scope = scope;
+    }
+
+    public String getPolicyGroup() {
+        return policyGroup;
+    }
+
+    public void setPolicyGroup(String policyGroup) {
+        this.policyGroup = policyGroup;
     }
 }

@@ -22,7 +22,6 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
-import io.jmix.securityui.role.annotation.SecurityDomain;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.menu.MenuConfig;
@@ -30,23 +29,19 @@ import io.jmix.ui.menu.MenuItem;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.LookupScreen;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
 /**
- * Class is used for getting security domain name by the {@link ResourcePolicy} instance.
- *
- * @see SecurityDomain
+ * Class is used for getting default policy group for the {@link ResourcePolicy} instance.
  */
-@Component("sec_ResourcePolicyDomainResolver")
-public class ResourcePolicyDomainResolver {
+@Component("sec_DefaultResourcePolicyGroupResolver")
+public class DefaultResourcePolicyGroupResolver {
 
     @Autowired
     private Metadata metadata;
@@ -57,50 +52,44 @@ public class ResourcePolicyDomainResolver {
     @Autowired
     private MenuConfig menuConfig;
 
-    private final static Logger log = LoggerFactory.getLogger(ResourcePolicyDomainResolver.class);
+    private final static Logger log = LoggerFactory.getLogger(DefaultResourcePolicyGroupResolver.class);
 
     /**
-     * Methods evaluates security domain for a given {@link ResourcePolicy}.
+     * Methods evaluates default policy group for a given {@link ResourcePolicy}.
+     *
      * @param resourcePolicy a {@link ResourcePolicy}
-     * @see #resolveDomain(String, String)
-     * @return a domain name or null if domain name cannot be resolved
+     * @return a group policy or null if the group cannot be resolved
+     * @see #resolvePolicyGroup(String, String)
      */
     @Nullable
-    public String resolveDomain(ResourcePolicy resourcePolicy) {
-        return resolveDomain(resourcePolicy.getType(), resourcePolicy.getResource());
+    public String resolvePolicyGroup(ResourcePolicy resourcePolicy) {
+        return resolvePolicyGroup(resourcePolicy.getType(), resourcePolicy.getResource());
     }
 
     /**
-     * Methods evaluates security domain for a given resource of the {@link ResourcePolicy}.
+     * Methods evaluates security policy group for a given resource of the {@link ResourcePolicy}.
      * <p>
      * For entity:
      *
      * <ul>
      *     <li>
-     *         if the entity class has a {@link SecurityDomain} annotation, then a domain name from annotation is returned
-     *     </li>
-     *     <li>
-     *         otherwise an entity name is returned
+     *         the entity name is returned
      *     </li>
      * </ul>
      * <p>
      * For entity attributes:
      *
      * <ul>
-     *     <li>a domain name for the attribute's entity is returned</li>
+     *     <li>a policy group for the attribute's entity is returned</li>
      * </ul>
      * <p>
      * For screen:
      *
      * <ul>
      *     <li>
-     *         if screen controller class has a {@link SecurityDomain} annotation, then a domain name from the
-     *         annotation is returned
-     *     </li>
-     *     <li>
-     *         returns a domain of the related entity (for standard editor and browser). If the screen implements
+     *         returns a policy group of the related entity (for standard editor and browser). If the screen implements
      *         the {@link LookupScreen} or {@link EditorScreen} interfaces then a generic type is taken
-     *         and assuming that a generic type points to the entity class the entity domain is returned
+     *         and assuming that a generic type points to the entity class the policy group of the entity is returned
      *     </li>
      * </ul>
      * <p>
@@ -109,72 +98,58 @@ public class ResourcePolicyDomainResolver {
      *
      * <ul>
      *     <li>
-     *         if menu item in menu.xml file has a {@code securityDomain} attribute, the attribute value is returned
-     *     </li>
-     *     <li>
-     *         otherwise a domain for the related screen is returned
+     *         policy group for the related screen is returned
      *     </li>
      * </ul>
      *
      * @param resourcePolicyType a {@link ResourcePolicyType}, i.e. screen, entity, menu, etc.
-     * @param resource a resource (screenId, entity name, etc.)
-     * @return a security domain name or null if domain name cannot be resolved
+     * @param resource           a resource (screenId, entity name, etc.)
+     * @return a policy group or null if policy group cannot be resolved
      * @see ResourcePolicyType
      */
     @Nullable
-    public String resolveDomain(String resourcePolicyType, String resource) {
+    public String resolvePolicyGroup(String resourcePolicyType, String resource) {
         switch (resourcePolicyType) {
             case ResourcePolicyType.SCREEN:
-                return resolveDomainForScreenPolicy(resource);
+                return resolvePolicyGroupForScreenPolicy(resource);
             case ResourcePolicyType.ENTITY:
-                return resolveDomainForEntityPolicy(resource);
+                return resolvePolicyGroupForEntityPolicy(resource);
             case ResourcePolicyType.ENTITY_ATTRIBUTE:
-                return resolveDomainForEntityAttributePolicy(resource);
+                return resolvePolicyGroupForEntityAttributePolicy(resource);
             case ResourcePolicyType.MENU:
-                return resolveDomainForMenuPolicy(resource);
+                return resolvePolicyGroupForMenuPolicy(resource);
             default:
                 return null;
         }
     }
 
     @Nullable
-    private String resolveDomainForEntityAttributePolicy(String resource) {
+    private String resolvePolicyGroupForEntityAttributePolicy(String resource) {
         String entityName = resource.substring(0, resource.lastIndexOf("."));
-        return resolveDomainForEntityPolicy(entityName);
+        return resolvePolicyGroupForEntityPolicy(entityName);
     }
 
     @Nullable
-    private String resolveDomainForEntityPolicy(String entityName) {
+    private String resolvePolicyGroupForEntityPolicy(String entityName) {
         MetaClass metaClass = metadata.findClass(entityName);
         if (metaClass != null) {
-            Class<Object> entityJavaClass = metaClass.getJavaClass();
-            if (entityJavaClass.isAnnotationPresent(SecurityDomain.class)) {
-                SecurityDomain domainAnnotation = entityJavaClass.getAnnotation(SecurityDomain.class);
-                return domainAnnotation.name();
-            } else {
-                return metaClass.getName();
-            }
+            return metaClass.getName();
         }
         return null;
     }
 
     @Nullable
-    private String resolveDomainForScreenPolicy(String screenId) {
+    private String resolvePolicyGroupForScreenPolicy(String screenId) {
         WindowInfo windowInfo = windowConfig.findWindowInfo(screenId);
         if (windowInfo != null) {
             Class<? extends FrameOwner> controllerClass = windowInfo.getControllerClass();
-            SecurityDomain domainAnnotation = AnnotationUtils.findAnnotation(controllerClass, SecurityDomain.class);
-            if (domainAnnotation != null) {
-                return domainAnnotation.name();
-            } else {
-                return resolveDomainByScreenControllerGenericType(controllerClass);
-            }
+            return resolvePolicyGroupByScreenControllerGenericType(controllerClass);
         }
         return null;
     }
 
     @Nullable
-    private String resolveDomainByScreenControllerGenericType(Class<? extends FrameOwner> controllerClass) {
+    private String resolvePolicyGroupByScreenControllerGenericType(Class<? extends FrameOwner> controllerClass) {
         Class<?> typeArgument = null;
         if (EditorScreen.class.isAssignableFrom(controllerClass)) {
             typeArgument = GenericTypeResolver.resolveTypeArgument(controllerClass, EditorScreen.class);
@@ -185,7 +160,7 @@ public class ResourcePolicyDomainResolver {
             if (Entity.class.isAssignableFrom(typeArgument)) {
                 MetaClass metaClass = metadata.findClass(typeArgument);
                 if (metaClass != null) {
-                    return resolveDomainForEntityPolicy(metaClass.getName());
+                    return resolvePolicyGroupForEntityPolicy(metaClass.getName());
                 }
             }
         }
@@ -193,7 +168,7 @@ public class ResourcePolicyDomainResolver {
     }
 
     @Nullable
-    private String resolveDomainForMenuPolicy(String menuId) {
+    private String resolvePolicyGroupForMenuPolicy(String menuId) {
         MenuItem item = null;
         for (MenuItem rootItem : menuConfig.getRootItems()) {
             item = menuConfig.findItem(menuId, rootItem);
@@ -201,15 +176,9 @@ public class ResourcePolicyDomainResolver {
         }
 
         if (item != null) {
-            Element descriptor = item.getDescriptor();
-            String domain = descriptor.attributeValue("securityDomain");
-            if (!Strings.isNullOrEmpty(domain)) {
-                return domain;
-            } else {
-                String screenId = item.getScreen();
-                if (!Strings.isNullOrEmpty(screenId)) {
-                    return resolveDomainForScreenPolicy(screenId);
-                }
+            String screenId = item.getScreen();
+            if (!Strings.isNullOrEmpty(screenId)) {
+                return resolvePolicyGroupForScreenPolicy(screenId);
             }
         }
         return null;

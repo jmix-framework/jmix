@@ -14,28 +14,36 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.entity;
+package io.jmix.securityui.screen.resourcepolicy;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.ModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@Entity(name = "test_Customer")
-public class TestCustomer {
+/**
+ * Class is used to display the attributes list in the {@link EntityAttributeResourcePolicyModelCreate} screen.
+ */
+@ModelObject(name = "sec_AttributeResourceModel")
+public class AttributeResourceModel {
 
     @Id
-    @Column(name = "ID")
     @JmixGeneratedValue
     protected UUID id;
 
-    @Column(name = "NAME")
+    @ModelProperty
     private String name;
 
-    @Column(name = "EMAIL")
-    private String email;
+    @ModelProperty
+    private String caption;
+
+    @ModelProperty
+    private Boolean view = false;
+
+    @ModelProperty
+    private Boolean modify = false;
 
     public UUID getId() {
         return id;
@@ -53,11 +61,27 @@ public class TestCustomer {
         this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getCaption() {
+        return caption;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public Boolean getView() {
+        return view;
+    }
+
+    public void setView(Boolean view) {
+        this.view = view;
+    }
+
+    public Boolean getModify() {
+        return modify;
+    }
+
+    public void setModify(Boolean modify) {
+        this.modify = modify;
     }
 }

@@ -74,12 +74,12 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             }
             String scope = entityPolicyAnnotation.scope();
             for (EntityPolicyAction action : actions) {
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY,
-                        entityName,
-                        action.getId(),
-                        ResourcePolicy.DEFAULT_EFFECT,
-                        scope,
-                        Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY, entityName)
+                        .withAction(action.getId())
+                        .withScope(scope)
+                        .withPolicyGroup(method.getName())
+                        .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
+                        .build();
                 resourcePolicies.add(resourcePolicy);
             }
         }

@@ -16,12 +16,12 @@
 
 package io.jmix.securityui.screen.resourcepolicy;
 
-import io.jmix.securityui.model.ResourcePolicyDomainResolver;
+import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.menu.MenuConfig;
 import io.jmix.ui.menu.MenuItem;
-import io.jmix.ui.model.DataContext;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,7 +43,7 @@ public class MenuResourcePolicyModelEdit extends StandardEditor<ResourcePolicyMo
     private MessageBundle messageBundle;
 
     @Autowired
-    private ResourcePolicyDomainResolver resourcePolicyDomainResolver;
+    private DefaultResourcePolicyGroupResolver resourcePolicyGroupResolver;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -76,9 +76,11 @@ public class MenuResourcePolicyModelEdit extends StandardEditor<ResourcePolicyMo
         return String.format("%s (%s)", caption.toString(), menuItem.getId());
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
-        String domain = resourcePolicyDomainResolver.resolveDomain(getEditedEntity().getType(), getEditedEntity().getResource());
-        getEditedEntity().setDomain(domain);
+    @Subscribe(id = "resourcePolicyModelDc", target = Target.DATA_CONTAINER)
+    public void onResourcePolicyModelDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ResourcePolicyModel> event) {
+        if ("resource".equals(event.getProperty())) {
+            String policyGroup = resourcePolicyGroupResolver.resolvePolicyGroup(getEditedEntity().getType(), getEditedEntity().getResource());
+            getEditedEntity().setPolicyGroup(policyGroup);
+        }
     }
 }

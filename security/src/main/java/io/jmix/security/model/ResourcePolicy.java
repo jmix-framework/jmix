@@ -16,7 +16,7 @@
 
 package io.jmix.security.model;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -38,47 +38,34 @@ public class ResourcePolicy {
     public static final String DEFAULT_EFFECT = ResourcePolicyEffect.ALLOW;
     public static final String DEFAULT_ACTION = "access";
     public static final String DEFAULT_SCOPE = "";
+    public static final String DEFAULT_POLICY_GROUP = "";
 
     private String type;
     private String resource;
-    private String action;
-    private String effect;
-    private String scope;
+    private String action = DEFAULT_ACTION;
+    private String effect = DEFAULT_EFFECT;
+    private String scope = DEFAULT_SCOPE;
+    private String policyGroup = DEFAULT_POLICY_GROUP;
 
     private Map<String, String> customProperties;
 
-    public ResourcePolicy(String type, String resource) {
-        this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT);
-    }
-
-    public ResourcePolicy(String type, String resource, Map<String, String> customProperties) {
-        this(type, resource, DEFAULT_ACTION, DEFAULT_EFFECT, customProperties);
-    }
-
-    public ResourcePolicy(String type, String resource, String action) {
-        this(type, resource, action, DEFAULT_EFFECT);
-    }
-
-    public ResourcePolicy(String type, String resource, String action, String effect) {
-        this(type, resource, action, effect, DEFAULT_SCOPE, Collections.emptyMap());
-    }
-
-    public ResourcePolicy(String type, String resource, String action, String effect, String scope) {
-        this(type, resource, action, effect, scope, Collections.emptyMap());
-    }
-
-    public ResourcePolicy(String type, String resource, String action, String effect, Map<String, String> customProperties) {
-        this(type, resource, action, effect, DEFAULT_SCOPE, customProperties);
-    }
-
-    public ResourcePolicy(String type, String resource, String action, String effect, String scope,
-                          Map<String, String> customProperties) {
+    private ResourcePolicy(String type, String resource) {
         this.type = type;
         this.resource = resource;
-        this.action = action;
-        this.effect = effect;
-        this.scope = scope;
-        this.customProperties = customProperties;
+    }
+
+    public ResourcePolicy(Builder builder) {
+        this.type = builder.type;
+        this.resource = builder.resource;
+        this.action = builder.action;
+        this.effect = builder.effect;
+        this.scope = builder.scope;
+        this.policyGroup = builder.policyGroup;
+        this.customProperties = builder.customProperties;
+    }
+
+    public static Builder builder(String type, String resource) {
+        return new Builder(type, resource);
     }
 
     /**
@@ -129,11 +116,66 @@ public class ResourcePolicy {
         return effect;
     }
 
+    /**
+     * Returns policy group. For annotated roles policy group is typically a name of the method in the role interface
+     *
+     * @return policy group
+     */
+    public String getPolicyGroup() {
+        return policyGroup;
+    }
+
     public Map<String, String> getCustomProperties() {
         return customProperties;
     }
 
     public String getScope() {
         return scope;
+    }
+
+    public static class Builder {
+
+        private String type;
+        private String resource;
+        private String action = DEFAULT_ACTION;
+        private String effect = DEFAULT_EFFECT;
+        private String scope = DEFAULT_SCOPE;
+        private String policyGroup = DEFAULT_POLICY_GROUP;
+        private Map<String, String> customProperties = new HashMap<>();
+
+
+        public Builder(String type, String resource) {
+            this.type = type;
+            this.resource = resource;
+        }
+
+        public Builder withAction(String action) {
+            this.action = action;
+            return this;
+        }
+
+        public Builder withEffect(String effect) {
+            this.effect = effect;
+            return this;
+        }
+
+        public Builder withScope(String scope) {
+            this.scope = scope;
+            return this;
+        }
+
+        public Builder withPolicyGroup(String policyGroup) {
+            this.policyGroup = policyGroup;
+            return this;
+        }
+
+        public Builder withCustomProperties(Map<String, String> customProperties) {
+            this.customProperties = customProperties;
+            return this;
+        }
+
+        public ResourcePolicy build() {
+            return new ResourcePolicy(this);
+        }
     }
 }

@@ -39,6 +39,7 @@ import io.jmix.ui.component.TabSheet;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
@@ -138,6 +139,8 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
     @Autowired
     private PopupButton createResourcePolicyPopupBtn;
 
+    @Autowired
+    private CollectionPropertyContainer<ResourcePolicyModel> resourcePoliciesDc;
     private boolean resourcePoliciesTableExpanded = true;
 
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
@@ -283,30 +286,36 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
 
     @Subscribe("resourcePoliciesTable.createEntityPolicy")
     public void onResourcePoliciesTableCreateEntity(Action.ActionPerformedEvent event) {
-        screenBuilders.editor(resourcePoliciesTable)
-                .withScreenClass(EntityResourcePolicyModelEdit.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setType(ResourcePolicyType.ENTITY);
-                    resourcePolicyModel.setAction(EntityPolicyAction.CREATE.getId());
-                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
-                })
+        screenBuilders.screen(this)
+                .withScreenClass(EntityResourcePolicyModelCreate.class)
+                .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesScreen)
                 .build()
                 .show();
     }
 
     @Subscribe("resourcePoliciesTable.createEntityAttributePolicy")
     public void onResourcePoliciesTableCreateEntityAttribute(Action.ActionPerformedEvent event) {
-        screenBuilders.editor(resourcePoliciesTable)
-                .withScreenClass(EntityAttributeResourcePolicyModelEdit.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setType(ResourcePolicyType.ENTITY_ATTRIBUTE);
-                    resourcePolicyModel.setAction(EntityAttributePolicyAction.READ.getId());
-                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
-                })
+        screenBuilders.screen(this)
+                .withScreenClass(EntityAttributeResourcePolicyModelCreate.class)
+                .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesScreen)
                 .build()
                 .show();
+    }
+
+    private void addPoliciesFromMultiplePoliciesScreen(io.jmix.ui.builder.AfterScreenCloseEvent<? extends MultipleResourcePolicyModelCreateScreen> closeEvent) {
+        if (MultipleResourcePolicyModelCreateScreen.COMMIT_ACTION_ID
+                .equals(((StandardCloseAction) closeEvent.getCloseAction()).getActionId())) {
+            MultipleResourcePolicyModelCreateScreen screen = closeEvent.getScreen();
+            for (ResourcePolicyModel resourcePolicyModel : screen.getResourcePolicies()) {
+                boolean policyExists = resourcePoliciesDc.getItems().stream()
+                        .anyMatch(rpm -> resourcePolicyModel.getType().equals(rpm.getType()) &&
+                                resourcePolicyModel.getAction().equals(rpm.getAction()) &&
+                                resourcePolicyModel.getResource().equals(rpm.getResource()));
+                if (!policyExists) {
+                    resourcePoliciesDc.getMutableItems().add(resourcePolicyModel);
+                }
+            }
+        }
     }
 
     @Subscribe("resourcePoliciesTable.createSpecificPolicy")
@@ -444,6 +453,7 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
                 policyEntity.setScope(policyModel.getScope() != null ?
                         policyModel.getScope() :
                         ResourcePolicy.DEFAULT_SCOPE);
+                policyEntity.setPolicyGroup(policyModel.getPolicyGroup());
             }
         } else if (roleModel.getRoleType() == RoleType.ROW_LEVEL) {
             List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()

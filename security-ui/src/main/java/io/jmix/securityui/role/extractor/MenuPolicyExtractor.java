@@ -38,7 +38,9 @@ public class MenuPolicyExtractor implements ResourcePolicyExtractor {
         MenuPolicy[] menuPolicyAnnotations = method.getAnnotationsByType(MenuPolicy.class);
         for (MenuPolicy menuPolicyAnnotation : menuPolicyAnnotations) {
             for (String menuId : menuPolicyAnnotation.menuIds()) {
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.MENU, menuId);
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.MENU, menuId)
+                        .withPolicyGroup(method.getName())
+                        .build();
                 resourcePolicies.add(resourcePolicy);
             }
         }

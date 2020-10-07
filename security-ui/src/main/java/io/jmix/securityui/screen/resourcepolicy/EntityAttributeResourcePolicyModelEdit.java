@@ -17,17 +17,17 @@
 package io.jmix.securityui.screen.resourcepolicy;
 
 import com.google.common.base.Strings;
-import io.jmix.securityui.model.ResourcePolicyDomainResolver;
+import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HasValue;
-import io.jmix.ui.model.DataContext;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @UiController("sec_EntityAttributeResourcePolicyModel.edit")
@@ -50,13 +50,12 @@ public class EntityAttributeResourcePolicyModelEdit extends StandardEditor<Resou
     @Autowired
     private MessageBundle messageBundle;
 
-    @Autowired
-    private ResourcePolicyDomainResolver resourcePolicyDomainResolver;
-
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         entityField.setOptionsMap(resourcePolicyEditorUtils.getEntityOptionsMap());
-        actionField.setOptionsList(Arrays.asList("read", "update"));
+        actionField.setOptionsList(Arrays.asList(
+                EntityAttributePolicyAction.READ.getId(),
+                EntityAttributePolicyAction.UPDATE.getId()));
 
         //fields with a null ValueSource are not disabled automatically by standard ViewAction
         entityField.setEditable(!this.isReadOnly());
@@ -97,14 +96,8 @@ public class EntityAttributeResourcePolicyModelEdit extends StandardEditor<Resou
         } else {
             optionsMap = !Strings.isNullOrEmpty(entityName) ?
                     resourcePolicyEditorUtils.getEntityAttributeOptionsMap(entityName) :
-                    null;
+                    new HashMap<>();
         }
         attributeField.setOptionsMap(optionsMap);
-    }
-
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
-        String domain = resourcePolicyDomainResolver.resolveDomain(getEditedEntity().getType(), getEditedEntity().getResource());
-        getEditedEntity().setDomain(domain);
     }
 }

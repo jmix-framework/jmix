@@ -149,4 +149,10 @@
                       columnDataType="VARCHAR(255)"/>
     </changeSet>
 
+    <changeSet author="security-data" id="3">
+        <addColumn tableName="SEC_RESOURCE_POLICY_ENTITY">
+            <column name="POLICY_GROUP" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

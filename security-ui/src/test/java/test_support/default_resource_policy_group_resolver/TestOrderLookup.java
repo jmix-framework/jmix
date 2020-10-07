@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package test_support.resource_policy_domain_resolver;
+package test_support.default_resource_policy_group_resolver;
 
 import io.jmix.securityui.entity.TestOrder;
 import io.jmix.ui.screen.StandardLookup;

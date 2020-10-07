@@ -39,13 +39,17 @@ public class ScreenPolicyExtractor implements ResourcePolicyExtractor {
         ScreenPolicy[] screenPolicyAnnotations = method.getAnnotationsByType(ScreenPolicy.class);
         for (ScreenPolicy screenPolicyAnnotation : screenPolicyAnnotations) {
             for (String screenId : screenPolicyAnnotation.screenIds()) {
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.SCREEN, screenId);
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SCREEN, screenId)
+                        .withPolicyGroup(method.getName())
+                        .build();
                 resourcePolicies.add(resourcePolicy);
             }
             for (Class screenClass : screenPolicyAnnotation.screenClasses()) {
                 UiController uiControllerAnnotation = (UiController) screenClass.getAnnotation(UiController.class);
                 String screenId = uiControllerAnnotation.value();
-                ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.SCREEN, screenId);
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SCREEN, screenId)
+                        .withPolicyGroup(method.getName())
+                        .build();
                 resourcePolicies.add(resourcePolicy);
             }
         }

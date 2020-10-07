@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package test_support.resource_policy_domain_resolver;
+package test_support.default_resource_policy_group_resolver;
 
-import io.jmix.securityui.role.annotation.SecurityDomain;
-import io.jmix.ui.screen.Screen;
+import io.jmix.securityui.entity.TestOrder;
+import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 
-@SecurityDomain(name = "ScreenWithDomainValue")
-@UiController(TestScreenWithDomain.ID)
-public class TestScreenWithDomain extends Screen {
-    public static final String ID = "test_ScreenWithDomain";
+@UiController("test_Order.edit")
+public class TestOrderEditor extends StandardEditor<TestOrder> {
 }

@@ -51,7 +51,7 @@ public class ResourcePolicyModel {
     private String scope;
 
     @ModelProperty
-    private String domain;
+    private String policyGroup;
 
     @ModelProperty
     private Map<String, String> customProperties = new HashMap<>();
@@ -104,12 +104,12 @@ public class ResourcePolicyModel {
         this.scope = scope;
     }
 
-    public String getDomain() {
-        return domain;
+    public String getPolicyGroup() {
+        return policyGroup;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
+    public void setPolicyGroup(String policyGroup) {
+        this.policyGroup = policyGroup;
     }
 
     public Map<String, String> getCustomProperties() {

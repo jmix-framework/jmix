@@ -34,9 +34,6 @@ public class RoleModelConverter {
     @Autowired
     protected Metadata metadata;
 
-    @Autowired
-    protected ResourcePolicyDomainResolver resourcePolicyDomainResolver;
-
     public RoleModel createRoleModel(Role role) {
         RoleModel roleModel = metadata.create(RoleModel.class);
         roleModel.setCode(role.getCode());
@@ -54,7 +51,7 @@ public class RoleModelConverter {
                     model.setAction(resourcePolicy.getAction());
                     model.setEffect(resourcePolicy.getEffect());
                     model.setScope(resourcePolicy.getScope());
-                    model.setDomain(resourcePolicyDomainResolver.resolveDomain(resourcePolicy));
+                    model.setPolicyGroup(resourcePolicy.getPolicyGroup());
                     model.setCustomProperties(resourcePolicy.getCustomProperties());
                     return model;
                 })

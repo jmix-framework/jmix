@@ -32,9 +32,11 @@ public interface TestExplicitResourcePoliciesRole {
     @ExplicitResourcePolicies
     static Collection<ResourcePolicy> explicitOrderPolicies() {
         List<ResourcePolicy> resourcePolicies = new ArrayList<>();
-        ResourcePolicy policy1 = new ResourcePolicy(ResourcePolicyType.SCREEN, "sample_Order.browsr");
+        ResourcePolicy policy1 = ResourcePolicy.builder(ResourcePolicyType.SCREEN, "sample_Order.browsr").build();
         resourcePolicies.add(policy1);
-        ResourcePolicy policy2 = new ResourcePolicy(ResourcePolicyType.ENTITY, "sample_Order", EntityPolicyAction.READ.getId());
+        ResourcePolicy policy2 = ResourcePolicy.builder(ResourcePolicyType.ENTITY, "sample_Order")
+                .withAction(EntityPolicyAction.READ.getId())
+                .build();
         resourcePolicies.add(policy2);
         return resourcePolicies;
     }

@@ -65,12 +65,12 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
             for (String attribute : policyAnnotation.attributes()) {
                 for (EntityAttributePolicyAction action : policyAnnotation.actions()) {
                     String resource = entityName + "." + attribute;
-                    ResourcePolicy resourcePolicy = new ResourcePolicy(ResourcePolicyType.ENTITY_ATTRIBUTE,
-                            resource,
-                            action.getId(),
-                            ResourcePolicy.DEFAULT_EFFECT,
-                            scope,
-                            Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()));
+                    ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY_ATTRIBUTE, resource)
+                            .withAction(action.getId())
+                            .withScope(scope)
+                            .withPolicyGroup(method.getName())
+                            .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
+                            .build();
                     resourcePolicies.add(resourcePolicy);
                 }
             }

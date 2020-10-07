@@ -128,12 +128,13 @@ public class DatabaseRoleProvider implements RoleProvider {
                         Map<String, String> customProperties = new HashMap<>();
                         customProperties.put("databaseId", id);
                         customProperties.put("uniqueKey", id);
-                        return new ResourcePolicy(entity.getType(),
-                                entity.getResource(),
-                                entity.getAction(),
-                                entity.getEffect(),
-                                entity.getScope(),
-                                customProperties);
+                        return ResourcePolicy.builder(entity.getType(), entity.getResource())
+                                .withAction(entity.getAction())
+                                .withEffect(entity.getEffect())
+                                .withScope(entity.getScope())
+                                .withPolicyGroup(entity.getPolicyGroup())
+                                .withCustomProperties(customProperties)
+                                .build();
                     })
                     .collect(Collectors.toList());
             role.setResourcePolicies(resourcePolicies);

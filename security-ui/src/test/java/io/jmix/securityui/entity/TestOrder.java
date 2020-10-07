@@ -17,7 +17,6 @@
 package io.jmix.securityui.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.securityui.role.annotation.SecurityDomain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +24,6 @@ import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity(name = "test_Order")
-@SecurityDomain(name = "Order")
 public class TestOrder {
     @Id
     @Column(name = "ID")

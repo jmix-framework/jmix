@@ -17,12 +17,12 @@
 package io.jmix.securityui.screen.resourcepolicy;
 
 import com.google.common.base.Strings;
-import io.jmix.securityui.model.ResourcePolicyDomainResolver;
+import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.model.DataContext;
+import io.jmix.ui.component.HasValue;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class ScreenResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
     private ScreensHelper screensHelper;
 
     @Autowired
-    private ResourcePolicyDomainResolver resourcePolicyDomainResolver;
+    private DefaultResourcePolicyGroupResolver resourcePolicyGroupResolver;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
@@ -75,9 +75,9 @@ public class ScreenResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
         screenField.setOptionsMap(map);
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
-        String domain = resourcePolicyDomainResolver.resolveDomain(getEditedEntity().getType(), getEditedEntity().getResource());
-        getEditedEntity().setDomain(domain);
+    @Subscribe("screenField")
+    public void onScreenFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        String policyGroup = resourcePolicyGroupResolver.resolvePolicyGroup(getEditedEntity().getType(), getEditedEntity().getResource());
+        getEditedEntity().setPolicyGroup(policyGroup);
     }
 }

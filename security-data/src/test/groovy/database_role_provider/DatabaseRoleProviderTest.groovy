@@ -16,7 +16,6 @@
 
 package database_role_provider
 
-import test_support.entity.TestOrder
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
@@ -27,6 +26,7 @@ import io.jmix.securitydata.entity.RowLevelPolicyEntity
 import io.jmix.securitydata.role.provider.DatabaseRoleProvider
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityDataSpecification
+import test_support.entity.TestOrder
 
 class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
@@ -62,6 +62,7 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         with(screen1ResourcePolicy) {
             action == ResourcePolicy.DEFAULT_ACTION
             effect == ResourcePolicy.DEFAULT_EFFECT
+            policyGroup == 'policyGroup1'
             type == ResourcePolicyType.SCREEN
         }
 
@@ -123,10 +124,10 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
 
         def entitiesToSave = []
 
-        entitiesToSave << createJpqlResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen1',
-                ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, role1)
-        entitiesToSave << createJpqlResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen2',
-                ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, role1)
+        entitiesToSave << createResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen1',
+                ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, 'policyGroup1', role1)
+        entitiesToSave << createResourcePolicyEntity(ResourcePolicyType.SCREEN, 'screen2',
+                ResourcePolicy.DEFAULT_ACTION, ResourcePolicy.DEFAULT_EFFECT, 'policyGroup2', role1)
 
         entitiesToSave << createJpqlRowLevelPolicyEntity('test_Order', 'where1', 'join1', role1)
         entitiesToSave << createJpqlRowLevelPolicyEntity('test_Customer', 'where2', 'join2', role1)
@@ -143,16 +144,18 @@ class DatabaseRoleProviderTest extends SecurityDataSpecification {
         dataManager.save(new SaveContext().saving(entitiesToSave))
     }
 
-    private ResourcePolicyEntity createJpqlResourcePolicyEntity(String type,
-                                                                String resource,
-                                                                String action,
-                                                                String effect,
-                                                                RoleEntity roleEntity) {
+    private ResourcePolicyEntity createResourcePolicyEntity(String type,
+                                                            String resource,
+                                                            String action,
+                                                            String effect,
+                                                            String policyGroup,
+                                                            RoleEntity roleEntity) {
         def resourcePolicy = metadata.create(ResourcePolicyEntity)
         resourcePolicy.type = type
         resourcePolicy.resource = resource
         resourcePolicy.action = action
         resourcePolicy.effect = effect
+        resourcePolicy.policyGroup = policyGroup
         resourcePolicy.role = roleEntity
         return resourcePolicy
     }

@@ -21,6 +21,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Dom4j;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.Window;
@@ -142,13 +143,7 @@ public class WindowConfig {
                 template = null;
             }
 
-            if (Strings.isNullOrEmpty(className)) {
-                // fallback for legacy frames
-                // controllerClass = AbstractFrame.class; todo implement
-                throw new UnsupportedOperationException();
-            } else {
-                controllerClass = loadDefinedScreenClass(className);
-            }
+            controllerClass = loadDefinedScreenClass(className);
 
         } else if (windowInfo.getControllerClassName() != null) {
             controllerClass = loadDefinedScreenClass(windowInfo.getControllerClassName());
@@ -182,7 +177,7 @@ public class WindowConfig {
     }
 
     protected ResourceLoader getResourceLoader() {
-        return applicationContext;
+        return resources;
     }
 
     protected WindowInfo.Type extractWindowInfoType(WindowInfo windowInfo, Class<? extends FrameOwner> controllerClass) {
@@ -198,7 +193,8 @@ public class WindowConfig {
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<? extends FrameOwner> loadDefinedScreenClass(String className) {
+    protected Class<? extends FrameOwner> loadDefinedScreenClass(@Nullable String className) {
+        Preconditions.checkNotEmptyString(className, "class name is empty");
         return (Class<? extends FrameOwner>) classManager.loadClass(className);
     }
 
@@ -341,15 +337,14 @@ public class WindowConfig {
     }
 
     protected void registerScreen(String id, WindowInfo windowInfo) {
-        // todo
-        // String controllerClassName = windowInfo.getControllerClassName();
-        /*if (controllerClassName != null) {
+        String controllerClassName = windowInfo.getControllerClassName();
+        if (controllerClassName != null) {
             MetadataReader classMetadata = loadClassMetadata(controllerClassName);
             AnnotationMetadata annotationMetadata = classMetadata.getAnnotationMetadata();
 
             registerPrimaryEditor(windowInfo, annotationMetadata);
             registerPrimaryLookup(windowInfo, annotationMetadata);
-        }*/
+        }
 
         screens.put(id, windowInfo);
 

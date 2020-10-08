@@ -193,7 +193,7 @@ public class WindowConfig {
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<? extends FrameOwner> loadDefinedScreenClass(@Nullable String className) {
+    protected Class<? extends FrameOwner> loadDefinedScreenClass(String className) {
         Preconditions.checkNotEmptyString(className, "class name is empty");
         return (Class<? extends FrameOwner>) classManager.loadClass(className);
     }

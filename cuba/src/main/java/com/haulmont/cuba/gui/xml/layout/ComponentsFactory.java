@@ -17,6 +17,7 @@ package com.haulmont.cuba.gui.xml.layout;
 
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
+import com.haulmont.cuba.gui.components.ComponentGenerationContext;
 
 /**
  * Factory to create UI components in client independent manner.
@@ -27,7 +28,7 @@ import io.jmix.ui.component.*;
 @Deprecated
 public interface ComponentsFactory {
 
-    String NAME = "ui_ComponentsFactory";
+    String NAME = "cuba_ComponentsFactory";
 
     /**
      * Create a component instance by its name.

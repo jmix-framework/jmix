@@ -49,10 +49,7 @@ import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
-import io.jmix.ui.Fragments;
-import io.jmix.ui.Screens;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiConfiguration;
+import io.jmix.ui.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
@@ -216,6 +213,11 @@ public class CubaConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected TablePresentations tablePresentations(Component component) {
         return new PresentationsImpl(component);
+    }
+
+    @Bean(name = WindowConfig.NAME)
+    WindowConfig windowConfig() {
+        return new com.haulmont.cuba.gui.config.WindowConfig();
     }
 
     @EventListener

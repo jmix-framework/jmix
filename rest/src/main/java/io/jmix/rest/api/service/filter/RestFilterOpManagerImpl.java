@@ -31,7 +31,7 @@ import java.util.UUID;
 
 import static io.jmix.rest.api.service.filter.RestFilterOp.*;
 
-@Component(RestFilterOpManager.NAME)
+@Component("rest_RestOpManager")
 public class RestFilterOpManagerImpl implements RestFilterOpManager {
 
     @Autowired

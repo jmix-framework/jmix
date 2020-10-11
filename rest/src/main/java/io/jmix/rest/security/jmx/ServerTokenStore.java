@@ -16,14 +16,9 @@
 
 package io.jmix.rest.security.jmx;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import java.util.Set;
-
-@Component(ServerTokenStoreMBean.NAME)
+@Component("rest_ServerTokenStoreMBean")
 public class ServerTokenStore implements ServerTokenStoreMBean {
 
 //    @Autowired

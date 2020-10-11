@@ -25,8 +25,6 @@ import io.swagger.models.Swagger;
  */
 public interface SwaggerGenerator {
 
-    String NAME = "rest_SwaggerGenerator";
-
     /**
      * @return a {@code Swagger} object that can be transformed to JSON or YAML version of documentation
      */

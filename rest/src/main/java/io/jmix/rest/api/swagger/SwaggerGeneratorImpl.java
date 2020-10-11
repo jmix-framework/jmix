@@ -48,7 +48,7 @@ import static io.jmix.core.impl.serialization.EntitySerializationImpl.ENTITY_NAM
 import static io.jmix.core.impl.serialization.EntitySerializationImpl.INSTANCE_NAME_PROP;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@Component(SwaggerGenerator.NAME)
+@Component("rest_SwaggerGenerator")
 public class SwaggerGeneratorImpl implements SwaggerGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(SwaggerGeneratorImpl.class);

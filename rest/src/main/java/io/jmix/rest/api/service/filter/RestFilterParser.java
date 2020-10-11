@@ -38,10 +38,8 @@ import java.util.*;
 /**
  * Class for REST API search filter JSON parsing
  */
-@Component(RestFilterParser.NAME)
+@Component("rest_RestFilterParser")
 public class RestFilterParser {
-
-    public static final String NAME = "rest_RestFilterParser";
 
     @Autowired
     protected Metadata metadata;

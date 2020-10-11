@@ -46,11 +46,9 @@ import java.util.List;
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Component(InspectorFormBuilder.NAME)
+@Component("datatools_EntityInspectorFormBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFormBuilder {
-
-    public static final String NAME = "datatools_EntityInspectorFormBuilder";
 
     public static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
 

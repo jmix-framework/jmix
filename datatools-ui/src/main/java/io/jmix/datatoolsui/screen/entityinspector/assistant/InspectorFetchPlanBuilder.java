@@ -29,11 +29,9 @@ import javax.annotation.PostConstruct;
 
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
-@Component(InspectorFetchPlanBuilder.NAME)
+@Component("datatools_EntityInspectorFetchPlanBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFetchPlanBuilder {
-
-    public static final String NAME = "datatools_EntityInspectorFetchPlanBuilder";
 
     @Autowired
     protected Metadata metadata;

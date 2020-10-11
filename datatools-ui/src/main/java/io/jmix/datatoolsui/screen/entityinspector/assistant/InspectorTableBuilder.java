@@ -40,11 +40,9 @@ import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isEmbed
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
 @SuppressWarnings({"rawtypes","unchecked"})
-@Component(InspectorTableBuilder.NAME)
+@Component("datatools_EntityInspectorTableBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorTableBuilder {
-
-    public static final String NAME = "datatools_EntityInspectorTableBuilder";
 
     @Autowired
     protected MetadataTools metadataTools;

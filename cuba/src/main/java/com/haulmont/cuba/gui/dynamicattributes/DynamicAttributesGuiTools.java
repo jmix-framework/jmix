@@ -103,7 +103,7 @@ public class DynamicAttributesGuiTools {
             }
         }
 
-        ZonedDateTime currentTimestamp = AppBeans.get(TimeSource.NAME, TimeSource.class).now();
+        ZonedDateTime currentTimestamp = AppBeans.get(TimeSource.class).now();
         boolean entityIsCategorized = item instanceof Categorized && ((Categorized) item).getCategory() != null;
 
         for (AttributeDefinition attribute : attributes) {

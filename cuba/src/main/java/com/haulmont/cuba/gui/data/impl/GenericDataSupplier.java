@@ -162,7 +162,7 @@ public class GenericDataSupplier implements DataSupplier {
     }
 
     protected Metadata getMetadata() {
-        return AppBeans.get(Metadata.NAME);
+        return AppBeans.get(Metadata.class);
     }
 
     protected DataManager getDataManager() {

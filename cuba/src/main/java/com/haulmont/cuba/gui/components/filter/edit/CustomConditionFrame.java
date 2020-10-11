@@ -238,8 +238,8 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
             return;
         }
 
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
+        MessageTools messageTools = AppBeans.get(MessageTools.class);
 
         Map<String, Object> items = new TreeMap<>();
         Object selectedItem = null;
@@ -252,7 +252,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
             if (param != null && Param.Type.ENTITY.equals(param.getType())) {
                 Class javaClass = param.getJavaClass();
-                Metadata metadata = AppBeans.get(Metadata.NAME);
+                Metadata metadata = AppBeans.get(Metadata.class);
                 selectedItem = metadata.getClass(javaClass);
             }
             entitySelect.setOptionsMap(items);
@@ -501,7 +501,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        DomainModelBuilder builder = AppBeans.get(DomainModelWithCaptionsBuilder.NAME);
+        DomainModelBuilder builder = AppBeans.get(DomainModelWithCaptionsBuilder.class);
         DomainModel domainModel = builder.produce();
 
         return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition, new ExtHintProvider(domainModel));

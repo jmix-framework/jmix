@@ -41,8 +41,8 @@ public class LegacyCaptionAdapter implements Function<Object, String> {
     protected CaptionMode captionMode;
     protected String captionProperty;
 
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
-    protected MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+    protected Metadata metadata = AppBeans.get(Metadata.class);
+    protected MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
 
     public LegacyCaptionAdapter(@Nullable CaptionMode captionMode, @Nullable String captionProperty) {
         this.captionMode = captionMode;

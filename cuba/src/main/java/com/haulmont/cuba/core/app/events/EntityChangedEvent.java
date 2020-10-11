@@ -112,7 +112,7 @@ public class EntityChangedEvent<E extends Entity, K> extends ApplicationEvent im
     @Internal
     @Override
     public ResolvableType getResolvableType() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
         ExtendedEntities extendedEntities = metadata.getExtendedEntities();
         MetaClass metaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClassNN(entityId.getEntityClass()));
         MetaProperty pkProperty = metadata.getTools().getPrimaryKeyProperty(metaClass);

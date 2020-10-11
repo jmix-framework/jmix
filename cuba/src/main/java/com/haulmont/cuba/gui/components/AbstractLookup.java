@@ -54,7 +54,7 @@ public class AbstractLookup extends AbstractWindow implements Window.Lookup {
     protected void initLookupActions(@SuppressWarnings("unused") InitEvent event) {
         addAction(new SelectAction(this));
 
-        Messages messages = (Messages) getApplicationContext().getBean(Messages.NAME);
+        Messages messages = getApplicationContext().getBean(Messages.class);
         addAction(new BaseAction(LOOKUP_CANCEL_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Cancel"))
                 .withHandler(e ->

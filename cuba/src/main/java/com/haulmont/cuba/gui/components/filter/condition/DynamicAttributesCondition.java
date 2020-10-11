@@ -81,7 +81,7 @@ public class DynamicAttributesCondition extends AbstractCondition {
 
         propertyPath = element.attributeValue("propertyPath");
 
-        MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+        MessageTools messageTools = AppBeans.get(MessageTools.class);
         locCaption = isBlank(caption)
                 ? element.attributeValue("locCaption")
                 : messageTools.loadString(messagesPack, caption);

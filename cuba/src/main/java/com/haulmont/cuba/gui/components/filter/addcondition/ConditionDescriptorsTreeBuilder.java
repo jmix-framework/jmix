@@ -98,7 +98,7 @@ public class ConditionDescriptorsTreeBuilder implements ConditionDescriptorsTree
         this.hideCustomConditions = hideCustomConditions;
         this.conditionsTree = conditionsTree;
         security = AppBeans.get(Security.class);
-        metadataTools = AppBeans.get(MetadataTools.NAME);
+        metadataTools = AppBeans.get(MetadataTools.class);
         // dynamicAttributes = AppBeans.get(DynamicAttributes.class); todo dynamic attributes
         queryTransformerFactory = AppBeans.get(QueryTransformerFactory.class);
         filterComponentName = getFilterComponentName();

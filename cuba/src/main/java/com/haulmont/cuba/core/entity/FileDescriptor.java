@@ -133,7 +133,7 @@ public class FileDescriptor extends StandardEntity {
         if (parts.length != 3 && parts.length != 4) {
             throw new IllegalArgumentException("Invalid FileDescriptor format");
         }
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
         FileDescriptor fd = metadata.create(FileDescriptor.class);
         fd.setId(UuidProvider.fromString(parts[0]));
         fd.setExtension(parts[1]);

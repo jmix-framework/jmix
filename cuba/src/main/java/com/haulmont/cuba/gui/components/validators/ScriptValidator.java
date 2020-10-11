@@ -41,8 +41,8 @@ public class ScriptValidator implements Field.Validator {
     private String scriptPath;
     private boolean innerScript;
     private Map<String, Object> params;
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
-    protected Resources resources = AppBeans.get(Resources.NAME);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
+    protected Resources resources = AppBeans.get(Resources.class);
     protected ScriptEvaluator scriptEvaluator = AppBeans.get(ScriptEvaluator.class);
 
     public ScriptValidator(Element element, String messagesPack) {

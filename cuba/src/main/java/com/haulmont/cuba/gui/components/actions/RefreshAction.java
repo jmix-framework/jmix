@@ -91,7 +91,7 @@ public class RefreshAction extends BaseAction {
         super(id);
         this.owner = target;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Refresh");
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.REFRESH_ACTION);

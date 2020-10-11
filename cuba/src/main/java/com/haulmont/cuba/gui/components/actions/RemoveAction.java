@@ -133,7 +133,7 @@ public class RemoveAction extends ItemTrackingAction
         this.target = target;
         this.autocommit = autocommit;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Remove");
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.REMOVE_ACTION);
@@ -293,7 +293,7 @@ public class RemoveAction extends ItemTrackingAction
         if (confirmationMessage != null)
             return confirmationMessage;
         else {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             return messages.getMessage("dialogs.Confirmation.Remove");
         }
     }
@@ -313,7 +313,7 @@ public class RemoveAction extends ItemTrackingAction
         if (confirmationTitle != null)
             return confirmationTitle;
         else {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             return messages.getMessage("dialogs.Confirmation");
         }
     }

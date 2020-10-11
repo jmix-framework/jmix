@@ -112,7 +112,7 @@ public class FileUploading implements FileUploadingAPI {
         if (file == null) {
             return null;
         }
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
 
         FileDescriptor fDesc = metadata.create(FileDescriptor.class);
 

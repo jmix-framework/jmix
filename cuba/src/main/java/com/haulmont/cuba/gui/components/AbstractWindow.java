@@ -158,7 +158,7 @@ public class AbstractWindow extends Screen
             if (closeAction instanceof ChangeTrackerCloseAction
                     && ((ChangeTrackerCloseAction) closeAction).isCheckForUnsavedChanges()
                     && hasUnsavedChanges()) {
-                ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+                ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
 
                 UnknownOperationResult result = new UnknownOperationResult();
 
@@ -870,7 +870,7 @@ public class AbstractWindow extends Screen
     }
 
     protected void showValidationErrors(ValidationErrors errors) {
-        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+        ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         screenValidation.showValidationErrors(this, errors);
     }
 
@@ -899,7 +899,7 @@ public class AbstractWindow extends Screen
      */
     @Override
     public boolean validateAll() {
-        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+        ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         ValidationErrors errors = screenValidation.validateUiComponents(getWindow());
 
         validateAdditionalRules(errors);

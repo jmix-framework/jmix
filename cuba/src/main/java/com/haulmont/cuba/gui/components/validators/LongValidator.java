@@ -38,7 +38,7 @@ public class LongValidator implements Field.Validator {
     protected String message;
     protected String messagesPack;
     protected String onlyPositive;
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     public LongValidator(Element element, String messagesPack) {
         message = element.attributeValue("message");
@@ -64,7 +64,7 @@ public class LongValidator implements Field.Validator {
         if (value instanceof String) {
             try {
                 Datatype<Long> datatype = Datatypes.getNN(Long.class);
-                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.class);
                 Long num = datatype.parse((String) value, currentAuthentication.getLocale());
                 result = checkPositive(num);
             } catch (ParseException e) {

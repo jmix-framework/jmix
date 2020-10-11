@@ -46,8 +46,8 @@ public class BeanValidator extends AbstractBeanValidator {
     }
 
     protected void init() {
-        this.messages = AppBeans.get(Messages.NAME);
-        this.metadata = AppBeans.get(Metadata.NAME);
+        this.messages = AppBeans.get(Messages.class);
+        this.metadata = AppBeans.get(Metadata.class);
         this.validator = AppBeans.get(Validator.class);
     }
 }

@@ -33,7 +33,7 @@ public class PatternValidator implements Field.Validator {
     protected Pattern pattern;
     protected String message;
     protected String messagesPack;
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     public PatternValidator(Element element, String messagesPack) {
         this(element.attributeValue("pattern"));

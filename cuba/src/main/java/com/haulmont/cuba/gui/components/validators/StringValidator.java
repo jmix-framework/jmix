@@ -30,7 +30,7 @@ public class StringValidator implements Field.Validator {
 
     protected String message;
     protected String messagesPack;
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     public StringValidator(Element element, String messagesPack) {
         this.message = element.attributeValue("message");

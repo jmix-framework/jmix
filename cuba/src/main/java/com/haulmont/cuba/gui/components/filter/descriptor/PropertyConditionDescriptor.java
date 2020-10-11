@@ -90,7 +90,7 @@ public class PropertyConditionDescriptor extends AbstractConditionDescriptor {
         super(name, filterComponentName, metaClass, entityAlias);
         this.caption = caption;
         this.messagesPack = messagesPack;
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         if (!isBlank(caption)) {
             this.locCaption = messages.getTools().loadString(messagesPack, caption);
         } else {

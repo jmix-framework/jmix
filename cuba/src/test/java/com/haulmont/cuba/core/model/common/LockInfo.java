@@ -42,7 +42,7 @@ public class LockInfo extends BaseUuidEntity {
     public LockInfo(User user, String entityName, String entityId) {
         this.entityName = entityName;
         this.entityId = entityId;
-        TimeSource timeSource = AppBeans.get(TimeSource.NAME);
+        TimeSource timeSource = AppBeans.get(TimeSource.class);
         this.since = timeSource.currentTimestamp();
         this.user = user;
     }

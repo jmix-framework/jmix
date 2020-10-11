@@ -175,7 +175,7 @@ public class AddAction extends ListAction
         this.handler = handler;
         this.openType = openType;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Add");
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.ADD_ACTION);
@@ -298,7 +298,7 @@ public class AddAction extends ListAction
         if (windowId != null) {
             return windowId;
         } else {
-            WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
+            WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
             MetaClass metaClass = target.getDatasource().getMetaClass();
 
             return windowConfig.getAvailableLookupScreenId(metaClass);
@@ -374,7 +374,7 @@ public class AddAction extends ListAction
                 return;
             }
 
-            Metadata metadata = AppBeans.get(Metadata.NAME);
+            Metadata metadata = AppBeans.get(Metadata.class);
             ExtendedEntities extendedEntities = metadata.getExtendedEntities();
 
             ds.suspendListeners();

@@ -61,7 +61,7 @@ public class FilteringLookupAction extends PickerField.LookupAction {
     private String joinClause;
     private String whereClause;
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
 
     public FilteringLookupAction(PickerField pickerField, String joinClause, String whereClause) {
         super(pickerField);

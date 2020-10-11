@@ -123,7 +123,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
 
             LayoutLoader layoutLoader = getLayoutLoader(innerContext);
 
-            ScreenXmlLoader screenXmlLoader = (ScreenXmlLoader) applicationContext.getBean(ScreenXmlLoader.NAME);
+            ScreenXmlLoader screenXmlLoader = applicationContext.getBean(ScreenXmlLoader.class);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(),
                     getContext().getParams());
@@ -140,7 +140,7 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
     }
 
     protected FragmentHelper getFragmentHelper() {
-        return (FragmentHelper) applicationContext.getBean(FragmentHelper.NAME);
+        return applicationContext.getBean(FragmentHelper.class);
     }
 
     @Override

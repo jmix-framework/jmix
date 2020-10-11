@@ -47,10 +47,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * <code>Messages</code> implementation common for all tiers.
  */
-@Component(CubaMessages.NAME)
+@Component("cuba_CubaMessages")
 public class CubaMessages {
-
-    public static final String NAME = "jmix_CubaMessages";
 
     public static final String BUNDLE_NAME = "messages";
     public static final String EXT = ".properties";

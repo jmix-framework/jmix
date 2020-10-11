@@ -40,7 +40,7 @@ public class SettingsImpl implements Settings {
 
     protected UiSettingsCache getSettingsClient() {
         if (settingsClient == null) {
-            settingsClient = AppBeans.get(UiSettingsCache.NAME);
+            settingsClient = AppBeans.get(UiSettingsCache.class);
         }
         return settingsClient;
     }

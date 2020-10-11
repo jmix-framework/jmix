@@ -231,7 +231,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         if (PersistenceHelper.isNew(item)
                 && !ds.getMetaClass().equals(metadata.getClass(item))) {
             Entity newItem = ds.getDataSupplier().newInstance(ds.getMetaClass());
-            MetadataTools metadataTools = (MetadataTools) getApplicationContext().getBean(MetadataTools.NAME);
+            MetadataTools metadataTools = (MetadataTools) getApplicationContext().getBean(MetadataTools.class);
             metadataTools.copy(item, newItem);
             item = newItem;
         }
@@ -315,7 +315,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
      * nested items previously deleted by the user.
      */
     protected void handlePreviouslyDeletedCompositionItems(Entity entity, DatasourceImplementation parentDs) {
-        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
+        Metadata metadata = getApplicationContext().getBean(Metadata.class);
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!PersistenceHelper.isLoaded(entity, property.getName()))
                 return;
@@ -342,7 +342,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
     }
 
     protected MetaClass getMetaClassForLocking(Datasource ds) {
-        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
+        Metadata metadata = getApplicationContext().getBean(Metadata.class);
         // lock original metaClass, if any, because by convention all the configuration is based on original entities
         MetaClass metaClass = metadata.getExtendedEntities().getOriginalMetaClass(ds.getMetaClass());
         if (metaClass == null) {
@@ -484,7 +484,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         if (this.readOnly != readOnly) {
             this.readOnly = readOnly;
 
-            ReadOnlyScreensSupport readOnlyScreensSupport = (ReadOnlyScreensSupport) getApplicationContext().getBean(ReadOnlyScreensSupport.NAME);
+            ReadOnlyScreensSupport readOnlyScreensSupport = getApplicationContext().getBean(ReadOnlyScreensSupport.class);
             readOnlyScreensSupport.setScreenReadOnly(this, readOnly, showEnableEditingBtn);
 
             if (readOnlyDueToLock) {

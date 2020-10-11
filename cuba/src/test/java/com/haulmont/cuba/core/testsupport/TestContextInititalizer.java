@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.testsupport;
+package com.haulmont.cuba.core.testsupport;
 
-import org.springframework.test.context.ContextConfiguration;
-import test_support.WebTestConfiguration;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.lang.annotation.*;
+public class TestContextInititalizer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@ContextConfiguration(classes = {WebTestConfiguration.class})
-public @interface WebTest {
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ((DefaultListableBeanFactory) applicationContext.getBeanFactory()).setAllowBeanDefinitionOverriding(false);
+    }
 }

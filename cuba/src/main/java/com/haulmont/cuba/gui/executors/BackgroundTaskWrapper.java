@@ -41,7 +41,7 @@ public class BackgroundTaskWrapper<T, V> {
 
     public BackgroundTaskWrapper(@Nullable BackgroundTask<T, V> task) {
         this.task = task;
-        this.backgroundWorker = AppBeans.get(BackgroundWorker.NAME);
+        this.backgroundWorker = AppBeans.get(BackgroundWorker.class);
     }
 
     public BackgroundTaskWrapper() {

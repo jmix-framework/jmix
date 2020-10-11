@@ -159,7 +159,7 @@ public class EditAction extends ItemTrackingAction
         this.target = target;
         this.openType = openType;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Edit");
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.EDIT_ACTION);
@@ -182,7 +182,7 @@ public class EditAction extends ItemTrackingAction
             return;
 
         if (!captionInitialized) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             if (security.isEntityOpPermitted(target.getDatasource().getMetaClass(), EntityOp.UPDATE)) {
                 setCaption(messages.getMessage("actions.Edit"));
             } else {
@@ -364,7 +364,7 @@ public class EditAction extends ItemTrackingAction
             return windowId;
         } else {
             MetaClass metaClass = target.getDatasource().getMetaClass();
-            WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
+            WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
             return windowConfig.getEditorScreenId(metaClass);
         }
     }

@@ -49,7 +49,7 @@ public class DsContextLoader {
     public DsContextLoader(DataSupplier dataservice) {
         this.dataservice = dataservice;
         this.scripting = AppBeans.get(Scripting.NAME);
-        this.metadata = AppBeans.get(Metadata.NAME);
+        this.metadata = AppBeans.get(Metadata.class);
     }
 
     public DsContext loadDatasources(@Nullable Element element, @Nullable DsContext parent, Map<String, String> aliasesMap) {
@@ -387,7 +387,7 @@ public class DsContextLoader {
             String query = queryElem.getText();
             if (!StringUtils.isBlank(query)) {
                 if (filterElem != null)
-                    datasource.setQuery(query, AppBeans.getPrototype(QueryFilter.NAME, filterElem));
+                    datasource.setQuery(query, AppBeans.getPrototype(QueryFilter.class, filterElem));
                 else
                     datasource.setQuery(query);
             }

@@ -52,7 +52,7 @@ public class CustomCondition extends AbstractCondition {
         if (isBlank(caption)) {
             locCaption = element.attributeValue("locCaption");
         } else {
-            MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+            MessageTools messageTools = AppBeans.get(MessageTools.class);
             locCaption = messageTools.loadString(messagesPack, caption);
         }
 

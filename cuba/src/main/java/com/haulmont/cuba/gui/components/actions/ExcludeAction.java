@@ -116,9 +116,9 @@ public class ExcludeAction extends RemoveAction
 
         this.confirm = confirm;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Exclude");
-        this.metadata = AppBeans.get(Metadata.NAME);
+        this.metadata = AppBeans.get(Metadata.class);
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.EXCLUDE_ACTION);
     }

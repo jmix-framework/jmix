@@ -47,9 +47,9 @@ public class OriginalEntityLoadInfo extends EntityLoadInfo {
     public static OriginalEntityLoadInfo create(Entity entity) {
         Objects.requireNonNull(entity, "entity is null");
 
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
-        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
+        ExtendedEntities extendedEntities = AppBeans.get(ExtendedEntities.class);
         MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
 
         MetaClass originalMetaClass = extendedEntities.getOriginalMetaClass(metaClass);

@@ -140,7 +140,7 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
      * @return this instance for chaining
      */
     public LoadContext<E> setFetchPlan(String fetchPlanName) {
-        FetchPlanRepository fetchPlanRepository = AppBeans.get(FetchPlanRepository.NAME);
+        FetchPlanRepository fetchPlanRepository = AppBeans.get(FetchPlanRepository.class);
         this.fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, fetchPlanName);
         return this;
     }

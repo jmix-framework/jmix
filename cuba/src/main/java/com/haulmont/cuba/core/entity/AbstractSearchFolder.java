@@ -84,7 +84,7 @@ public abstract class AbstractSearchFolder extends Folder {
     @ModelProperty
     public String getLocName() {
         if (StringUtils.isNotEmpty(name)) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             return messages.getMainMessage(name);
         }
         return null;

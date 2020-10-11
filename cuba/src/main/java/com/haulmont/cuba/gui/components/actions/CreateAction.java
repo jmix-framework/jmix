@@ -79,7 +79,7 @@ public class CreateAction extends ListAction
 
     protected boolean addFirst = true;
 
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
+    protected Metadata metadata = AppBeans.get(Metadata.class);
     protected Security security = AppBeans.get(Security.NAME);
 
     protected AfterCommitHandler afterCommitHandler;
@@ -168,7 +168,7 @@ public class CreateAction extends ListAction
         this.target = target;
         this.openType = openType;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.Create");
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.CREATE_ACTION);
@@ -377,7 +377,7 @@ public class CreateAction extends ListAction
             return windowId;
         } else {
             MetaClass metaClass = target.getDatasource().getMetaClass();
-            WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
+            WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
             return windowConfig.getEditorScreenId(metaClass);
         }
     }

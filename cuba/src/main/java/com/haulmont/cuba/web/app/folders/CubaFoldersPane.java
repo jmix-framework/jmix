@@ -117,16 +117,16 @@ public class CubaFoldersPane extends VerticalLayout {
     protected Frame frame;
     protected BackgroundTaskWrapper<Integer, List<AppFolder>> folderUpdateBackgroundTaskWrapper;
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
-    protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
-    protected UserSettingService userSettingService = AppBeans.get(UserSettingService.NAME);
-    protected FoldersService foldersService = AppBeans.get(FoldersService.NAME);
-    protected DataManager dataManager = AppBeans.get(DataManager.NAME);
-    protected UserSettingsTools userSettingsTools = AppBeans.get(UserSettingsTools.NAME);
-    protected Folders folders = AppBeans.get(Folders.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
+    protected Metadata metadata = AppBeans.get(Metadata.class);
+    protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.class);
+    protected UserSettingService userSettingService = AppBeans.get(UserSettingService.class);
+    protected FoldersService foldersService = AppBeans.get(FoldersService.class);
+    protected DataManager dataManager = AppBeans.get(DataManager.class);
+    protected UserSettingsTools userSettingsTools = AppBeans.get(UserSettingsTools.class);
+    protected Folders folders = AppBeans.get(Folders.class);
     protected EntityStates entityStates = AppBeans.get(EntityStates.class);
-    protected Security security = AppBeans.get(Security.NAME);
+    protected Security security = AppBeans.get(Security.class);
     protected CubaProperties cubaProperties = AppBeans.get(CubaProperties.class);
     protected UiProperties uiProperties = AppBeans.get(UiProperties.class);
     protected CoreProperties coreProperties = AppBeans.get(CoreProperties.class);
@@ -909,7 +909,7 @@ public class CubaFoldersPane extends VerticalLayout {
             }
 
             WindowManager windowManager = (WindowManager) appUI.getScreens();
-            WindowConfig windowConfig = AppBeans.get(WindowConfig.NAME);
+            WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
             WindowInfo windowInfo = windowConfig.getWindowInfo("fileUploadDialog");
             FileUploadDialog dialog = (FileUploadDialog) windowManager.openWindow(windowInfo, WindowManager.OpenType.DIALOG);
             dialog.addCloseListener(actionId -> {

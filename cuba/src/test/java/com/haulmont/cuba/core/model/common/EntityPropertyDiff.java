@@ -50,7 +50,7 @@ public abstract class EntityPropertyDiff extends BaseUuidEntity {
         metaClassName = metaProperty.getDomain().getName();
         propertyName = metaProperty.getName();
 
-        MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+        MessageTools messageTools = AppBeans.get(MessageTools.class);
         propertyCaption = messageTools.getPropertyCaption(metaProperty.getDomain(), metaProperty.getName());
 
     }

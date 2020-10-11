@@ -37,7 +37,7 @@ public class RequiredViewValidator implements ConstraintValidator<RequiredView, 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         try {
-            EntityStates entityStates = AppBeans.get(EntityStates.NAME);
+            EntityStates entityStates = AppBeans.get(EntityStates.class);
             if (value instanceof Entity) {
                 entityStates.checkLoadedWithFetchPlan((Entity) value, view);
             } else if (value instanceof Collection) {

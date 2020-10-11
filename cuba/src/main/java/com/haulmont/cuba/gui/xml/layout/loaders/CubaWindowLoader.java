@@ -50,7 +50,7 @@ public class CubaWindowLoader extends WindowLoader {
             List<Element> facetElements = timersElement.elements("timer");
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
+                FacetLoader loader = applicationContext.getBean(FacetLoader.class);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

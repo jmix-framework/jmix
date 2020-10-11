@@ -17,6 +17,7 @@
 package com.haulmont.cuba;
 
 import com.haulmont.cuba.core.global.CubaMetadataTools;
+import com.haulmont.cuba.core.global.EntityStates;
 import com.haulmont.cuba.core.global.impl.CubaFetchPlanRepository;
 import com.haulmont.cuba.core.global.impl.CubaInstanceNameProviderImpl;
 import com.haulmont.cuba.core.global.impl.CubaMetadata;
@@ -98,49 +99,58 @@ public class CubaConfiguration {
         this.uiControllerReflectionInspector = uiControllerReflectionInspector;
     }
 
-    @Bean(Screens.NAME)
+    @Bean("cuba_Screens")
+    @Primary
     @UIScope
     protected Screens getScreens() {
         return new CubaScreens();
     }
 
-    @Bean(Fragments.NAME)
+    @Bean("cuba_Fragments")
+    @Primary
     @UIScope
     protected Fragments getFragments() {
         return new CubaFragments();
     }
 
-    @Bean(Messages.NAME)
+    @Bean("cuba_Messages")
+    @Primary
     protected Messages messages() {
         return new MessagesImpl();
     }
 
-    @Bean(Metadata.NAME)
+    @Bean("cuba_Metadata")
+    @Primary
     protected Metadata metadata(MetadataLoader metadataLoader) {
         return new CubaMetadata(metadataLoader);
     }
 
-    @Bean(UiComponents.NAME)
+    @Bean("cuba_UiComponents")
+    @Primary
     protected UiComponents uiComponents() {
         return new CubaUiComponents();
     }
 
-    @Bean(InstanceNameProvider.NAME)
+    @Bean("cuba_InstanceNameProvider")
+    @Primary
     protected InstanceNameProvider instanceNameProvider() {
         return new CubaInstanceNameProviderImpl();
     }
 
-    @Bean(FetchPlanRepository.NAME)
+    @Bean("cuba_FetchPlanRepository")
+    @Primary
     protected FetchPlanRepository fetchPlanRepository() {
         return new CubaFetchPlanRepository();
     }
 
-    @Bean(MetaModelLoader.NAME)
+    @Bean("cuba_MetaModelLoader")
+    @Primary
     protected MetaModelLoader metaModelLoader(DatatypeRegistry datatypes, Stores stores, FormatStringsRegistry formatStringsRegistry) {
         return new CubaMetaModelLoader(datatypes, stores, formatStringsRegistry);
     }
 
-    @Bean(NumberIdCache.NAME)
+    @Bean("cuba_NumberIdCache")
+    @Primary
     protected NumberIdCache numberIdCache() {
         return new CubaNumberIdCache();
     }
@@ -162,7 +172,8 @@ public class CubaConfiguration {
         return actionsConfiguration;
     }
 
-    @Bean(UiControllerDependencyInjector.NAME)
+    @Bean("cuba_UiControllerDependencyInjector")
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected UiControllerDependencyInjector uiControllerDependencyInjector(FrameOwner frameOwner, ScreenOptions options) {
         UiControllerDependencyInjector injector = new CubaUiControllerReflectionInspector(frameOwner, options);
@@ -171,51 +182,60 @@ public class CubaConfiguration {
         return injector;
     }
 
-    @Bean(MenuItemCommands.NAME)
+    @Bean("cuba_MenuItemCommands")
+    @Primary
     protected MenuItemCommands menuItemCommands() {
         return new CubaMenuItemCommands();
     }
 
-    @Bean(MetadataTools.NAME)
+    @Bean("cuba_MetadataTools")
+    @Primary
     protected MetadataTools metadataTools() {
         return new CubaMetadataTools();
     }
 
-    @Bean(ScreenData.NAME)
+    @Bean("cuba_ScreenData")
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected ScreenData screenData() {
         return new CubaScreenDataImpl();
     }
 
-    @Bean(EntityStates.NAME)
+    @Bean("cuba_EntityStates")
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected EntityStates entityStates() {
-        return new com.haulmont.cuba.core.global.EntityStates();
+        return new EntityStates();
     }
 
-    @Bean(FluentLoader.NAME)
+    @Bean("cuba_FluentLoader")
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected com.haulmont.cuba.core.global.FluentLoader fluentLoader(Class entityClass) {
         return new com.haulmont.cuba.core.global.FluentLoader(entityClass);
     }
 
-    @Bean(UserSettingsTools.NAME)
+    @Bean("cuba_UserSettingsTools")
+    @Primary
     protected UserSettingsTools userSettingsTools() {
         return new UserSettingsToolsImpl();
     }
 
-    @Bean(UserSettingService.NAME)
+    @Bean("cuba_UserSettingService")
+    @Primary
     protected UserSettingService userSettingService() {
         return new UserSettingServiceBean();
     }
 
-    @Bean(TablePresentations.NAME)
+    @Bean("cuba_Presentations")
+    @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected TablePresentations tablePresentations(Component component) {
         return new PresentationsImpl(component);
     }
 
-    @Bean(name = WindowConfig.NAME)
+    @Bean("cuba_WindowConfig")
+    @Primary
     WindowConfig windowConfig() {
         return new com.haulmont.cuba.gui.config.WindowConfig();
     }

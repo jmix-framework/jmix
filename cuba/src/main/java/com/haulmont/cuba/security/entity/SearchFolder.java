@@ -71,7 +71,7 @@ public class SearchFolder extends AbstractSearchFolder {
 
     @Override
     public String getCaption() {
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         return messages.getMainMessage(name);
     }
 

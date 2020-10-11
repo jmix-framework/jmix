@@ -39,7 +39,7 @@ public class CollectionDsHelper {
 
     public static List<MetaPropertyPath> createProperties(FetchPlan fetchPlan, MetaClass metaClass) {
         List<MetaPropertyPath> properties = new ArrayList<>();
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
 
         if (fetchPlan != null && metadataTools.isPersistent(metaClass)) {
             for (FetchPlanProperty property : fetchPlan.getProperties()) {

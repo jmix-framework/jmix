@@ -46,7 +46,7 @@ public class SelectAction extends AbstractAction {
 
         setShortcut(AppBeans.get(UiProperties.class).getCommitShortcut());
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         setCaption(messages.getMessage("actions.Select"));
     }
 
@@ -94,7 +94,7 @@ public class SelectAction extends AbstractAction {
     }
 
     protected void removeListeners(Collection selected) {
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
         for (Object obj : selected) {
             if (obj instanceof Entity) {
                 metadataTools.traverseAttributes(obj,

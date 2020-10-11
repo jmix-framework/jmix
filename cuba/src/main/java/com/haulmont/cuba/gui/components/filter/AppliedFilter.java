@@ -39,7 +39,7 @@ public class AppliedFilter {
 
     private FilterEntity filterEntity;
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
     protected ConditionsTree conditions;
 
     public AppliedFilter(FilterEntity filterEntity, ConditionsTree conditions) {

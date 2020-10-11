@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import test_support.CoreTestConfiguration;
 
 import java.lang.annotation.*;
 
@@ -28,7 +29,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CoreTestConfiguration.class})
+@ContextConfiguration(classes = {CoreTestConfiguration.class}, initializers = {TestContextInititalizer.class})
 @TestExecutionListeners(value = AppContextTestExecutionListener.class,
         mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public @interface CoreTest {

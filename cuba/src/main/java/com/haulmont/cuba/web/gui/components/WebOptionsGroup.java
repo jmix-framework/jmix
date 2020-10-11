@@ -224,7 +224,7 @@ public class WebOptionsGroup<V, I> extends WebAbstractField<JmixOptionGroup, V> 
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.NAME, OptionsBinder.class);
+            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.class);
             this.optionsBinding = optionsBinder.bind(options, this, this::setOptionsToComponent);
             this.optionsBinding.activate();
         }

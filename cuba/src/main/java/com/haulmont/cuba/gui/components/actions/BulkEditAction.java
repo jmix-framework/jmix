@@ -86,7 +86,7 @@ public class BulkEditAction extends ItemTrackingAction
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.BULK_EDIT_ACTION);
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.BulkEdit");
         this.constraintOperationType = ConstraintOperationType.UPDATE;
 
@@ -170,7 +170,7 @@ public class BulkEditAction extends ItemTrackingAction
 
         Security security = AppBeans.get(Security.class);
         if (!security.isSpecificPermitted(BulkEditor.PERMISSION)) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
 
             Notifications notifications = getScreenContext(target.getFrame()).getNotifications();
             notifications.create(NotificationType.ERROR)
@@ -180,7 +180,7 @@ public class BulkEditAction extends ItemTrackingAction
         }
 
         if (target.getSelected().isEmpty()) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
 
             Notifications notifications = getScreenContext(target.getFrame()).getNotifications();
             notifications.create(NotificationType.HUMANIZED)
@@ -193,7 +193,7 @@ public class BulkEditAction extends ItemTrackingAction
         OpenType openType = this.openType;
 
         if (openType.getOpenMode() == OpenMode.DIALOG) {
-            ThemeConstantsManager themeManager = AppBeans.get(ThemeConstantsManager.NAME);
+            ThemeConstantsManager themeManager = AppBeans.get(ThemeConstantsManager.class);
             ThemeConstants theme = themeManager.getConstants();
 
             openType = openType.copy()

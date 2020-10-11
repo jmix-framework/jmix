@@ -67,7 +67,7 @@ public class FolderEditWindow extends JmixWindow {
     protected Button cancelBtn;
     protected TextField selectedPresentationField;
 
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
     protected UserSessionSource userSessionSource = AppBeans.get(UserSessionSource.NAME);
     protected Security security = AppBeans.get(Security.NAME);
     protected IconResolver iconResolver = AppBeans.get(IconResolver.class);

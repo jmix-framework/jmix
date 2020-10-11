@@ -226,7 +226,7 @@ public class EntityCombinedScreen extends AbstractLookup {
     }
 
     protected MetaClass getMetaClassForLocking(Entity item) {
-        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
+        Metadata metadata = getApplicationContext().getBean(Metadata.class);
         // lock original metaClass, if any, because by convention all the configuration is based on original entities
         MetaClass metaClass = getApplicationContext().getBean(ExtendedEntities.class).getOriginalMetaClass(metadata.getClass(item));
         if (metaClass == null) {

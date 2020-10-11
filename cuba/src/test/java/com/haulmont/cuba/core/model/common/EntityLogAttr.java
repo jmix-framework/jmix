@@ -118,7 +118,7 @@ public class EntityLogAttr extends BaseUuidEntity {
                 if (property.getRange().isDatatype()) {
                     return value;
                 } else if (property.getRange().isEnum() && EnumClass.class.isAssignableFrom(property.getJavaType())) {
-                    Messages messages = AppBeans.get(Messages.NAME);
+                    Messages messages = AppBeans.get(Messages.class);
                     Enum en = getEnumById(property.getRange().asEnumeration().getValues(), value);
                     if (en != null) {
                         return messages.getMessage(en);
@@ -180,7 +180,7 @@ public class EntityLogAttr extends BaseUuidEntity {
         String message;
         io.jmix.core.metamodel.model.MetaClass metaClass = getClassFromEntityName(entityName);
         if (metaClass != null) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             message = messages.getTools().getPropertyCaption(metaClass, getName());
         } else {
             return getName();
@@ -189,7 +189,7 @@ public class EntityLogAttr extends BaseUuidEntity {
     }
 
     private io.jmix.core.metamodel.model.MetaClass getClassFromEntityName(String entityName) {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
         io.jmix.core.metamodel.model.MetaClass metaClass = metadata.getSession().findClass(entityName);
         return metaClass == null ? null : metadata.getExtendedEntities().getEffectiveMetaClass(metaClass);
     }
@@ -214,7 +214,7 @@ public class EntityLogAttr extends BaseUuidEntity {
             if (property != null && property.getRange().isEnum()) {
                 try {
                     Enum caller = Enum.valueOf((Class<Enum>) property.getJavaType(), value);
-                    Messages messages = AppBeans.get(Messages.NAME);
+                    Messages messages = AppBeans.get(Messages.class);
                     return messages.getMessage(caller);
                 } catch (IllegalArgumentException ignored) {
                 }
@@ -222,7 +222,7 @@ public class EntityLogAttr extends BaseUuidEntity {
         }
 
         if (!StringUtils.isBlank(messagesPack)) {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Messages messages = AppBeans.get(Messages.class);
             return messages.getMessage(messagesPack, value);
         } else {
             return value;

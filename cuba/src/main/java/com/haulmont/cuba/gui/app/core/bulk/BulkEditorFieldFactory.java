@@ -32,8 +32,8 @@ import java.util.Map;
 
 public class BulkEditorFieldFactory {
 
-    protected UiComponents componentsFactory = AppBeans.get(UiComponents.NAME);
-    protected Messages messages = AppBeans.get(Messages.NAME);
+    protected UiComponents componentsFactory = AppBeans.get(UiComponents.class);
+    protected Messages messages = AppBeans.get(Messages.class);
 
     protected static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
 

@@ -106,7 +106,7 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return (Metadata) applicationContext.getBean(Metadata.class);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

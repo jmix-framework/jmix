@@ -91,9 +91,9 @@ public class WebTable<E extends Entity> extends io.jmix.ui.component.impl.WebTab
 
     @Override
     protected TablePresentations createTablePresentations() {
-        Presentations presentations = (Presentations) applicationContext.getBean(Presentations.NAME, this);
+        Presentations presentations = applicationContext.getBean(Presentations.class, this);
 
-        presentationsDelegate = (LegacyPresentationsDelegate) applicationContext.getBean(LegacyPresentationsDelegate.NAME,
+        presentationsDelegate = applicationContext.getBean(LegacyPresentationsDelegate.class,
                 this, presentations, getSettingsBinder());
 
         return presentations;

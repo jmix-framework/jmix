@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component(LegacyDependencyResolver.NAME)
+@Component("jmix_LegacyDependencyResolver")
 public class CubaLegacyDependencyResolver implements LegacyDependencyResolver {
 
     @Nullable

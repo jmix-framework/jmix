@@ -208,7 +208,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
     }
 
     protected MetadataTools getMetadataTools() {
-        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected List<FieldGroup.FieldConfig> loadDynamicAttributeFields(Datasource ds) {

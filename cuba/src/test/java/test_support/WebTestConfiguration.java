@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.core.testsupport;
+package test_support;
 
 import com.haulmont.cuba.CubaConfiguration;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.core.model.common.UserEntityListener;
+import com.haulmont.cuba.core.testsupport.TestEventsListener;
+import com.haulmont.cuba.core.testsupport.TestJpqlSortExpressionProvider;
+import com.haulmont.cuba.core.testsupport.TestSecureOperations;
+import com.haulmont.cuba.core.testsupport.TestUserSessionSource;
+import com.haulmont.cuba.web.testsupport.TestUiSecureOperations;
 import io.jmix.core.CoreConfiguration;
-import io.jmix.core.JmixModules;
-import io.jmix.core.Resources;
 import io.jmix.core.Stores;
-import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
@@ -38,10 +40,11 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
+import io.jmix.securityui.constraint.UiSecureOperations;
 import io.jmix.ui.UiConfiguration;
+import io.jmix.uidata.UiDataConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -55,11 +58,17 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({CoreConfiguration.class, CubaConfiguration.class, DataConfiguration.class, UiConfiguration.class,
-        DynAttrConfiguration.class, DynAttrUiConfiguration.class, FileSystemFileStorageConfiguration.class,
-        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class})
-@PropertySource("classpath:/com/haulmont/cuba/core/test-core-app.properties")
-public class CoreTestConfiguration {
+@Import({
+        CoreConfiguration.class,
+        DataConfiguration.class,
+        UiConfiguration.class, UiDataConfiguration.class,
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
+        DynAttrConfiguration.class, DynAttrUiConfiguration.class,
+        FileSystemFileStorageConfiguration.class,
+        CubaConfiguration.class
+})
+@PropertySource("classpath:/com/haulmont/cuba/core/test-web-app.properties")
+public class WebTestConfiguration {
 
     @Bean
     public UserRepository userRepository() {
@@ -67,13 +76,7 @@ public class CoreTestConfiguration {
     }
 
     @Bean
-    public MessageSource messageSource(JmixModules modules, Resources resources) {
-        return new JmixMessageSource(modules, resources);
-    }
-
-    @Bean
-    @Primary
-    DataSource dataSource() {
+    protected DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
                 .generateUniqueName(true)
                 .setType(EmbeddedDatabaseType.HSQL)
@@ -81,14 +84,12 @@ public class CoreTestConfiguration {
     }
 
     @Bean
-    @Primary
     LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource, PersistenceConfigProcessor processor, JpaVendorAdapter jpaVendorAdapter) {
         return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter);
     }
 
     @Bean
-    @Primary
     PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
         return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
     }
@@ -98,12 +99,14 @@ public class CoreTestConfiguration {
         return new UserEntityListener();
     }
 
-    @Bean(name = UserSessionSource.NAME)
+    @Bean("test_UserSessionSource")
+    @Primary
     UserSessionSource userSessionSource() {
         return new TestUserSessionSource();
     }
 
-    @Bean(name = JpqlSortExpressionProvider.NAME)
+    @Bean("test_JpqlSortExpressionProvider")
+    @Primary
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }
@@ -113,9 +116,16 @@ public class CoreTestConfiguration {
         return new TestEventsListener();
     }
 
-    @Bean
-    TestAppContextLifecycleListener testAppContextLifecycleListener() {
-        return new TestAppContextLifecycleListener();
+    @Bean(name = "test_SecureOperations")
+    @Primary
+    public SecureOperations secureOperations() {
+        return new TestSecureOperations();
+    }
+
+    @Bean(name = "test_UiSecureOperations")
+    @Primary
+    public UiSecureOperations uiSecureOperations() {
+        return new TestUiSecureOperations();
     }
 
     @Bean
@@ -128,8 +138,8 @@ public class CoreTestConfiguration {
         return new ConcurrentMapCacheManager();
     }
 
-    @Bean(name = "sec_SecureOperations")
-    public SecureOperations secureOperations() {
-        return new TestSecureOperations();
-    }
+//    @Bean
+//    DataLoadCoordinatorFacetProvider dataLoadCoordinatorFacetProvider() {
+//        return new CubaDataLoadCoordinatorFacetProvider(); // this is normally done in CubaAutoConfiguration
+//    }
 }

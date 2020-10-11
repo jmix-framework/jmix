@@ -180,11 +180,11 @@ public class DsBuilder {
     }
 
     protected FetchPlanRepository getViewRepository() {
-        return AppBeans.get(FetchPlanRepository.NAME);
+        return AppBeans.get(FetchPlanRepository.class);
     }
 
     protected Metadata getMetadata() {
-        return AppBeans.get(Metadata.NAME);
+        return AppBeans.get(Metadata.class);
     }
 
     public DsContext getDsContext() {
@@ -365,7 +365,7 @@ public class DsBuilder {
                 if (master != null) {
                     MetaClass metaClass = master.getMetaClass();
                     MetaProperty metaProperty = metaClass.findProperty(property);
-                    MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+                    MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
                     isEmbedded = metadataTools.isEmbedded(metaProperty);
                 }
                 if (dsClass == null) {

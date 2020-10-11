@@ -43,7 +43,7 @@ public class ShowLinkAction extends BaseAction {
         this.ds = ds;
         this.handler = handler;
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         setCaption(messages.getMessage("table.showLinkAction"));
     }
 
@@ -53,7 +53,7 @@ public class ShowLinkAction extends BaseAction {
             return;
         }
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
 
         Dialogs dialogs = AppUI.getCurrent().getDialogs();
 
@@ -66,7 +66,7 @@ public class ShowLinkAction extends BaseAction {
     protected String compileLink(CollectionDatasource ds) {
         StringBuilder sb = new StringBuilder();
 
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         sb.append(messages.getMessage("table.showLinkAction.link")).append("<br/>");
         sb.append("<textarea class=\"c-table-showlink-textarea\" autofocus=\"true\" readonly=\"true\">").
                 append(handler.makeLink(ds.getItem()).replace("&", "&amp")).append("</textarea>");

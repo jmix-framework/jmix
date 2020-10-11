@@ -91,7 +91,7 @@ public class QueryCacheTestClass {
 
     @BeforeEach
     public void setUp() throws Exception {
-        queryCache = AppBeans.get(QueryCache.NAME);
+        queryCache = AppBeans.get(QueryCache.class);
         try (Transaction tx = persistence.createTransaction()) {
             EntityManagerFactory emf = persistence.getEntityManager().getDelegate().getEntityManagerFactory();
 

@@ -232,8 +232,8 @@ public class View extends FetchPlan {
     }
 
     public View addSystemProperties() {
-        io.jmix.core.Metadata metadata = AppBeans.get(Metadata.NAME);
-        MetadataTools metadataTools = AppBeans.get(MetadataTools.NAME);
+        io.jmix.core.Metadata metadata = AppBeans.get(Metadata.class);
+        MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
         MetaClass metaClass = metadata.getClass(getEntityClass());
         for (String propertyName : metadataTools.getSystemProperties(metaClass)) {
             addProperty(propertyName);

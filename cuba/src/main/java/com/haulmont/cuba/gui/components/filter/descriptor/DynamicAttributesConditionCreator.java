@@ -35,7 +35,7 @@ public class DynamicAttributesConditionCreator extends AbstractConditionDescript
                                              String propertyPath, String entityAlias) {
         super(RandomStringUtils.randomAlphabetic(10), filterComponentName, metaClass, entityAlias);
         this.propertyPath = propertyPath;
-        Messages messages = AppBeans.get(Messages.NAME);
+        Messages messages = AppBeans.get(Messages.class);
         locCaption = messages.getMainMessage("filter.dynamicAttributeConditionCreator");
         showImmediately = true;
     }

@@ -43,7 +43,7 @@ public class CustomConditionDescriptor extends AbstractConditionDescriptor {
         this.messagesPack = messagesPack;
         this.caption = element.attributeValue("caption");
         if (this.caption != null) {
-            MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+            MessageTools messageTools = AppBeans.get(MessageTools.class);
             this.locCaption = messageTools.loadString(messagesPack, this.caption);
         }
 

@@ -60,7 +60,7 @@ public class DsContextImpl implements DsContextImplementation {
 
     public DsContextImpl(DataSupplier dataservice) {
         this.dataservice = dataservice;
-        this.metadata = AppBeans.get(Metadata.NAME);
+        this.metadata = AppBeans.get(Metadata.class);
     }
 
     @Override

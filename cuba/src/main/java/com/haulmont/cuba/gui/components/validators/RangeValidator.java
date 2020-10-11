@@ -36,7 +36,7 @@ public class RangeValidator implements Field.Validator {
 
     protected String message;
     protected String messagesPack;
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     protected Class<? extends Comparable> type = String.class;
     protected Comparable minValue = null;

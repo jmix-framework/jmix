@@ -31,7 +31,7 @@ import java.util.UUID;
 @Deprecated
 public interface UserSessionSource {
 
-    String NAME = "jmix_UserSessionSource";
+    String NAME = "cuba_UserSessionSource";
 
     /**
      * @return true if the current user session is valid and calling {@link #getUserSession()} is safe

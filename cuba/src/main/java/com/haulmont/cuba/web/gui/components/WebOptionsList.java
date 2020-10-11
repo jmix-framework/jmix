@@ -207,7 +207,7 @@ public class WebOptionsList<V, I> extends WebAbstractField<JmixListSelect, V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.NAME, OptionsBinder.class);
+            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.class);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
         }

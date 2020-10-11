@@ -101,7 +101,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
 
     @Override
     protected void initComponent(JmixPickerField<V> component) {
-        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+        Messages messages = applicationContext.getBean(Messages.class);
         setInputPrompt(messages.getMessage("searchPickerField.inputPrompt"));
 
         getComponent().setItemCaptionGenerator(this::generateItemCaption);
@@ -171,7 +171,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         return new SearchNotifications() {
             @Override
             public void notFoundSuggestions(String filterString) {
-                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+                Messages messages = applicationContext.getBean(Messages.class);
 
                 String message = messages.formatMessage("searchSelect.notFound", filterString);
                 // TODO: legacy-ui
@@ -180,7 +180,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
 
             @Override
             public void needMinSearchStringLength(String filterString, int minSearchStringLength) {
-                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+                Messages messages = applicationContext.getBean(Messages.class);
 
                 String message = messages.formatMessage("", "searchSelect.minimumLengthOfFilter", minSearchStringLength);
                 // TODO: legacy-ui
@@ -529,7 +529,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.class);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
 

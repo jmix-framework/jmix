@@ -17,7 +17,7 @@
 package cuba_messages
 
 import com.haulmont.cuba.core.global.Messages
-import com.haulmont.cuba.core.testsupport.CoreTestConfiguration
+import test_support.CoreTestConfiguration
 import test_support.cuba_messages.foo.Bar
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification

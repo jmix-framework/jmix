@@ -41,7 +41,7 @@ public class LegacyFragmentAdapter extends AbstractFrame implements CubaFragment
 
     public LegacyFragmentAdapter(AbstractWindow legacyScreen) {
         this.screen = legacyScreen;
-        this.messages = AppBeans.get(Messages.NAME);
+        this.messages = AppBeans.get(Messages.class);
     }
 
     /**

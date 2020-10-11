@@ -30,6 +30,8 @@ import java.util.LinkedList;
  */
 public class EntityStates extends io.jmix.core.EntityStates {
 
+    public static final String NAME = "cuba_EntityStates";
+
     /**
      * DEPRECATED. Use {@link MetadataTools#getEntityName(Class)} instead.
      */

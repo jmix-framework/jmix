@@ -40,8 +40,8 @@ public class DoubleValidator implements Field.Validator {
     protected String message;
     protected String messagesPack;
     protected String onlyPositive;
-    protected Messages messages = AppBeans.get(Messages.NAME);
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     public DoubleValidator(Element element, String messagesPack) {
         message = element.attributeValue("message");
@@ -75,7 +75,7 @@ public class DoubleValidator implements Field.Validator {
         if (value instanceof String) {
             try {
                 Datatype<Double> datatype = Datatypes.getNN(Double.class);
-                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.class);
                 Double num = datatype.parse((String) value, currentAuthentication.getLocale());
                 result = checkDoubleOnPositive(num);
             } catch (ParseException e) {

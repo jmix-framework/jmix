@@ -46,9 +46,9 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
     protected boolean allowCommit = true;
     protected Datasource.CommitMode commitMode = CommitMode.DATASTORE;
     protected Datasource parentDs;
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
+    protected Metadata metadata = AppBeans.get(Metadata.class);
 
-    protected BackgroundWorker backgroundWorker = AppBeans.get(BackgroundWorker.NAME);
+    protected BackgroundWorker backgroundWorker = AppBeans.get(BackgroundWorker.class);
 
     private EventRouter eventRouter;
 

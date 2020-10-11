@@ -33,8 +33,8 @@ public class DateValidator implements Field.Validator {
 
     protected String message;
     protected String messagesPack;
-    protected Messages messages = AppBeans.get(Messages.NAME);
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
+    protected Messages messages = AppBeans.get(Messages.class);
+    protected MessageTools messageTools = AppBeans.get(MessageTools.class);
 
     public DateValidator(Element element, String messagesPack) {
         this.message = element.attributeValue("message");
@@ -58,7 +58,7 @@ public class DateValidator implements Field.Validator {
         if (value instanceof String) {
             try {
                 Datatype datatype = Datatypes.getNN(java.sql.Date.class);
-                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.class);
                 datatype.parse((String) value, currentAuthentication.getLocale());
                 result = true;
             } catch (ParseException e) {

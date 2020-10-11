@@ -91,7 +91,7 @@ public class MainScreen extends Screen implements Window.HasWorkArea, Window.Has
         Image logoImage = getLogoImage();
         if (logoImage != null) {
             LayoutAnalyzerContextMenuProvider laContextMenuProvider =
-                    (LayoutAnalyzerContextMenuProvider) getApplicationContext().getBean(LayoutAnalyzerContextMenuProvider.NAME);
+                    getApplicationContext().getBean(LayoutAnalyzerContextMenuProvider.class);
             laContextMenuProvider.initContextMenu(this, logoImage);
         }
     }

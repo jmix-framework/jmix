@@ -64,7 +64,7 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
 
     protected SearchNotifications createSearchNotifications() {
         return new SearchNotifications() {
-            protected Messages messages = AppBeans.get(Messages.NAME);
+            protected Messages messages = AppBeans.get(Messages.class);
 
             @Override
             public void notFoundSuggestions(String filterString) {

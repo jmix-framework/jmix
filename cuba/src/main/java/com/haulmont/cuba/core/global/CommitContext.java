@@ -177,8 +177,8 @@ public class CommitContext extends SaveContext {
     private FetchPlan getFetchPlanFromRepository(Entity entity, @Nullable String fetchPlanName) {
         if (fetchPlanName == null)
             return null;
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        FetchPlanRepository viewRepository = AppBeans.get(FetchPlanRepository.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
+        FetchPlanRepository viewRepository = AppBeans.get("core_FetchPlanRepository");
         return viewRepository.getFetchPlan(metadata.findClass(entity.getClass()), fetchPlanName);
     }
 

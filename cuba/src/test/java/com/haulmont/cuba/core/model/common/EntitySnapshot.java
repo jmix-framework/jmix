@@ -76,7 +76,7 @@ public class EntitySnapshot extends BaseUuidEntity implements Creatable {
 
     @PostConstruct
     public void init() {
-        Metadata metadata = AppBeans.get(Metadata.NAME);
+        Metadata metadata = AppBeans.get(Metadata.class);
         entity = metadata.create(ReferenceToEntity.class);
     }
 

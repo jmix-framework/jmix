@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.List;
 
-@Component(PersistentAttributesLoadChecker.NAME)
+@Component("core_PersistentAttributesLoadChecker")
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
 
     @Autowired

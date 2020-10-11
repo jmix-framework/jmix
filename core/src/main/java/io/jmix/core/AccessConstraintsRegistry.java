@@ -24,10 +24,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-@Component(AccessConstraintsRegistry.NAME)
+@Component("core_AccessConstraintsRegistry")
 public class AccessConstraintsRegistry {
-
-    public static final String NAME = "core_AccessConstraintsRegistry";
 
     protected List<AccessConstraint<?>> accessConstraints = new CopyOnWriteArrayList<>();
 

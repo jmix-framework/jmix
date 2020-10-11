@@ -26,10 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Allows resolving the current authorized {@link BaseUser} as method argument.
  */
-@Component(UserArgumentResolver.NAME)
+@Component("core_UserArgumentResolver")
 public class UserArgumentResolver extends TypedArgumentResolver<BaseUser> {
-
-    public static final String NAME = "core_UserArgumentResolver";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

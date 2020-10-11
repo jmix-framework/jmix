@@ -21,8 +21,6 @@ import java.util.Collection;
 
 public interface LockManager {
 
-    String NAME = "core_LockManager";
-
     String LOCKS_CACHE_NAME = "jmix-locks-cache";
 
     /**

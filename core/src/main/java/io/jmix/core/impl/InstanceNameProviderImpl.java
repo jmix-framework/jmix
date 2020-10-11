@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@Component(InstanceNameProvider.NAME)
+@Component("core_InstanceNameProvider")
 public class InstanceNameProviderImpl implements InstanceNameProvider {
 
     @Autowired

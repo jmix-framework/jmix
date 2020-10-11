@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.*;
 
-@Component(DatatypeRegistry.NAME)
+@Component("core_DatatypeRegistry")
 public class DatatypeRegistryImpl implements DatatypeRegistry {
 
     private static final Logger log = LoggerFactory.getLogger(DatatypeRegistryImpl.class);

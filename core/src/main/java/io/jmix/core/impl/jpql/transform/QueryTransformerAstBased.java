@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(QueryTransformer.NAME)
+@Component("core_QueryTransformer")
 public class QueryTransformerAstBased implements QueryTransformer {
     protected DomainModel model;
     protected String query;

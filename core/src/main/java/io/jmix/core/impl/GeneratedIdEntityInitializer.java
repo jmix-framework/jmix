@@ -26,9 +26,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-@Component(GeneratedIdEntityInitializer.NAME)
+@Component("core_GeneratedIdEntityInitializer")
 public class GeneratedIdEntityInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "core_GeneratedIdEntityInitializer";
 
     @Autowired
     private Metadata metadata;

@@ -26,10 +26,8 @@ import java.io.*;
 /**
  * The serialization implementation using standard Java serialization and allowing beans to be restored on deserialization
  */
-@Component(StandardSerialization.NAME)
+@Component("core_StandardSerialization")
 public class StandardSerialization {
-
-    public static final String NAME = "core_StandardSerialization";
 
     @Autowired
     protected BeanFactory beanFactory;

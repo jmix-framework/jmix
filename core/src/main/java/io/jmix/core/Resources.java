@@ -35,8 +35,6 @@ import java.io.InputStream;
  */
 public interface Resources extends ResourceLoader {
 
-    String NAME = "core_Resources";
-
     /**
      * Searches for a resource according to the rules explained in {@link Resources} and returns the resource as stream
      * if found. The returned stream should be closed after use.

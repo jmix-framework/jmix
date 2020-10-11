@@ -38,11 +38,9 @@ import java.util.Set;
  * belong to any data store.
  */
 @Internal
-@Component(NoopDataStore.NAME)
+@Component("core_NoopDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NoopDataStore implements DataStore {
-
-    public static final String NAME = "core_NoopDataStore";
 
     protected String name;
 

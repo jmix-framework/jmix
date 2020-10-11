@@ -24,8 +24,6 @@ import java.util.Locale;
  */
 public interface Messages {
 
-    String NAME = "core_Messages";
-
     /**
      * Returns localized message.<br>
      * Locale is determined by the current user session.

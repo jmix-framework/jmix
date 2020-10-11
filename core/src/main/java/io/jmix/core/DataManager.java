@@ -29,10 +29,6 @@ import java.util.List;
  */
 public interface DataManager {
 
-    String NAME = "core_DataManager";
-
-    String SECURE_NAME = "core_SecureDataManager";
-
     /**
      * Loads a single entity instance.
      * <p>The depth of object graphs, starting from loaded instances, defined by {@link FetchPlan}

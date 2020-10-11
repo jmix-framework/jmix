@@ -18,10 +18,8 @@ package io.jmix.core;
 
 import org.springframework.stereotype.Component;
 
-@Component(EntitySystemStateSupport.NAME)
+@Component("core_EntitySystemStateSupport")
 public class EntitySystemStateSupport {
-
-    public static final String NAME = "core_EntitySystemStateSupport";
 
     public void copySystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());

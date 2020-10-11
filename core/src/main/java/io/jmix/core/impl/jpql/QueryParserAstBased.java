@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(QueryParser.NAME)
+@Component("core_QueryParser")
 public class QueryParserAstBased implements QueryParser {
     protected DomainModel model;
     protected String query;

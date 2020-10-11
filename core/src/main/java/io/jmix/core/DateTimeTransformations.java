@@ -23,9 +23,8 @@ import javax.annotation.Nullable;
 import java.time.*;
 import java.util.Date;
 
-@Component(DateTimeTransformations.NAME)
+@Component("core_DateTimeTransformations")
 public class DateTimeTransformations {
-    public static final String NAME = "core_DateTimeTransformations";
 
     /**
      * Converts a date instance to the passed java type corresponding to one of the date types.

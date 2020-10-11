@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Component(FormatStringsRegistry.NAME)
+@Component("core_FormatStringsRegistry")
 public class FormatStringsRegistryImpl implements FormatStringsRegistry {
 
     protected Map<Locale, FormatStrings> formatStringsMap = new HashMap<>();

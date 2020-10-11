@@ -39,7 +39,7 @@ import static io.jmix.core.FetchPlanSerializationOption.INCLUDE_FETCH_MODE;
 /**
  *
  */
-@Component(FetchPlanSerialization.NAME)
+@Component("core_FetchPlanSerialization")
 public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
     @Autowired

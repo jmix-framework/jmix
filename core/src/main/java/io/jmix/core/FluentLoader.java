@@ -34,11 +34,9 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 
-@Component(FluentLoader.NAME)
+@Component("core_FluentLoader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentLoader<E> {
-
-    public static final String NAME = "core_FluentLoader";
 
     private Class<E> entityClass;
     private MetaClass metaClass;

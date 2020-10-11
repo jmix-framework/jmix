@@ -30,7 +30,7 @@ public class Dom4jToolsShutdownListener {
 
     @EventListener(ContextClosedEvent.class)
     public void appContextStopped() {
-        ((Dom4jTools) beanFactory.getBean(Dom4jTools.NAME)).shutdown();
+        beanFactory.getBean(Dom4jTools.class).shutdown();
     }
 
 }

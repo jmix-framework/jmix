@@ -35,11 +35,9 @@ import java.util.stream.Collectors;
  * <p>
  * Use {@link FetchPlans} factory to get the builder.
  */
-@Component(FetchPlanBuilder.NAME)
+@Component("core_FetchPlanBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FetchPlanBuilder {
-
-    public static final String NAME = "core_FetchPlanBuilder";
 
     @Autowired
     protected ApplicationContext applicationContext;

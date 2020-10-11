@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 /**
  * Factory for {@link FetchPlanBuilder}.
  */
-@Component(FetchPlans.NAME)
+@Component("core_FetchPlans")
 public class FetchPlans {
-
-    public static final String NAME = "core_FetchPlans";
 
     @Autowired
     protected ObjectProvider<FetchPlanBuilder> fetchPlanBuilderProvider;

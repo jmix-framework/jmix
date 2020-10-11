@@ -20,7 +20,6 @@ import io.jmix.core.annotation.Internal;
 
 @Internal
 public interface PersistentAttributesLoadChecker {
-    String NAME = "core_PersistentAttributesLoadChecker";
 
     boolean isLoaded(Object entity, String property);
 }

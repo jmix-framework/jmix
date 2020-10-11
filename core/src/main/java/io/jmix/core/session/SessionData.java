@@ -25,8 +25,6 @@ import java.util.Enumeration;
  **/
 public interface SessionData extends Serializable {
 
-    String NAME = "core_SessionData";
-
     /**
      * Return all session attributes
      **/

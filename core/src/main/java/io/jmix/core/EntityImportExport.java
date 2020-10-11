@@ -23,8 +23,6 @@ import java.util.Collection;
  */
 public interface EntityImportExport {
 
-    String NAME = "core_EntityImportExport";
-
     /**
      * <p>Serializes a collection of entities to JSON using {@link EntitySerialization}
      * and packs the JSON file into ZIP archive.</p> <p>Serialization is described in the {@link

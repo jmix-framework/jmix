@@ -41,10 +41,8 @@ import java.util.Map;
  * Encapsulates functionality for working with extended entities.
  *
  */
-@Component(ExtendedEntities.NAME)
+@Component("core_ExtendedEntities")
 public class ExtendedEntities {
-
-    public static final String NAME = "core_ExtendedEntities";
 
     protected Metadata metadata;
 

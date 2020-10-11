@@ -45,7 +45,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 
-@Component(EntitySerialization.NAME)
+@Component("core_EntitySerialization")
 public class EntitySerializationImpl implements EntitySerialization {
 
     private static final Logger log = LoggerFactory.getLogger(EntitySerializationImpl.class);

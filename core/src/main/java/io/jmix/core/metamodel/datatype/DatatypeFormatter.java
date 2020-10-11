@@ -35,10 +35,8 @@ import java.util.TimeZone;
  * <p>
  * For locale-independent conversion use {@link Datatype} methods directly.
  */
-@Component(DatatypeFormatter.NAME)
+@Component("core_DatatypeFormatter")
 public class DatatypeFormatter {
-
-    public static final String NAME = "core_DatatypeFormatter";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

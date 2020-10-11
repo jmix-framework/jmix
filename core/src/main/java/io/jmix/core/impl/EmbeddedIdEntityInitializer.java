@@ -24,9 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-@Component(EmbeddedIdEntityInitializer.NAME)
+@Component("core_EmbeddedIdEntityInitializer")
 public class EmbeddedIdEntityInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "core_EmbeddedIdEntityInitializer";
 
     @Autowired
     private Metadata metadata;

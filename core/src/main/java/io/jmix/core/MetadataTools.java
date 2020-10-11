@@ -63,10 +63,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  * <p> Implemented as Spring bean to allow for extension in
  * application projects.
  */
-@Component(MetadataTools.NAME)
+@Component("core_MetadataTools")
 public class MetadataTools {
-
-    public static final String NAME = "core_MetadataTools";
 
     public static final String PRIMARY_KEY_ANN_NAME = "jmix.primaryKey";
     public static final String EMBEDDED_ANN_NAME = "jmix.embedded";

@@ -36,15 +36,13 @@ import java.util.function.Function;
  * Utility class to provide common functionality related to localized messages.
  * <br> Implemented as Spring bean to allow extension in application projects.
  */
-@Component(MessageTools.NAME)
+@Component("core_MessageTools")
 public class MessageTools {
 
     /**
      * Prefix defining that the string is actually a key in a localized messages pack.
      */
     public static final String MARK = "msg://";
-
-    public static final String NAME = "core_MessageTools";
 
     private static final Logger log = LoggerFactory.getLogger(MessageTools.class);
 

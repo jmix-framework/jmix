@@ -30,10 +30,8 @@ import java.util.stream.Collectors;
 /**
  * Modifies JPQL query according to the tree of conditions. See {@link #processQuery(String, Condition)} method.
  */
-@Component(ConditionJpqlGenerator.NAME)
+@Component("core_ConditionJpqlGenerator")
 public class ConditionJpqlGenerator {
-
-    public static final String NAME = "core_ConditionJpqlGenerator";
 
     @Autowired
     private QueryTransformerFactory queryTransformerFactory;

@@ -27,9 +27,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@Component(AccessManager.NAME)
+@Component("core_AccessManager")
 public class AccessManager {
-    public static final String NAME = "core_AccessManager";
 
     @Autowired
     protected AccessConstraintsRegistry registry;

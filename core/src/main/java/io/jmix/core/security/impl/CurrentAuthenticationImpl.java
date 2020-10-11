@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-@Component(CurrentAuthentication.NAME)
+@Component("core_CurrentAuthentication")
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired(required = false)

@@ -3,10 +3,7 @@ package test_support.addon1;
 import io.jmix.core.annotation.JmixModule;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import test_support.TestBean;
 import test_support.base.TestBaseConfiguration;
 
@@ -22,7 +19,20 @@ public class TestAddon1Configuration {
     }
 
     @Bean
-    public CacheManager cacheManager() {
+    @Primary
+    public CacheManager addonCacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    @Primary
+    public TestAddonFooBean addonFooBean() {
+        return new TestAddonFooBean();
+    }
+
+    @Bean
+    @Primary
+    public TestAddonBarBean addonBarBean() {
+        return new TestAddonBarBean();
     }
 }

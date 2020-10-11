@@ -37,11 +37,9 @@ import java.util.stream.Collectors;
  * Populates references to entities from different data stores.
  */
 @Internal
-@Component(CrossDataStoreReferenceLoader.NAME)
+@Component("core_CrossDataStoreReferenceLoader")
 @Scope("prototype")
 public class CrossDataStoreReferenceLoader {
-
-    public static final String NAME = "core_CrossDataStoreReferenceLoader";
 
     private static final Logger log = LoggerFactory.getLogger(CrossDataStoreReferenceLoader.class);
 

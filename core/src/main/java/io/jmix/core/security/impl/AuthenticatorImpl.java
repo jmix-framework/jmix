@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component(Authenticator.NAME)
+@Component("core_Authenticator")
 public class AuthenticatorImpl extends AuthenticatorSupport implements Authenticator {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatorImpl.class);

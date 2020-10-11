@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import javax.el.ExpressionFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.ValidationException;
@@ -38,9 +37,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component(ValidationMessageInterpolator.NAME)
+@Component("core_ValidationMessageInterpolator")
 public class ValidationMessageInterpolator implements MessageInterpolator {
-    public static final String NAME = "core_ValidationMessageInterpolator";
 
     @Autowired
     protected Messages messages;

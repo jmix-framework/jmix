@@ -37,7 +37,7 @@ import java.util.Map;
 /**
  *
  */
-@Component(EntityImportPlanJsonBuilder.NAME)
+@Component("core_EntityImportPlanJsonBuilder")
 public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuilder {
 
     @Autowired

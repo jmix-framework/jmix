@@ -36,7 +36,7 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component(LockManager.NAME)
+@Component("core_LockManager")
 public class LockManagerImpl implements LockManager {
 
     protected static class LockKey implements Serializable {

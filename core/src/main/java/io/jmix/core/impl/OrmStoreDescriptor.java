@@ -19,10 +19,8 @@ package io.jmix.core.impl;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import org.springframework.stereotype.Component;
 
-@Component(OrmStoreDescriptor.NAME)
+@Component("core_OrmStoreDescriptor")
 public class OrmStoreDescriptor implements StoreDescriptor {
-
-    public static final String NAME = "core_OrmStoreDescriptor";
 
     @Override
     public String getBeanName() {

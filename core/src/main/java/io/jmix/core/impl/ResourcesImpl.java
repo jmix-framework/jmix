@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@Component(Resources.NAME)
+@Component("core_Resources")
 public class ResourcesImpl implements Resources, ResourceLoaderAware {
 
     private final Environment environment;

@@ -26,6 +26,7 @@ import io.jmix.core.impl.jpql.model.JpqlEntityModel;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +37,9 @@ import java.util.Collection;
  * Generates domain model for use in JPQL parser.
  */
 @Internal
-@Component(DomainModelBuilder.NAME)
+@Component("core_DomainModelBuilder")
+@Qualifier("regular")
 public class DomainModelBuilder {
-
-    public static final String NAME = "core_DomainModelBuilder";
 
     @Autowired
     protected Metadata metadata;

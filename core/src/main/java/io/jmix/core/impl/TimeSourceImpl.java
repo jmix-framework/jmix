@@ -26,7 +26,7 @@ import java.util.Date;
  * Standard implementation of {@link TimeSource} interface.
  *
  */
-@Component(TimeSource.NAME)
+@Component("core_TimeSource")
 public class TimeSourceImpl implements TimeSource {
 
     @Override

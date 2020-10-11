@@ -28,8 +28,6 @@ import java.util.TimeZone;
  */
 public interface CurrentAuthentication {
 
-    String NAME = "core_CurrentAuthentication";
-
     @Nullable
     Authentication getAuthentication();
 

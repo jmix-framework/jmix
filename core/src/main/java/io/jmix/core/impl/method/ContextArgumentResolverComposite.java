@@ -27,10 +27,8 @@ import java.util.List;
  * {@link MethodArgumentResolver MethodArgumentResolvers}.
  * Previously resolved method parameters are cached for faster lookups.
  */
-@Component(ContextArgumentResolverComposite.NAME)
+@Component("core_ContextArgumentResolverComposite")
 public class ContextArgumentResolverComposite extends CachedArgumentResolverComposite {
-
-    public static final String NAME = "core_ContextArgumentResolverComposite";
 
     @Autowired
     protected List<MethodArgumentResolver> resolvers;

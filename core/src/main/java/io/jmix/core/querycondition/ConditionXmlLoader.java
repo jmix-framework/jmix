@@ -32,10 +32,8 @@ import java.util.stream.Collectors;
  * Use {@link #addFactory(String, Function)} method to add your own functions creating conditions from XML elements.
  * By default, {@link LogicalCondition} and {@link JpqlCondition} are supported.
  */
-@Component(ConditionXmlLoader.NAME)
+@Component("core_ConditionXmlLoader")
 public class ConditionXmlLoader {
-
-    public static final String NAME = "core_ConditionXmlLoader";
 
     private Map<String, Function<Element, Condition>> factories = new LinkedHashMap<>();
 

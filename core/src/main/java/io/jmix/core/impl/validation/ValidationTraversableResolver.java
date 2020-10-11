@@ -27,9 +27,8 @@ import javax.validation.Path;
 import javax.validation.TraversableResolver;
 import java.lang.annotation.ElementType;
 
-@Component(ValidationTraversableResolver.NAME)
+@Component("core_ValidationTraversableResolver")
 public class ValidationTraversableResolver implements TraversableResolver {
-    public static final String NAME = "core_ValidationTraversableResolver";
 
     @Autowired
     protected Metadata metadata;

@@ -33,11 +33,9 @@ import java.util.Map;
  * See {@link EntityImportPlan} javadoc for usage example.
  */
 
-@Component(EntityImportPlanBuilder.NAME)
+@Component("core_EntityImportPlanBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EntityImportPlanBuilder {
-
-    public static final String NAME = "core_EntityImportPlanBuilder";
 
     private Class<?> entityClass;
 

@@ -26,8 +26,6 @@ import io.jmix.core.metamodel.model.MetaClass;
  */
 public interface EntityImportPlanJsonBuilder {
 
-    String NAME = "core_EntityImportPlanJsonBuilder";
-
     /**
      * Builds an {@link EntityImportPlan} that contains all fields that are presented in the JSON object.
      * <p>

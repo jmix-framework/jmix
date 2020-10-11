@@ -42,10 +42,8 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 
-@Component(FetchPlanLoader.NAME)
+@Component("core_FetchPlanLoader")
 public class FetchPlanLoader {
-
-    public static final String NAME = "core_FetchPlanLoader";
 
     private final Logger log = LoggerFactory.getLogger(FetchPlanLoader.class);
 

@@ -26,10 +26,8 @@ import java.util.*;
 /**
  * Normalizes references between items of a collection.
  */
-@Component(EntityReferencesNormalizer.NAME)
+@Component("core_EntityReferencesNormalizer")
 public class EntityReferencesNormalizer {
-
-    public static final String NAME = "core_EntityReferencesNormalizer";
 
     @Autowired
     private EntityStates entityStates;

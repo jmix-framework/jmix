@@ -30,10 +30,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
-@Component(FormatStringsLoader.NAME)
+@Component("core_FormatStringsLoader")
 public class FormatStringsLoader {
-
-    public static final String NAME = "core_FormatStringsLoader";
 
     private static final Logger log = LoggerFactory.getLogger(FormatStringsRegistryImpl.class);
 

@@ -28,7 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 
-@Component(Metadata.NAME)
+@Component("core_Metadata")
 public class MetadataImpl implements Metadata {
 
     protected volatile Session session;

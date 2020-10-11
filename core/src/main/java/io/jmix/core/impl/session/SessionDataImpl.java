@@ -27,7 +27,7 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 
-@Component(SessionData.NAME)
+@Component("core_SessionData")
 @Scope(value = WebApplicationContext.SCOPE_SESSION)
 public class SessionDataImpl implements SessionData {
 

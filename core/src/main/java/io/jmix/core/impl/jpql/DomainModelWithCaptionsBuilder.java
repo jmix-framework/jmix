@@ -17,6 +17,7 @@
 package io.jmix.core.impl.jpql;
 
 import io.jmix.core.annotation.Internal;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,10 +25,9 @@ import org.springframework.stereotype.Component;
  * Generates domain model for use in autocomplete fields.
  */
 @Internal
-@Component(DomainModelWithCaptionsBuilder.NAME)
+@Component("core_DomainModelWithCaptionsBuilder")
+@Qualifier("withCaptions")
 public class DomainModelWithCaptionsBuilder extends DomainModelBuilder {
-
-    public static final String NAME = "core_DomainModelWithCaptionsBuilder";
 
     public DomainModelWithCaptionsBuilder() {
         this.loadCaptions = true;

@@ -50,9 +50,8 @@ import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.rightPad;
 
-@Component(EntitySerializationTokenManager.NAME)
+@Component("core_EntitySerializationTokenManager")
 public class EntitySerializationTokenManager {
-    public static final String NAME = "core_EntitySerializationTokenManager";
 
     @Autowired
     protected Metadata metadata;

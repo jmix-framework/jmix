@@ -31,11 +31,9 @@ import java.util.regex.Pattern;
 /**
  * {@link QueryStringProcessor} implementation that provides support for abbreviated JPQL queries.
  */
-@Component(JpqlQueryStringProcessor.NAME)
+@Component("core_JpqlQueryStringProcessor")
 @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
 public class JpqlQueryStringProcessor implements QueryStringProcessor {
-
-    public static final String NAME = "core_JpqlQueryStringProcessor";
 
     public static final Pattern START_PATTERN = Pattern.compile("^(\\w+)\\s");
 

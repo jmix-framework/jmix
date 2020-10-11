@@ -30,10 +30,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component(FluentValueLoader.NAME)
+@Component("core_FluentValueLoader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentValueLoader<T> extends AbstractFluentValueLoader {
-    public static final String NAME = "core_FluentValueLoader";
 
     private final Class<T> valueClass;
 

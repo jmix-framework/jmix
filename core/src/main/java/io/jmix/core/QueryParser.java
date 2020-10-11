@@ -24,7 +24,6 @@ import java.util.Set;
  * Parses JPQL query and returns some information about it.
  */
 public interface QueryParser {
-    String NAME = "core_QueryParser";
 
     /**
      * Get all parameter names

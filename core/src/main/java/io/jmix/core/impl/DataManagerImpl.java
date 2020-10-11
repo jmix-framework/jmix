@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 @Primary
-@Component(DataManager.NAME)
+@Component("core_DataManager")
 public class DataManagerImpl implements DataManager {
 
     private static final Logger log = LoggerFactory.getLogger(DataManagerImpl.class);

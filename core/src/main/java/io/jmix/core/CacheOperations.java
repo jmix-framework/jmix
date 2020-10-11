@@ -29,10 +29,8 @@ import java.util.function.BiConsumer;
  * Spring cache API doesn't support some operations over cache (e.g. iterations),
  * so the {@link CacheOperations} facade uses specific API of cache implementations.
  */
-@Component(CacheOperations.NAME)
+@Component("core_CacheOperations")
 public class CacheOperations {
-
-    public static final String NAME = "core_CacheOperations";
 
     /**
      * Iterations over cache entries are supported for JCache and default {@link ConcurrentMapCache}.

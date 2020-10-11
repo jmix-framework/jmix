@@ -32,8 +32,18 @@ public class TestBaseConfiguration {
     }
 
     @Bean
-    public CacheManager cacheManager() {
+    public CacheManager baseCacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    TestBaseFooBean baseFooBean() {
+        return new TestBaseFooBean();
+    }
+
+    @Bean
+    TestBaseBarBean baseBarBean() {
+        return new TestBaseBarBean();
     }
 
     @EnableWebSecurity

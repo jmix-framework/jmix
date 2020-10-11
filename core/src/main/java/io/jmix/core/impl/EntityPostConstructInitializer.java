@@ -36,9 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Component(EntityPostConstructInitializer.NAME)
+@Component("core_EntityPostConstructInitializer")
 public class EntityPostConstructInitializer implements EntityInitializer {
-    public static final String NAME = "core_EntityPostConstructInitializer";
 
     @Autowired
     protected ApplicationContext applicationContext;

@@ -22,9 +22,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component(ClassManager.NAME)
+@Component("core_ClassManager")
 public class ClassManager {
-    public static final String NAME = "core_ClassManager";
 
     @Autowired
     protected JavaClassLoader javaClassLoader;

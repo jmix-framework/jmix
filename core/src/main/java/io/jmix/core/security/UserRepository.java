@@ -23,8 +23,6 @@ import java.util.List;
 
 public interface UserRepository extends UserDetailsService {
 
-    String NAME = "core_UserRepository";
-
     BaseUser getSystemUser();
 
     BaseUser getAnonymousUser();

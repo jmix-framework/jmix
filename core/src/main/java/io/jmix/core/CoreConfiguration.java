@@ -22,20 +22,15 @@ import io.jmix.core.impl.validation.ValidationClockProvider;
 import io.jmix.core.impl.validation.ValidationTraversableResolver;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
-import org.springframework.core.PriorityOrdered;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.MessageInterpolator;
 
 /**
  * Configuration of the core module.
- *
- * <p>It implements {@link BeanDefinitionRegistryPostProcessor} with {@link PriorityOrdered} in order to be processed
- * before {@code @Conditional} annotations that depend on {@code @JmixProperty} values.
  */
 @Configuration
 @ComponentScan
@@ -51,6 +46,11 @@ public class CoreConfiguration {
         return new JmixModulesProcessor();
     }
 
+    @Bean("core_BeanExclusionProcessor")
+    public static BeanExclusionProcessor beanExclusionProcessor() {
+        return new BeanExclusionProcessor();
+    }
+
     @Bean("core_Modules")
     public JmixModules modules(JmixModulesProcessor processor) {
         return processor.getJmixModules();
@@ -61,10 +61,10 @@ public class CoreConfiguration {
         return new SimpleMeterRegistry();
     }
 
-    @Bean
-    public static LocalValidatorFactoryBean defaultValidator(ValidationClockProvider clockProvider,
-                                                             ValidationTraversableResolver traversableResolver,
-                                                             MessageInterpolator messageInterpolator) {
+    @Bean("core_Validator")
+    public static LocalValidatorFactoryBean validator(ValidationClockProvider clockProvider,
+                                                      ValidationTraversableResolver traversableResolver,
+                                                      MessageInterpolator messageInterpolator) {
         JmixLocalValidatorFactoryBean validatorFactory = new JmixLocalValidatorFactoryBean();
 
         validatorFactory.setClockProvider(clockProvider);

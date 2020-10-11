@@ -29,10 +29,8 @@ import java.util.stream.Collectors;
  * Helps to select a bean that belongs to the lower module in the hierarchy of {@code @JmixModule} dependencies (where
  * core is on top and an application is at bottom).
  */
-@Component(JmixModulesAwareBeanSelector.NAME)
+@Component("core_JmixModulesAwareBeanSelector")
 public class JmixModulesAwareBeanSelector {
-
-    public static final String NAME = "core_JmixModulesAwareBeanSelector";
 
     @Autowired
     private JmixModules modules;

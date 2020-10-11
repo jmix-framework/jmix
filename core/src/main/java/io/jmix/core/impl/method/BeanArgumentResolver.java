@@ -28,10 +28,8 @@ import java.util.Locale;
  * Allows resolving the current {@link Locale} as method argument.
  * Current user session locale will be returned if user is authorized otherwise will be returned default system locale
  */
-@Component(BeanArgumentResolver.NAME)
+@Component("core_BeanArgumentResolver")
 public class BeanArgumentResolver implements MethodArgumentResolver {
-
-    public static final String NAME = "core_BeanArgumentResolver";
 
     @Autowired
     protected ApplicationContext applicationContext;

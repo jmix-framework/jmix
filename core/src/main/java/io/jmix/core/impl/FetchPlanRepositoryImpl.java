@@ -49,7 +49,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Implementation of the {@link FetchPlanRepository}. Contains methods to store {@link FetchPlan} objects and deploy
  * them from XML.
  */
-@Component(FetchPlanRepository.NAME)
+@Component("core_FetchPlanRepository")
 public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     private final Logger log = LoggerFactory.getLogger(FetchPlanRepositoryImpl.class);

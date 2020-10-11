@@ -45,11 +45,9 @@ import java.util.Map;
  * Creates metadata session and loads metadata from annotated Java classes.
  */
 @Internal
-@Component(MetadataLoader.NAME)
+@Component("core_MetadataLoader")
 @Scope("prototype")
 public class MetadataLoader {
-
-    public static final String NAME = "core_MetadataLoader";
 
     private final Logger log = LoggerFactory.getLogger(MetadataLoader.class);
 

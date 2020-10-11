@@ -67,10 +67,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * Loads meta-model from a set of annotated Java classes.
  */
 @Internal
-@Component(MetaModelLoader.NAME)
+@Component("core_MetaModelLoader")
 public class MetaModelLoader {
-
-    public static final String NAME = "core_MetaModelLoader";
 
     protected static final String VALIDATION_MIN = "_min";
     protected static final String VALIDATION_MAX = "_max";

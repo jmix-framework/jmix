@@ -27,7 +27,6 @@ import java.time.ZonedDateTime;
 
 @Component("core_JmixValidationClockProvider")
 public class ValidationClockProvider implements ClockProvider {
-    public static final String NAME = "core_JmixValidationClockProvider";
 
     @Autowired
     protected TimeSource timeSource;

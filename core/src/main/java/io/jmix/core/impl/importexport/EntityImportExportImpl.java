@@ -48,7 +48,7 @@ import java.util.zip.CRC32;
 
 import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
 
-@Component(EntityImportExport.NAME)
+@Component("core_EntityImportExport")
 public class EntityImportExportImpl implements EntityImportExport {
 
     @Autowired

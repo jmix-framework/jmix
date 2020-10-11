@@ -37,9 +37,8 @@ import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 /**
  * Provides information about entities states.
  */
-@Component(EntityStates.NAME)
+@Component("core_EntityStates")
 public class EntityStates {
-    public static final String NAME = "core_EntityStates";
 
     @Autowired
     protected PersistentAttributesLoadChecker checker;

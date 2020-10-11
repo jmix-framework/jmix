@@ -24,10 +24,9 @@ import org.springframework.stereotype.Component;
 import javax.persistence.TemporalType;
 import java.util.*;
 
-@Component(FluentValuesLoader.NAME)
+@Component("core_FluentValuesLoader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FluentValuesLoader extends AbstractFluentValueLoader {
-    public static final String NAME = "core_FluentValuesLoader";
 
     private List<String> properties = new ArrayList<>();
 

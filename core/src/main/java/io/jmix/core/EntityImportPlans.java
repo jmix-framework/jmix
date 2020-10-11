@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 /**
  * Factory for {@link EntityImportPlanBuilder}.
  */
-@Component(EntityImportPlans.NAME)
+@Component("core_EntityImportPlans")
 public class EntityImportPlans {
-
-    public static final String NAME = "core_EntityImportPlans";
 
     @Autowired
     protected ObjectProvider<EntityImportPlanBuilder> entityImportPlanBuilderProvider;

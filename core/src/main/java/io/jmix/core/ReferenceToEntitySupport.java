@@ -28,10 +28,8 @@ import java.util.UUID;
 /**
  * Utility class to provide common functionality for entities with different type of primary keys
  */
-@Component(ReferenceToEntitySupport.NAME)
+@Component("core_ReferenceToEntitySupport")
 public class ReferenceToEntitySupport {
-
-    public static final String NAME = "core_ReferenceToEntitySupport";
 
     @Autowired
     protected MetadataTools metadataTools;

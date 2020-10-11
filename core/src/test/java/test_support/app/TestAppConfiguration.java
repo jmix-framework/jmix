@@ -38,7 +38,14 @@ public class TestAppConfiguration {
     }
 
     @Bean
+    @Primary
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @Bean
+    @Primary
+    public TestAppBarBean appBarBean() {
+        return new TestAppBarBean();
     }
 }

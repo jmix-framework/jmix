@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@Component(Messages.NAME)
+@Component("core_Messages")
 public class MessagesImpl implements Messages {
 
     @Autowired

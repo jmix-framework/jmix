@@ -35,10 +35,8 @@ import java.util.*;
 /**
  * Utility class for accessing registered data store names.
  */
-@Component(Stores.NAME)
+@Component("core_Stores")
 public class Stores {
-
-    public static final String NAME = "core_Stores";
 
     public static final String MAIN = "main";
     public static final String NOOP = "noop";

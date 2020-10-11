@@ -21,8 +21,6 @@ package io.jmix.core;
  */
 public interface FetchPlanSerialization {
 
-    String NAME = "core_FetchPlanSerialization";
-
     /**
      * Deserializes a JSON object to fetch plan. The method automatically identifies whether the fetch plan was serialized with the
      * {@link FetchPlanSerializationOption#COMPACT_FORMAT} option.

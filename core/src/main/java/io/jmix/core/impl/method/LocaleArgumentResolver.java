@@ -27,10 +27,8 @@ import java.util.Locale;
  * Allows resolving the current {@link Locale} as method argument.
  * Current user session locale will be returned if user is authorized otherwise will be returned default system locale
  */
-@Component(LocaleArgumentResolver.NAME)
+@Component("core_LocaleArgumentResolver")
 public class LocaleArgumentResolver extends TypedArgumentResolver<Locale> {
-
-    public static final String NAME = "core_LocaleArgumentResolver";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

@@ -26,8 +26,6 @@ import java.util.Date;
  */
 public interface TimeSource {
 
-    String NAME = "core_TimeSource";
-
     /**
      * Return current timestamp as Date instance.
      * @return  current timestamp

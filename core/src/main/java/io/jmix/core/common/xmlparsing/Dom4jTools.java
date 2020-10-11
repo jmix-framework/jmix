@@ -40,10 +40,8 @@ import java.util.function.Function;
  * Pool size and timeout to borrow can be configured
  * with the application properties {@code cuba.dom4j.maxPoolSize} and {@code cuba.dom4j.maxBorrowWaitMillis}
  */
-@Component(Dom4jTools.NAME)
+@Component("core_Dom4jTools")
 public class Dom4jTools {
-
-    public static final String NAME = "core_Dom4jTools";
 
     protected CoreProperties properties;
 

@@ -31,10 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Factory of {@link DataStore} implementations.
  */
 @Internal
-@Component(DataStoreFactory.NAME)
+@Component("core_DataStoreFactory")
 public class DataStoreFactory {
-
-    public static final String NAME = "core_DataStoreFactory";
 
     protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 

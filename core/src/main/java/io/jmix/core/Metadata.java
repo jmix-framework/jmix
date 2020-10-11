@@ -25,8 +25,6 @@ import io.jmix.core.metamodel.model.Session;
  */
 public interface Metadata extends Session {
 
-    String NAME = "core_Metadata";
-
     /**
      * Get Metadata session - interface providing access to MetaClasses and MetaProperties.
      * @return  current metadata session

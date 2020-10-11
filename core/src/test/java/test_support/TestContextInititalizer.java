@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl;
+package test_support;
 
-import io.jmix.core.metamodel.model.StoreDescriptor;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
-@Component("core_UndefinedStoreDescriptor")
-public class UndefinedStoreDescriptor implements StoreDescriptor {
-
-    @Override
-    public String getBeanName() {
-        return "<undefined>";
-    }
+public class TestContextInititalizer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     @Override
-    public boolean isPersistent() {
-        return false;
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ((DefaultListableBeanFactory) applicationContext.getBeanFactory()).setAllowBeanDefinitionOverriding(false);
     }
 }

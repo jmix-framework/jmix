@@ -22,7 +22,6 @@ import java.util.Set;
  *
  */
 public interface QueryTransformer {
-    String NAME = "core_QueryTransformer";
 
     /** Main entity alias placeholder  */
     String ALIAS_PLACEHOLDER = "{E}";

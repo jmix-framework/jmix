@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Secure
-@Component(DataManager.SECURE_NAME)
+@Component("core_SecureDataManager")
 public class SecureDataManagerImpl implements DataManager {
     @Autowired
     protected DataManager dataManager;

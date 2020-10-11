@@ -27,8 +27,6 @@ import java.util.Collection;
  */
 public interface FetchPlanRepository {
 
-    String NAME = "core_FetchPlanRepository";
-
     /**
      * Get fetch plan for an entity.
      *

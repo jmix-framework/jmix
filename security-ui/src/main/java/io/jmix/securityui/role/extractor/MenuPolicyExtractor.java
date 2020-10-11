@@ -27,10 +27,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(MenuPolicyExtractor.NAME)
+@Component("sec_MenuPolicyExtractor")
 public class MenuPolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_MenuPolicyExtractor";
 
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {

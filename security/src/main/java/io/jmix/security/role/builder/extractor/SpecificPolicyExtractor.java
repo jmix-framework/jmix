@@ -24,10 +24,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component(SpecificPolicyExtractor.NAME)
+@Component("sec_SpecificPolicyExtractor")
 public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_SpecificPolicyExtractor";
 
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {

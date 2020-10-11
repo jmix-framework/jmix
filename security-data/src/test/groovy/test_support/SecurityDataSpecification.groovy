@@ -25,8 +25,10 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration,
-        SecurityDataConfiguration, SecurityDataTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, SecurityDataConfiguration, SecurityDataTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class SecurityDataSpecification extends Specification {
 
     @Autowired

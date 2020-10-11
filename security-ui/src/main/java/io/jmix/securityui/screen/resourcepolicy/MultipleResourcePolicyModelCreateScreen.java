@@ -53,8 +53,8 @@ public abstract class MultipleResourcePolicyModelCreateScreen extends Screen {
     protected void initScreenActions() {
         Window window = getWindow();
 
-        Messages messages = (Messages) getApplicationContext().getBean(Messages.NAME);
-        Icons icons = (Icons) getApplicationContext().getBean(Icons.NAME);
+        Messages messages = getApplicationContext().getBean(Messages.class);
+        Icons icons = getApplicationContext().getBean(Icons.class);
 
         String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 

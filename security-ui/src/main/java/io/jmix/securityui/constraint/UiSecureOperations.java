@@ -17,7 +17,6 @@
 package io.jmix.securityui.constraint;
 
 public interface UiSecureOperations {
-    String NAME = "sec_UiSecureOperations";
 
     boolean isScreenPermitted(String windowId, UiPolicyStore policyStore);
 

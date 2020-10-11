@@ -23,9 +23,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component(PredefinedQueryParameters.NAME)
+@Component("sec_PredefinedQueryParameters")
 public class PredefinedQueryParameters {
-    public static final String NAME = "sec_PredefinedQueryParameters";
 
     public static final String PARAM_SESSION_ATTR = "session$";
     public static final String PARAM_USER_LOGIN = "username";

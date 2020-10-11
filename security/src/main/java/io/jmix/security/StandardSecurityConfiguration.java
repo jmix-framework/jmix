@@ -176,7 +176,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
-    @Bean(name = SecurityConstraintsRegistration.NAME)
+    @Bean(name = "sec_SecurityConstraintsRegistration")
     public SecurityConstraintsRegistration constraintsRegistration() {
         return new SecurityConstraintsRegistration();
     }

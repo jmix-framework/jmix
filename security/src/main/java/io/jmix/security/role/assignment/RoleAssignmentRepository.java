@@ -23,8 +23,6 @@ import java.util.Collection;
  */
 public interface RoleAssignmentRepository {
 
-    String NAME = "sec_RoleAssignmentRepository";
-
     Collection<RoleAssignment> getAllAssignments();
 
     Collection<RoleAssignment> getAssignmentsByUsername(String username);

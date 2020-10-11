@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component(UiSecureOperations.NAME)
+@Component("sec_UiSecureOperations")
 public class UiSecureOperationsImpl implements UiSecureOperations {
 
     @Override

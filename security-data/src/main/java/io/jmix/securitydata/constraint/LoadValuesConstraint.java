@@ -29,10 +29,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(LoadValuesConstraint.NAME)
+@Component("sec_LoadValuesConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class LoadValuesConstraint implements EntityOperationConstraint<LoadValuesAccessContext> {
-    public static final String NAME = "sec_LoadValuesConstraint";
 
     protected SecureOperations secureOperations;
     protected PolicyStore policyStore;

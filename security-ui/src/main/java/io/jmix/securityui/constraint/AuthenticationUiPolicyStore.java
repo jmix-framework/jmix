@@ -28,9 +28,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component(AuthenticationUiPolicyStore.NAME)
+@Component("sec_AuthenticationUiPolicyStore")
 public class AuthenticationUiPolicyStore implements UiPolicyStore {
-    public static final String NAME = "sec_AuthenticationUiPolicyStore";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

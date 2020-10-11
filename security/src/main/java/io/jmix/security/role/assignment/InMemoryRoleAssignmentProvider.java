@@ -26,10 +26,8 @@ import java.util.Collection;
  * {@link RoleAssignmentProvider} that stores role assignments in memory. Use the {@link #addAssignment(RoleAssignment)}
  * method to put the {@code RoleAssignment} into in-memory storage.
  */
-@Component(InMemoryRoleAssignmentProvider.NAME)
+@Component("sec_InMemoryRoleAssignmentProvider")
 public class InMemoryRoleAssignmentProvider implements RoleAssignmentProvider {
-
-    public static final String NAME = "sec_InMemoryRoleAssignmentProvider";
 
     //the key of the map is User.username
     protected Multimap<String, RoleAssignment> assignments = HashMultimap.create();

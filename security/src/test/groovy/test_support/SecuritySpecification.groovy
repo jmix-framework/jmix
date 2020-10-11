@@ -22,7 +22,9 @@ import io.jmix.security.SecurityConfiguration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration,
-        SecurityTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, SecurityTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class SecuritySpecification extends Specification {
 }

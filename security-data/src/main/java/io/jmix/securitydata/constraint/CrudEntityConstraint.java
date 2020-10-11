@@ -25,10 +25,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("sec_CrudEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CrudEntityConstraint implements EntityOperationConstraint<CrudEntityContext> {
-    public static final String NAME = "sec_CrudEntityConstraint";
 
     protected PolicyStore policyStore;
     protected SecureOperations secureOperations;

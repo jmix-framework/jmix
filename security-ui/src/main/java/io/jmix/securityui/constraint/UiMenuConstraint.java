@@ -23,10 +23,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(UiMenuConstraint.NAME)
+@Component("sec_UiMenuConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
-    public static final String NAME = "sec_UiMenuConstraint";
 
     protected UiSecureOperations uiOperations;
     protected UiPolicyStore policyStore;

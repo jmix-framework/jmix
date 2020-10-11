@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-@Component(RoleRepository.NAME)
+@Component("sec_RoleRepository")
 public class RoleRepositoryImpl implements RoleRepository {
 
     private static final Logger log = LoggerFactory.getLogger(RoleRepositoryImpl.class);

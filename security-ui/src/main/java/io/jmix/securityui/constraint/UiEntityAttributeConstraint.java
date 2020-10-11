@@ -25,10 +25,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(UiEntityAttributeConstraint.NAME)
+@Component("sec_UiEntityAttributeConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiEntityAttributeConstraint implements EntityOperationConstraint<UiEntityAttributeContext> {
-    public static final String NAME = "sec_UiEntityAttributeConstraint";
 
     protected PolicyStore policyStore;
     protected SecureOperations secureOperations;

@@ -20,7 +20,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
 public interface SecureOperations {
-    String NAME = "sec_SecureOperations";
 
     boolean isEntityCreatePermitted(MetaClass metaClass, PolicyStore policyStore);
 

@@ -20,8 +20,6 @@ import io.jmix.security.model.Role;
 
 public interface AnnotatedRoleBuilder {
 
-    String NAME = "sec_AnnotatedRoleBuilder";
-
     Role createRole(String className);
 
 }

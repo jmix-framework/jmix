@@ -28,10 +28,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(ScreenPolicyExtractor.NAME)
+@Component("sec_ScreenPolicyExtractor")
 public class ScreenPolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_ScreenPolicyExtractor";
 
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {

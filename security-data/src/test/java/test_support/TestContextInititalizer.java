@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package test_support;
 
-import io.jmix.core.AccessConstraintsRegistry;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.annotation.PostConstruct;
+public class TestContextInititalizer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-public class SecurityConstraintsRegistration {
-
-    @Autowired
-    protected AccessConstraintsRegistry accessConstraintsRegistry;
-    @Autowired
-    protected BeanFactory beanFactory;
-
-    @PostConstruct
-    public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(ImportEntityConstraint.class));
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ((DefaultListableBeanFactory) applicationContext.getBeanFactory()).setAllowBeanDefinitionOverriding(false);
     }
 }

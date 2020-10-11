@@ -24,7 +24,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan
 public class StandardSecurityUiConfiguration {
-    @Bean(name = UiSecurityConstraintsRegistration.NAME)
+
+    @Bean(name = "sec_UiConstraintsRegistration")
     public UiSecurityConstraintsRegistration constraintsRegistration() {
         return new UiSecurityConstraintsRegistration();
     }

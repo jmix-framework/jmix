@@ -23,8 +23,6 @@ import java.util.Collection;
 
 public interface RoleRepository {
 
-    String NAME = "sec_RoleRepository";
-
     @Nullable
     Role getRoleByCode(String code);
 

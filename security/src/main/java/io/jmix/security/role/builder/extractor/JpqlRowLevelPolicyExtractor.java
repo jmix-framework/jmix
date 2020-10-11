@@ -26,10 +26,9 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component(JpqlRowLevelPolicyExtractor.NAME)
+@Component("sec_JpqlRowLevelPolicyExtractor")
 public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
 
-    public static final String NAME = "sec_JpqlRowLevelPolicyExtractor";
     private Metadata metadata;
 
     @Autowired

@@ -29,10 +29,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 
-@Component(PredicateRowLevelPolicyExtractor.NAME)
+@Component("sec_InMemoryRowLevelPolicyExtractor")
 public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
-
-    public static final String NAME = "sec_InMemoryRowLevelPolicyExtractor";
 
     protected Metadata metadata;
 

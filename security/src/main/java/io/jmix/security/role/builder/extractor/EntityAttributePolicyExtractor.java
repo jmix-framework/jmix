@@ -32,10 +32,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component(EntityAttributePolicyExtractor.NAME)
+@Component("sec_EntityAttributePolicyExtractor")
 public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_EntityAttributePolicyExtractor";
 
     private static final Logger log = LoggerFactory.getLogger(EntityAttributePolicyExtractor.class);
 

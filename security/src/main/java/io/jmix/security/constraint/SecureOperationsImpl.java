@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component(SecureOperations.NAME)
+@Component("sec_SecureOperations")
 public class SecureOperationsImpl implements SecureOperations {
 
     public boolean isEntityCreatePermitted(MetaClass metaClass, PolicyStore policyStore) {

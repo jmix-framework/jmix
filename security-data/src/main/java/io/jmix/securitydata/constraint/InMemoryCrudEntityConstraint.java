@@ -27,10 +27,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(InMemoryCrudEntityConstraint.NAME)
+@Component("sec_InMemoryCrudEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InMemoryCrudEntityConstraint implements InMemoryConstraint<InMemoryCrudEntityContext> {
-    public static final String NAME = "sec_InMemoryCrudEntityConstraint";
 
     protected PolicyStore policyStore;
 

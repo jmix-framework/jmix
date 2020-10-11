@@ -23,10 +23,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(SpecificConstraintImpl.NAME)
+@Component("sec_SpecificConstraintImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperationAccessContext> {
-    public static final String NAME = "sec_SpecificConstraintImpl";
 
     protected final Class<SpecificOperationAccessContext> contextClass;
     protected final String resourceName;

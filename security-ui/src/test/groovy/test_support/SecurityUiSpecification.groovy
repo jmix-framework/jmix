@@ -24,7 +24,9 @@ import io.jmix.ui.UiConfiguration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, UiConfiguration,
-        SecurityUiConfiguration, SecurityUiTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, UiConfiguration, SecurityUiConfiguration, SecurityUiTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class SecurityUiSpecification extends Specification {
 }

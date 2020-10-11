@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.*;
 import java.util.*;
 
-@Component(ExplicitResourcePolicyExtractor.NAME)
+@Component("sec_ExplicitResourcePolicyExtractor")
 public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_ExplicitResourcePolicyExtractor";
 
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {

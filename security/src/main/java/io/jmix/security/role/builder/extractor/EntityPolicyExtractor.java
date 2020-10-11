@@ -32,10 +32,8 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component(EntityPolicyExtractor.NAME)
+@Component("sec_EntityPolicyExtractor")
 public class EntityPolicyExtractor implements ResourcePolicyExtractor {
-
-    public static final String NAME = "sec_EntityPolicyExtractor";
 
     private static final EntityPolicyAction[] ALL_CRUD_ACTIONS = {
             EntityPolicyAction.CREATE,

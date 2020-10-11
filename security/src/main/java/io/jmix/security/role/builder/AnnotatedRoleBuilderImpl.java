@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component(AnnotatedRoleBuilder.NAME)
+@Component("sec_AnnotatedRoleBuilder")
 public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
 
     protected Collection<ResourcePolicyExtractor> resourcePolicyExtractors;

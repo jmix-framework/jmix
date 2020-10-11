@@ -23,10 +23,9 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component(UiShowScreenConstraint.NAME)
+@Component("sec_UiShowScreenConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiShowScreenConstraint implements AccessConstraint<UiShowScreenContext> {
-    public static final String NAME = "sec_UiShowScreenConstraint";
 
     protected UiSecureOperations uiOperations;
     protected UiPolicyStore policyStore;

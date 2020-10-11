@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component(RoleAssignmentRepository.NAME)
+@Component("sec_RoleAssignmentRepository")
 public class RoleAssignmentRepositoryImpl implements RoleAssignmentRepository {
 
     protected Collection<RoleAssignmentProvider> assignmentProviders = new ArrayList<>();

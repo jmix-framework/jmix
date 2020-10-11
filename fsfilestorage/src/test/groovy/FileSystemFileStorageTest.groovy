@@ -23,9 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.FileSystemFileStorageTestConfiguration
+import test_support.TestContextInititalizer
 
-@ContextConfiguration(classes = [CoreConfiguration, FileSystemFileStorageConfiguration,
-        FileSystemFileStorageTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, FileSystemFileStorageConfiguration, FileSystemFileStorageTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class FileSystemFileStorageTest extends Specification {
 
     @Autowired

@@ -31,10 +31,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component(AttributeRecalculationManager.NAME)
+@Component("dynattr_AttributeRecalculationManager")
 public class AttributeRecalculationManager {
-
-    public static final String NAME = "dynattrui_AttributeRecalculationManager";
 
     @Autowired
     protected ScriptEvaluator scriptEvaluator;

@@ -30,9 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
-@org.springframework.stereotype.Component(FormEmbeddingStrategy.NAME)
+@org.springframework.stereotype.Component("dynattr_FormEmbeddingStrategy")
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
-    public static final String NAME = "dynattrui_FormEmbeddingStrategy";
 
     protected UiComponentsGenerator uiComponentsGenerator;
 

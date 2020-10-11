@@ -34,9 +34,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Internal
-@Component(MsgBundleTools.NAME)
+@Component("dynattr_MsgBundleTools")
 public final class MsgBundleTools {
-    public static final String NAME = "dynattrui_MsgBundleTools";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

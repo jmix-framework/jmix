@@ -23,9 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component(AttributeDependencies.NAME)
+@Component("dynattr_AttributeDependencies")
 public class AttributeDependencies {
-    public static final String NAME = "dynattrui_AttributeDependencies";
 
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;

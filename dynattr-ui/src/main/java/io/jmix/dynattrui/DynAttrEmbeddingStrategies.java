@@ -19,17 +19,14 @@ package io.jmix.dynattrui;
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrui.impl.EmbeddingStrategy;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.xml.layout.ComponentLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Internal
-@org.springframework.stereotype.Component(DynAttrEmbeddingStrategies.NAME)
+@org.springframework.stereotype.Component("dynattr_DynAttrEmbeddingStrategies")
 public class DynAttrEmbeddingStrategies {
-    public static final String NAME = "dynattrui_DynAttrEmbeddingStrategies";
 
     @Autowired(required = false)
     protected List<EmbeddingStrategy> embeddingStrategies;

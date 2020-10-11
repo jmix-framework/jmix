@@ -29,9 +29,8 @@ import io.jmix.ui.component.data.table.ContainerTableItems;
 
 import java.util.List;
 
-@org.springframework.stereotype.Component(TableEmbeddingStrategy.NAME)
+@org.springframework.stereotype.Component("dynattr_TableEmbeddingStrategy")
 public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
-    public static final String NAME = "dynattrui_TableEmbeddingStrategy";
 
     @Override
     public boolean supportComponent(Component component) {

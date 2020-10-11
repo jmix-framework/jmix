@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.dynattr;
+package test_support;
 
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Collection;
-import java.util.Optional;
+public class TestContextInititalizer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-public interface DynAttrMetadata {
-
-    String DYN_ATTR_CACHE_NAME = "jmix-dyn-attr-cache";
-
-    Collection<AttributeDefinition> getAttributes(MetaClass metaClass);
-
-    Collection<CategoryDefinition> getCategories(MetaClass metaClass);
-
-    Optional<AttributeDefinition> getAttributeByCode(MetaClass metaClass, String code);
-
-    void reload();
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ((DefaultListableBeanFactory) applicationContext.getBeanFactory()).setAllowBeanDefinitionOverriding(false);
+    }
 }

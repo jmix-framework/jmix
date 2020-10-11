@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public interface DynAttrManager {
-    String NAME = "dynattr_DynamicModelManager";
 
     /**
      * Fetch dynamic attributes from dynamic attributes store for each entity

@@ -46,11 +46,9 @@ import java.util.Collections;
 *
  * @param <T> any Object
  */
-@Component(GroovyScriptValidator.NAME)
+@Component("dynattr_GroovyScriptValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GroovyScriptValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "dynattrui_GroovyScriptValidator";
 
     protected String validatorGroovyScript;
 

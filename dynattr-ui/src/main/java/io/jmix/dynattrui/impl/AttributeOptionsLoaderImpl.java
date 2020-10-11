@@ -36,7 +36,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component(AttributeOptionsLoader.NAME)
+@Component("dynattr_AttributeOptionsLoader")
 public class AttributeOptionsLoaderImpl implements AttributeOptionsLoader {
 
     protected final Map<String, OptionsLoaderStrategy> loaderStrategies = new HashMap<>();

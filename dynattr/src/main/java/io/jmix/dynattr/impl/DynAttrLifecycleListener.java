@@ -28,9 +28,8 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Map;
 
-@Component(DynAttrLifecycleListener.NAME)
+@Component("dynattr_DynAttrLifecycleListener")
 public class DynAttrLifecycleListener implements OrmLifecycleListener {
-    public static final String NAME = "dynattr_DynAttrLifecycleListener";
 
     @Autowired
     protected DynAttrManager dynAttrManager;

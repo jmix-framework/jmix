@@ -27,8 +27,6 @@ import io.jmix.data.StoreAwareLocator;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -41,7 +39,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component(DynAttrMetadata.NAME)
+@Component("dynattr_DynAttrMetadata")
 public class DynAttrMetadataImpl implements DynAttrMetadata {
 
     @Autowired

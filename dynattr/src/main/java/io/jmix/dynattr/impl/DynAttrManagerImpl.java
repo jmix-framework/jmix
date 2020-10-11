@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.entity.EntitySystemAccess.*;
 
 //TODO: take into account category
-@Component(DynAttrManager.NAME)
+@Component("dynattr_DynamicModelManager")
 public class DynAttrManagerImpl implements DynAttrManager {
     public static final int MAX_ENTITIES_FOR_ATTRIBUTE_VALUES_BATCH = 100;
 

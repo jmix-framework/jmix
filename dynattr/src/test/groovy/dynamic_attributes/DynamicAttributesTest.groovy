@@ -33,6 +33,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 import test_support.JmixDynAttrTestConfiguration
+import test_support.TestContextInititalizer
 import test_support.entity.Group
 import test_support.entity.Role
 import test_support.entity.User
@@ -40,7 +41,10 @@ import test_support.entity.UserRole
 
 import javax.sql.DataSource
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, DynAttrConfiguration, JmixDynAttrTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, DynAttrConfiguration, JmixDynAttrTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class DynamicAttributesTest extends Specification {
     @Autowired
     protected DataManager dataManager

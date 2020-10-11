@@ -21,7 +21,6 @@ import io.jmix.dynattr.AttributeDefinition;
 import java.util.List;
 
 public interface AttributeOptionsLoader {
-    String NAME = "dynattrui_AttributeOptionsLoader";
 
     List loadOptions(Object entity, AttributeDefinition attribute);
 }

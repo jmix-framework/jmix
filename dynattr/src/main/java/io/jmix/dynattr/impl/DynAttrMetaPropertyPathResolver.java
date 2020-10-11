@@ -24,9 +24,8 @@ import io.jmix.dynattr.DynAttrUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component(DynAttrMetaPropertyPathResolver.NAME)
+@Component("dynattr_DynAttrMetaPropertyPathResolver")
 public class DynAttrMetaPropertyPathResolver implements MetaPropertyPathResolver {
-    public static final String NAME = "dynattr_DynAttrMetaPropertyPathResolver";
 
     @Autowired
     protected DynAttrMetadata dynAttrMetadata;

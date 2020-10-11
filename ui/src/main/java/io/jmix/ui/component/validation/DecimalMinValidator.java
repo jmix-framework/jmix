@@ -49,11 +49,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */
-@Component(DecimalMinValidator.NAME)
+@Component("ui_DecimalMinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DecimalMinValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_DecimalMinValidator";
 
     protected BigDecimal min;
     protected boolean inclusive = true;

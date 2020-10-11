@@ -39,7 +39,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component(Icons.NAME)
+@Component("ui_Icons")
 public class IconsImpl implements Icons {
 
     private static final Logger log = LoggerFactory.getLogger(IconsImpl.class);

@@ -35,10 +35,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-@Component(ThemeConstantsRepository.NAME)
+@Component("ui_ThemeConstantsRepository")
 public class ThemeConstantsRepository {
-
-    public static final String NAME = "jmix_ThemeConstantsRepository";
 
     private static final Logger log = LoggerFactory.getLogger(ThemeConstantsRepository.class);
 

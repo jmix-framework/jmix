@@ -73,7 +73,7 @@ public class ContainerValueSource<E, V> implements EntityValueSource<E, V>, Appl
     public void setApplicationContext(ApplicationContext applicationContext) {
         MetaClass metaClass = container.getEntityMetaClass();
 
-        MetadataTools metadataTools = (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
+        MetadataTools metadataTools = applicationContext.getBean(MetadataTools.class);
         this.metaPropertyPath = metadataTools.resolveMetaPropertyPath(metaClass, property);
 
         this.container.addItemChangeListener(this::containerItemChanged);

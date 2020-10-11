@@ -84,7 +84,7 @@ import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructo
 
 @ParametersAreNonnullByDefault
 @UIScope
-@Component(Screens.NAME)
+@Component("ui_Screens")
 public class WebScreens implements Screens {
 
     private static final org.slf4j.Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
@@ -202,7 +202,7 @@ public class WebScreens implements Screens {
 
         Timer.Sample loadSample = Timer.start(meterRegistry);
 
-        ComponentLoaderContext componentLoaderContext = applicationContext.containsBean(DsSupport.NAME)
+        ComponentLoaderContext componentLoaderContext = !applicationContext.getBeansOfType(DsSupport.class).isEmpty()
                 ? applicationContext.getBean(DsSupport.class).createComponentLoaderContext(options)
                 : new ComponentLoaderContext(options);
 
@@ -221,7 +221,7 @@ public class WebScreens implements Screens {
         Timer.Sample injectSample = Timer.start(meterRegistry);
 
         UiControllerDependencyInjector dependencyInjector =
-                (UiControllerDependencyInjector) applicationContext.getBean(UiControllerDependencyInjector.NAME, controller, options);
+                applicationContext.getBean(UiControllerDependencyInjector.class, controller, options);
         dependencyInjector.inject();
 
         injectSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, windowInfo.getId()));
@@ -331,7 +331,7 @@ public class WebScreens implements Screens {
             }
         }
 
-        LayoutLoader layoutLoader = (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, componentLoaderContext);
+        LayoutLoader layoutLoader = applicationContext.getBean(LayoutLoader.class, componentLoaderContext);
         ComponentLoader<Window> windowLoader = layoutLoader.createWindowContent(window, element);
 
         if (controller instanceof CubaLegacyFrame) {

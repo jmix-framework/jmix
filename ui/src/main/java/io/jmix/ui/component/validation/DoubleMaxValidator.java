@@ -49,11 +49,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> Double and String that represents Double value with current locale
  */
-@Component(DoubleMaxValidator.NAME)
+@Component("ui_DoubleMaxValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DoubleMaxValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_DoubleMaxValidator";
 
     protected Double max;
     protected boolean inclusive = true;

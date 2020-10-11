@@ -53,10 +53,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 @UIScope
-@Component(UrlChangeHandler.NAME)
+@Component("ui_UrlChangeHandler")
 public class UrlChangeHandler implements InitializingBean {
-
-    public static final String NAME = "ui_UrlChangeHandler";
 
     private static final Logger log = LoggerFactory.getLogger(UrlChangeHandler.class);
 
@@ -92,8 +90,8 @@ public class UrlChangeHandler implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        historyNavigator = (HistoryNavigator) applicationContext.getBean(HistoryNavigator.NAME, ui, this);
-        screenNavigator = (ScreenNavigator) applicationContext.getBean(ScreenNavigator.NAME, ui);
+        historyNavigator = applicationContext.getBean(HistoryNavigator.class, ui, this);
+        screenNavigator = applicationContext.getBean(ScreenNavigator.class, ui);
     }
 
     public void handleUrlChange(Page.PopStateEvent event) {
@@ -201,7 +199,7 @@ public class UrlChangeHandler implements InitializingBean {
 
         loginScreen.show();
 
-        RedirectHandler redirectHandler = (RedirectHandler) applicationContext.getBean(RedirectHandler.NAME, ui);
+        RedirectHandler redirectHandler = applicationContext.getBean(RedirectHandler.class, ui);
         redirectHandler.schedule(navigationState);
 
         setRedirectHandler(redirectHandler);

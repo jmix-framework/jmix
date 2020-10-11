@@ -40,7 +40,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@org.springframework.stereotype.Component(UiComponents.NAME)
+@org.springframework.stereotype.Component("ui_UiComponents")
 public class WebUiComponents implements UiComponents {
 
     @Autowired

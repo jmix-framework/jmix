@@ -36,11 +36,9 @@ import java.util.Map;
  * <br> The bean traverses all implementations of {@link LinkHandlerProcessor}
  * by their priority and gives control to first possible to handle processor.
  */
-@org.springframework.stereotype.Component(LinkHandler.NAME)
+@org.springframework.stereotype.Component("ui_LinkHandler")
 @Scope("prototype")
 public class LinkHandler {
-
-    public static final String NAME = "ui_LinkHandler";
 
     @Autowired
     protected List<LinkHandlerProcessor> processors;

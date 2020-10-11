@@ -20,8 +20,6 @@ import java.util.List;
 
 public interface ThemeVariantsProvider {
 
-    String NAME = "ui_ThemeVariantsProvider";
-
     /**
      * @return a list of additional class names that will be added to
      * the div element into which this application is rendered

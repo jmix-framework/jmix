@@ -52,7 +52,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
             String entityClassName = queryElement.attributeValue("entityClass");
             if (StringUtils.isNotEmpty(entityClassName)) {
-                DataManager dataManager = (DataManager) applicationContext.getBean(DataManager.NAME);
+                DataManager dataManager = applicationContext.getBean(DataManager.class);
                 suggestionField.setSearchExecutor((searchString, searchParams) -> {
                     Class<?> entityClass = ReflectionHelper.getClass(entityClassName);
                     if (escapeValue) {
@@ -78,7 +78,7 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
     protected String applySearchFormat(String searchString, String format) {
         if (StringUtils.isNotEmpty(format)) {
-            StringSubstitutor substitutor = (StringSubstitutor) applicationContext.getBean(StringSubstitutor.NAME);
+            StringSubstitutor substitutor = applicationContext.getBean(StringSubstitutor.class);
             searchString = substitutor.substitute(format, ParamsMap.of("searchString", searchString));
         }
         return searchString;

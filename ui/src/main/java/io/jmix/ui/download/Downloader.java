@@ -24,8 +24,6 @@ import javax.annotation.Nullable;
  */
 public interface Downloader {
 
-    String NAME = "ui_Downloader";
-
     /**
      * Downloads an arbitrary resource defined by a DownloadDataProvider.
      *

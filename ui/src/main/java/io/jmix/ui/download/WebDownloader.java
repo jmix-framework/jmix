@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -44,10 +45,10 @@ import java.io.PrintWriter;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
- * Allows to show exported data in web browser or download it.
+ * Shows exported data in the web browser or downloads it.
  */
-@Component(Downloader.NAME)
-@Scope("prototype")
+@Component("ui_Downloader")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class WebDownloader implements Downloader {
 
     private static final Logger log = LoggerFactory.getLogger(WebDownloader.class);

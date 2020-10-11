@@ -49,11 +49,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> Double and String that represents BigDouble value with current locale
  */
-@Component(DoubleMinValidator.NAME)
+@Component("ui_DoubleMinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DoubleMinValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_DoubleMinValidator";
 
     protected Double min;
     protected boolean inclusive = true;

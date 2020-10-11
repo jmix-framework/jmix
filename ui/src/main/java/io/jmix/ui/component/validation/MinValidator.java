@@ -45,11 +45,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer
  */
-@Component(MinValidator.NAME)
+@Component("ui_MinValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MinValidator<T extends Number> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_MinValidator";
 
     protected long min;
 

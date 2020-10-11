@@ -46,10 +46,8 @@ import java.util.Set;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component(ScreenValidation.NAME)
+@Component("ui_ScreenValidation")
 public class ScreenValidation {
-
-    public static final String NAME = "jmix_ScreenValidation";
 
     @Autowired
     protected UiProperties properties;

@@ -20,8 +20,6 @@ import io.jmix.ui.screen.FrameOwner;
 
 public interface RelatedEntitiesAPI {
 
-    String NAME = "ui_RelatedEntities";
-
     /**
      * Creates a related screen builder.
      * <p>

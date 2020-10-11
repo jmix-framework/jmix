@@ -38,10 +38,8 @@ import static io.jmix.ui.component.HtmlAttributes.CSS.FONT;
  * supports the font element as value. Also default policy factory contains policies that are not contained in
  * standard {@link Sanitizers}.
  */
-@Component(HtmlSanitizer.NAME)
+@Component("ui_HtmlSanitizer")
 public class HtmlSanitizer {
-
-    public static final String NAME = "ui_HtmlSanitizer";
 
     /**
      * Font size regexp. Intended to match size attribute value of font element.

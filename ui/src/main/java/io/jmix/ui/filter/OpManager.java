@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import java.util.EnumSet;
 
 public interface OpManager {
-    String NAME = "jmix_OpManager";
 
     EnumSet<Op> availableOps(Class javaClass);
 

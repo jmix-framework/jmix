@@ -52,10 +52,8 @@ import java.util.stream.Collectors;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
-@Component(MenuItemCommands.NAME)
+@Component("ui_MenuItemCommands")
 public class MenuItemCommands {
-
-    public static final String NAME = "jmix_MenuItemCommands";
 
     private static final Logger userActionsLog = LoggerFactory.getLogger(UserActionsLogger.class);
     private static final Logger log = LoggerFactory.getLogger(MenuItemCommands.class);
@@ -259,7 +257,7 @@ public class MenuItemCommands {
                         .collect(Collectors.toList());
             }
 
-            UiControllerPropertyInjector propertyInjector = (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME,
+            UiControllerPropertyInjector propertyInjector = applicationContext.getBean(UiControllerPropertyInjector.class,
                     screen, properties);
             propertyInjector.inject();
 

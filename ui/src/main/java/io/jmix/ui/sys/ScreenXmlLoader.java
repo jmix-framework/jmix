@@ -38,10 +38,8 @@ import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 /**
  * Loads screen XML descriptors.
  */
-@Component(ScreenXmlLoader.NAME)
+@Component("ui_ScreenXmlLoader")
 public class ScreenXmlLoader {
-
-    public static final String NAME = "ui_ScreenXmlLoader";
 
     @Autowired
     protected Resources resources;
@@ -96,7 +94,7 @@ public class ScreenXmlLoader {
     protected Document createDocument(String template, Map<String, Object> params) {
         Document originalDocument = screenXmlParser.parseDescriptor(template);
 
-        XmlInheritanceProcessor processor = (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME,
+        XmlInheritanceProcessor processor = applicationContext.getBean(XmlInheritanceProcessor.class,
                 originalDocument, params);
         Element resultRoot = processor.getResultRoot();
 

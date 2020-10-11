@@ -49,10 +49,8 @@ import java.util.TimeZone;
 /**
  * Utillity bean that provides typical data aware operations with UI components.
  */
-@Component(DataAwareComponentsTools.NAME)
+@Component("ui_DataAwareComponentsTools")
 public class DataAwareComponentsTools {
-
-    public static final String NAME = "ui_DataAwareComponentsTools";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

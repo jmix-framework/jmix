@@ -41,12 +41,10 @@ import static io.jmix.ui.component.ComponentsHelper.getComponentPath;
  * Provides functionality for applying and saving component settings.
  */
 @Internal
-@org.springframework.stereotype.Component(ScreenSettingsManager.NAME)
+@org.springframework.stereotype.Component("ui_ScreenSettingsManager")
 public class ScreenSettingsManager {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenSettingsManager.class);
-
-    public static final String NAME = "uidata_ScreenSettingsManager";
 
     @Autowired
     protected ComponentSettingsRegistry settingsRegistry;

@@ -39,11 +39,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component(AggregatableDelegate.NAME)
+@Component("ui_AggregatableDelegate")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class AggregatableDelegate<K> {
-
-    public static final String NAME = "ui_AggregatableDelegate";
 
     protected Aggregations aggregations;
     protected CurrentAuthentication currentAuthentication;

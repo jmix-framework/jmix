@@ -26,9 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-@Component(LoaderResolver.NAME)
+@Component("ui_LoaderResolver")
 public class LoaderResolver {
-    public static final String NAME = "ui_LoaderResolver";
 
     @Autowired
     protected List<LoaderConfig> loaderConfigs;

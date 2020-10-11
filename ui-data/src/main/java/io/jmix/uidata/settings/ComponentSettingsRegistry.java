@@ -33,10 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Collects {@link ComponentSettingsBinder} and provides information for which component registered settings class.
  */
 @Internal
-@org.springframework.stereotype.Component(ComponentSettingsRegistry.NAME)
+@org.springframework.stereotype.Component("ui_ComponentSettingsRegistry")
 public class ComponentSettingsRegistry implements InitializingBean {
-
-    public static final String NAME = "uidata_ComponentSettingsRegistry";
 
     @Autowired
     protected List<ComponentSettingsBinder> binders;

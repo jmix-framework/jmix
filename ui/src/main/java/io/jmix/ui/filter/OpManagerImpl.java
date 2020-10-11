@@ -32,7 +32,7 @@ import java.util.UUID;
 
 import static io.jmix.ui.filter.Op.*;
 
-@Component(OpManager.NAME)
+@Component("jmix_OpManager")
 public class OpManagerImpl implements OpManager {
 
     @Autowired

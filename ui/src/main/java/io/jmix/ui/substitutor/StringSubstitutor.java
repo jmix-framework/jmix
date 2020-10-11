@@ -23,8 +23,6 @@ import java.util.Map;
  */
 public interface StringSubstitutor {
 
-    String NAME = "ui_StringSubstitutor";
-
     /**
      * Substitutes all the occurrences of variables in the given source object with their matching values from the map.
      *

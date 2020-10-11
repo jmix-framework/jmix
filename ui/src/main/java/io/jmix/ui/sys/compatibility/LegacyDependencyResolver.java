@@ -22,8 +22,6 @@ import javax.annotation.Nullable;
 
 public interface LegacyDependencyResolver {
 
-    String NAME = "jmix_LegacyDependencyResolver";
-
     @Nullable
     Object resolveDependency(FrameOwner frameOwner, Class<?> type, String name);
 }

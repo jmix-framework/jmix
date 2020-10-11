@@ -33,9 +33,8 @@ import java.util.function.BiFunction;
 /**
  * Specific bean for loading validators.
  */
-@Component(ValidatorLoadFactory.NAME)
+@Component("ui_ValidatorFactory")
 public class ValidatorLoadFactory {
-    public static final String NAME = "ui_ValidatorFactory";
 
     protected ApplicationContext applicationContext;
     protected MessageTools messageTools;
@@ -116,7 +115,7 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Min value is not defined");
         }
         BigDecimal decimalValue = new BigDecimal(value);
-        DecimalMinValidator validator = (DecimalMinValidator) applicationContext.getBean(DecimalMinValidator.NAME, decimalValue);
+        DecimalMinValidator validator = applicationContext.getBean(DecimalMinValidator.class, decimalValue);
 
         Boolean inclusive = loadInclusive(element);
         if (inclusive != null) {
@@ -134,7 +133,7 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Max value is not defined");
         }
         BigDecimal decimalValue = new BigDecimal(value);
-        DecimalMaxValidator validator = (DecimalMaxValidator) applicationContext.getBean(DecimalMaxValidator.NAME, decimalValue);
+        DecimalMaxValidator validator = applicationContext.getBean(DecimalMaxValidator.class, decimalValue);
 
         Boolean inclusive = loadInclusive(element);
         if (inclusive != null) {
@@ -152,7 +151,7 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Min value is not defined");
         }
         Double doubleValue = Double.valueOf(value);
-        DoubleMinValidator validator = (DoubleMinValidator) applicationContext.getBean(DoubleMinValidator.NAME, doubleValue);
+        DoubleMinValidator validator = applicationContext.getBean(DoubleMinValidator.class, doubleValue);
 
         Boolean inclusive = loadInclusive(element);
         if (inclusive != null) {
@@ -170,7 +169,7 @@ public class ValidatorLoadFactory {
             throw new IllegalArgumentException("Max value is not defined");
         }
         Double doubleValue = Double.valueOf(value);
-        DoubleMaxValidator validator = (DoubleMaxValidator) applicationContext.getBean(DoubleMaxValidator.NAME, doubleValue);
+        DoubleMaxValidator validator = applicationContext.getBean(DoubleMaxValidator.class, doubleValue);
 
         Boolean inclusive = loadInclusive(element);
         if (inclusive != null) {
@@ -195,7 +194,7 @@ public class ValidatorLoadFactory {
         }
         int fractionValue = Integer.parseInt(fraction);
 
-        DigitsValidator validator = (DigitsValidator) applicationContext.getBean(DigitsValidator.NAME, integerValue, fractionValue);
+        DigitsValidator validator = applicationContext.getBean(DigitsValidator.class, integerValue, fractionValue);
         validator.setMessage(loadMessage(element, messagePack));
 
         return validator;
@@ -203,7 +202,7 @@ public class ValidatorLoadFactory {
 
     @SuppressWarnings("rawtypes")
     protected Validator loadFutureValidator(Element element, String messagePack) {
-        FutureValidator validator = (FutureValidator) applicationContext.getBean(FutureValidator.NAME);
+        FutureValidator validator = applicationContext.getBean(FutureValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
@@ -216,7 +215,7 @@ public class ValidatorLoadFactory {
 
     @SuppressWarnings("rawtypes")
     protected Validator loadFutureOrPresentValidator(Element element, String messagePack) {
-        FutureOrPresentValidator validator = (FutureOrPresentValidator) applicationContext.getBean(FutureOrPresentValidator.NAME);
+        FutureOrPresentValidator validator = applicationContext.getBean(FutureOrPresentValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
@@ -229,7 +228,7 @@ public class ValidatorLoadFactory {
 
     @SuppressWarnings("rawtypes")
     protected Validator loadPastValidator(Element element, String messagePack) {
-        PastValidator validator = (PastValidator) applicationContext.getBean(PastValidator.NAME);
+        PastValidator validator = applicationContext.getBean(PastValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
@@ -242,7 +241,7 @@ public class ValidatorLoadFactory {
 
     @SuppressWarnings("rawtypes")
     protected Validator loadPastOrPresentValidator(Element element, String messagePack) {
-        PastOrPresentValidator validator = (PastOrPresentValidator) applicationContext.getBean(PastOrPresentValidator.NAME);
+        PastOrPresentValidator validator = applicationContext.getBean(PastOrPresentValidator.class);
 
         Boolean checkSeconds = loadCheckSeconds(element);
         if (checkSeconds != null) {
@@ -261,7 +260,7 @@ public class ValidatorLoadFactory {
         }
         long maxValue = Long.parseLong(value);
 
-        MaxValidator validator = (MaxValidator) applicationContext.getBean(MaxValidator.NAME, maxValue);
+        MaxValidator validator = applicationContext.getBean(MaxValidator.class, maxValue);
         validator.setMessage(loadMessage(element, messagePack));
         return validator;
     }
@@ -274,7 +273,7 @@ public class ValidatorLoadFactory {
         }
         long minValue = Long.parseLong(value);
 
-        MinValidator validator = (MinValidator) applicationContext.getBean(MinValidator.NAME, minValue);
+        MinValidator validator = applicationContext.getBean(MinValidator.class, minValue);
         validator.setMessage(loadMessage(element, messagePack));
         return validator;
     }
@@ -284,28 +283,28 @@ public class ValidatorLoadFactory {
         AbstractValidator validator;
         switch (element.getName()) {
             case "email":
-                validator = (AbstractValidator) applicationContext.getBean(EmailValidator.NAME);
+                validator = applicationContext.getBean(EmailValidator.class);
                 break;
             case "negativeOrZero":
-                validator = (AbstractValidator) applicationContext.getBean(NegativeOrZeroValidator.NAME);
+                validator = applicationContext.getBean(NegativeOrZeroValidator.class);
                 break;
             case "negative":
-                validator = (AbstractValidator) applicationContext.getBean(NegativeValidator.NAME);
+                validator = applicationContext.getBean(NegativeValidator.class);
                 break;
             case "notBlank":
-                validator = (AbstractValidator) applicationContext.getBean(NotBlankValidator.NAME);
+                validator = applicationContext.getBean(NotBlankValidator.class);
                 break;
             case "notEmpty":
-                validator = (AbstractValidator) applicationContext.getBean(NotEmptyValidator.NAME);
+                validator = applicationContext.getBean(NotEmptyValidator.class);
                 break;
             case "notNull":
-                validator = (AbstractValidator) applicationContext.getBean(NotNullValidator.NAME);
+                validator = applicationContext.getBean(NotNullValidator.class);
                 break;
             case "positiveOrZero":
-                validator = (AbstractValidator) applicationContext.getBean(PositiveOrZeroValidator.NAME);
+                validator = applicationContext.getBean(PositiveOrZeroValidator.class);
                 break;
             case "positive":
-                validator = (AbstractValidator) applicationContext.getBean(PositiveValidator.NAME);
+                validator = applicationContext.getBean(PositiveValidator.class);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown validator element: " + element.getName());
@@ -320,7 +319,7 @@ public class ValidatorLoadFactory {
 
         Preconditions.checkNotNullArgument(regexp);
 
-        RegexpValidator validator = (RegexpValidator) applicationContext.getBean(RegexpValidator.NAME, regexp);
+        RegexpValidator validator = applicationContext.getBean(RegexpValidator.class, regexp);
         validator.setMessage(loadMessage(element, messagePack));
 
         return validator;
@@ -328,7 +327,7 @@ public class ValidatorLoadFactory {
 
     @SuppressWarnings("rawtypes")
     protected Validator loadSizeValidator(Element element, String messagePack) {
-        SizeValidator validator = (SizeValidator) applicationContext.getBean(SizeValidator.NAME);
+        SizeValidator validator = applicationContext.getBean(SizeValidator.class);
 
         String min = element.attributeValue("min");
         if (min != null) {

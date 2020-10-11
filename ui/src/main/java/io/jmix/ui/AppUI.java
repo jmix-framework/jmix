@@ -158,7 +158,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     }
 
     protected App createApplication() {
-        return (App) beanFactory.getBean(App.NAME);
+        return beanFactory.getBean(App.class);
     }
 
     @Override
@@ -471,7 +471,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
         try {
             String action = (String) wrappedSession.getAttribute(LAST_REQUEST_ACTION_ATTR);
-            LinkHandler linkHandler = (LinkHandler) beanFactory.getBean(LinkHandler.NAME, app, action, params);
+            LinkHandler linkHandler = beanFactory.getBean(LinkHandler.class, app, action, params);
             if (linkHandler.canHandleLink()) {
                 linkHandler.handle();
             } else {

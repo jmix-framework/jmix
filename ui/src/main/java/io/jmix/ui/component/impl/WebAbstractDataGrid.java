@@ -1399,7 +1399,7 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
 
         EntityDataGridItems<E> items = getEntityDataGridItemsNN();
         DataComponents factory = this.applicationContext.getBean(DataComponents.class);
-        FetchPlanRepository viewRepository = (FetchPlanRepository) this.applicationContext.getBean(FetchPlanRepository.NAME);
+        FetchPlanRepository viewRepository = this.applicationContext.getBean(FetchPlanRepository.class);
         MetaClass metaClass = items.getEntityMetaClass();
 
         InstanceContainer<E> instanceContainer;

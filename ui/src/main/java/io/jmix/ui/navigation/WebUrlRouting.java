@@ -51,7 +51,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 @UIScope
-@Component(UrlRouting.NAME)
+@Component("ui_UrlRouting")
 public class WebUrlRouting implements UrlRouting {
 
     public static final String NEW_ENTITY_ID = "new";

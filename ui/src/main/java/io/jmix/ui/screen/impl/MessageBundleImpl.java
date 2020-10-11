@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(MessageBundle.NAME)
+@Component("ui_MessageBundle")
 public class MessageBundleImpl implements MessageBundle {
 
     protected Messages messages;

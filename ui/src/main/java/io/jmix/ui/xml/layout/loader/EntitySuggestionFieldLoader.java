@@ -60,7 +60,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return applicationContext.getBean(Metadata.class);
     }
 
     protected void loadPopupWidth(EntitySuggestionField suggestionField, Element element) {
@@ -96,7 +96,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     }
 
     protected Actions getActions() {
-        return (Actions) applicationContext.getBean(Actions.NAME);
+        return applicationContext.getBean(Actions.class);
     }
 
     protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {

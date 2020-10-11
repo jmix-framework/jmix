@@ -95,9 +95,9 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
     public void setApplicationContext(ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
 
-        messages = (Messages) applicationContext.getBean(Messages.NAME);
+        messages = applicationContext.getBean(Messages.class);
 
-        UiComponents cf = (UiComponents) applicationContext.getBean(UiComponents.NAME);
+        UiComponents cf = applicationContext.getBean(UiComponents.class);
         setInitialLayout(cf.create(VBoxLayout.NAME));
 
         this.tabbedContainer = createTabbedModeContainer();
@@ -733,8 +733,8 @@ public class WebAppWorkArea extends WebAbstractComponent<CssLayout> implements A
 
     protected void loadModeFromSettings() {
         UserSettingsTools userSettingsTools =
-                applicationContext.containsBean(UserSettingsTools.NAME) ?
-                        (UserSettingsTools) applicationContext.getBean(UserSettingsTools.NAME)
+                !applicationContext.getBeansOfType(UserSettingsTools.class).isEmpty() ?
+                        applicationContext.getBean(UserSettingsTools.class)
                         : null;
 
         if (userSettingsTools != null) {

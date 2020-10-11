@@ -64,7 +64,7 @@ import static io.jmix.ui.component.impl.WebComponentsHelper.setClickShortcut;
 import static io.jmix.ui.component.impl.WebWrapperUtils.*;
 
 @UIScope
-@Component(Dialogs.NAME)
+@Component("ui_Dialogs")
 public class WebDialogs implements Dialogs {
 
     @Autowired

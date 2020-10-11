@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @NotThreadSafe
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(UiEventsMulticaster.NAME)
+@Component("ui_UiEventsMulticaster")
 public class UiEventsMulticasterImpl implements UiEventsMulticaster {
     protected List<ApplicationListener<?>> listeners = new ArrayList<>();
 

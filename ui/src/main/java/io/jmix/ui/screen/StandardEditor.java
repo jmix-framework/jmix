@@ -74,8 +74,8 @@ public abstract class StandardEditor<T> extends Screen
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
         Window window = getWindow();
 
-        Messages messages = (Messages) getApplicationContext().getBean(Messages.NAME);
-        Icons icons = (Icons) getApplicationContext().getBean(Icons.NAME);
+        Messages messages = getApplicationContext().getBean(Messages.class);
+        Icons icons = getApplicationContext().getBean(Icons.class);
 
         String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 
@@ -148,7 +148,7 @@ public abstract class StandardEditor<T> extends Screen
         if (action instanceof ChangeTrackerCloseAction
                 && ((ChangeTrackerCloseAction) action).isCheckForUnsavedChanges()
                 && hasUnsavedChanges()) {
-            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+            ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
 
             UnknownOperationResult result = new UnknownOperationResult();
 
@@ -265,7 +265,7 @@ public abstract class StandardEditor<T> extends Screen
         if (dataContext.isModified(entity) || dataContext.isRemoved(entity))
             return true;
 
-        Metadata metadata = (Metadata) getApplicationContext().getBean(Metadata.NAME);
+        Metadata metadata = getApplicationContext().getBean(Metadata.class);
 
         for (MetaProperty property : metadata.getClass(entity).getProperties()) {
             if (property.getRange().isClass()) {
@@ -423,7 +423,7 @@ public abstract class StandardEditor<T> extends Screen
         if (this.readOnly != readOnly) {
             this.readOnly = readOnly;
 
-            ReadOnlyScreensSupport readOnlyScreensSupport = (ReadOnlyScreensSupport) getApplicationContext().getBean(ReadOnlyScreensSupport.NAME);
+            ReadOnlyScreensSupport readOnlyScreensSupport = getApplicationContext().getBean(ReadOnlyScreensSupport.class);
             readOnlyScreensSupport.setScreenReadOnly(this, readOnly);
 
             if (readOnlyDueToLock) {
@@ -476,14 +476,14 @@ public abstract class StandardEditor<T> extends Screen
      * @return validation errors
      */
     protected ValidationErrors validateUiComponents() {
-        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+        ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         return screenValidation.validateUiComponents(getWindow());
     }
 
     protected void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (isCrossFieldValidate() && errors.isEmpty()) {
-            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+            ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
 
             ValidationErrors validationErrors = screenValidation.validateCrossFieldRules(this, getEditedEntity());
 
@@ -496,7 +496,7 @@ public abstract class StandardEditor<T> extends Screen
     }
 
     private EntityStates getEntityStates() {
-        return (EntityStates) getApplicationContext().getBean(EntityStates.NAME);
+        return getApplicationContext().getBean(EntityStates.class);
     }
 
     protected void commitAndClose(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {

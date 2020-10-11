@@ -17,7 +17,6 @@
 package io.jmix.ui.facet;
 
 import io.jmix.core.MessageTools;
-import io.jmix.ui.Dialogs;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
@@ -33,10 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(MessageDialogFacetProvider.NAME)
+@Component("ui_MessageDialogFacetProvider")
 public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFacet> {
-
-    public static final String NAME = "ui_MessageDialogFacetProvider";
 
     @Autowired
     protected MessageTools messageTools;

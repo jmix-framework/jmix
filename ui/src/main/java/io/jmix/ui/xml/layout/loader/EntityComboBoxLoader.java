@@ -83,11 +83,11 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
     }
 
     protected Actions getActions() {
-        return (Actions) applicationContext.getBean(Actions.NAME);
+        return applicationContext.getBean(Actions.class);
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return applicationContext.getBean(Metadata.class);
     }
 
     @Override

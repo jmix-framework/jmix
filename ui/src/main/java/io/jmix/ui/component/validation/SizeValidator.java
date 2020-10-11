@@ -45,10 +45,8 @@ import java.util.Map;
  * @param <T> Collection or String
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(SizeValidator.NAME)
+@Component("ui_SizeValidator")
 public class SizeValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_SizeValidator";
 
     protected int min;
     protected int max = Integer.MAX_VALUE;

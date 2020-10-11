@@ -44,11 +44,9 @@ import java.util.Date;
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}
  */
-@Component(FutureValidator.NAME)
+@Component("ui_FutureValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FutureValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_FutureValidator";
 
     protected TimeSource timeSource;
 

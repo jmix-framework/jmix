@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.settings.component.binder;
+package io.jmix.ui.testassist;
 
-@org.springframework.stereotype.Component("ui_TableSettingsBinder")
-public class TableSettingsBinder extends AbstractTableSettingsBinder {
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+
+public class TestContextInititalizer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+    @Override
+    public void initialize(ConfigurableApplicationContext applicationContext) {
+        ((DefaultListableBeanFactory) applicationContext.getBeanFactory()).setAllowBeanDefinitionOverriding(false);
+    }
 }

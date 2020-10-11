@@ -286,7 +286,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
     }
 
     protected MetadataTools getMetadataTools() {
-        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected UiComponentsGenerator getUiComponentsGenerator() {

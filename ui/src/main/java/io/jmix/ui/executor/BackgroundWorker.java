@@ -20,7 +20,6 @@ package io.jmix.ui.executor;
  * Entry point to {@link BackgroundTask} execution functionality.
  */
 public interface BackgroundWorker {
-    String NAME = "ui_BackgroundWorker";
 
     /**
      * Create handler for a background task. The handler is used to control the task execution.

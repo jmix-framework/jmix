@@ -35,10 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component(ActionCustomPropertyLoader.NAME)
+@Component("ui_ActionCustomPropertyLoader")
 public class ActionCustomPropertyLoader {
-
-    public static final String NAME = "ui_ActionCustomPropertyLoader";
 
     private static final Logger log = LoggerFactory.getLogger(ActionCustomPropertyLoader.class);
 

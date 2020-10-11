@@ -45,10 +45,8 @@ import java.util.regex.Pattern;
  * @see Pattern
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(RegexpValidator.NAME)
+@Component("ui_RegexpValidator")
 public class RegexpValidator extends AbstractValidator<String> {
-
-    public static final String NAME = "ui_RegexpValidator";
 
     protected Pattern pattern;
 

@@ -23,10 +23,8 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component(ScreenFacetProvider.NAME)
+@Component("jmix_ScreenFacetProvider")
 public class ScreenFacetProvider extends AbstractScreenFacetProvider<ScreenFacet> {
-
-    public static final String NAME = "jmix_ScreenFacetProvider";
 
     @Autowired
     protected ApplicationContext applicationContext;

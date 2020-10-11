@@ -44,11 +44,9 @@ import java.util.Date;
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}
  */
-@Component(PastOrPresentValidator.NAME)
+@Component("ui_PastOrPresentValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PastOrPresentValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_PastOrPresentValidator";
 
     protected TimeSource timeSource;
 

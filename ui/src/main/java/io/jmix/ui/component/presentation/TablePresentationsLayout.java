@@ -65,7 +65,7 @@ public class TablePresentationsLayout extends VerticalLayout {
     public TablePresentationsLayout(Table component, ComponentSettingsBinder settingsBinder, ApplicationContext applicationContext) {
         this.table = component;
         this.applicationContext = applicationContext;
-        this.messages = (Messages) applicationContext.getBean(Messages.NAME);
+        this.messages = applicationContext.getBean(Messages.class);
 
         this.tableImpl = table.unwrapOrNull(JmixEnhancedTable.class);
 
@@ -317,7 +317,7 @@ public class TablePresentationsLayout extends VerticalLayout {
     @Nullable
     protected PresentationActionsBuilder getPresentationActionsBuilder() {
         if (presentationActionsBuilder == null)
-            presentationActionsBuilder = (PresentationActionsBuilder) applicationContext.getBean(PresentationActionsBuilder.NAME, table, settingsBinder);
+            presentationActionsBuilder = applicationContext.getBean(PresentationActionsBuilder.class, table, settingsBinder);
         return presentationActionsBuilder;
     }
 

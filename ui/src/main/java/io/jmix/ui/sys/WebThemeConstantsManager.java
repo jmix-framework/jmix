@@ -21,7 +21,7 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.springframework.stereotype.Component;
 
-@Component(ThemeConstantsManager.NAME)
+@Component("ui_ThemeManager")
 public class WebThemeConstantsManager implements ThemeConstantsManager {
     @Override
     public ThemeConstants getConstants() {

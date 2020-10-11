@@ -24,11 +24,9 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component(LookupScreenFacetProvider.NAME)
+@Component("ui_LookupScreenFacetProvider")
 public class LookupScreenFacetProvider
         extends AbstractEntityAwareScreenFacetProvider<LookupScreenFacet> {
-
-    public static final String NAME = "ui_LookupScreenFacetProvider";
 
     @Autowired
     protected ApplicationContext applicationContext;

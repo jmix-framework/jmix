@@ -45,11 +45,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer
  */
-@Component(MaxValidator.NAME)
+@Component("ui_MaxValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MaxValidator<T extends Number> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_MaxValidator";
 
     protected long max;
 

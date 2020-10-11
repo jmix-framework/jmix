@@ -36,7 +36,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
@@ -49,16 +48,13 @@ import static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructo
 /**
  * Provides shared functionality for fragment initialization from XML and programmatic creation.
  */
-@Component(FragmentHelper.NAME)
-@ParametersAreNonnullByDefault
+@Component("ui_FragmentHelper")
 public class FragmentHelper {
 
     @Autowired
     protected ScreenXmlLoader screenXmlLoader;
     @Autowired
     protected ClassManager classManager;
-
-    public static final String NAME = "jmix_FragmentHelper";
 
     @SuppressWarnings("unchecked")
     public ScreenFragment createController(WindowInfo windowInfo, Fragment fragment) {
@@ -151,7 +147,7 @@ public class FragmentHelper {
 
             FrameOwner controller = fragment.getFrameOwner();
             UiControllerDependencyInjector dependencyInjector =
-                    (UiControllerDependencyInjector) applicationContext.getBean(UiControllerDependencyInjector.NAME, controller, options);
+                    applicationContext.getBean(UiControllerDependencyInjector.class, controller, options);
             dependencyInjector.inject();
 
             sample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INJECTION, getFullFrameId(this.fragment)));
@@ -191,7 +187,7 @@ public class FragmentHelper {
                 List<UiControllerProperty> properties = fragmentLoaderContext.getProperties();
                 if (!properties.isEmpty()) {
                     UiControllerPropertyInjector propertyInjector =
-                            (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME, frameOwner, properties);
+                            applicationContext.getBean(UiControllerPropertyInjector.class, frameOwner, properties);
                     propertyInjector.inject();
                 }
             }

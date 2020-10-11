@@ -27,11 +27,9 @@ import java.util.List;
 /**
  * A facade bean that is intended for screen navigation using all available {@link NavigationHandler} beans.
  */
-@Component(ScreenNavigator.NAME)
+@Component("ui_ScreenNavigator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenNavigator {
-
-    public static final String NAME = "ui_ScreenNavigator";
 
     @Autowired
     protected List<NavigationHandler> navigationHandlers;

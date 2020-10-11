@@ -78,14 +78,14 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
     @Override
     public <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass) {
         // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "");
+        ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
         return screenSettings.toComponentSettings(settings, settingsClass);
     }
 
     @Override
     public String toSettingsString(ComponentSettings settings) {
         // screen id is empty as we won't commit any changes
-        ScreenSettings screenSettings = (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "");
+        ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
         return screenSettings.toSettingsString(settings);
     }
 

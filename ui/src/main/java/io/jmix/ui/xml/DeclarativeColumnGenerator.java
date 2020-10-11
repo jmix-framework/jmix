@@ -30,11 +30,9 @@ import java.lang.reflect.Method;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
-@org.springframework.stereotype.Component(DeclarativeColumnGenerator.NAME)
+@org.springframework.stereotype.Component("ui_DeclarativeColumnGenerator")
 @Scope(SCOPE_PROTOTYPE)
 public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
-
-    public static final String NAME = "ui_DeclarativeColumnGenerator";
 
     protected final String methodName;
     protected final Table table;

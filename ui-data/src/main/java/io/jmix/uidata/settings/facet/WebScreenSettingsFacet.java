@@ -184,7 +184,7 @@ public class WebScreenSettingsFacet extends WebAbstractFacet implements ScreenSe
         super.setOwner(owner);
 
         if (getScreenOwner() != null)
-            screenSettings = (ScreenSettings) beanFactory.getBean(ScreenSettings.NAME, getScreenOwner().getId());
+            screenSettings = beanFactory.getBean(ScreenSettings.class, getScreenOwner().getId());
 
         subscribe();
     }

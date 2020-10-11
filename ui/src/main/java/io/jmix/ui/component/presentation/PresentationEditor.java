@@ -51,11 +51,9 @@ import org.springframework.context.annotation.Scope;
 import java.util.Objects;
 import java.util.UUID;
 
-@org.springframework.stereotype.Component(PresentationEditor.NAME)
+@org.springframework.stereotype.Component("ui_PresentationEditor")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PresentationEditor extends JmixWindow implements InitializingBean {
-
-    public static final String NAME = "ui_PresentationEditor";
 
     private static final Logger log = LoggerFactory.getLogger(PresentationEditor.class);
 

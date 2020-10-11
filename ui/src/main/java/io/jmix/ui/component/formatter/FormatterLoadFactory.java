@@ -30,10 +30,8 @@ import java.util.function.Function;
 /**
  * Specific bean for loading formatters.
  */
-@Component(FormatterLoadFactory.NAME)
+@Component("ui_FormatterLoadFactory")
 public class FormatterLoadFactory {
-
-    public static final String NAME = "ui_FormatterLoadFactory";
 
     protected ApplicationContext applicationContext;
 
@@ -77,11 +75,11 @@ public class FormatterLoadFactory {
     }
 
     protected ClassNameFormatter loadClassNameFormatter(Element element) {
-        return (ClassNameFormatter) applicationContext.getBean(ClassNameFormatter.NAME);
+        return applicationContext.getBean(ClassNameFormatter.class);
     }
 
     protected CollectionFormatter loadCollectionFormatter(Element element) {
-        return (CollectionFormatter) applicationContext.getBean(CollectionFormatter.NAME);
+        return applicationContext.getBean(CollectionFormatter.class);
     }
 
     protected Formatter loadCustomFormatter(Element element) {
@@ -94,7 +92,7 @@ public class FormatterLoadFactory {
     }
 
     protected DateFormatter loadDateFormatter(Element element) {
-        DateFormatter formatter = (DateFormatter) applicationContext.getBean(DateFormatter.NAME);
+        DateFormatter formatter = applicationContext.getBean(DateFormatter.class);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {
@@ -115,7 +113,7 @@ public class FormatterLoadFactory {
     }
 
     protected NumberFormatter loadNumberFormatter(Element element) {
-        NumberFormatter formatter = (NumberFormatter) applicationContext.getBean(NumberFormatter.NAME);
+        NumberFormatter formatter = applicationContext.getBean(NumberFormatter.class);
 
         String format = element.attributeValue("format");
         if (StringUtils.isNotEmpty(format)) {

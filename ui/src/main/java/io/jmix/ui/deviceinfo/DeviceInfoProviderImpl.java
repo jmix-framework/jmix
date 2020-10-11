@@ -24,8 +24,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
-@Component(DeviceInfoProvider.NAME)
+@Component("ui_DeviceInfoProvider")
 public class DeviceInfoProviderImpl implements DeviceInfoProvider {
+
+    private static final String ATTR_NAME = "ui_DeviceInfoProvider";
 
     @Nullable
     @Override
@@ -36,7 +38,7 @@ public class DeviceInfoProviderImpl implements DeviceInfoProvider {
             return null;
         }
 
-        DeviceInfo deviceInfo = (DeviceInfo) currentServletRequest.getAttribute(DeviceInfoProvider.NAME);
+        DeviceInfo deviceInfo = (DeviceInfo) currentServletRequest.getAttribute(ATTR_NAME);
         if (deviceInfo != null) {
             return deviceInfo;
         }
@@ -87,7 +89,7 @@ public class DeviceInfoProviderImpl implements DeviceInfoProvider {
         di.setScreenHeight(webBrowser.getScreenHeight());
         di.setScreenWidth(webBrowser.getScreenWidth());
 
-        currentServletRequest.setAttribute(DeviceInfoProvider.NAME, di);
+        currentServletRequest.setAttribute(ATTR_NAME, di);
 
         return di;
     }

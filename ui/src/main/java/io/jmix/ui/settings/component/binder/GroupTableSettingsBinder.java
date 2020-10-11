@@ -39,12 +39,10 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("rawtypes")
-@org.springframework.stereotype.Component(GroupTableSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_GroupTableSettingsBinder")
 public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
 
     private static final Logger log = LoggerFactory.getLogger(GroupTableSettingsBinder.class);
-
-    public static final String NAME = "ui_GroupTableSettingsBinder";
 
     protected MetadataTools metadataTools;
 

@@ -32,10 +32,8 @@ import javax.validation.Validator;
  * Automatically added on data binding if property enclosing class has validation constraints.
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(BeanPropertyValidator.NAME)
+@Component("ui_BeanPropertyValidator")
 public class BeanPropertyValidator extends AbstractBeanValidator {
-
-    public static final String NAME = "ui_BeanPropertyValidator";
 
     public BeanPropertyValidator(Class beanClass, String beanProperty) {
         super(beanClass, beanProperty);

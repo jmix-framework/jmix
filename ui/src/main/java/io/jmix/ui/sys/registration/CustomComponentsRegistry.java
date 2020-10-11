@@ -84,10 +84,8 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  *
  * @see ComponentRegistrationBuilder
  */
-@org.springframework.stereotype.Component(CustomComponentsRegistry.NAME)
+@org.springframework.stereotype.Component("ui_CustomComponentsRegistry")
 public class CustomComponentsRegistry {
-
-    public static final String NAME = "ui_CustomComponentsRegistry";
 
     private final Logger log = LoggerFactory.getLogger(CustomComponentsRegistry.class);
 

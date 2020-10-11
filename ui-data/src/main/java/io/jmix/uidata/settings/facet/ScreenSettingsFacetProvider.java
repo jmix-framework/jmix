@@ -28,10 +28,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Internal
-@org.springframework.stereotype.Component(ScreenSettingsFacetProvider.NAME)
+@org.springframework.stereotype.Component("ui_ScreenSettingsFacetProvider")
 public class ScreenSettingsFacetProvider implements FacetProvider<ScreenSettingsFacet> {
-
-    public static final String NAME = "uidata_ScreenSettingsFacetProvider";
 
     @Override
     public Class<ScreenSettingsFacet> getFacetClass() {

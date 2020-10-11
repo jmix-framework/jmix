@@ -71,7 +71,7 @@ public class WebSideMenu extends WebAbstractComponent<JmixSideMenu> implements S
 
     @Override
     public void loadMenuConfig() {
-        SideMenuBuilder menuBuilder = (SideMenuBuilder) applicationContext.getBean(SideMenuBuilder.NAME);
+        SideMenuBuilder menuBuilder = applicationContext.getBean(SideMenuBuilder.class);
         menuBuilder.build(this);
     }
 

@@ -34,10 +34,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(WebJarResourceResolver.NAME)
+@Component("ui_WebJarResourceResolver")
 public class WebJarResourceResolver {
-
-    public static final String NAME = "jmix_WebJarResourceResolver";
 
     public static final String VAADIN_PREFIX = "VAADIN/webjars/";
     public static final String CLASSPATH_WEBJAR_PREFIX = "META-INF/resources/webjars/";

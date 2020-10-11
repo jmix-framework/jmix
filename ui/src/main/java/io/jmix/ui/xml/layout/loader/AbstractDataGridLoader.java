@@ -252,11 +252,11 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return applicationContext.getBean(Metadata.class);
     }
 
     protected FetchPlanRepository getViewRepository() {
-        return (FetchPlanRepository) applicationContext.getBean(FetchPlanRepository.NAME);
+        return applicationContext.getBean(FetchPlanRepository.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -667,7 +667,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
     }
 
     protected MetadataTools getMetadataTools() {
-        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected void loadSelectionMode(DataGrid component, Element element) {

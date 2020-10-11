@@ -23,8 +23,6 @@ import io.jmix.core.Messages;
  */
 public interface MessageBundle {
 
-    String NAME = "jmix_MessageBundle";
-
     /**
      * Sets source message pack.
      *

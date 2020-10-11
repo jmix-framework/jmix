@@ -147,7 +147,7 @@ public class WebDateField<V extends Comparable<V>>
         CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         Locale locale = currentAuthentication.getLocale();
 
-        FormatStringsRegistry formatStringsRegistry = (FormatStringsRegistry) applicationContext.getBean(FormatStringsRegistry.NAME);
+        FormatStringsRegistry formatStringsRegistry = applicationContext.getBean(FormatStringsRegistry.class);
 
         dateField.setDateFormat(formatStringsRegistry.getFormatStrings(locale).getDateFormat());
         dateField.setResolution(DateResolution.DAY);
@@ -283,7 +283,7 @@ public class WebDateField<V extends Comparable<V>>
 
     protected void handleDateOutOfRange(V value) {
         if (getFrame() != null) {
-            Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+            Messages messages = applicationContext.getBean(Messages.class);
             Notifications notifications = ComponentsHelper.getScreenContext(this).getNotifications();
 
             notifications.create()
@@ -695,7 +695,7 @@ public class WebDateField<V extends Comparable<V>>
             return;
         }
 
-        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+        Messages messages = applicationContext.getBean(Messages.class);
 
         V value = constructModelValue();
         if (!checkRange(value, false)) {

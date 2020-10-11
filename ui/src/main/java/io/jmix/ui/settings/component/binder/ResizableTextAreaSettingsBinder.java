@@ -26,10 +26,8 @@ import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.widget.JmixResizableTextAreaWrapper;
 
 @SuppressWarnings("rawtypes")
-@org.springframework.stereotype.Component(ResizableTextAreaSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_ResizableTextAreaSettingsBinder")
 public class ResizableTextAreaSettingsBinder implements ComponentSettingsBinder<ResizableTextArea, ResizableTextAreaSettings> {
-
-    public static final String NAME = "ui_ResizableTextAreaSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

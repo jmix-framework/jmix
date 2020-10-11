@@ -36,11 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 *
  * @param <T> value type
  */
-@Component(NotNullValidator.NAME)
+@Component("ui_NotNullValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotNullValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_NotNullValidator";
 
     public NotNullValidator() {
     }

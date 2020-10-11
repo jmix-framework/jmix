@@ -38,9 +38,8 @@ import org.springframework.core.Ordered;
 import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
-@org.springframework.stereotype.Component(DataGridEditorComponentGenerationStrategy.NAME)
+@org.springframework.stereotype.Component("ui_DataGridEditorComponentGenerationStrategy")
 public class DataGridEditorComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "ui_DataGridEditorComponentGenerationStrategy";
 
     @Autowired
     public DataGridEditorComponentGenerationStrategy(Messages messages,

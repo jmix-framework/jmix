@@ -204,7 +204,7 @@ public class WebMaskedField<V> extends WebV8AbstractField<JmixMaskedTextField, S
     }
 
     protected String getConversionErrorMessage() {
-        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+        Messages messages = applicationContext.getBean(Messages.class);
         return messages.getMessage("databinding.conversion.error");
     }
 

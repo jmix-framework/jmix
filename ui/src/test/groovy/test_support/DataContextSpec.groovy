@@ -33,7 +33,10 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class DataContextSpec extends Specification {
 
     @Autowired

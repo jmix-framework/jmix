@@ -38,10 +38,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Parses screen XML taking into account 'assign' elements.
  */
-@Component(ScreenXmlParser.NAME)
+@Component("ui_ScreenXmlParser")
 public class ScreenXmlParser {
-    
-    public static final String NAME = "jmix_ScreenXmlParser";
 
     @Autowired
     protected ThemeConstantsManager themeConstantsManager;

@@ -37,7 +37,7 @@ public abstract class ActionsHolderLoader<T extends ActionsHolder> extends Abstr
 
         String actionTypeId = element.attributeValue("type");
         if (StringUtils.isNotEmpty(actionTypeId)) {
-            Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
+            Actions actions = applicationContext.getBean(Actions.class);
             Action instance = actions.create(actionTypeId, id);
 
             if (instance instanceof ListAction) {

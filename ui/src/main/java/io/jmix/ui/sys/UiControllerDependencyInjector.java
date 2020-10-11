@@ -93,13 +93,11 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * Wires {@link Inject}, {@link Autowired}, {@link Resource}, {@link Named} fields/setters
  * and {@link Subscribe}, {@link Install} and {@link EventListener} methods.
  */
-@org.springframework.stereotype.Component(UiControllerDependencyInjector.NAME)
+@org.springframework.stereotype.Component("ui_UiControllerDependencyInjector")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiControllerDependencyInjector {
 
     private static final Logger log = LoggerFactory.getLogger(UiControllerDependencyInjector.class);
-
-    public static final String NAME = "jmix_UiControllerDependencyInjector";
 
     protected FrameOwner frameOwner;
     protected ScreenOptions options;
@@ -630,7 +628,7 @@ public class UiControllerDependencyInjector {
 
         } else if (Downloader.class.isAssignableFrom(type)) {
             // Injecting a Downloader
-            return applicationContext.<Downloader>getBean(Downloader.NAME);
+            return applicationContext.getBean(Downloader.class);
 
         } else if (Logger.class == type && element instanceof Field) {
             // injecting logger
@@ -641,7 +639,7 @@ public class UiControllerDependencyInjector {
 
         } else if (ThemeConstants.class == type) {
             // Injecting a Theme
-            ThemeConstantsManager themeManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
+            ThemeConstantsManager themeManager = applicationContext.getBean(ThemeConstantsManager.class);
             return themeManager.getConstants();
 
         } else if (BeanFactory.class.isAssignableFrom(type)) {
@@ -674,11 +672,12 @@ public class UiControllerDependencyInjector {
             Map<String, ?> beans = applicationContext.getBeansOfType(type);
             if (!beans.isEmpty()) {
                 instance = beans.get(name);
-                // If a bean with required name found, return it. Otherwise return first found.
+                // If a bean with required name found, return it
                 if (instance != null) {
                     return instance;
                 } else {
-                    return beans.values().iterator().next();
+                    // Otherwise get a bean from the context again to respect @Primary annotation
+                    return applicationContext.getBean(type);
                 }
             }
         }
@@ -693,7 +692,7 @@ public class UiControllerDependencyInjector {
     }
 
     protected MessageBundle createMessageBundle(@SuppressWarnings("unused") AnnotatedElement element, FrameOwner frameOwner, Frame frame) {
-        MessageBundle messageBundle = (MessageBundle) applicationContext.getBean(MessageBundle.NAME);
+        MessageBundle messageBundle = applicationContext.getBean(MessageBundle.class);
 
         Class<? extends FrameOwner> screenClass = frameOwner.getClass();
         String packageName = UiControllerUtils.getPackage(screenClass);

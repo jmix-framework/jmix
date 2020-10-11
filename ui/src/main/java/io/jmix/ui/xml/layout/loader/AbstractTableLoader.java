@@ -185,7 +185,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 if (StringUtils.isNotEmpty(generatorMethod)) {
                     //noinspection unchecked
                     resultComponent.addGeneratedColumn(String.valueOf(column),
-                            (Table.ColumnGenerator) applicationContext.getBean(DeclarativeColumnGenerator.NAME, resultComponent, generatorMethod));
+                            applicationContext.getBean(DeclarativeColumnGenerator.class, resultComponent, generatorMethod));
                 }
             }
         }
@@ -257,11 +257,11 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return applicationContext.getBean(Metadata.class);
     }
 
     protected FetchPlanRepository getViewRepository() {
-        return (FetchPlanRepository) applicationContext.getBean(FetchPlanRepository.NAME);
+        return applicationContext.getBean(FetchPlanRepository.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -274,7 +274,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     }
 
     protected MetadataTools getMetadataTools() {
-        return (MetadataTools) applicationContext.getBean(MetadataTools.NAME);
+        return applicationContext.getBean(MetadataTools.class);
     }
 
     protected void loadTextSelectionEnabled(Table table, Element element) {

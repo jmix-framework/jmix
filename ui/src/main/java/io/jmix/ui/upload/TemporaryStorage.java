@@ -29,8 +29,6 @@ import java.util.UUID;
  */
 public interface TemporaryStorage {
 
-    String NAME = "jmix_TemporaryStorage";
-
     /**
      * Listener to be notified about the progress of uploading file into the temporary storage.
      */

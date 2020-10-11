@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component(ThemeVariantsProvider.NAME)
+@Component("ui_ThemeVariantsProvider")
 public class HeliumThemeVariantsProvider implements ThemeVariantsProvider {
 
     @Autowired

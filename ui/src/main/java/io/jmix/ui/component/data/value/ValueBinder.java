@@ -49,10 +49,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@org.springframework.stereotype.Component(ValueBinder.NAME)
+@org.springframework.stereotype.Component("ui_ValueBinder")
 public class ValueBinder {
-
-    public static final String NAME = "ui_ValueBinder";
 
     @Autowired
     protected MessageTools messageTools;
@@ -139,7 +137,7 @@ public class ValueBinder {
             BeanDescriptor beanDescriptor = validator.getConstraintsForClass(enclosingJavaClass);
 
             if (beanDescriptor.isBeanConstrained()) {
-                component.addValidator((BeanPropertyValidator) applicationContext.getBean(BeanPropertyValidator.NAME, enclosingJavaClass, metaProperty.getName()));
+                component.addValidator(applicationContext.getBean(BeanPropertyValidator.class, enclosingJavaClass, metaProperty.getName()));
             }
         }
     }

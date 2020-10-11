@@ -39,11 +39,9 @@ import java.util.*;
 /**
  * Provides inheritance of screen XML descriptors.
  */
-@Component(XmlInheritanceProcessor.NAME)
+@Component("jmix_XmlInheritanceProcessor")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class XmlInheritanceProcessor {
-
-    public static final String NAME = "jmix_XmlInheritanceProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(XmlInheritanceProcessor.class);
 
@@ -88,7 +86,7 @@ public class XmlInheritanceProcessor {
                 throw new RuntimeException("Unable to read ancestor XML document", e);
             }
 
-            XmlInheritanceProcessor processor = (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME,
+            XmlInheritanceProcessor processor = applicationContext.getBean(XmlInheritanceProcessor.class,
                     ancestorDocument, params);
             result = processor.getResultRoot();
             process(result, root);

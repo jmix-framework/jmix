@@ -31,10 +31,8 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-@Component(SecurityJpqlGenerator.NAME)
+@Component("ui_SecurityJpqlGenerator")
 public class SecurityJpqlGenerator extends AbstractJpqlGenerator {
-
-    public static final String NAME = "ui_SecurityJpqlGenerator";
 
     protected Metadata metadata;
     protected MetadataTools metadataTools;

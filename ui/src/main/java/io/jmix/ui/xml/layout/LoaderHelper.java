@@ -25,10 +25,8 @@ import java.util.Optional;
 /**
  * Facilitates parsing data from XML.
  */
-@Component(LoaderHelper.NAME)
+@Component("ui_LoaderHelper")
 public class LoaderHelper {
-
-    public static final String NAME = "ui_LoaderHelper";
 
     /**
      * Returns an {@link Optional} with the attribute value from

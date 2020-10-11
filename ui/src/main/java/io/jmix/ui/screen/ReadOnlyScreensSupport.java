@@ -38,9 +38,8 @@ import static io.jmix.ui.screen.EditorScreen.WINDOW_CLOSE;
 /**
  * Bean that encapsulates the default logic of changing screens read-only mode.
  */
-@org.springframework.stereotype.Component(ReadOnlyScreensSupport.NAME)
+@org.springframework.stereotype.Component("ui_ReadOnlyScreensSupport")
 public class ReadOnlyScreensSupport {
-    public static final String NAME = "ui_ReadOnlyScreensSupport";
 
     protected AccessManager accessManager;
 

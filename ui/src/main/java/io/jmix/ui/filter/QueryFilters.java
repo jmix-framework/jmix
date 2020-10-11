@@ -21,10 +21,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component(QueryFilters.NAME)
+@Component("ui_QueryFilters")
 public class QueryFilters {
-
-    public static final String NAME = "ui_QueryFilters";
 
     @Autowired
     protected ObjectProvider<QueryFilter> objectProvider;

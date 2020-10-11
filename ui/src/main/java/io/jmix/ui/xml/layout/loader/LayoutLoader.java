@@ -35,10 +35,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(LayoutLoader.NAME)
+@Component("ui_LayoutLoader")
 public class LayoutLoader {
-
-    public static final String NAME = "ui_LayoutLoader";
 
     protected ComponentLoader.Context context;
     protected UiComponents factory;

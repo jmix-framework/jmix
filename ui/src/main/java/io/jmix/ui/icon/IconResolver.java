@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
  * all available {@link IconProvider} beans.
  */
 public interface IconResolver {
-    String NAME = "ui_IconResolver";
 
     /**
      * Returns an instance of {@link Resource} by the given {@code iconPath}.

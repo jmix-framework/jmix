@@ -29,10 +29,8 @@ import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(TimerFacetProvider.NAME)
+@Component("ui_TimerFacetProvider")
 public class TimerFacetProvider implements FacetProvider<Timer> {
-
-    public static final String NAME = "ui_TimerFacetProvider";
 
     @Override
     public Class<Timer> getFacetClass() {

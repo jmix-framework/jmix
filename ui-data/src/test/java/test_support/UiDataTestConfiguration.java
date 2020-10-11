@@ -81,12 +81,12 @@ public class UiDataTestConfiguration {
         return new JdbcTemplate(dataSource);
     }
 
-    @Bean(UiSettingsCache.NAME)
+    @Bean("test_UiSettingsCache")
     UiSettingsCache uiSettingsCache() {
         return new TestUiSettingsCache();
     }
 
-    @Bean(ResizableTextAreaSettingsBinder.NAME)
+    @Bean("test_resizableTextAreaBinder")
     TestResizableTextAreaBinder resizableTextAreaBinder() {
         return new TestResizableTextAreaBinder();
     }

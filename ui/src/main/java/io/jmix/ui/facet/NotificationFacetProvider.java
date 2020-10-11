@@ -33,10 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(NotificationFacetProvider.NAME)
+@Component("jmix_NotificationFacetProvider")
 public class NotificationFacetProvider implements FacetProvider<NotificationFacet> {
-
-    public static final String NAME = "jmix_NotificationFacetProvider";
 
     @Autowired
     protected MessageTools messageTools;

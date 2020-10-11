@@ -362,11 +362,11 @@ public class WebFileMultiUploadField extends WebAbstractComponent<JmixFileUpload
             if (fileSizeLimit % BYTES_IN_MEGABYTE == 0) {
                 fileSizeLimitString = String.valueOf(fileSizeLimit / BYTES_IN_MEGABYTE);
             } else {
-                DatatypeRegistry datatypeRegistry = (DatatypeRegistry) applicationContext.getBean(DatatypeRegistry.NAME);
+                DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
                 Datatype<Double> doubleDatatype = datatypeRegistry.get(Double.class);
                 double fileSizeInMb = fileSizeLimit / ((double) BYTES_IN_MEGABYTE);
 
-                CurrentAuthentication currentAuthentication = (CurrentAuthentication) applicationContext.getBean(CurrentAuthentication.NAME);
+                CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
                 fileSizeLimitString = doubleDatatype.format(fileSizeInMb, currentAuthentication.getLocale());
             }
         } else {

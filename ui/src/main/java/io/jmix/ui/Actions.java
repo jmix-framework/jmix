@@ -26,8 +26,6 @@ import io.jmix.ui.action.ActionType;
  */
 public interface Actions {
 
-    String NAME = "ui_Actions";
-
     Action create(String actionTypeId);
 
     Action create(String actionTypeId, String id);

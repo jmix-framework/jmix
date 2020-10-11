@@ -45,7 +45,7 @@ import static io.jmix.ui.screen.UiControllerUtils.*;
 import static java.util.Collections.emptyMap;
 
 @UIScope
-@Component(Fragments.NAME)
+@Component("ui_Fragments")
 @ParametersAreNonnullByDefault
 public class WebFragments implements Fragments {
 
@@ -158,7 +158,7 @@ public class WebFragments implements Fragments {
             innerContext.setFrame(fragment);
             innerContext.setParent(loaderContext);
 
-            LayoutLoader layoutLoader = (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, innerContext);
+            LayoutLoader layoutLoader = applicationContext.getBean(LayoutLoader.class, innerContext);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(), emptyMap());
 

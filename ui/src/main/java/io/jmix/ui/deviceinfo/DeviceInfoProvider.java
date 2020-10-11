@@ -23,8 +23,6 @@ import javax.annotation.Nullable;
  */
 public interface DeviceInfoProvider {
 
-    String NAME = "ui_DeviceInfoProvider";
-
     @Nullable
     DeviceInfo getDeviceInfo();
 }

@@ -39,11 +39,9 @@ import java.util.Objects;
 /**
  * Bean that handles URL history transitions.
  */
-@Component(HistoryNavigator.NAME)
+@Component("ui_HistoryNavigator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class HistoryNavigator {
-
-    public static final String NAME = "jmix_HistoryNavigator";
 
     private static final Logger log = LoggerFactory.getLogger(HistoryNavigator.class);
 

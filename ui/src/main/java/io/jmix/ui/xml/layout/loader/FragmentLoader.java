@@ -89,7 +89,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
     }
 
     protected ScreenViewsLoader getScreenViewsLoader() {
-        return (ScreenViewsLoader) applicationContext.getBean(ScreenViewsLoader.NAME);
+        return applicationContext.getBean(ScreenViewsLoader.class);
     }
 
     protected void loadDataElement(Element element) {
@@ -116,7 +116,7 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
             List<Element> facetElements = facetsElement.elements();
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
+                FacetLoader loader = applicationContext.getBean(FacetLoader.class);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

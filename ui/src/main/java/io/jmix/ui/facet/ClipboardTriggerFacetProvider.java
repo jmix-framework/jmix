@@ -27,10 +27,8 @@ import javax.annotation.Nullable;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@org.springframework.stereotype.Component(ClipboardTriggerFacetProvider.NAME)
+@org.springframework.stereotype.Component("ui_ClipboardTriggerFacetProvider")
 public class ClipboardTriggerFacetProvider implements FacetProvider<ClipboardTrigger> {
-
-    public static final String NAME = "ui_ClipboardTriggerFacetProvider";
 
     @Override
     public Class<ClipboardTrigger> getFacetClass() {

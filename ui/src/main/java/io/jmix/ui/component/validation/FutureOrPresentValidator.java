@@ -45,10 +45,8 @@ import java.util.Date;
  *            {@link OffsetTime}
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Component(FutureOrPresentValidator.NAME)
+@Component("ui_FutureOrPresentValidator")
 public class FutureOrPresentValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_FutureOrPresentValidator";
 
     protected TimeSource timeSource;
 

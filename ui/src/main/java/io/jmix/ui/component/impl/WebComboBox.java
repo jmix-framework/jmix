@@ -219,7 +219,7 @@ public class WebComboBox<V> extends WebV8AbstractField<JmixComboBox<V>, V, V>
         }
 
         if (options != null) {
-            OptionsBinder optionsBinder = (OptionsBinder) applicationContext.getBean(OptionsBinder.NAME);
+            OptionsBinder optionsBinder = applicationContext.getBean(OptionsBinder.class);
             this.optionsBinding = optionsBinder.bind(options, this, this::setItemsToPresentation);
             this.optionsBinding.activate();
         }

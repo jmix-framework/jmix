@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 @UIScope
-@Component(WebBrowserTools.NAME)
+@Component("ui_WebBrowserTools")
 public class WebBrowserToolsImpl implements WebBrowserTools {
 
     protected AppUI ui;

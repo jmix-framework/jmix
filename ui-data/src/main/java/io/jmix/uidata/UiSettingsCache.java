@@ -33,10 +33,10 @@ import java.util.Optional;
  * User settings provider. Caches settings in HTTP session.
  */
 @Internal
-@Component(UiSettingsCache.NAME)
+@Component("ui_UiSettingsCache")
 public class UiSettingsCache {
 
-    public static final String NAME = "uidata_SettingsClient";
+    public static final String ATTR_NAME = "ui_UiSettingsCache";
 
     @Autowired
     protected UserSettingService userSettingService;
@@ -80,7 +80,7 @@ public class UiSettingsCache {
             throw new IllegalConcurrentAccessException("Illegal access to settings client from background thread");
         }
 
-        session.setAttribute(NAME, null);
+        session.setAttribute(ATTR_NAME, null);
     }
 
     protected Map<String, Optional<String>> getCache() {
@@ -90,10 +90,10 @@ public class UiSettingsCache {
         }
 
         @SuppressWarnings("unchecked")
-        Map<String, Optional<String>> settings = (Map<String, Optional<String>>) session.getAttribute(NAME);
+        Map<String, Optional<String>> settings = (Map<String, Optional<String>>) session.getAttribute(ATTR_NAME);
         if (settings == null) {
             settings = new HashMap<>();
-            session.setAttribute(NAME, settings);
+            session.setAttribute(ATTR_NAME, settings);
         }
         return settings;
     }

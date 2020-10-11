@@ -50,9 +50,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyMap;
 
-@Component(ScreensHelper.NAME)
+@Component("ui_ScreensHelper")
 public class ScreensHelper {
-    public static final String NAME = "jmix_ScreensHelper";
 
     private static final Logger log = LoggerFactory.getLogger(ScreensHelper.class);
 
@@ -546,7 +545,7 @@ public class ScreensHelper {
             try {
                 Document document = dom4JTools.readDocument(text);
                 XmlInheritanceProcessor processor =
-                        (XmlInheritanceProcessor) applicationContext.getBean(XmlInheritanceProcessor.NAME, document, emptyMap());
+                        applicationContext.getBean(XmlInheritanceProcessor.class, document, emptyMap());
                 Element root = processor.getResultRoot();
                 if (root.getName().equals("window")
                         || root.getName().equals(Fragment.NAME)) {

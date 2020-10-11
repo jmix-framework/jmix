@@ -31,8 +31,6 @@ import java.util.Collection;
  */
 public interface Screens {
 
-    String NAME = "ui_Screens";
-
     String NAVIGATION_CLOSE_ACTION_ID = "mainMenu";
 
     /**

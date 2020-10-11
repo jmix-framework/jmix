@@ -26,8 +26,6 @@ import io.jmix.ui.component.Facet;
  */
 public interface Facets {
 
-    String NAME = "ui_Facets";
-
     /**
      * Create a facet instance by its class.
      *

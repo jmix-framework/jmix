@@ -75,7 +75,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
     }
 
     protected void initComponent(JmixCalendar component) {
-        Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+        Messages messages = applicationContext.getBean(Messages.class);
         String[] monthNamesShort = new String[12];
         monthNamesShort[0] = messages.getMessage("calendar.januaryCaption");
         monthNamesShort[1] = messages.getMessage("calendar.februaryCaption");
@@ -110,7 +110,7 @@ public class WebCalendar<V> extends WebAbstractComponent<JmixCalendar>
                     String.format("Can't set time format '%s'", messages.getMessage("calendar.timeFormat")));
         }
 
-        CurrentAuthentication currentAuthentication = (CurrentAuthentication) applicationContext.getBean(CurrentAuthentication.NAME);
+        CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
         TimeZone userTimeZone = currentAuthentication.getTimeZone();
         setTimeZone(userTimeZone);
 

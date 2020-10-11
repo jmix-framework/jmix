@@ -62,7 +62,7 @@ public class WebTabWindow extends WebWindow implements TabWindow {
         if (component.isAttached()) {
             TabSheet.Tab tabWindow = findTab();
             if (tabWindow != null) {
-                IconResolver iconResolver = (IconResolver) applicationContext.getBean(IconResolver.NAME);
+                IconResolver iconResolver = applicationContext.getBean(IconResolver.class);
                 tabWindow.setIcon(iconResolver.getIconResource(icon));
             }
         }

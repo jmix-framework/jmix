@@ -27,6 +27,6 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {UiTestAssistConfiguration.class})
+@ContextConfiguration(classes = {UiTestAssistConfiguration.class}, initializers = {TestContextInititalizer.class})
 public @interface UiTest {
 }

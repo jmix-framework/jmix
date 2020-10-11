@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Component(ScreenData.NAME)
+@Component("ui_ScreenData")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenDataImpl implements ScreenData {
 

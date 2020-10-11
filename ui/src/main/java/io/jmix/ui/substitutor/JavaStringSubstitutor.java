@@ -24,7 +24,7 @@ import java.util.Map;
  * Substitutes variables of a within a string by values. The default definition of a variable is
  * <code>${variableName}</code>.
  */
-@Component(StringSubstitutor.NAME)
+@Component("ui_StringSubstitutor")
 public class JavaStringSubstitutor implements StringSubstitutor {
 
     @Override

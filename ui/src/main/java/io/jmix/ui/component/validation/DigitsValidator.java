@@ -50,11 +50,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */
-@Component(DigitsValidator.NAME)
+@Component("ui_DigitsValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DigitsValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_DigitsValidator";
 
     protected int integer;
     protected int fraction;

@@ -48,7 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Web implementation of {@link BackgroundWorker}
  */
-@Component(BackgroundWorker.NAME)
+@Component("ui_BackgroundWorker")
 public class WebBackgroundWorker implements BackgroundWorker {
 
     private static final Logger log = LoggerFactory.getLogger(WebBackgroundWorker.class);

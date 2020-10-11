@@ -30,11 +30,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collection;
 import java.util.List;
 
-@Component(FacetLoader.NAME)
-@ParametersAreNonnullByDefault
+@Component("ui_FacetLoader")
 public class FacetLoader {
-
-    public static final String NAME = "ui_FacetLoader";
 
     protected Multimap<String, FacetProvider<?>> registrations = HashMultimap.create();
 

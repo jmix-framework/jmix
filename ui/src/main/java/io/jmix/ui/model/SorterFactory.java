@@ -27,10 +27,8 @@ import javax.annotation.Nullable;
 /**
  * Factory bean for sorters.
  */
-@Component("jmix_SorterFactory")
+@Component("ui_SorterFactory")
 public class SorterFactory {
-
-    public static final String NAME = "jmix_SorterFactory";
 
     protected BeanFactory beanFactory;
 

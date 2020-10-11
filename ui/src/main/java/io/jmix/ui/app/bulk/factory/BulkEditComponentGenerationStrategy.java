@@ -34,10 +34,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("rawtypes")
-@org.springframework.stereotype.Component(BulkEditComponentGenerationStrategy.NAME)
+@org.springframework.stereotype.Component("ui_BulkEditComponentGenerationStrategy")
 public class BulkEditComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-
-    public static final String NAME = "ui_BulkEditComponentGenerationStrategy";
 
     protected static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
 

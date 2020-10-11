@@ -311,7 +311,7 @@ public class WebEntityLinkField<V> extends WebV8AbstractField<JmixButtonField<V>
             return;
         }
 
-        DataManager dataManager = (DataManager) applicationContext.getBean(DataManager.NAME);
+        DataManager dataManager = applicationContext.getBean(DataManager.class);
         //noinspection unchecked
         entity = dataManager.load(Id.of(entity))
                 .fetchPlan(applicationContext.getBean(FetchPlanRepository.class).getFetchPlan(entity.getClass(), FetchPlan.INSTANCE_NAME))

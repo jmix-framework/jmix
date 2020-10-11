@@ -37,11 +37,9 @@ import java.util.List;
  *     &lt;bean id="ui_EmailValidator" class="io.jmix.ui.component.validation.EmailValidator" scope="prototype"/&gt;
  *     </pre>
  */
-@Component(EmailValidator.NAME)
+@Component("ui_EmailValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailValidator extends AbstractValidator<String> {
-
-    public static final String NAME = "ui_EmailValidator";
 
     protected Validator validator;
 

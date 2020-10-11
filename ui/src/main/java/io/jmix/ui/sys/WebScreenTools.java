@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component(ScreenTools.NAME)
+@Component("ui_ScreenTools")
 public class WebScreenTools implements ScreenTools {
 
     private static final Logger log = LoggerFactory.getLogger(WebScreenTools.class);

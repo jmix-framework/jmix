@@ -36,10 +36,8 @@ import javax.annotation.Nullable;
  * generation strategies didn't create a field. For instance, when a datatype is custom and doesn't match any type
  * for which {@link DefaultComponentGenerationStrategy} creates fields.
  */
-@org.springframework.stereotype.Component(CustomDatatypesComponentGenerationStrategy.NAME)
+@org.springframework.stereotype.Component("ui_CustomDatatypesComponentGenerationStrategy")
 public class CustomDatatypesComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-
-    public static final String NAME = "ui_CustomDatatypesComponentGenerationStrategy";
 
     @Autowired
     public CustomDatatypesComponentGenerationStrategy(Messages messages,

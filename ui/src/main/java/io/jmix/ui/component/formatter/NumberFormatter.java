@@ -36,11 +36,9 @@ import java.text.DecimalFormat;
  * <p>
  * This formatter formats the {@link Number} value into a string depending on the format string.
 */
-@Component(NumberFormatter.NAME)
+@Component("ui_NumberFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NumberFormatter implements Formatter<Number> {
-
-    public static final String NAME = "ui_NumberFormatter";
 
     protected String format;
 

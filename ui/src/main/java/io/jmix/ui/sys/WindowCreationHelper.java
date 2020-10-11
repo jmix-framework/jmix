@@ -30,10 +30,8 @@ import java.util.regex.Pattern;
 /**
  * Utility class used by the framework when it creates frames and windows. Not for use in application code.
  */
-@org.springframework.stereotype.Component(WindowCreationHelper.NAME)
+@org.springframework.stereotype.Component("ui_WindowCreationHelper")
 public class WindowCreationHelper {
-
-    public static final String NAME = "jmix_WindowCreationHelper";
 
     private final Pattern INNER_COMPONENT_PATTERN = Pattern.compile("(.+?)\\[(.+?)]");
     private final Pattern COMPONENT_ACTION_PATTERN = Pattern.compile("(.+?)<(.+?)>");

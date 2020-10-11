@@ -52,7 +52,7 @@ public abstract class AbstractValuePickerLoader<T extends ValuePicker> extends A
     }
 
     protected Actions getActions() {
-        return (Actions) applicationContext.getBean(Actions.NAME);
+        return applicationContext.getBean(Actions.class);
     }
 
     @Override

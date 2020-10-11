@@ -31,9 +31,8 @@ import java.util.List;
 /**
  * Utility class for {@link Pagination} component. Performs operation on max result options.
  */
-@Component(PaginationDelegate.NAME)
+@Component("ui_PaginationDelegate")
 public class PaginationDelegate {
-    public static final String NAME = "ui_PaginationDelegate";
 
     protected UiProperties uiProperties;
 

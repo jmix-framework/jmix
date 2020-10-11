@@ -35,11 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  *     &lt;bean id="ui_NotBlankValidator" class="io.jmix.ui.component.validation.NotBlankValidator" scope="prototype"/&gt;
  *     </pre>
 */
-@Component(NotBlankValidator.NAME)
+@Component("ui_NotBlankValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotBlankValidator extends AbstractValidator<String> {
-
-    public static final String NAME = "ui_NotBlankValidator";
 
     public NotBlankValidator() {
     }

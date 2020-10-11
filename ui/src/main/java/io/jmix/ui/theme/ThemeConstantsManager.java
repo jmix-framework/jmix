@@ -18,7 +18,5 @@ package io.jmix.ui.theme;
 
 public interface ThemeConstantsManager {
 
-    String NAME = "jmix_ThemeManager";
-
     ThemeConstants getConstants();
 }

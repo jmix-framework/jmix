@@ -91,7 +91,7 @@ public class DatePickerLoader extends AbstractFieldLoader<DatePicker> {
     }
 
     protected DateTimeTransformations getDateTimeTransformations() {
-        return (DateTimeTransformations) applicationContext.getBean(DateTimeTransformations.NAME);
+        return applicationContext.getBean(DateTimeTransformations.class);
     }
 
     protected Date parseDate(String rangeStart) throws ParseException {

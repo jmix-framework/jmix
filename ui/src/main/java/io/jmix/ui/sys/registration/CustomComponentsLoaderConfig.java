@@ -33,10 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see CustomComponentsRegistry
  */
 @Order(JmixOrder.HIGHEST_PRECEDENCE + 10)
-@Component(CustomComponentsLoaderConfig.NAME)
+@Component("ui_CustomComponentsLoaderConfig")
 public class CustomComponentsLoaderConfig implements LoaderConfig {
-
-    public static final String NAME = "ui_CustomComponentsLoaderConfig";
 
     protected Map<String, Class<? extends ComponentLoader>> loaders = new ConcurrentHashMap<>();
 

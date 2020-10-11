@@ -34,8 +34,6 @@ import io.jmix.ui.screen.ScreenOptions;
  */
 public interface Fragments {
 
-    String NAME = "ui_Fragments";
-
     /**
      * Creates a screen fragment by its controller class.
      *

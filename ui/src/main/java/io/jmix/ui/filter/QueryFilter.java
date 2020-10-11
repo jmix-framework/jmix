@@ -31,11 +31,9 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Component(QueryFilter.NAME)
+@Component("ui_QueryFilter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class QueryFilter extends FilterParser implements Serializable {
-
-    public static final String NAME = "ui_QueryFilter";
 
     protected static final boolean ENABLE_SESSION_PARAMS = true;
 

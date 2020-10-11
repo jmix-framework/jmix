@@ -35,11 +35,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-@Component(PresentationActionsBuilder.NAME)
+@Component("ui_PresentationActionsBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PresentationActionsBuilder {
-
-    public static final String NAME = "ui_PresentationActionsBuilder";
 
     public enum Type {
         SAVE,

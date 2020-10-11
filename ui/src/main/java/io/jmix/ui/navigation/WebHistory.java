@@ -33,7 +33,7 @@ import java.util.Objects;
 
 
 @UIScope
-@Component(History.NAME)
+@Component("ui_History")
 public class WebHistory implements History {
 
     private static final Logger log = LoggerFactory.getLogger(WebHistory.class);

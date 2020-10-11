@@ -45,11 +45,9 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer, Double, Float
  */
-@Component(NegativeOrZeroValidator.NAME)
+@Component("ui_NegativeOrZeroValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NegativeOrZeroValidator<T extends Number> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_NegativeOrZeroValidator";
 
     public NegativeOrZeroValidator() {
     }

@@ -527,7 +527,7 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
      * @return validation errors
      */
     protected ValidationErrors validateUiComponents() {
-        ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+        ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
         return screenValidation.validateUiComponents(getForm().getComponents());
     }
 
@@ -539,7 +539,7 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
     protected void validateAdditionalRules(ValidationErrors errors) {
         // all previous validations return no errors
         if (isCrossFieldValidate() && errors.isEmpty()) {
-            ScreenValidation screenValidation = (ScreenValidation) getApplicationContext().getBean(ScreenValidation.NAME);
+            ScreenValidation screenValidation = getApplicationContext().getBean(ScreenValidation.class);
 
             ValidationErrors validationErrors =
                     screenValidation.validateCrossFieldRules(this, getEditContainer().getItem());

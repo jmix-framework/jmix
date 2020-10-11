@@ -34,11 +34,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-@Component(RedirectHandler.NAME)
+@Component("ui_RedirectHandler")
 @Scope("prototype")
 public class RedirectHandler {
-
-    public static final String NAME = "jmix_RedirectHandler";
 
     private static final Logger log = LoggerFactory.getLogger(RedirectHandler.class);
 

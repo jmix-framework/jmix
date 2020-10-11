@@ -41,11 +41,9 @@ import java.util.stream.Collectors;
  * Use this class to export {@link Table} into JSON format.
  * <br>Just create an instance of {@link ExportAction} with <code>withExporter</code> method.
  */
-@Component(JsonExporter.NAME)
+@Component("ui_JsonExporter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JsonExporter extends AbstractTableExporter<JsonExporter> {
-
-    public static final String NAME = "export_JsonExporter";
 
     @Autowired
     protected Messages messages;

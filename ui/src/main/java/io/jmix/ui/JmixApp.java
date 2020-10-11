@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 
-@Component(App.NAME)
+@Component("ui_App")
 @VaadinSessionScope
 public class JmixApp extends App {
 

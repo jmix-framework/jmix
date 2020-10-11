@@ -33,11 +33,9 @@ import java.util.stream.Collectors;
  * <p>
  * This formatter formats collection into a string where the elements of the collection are separated by commas.
 */
-@Component(CollectionFormatter.NAME)
+@Component("ui_CollectionFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CollectionFormatter implements Formatter<Collection> {
-
-    public static final String NAME = "ui_CollectionFormatter";
 
     @Autowired
     protected MetadataTools metadataTools;

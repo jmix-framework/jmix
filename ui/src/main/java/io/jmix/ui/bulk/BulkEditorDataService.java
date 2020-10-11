@@ -26,8 +26,6 @@ import java.util.List;
 
 public interface BulkEditorDataService {
 
-    String NAME = "ui_BulkEditorDataService";
-
     /**
      * Reloads selected items with the passed view.
      *

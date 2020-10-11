@@ -32,10 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@Component(Aggregations.NAME)
+@Component("ui_Aggregations")
 public class Aggregations {
-
-    public static final String NAME = "ui_Aggregations";
 
     protected DatatypeRegistry datatypeRegistry;
 

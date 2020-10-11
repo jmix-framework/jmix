@@ -41,11 +41,9 @@ import java.util.Collection;
 *
  * @param <T> Collection or String
  */
-@Component(NotEmptyValidator.NAME)
+@Component("ui_NotEmptyValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotEmptyValidator<T> extends AbstractValidator<T> {
-
-    public static final String NAME = "ui_NotEmptyValidator";
 
     public NotEmptyValidator() {
     }

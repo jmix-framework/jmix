@@ -26,10 +26,8 @@ import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.SplitPanelSettings;
 import org.apache.commons.lang3.math.NumberUtils;
 
-@org.springframework.stereotype.Component(SplitPanelSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_SplitPanelSettingsBinder")
 public class SplitPanelSettingsBinder implements ComponentSettingsBinder<SplitPanel, SplitPanelSettings> {
-
-    public static final String NAME = "ui_SplitPanelSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

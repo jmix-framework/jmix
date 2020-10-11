@@ -36,10 +36,8 @@ import org.dom4j.Element;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 
-@org.springframework.stereotype.Component(DataLoadCoordinatorFacetProvider.NAME)
+@org.springframework.stereotype.Component("ui_DataLoadCoordinatorFacetProvider")
 public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadCoordinator> {
-
-    public static final String NAME = "ui_DataLoadCoordinatorFacetProvider";
 
     private UiControllerReflectionInspector reflectionInspector;
 

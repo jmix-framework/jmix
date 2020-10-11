@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component(Actions.NAME)
+@Component("ui_Actions")
 public class ActionsImpl implements Actions, ApplicationListener<ContextRefreshedEvent> {
 
     private final Logger log = LoggerFactory.getLogger(ActionsImpl.class);

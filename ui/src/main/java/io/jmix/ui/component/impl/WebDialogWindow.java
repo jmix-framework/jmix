@@ -61,7 +61,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
     }
 
     protected void setupDefaultSize() {
-        ThemeConstantsManager themeConstantsManager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
+        ThemeConstantsManager themeConstantsManager = applicationContext.getBean(ThemeConstantsManager.class);
         ThemeConstants theme = themeConstantsManager.getConstants();
 
         dialogWindow.setWidth(theme.get("jmix.ui.WebWindowManager.dialog.width"));
@@ -158,7 +158,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         if (icon == null) {
             dialogWindow.setIcon(null);
         } else {
-            IconResolver iconResolver = (IconResolver) applicationContext.getBean(IconResolver.NAME);
+            IconResolver iconResolver = applicationContext.getBean(IconResolver.class);
             dialogWindow.setIcon(iconResolver.getIconResource(icon));
         }
     }
@@ -329,7 +329,7 @@ public class WebDialogWindow extends WebWindow implements DialogWindow, Initiali
         @Override
         public Action[] getActions(Object target, Object sender) {
             if (!initialized) {
-                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+                Messages messages = applicationContext.getBean(Messages.class);
 
                 analyzeAction = new Action(messages.getMessage("actions.analyzeLayout"));
 

@@ -102,7 +102,7 @@ public class PaginationLoader extends AbstractComponentLoader<Pagination> {
     protected Optional<List<Integer>> loadMaxResults(Element element) {
         String maxResults = element.attributeValue("maxResultValues");
         if (StringUtils.isNotEmpty(maxResults)) {
-            PaginationDelegate delegate = (PaginationDelegate) applicationContext.getBean(PaginationDelegate.NAME);
+            PaginationDelegate delegate = applicationContext.getBean(PaginationDelegate.class);
             return Optional.of(delegate.parseMaxResultsOptions(maxResults));
         }
         return Optional.empty();

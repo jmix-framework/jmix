@@ -36,10 +36,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.text.ParseException;
 
-@Component(ScreenDataXmlLoader.NAME)
+@Component("jmix_ScreenDataXmlLoader")
 public class ScreenDataXmlLoader {
-
-    public static final String NAME = "jmix_ScreenDataXmlLoader";
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;

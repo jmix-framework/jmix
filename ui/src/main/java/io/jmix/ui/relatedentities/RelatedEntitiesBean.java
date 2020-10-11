@@ -27,7 +27,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.stereotype.Component;
 
-@Component(RelatedEntitiesAPI.NAME)
+@Component("ui_RelatedEntities")
 public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
     //    protected Messages messages;

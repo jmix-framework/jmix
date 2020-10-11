@@ -17,7 +17,6 @@
 package io.jmix.ui.facet;
 
 import io.jmix.core.MessageTools;
-import io.jmix.ui.Dialogs;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
@@ -42,11 +41,9 @@ import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(OptionDialogFacetProvider.NAME)
+@Component("jmix_OptionDialogFacetProvider")
 public class OptionDialogFacetProvider
         implements FacetProvider<OptionDialogFacet> {
-
-    public static final String NAME = "jmix_OptionDialogFacetProvider";
 
     @Autowired
     protected MessageTools messageTools;

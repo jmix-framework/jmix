@@ -1017,7 +1017,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
 
         int defaultRowHeaderWidth = 16;
         ThemeConstantsManager themeConstantsManager =
-                applicationContext.getBean(ThemeConstantsManager.NAME, ThemeConstantsManager.class);
+                applicationContext.getBean(ThemeConstantsManager.class, ThemeConstantsManager.class);
         ThemeConstants theme = themeConstantsManager.getConstants();
         if (theme != null) {
             defaultRowHeaderWidth = theme.getInt("jmix.ui.Table.defaultRowHeaderWidth", 16);
@@ -2648,7 +2648,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) applicationContext.getBean(TableSettingsBinder.NAME);
+        return applicationContext.getBean(TableSettingsBinder.class);
     }
 
     protected boolean needUpdatePresentation(Map<String, Object> variables) {
@@ -2781,7 +2781,7 @@ public abstract class WebAbstractTable<T extends com.vaadin.v7.ui.Table & JmixEn
     }
 
     protected TablePresentations createTablePresentations() {
-        return (TablePresentations) applicationContext.getBean(TablePresentations.NAME, this);
+        return applicationContext.getBean(TablePresentations.class, this);
     }
 
     @Nullable

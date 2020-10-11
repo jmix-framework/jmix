@@ -37,11 +37,9 @@ import java.util.Date;
  * <p>
  * This formatter formats the {@link Date} value into a string depending on the format string.
 */
-@Component(DateFormatter.NAME)
+@Component("ui_DateFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DateFormatter implements Formatter<Date> {
-
-    public static final String NAME = "ui_DateFormatter";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

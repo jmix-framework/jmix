@@ -32,8 +32,6 @@ import javax.annotation.Nullable;
  */
 public interface UserSettingsTools {
 
-    String NAME = "ui_UserSettingsTools";
-
     AppWorkArea.Mode loadAppWindowMode();
 
     void saveAppWindowMode(AppWorkArea.Mode mode);

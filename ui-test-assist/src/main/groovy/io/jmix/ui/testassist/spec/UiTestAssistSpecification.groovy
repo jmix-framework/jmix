@@ -16,12 +16,10 @@
 
 package io.jmix.ui.testassist.spec
 
-import com.vaadin.server.Extension
+
 import com.vaadin.server.VaadinSession
 import com.vaadin.server.WebBrowser
-import com.vaadin.ui.Notification
 import com.vaadin.ui.UI
-import com.vaadin.ui.Window
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
@@ -93,7 +91,7 @@ class UiTestAssistSpecification extends Specification {
         def vaadinSession = new TestVaadinSession(new WebBrowser(), Locale.ENGLISH)
 
         vaadinSession.setAttribute(App.class, app)
-        vaadinSession.setAttribute(App.NAME, app)
+        vaadinSession.setAttribute('ui_App', app)
 
         VaadinSession.setCurrent(vaadinSession)
 

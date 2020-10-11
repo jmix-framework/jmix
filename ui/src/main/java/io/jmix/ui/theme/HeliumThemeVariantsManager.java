@@ -30,9 +30,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@Component(HeliumThemeVariantsManager.NAME)
+@Component("ui_HeliumThemeVariantsManager")
 public class HeliumThemeVariantsManager {
-    public static final String NAME = "helium_HeliumThemeVariantsManager";
 
     protected static final String THEME_SIZE_USER_SETTING_NAME = "heliumThemeSize";
     protected static final String THEME_MODE_USER_SETTING_NAME = "heliumThemeMode";

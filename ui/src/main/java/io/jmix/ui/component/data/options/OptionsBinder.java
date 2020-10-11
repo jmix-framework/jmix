@@ -28,10 +28,8 @@ import io.jmix.ui.component.data.meta.OptionsBinding;
 import java.util.stream.Stream;
 
 
-@org.springframework.stereotype.Component(OptionsBinder.NAME)
+@org.springframework.stereotype.Component("ui_OptionsBinder")
 public class OptionsBinder {
-
-    public static final String NAME = "ui_OptionsBinder";
 
     public <V> OptionsBinding<V> bind(Options<V> options, Component component,
                                       OptionsTarget<V> optionsTarget) {

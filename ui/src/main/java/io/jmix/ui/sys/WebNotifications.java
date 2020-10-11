@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.function.Consumer;
 
 @UIScope
-@Component(Notifications.NAME)
+@Component("ui_Notifications")
 public class WebNotifications implements Notifications {
 
     protected static final int HUMANIZED_NOTIFICATION_DELAY_MSEC = 3000;

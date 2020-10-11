@@ -16,8 +16,6 @@
 
 package io.jmix.ui.settings.component.binder;
 
-@org.springframework.stereotype.Component(DataGridSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_DataGridSettingsBinder")
 public class DataGridSettingsBinder extends AbstractDataGridSettingsBinder {
-
-    public static final String NAME = "ui_DataGridSettingsBinder";
 }

@@ -187,7 +187,7 @@ public class WebGroupTable<E> extends WebAbstractTable<JmixGroupTable, E>
 
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) applicationContext.getBean(GroupTableSettingsBinder.NAME);
+        return applicationContext.getBean(GroupTableSettingsBinder.class);
     }
 
     @Override

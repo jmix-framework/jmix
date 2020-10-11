@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Component(IconResolver.NAME)
+@Component("ui_IconResolver")
 public class IconResolverImpl implements IconResolver {
     protected static final String THEME_PREFIX = "theme://";
     protected static final List<String> PROPERTY_PREFIXES = ImmutableList.of("icons.", "cuba.web.");

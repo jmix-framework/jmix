@@ -44,8 +44,6 @@ import java.util.Map;
  */
 public interface UrlRouting {
 
-    String NAME = "ui_UrlRouting";
-
     /**
      * Pushes the state corresponding to the given {@code screen}.
      * <p>

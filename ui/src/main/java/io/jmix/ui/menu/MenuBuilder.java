@@ -45,10 +45,9 @@ import java.util.function.Consumer;
  * Main menu builder.
  */
 @Internal
-@Component(MenuBuilder.NAME)
+@Component("ui_AppMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class MenuBuilder {
-    public static final String NAME = "ui_AppMenuBuilder";
 
     @Autowired
     protected MenuConfig menuConfig;

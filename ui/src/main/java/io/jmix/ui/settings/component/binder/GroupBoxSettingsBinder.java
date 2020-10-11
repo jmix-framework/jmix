@@ -23,10 +23,8 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.GroupBoxSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 
-@org.springframework.stereotype.Component(GroupBoxSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_GroupBoxSettingsBinder")
 public class GroupBoxSettingsBinder implements ComponentSettingsBinder<GroupBoxLayout, GroupBoxSettings> {
-
-    public static final String NAME = "ui_GroupBoxSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

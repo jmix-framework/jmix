@@ -46,10 +46,9 @@ import static io.jmix.ui.component.KeyCombination.getShortcutModifiers;
  * Side menu builder.
  */
 @Internal
-@Component(SideMenuBuilder.NAME)
+@Component("jmix_SideMenuBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SideMenuBuilder {
-    public static final String NAME = "jmix_SideMenuBuilder";
 
     @Autowired
     protected MenuConfig menuConfig;

@@ -60,7 +60,7 @@ class ScreenSettingsTest extends UiDataTestSpecification {
         saveSettings(screenSettings)
 
         when: "Load ScreenSettings"
-        screenSettings = (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "screenId")
+        screenSettings = applicationContext.getBean(ScreenSettings, "screenId")
 
         then: "Component settings should be the same"
         def settingsOpt = screenSettings.getSettings("table", TableSettings)
@@ -125,7 +125,7 @@ class ScreenSettingsTest extends UiDataTestSpecification {
     }
 
     ScreenSettings loadScreenSettings() {
-        (ScreenSettings) applicationContext.getBean(ScreenSettings.NAME, "screenId")
+        applicationContext.getBean(ScreenSettings, "screenId")
     }
 
     def saveSettings(ScreenSettings screenSettings) {

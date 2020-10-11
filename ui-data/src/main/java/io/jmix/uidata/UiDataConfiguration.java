@@ -35,18 +35,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class})
 public class UiDataConfiguration {
 
-    @Bean(UserSettingService.NAME)
+    @Bean("ui_UserSettingService")
     public UserSettingService userSettingService() {
         return new UserSettingServiceImpl();
     }
 
-    @Bean(TablePresentations.NAME)
+    @Bean("ui_Presentations")
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     public TablePresentations presentations(Component component) {
         return new TablePresentationsImpl(component);
     }
 
-    @Bean(UserSettingsTools.NAME)
+    @Bean("ui_UserSettingsTools")
     public UserSettingsTools userSettingsTools() {
         return new UserSettingsToolsImpl();
     }

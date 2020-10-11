@@ -52,7 +52,7 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
         Window window = getWindow();
 
         Messages messages = getApplicationContext().getBean(Messages.class);
-        Icons icons = (Icons) getApplicationContext().getBean(Icons.NAME);
+        Icons icons = getApplicationContext().getBean(Icons.class);
 
         String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 

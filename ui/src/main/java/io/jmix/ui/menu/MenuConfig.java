@@ -48,12 +48,10 @@ import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 /**
  * GenericUI class holding information about the main menu structure.
  */
-@Component(MenuConfig.NAME)
+@Component("ui_MenuConfig")
 public class MenuConfig {
 
     private final Logger log = LoggerFactory.getLogger(MenuConfig.class);
-
-    public static final String NAME = "ui_MenuConfig";
 
     public static final String MENU_CONFIG_XML_PROP = "jmix.ui.menuConfig";
 

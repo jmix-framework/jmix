@@ -203,7 +203,7 @@ public class WindowLoader extends ContainerLoader<Window> implements ComponentRo
             List<Element> facetElements = facetsElement.elements();
 
             for (Element facetElement : facetElements) {
-                FacetLoader loader = (FacetLoader) applicationContext.getBean(FacetLoader.NAME);
+                FacetLoader loader = applicationContext.getBean(FacetLoader.class);
                 Facet facet = loader.load(facetElement, getComponentContext());
 
                 resultComponent.addFacet(facet);

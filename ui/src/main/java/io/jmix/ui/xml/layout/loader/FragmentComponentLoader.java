@@ -26,12 +26,8 @@ import io.jmix.ui.monitoring.ScreenLifeCycle;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.ScreenOptions;
-import io.jmix.ui.sys.FragmentContextImpl;
-import io.jmix.ui.sys.FragmentHelper;
+import io.jmix.ui.sys.*;
 import io.jmix.ui.sys.FragmentHelper.FragmentLoaderInitTask;
-import io.jmix.ui.sys.ScreenContextImpl;
-import io.jmix.ui.sys.ScreenXmlLoader;
-import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
@@ -42,14 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
-import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
-import static io.jmix.ui.screen.UiControllerUtils.setFrame;
-import static io.jmix.ui.screen.UiControllerUtils.setHostController;
-import static io.jmix.ui.screen.UiControllerUtils.setScreenContext;
-import static io.jmix.ui.screen.UiControllerUtils.setScreenData;
-import static io.jmix.ui.screen.UiControllerUtils.setWindowId;
+import static io.jmix.ui.screen.UiControllerUtils.*;
 import static io.jmix.ui.sys.FragmentHelper.FragmentLoaderInjectTask;
-import static io.jmix.ui.sys.FragmentHelper.NAME;
 
 public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
@@ -128,7 +118,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
             LayoutLoader layoutLoader = getLayoutLoader(innerContext);
 
-            ScreenXmlLoader screenXmlLoader = (ScreenXmlLoader) applicationContext.getBean(ScreenXmlLoader.NAME);
+            ScreenXmlLoader screenXmlLoader = applicationContext.getBean(ScreenXmlLoader.class);
 
             Element rootElement = screenXmlLoader.load(windowInfo.getTemplate(), windowInfo.getId(),
                     getComponentContext().getParams());
@@ -151,7 +141,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
     }
 
     protected FragmentHelper getFragmentHelper() {
-        return (FragmentHelper) applicationContext.getBean(NAME);
+        return applicationContext.getBean(FragmentHelper.class);
     }
 
     @Override
@@ -273,6 +263,6 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
     }
 
     protected WindowConfig getWindowConfig() {
-        return (WindowConfig) applicationContext.getBean(WindowConfig.NAME);
+        return applicationContext.getBean(WindowConfig.class);
     }
 }

@@ -36,7 +36,7 @@ import java.util.Optional;
  * Screen settings that use JSON structure for stored settings.
  */
 @Internal
-@Component(ScreenSettings.NAME)
+@Component("ui_ScreenSettings")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ScreenSettingsJson extends AbstractScreenSettings {
 

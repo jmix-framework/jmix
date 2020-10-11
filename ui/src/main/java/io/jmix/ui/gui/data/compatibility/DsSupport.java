@@ -23,8 +23,6 @@ import org.dom4j.Element;
 
 public interface DsSupport {
 
-    String NAME = "ui_DsSupport";
-
     ComponentLoaderContext createComponentLoaderContext(ScreenOptions screenOptions);
 
     void initDsContext(Screen screen, Element screenDescriptor, ComponentLoaderContext context);

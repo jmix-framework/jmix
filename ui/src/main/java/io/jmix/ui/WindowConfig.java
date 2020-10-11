@@ -54,10 +54,8 @@ import java.util.regex.Pattern;
 /**
  * GenericUI class holding information about all registered in <code>screens.xml</code> screens.
  */
-@Component(WindowConfig.NAME)
+@Component("ui_WindowConfig")
 public class WindowConfig {
-
-    public static final String NAME = "jmix_WindowConfig";
 
     public static final String WINDOW_CONFIG_XML_PROP = "jmix.ui.windowConfig";
 

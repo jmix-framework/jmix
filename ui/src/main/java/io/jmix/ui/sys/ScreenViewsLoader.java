@@ -26,11 +26,9 @@ import java.io.InputStream;
 /**
  * Loads views defined in screen descriptors.
  */
-@Component(ScreenViewsLoader.NAME)
+@Component("ui_ScreenViewsLoader")
 @Deprecated
 public class ScreenViewsLoader {
-
-    public static final String NAME = "ui_ScreenViewsLoader";
 
 
     @Autowired

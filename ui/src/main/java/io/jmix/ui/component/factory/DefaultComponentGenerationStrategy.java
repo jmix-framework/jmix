@@ -20,7 +20,6 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -31,9 +30,8 @@ import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
 
-@org.springframework.stereotype.Component(DefaultComponentGenerationStrategy.NAME)
+@org.springframework.stereotype.Component("ui_DefaultComponentGenerationStrategy")
 public class DefaultComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
-    public static final String NAME = "ui_DefaultComponentGenerationStrategy";
 
     @Autowired
     public DefaultComponentGenerationStrategy(Messages messages,

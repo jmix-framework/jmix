@@ -68,7 +68,7 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
     }
 
     protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.NAME);
+        return applicationContext.getBean(Metadata.class);
     }
 
     @Override

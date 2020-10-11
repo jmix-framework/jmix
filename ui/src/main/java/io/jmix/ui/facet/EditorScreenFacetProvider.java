@@ -29,11 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(EditorScreenFacetProvider.NAME)
+@Component("ui_EditorScreenFacetProvider")
 public class EditorScreenFacetProvider
         extends AbstractEntityAwareScreenFacetProvider<EditorScreenFacet> {
-
-    public static final String NAME = "ui_EditorScreenFacetProvider";
 
     @Autowired
     protected Metadata metadata;

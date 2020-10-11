@@ -49,10 +49,8 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
  * Class that provides fluent interface for removing entity instances. <br>
  * Inject the class into your screen controller and use {@link #builder(Class, FrameOwner)} method as an entry point.
  */
-@Component(RemoveOperation.NAME)
+@Component("ui_RemoveOperation")
 public class RemoveOperation {
-
-    public static final String NAME = "jmix_RemoveHelper";
 
     @Autowired
     protected WindowConfig windowConfig;

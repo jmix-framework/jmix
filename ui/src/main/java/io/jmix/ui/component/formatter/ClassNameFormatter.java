@@ -30,11 +30,9 @@ import javax.annotation.Nullable;
  * The formatter formats the string that contains the class path, where the packages are separated by dots,
  * into a string that is the class name.
 */
-@Component(ClassNameFormatter.NAME)
+@Component("ui_ClassNameFormatter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ClassNameFormatter implements Formatter<String> {
-
-    public static final String NAME = "ui_ClassNameFormatter";
 
     @Autowired
     protected Messages messages;

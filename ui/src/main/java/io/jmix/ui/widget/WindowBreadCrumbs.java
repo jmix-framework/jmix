@@ -84,7 +84,7 @@ public class WindowBreadCrumbs extends CssLayout {
         linksLayout.setSizeUndefined();
 
         if (workAreaMode == Mode.SINGLE) {
-            Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+            Messages messages = applicationContext.getBean(Messages.class);
 
             JmixButton closeBtn = new JmixButton("");
             closeBtn.setDescription(messages.getMessage("windowBreadCrumbs.closeButton.description"));

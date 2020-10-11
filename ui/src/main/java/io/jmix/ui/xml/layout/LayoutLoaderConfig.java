@@ -26,10 +26,8 @@ import javax.annotation.Nullable;
 
 @SuppressWarnings("rawtypes")
 @Order(JmixOrder.LOWEST_PRECEDENCE - 10)
-@Component(LayoutLoaderConfig.NAME)
+@Component("ui_LayoutLoaderConfig")
 public class LayoutLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
-
-    public static final String NAME = "ui_LayoutLoaderConfig";
 
     protected Class<? extends WindowLoader> windowLoader = WindowLoader.class;
     protected Class<? extends FragmentLoader> fragmentLoader = FragmentLoader.class;

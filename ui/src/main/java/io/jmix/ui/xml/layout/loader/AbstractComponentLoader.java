@@ -199,15 +199,15 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Messages getMessages() {
-        return (Messages) applicationContext.getBean(Messages.NAME);
+        return applicationContext.getBean(Messages.class);
     }
 
     protected MessageTools getMessageTools() {
-        return (MessageTools) applicationContext.getBean(MessageTools.NAME);
+        return applicationContext.getBean(MessageTools.class);
     }
 
     protected ClassManager getClassManager() {
-        return (ClassManager) applicationContext.getBean(ClassManager.NAME);
+        return applicationContext.getBean(ClassManager.class);
     }
 
     protected UiProperties getProperties() {
@@ -219,16 +219,16 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected ThemeConstants getTheme() {
-        ThemeConstantsManager manager = (ThemeConstantsManager) applicationContext.getBean(ThemeConstantsManager.NAME);
+        ThemeConstantsManager manager = applicationContext.getBean(ThemeConstantsManager.class);
         return manager.getConstants();
     }
 
     protected LayoutLoader getLayoutLoader() {
-        return (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, context);
+        return applicationContext.getBean(LayoutLoader.class, context);
     }
 
     protected LayoutLoader getLayoutLoader(Context context) {
-        return (LayoutLoader) applicationContext.getBean(LayoutLoader.NAME, context);
+        return applicationContext.getBean(LayoutLoader.class, context);
     }
 
     protected void loadId(Component component, Element element) {
@@ -500,7 +500,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected void loadPresentations(HasTablePresentations component, Element element) {
         String presentations = element.attributeValue("presentations");
         if (StringUtils.isNotEmpty(presentations)) {
-            if (applicationContext.containsBean(TablePresentations.NAME)) {
+            if (!applicationContext.getBeansOfType(TablePresentations.class).isEmpty()) {
                 component.usePresentations(Boolean.parseBoolean(presentations));
                 getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
             } else {
@@ -526,7 +526,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         String iconPath = null;
 
         if (ICON_NAME_REGEX.matcher(icon).matches()) {
-            Icons icons = (Icons) applicationContext.getBean(Icons.NAME);
+            Icons icons = applicationContext.getBean(Icons.class);
             iconPath = icons.get(icon);
         }
 
@@ -746,7 +746,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Action loadValuePickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String type = element.attributeValue("type");
         if (StringUtils.isNotEmpty(type)) {
-            Actions actions = (Actions) applicationContext.getBean(Actions.NAME);
+            Actions actions = applicationContext.getBean(Actions.class);
 
             String id = loadActionId(element);
             Action action = actions.create(type, id);
@@ -760,7 +760,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
 
     @Nullable
     protected Formatter<?> loadFormatter(Element element) {
-        FormatterLoadFactory loadFactory = (FormatterLoadFactory) applicationContext.getBean(FormatterLoadFactory.NAME);
+        FormatterLoadFactory loadFactory = applicationContext.getBean(FormatterLoadFactory.class);
         for (Element childElement : element.elements()) {
             if (loadFactory.isFormatter(childElement)) {
                 return loadFactory.createFormatter(childElement);

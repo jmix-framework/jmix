@@ -42,13 +42,11 @@ import java.util.List;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("unused")
-@org.springframework.stereotype.Component(UiControllerPropertyInjector.NAME)
+@org.springframework.stereotype.Component("ui_UiControllerPropertyInjector")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class UiControllerPropertyInjector {
 
     private static final Logger log = LoggerFactory.getLogger(UiControllerPropertyInjector.class);
-
-    public static final String NAME = "ui_UiControllerPropertyInjector";
 
     protected final FrameOwner frameOwner;
     protected final Screen sourceScreen;

@@ -209,7 +209,7 @@ public abstract class WebV8AbstractField<T extends com.vaadin.ui.Component & com
         if (isEmpty() && isRequired()) {
             String requiredMessage = getRequiredMessage();
             if (requiredMessage == null) {
-                Messages messages = (Messages) applicationContext.getBean(Messages.NAME);
+                Messages messages = applicationContext.getBean(Messages.class);
                 requiredMessage = messages.getMessage("validationFail.defaultRequiredMessage");
             }
             throw new RequiredValueMissingException(requiredMessage, this);

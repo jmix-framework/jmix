@@ -28,10 +28,8 @@ import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.TreeDataGridSettings;
 
 @SuppressWarnings("rawtypes")
-@org.springframework.stereotype.Component(TreeDataGridSettingsBinder.NAME)
+@org.springframework.stereotype.Component("ui_TreeDataGridSettingsBinder")
 public class TreeDataGridSettingsBinder extends AbstractDataGridSettingsBinder {
-
-    public static final String NAME = "ui_TreeDataGridSettingsBinder";
 
     @Override
     public Class<? extends Component> getComponentClass() {

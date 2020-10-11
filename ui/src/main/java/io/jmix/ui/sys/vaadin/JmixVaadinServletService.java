@@ -81,8 +81,8 @@ public class JmixVaadinServletService extends SpringVaadinServletService
         this.environment = applicationContext.getBean(Environment.class);
         this.resolver = applicationContext.getBean(WebJarResourceResolver.class);
 
-        if (applicationContext.containsBean(ThemeVariantsProvider.NAME)) {
-            themeVariantsProvider = (ThemeVariantsProvider) applicationContext.getBean(ThemeVariantsProvider.NAME);
+        if (!applicationContext.getBeansOfType(ThemeVariantsProvider.class).isEmpty()) {
+            themeVariantsProvider = applicationContext.getBean(ThemeVariantsProvider.class);
         }
 
         addSessionInitListener(event -> {

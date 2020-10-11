@@ -38,10 +38,8 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Helper for working with URL.
  */
-@Component(UrlTools.NAME)
+@Component("ui_UrlTools")
 public class UrlTools {
-
-    public static final String NAME = "jmix_UrlTools";
 
     private static final Logger log = LoggerFactory.getLogger(UrlTools.class);
 

@@ -221,8 +221,7 @@ public abstract class WebAbstractScreenFacet<S extends Screen> extends WebAbstra
                 throw new IllegalStateException("Unable to inject properties. ApplicationContext is null.");
             }
 
-            UiControllerPropertyInjector injector =
-                    (UiControllerPropertyInjector) applicationContext.getBean(UiControllerPropertyInjector.NAME,
+            UiControllerPropertyInjector injector = applicationContext.getBean(UiControllerPropertyInjector.class,
                             screen, owner.getFrameOwner(), properties);
 
             injector.inject();

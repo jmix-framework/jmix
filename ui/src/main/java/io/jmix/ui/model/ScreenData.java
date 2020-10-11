@@ -24,8 +24,6 @@ import java.util.Set;
  */
 public interface ScreenData {
 
-    String NAME = "ui_ScreenData";
-
     /**
      * Returns screen's {@code DataContext}.
      */

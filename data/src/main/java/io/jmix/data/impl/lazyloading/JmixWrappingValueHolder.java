@@ -132,8 +132,8 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         BeanFactory beanFactory = SerializationContext.getThreadLocalBeanFactory();
-        dataManager = (DataManager) beanFactory.getBean(DataManager.NAME);
-        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
-        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
+        dataManager = beanFactory.getBean(DataManager.class);
+        metadata = beanFactory.getBean(Metadata.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
     }
 }

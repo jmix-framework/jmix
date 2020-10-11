@@ -38,11 +38,9 @@ import javax.persistence.Query;
 import javax.sql.DataSource;
 import java.util.*;
 
-@Component(DeletePolicyProcessor.NAME)
+@Component("data_DeletePolicyProcessor")
 @Scope("prototype")
 public class DeletePolicyProcessor {
-
-    public static final String NAME = "data_DeletePolicyProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(DeletePolicyProcessor.class);
 

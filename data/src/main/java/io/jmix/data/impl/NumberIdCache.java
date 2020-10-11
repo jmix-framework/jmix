@@ -37,10 +37,8 @@ import java.util.concurrent.ConcurrentMap;
  * Intermediate cache for generated ids of entities with long/integer PK.
  * The cache size is determined by the {@code jmix.data.numberIdCacheSize} property.
  */
-@Component(NumberIdCache.NAME)
+@Component("data_NumberIdCache")
 public class NumberIdCache {
-
-    public static final String NAME = "data_NumberIdCache";
 
     @Autowired
     protected Metadata metadata;

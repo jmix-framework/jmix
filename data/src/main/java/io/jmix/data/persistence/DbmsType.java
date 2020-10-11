@@ -32,10 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * {@link DbmsSpecifics} bean.
  */
 @Internal
-@Component(DbmsType.NAME)
+@Component("data_DbmsType")
 public class DbmsType {
-
-    public static final String NAME = "data_DbmsType";
 
     @Autowired
     protected Environment environment;

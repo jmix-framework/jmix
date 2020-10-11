@@ -153,9 +153,9 @@ public class JmixSingleValueHolder extends JmixAbstractValueHolder {
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         BeanFactory beanFactory = SerializationContext.getThreadLocalBeanFactory();
-        dataManager = (DataManager) beanFactory.getBean(DataManager.NAME);
+        dataManager = beanFactory.getBean(DataManager.class);
         fetchPlanBuilder = beanFactory.getBean(FetchPlanBuilder.class, parentEntity.getClass());
-        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
-        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
+        metadata = beanFactory.getBean(Metadata.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
     }
 }

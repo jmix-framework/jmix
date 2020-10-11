@@ -35,10 +35,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component(LiquibaseChangeLogProcessor.NAME)
+@Component("data_LiquibaseChangeLogProcessor")
 public class LiquibaseChangeLogProcessor {
-
-    public static final String NAME = "data_LiquibaseChangeLogProcessor";
 
     private Environment environment;
     private JmixModules jmixModules;

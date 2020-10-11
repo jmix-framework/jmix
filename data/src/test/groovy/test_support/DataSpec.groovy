@@ -26,7 +26,10 @@ import spock.lang.Specification
 
 import org.springframework.beans.factory.annotation.Autowired
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, DataTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, DataTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class DataSpec extends Specification {
 
     @Autowired

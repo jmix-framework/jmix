@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Component(NumberIdSource.NAME)
+@Component("data_NumberIdSource")
 public class NumberIdSourceImpl implements NumberIdSource {
     @Autowired
     protected NumberIdCache cache;

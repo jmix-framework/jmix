@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Component(QueryCache.NAME)
+@Component("data_QueryCache")
 public class StandardQueryCache implements QueryCache {
 
     protected Cache queries;

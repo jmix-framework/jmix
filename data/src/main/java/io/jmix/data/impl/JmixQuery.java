@@ -100,18 +100,18 @@ public class JmixQuery<E> implements TypedQuery<E> {
         this.resultClass = resultClass;
 
         environment = beanFactory.getBean(Environment.class);
-        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
-        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
-        extendedEntities = (ExtendedEntities) beanFactory.getBean(ExtendedEntities.NAME);
-        fetchPlanRepository = (FetchPlanRepository) beanFactory.getBean(FetchPlanRepository.NAME);
-        support = (PersistenceSupport) beanFactory.getBean(PersistenceSupport.NAME);
-        entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
-        fetchGroupMgr = (FetchGroupManager) beanFactory.getBean(FetchGroupManager.NAME);
-        entityFetcher = (EntityFetcher) beanFactory.getBean(EntityFetcher.NAME);
-        queryCacheMgr = (QueryCacheManager) beanFactory.getBean(QueryCacheManager.NAME);
-        queryTransformerFactory = (QueryTransformerFactory) beanFactory.getBean(QueryTransformerFactory.NAME);
-        hintsProcessor = (QueryHintsProcessor) beanFactory.getBean(QueryHintsProcessor.NAME);
-        dbmsSpecifics = (DbmsSpecifics) beanFactory.getBean(DbmsSpecifics.NAME);
+        metadata = beanFactory.getBean(Metadata.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
+        extendedEntities = beanFactory.getBean(ExtendedEntities.class);
+        fetchPlanRepository = beanFactory.getBean(FetchPlanRepository.class);
+        support = beanFactory.getBean(PersistenceSupport.class);
+        entityChangedEventManager = beanFactory.getBean(EntityChangedEventManager.class);
+        fetchGroupMgr = beanFactory.getBean(FetchGroupManager.class);
+        entityFetcher = beanFactory.getBean(EntityFetcher.class);
+        queryCacheMgr = beanFactory.getBean(QueryCacheManager.class);
+        queryTransformerFactory = beanFactory.getBean(QueryTransformerFactory.class);
+        hintsProcessor = beanFactory.getBean(QueryHintsProcessor.class);
+        dbmsSpecifics = beanFactory.getBean(DbmsSpecifics.class);
         macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());
     }
 

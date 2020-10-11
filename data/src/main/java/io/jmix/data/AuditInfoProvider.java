@@ -26,8 +26,6 @@ import javax.annotation.Nullable;
  */
 public interface AuditInfoProvider {
 
-    String NAME = "data_AuditInfoProvider";
-
     @Nullable
     BaseUser getCurrentUser();
 }

@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Supports functionality that allows queries from previously selected results.
  */
-@Component(QueryResultsManager.NAME)
+@Component("data_QueryResultsManager")
 public class QueryResultsManagerImpl implements QueryResultsManager {
 
     private final Logger log = LoggerFactory.getLogger(QueryResultsManagerImpl.class);

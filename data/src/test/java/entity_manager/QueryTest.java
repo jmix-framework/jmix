@@ -33,6 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
+import test_support.TestContextInititalizer;
 import test_support.entity.sales.Customer;
 
 import javax.persistence.EntityManager;
@@ -43,7 +44,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class})
+@ContextConfiguration(
+        classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class},
+        initializers = {TestContextInititalizer.class}
+)
 public class QueryTest {
 
     @PersistenceContext

@@ -30,10 +30,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-@Component(StoreAwareLocator.NAME)
+@Component("data_StoreAwareLocator")
 public class StoreAwareLocator {
-
-    public static final String NAME = "data_StoreAwareLocator";
 
     @Autowired
     protected ApplicationContext applicationContext;

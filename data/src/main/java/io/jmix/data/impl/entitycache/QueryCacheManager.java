@@ -37,10 +37,8 @@ import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(QueryCacheManager.NAME)
+@Component("data_QueryCacheManager")
 public class QueryCacheManager {
-
-    public static final String NAME = "data_QueryCacheManager";
 
     @Autowired
     protected DataProperties properties;

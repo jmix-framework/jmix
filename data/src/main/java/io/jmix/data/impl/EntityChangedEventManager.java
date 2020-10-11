@@ -44,10 +44,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
-@Component(EntityChangedEventManager.NAME)
+@Component("data_EntityChangedEventManager")
 public class EntityChangedEventManager {
-
-    public static final String NAME = "data_EntityChangedEventManager";
 
     private static final Logger log = LoggerFactory.getLogger(EntityChangedEventManager.class);
 

@@ -39,10 +39,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(FetchGroupManager.NAME)
+@Component("data_FetchGroupManager")
 public class FetchGroupManager {
-
-    public static final String NAME = "data_FetchGroupManager";
 
     private final Logger log = LoggerFactory.getLogger(FetchGroupManager.class);
 

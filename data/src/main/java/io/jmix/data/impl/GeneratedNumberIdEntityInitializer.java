@@ -30,9 +30,8 @@ import javax.persistence.InheritanceType;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component(GeneratedNumberIdEntityInitializer.NAME)
+@Component("data_GeneratedNumberIdEntityInitializer")
 public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Ordered {
-    public static final String NAME = "data_GeneratedNumberIdEntityInitializer";
 
     @Autowired
     protected Metadata metadata;

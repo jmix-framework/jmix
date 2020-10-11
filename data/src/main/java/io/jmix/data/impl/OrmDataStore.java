@@ -69,11 +69,9 @@ import static io.jmix.core.entity.EntityValues.getValue;
  * INTERNAL.
  * Implementation of the {@link DataStore} interface working with a relational database through ORM.
  */
-@Component(OrmDataStore.NAME)
+@Component("data_OrmDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class OrmDataStore implements DataStore, DataSortingOptions {
-
-    public static final String NAME = "data_OrmDataStore";
 
     public static final String LOAD_TX_PREFIX = "OrmDataStore-load-";
     public static final String SAVE_TX_PREFIX = "OrmDataStore-save-";

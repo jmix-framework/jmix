@@ -31,10 +31,8 @@ import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManagerFactory;
 
-@Component(OrmCacheSupport.NAME)
+@Component("data_OrmCacheSupport")
 public class OrmCacheSupport {
-
-    public static final String NAME = "data_OrmCacheSupport";
 
     @Autowired
     protected Metadata metadata;

@@ -24,10 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Component(EntityPersistingEventManager.NAME)
+@Component("data_EntityPersistingEventManager")
 public class EntityPersistingEventManager {
-
-    public static final String NAME = "data_EntityPersistingEventManager";
 
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;

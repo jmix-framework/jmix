@@ -37,13 +37,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Methods {@link #addListener(Class, Class)} and {@link #addListener(Class, String)} allow to add listeners dynamically,
  * e.g. to an entity from a base project.
  */
-@Component(EntityListenerManager.NAME)
+@Component("data_EntityListenerManager")
 public class EntityListenerManager {
 
     @Autowired
     protected BeanFactory beanFactory;
-
-    public static final String NAME = "data_EntityListenerManager";
 
     protected static class Key {
         private final Class entityClass;

@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
-@Component(EntityAttributesEraser.NAME)
+@Component("data_EntityAttributesEraser")
 public class EntityAttributesEraserImpl implements EntityAttributesEraser {
 
     @Autowired

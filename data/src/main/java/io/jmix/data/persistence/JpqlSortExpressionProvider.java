@@ -24,8 +24,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
  */
 public interface JpqlSortExpressionProvider {
 
-    String NAME = "data_JpqlSortExpressionProvider";
-
     /**
      * Returns JPQL order expression for specified property,
      * e.g. <code>{E}.property</code>, where <code>{E}</code> is a selected entity alias.

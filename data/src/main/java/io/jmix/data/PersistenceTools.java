@@ -61,10 +61,8 @@ import static io.jmix.core.entity.EntityValues.getValue;
  * Utility class to provide common functionality related to persistence.
  * <br> Implemented as Spring bean to allow extension in application projects.
  */
-@Component(PersistenceTools.NAME)
+@Component("data_PersistenceTools")
 public class PersistenceTools {
-
-    public static final String NAME = "data_PersistenceTools";
 
     @PersistenceContext
     protected EntityManager entityManager;

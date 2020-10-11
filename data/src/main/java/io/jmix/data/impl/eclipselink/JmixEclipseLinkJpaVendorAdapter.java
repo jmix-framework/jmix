@@ -36,10 +36,8 @@ import org.springframework.stereotype.Component;
 import javax.persistence.spi.PersistenceProvider;
 import java.util.Map;
 
-@Component(JmixEclipseLinkJpaVendorAdapter.NAME)
+@Component("data_JmixEclipseLinkJpaVendorAdapter")
 public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter {
-
-    public static final String NAME = "data_JmixEclipseLinkJpaVendorAdapter";
 
     protected final EclipseLinkJpaDialect jpaDialect;
 

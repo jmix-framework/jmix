@@ -48,11 +48,9 @@ import java.util.List;
 
 import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
-@Component(JmixEclipseLinkDescriptorEventListener.NAME)
+@Component("data_EclipseLinkDescriptorEventListener")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventListener {
-
-    public static final String NAME = "data_EclipseLinkDescriptorEventListener";
 
     private final Logger logger = LoggerFactory.getLogger(JmixEclipseLinkDescriptorEventListener.class);
 

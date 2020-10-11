@@ -62,9 +62,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Component(JmixEclipseLinkSessionEventListener.NAME)
+@Component("data_JmixEclipseLinkSessionEventListener")
 public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
-    public static final String NAME = "data_JmixEclipseLinkSessionEventListener";
 
     @Autowired
     private Environment environment;

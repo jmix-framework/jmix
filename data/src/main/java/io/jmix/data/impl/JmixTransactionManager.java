@@ -51,7 +51,7 @@ public class JmixTransactionManager extends JpaTransactionManager implements App
     protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
         super.prepareSynchronization(status, definition);
         // lookup instead of injection to avoid circular dependency
-        PersistenceSupport persistenceSupport = applicationContext.getBean(PersistenceSupport.NAME, PersistenceSupport.class);
+        PersistenceSupport persistenceSupport = applicationContext.getBean(PersistenceSupport.class);
         persistenceSupport.registerSynchronizations(storeName);
     }
 

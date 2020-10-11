@@ -126,7 +126,8 @@ public class DataTestConfiguration {
         return new TransactionTemplate(transactionManager);
     }
 
-    @Bean(JpqlSortExpressionProvider.NAME)
+    @Bean("test_JpqlSortExpressionProvider")
+    @Primary
     JpqlSortExpressionProvider jpqlSortExpressionProvider() {
         return new TestJpqlSortExpressionProvider();
     }

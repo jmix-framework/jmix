@@ -16,17 +16,18 @@
 
 package io.jmix.data;
 
-import io.jmix.data.impl.DataEntitySystemStateSupport;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.EntitySystemStateSupport;
 import io.jmix.core.PersistentAttributesLoadChecker;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.data.impl.DataEntitySystemStateSupport;
 import io.jmix.data.impl.DataPersistentAttributesLoadChecker;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -36,12 +37,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class DataConfiguration {
 
-    @Bean(name = PersistentAttributesLoadChecker.NAME)
+    @Bean("data_PersistentAttributesLoadChecker")
+    @Primary
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker(ApplicationContext applicationContext) {
         return new DataPersistentAttributesLoadChecker(applicationContext);
     }
 
-    @Bean(name = EntitySystemStateSupport.NAME)
+    @Bean("data_EntitySystemStateSupport")
+    @Primary
     protected EntitySystemStateSupport entitySystemStateSupport() {
         return new DataEntitySystemStateSupport();
     }

@@ -26,8 +26,6 @@ import java.util.List;
  */
 public interface QueryResultsManager {
 
-    String NAME = "data_QueryResultsManager";
-
     void savePreviousQueryResults(LoadContext loadContext);
 
     void insert(int queryKey, List idList);

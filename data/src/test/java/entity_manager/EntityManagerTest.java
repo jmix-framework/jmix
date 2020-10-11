@@ -26,12 +26,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 import test_support.DataTestConfiguration;
+import test_support.TestContextInititalizer;
 import test_support.TestCustomerListener;
 import test_support.entity.sales.Customer;
 
@@ -46,7 +48,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class})
+@ContextConfiguration(
+        classes = {CoreConfiguration.class, DataConfiguration.class, DataTestConfiguration.class},
+        initializers = {TestContextInititalizer.class}
+)
 public class EntityManagerTest {
 
     @PersistenceContext
@@ -56,7 +61,11 @@ public class EntityManagerTest {
     EntityManagerFactory entityManagerFactory;
 
     @Autowired
-    private JdbcTemplate jdbc;
+    JdbcTemplate jdbc;
+
+    @Autowired
+    @Qualifier("db1JdbcTemplate")
+    JdbcTemplate db1Jdbc;
 
     @Autowired
     TransactionTemplate tx;
@@ -91,6 +100,8 @@ public class EntityManagerTest {
 
     @Test
     public void testContainerEm() {
+        System.out.println(">>> jdbc: " + jdbc.getDataSource().toString());
+
         Customer customer = metadata.create(Customer.class);
         customer.setName("c1");
 

@@ -20,7 +20,7 @@ import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.stereotype.Component;
 
-@Component(JpqlSortExpressionProvider.NAME)
+@Component("data_JpqlSortExpressionProvider")
 public class DefaultJpqlSortExpressionProvider implements JpqlSortExpressionProvider {
     @Override
     public String getDatatypeSortExpression(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {

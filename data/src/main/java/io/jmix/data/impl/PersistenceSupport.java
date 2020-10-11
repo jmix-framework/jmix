@@ -59,10 +59,8 @@ import java.util.stream.Collectors;
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
-@Component(PersistenceSupport.NAME)
+@Component("data_PersistenceSupport")
 public class PersistenceSupport implements ApplicationContextAware {
-
-    public static final String NAME = "data_PersistenceImplSupport";
 
     public static final String RESOURCE_HOLDER_KEY = ContainerResourceHolder.class.getName();
 

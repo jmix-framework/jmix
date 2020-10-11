@@ -38,10 +38,9 @@ import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(JmixEclipseLinkRemoteConnection.NAME)
+@Component("data_JmixEclipseLinkRemoteConnection")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
-    public static final String NAME = "data_JmixEclipseLinkRemoteConnection";
 
     @Autowired
     protected Metadata metadata;

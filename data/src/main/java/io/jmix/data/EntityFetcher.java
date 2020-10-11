@@ -37,10 +37,8 @@ import java.util.function.Consumer;
 /**
  * Fetches entities by fetch plans by accessing reference attributes.
  */
-@Component(EntityFetcher.NAME)
+@Component("data_EntityFetcher")
 public class EntityFetcher {
-
-    public static final String NAME = "data_EntityFetcher";
 
     private static final Logger log = LoggerFactory.getLogger(EntityFetcher.class);
 

@@ -34,7 +34,7 @@ public class DataPersistentAttributesLoadChecker extends CorePersistentAttribute
     private StoreAwareLocator storeAwareLocator;
 
     public DataPersistentAttributesLoadChecker(ApplicationContext applicationContext) {
-        this.storeAwareLocator = (StoreAwareLocator) applicationContext.getBean(StoreAwareLocator.NAME);
+        this.storeAwareLocator = applicationContext.getBean(StoreAwareLocator.class);
     }
 
     @Override

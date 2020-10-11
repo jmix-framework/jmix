@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  * Default implementation to support common types.
  * Instantiate this bean and add custom converters to support different date/time and user types.
  */
-@Component(AuditConversionService.NAME)
+@Component("data_AuditConversionService")
 public class AuditConversionServiceImpl implements AuditConversionService {
 
     private GenericConversionService conversionService;

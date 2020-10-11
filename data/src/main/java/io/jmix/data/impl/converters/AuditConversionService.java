@@ -32,7 +32,6 @@ import java.util.Date;
  * Also converts current user to {@link CreatedBy}, {@link LastModifiedBy} and {@link DeletedBy} field types
  */
 public interface AuditConversionService {
-    String NAME = "data_AuditConversionService";
 
     /**
      * @see org.springframework.core.convert.ConversionService#canConvert(Class, Class)

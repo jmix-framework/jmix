@@ -28,10 +28,8 @@ import org.springframework.stereotype.Component;
  * Factory for obtaining implementations of DBMS-specific objects, particularly {@link DbmsFeatures},
  * {@link SequenceSupport} and {@link DbTypeConverter}.
  */
-@Component(DbmsSpecifics.NAME)
+@Component("data_DbmsSpecifics")
 public class DbmsSpecifics {
-
-    public static final String NAME = "data_DbmsSpecifics";
 
     @Autowired
     protected DbmsType dbmsType;

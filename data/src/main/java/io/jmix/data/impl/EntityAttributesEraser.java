@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 public interface EntityAttributesEraser {
-    String NAME = "data_EntityAttributesEraser";
 
     ReferencesCollector collectErasingReferences(Collection entityList, Predicate predicate);
 

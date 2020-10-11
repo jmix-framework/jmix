@@ -39,11 +39,9 @@ import java.util.stream.Collectors;
 /**
  * Builds {@link Query} instance to use in DataService.
  */
-@Component(JpqlQueryBuilder.NAME)
+@Component("data_OrmQueryBuilder")
 @Scope("prototype")
 public class JpqlQueryBuilder {
-
-    public static final String NAME = "data_OrmQueryBuilder";
 
     protected Object id;
     protected List<?> ids;

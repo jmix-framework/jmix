@@ -26,8 +26,6 @@ import java.util.UUID;
  */
 public interface QueryCache {
 
-    String NAME = "data_QueryCache";
-
     /**
      * Returns the query results associated with {@code queryKey} in this cache
      */

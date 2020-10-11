@@ -31,10 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Generates ids for entities with long/integer PK using database sequences.
  */
-@Component(NumberIdWorker.NAME)
+@Component("data_NumberIdWorker")
 public class NumberIdWorker {
-
-    public static final String NAME = "data_NumberIdWorker";
 
     @Autowired
     protected Metadata metadata;

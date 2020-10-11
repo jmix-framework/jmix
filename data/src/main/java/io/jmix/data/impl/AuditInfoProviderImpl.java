@@ -22,7 +22,7 @@ import io.jmix.data.AuditInfoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component(AuditInfoProvider.NAME)
+@Component("data_AuditInfoProvider")
 public class AuditInfoProviderImpl implements AuditInfoProvider {
 
     @Autowired

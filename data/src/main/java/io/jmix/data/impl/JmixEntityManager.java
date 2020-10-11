@@ -71,17 +71,17 @@ public class JmixEntityManager implements EntityManager {
         this.delegate = delegate;
         this.beanFactory = beanFactory;
 
-        support = (PersistenceSupport) beanFactory.getBean(PersistenceSupport.NAME);
-        extendedEntities = (ExtendedEntities) beanFactory.getBean(ExtendedEntities.NAME);
-        metadataTools = (MetadataTools) beanFactory.getBean(MetadataTools.NAME);
-        metadata = (Metadata) beanFactory.getBean(Metadata.NAME);
-        entityStates = (EntityStates) beanFactory.getBean(EntityStates.NAME);
-        entityListenerMgr = (EntityListenerManager) beanFactory.getBean(EntityListenerManager.NAME);
-        entityChangedEventManager = (EntityChangedEventManager) beanFactory.getBean(EntityChangedEventManager.NAME);
-        entityPersistingEventMgr = (EntityPersistingEventManager) beanFactory.getBean(EntityPersistingEventManager.NAME);
-        timeSource = (TimeSource) beanFactory.getBean(TimeSource.NAME);
-        auditInfoProvider = (AuditInfoProvider) beanFactory.getBean(AuditInfoProvider.NAME);
-        auditConverter = (AuditConversionService) beanFactory.getBean(AuditConversionService.NAME);
+        support = beanFactory.getBean(PersistenceSupport.class);
+        extendedEntities = beanFactory.getBean(ExtendedEntities.class);
+        metadataTools = beanFactory.getBean(MetadataTools.class);
+        metadata = beanFactory.getBean(Metadata.class);
+        entityStates = beanFactory.getBean(EntityStates.class);
+        entityListenerMgr = beanFactory.getBean(EntityListenerManager.class);
+        entityChangedEventManager = beanFactory.getBean(EntityChangedEventManager.class);
+        entityPersistingEventMgr = beanFactory.getBean(EntityPersistingEventManager.class);
+        timeSource = beanFactory.getBean(TimeSource.class);
+        auditInfoProvider = beanFactory.getBean(AuditInfoProvider.class);
+        auditConverter = beanFactory.getBean(AuditConversionService.class);
     }
 
     @Override

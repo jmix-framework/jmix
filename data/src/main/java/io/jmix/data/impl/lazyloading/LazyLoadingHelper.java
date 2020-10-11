@@ -44,10 +44,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-@Component(LazyLoadingHelper.NAME)
+@Component("data_LazyLoadingHelper")
 public class LazyLoadingHelper implements OrmLifecycleListener {
-
-    public static final String NAME = "jmix_LazyLoadingHelper";
 
     private static final Logger log = LoggerFactory.getLogger(LazyLoadingHelper.class);
 

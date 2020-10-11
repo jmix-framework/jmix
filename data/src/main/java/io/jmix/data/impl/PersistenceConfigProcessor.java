@@ -47,10 +47,8 @@ import java.util.Map;
  * Generates a working persistence.xml file combining classes and properties from a set of given persistence.xml files,
  * defined in <code>cuba.persistenceConfig</code> app property.
  */
-@Component(PersistenceConfigProcessor.NAME)
+@Component("data_PersistenceConfigProcessor")
 public class PersistenceConfigProcessor {
-
-    public static final String NAME = "data_PersistenceConfigProcessor";
 
     private static final Logger log = LoggerFactory.getLogger(PersistenceConfigProcessor.class);
 

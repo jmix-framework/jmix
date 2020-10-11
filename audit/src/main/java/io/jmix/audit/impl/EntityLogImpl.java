@@ -63,7 +63,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Component(EntityLog.NAME)
+@Component("audit_EntityLog")
 public class EntityLogImpl implements EntityLog, OrmLifecycleListener {
 
     private static final Logger log = LoggerFactory.getLogger(EntityLogImpl.class);

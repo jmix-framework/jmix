@@ -25,8 +25,6 @@ import java.util.stream.Stream;
  **/
 public interface UserSessions {
 
-    String NAME = "core_UserSessions";
-
     /**
      * Returns all active user sessions
      *

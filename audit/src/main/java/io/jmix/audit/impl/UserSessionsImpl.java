@@ -29,7 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-@Component(UserSessions.NAME)
+@Component("core_UserSessions")
 public class UserSessionsImpl implements UserSessions {
 
     @Autowired(required = false)

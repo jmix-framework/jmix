@@ -18,6 +18,7 @@ import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
 import spock.lang.Specification
 import test_support.AuditTestConfiguration
+import test_support.TestContextInititalizer
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
@@ -39,7 +40,10 @@ import javax.persistence.TypedQuery
  * limitations under the License.
  */
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, AuditConfiguration, AuditTestConfiguration])
+@ContextConfiguration(
+        classes = [CoreConfiguration, DataConfiguration, AuditConfiguration, AuditTestConfiguration],
+        initializers = [TestContextInititalizer]
+)
 class AbstractEntityLogTest extends Specification {
     @Autowired
     protected EntityLog entityLog

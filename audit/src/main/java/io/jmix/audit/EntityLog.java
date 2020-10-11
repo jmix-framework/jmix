@@ -28,8 +28,6 @@ import javax.annotation.Nullable;
  */
 public interface EntityLog {
 
-    String NAME = "audit_EntityLog";
-
     boolean isEnabled();
 
     void setEnabled(boolean enabled);

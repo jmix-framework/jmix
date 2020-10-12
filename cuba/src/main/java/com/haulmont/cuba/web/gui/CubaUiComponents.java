@@ -17,10 +17,11 @@
 package com.haulmont.cuba.web.gui;
 
 import com.haulmont.cuba.gui.components.Accordion;
+import com.haulmont.cuba.gui.components.ButtonsPanel;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
-import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.components.PopupView;
+import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.web.gui.components.*;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebFoldersPane;
@@ -65,6 +66,7 @@ public class CubaUiComponents extends WebUiComponents {
     public static final String NAME = "cuba_UiComponents";
 
     {
+        classes.put(ButtonsPanel.NAME, WebButtonsPanel.class);
         classes.put(RowsCount.NAME, WebRowsCount.class);
         classes.put(Calendar.NAME, WebCalendar.class);
         classes.put(Tree.NAME, WebTree.class);

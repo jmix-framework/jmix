@@ -16,6 +16,7 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import org.springframework.data.annotation.CreatedBy;
@@ -33,6 +34,7 @@ import java.util.UUID;
 @Table(name = "AUDIT_LOGGED_ATTR",
         uniqueConstraints = @UniqueConstraint(name = "AUDIT_LOGGED_ATTR_UNIQ_NAME", columnNames = {"ENTITY_ID", "NAME"}))
 @SystemLevel
+@Internal
 public class LoggedAttribute implements Serializable {
 
     private static final long serialVersionUID = -615000337312303671L;

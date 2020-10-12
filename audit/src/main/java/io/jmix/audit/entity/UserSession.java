@@ -16,6 +16,7 @@
 
 package io.jmix.audit.entity;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.ModelObject;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -25,8 +26,9 @@ import org.springframework.security.core.session.SessionInformation;
 import javax.persistence.Transient;
 import java.util.Date;
 
-@ModelObject(name = "core_UserSession", annotatedPropertiesOnly = true)
+@ModelObject(name = "audit_UserSession", annotatedPropertiesOnly = true)
 @SystemLevel
+@Internal
 public class UserSession {
 
     @Transient

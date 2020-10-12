@@ -50,6 +50,8 @@ public class CubaProperties {
     String appFolderEditWindow;
     String folderEditWindow;
     int foldersPaneDefaultWidth;
+    boolean rememberMeEnabled;
+    boolean poweredByLinkVisible;
 
     public CubaProperties(
             boolean dataManagerBeanValidation,
@@ -74,7 +76,9 @@ public class CubaProperties {
             @DefaultValue("180") int appFoldersRefreshPeriodSec,
             @Nullable String appFolderEditWindow,
             @Nullable String folderEditWindow,
-            @DefaultValue("200") int foldersPaneDefaultWidth
+            @DefaultValue("200") int foldersPaneDefaultWidth,
+            @DefaultValue("true") boolean rememberMeEnabled,
+            @DefaultValue("true") boolean poweredByLinkVisible
     ) {
         this.dataManagerBeanValidation = dataManagerBeanValidation;
         this.disableEscapingLikeForDataStores = disableEscapingLikeForDataStores;
@@ -99,6 +103,8 @@ public class CubaProperties {
         this.appFolderEditWindow = appFolderEditWindow;
         this.folderEditWindow = folderEditWindow;
         this.foldersPaneDefaultWidth = foldersPaneDefaultWidth;
+        this.rememberMeEnabled = rememberMeEnabled;
+        this.poweredByLinkVisible = poweredByLinkVisible;
     }
 
     public boolean isDataManagerBeanValidation() {
@@ -226,5 +232,13 @@ public class CubaProperties {
 
     public int getFoldersPaneDefaultWidth() {
         return foldersPaneDefaultWidth;
+    }
+
+    public boolean isRememberMeEnabled() {
+        return rememberMeEnabled;
+    }
+
+    public boolean isPoweredByLinkVisible() {
+        return poweredByLinkVisible;
     }
 }

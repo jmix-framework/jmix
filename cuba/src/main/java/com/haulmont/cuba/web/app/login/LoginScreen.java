@@ -107,7 +107,7 @@ public class LoginScreen extends Screen {
     protected void initPoweredByLink() {
         Component poweredByLink = getWindow().getComponent("poweredByLink");
         if (poweredByLink != null) {
-            poweredByLink.setVisible(loginProperties.isPoweredByLinkVisible());
+            poweredByLink.setVisible(cubaProperties.isPoweredByLinkVisible());
         }
     }
 
@@ -155,7 +155,7 @@ public class LoginScreen extends Screen {
     }
 
     protected void initRememberMe() {
-        if (!loginProperties.isRememberMeEnabled()) {
+        if (!cubaProperties.isRememberMeEnabled()) {
             rememberMeCheckBox.setValue(false);
             rememberMeCheckBox.setVisible(false);
         }

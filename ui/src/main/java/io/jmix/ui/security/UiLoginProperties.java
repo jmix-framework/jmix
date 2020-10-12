@@ -24,25 +24,15 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class UiLoginProperties {
 
-    boolean rememberMeEnabled;
     String defaultUser;
     String defaultPassword;
-    boolean poweredByLinkVisible;
 
     public UiLoginProperties(
-            @DefaultValue("true") boolean rememberMeEnabled,
             @DefaultValue("admin") String defaultUser,
-            @DefaultValue("admin") String defaultPassword,
-            @DefaultValue("true") boolean poweredByLinkVisible
+            @DefaultValue("admin") String defaultPassword
     ) {
-        this.rememberMeEnabled = rememberMeEnabled;
         this.defaultUser = defaultUser;
         this.defaultPassword = defaultPassword;
-        this.poweredByLinkVisible = poweredByLinkVisible;
-    }
-
-    public boolean isRememberMeEnabled() {
-        return rememberMeEnabled;
     }
 
     public String getDefaultUser() {
@@ -51,9 +41,5 @@ public class UiLoginProperties {
 
     public String getDefaultPassword() {
         return defaultPassword;
-    }
-
-    public boolean isPoweredByLinkVisible() {
-        return poweredByLinkVisible;
     }
 }

@@ -99,6 +99,23 @@ public class WebLocalDateTimeRenderer extends WebAbstractDataGrid.AbstractRender
         return new LocalDateTimeRenderer(formatter, getNullRepresentation());
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebLocalDateTimeRenderer) {
+            setNullRepresentation(((WebLocalDateTimeRenderer) existingRenderer).getNullRepresentation());
+            setLocale(((WebLocalDateTimeRenderer) existingRenderer).getLocale());
+
+            if (((WebLocalDateTimeRenderer) existingRenderer).getFormatPattern() != null) {
+                setFormatPattern(((WebLocalDateTimeRenderer) existingRenderer).getFormatPattern());
+            }
+
+            if (((WebLocalDateTimeRenderer) existingRenderer).getFormatter() != null) {
+                setFormatter(((WebLocalDateTimeRenderer) existingRenderer).getFormatter());
+            }
+        }
+    }
+
     @Override
     public String getNullRepresentation() {
         return super.getNullRepresentation();

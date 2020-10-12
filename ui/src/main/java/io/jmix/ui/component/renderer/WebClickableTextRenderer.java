@@ -61,6 +61,15 @@ public class WebClickableTextRenderer<T>
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebClickableTextRenderer) {
+            setRendererClickListener(((WebClickableTextRenderer) existingRenderer).listener);
+            setNullRepresentation(((WebClickableTextRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
+
     @Override
     public String getNullRepresentation() {
         return super.getNullRepresentation();

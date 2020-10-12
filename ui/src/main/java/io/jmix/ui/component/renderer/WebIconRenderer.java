@@ -57,6 +57,13 @@ public class WebIconRenderer<T>
         return new JmixIconRenderer();
     }
 
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebIconRenderer) {
+            setNullRepresentation(((WebIconRenderer<?>) existingRenderer).getNullRepresentation());
+        }
+    }
+
     @Nullable
     @Override
     public ValueProvider<Icons.Icon, Resource> getPresentationValueProvider() {

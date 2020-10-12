@@ -49,6 +49,13 @@ public class WebTextRenderer extends WebAbstractDataGrid.AbstractRenderer<Object
     }
 
     @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebTextRenderer) {
+            setNullRepresentation(((WebTextRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
+
+    @Override
     public String getNullRepresentation() {
         return super.getNullRepresentation();
     }

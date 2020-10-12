@@ -35,4 +35,11 @@ public class WebCheckBoxRenderer extends WebAbstractDataGrid.AbstractRenderer<Ob
     protected Renderer<Boolean> createImplementation() {
         return new JmixCheckBoxRenderer();
     }
+
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebCheckBoxRenderer) {
+            setNullRepresentation(((WebCheckBoxRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
 }

@@ -2333,9 +2333,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
             column.setSortable(existingColumn.isSortable());
         }
 
-        Renderer renderer = existingColumn.getRenderer();
-        if (renderer != null) {
-            Class<?>[] rendererInterfaces = renderer.getClass().getInterfaces();
+        if (existingColumn.getRenderer() != null) {
+            Renderer existingRenderer = existingColumn.getRenderer();
+            Class<?>[] rendererInterfaces = existingRenderer.getClass().getInterfaces();
 
             Class<? extends Renderer> rendererType = (Class<? extends Renderer>) Arrays.stream(rendererInterfaces)
                     .filter(Renderer.class::isAssignableFrom)
@@ -2344,7 +2344,9 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
                             new DevelopmentException(
                                     "Renderer should be specified explicitly for generated column: " + column.getId()));
 
-            column.setRenderer(this.applicationContext.getBean(rendererType));
+            Renderer renderer = applicationContext.getBean(rendererType);
+            ((AbstractRenderer) renderer).copy(existingRenderer);
+            column.setRenderer(renderer);
         }
     }
 
@@ -3092,6 +3094,8 @@ public abstract class WebAbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E
         }
 
         protected abstract com.vaadin.ui.renderers.Renderer<V> createImplementation();
+
+        protected abstract void copy(Renderer existingRenderer);
 
         @Nullable
         public ValueProvider<?, V> getPresentationValueProvider() {

@@ -36,4 +36,11 @@ public class WebProgressBarRenderer
     protected JmixProgressBarRenderer createImplementation() {
         return new JmixProgressBarRenderer();
     }
+
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebProgressBarRenderer) {
+            setNullRepresentation(((WebProgressBarRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
 }

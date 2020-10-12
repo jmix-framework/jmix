@@ -50,4 +50,13 @@ public class WebImageRenderer<T>
             return new JmixImageRenderer<>();
         }
     }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebImageRenderer) {
+            setRendererClickListener(((WebImageRenderer) existingRenderer).listener);
+            setNullRepresentation(((WebImageRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
 }

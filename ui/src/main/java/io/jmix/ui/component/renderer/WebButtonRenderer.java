@@ -67,6 +67,15 @@ public class WebButtonRenderer<T>
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebButtonRenderer) {
+            setRendererClickListener(((WebButtonRenderer) existingRenderer).listener);
+            setNullRepresentation(((WebButtonRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
+
     @Override
     public String getNullRepresentation() {
         return super.getNullRepresentation();

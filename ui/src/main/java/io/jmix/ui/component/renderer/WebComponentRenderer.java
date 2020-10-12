@@ -40,6 +40,14 @@ public class WebComponentRenderer<T> extends WebAbstractDataGrid.AbstractRendere
         return new ComponentRenderer();
     }
 
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebComponentRenderer) {
+            setNullRepresentation(((WebComponentRenderer) existingRenderer).getNullRepresentation());
+        }
+    }
+
     @Nullable
     @Override
     public ValueProvider<Component, com.vaadin.ui.Component> getPresentationValueProvider() {

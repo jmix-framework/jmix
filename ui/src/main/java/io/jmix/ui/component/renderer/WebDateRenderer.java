@@ -99,6 +99,23 @@ public class WebDateRenderer extends WebAbstractDataGrid.AbstractRenderer<Object
         return new DateRenderer(dateFormat, getNullRepresentation());
     }
 
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected void copy(DataGrid.Renderer existingRenderer) {
+        if (existingRenderer instanceof WebDateRenderer) {
+            setLocale(((WebDateRenderer) existingRenderer).getLocale());
+            setNullRepresentation(((WebDateRenderer) existingRenderer).getNullRepresentation());
+
+            if (((WebDateRenderer) existingRenderer).getFormatString() != null) {
+                setFormatString(((WebDateRenderer) existingRenderer).getFormatString());
+            }
+
+            if (((WebDateRenderer) existingRenderer).getDateFormat() != null) {
+                setDateFormat(((WebDateRenderer) existingRenderer).getDateFormat());
+            }
+        }
+    }
+
     @Override
     public String getNullRepresentation() {
         return super.getNullRepresentation();

@@ -15,26 +15,26 @@
  */
 package io.jmix.ui.component;
 
-import java.util.Collection;
-import java.util.function.Supplier;
-
+/**
+ * A container that streamlines the use and placement of the components (usually, buttons) for data management in a
+ * components that implement {@link HasButtonsPanel} interface.
+ */
 public interface ButtonsPanel extends FlowBoxLayout {
 
     String NAME = "buttonsPanel";
 
+    /**
+     * Sets whether or not buttons panel is always displayed on the lookup screen. If the attribute value is true,
+     * the buttons panel is not hidden. Default value is {@code false}.
+     *
+     * @param alwaysVisible specifies whether buttons panel is always displayed on the lookup screen
+     */
     void setAlwaysVisible(boolean alwaysVisible);
-    boolean isAlwaysVisible();
 
     /**
-     * @deprecated will be removed in release 7.1
+     * Returns whether buttons panel is always displayed on the lookup screen. Default value is {@code false}.
+     *
+     * @return {code true} if the buttons panel is always displayed on the lookup screen
      */
-    @Deprecated
-    interface Provider extends Supplier<Collection<Component>> {
-        @Override
-        default Collection<Component> get() {
-            return getButtons();
-        }
-
-        Collection<Component> getButtons();
-    }
+    boolean isAlwaysVisible();
 }

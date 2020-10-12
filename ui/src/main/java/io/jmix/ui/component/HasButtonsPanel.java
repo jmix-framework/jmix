@@ -22,8 +22,17 @@ import javax.annotation.Nullable;
  * Component having a buttons panel.
  */
 public interface HasButtonsPanel {
+
+    /**
+     * @return a buttons panel component.
+     */
     @Nullable
     ButtonsPanel getButtonsPanel();
 
+    /**
+     * Sets a {@link ButtonsPanel} component.
+     *
+     * @param panel a buttons panel component
+     */
     void setButtonsPanel(@Nullable ButtonsPanel panel);
 }

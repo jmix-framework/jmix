@@ -82,22 +82,10 @@ public class WebTimer extends WebAbstractFacet implements Timer {
     }
 
     @Override
-    @Deprecated
-    public void removeTimerActionListener(Consumer<TimerActionEvent> listener) {
-        timerImpl.removeActionListener(new JmixTimerActionListenerWrapper(listener));
-    }
-
-    @Override
     public Subscription addTimerStopListener(Consumer<TimerStopEvent> listener) {
         Consumer<JmixTimer> wrapper = new JmixTimerStopListenerWrapper(listener);
         timerImpl.addStopListener(wrapper);
         return () -> timerImpl.removeStopListeners(wrapper);
-    }
-
-    @Override
-    @Deprecated
-    public void removeTimerStopListener(Consumer<TimerStopEvent> listener) {
-        timerImpl.removeStopListeners(new JmixTimerStopListenerWrapper(listener));
     }
 
     @Override

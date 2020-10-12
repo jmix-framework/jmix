@@ -16,8 +16,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.component.compatibility.TimerActionListenerWrapper;
-import io.jmix.ui.component.compatibility.TimerStopListenerWrapper;
 
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -33,6 +31,7 @@ public interface Timer extends Facet {
      * @return true if timer action is repetitive
      */
     boolean isRepeating();
+
     /**
      * Sets repetitive mode for timer action.
      *
@@ -44,6 +43,7 @@ public interface Timer extends Facet {
      * @return delay in milliseconds.
      */
     int getDelay();
+
     /**
      * @param delayMs delay in milliseconds.
      */
@@ -105,77 +105,5 @@ public interface Timer extends Facet {
         public Timer getSource() {
             return (Timer) super.getSource();
         }
-    }
-
-    // Deprecated API
-
-    /**
-     * Removes {@link TimerActionEvent} listener.
-     *
-     * @param listener listener
-     * @deprecated Use subscription object instead
-     */
-    @Deprecated
-    void removeTimerActionListener(Consumer<TimerActionEvent> listener);
-
-    /**
-     * Removes {@link TimerStopEvent} listener.
-     *
-     * @param listener listener
-     * @deprecated Use subscription object instead
-     */
-    @Deprecated
-    void removeTimerStopListener(Consumer<TimerStopEvent> listener);
-
-    /**
-     * Listener for timer events.
-     *
-     * @deprecated Use {@link #addTimerActionListener(Consumer)} with lambda instead.
-     */
-    @Deprecated
-    interface ActionListener {
-        void timerAction(Timer timer);
-    }
-
-    /**
-     * Listener for timer stop event.
-     *
-     * @deprecated Use {@link #addTimerStopListener(Consumer)} with lambda instead.
-     */
-    @Deprecated
-    interface StopListener {
-        void timerStopped(Timer timer);
-    }
-
-    /**
-     * @deprecated Use {@link #addTimerActionListener(Consumer)} instead
-     */
-    @Deprecated
-    default void addActionListener(ActionListener listener) {
-        addTimerActionListener(new TimerActionListenerWrapper(listener));
-    }
-
-    /**
-     * @deprecated Use {@link #removeTimerActionListener(Consumer)} instead
-     */
-    @Deprecated
-    default void removeActionListener(ActionListener listener) {
-        removeTimerActionListener(new TimerActionListenerWrapper(listener));
-    }
-
-    /**
-     * @deprecated Use {@link #addTimerStopListener(Consumer)} instead
-     */
-    @Deprecated
-    default void addStopListener(StopListener listener) {
-        addTimerStopListener(new TimerStopListenerWrapper(listener));
-    }
-
-    /**
-     * @deprecated Use {@link #removeTimerStopListener(Consumer)} instead
-     */
-    @Deprecated
-    default void removeStopListener(StopListener listener) {
-        removeTimerStopListener(new TimerStopListenerWrapper(listener));
     }
 }

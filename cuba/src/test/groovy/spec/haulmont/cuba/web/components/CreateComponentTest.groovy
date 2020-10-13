@@ -17,9 +17,7 @@
 package spec.haulmont.cuba.web.components
 
 import com.haulmont.cuba.gui.components.*
-import com.haulmont.cuba.gui.components.mainwindow.FoldersPane
 import com.haulmont.cuba.web.gui.components.CubaDataLoadCoordinator
-import com.haulmont.cuba.web.gui.components.CubaInputDialogFacet
 import io.jmix.ui.Facets
 import io.jmix.ui.component.RelatedEntities
 import org.springframework.beans.factory.annotation.Autowired
@@ -74,7 +72,8 @@ class CreateComponentTest extends UiScreenSpec {
 
         facet << [
                 CubaDataLoadCoordinator,
-                CubaInputDialogFacet,
+                InputDialogFacet,
+                Timer
         ]
     }
 }

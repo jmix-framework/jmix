@@ -16,7 +16,22 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import io.jmix.ui.component.impl.WebInputDialogFacet;
+import com.haulmont.cuba.gui.components.Timer;
 
-public class CubaInputDialogFacet extends WebInputDialogFacet {
+import java.util.function.Consumer;
+
+@Deprecated
+public class WebTimer extends io.jmix.ui.component.impl.WebTimer implements Timer {
+
+    @Override
+    @Deprecated
+    public void removeTimerActionListener(Consumer<TimerActionEvent> listener) {
+        timerImpl.removeActionListener(new JmixTimerActionListenerWrapper(listener));
+    }
+
+    @Override
+    @Deprecated
+    public void removeTimerStopListener(Consumer<TimerStopEvent> listener) {
+        timerImpl.removeStopListeners(new JmixTimerStopListenerWrapper(listener));
+    }
 }

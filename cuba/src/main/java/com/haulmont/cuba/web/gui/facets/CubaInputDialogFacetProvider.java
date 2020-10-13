@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.web.gui.facets;
 
-import com.haulmont.cuba.web.gui.components.CubaInputDialogFacet;
+import com.haulmont.cuba.gui.components.InputDialogFacet;
+import com.haulmont.cuba.web.gui.components.WebInputDialogFacet;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.app.inputdialog.DialogActions;
-import io.jmix.ui.component.InputDialogFacet;
 import io.jmix.ui.facet.InputDialogFacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -27,24 +27,24 @@ import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component(CubaInputDialogFacetProvider.NAME)
+@Component("cuba_InputDialogFacetProvider")
 public class CubaInputDialogFacetProvider extends InputDialogFacetProvider {
-
-    public static final String NAME = "cuba_InputDialogFacetProvider";
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Class getFacetClass() {
-        return CubaInputDialogFacet.class;
+        return InputDialogFacet.class;
     }
 
     @Override
     public InputDialogFacet create() {
-        return new CubaInputDialogFacet();
+        return new WebInputDialogFacet();
     }
 
     @Override
-    protected void loadDialogActions(InputDialogFacet facet, Element element, ComponentLoader.ComponentContext context) {
+    protected void loadDialogActions(io.jmix.ui.component.InputDialogFacet facet,
+                                     Element element,
+                                     ComponentLoader.ComponentContext context) {
         loadDialogActions(facet, element, "dialogActions");
         loadDialogActions(facet, element, "defaultActions"); // for backward compatibility
 
@@ -60,7 +60,9 @@ public class CubaInputDialogFacetProvider extends InputDialogFacetProvider {
         }
     }
 
-    protected void loadDialogActions(InputDialogFacet facet, Element element, String attributeName) {
+    protected void loadDialogActions(io.jmix.ui.component.InputDialogFacet facet,
+                                     Element element,
+                                     String attributeName) {
         String actions = element.attributeValue(attributeName);
         if (isNotEmpty(actions)) {
             facet.setDialogActions(DialogActions.valueOf(actions));

@@ -24,7 +24,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.gui.data.GroupInfo;
+import io.jmix.ui.component.data.GroupInfo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.lang3.ArrayUtils;

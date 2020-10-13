@@ -31,7 +31,7 @@ import io.jmix.ui.filter.Condition;
 import io.jmix.ui.filter.DenyingClause;
 import io.jmix.ui.filter.LogicalCondition;
 import io.jmix.ui.filter.LogicalOp;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import org.apache.commons.collections4.map.LinkedMap;
 
 import java.util.*;

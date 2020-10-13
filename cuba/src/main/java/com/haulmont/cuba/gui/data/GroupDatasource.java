@@ -17,7 +17,7 @@ package com.haulmont.cuba.gui.data;
 
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.gui.data.GroupInfo;
+import io.jmix.ui.component.data.GroupInfo;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.gui.data.compatibility.DsSupport;
+import io.jmix.ui.component.data.compatibility.DsSupport;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 import org.apache.commons.lang3.StringUtils;

@@ -19,13 +19,14 @@ package com.haulmont.cuba.gui.components.data.datagrid;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * @deprecated use {@link io.jmix.ui.gui.data.impl.AggregatableDelegate} instead
+ * @deprecated use {@link AggregatableDelegate} instead
  */
 @Deprecated
 public interface AggregatableDataGridItems<E extends Entity> extends DataGridItems<E> {

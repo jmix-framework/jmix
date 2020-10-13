@@ -291,6 +291,16 @@ public class JmixSuggestionField<T> extends AbstractField<T> {
         getState().popupWidth = popupWidth;
     }
 
+    public boolean isSelectFirstSuggestionOnShow() {
+        return getState(false).selectFirstSuggestionOnShow;
+    }
+
+    public void setSelectFirstSuggestionOnShow(boolean selectFirstSuggestionOnShow) {
+        if (getState(false).selectFirstSuggestionOnShow != selectFirstSuggestionOnShow) {
+            getState().selectFirstSuggestionOnShow = selectFirstSuggestionOnShow;
+        }
+    }
+
     protected boolean isPredefinedPopupWidth(String popupWidth) {
         return "auto".equals(popupWidth) || "parent".equals(popupWidth);
     }

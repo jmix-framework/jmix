@@ -157,4 +157,12 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
     public void setOptionsStyleProvider(Function<Object, String> optionsStyleProvider) {
         getFieldInternal().setOptionsStyleProvider(optionsStyleProvider);
     }
+
+    public boolean isSelectFirstSuggestionOnShow() {
+        return getFieldInternal().isSelectFirstSuggestionOnShow();
+    }
+
+    public void setSelectFirstSuggestionOnShow(boolean selectFirstSuggestionOnShow) {
+        getFieldInternal().setSelectFirstSuggestionOnShow(selectFirstSuggestionOnShow);
+    }
 }

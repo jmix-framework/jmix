@@ -18,7 +18,7 @@ package io.jmix.ui.component;
 
 import javax.annotation.Nullable;
 
-public interface ColorPicker extends Field<String>, Component.Focusable {
+public interface ColorPicker extends Field<String>, Component.Focusable, Buffered {
 
     String NAME = "colorPicker";
 

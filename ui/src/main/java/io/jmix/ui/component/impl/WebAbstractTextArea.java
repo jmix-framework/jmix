@@ -212,18 +212,6 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
     }
 
     @Override
-    public int getColumns() {
-        return columns;
-    }
-
-    @Override
-    public void setColumns(int columns) {
-        this.columns = columns;
-        // See com.vaadin.v7.client.ui.VTextField.setColumns for formula
-        component.setWidth(columns + "em");
-    }
-
-    @Override
     public boolean isWordWrap() {
         return component.isWordWrap();
     }

@@ -16,34 +16,15 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import com.google.common.base.Strings;
 import io.jmix.ui.component.ResizableTextArea;
-import io.jmix.ui.component.TextArea;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static io.jmix.ui.component.ResizableTextArea.ResizeDirection;
 
 public class ResizableTextAreaLoader extends TextAreaLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(ResizableTextAreaLoader.class);
-
     @Override
     public void createComponent() {
-        if (element.getName().equals(ResizableTextArea.NAME)) {
-            resultComponent = factory.create(ResizableTextArea.NAME);
-        }
-
-        if (element.getName().equals(TextArea.NAME)) {
-            if (isResizable() || hasResizableDirection()) {
-                resultComponent = factory.create(ResizableTextArea.NAME);
-                log.warn("The 'resizableTextArea' element must be used in order to create a resizable text area " +
-                        "instead of 'textArea'");
-            } else {
-                resultComponent = factory.create(TextArea.NAME);
-            }
-        }
-
+        resultComponent = factory.create(ResizableTextArea.NAME);
         loadId(resultComponent, element);
     }
 
@@ -51,30 +32,7 @@ public class ResizableTextAreaLoader extends TextAreaLoader {
     public void loadComponent() {
         super.loadComponent();
 
-        if (resultComponent instanceof ResizableTextArea) {
-            ResizableTextArea textArea = (ResizableTextArea) resultComponent;
-            String resizableDirection = element.attributeValue("resizableDirection");
-            if (!Strings.isNullOrEmpty(resizableDirection)) {
-                textArea.setResizableDirection(ResizeDirection.valueOf(resizableDirection));
-            }
-        }
-    }
-
-    protected boolean isResizable() {
-        String resizable = element.attributeValue("resizable");
-        if (!Strings.isNullOrEmpty(resizable)) {
-            return Boolean.parseBoolean(resizable);
-        }
-
-        return false;
-    }
-
-    protected boolean hasResizableDirection() {
-        String resizableDirection = element.attributeValue("resizableDirection");
-        if (!Strings.isNullOrEmpty(resizableDirection)) {
-            return ResizeDirection.valueOf(resizableDirection) != ResizeDirection.NONE;
-        }
-
-        return false;
+        loadEnum(element, ResizeDirection.class, "resizableDirection",
+                (resizableDirection) -> ((ResizableTextArea) resultComponent).setResizableDirection(resizableDirection));
     }
 }

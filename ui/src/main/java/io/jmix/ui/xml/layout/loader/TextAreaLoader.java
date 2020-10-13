@@ -36,15 +36,7 @@ public class TextAreaLoader extends AbstractTextFieldLoader<TextArea> {
         loadCaseConversion(resultComponent, element);
         loadTextChangeEventProperties(resultComponent, element);
 
-        String cols = element.attributeValue("cols");
-        if (StringUtils.isNotEmpty(cols)) {
-            resultComponent.setColumns(Integer.parseInt(cols));
-        }
-
-        String rows = element.attributeValue("rows");
-        if (StringUtils.isNotEmpty(rows)) {
-            resultComponent.setRows(Integer.parseInt(rows));
-        }
+        loadInteger(element, "rows", resultComponent::setRows);
 
         loadWordWrap();
 

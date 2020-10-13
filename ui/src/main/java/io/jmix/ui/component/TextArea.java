@@ -56,25 +56,18 @@ public interface TextArea<V> extends TextInputField<V>,
     TypeToken<TextArea<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<TextArea<LocalDateTime>>(){};
     TypeToken<TextArea<Time>> TYPE_TIME = new TypeToken<TextArea<Time>>(){};
     TypeToken<TextArea<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TextArea<OffsetTime>>(){};
-    
+
+    /**
+     * @return the number of rows
+     */
     int getRows();
-    void setRows(int rows);
 
     /**
-     * @return the number of columns
-     * @deprecated Use {@link #getWidth()} instead
-     */
-    @Deprecated
-    int getColumns();
-
-    /**
-     * Sets width according to the number of columns.
+     * Sets the number of rows in the text area.
      *
-     * @param columns the number of columns to set
-     * @deprecated Use {@link #setWidth(String)} instead
+     * @param rows the number of rows
      */
-    @Deprecated
-    void setColumns(int columns);
+    void setRows(int rows);
 
     /**
      * @return whether word wrapping is enabled or not

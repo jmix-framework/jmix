@@ -51,7 +51,7 @@ public abstract class BaseLoaderConfig {
 
         loaders.put(TextField.NAME, TextFieldLoader.class);
         loaders.put(MaskedField.NAME, MaskedFieldLoader.class);
-        loaders.put(TextArea.NAME, ResizableTextAreaLoader.class);
+        loaders.put(TextArea.NAME, TextAreaLoader.class);
         loaders.put(ResizableTextArea.NAME, ResizableTextAreaLoader.class);
         loaders.put(SourceCodeEditor.NAME, SourceCodeEditorLoader.class);
         loaders.put(PasswordField.NAME, PasswordFieldLoader.class);

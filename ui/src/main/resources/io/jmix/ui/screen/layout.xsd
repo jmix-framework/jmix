@@ -1931,7 +1931,6 @@
     <xs:complexType name="textAreaComponent">
         <xs:complexContent>
             <xs:extension base="baseTextComponent">
-                <xs:attribute name="cols" type="xs:int"/>
                 <xs:attribute name="rows" type="xs:int"/>
 
                 <xs:attribute name="caseConversion" type="caseConversion"/>
@@ -1943,7 +1942,6 @@
 
                 <xs:attribute name="stylename" type="textAreaStylename"/>
                 <xs:attribute name="maxLength" type="xs:int"/>
-                <xs:attribute name="resizableDirection" type="resizableDirection"/>
                 <xs:attribute name="trim" type="xs:boolean"/>
                 <xs:attribute name="inputPrompt" type="resourceString"/>
                 <xs:attribute name="wordWrap" type="xs:boolean"/>
@@ -1956,7 +1954,9 @@
     <!-- ResizableTextArea -->
     <xs:complexType name="resizableTextAreaComponent">
         <xs:complexContent>
-            <xs:extension base="textAreaComponent"/>
+            <xs:extension base="textAreaComponent">
+                <xs:attribute name="resizableDirection" type="resizableDirection"/>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 

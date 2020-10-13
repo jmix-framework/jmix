@@ -40,7 +40,6 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.theme.ThemeConstants;
@@ -500,12 +499,12 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected void loadPresentations(HasTablePresentations component, Element element) {
         String presentations = element.attributeValue("presentations");
         if (StringUtils.isNotEmpty(presentations)) {
-            if (!applicationContext.getBeansOfType(TablePresentations.class).isEmpty()) {
+            if (applicationContext.containsBean("ui_Presentations")) {
                 component.usePresentations(Boolean.parseBoolean(presentations));
                 getComponentContext().addPostInitTask(new LoadPresentationsPostInitTask(component));
             } else {
-                log.warn("Presentations is not available for the project. Add `ui-persistence`" +
-                        " add-on in order to use Presentations.");
+                log.warn("Presentations is not available for the project. Add `ui-data`" +
+                        " starter in order to use Presentations.");
             }
         }
     }

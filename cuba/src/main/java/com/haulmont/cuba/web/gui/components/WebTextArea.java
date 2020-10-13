@@ -31,4 +31,16 @@ public class WebTextArea<V> extends io.jmix.ui.component.impl.WebTextArea<V> imp
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
     }
+
+    @Override
+    public int getColumns() {
+        return columns;
+    }
+
+    @Override
+    public void setColumns(int columns) {
+        this.columns = columns;
+        // See com.vaadin.v7.client.ui.VTextField.setColumns for formula
+        component.setWidth(columns + "em");
+    }
 }

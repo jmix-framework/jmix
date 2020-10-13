@@ -18,27 +18,59 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
-import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ResizableTextArea;
+import com.haulmont.cuba.gui.components.TextArea;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.ResizableTextAreaLoader;
 import org.dom4j.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
+
+    private static final Logger log = LoggerFactory.getLogger(CubaResizableTextAreaLoader.class);
+
+    @Override
+    public void createComponent() {
+        if (element.getName().equals(ResizableTextArea.NAME)) {
+            resultComponent = factory.create(ResizableTextArea.NAME);
+        }
+
+        if (element.getName().equals(TextArea.NAME)) {
+            if (isResizable() || hasResizableDirection()) {
+                resultComponent = factory.create(ResizableTextArea.NAME);
+                log.warn("The 'resizableTextArea' element must be used in order to create a resizable text area " +
+                        "instead of 'textArea'");
+            } else {
+                resultComponent = factory.create(TextArea.NAME);
+            }
+        }
+
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
 
+        if (resultComponent instanceof TextArea) {
+            loadInteger(element, "cols",
+                    (columns) -> ((TextArea) resultComponent).setColumns(columns));
+            ComponentLoaderHelper.loadValidators((TextArea) resultComponent,
+                    element,
+                    context,
+                    getClassManager(),
+                    getMessages());
+        }
+
         if (resultComponent instanceof ResizableTextArea) {
-            loadResizable((ResizableTextArea) resultComponent, element);
+            loadBoolean(element, "resizable",
+                    (resizable) -> ((ResizableTextArea) resultComponent).setResizable(resizable));
 
             ComponentLoaderHelper.loadSettingsEnabled((ResizableTextArea) resultComponent, element);
         }
-
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -52,10 +84,21 @@ public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
                 .ifPresent(component::setValueSource);
     }
 
-    protected void loadResizable(ResizableTextArea component, Element element) {
+    protected boolean isResizable() {
         String resizable = element.attributeValue("resizable");
         if (!Strings.isNullOrEmpty(resizable)) {
-            component.setResizable(Boolean.parseBoolean(resizable));
+            return Boolean.parseBoolean(resizable);
         }
+
+        return false;
+    }
+
+    protected boolean hasResizableDirection() {
+        String resizableDirection = element.attributeValue("resizableDirection");
+        if (!Strings.isNullOrEmpty(resizableDirection)) {
+            return ResizableTextArea.ResizeDirection.valueOf(resizableDirection) != ResizableTextArea.ResizeDirection.NONE;
+        }
+
+        return false;
     }
 }

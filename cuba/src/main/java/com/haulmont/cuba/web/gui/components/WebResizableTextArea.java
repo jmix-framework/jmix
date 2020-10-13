@@ -97,4 +97,16 @@ public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResiza
     public void removeResizeListener(Consumer<ResizableTextArea.ResizeEvent> listener) {
         unsubscribe(ResizableTextArea.ResizeEvent.class, listener);
     }
+
+    @Override
+    public int getColumns() {
+        return columns;
+    }
+
+    @Override
+    public void setColumns(int columns) {
+        this.columns = columns;
+        // See com.vaadin.v7.client.ui.VTextField.setColumns for formula
+        component.setWidth(columns + "em");
+    }
 }

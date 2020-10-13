@@ -47,4 +47,20 @@ public interface TextArea<V> extends TextInputField<V>, io.jmix.ui.component.Tex
     TypeToken<TextArea<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<TextArea<LocalDateTime>>(){};
     TypeToken<TextArea<java.sql.Time>> TYPE_TIME = new TypeToken<TextArea<java.sql.Time>>(){};
     TypeToken<TextArea<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TextArea<OffsetTime>>(){};
+
+    /**
+     * @return the number of columns
+     * @deprecated Use {@link #getWidth()} instead
+     */
+    @Deprecated
+    int getColumns();
+
+    /**
+     * Sets width according to the number of columns.
+     *
+     * @param columns the number of columns to set
+     * @deprecated Use {@link #setWidth(String)} instead
+     */
+    @Deprecated
+    void setColumns(int columns);
 }

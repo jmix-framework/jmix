@@ -31,4 +31,6 @@ public class ResizableTextAreaTestScreen extends Screen {
     public ResizableTextArea<String> resizableField;
     @Autowired
     public ResizableTextArea<String> notResizableField;
+    @Autowired
+    public ResizableTextArea<String> twoColumnsField;
 }

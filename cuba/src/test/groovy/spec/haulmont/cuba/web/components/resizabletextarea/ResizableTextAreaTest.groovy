@@ -37,18 +37,42 @@ class ResizableTextAreaTest extends UiScreenSpec {
         def resizableField = screen.resizableField
         def notResizableField = screen.notResizableField
 
-        then: 'Attribute value is applied'
+        then: 'Default attribute value is "true"'
 
         defaultField != null
         defaultField.resizable
         defaultField.resizableDirection == ResizableTextArea.ResizeDirection.BOTH
 
+        and: 'Value "true" from XML is applied for attribute'
+
         resizableField != null
         resizableField.resizable
         resizableField.resizableDirection == ResizableTextArea.ResizeDirection.BOTH
 
+        and: 'Value "false" from XML is applied for attribute'
+
         notResizableField != null
         !notResizableField.resizable
         notResizableField.resizableDirection == ResizableTextArea.ResizeDirection.NONE
+    }
+
+    def 'load "cols" XML attribute'() {
+        showMainScreen()
+
+        when: 'Screen is loaded'
+
+        ResizableTextAreaTestScreen screen = screens.create(ResizableTextAreaTestScreen).show()
+        def defaultField = screen.defaultField
+        def twoColumnsField = screen.twoColumnsField
+
+        then: 'Default attribute value is "0"'
+
+        defaultField != null
+        defaultField.columns == 0
+
+        and: 'Value "2" from XML is applied for attribute'
+
+        twoColumnsField != null
+        twoColumnsField.columns == 2
     }
 }

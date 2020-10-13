@@ -19,5 +19,6 @@
         <resizableTextArea id="defaultField"/>
         <resizableTextArea id="resizableField" resizable="true"/>
         <resizableTextArea id="notResizableField" resizable="false"/>
+        <resizableTextArea id="twoColumnsField" cols="2"/>
     </layout>
 </window>

@@ -47,7 +47,6 @@ public abstract class WebAbstractTextArea<T extends com.vaadin.ui.TextArea, V>
 
     protected boolean trimming = true;
 
-    protected int columns;
     protected String conversionErrorMessage;
 
     protected DataAwareComponentsTools dataAwareComponentsTools;

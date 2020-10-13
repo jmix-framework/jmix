@@ -282,10 +282,6 @@ public class JmixTreeTableConnector extends TreeTableConnector {
             }
         }
 
-        getWidget().setScrollToLastItemEnabled(
-                uidl.getBooleanAttribute("scrolltolast"));
-
-
         getWidget().updateTableBodyScroll();
     }
 

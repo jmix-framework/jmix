@@ -267,9 +267,6 @@ public class JmixScrollTableConnector extends TableConnector {
                 }
             }
         }
-
-        getWidget().setScrollToLastItemEnabled(
-                uidl.getBooleanAttribute("scrolltolast"));
     }
 
     @Override

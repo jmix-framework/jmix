@@ -26,8 +26,10 @@ import org.dom4j.Element;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResizableTextArea<V> implements ResizableTextArea<V> {
+public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResizableTextArea<V>
+        implements ResizableTextArea<V> {
 
+    protected int columns;
     protected LegacySettingsDelegate settingsDelegate;
 
     @Override

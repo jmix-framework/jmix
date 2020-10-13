@@ -22,6 +22,9 @@ import java.util.function.Consumer;
 
 @Deprecated
 public class WebTextArea<V> extends io.jmix.ui.component.impl.WebTextArea<V> implements TextArea<V> {
+
+    protected int columns;
+
     @Override
     public void addValidator(Consumer<? super V> validator) {
         addValidator(validator::accept);

@@ -66,7 +66,7 @@ import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;

@@ -16,8 +16,6 @@
 
 package io.jmix.ui.component.data;
 
-import io.jmix.ui.gui.data.GroupInfo;
-
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;

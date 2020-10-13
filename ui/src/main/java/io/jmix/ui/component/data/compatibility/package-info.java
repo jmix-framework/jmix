@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.ui.gui;
+package io.jmix.ui.component.data.compatibility;
 
 import org.springframework.lang.NonNullApi;

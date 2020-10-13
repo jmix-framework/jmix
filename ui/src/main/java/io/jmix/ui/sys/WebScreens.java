@@ -38,7 +38,7 @@ import io.jmix.ui.component.impl.WebWindow;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
-import io.jmix.ui.gui.data.compatibility.DsSupport;
+import io.jmix.ui.component.data.compatibility.DsSupport;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;

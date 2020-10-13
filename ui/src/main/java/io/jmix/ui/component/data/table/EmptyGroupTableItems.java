@@ -17,8 +17,8 @@
 package io.jmix.ui.component.data.table;
 
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.ui.component.data.GroupInfo;
 import io.jmix.ui.component.data.GroupTableItems;
-import io.jmix.ui.gui.data.GroupInfo;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

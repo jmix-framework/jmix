@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-@NonNullApi
-package io.jmix.ui.gui.data.compatibility;
+package io.jmix.ui.component.data.compatibility;
 
-import org.springframework.lang.NonNullApi;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenOptions;
+import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
+import org.dom4j.Element;
+
+public interface DsSupport {
+
+    ComponentLoaderContext createComponentLoaderContext(ScreenOptions screenOptions);
+
+    void initDsContext(Screen screen, Element screenDescriptor, ComponentLoaderContext context);
+}

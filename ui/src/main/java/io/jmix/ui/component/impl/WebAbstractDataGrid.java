@@ -73,7 +73,7 @@ import io.jmix.ui.component.valueprovider.EntityValueProvider;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataComponents;

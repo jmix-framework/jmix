@@ -26,7 +26,7 @@ import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
-import io.jmix.ui.gui.data.impl.AggregatableDelegate;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.HasLoader;

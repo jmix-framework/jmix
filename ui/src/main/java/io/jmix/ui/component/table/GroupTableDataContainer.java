@@ -17,8 +17,8 @@
 package io.jmix.ui.component.table;
 
 import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.GroupInfo;
 import io.jmix.ui.component.data.GroupTableItems;
-import io.jmix.ui.gui.data.GroupInfo;
 import io.jmix.ui.widget.data.GroupTableContainer;
 
 import javax.annotation.Nullable;

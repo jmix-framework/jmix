@@ -17,7 +17,7 @@ package io.jmix.ui.component;
 
 import com.google.common.reflect.TypeToken;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.gui.data.GroupInfo;
+import io.jmix.ui.component.data.GroupInfo;
 
 import javax.annotation.Nullable;
 import java.util.Collection;

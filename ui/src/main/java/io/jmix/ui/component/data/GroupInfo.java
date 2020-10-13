@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.jmix.ui.gui.data;
+package io.jmix.ui.component.data;
 
 import org.apache.commons.collections4.map.LinkedMap;
 

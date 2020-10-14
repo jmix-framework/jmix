@@ -29,9 +29,8 @@ import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.HasOuterMargin;
 import io.jmix.ui.component.MarginInfo;
-import io.jmix.ui.component.impl.WebAbstractComponent;
+import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.model.BaseCollectionLoader;
-import io.jmix.ui.settings.component.SettingsWrapper;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import java.util.function.Consumer;
 /**
  * Generic filter implementation for the web-client.
  */
-public class WebFilter extends WebAbstractComponent<com.vaadin.ui.Component> implements Filter, FilterImplementation,
+public class WebFilter extends AbstractComponent<com.vaadin.ui.Component> implements Filter, FilterImplementation,
         Component.HasXmlDescriptor {
 
     protected static final String FILTER_STYLENAME = "c-generic-filter";

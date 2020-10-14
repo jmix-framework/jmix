@@ -19,9 +19,10 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.EntityLinkField;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.impl.EntityLinkFieldImpl;
 
 @Deprecated
-public class WebEntityLinkField<V> extends io.jmix.ui.component.impl.WebEntityLinkField<V> implements EntityLinkField<V> {
+public class WebEntityLinkField<V> extends EntityLinkFieldImpl<V> implements EntityLinkField<V> {
 
     protected OpenType screenOpenType = OpenType.THIS_TAB;
 

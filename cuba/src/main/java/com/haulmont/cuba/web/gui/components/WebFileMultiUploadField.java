@@ -17,8 +17,9 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
+import io.jmix.ui.component.impl.FileMultiUploadFieldImpl;
 
 @Deprecated
-public class WebFileMultiUploadField extends io.jmix.ui.component.impl.WebFileMultiUploadField
+public class WebFileMultiUploadField extends FileMultiUploadFieldImpl
         implements FileMultiUploadField {
 }

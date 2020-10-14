@@ -28,6 +28,7 @@ import com.haulmont.cuba.web.gui.components.table.TableDelegate;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.impl.TreeTableImpl;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 @Deprecated
-public class WebTreeTable<E extends Entity> extends io.jmix.ui.component.impl.WebTreeTable<E> implements TreeTable<E> {
+public class WebTreeTable<E extends Entity> extends TreeTableImpl<E> implements TreeTable<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected LegacyPresentationsDelegate presentationsDelegate;

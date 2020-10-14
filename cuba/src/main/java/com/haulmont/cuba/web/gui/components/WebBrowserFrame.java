@@ -18,9 +18,10 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.BrowserFrame;
 import io.jmix.ui.component.Resource;
+import io.jmix.ui.component.impl.BrowserFrameImpl;
 
 @Deprecated
-public class WebBrowserFrame extends io.jmix.ui.component.impl.WebBrowserFrame implements BrowserFrame {
+public class WebBrowserFrame extends BrowserFrameImpl implements BrowserFrame {
 
     @Override
     public <R extends Resource> R createResource(Class<R> type) {

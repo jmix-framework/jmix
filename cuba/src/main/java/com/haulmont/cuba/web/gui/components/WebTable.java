@@ -28,6 +28,7 @@ import io.jmix.core.Entity;
 import io.jmix.ui.component.AggregationInfo;
 import com.haulmont.cuba.gui.components.data.table.AggregatableTableItems;
 import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.impl.TableImpl;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -40,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 @Deprecated
-public class WebTable<E extends Entity> extends io.jmix.ui.component.impl.WebTable<E> implements Table<E> {
+public class WebTable<E extends Entity> extends TableImpl<E> implements Table<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected LegacyPresentationsDelegate presentationsDelegate;

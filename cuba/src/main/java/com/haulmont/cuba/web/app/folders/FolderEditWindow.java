@@ -35,7 +35,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.ui.ComboBox;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.component.impl.WebButton;
+import io.jmix.ui.component.impl.ButtonImpl;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -172,7 +172,7 @@ public class FolderEditWindow extends JmixWindow {
 
         okBtn = new JmixButton(getMessage("actions.Ok"));
         okBtn.setIcon(iconResolver.getIconResource("icons/ok.png"));
-        okBtn.addStyleName(WebButton.ICON_STYLE);
+        okBtn.addStyleName(ButtonImpl.ICON_STYLE);
 
         initButtonOkListener();
         buttonsLayout.addComponent(okBtn);

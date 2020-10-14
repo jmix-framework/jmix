@@ -25,7 +25,7 @@ import com.haulmont.cuba.web.app.folders.CubaFoldersPane;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.IconGenerator;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.impl.WebAbstractComponent;
+import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import org.apache.commons.lang3.BooleanUtils;
@@ -40,7 +40,7 @@ import java.util.function.Function;
 import static com.haulmont.cuba.web.app.folders.CubaFoldersPane.C_FOLDERS_PANE;
 
 @Deprecated
-public class WebFoldersPane extends WebAbstractComponent<CubaFoldersPane> implements FoldersPane {
+public class WebFoldersPane extends AbstractComponent<CubaFoldersPane> implements FoldersPane {
 
     protected static final IconGenerator<AbstractSearchFolder> NULL_ITEM_ICON_GENERATOR = item -> null;
 

@@ -18,10 +18,10 @@ package com.haulmont.cuba.web.sys;
 
 import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
 import io.jmix.ui.screen.ScreenOptions;
-import io.jmix.ui.sys.WebFragments;
+import io.jmix.ui.sys.FragmentsImpl;
 
 @Deprecated
-public class CubaFragments extends WebFragments {
+public class CubaFragments extends FragmentsImpl {
 
     @Override
     protected ComponentLoaderContext createComponentLoaderContext(ScreenOptions options) {

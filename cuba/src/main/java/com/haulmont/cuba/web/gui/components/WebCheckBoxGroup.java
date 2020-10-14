@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.CheckBoxGroup;
+import io.jmix.ui.component.impl.CheckBoxGroupImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebCheckBoxGroup<I> extends io.jmix.ui.component.impl.WebCheckBoxGroup<I> implements CheckBoxGroup<I> {
+public class WebCheckBoxGroup<I> extends CheckBoxGroupImpl<I> implements CheckBoxGroup<I> {
     @Override
     public void addValidator(Consumer<? super Collection<I>> validator) {
         addValidator(validator::accept);

@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.CurrencyField;
+import io.jmix.ui.component.impl.CurrencyFieldImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebCurrencyField<V extends Number> extends io.jmix.ui.component.impl.WebCurrencyField<V>
+public class WebCurrencyField<V extends Number> extends CurrencyFieldImpl<V>
         implements CurrencyField<V> {
     @Override
     public void addValidator(Consumer<? super V> validator) {

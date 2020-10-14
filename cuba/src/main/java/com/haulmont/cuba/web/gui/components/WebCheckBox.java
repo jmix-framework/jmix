@@ -17,11 +17,27 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.CheckBox;
+import com.haulmont.cuba.gui.components.FieldGroup;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Form;
+import io.jmix.ui.component.impl.CheckBoxImpl;
+import io.jmix.ui.widget.JmixCheckBox;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebCheckBox extends io.jmix.ui.component.impl.WebCheckBox implements CheckBox {
+public class WebCheckBox extends CheckBoxImpl implements CheckBox {
+
+    @Override
+    public void setParent(@Nullable Component parent) {
+        super.setParent(parent);
+
+        if (parent instanceof FieldGroup) {
+            ((JmixCheckBox) component).setCaptionManagedByLayout(true);
+        }
+    }
+
     @Override
     public void addValidator(Consumer<? super Boolean> validator) {
         addValidator(validator::accept);

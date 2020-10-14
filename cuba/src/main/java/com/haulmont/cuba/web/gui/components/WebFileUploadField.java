@@ -31,6 +31,7 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.impl.FileStorageUploadFieldImpl;
 import io.jmix.ui.upload.TemporaryStorage;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ import java.io.FileInputStream;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorageUploadField<FileDescriptor>
+public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescriptor>
         implements FileUploadField {
 
     private static final Logger log = LoggerFactory.getLogger(WebFileUploadField.class);
@@ -125,7 +126,7 @@ public class WebFileUploadField extends io.jmix.ui.component.impl.WebFileStorage
      * Get content bytes for uploaded file
      *
      * @return Bytes for uploaded file
-     * @deprecated Please use {@link io.jmix.ui.component.impl.WebFileStorageUploadField#getFileId()} method
+     * @deprecated Please use {@link FileStorageUploadFieldImpl#getFileId()} method
      * and {@link TemporaryStorage}
      */
     @Override

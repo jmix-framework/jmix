@@ -26,7 +26,7 @@ import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.impl.WebComponentsHelper;
-import io.jmix.ui.component.impl.WebV8AbstractField;
+import io.jmix.ui.component.impl.AbstractField;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,7 +37,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class WebListEditor<V> extends WebV8AbstractField<WebListEditor.CubaListEditor<V>, List<V>, List<V>>
+public class WebListEditor<V> extends AbstractField<WebListEditor.CubaListEditor<V>, List<V>, List<V>>
         implements ListEditor<V>, InitializingBean {
 
     protected static final String LISTEDITOR_STYLENAME = "c-listeditor";

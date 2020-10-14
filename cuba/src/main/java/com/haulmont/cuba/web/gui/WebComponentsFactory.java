@@ -21,7 +21,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Timer;
 import io.jmix.ui.component.UiComponentsGenerator;
-import io.jmix.ui.component.impl.WebTimer;
+import io.jmix.ui.component.impl.TimerImpl;
 
 import javax.inject.Inject;
 
@@ -50,6 +50,6 @@ public class WebComponentsFactory implements ComponentsFactory {
 
     @Override
     public Timer createTimer() {
-        return new WebTimer();
+        return new TimerImpl();
     }
 }

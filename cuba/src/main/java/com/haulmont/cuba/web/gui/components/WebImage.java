@@ -20,14 +20,15 @@ import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.Image;
 import io.jmix.ui.component.Resource;
-import io.jmix.ui.component.impl.WebFileStorageResource;
+import io.jmix.ui.component.impl.ImageImpl;
+import io.jmix.ui.component.impl.FileStorageResourceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.jmix.core.common.event.Subscription;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebImage extends io.jmix.ui.component.impl.WebImage<FileDescriptor> implements Image {
+public class WebImage extends ImageImpl<FileDescriptor> implements Image {
 
     protected CubaFileStorage cubaFileStorage;
 
@@ -54,8 +55,8 @@ public class WebImage extends io.jmix.ui.component.impl.WebImage<FileDescriptor>
     @Override
     protected Resource createImageResource(Object resourceObject) {
         Resource resource = super.createImageResource(resourceObject);
-        if (resource instanceof WebFileStorageResource) {
-            ((WebFileStorageResource) resource).setFileStorage(cubaFileStorage.getFileStorageAdapter());
+        if (resource instanceof FileStorageResourceImpl) {
+            ((FileStorageResourceImpl) resource).setFileStorage(cubaFileStorage.getFileStorageAdapter());
         }
         return resource;
     }

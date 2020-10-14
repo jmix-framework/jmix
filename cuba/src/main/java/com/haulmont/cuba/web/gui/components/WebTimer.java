@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Timer;
+import io.jmix.ui.component.impl.TimerImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebTimer extends io.jmix.ui.component.impl.WebTimer implements Timer {
+public class WebTimer extends TimerImpl implements Timer {
 
     @Override
     @Deprecated

@@ -22,6 +22,7 @@ import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
 import com.haulmont.cuba.settings.CubaLegacySettings;
 import com.haulmont.cuba.settings.Settings;
+import io.jmix.ui.component.impl.TabSheetImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -31,7 +32,7 @@ import java.util.UUID;
 import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
-public class WebTabSheet extends io.jmix.ui.component.impl.WebTabSheet {
+public class WebTabSheet extends TabSheetImpl {
 
     @Override
     protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent, Element descriptor, ComponentLoader loader) {

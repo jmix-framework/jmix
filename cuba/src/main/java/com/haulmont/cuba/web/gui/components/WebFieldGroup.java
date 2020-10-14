@@ -29,7 +29,7 @@ import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.component.impl.WebAbstractComponent;
+import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
@@ -53,7 +53,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class WebFieldGroup extends WebAbstractComponent<JmixFormLayout> implements FieldGroup, UiPermissionAware {
+public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements FieldGroup, UiPermissionAware {
 
     protected JmixFieldGroup wrapper;
     protected boolean wrapperAttached = false;

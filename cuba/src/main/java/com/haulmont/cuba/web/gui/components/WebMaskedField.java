@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.MaskedField;
+import io.jmix.ui.component.impl.MaskedFieldImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebMaskedField<V> extends io.jmix.ui.component.impl.WebMaskedField<V> implements MaskedField<V> {
+public class WebMaskedField<V> extends MaskedFieldImpl<V> implements MaskedField<V> {
     @Override
     public void addValidator(Consumer<? super V> validator) {
         addValidator(validator::accept);

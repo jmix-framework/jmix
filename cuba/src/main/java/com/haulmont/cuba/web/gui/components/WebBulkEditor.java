@@ -23,13 +23,13 @@ import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.BulkEditAction;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.app.bulk.ColumnsMode;
-import io.jmix.ui.component.impl.WebButton;
+import io.jmix.ui.component.impl.ButtonImpl;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class WebBulkEditor extends WebButton implements BulkEditor {
+public class WebBulkEditor extends ButtonImpl implements BulkEditor {
 
     protected String exclude;
     protected List<String> includeProperties = Collections.emptyList();

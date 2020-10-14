@@ -58,10 +58,10 @@ import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;
 import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.impl.WebGridLayout;
-import io.jmix.ui.sys.WebUiComponents;
+import io.jmix.ui.component.impl.GridLayoutImpl;
+import io.jmix.ui.sys.UiComponentsImpl;
 
-public class CubaUiComponents extends WebUiComponents {
+public class CubaUiComponents extends UiComponentsImpl {
 
     public static final String NAME = "cuba_UiComponents";
 
@@ -112,7 +112,7 @@ public class CubaUiComponents extends WebUiComponents {
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
 
         classes.put(Filter.NAME, WebFilter.class);
-        classes.put("grid", WebGridLayout.class);
+        classes.put("grid", GridLayoutImpl.class);
 
         classes.put(SplitPanel.NAME, WebSplitPanel.class);
         classes.put(GroupBoxLayout.NAME, WebGroupBox.class);

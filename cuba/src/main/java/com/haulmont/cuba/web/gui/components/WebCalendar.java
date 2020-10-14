@@ -24,12 +24,13 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.calendar.CalendarEventProvider;
 import io.jmix.ui.component.calendar.ContainerCalendarEventProvider;
+import io.jmix.ui.component.impl.CalendarImpl;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebCalendar<V> extends io.jmix.ui.component.impl.WebCalendar<V> implements Calendar<V> {
+public class WebCalendar<V> extends CalendarImpl<V> implements Calendar<V> {
 
     /**
      * Set collection datasource for the calendar component with a collection of events.

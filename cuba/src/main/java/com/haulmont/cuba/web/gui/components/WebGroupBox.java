@@ -20,11 +20,12 @@ import com.haulmont.cuba.gui.components.GroupBoxLayout;
 import com.haulmont.cuba.settings.binder.CubaGroupBoxSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyGroupBoxSettingsConverter;
+import io.jmix.ui.component.impl.GroupBoxImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 
 @Deprecated
-public class WebGroupBox extends io.jmix.ui.component.impl.WebGroupBox implements GroupBoxLayout {
+public class WebGroupBox extends GroupBoxImpl implements GroupBoxLayout {
 
     protected LegacySettingsDelegate settingsDelegate;
 

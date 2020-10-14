@@ -22,7 +22,7 @@ import io.jmix.ui.component.Button
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.screen.UiControllerUtils
-import io.jmix.ui.sys.WebUiComponents
+import io.jmix.ui.sys.UiComponentsImpl
 import io.jmix.ui.xml.layout.LayoutLoaderConfig
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.composite.components.comments.TestCommentaryPanel
@@ -49,9 +49,9 @@ class CompositeComponentTest extends UiScreenSpec {
         exportScreensPackages(['spec.haulmont.cuba.web.components.composite.screens', 'com.haulmont.cuba.web.app.main'])
 
         // Register composite components
-        ((WebUiComponents) uiComponents).register(TestStepperField.NAME, TestStepperField)
-        ((WebUiComponents) uiComponents).register(TestCommentaryPanel.NAME, TestCommentaryPanel)
-        ((WebUiComponents) uiComponents).register(TestProgrammaticCommentaryPanel.NAME, TestProgrammaticCommentaryPanel)
+        ((UiComponentsImpl) uiComponents).register(TestStepperField.NAME, TestStepperField)
+        ((UiComponentsImpl) uiComponents).register(TestCommentaryPanel.NAME, TestCommentaryPanel)
+        ((UiComponentsImpl) uiComponents).register(TestProgrammaticCommentaryPanel.NAME, TestProgrammaticCommentaryPanel)
 
         // Register composite component loaders
         layoutLoaderConfig.registerLoader("testStepperField", TestStepperFieldLoader)

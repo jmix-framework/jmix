@@ -20,13 +20,14 @@ import com.haulmont.cuba.gui.components.ResizableTextArea;
 import com.haulmont.cuba.settings.binder.CubaResizableTextAreaSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyResizableTextAreaSettingsConverter;
+import io.jmix.ui.component.impl.ResizableTextAreaImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebResizableTextArea<V> extends io.jmix.ui.component.impl.WebResizableTextArea<V>
+public class WebResizableTextArea<V> extends ResizableTextAreaImpl<V>
         implements ResizableTextArea<V> {
 
     protected int columns;

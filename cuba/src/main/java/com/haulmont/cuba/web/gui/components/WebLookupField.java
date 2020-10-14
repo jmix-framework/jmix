@@ -17,7 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.LookupField;
-import io.jmix.ui.component.impl.WebComboBox;
+import io.jmix.ui.component.impl.ComboBoxImpl;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Deprecated
-public class WebLookupField<V> extends WebComboBox<V> implements LookupField<V> {
+public class WebLookupField<V> extends ComboBoxImpl<V> implements LookupField<V> {
 
     protected V nullOption;
 

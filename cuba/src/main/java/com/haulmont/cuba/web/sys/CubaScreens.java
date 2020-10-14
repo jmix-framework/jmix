@@ -34,9 +34,9 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.SelectHandlerAdapter;
-import io.jmix.ui.component.impl.WebAppWorkArea;
+import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.sys.WebScreens;
+import io.jmix.ui.sys.ScreensImpl;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "unchecked", "DeprecatedIsStillUsed", "deprecation"})
 @Deprecated
-public final class CubaScreens extends WebScreens implements WindowManager {
+public final class CubaScreens extends ScreensImpl implements WindowManager {
 
     @Override
     public Collection<Window> getOpenWindows() {
@@ -57,7 +57,7 @@ public final class CubaScreens extends WebScreens implements WindowManager {
 
     @Override
     public void selectWindowTab(Window window) {
-        WebAppWorkArea workArea = getConfiguredWorkArea();
+        AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
         Collection<WindowStack> workAreaStacks = getWorkAreaStacks(workArea);
 

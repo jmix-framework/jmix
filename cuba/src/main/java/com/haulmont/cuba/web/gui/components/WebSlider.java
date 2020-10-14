@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Slider;
+import io.jmix.ui.component.impl.SliderImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebSlider<V extends Number> extends io.jmix.ui.component.impl.WebSlider<V> implements Slider<V> {
+public class WebSlider<V extends Number> extends SliderImpl<V> implements Slider<V> {
     @Override
     public void addValidator(Consumer<? super V> validator) {
         addValidator(validator::accept);

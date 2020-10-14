@@ -30,8 +30,8 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.component.VisibilityChangeNotifier;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.component.impl.WebAbstractComponent;
-import io.jmix.ui.component.impl.WebAbstractTable;
+import io.jmix.ui.component.impl.AbstractComponent;
+import io.jmix.ui.component.impl.AbstractTable;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -59,7 +59,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @SuppressWarnings("rawtypes")
 @Deprecated
-public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier,
+public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements RowsCount, VisibilityChangeNotifier,
         InitializingBean {
 
     protected static final String TABLE_ROWS_COUNT_STYLENAME = "c-table-rows-count";
@@ -287,7 +287,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         int newStart = adapter.getFirstResult() - adapter.getMaxResults();
         adapter.setFirstResult(newStart < 0 ? 0 : newStart);
         if (refreshData()) {
-            if (target instanceof WebAbstractTable) {
+            if (target instanceof AbstractTable) {
                 resetCurrentDataPage((Table) target);
             }
         } else {
@@ -306,7 +306,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
                 refreshData();
                 adapter.setMaxResults(maxResults);
             }
-            if (target instanceof WebAbstractTable) {
+            if (target instanceof AbstractTable) {
                 resetCurrentDataPage((Table) target);
             }
         } else {
@@ -318,7 +318,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         int firstResult = adapter.getFirstResult();
         adapter.setFirstResult(0);
         if (refreshData()) {
-            if (target instanceof WebAbstractTable) {
+            if (target instanceof AbstractTable) {
                 resetCurrentDataPage((Table) target);
             }
         } else {
@@ -334,7 +334,7 @@ public class WebRowsCount extends WebAbstractComponent<JmixRowsCount> implements
         int firstResult = adapter.getFirstResult();
         adapter.setFirstResult(count - itemsToDisplay);
         if (refreshData()) {
-            if (target instanceof WebAbstractTable) {
+            if (target instanceof AbstractTable) {
                 resetCurrentDataPage((Table) target);
             }
         } else {

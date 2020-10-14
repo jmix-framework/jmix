@@ -20,12 +20,13 @@ import com.haulmont.cuba.gui.components.SplitPanel;
 import com.haulmont.cuba.settings.binder.CubaSplitPanelSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacySplitPanelSettingsConverter;
+import io.jmix.ui.component.impl.SplitPanelImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 
 @Deprecated
-public class WebSplitPanel extends io.jmix.ui.component.impl.WebSplitPanel implements SplitPanel, InitializingBean {
+public class WebSplitPanel extends SplitPanelImpl implements SplitPanel, InitializingBean {
 
     protected LegacySettingsDelegate settingsDelegate;
 

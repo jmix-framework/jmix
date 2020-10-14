@@ -48,7 +48,8 @@ import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
 import io.jmix.ui.component.formatter.CollectionFormatter;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.component.impl.WebAbstractDataGrid;
+import io.jmix.ui.component.impl.AbstractDataGrid;
+import io.jmix.ui.component.impl.TreeDataGridImpl;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
@@ -65,7 +66,7 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
-public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl.WebTreeDataGrid<E>
+public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
         implements TreeDataGrid<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
@@ -112,7 +113,7 @@ public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl
     }
 
     @Override
-    protected ColumnImpl<E> createColumn(String id, @Nullable MetaPropertyPath propertyPath, WebAbstractDataGrid<?, E> owner) {
+    protected ColumnImpl<E> createColumn(String id, @Nullable MetaPropertyPath propertyPath, AbstractDataGrid<?, E> owner) {
         return new WebDataGrid.ColumnImpl<>(id, propertyPath, owner);
     }
 
@@ -460,7 +461,7 @@ public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl
     protected String getGeneratedCellDescription(E item, io.jmix.ui.component.DataGrid.Column<E> column) {
         if (column.getDescriptionProvider() != null) {
             String cellDescription = column.getDescriptionProvider().apply(item);
-            return ((WebAbstractDataGrid.ColumnImpl) column).getDescriptionContentMode() == ContentMode.HTML
+            return ((AbstractDataGrid.ColumnImpl) column).getDescriptionContentMode() == ContentMode.HTML
                     ? sanitize(cellDescription)
                     : cellDescription;
         }
@@ -550,14 +551,14 @@ public class WebTreeDataGrid<E extends Entity> extends io.jmix.ui.component.impl
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static class WebTreeDataGridEditorFieldFactory<E extends Entity> extends WebAbstractDataGrid.WebDataGridEditorFieldFactory {
+    protected static class WebTreeDataGridEditorFieldFactory<E extends Entity> extends AbstractDataGrid.WebDataGridEditorFieldFactory {
 
-        public WebTreeDataGridEditorFieldFactory(WebAbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
+        public WebTreeDataGridEditorFieldFactory(AbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
             super(dataGrid, fieldFactory);
         }
 
         @Override
-        protected Field createField(WebAbstractDataGrid.ColumnImpl column, Object bean) {
+        protected Field createField(AbstractDataGrid.ColumnImpl column, Object bean) {
             if (column instanceof WebDataGrid.ColumnImpl && ((WebDataGrid.ColumnImpl) column).getEditorFieldGenerator() != null) {
                 String fieldPropertyId = String.valueOf(column.getPropertyId());
                 Datasource fieldDataSource = ((WebTreeDataGrid) dataGrid).createItemDatasource((Entity) bean);

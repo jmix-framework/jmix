@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.TextArea;
+import io.jmix.ui.component.impl.TextAreaImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebTextArea<V> extends io.jmix.ui.component.impl.WebTextArea<V> implements TextArea<V> {
+public class WebTextArea<V> extends TextAreaImpl<V> implements TextArea<V> {
 
     protected int columns;
 

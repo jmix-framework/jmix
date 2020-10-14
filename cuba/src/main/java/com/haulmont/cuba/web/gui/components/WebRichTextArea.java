@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.RichTextArea;
+import io.jmix.ui.component.impl.RichTextAreaImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebRichTextArea extends io.jmix.ui.component.impl.WebRichTextArea implements RichTextArea {
+public class WebRichTextArea extends RichTextAreaImpl implements RichTextArea {
     @Override
     public void addValidator(Consumer<? super String> validator) {
         addValidator(validator::accept);

@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.TimeField;
+import io.jmix.ui.component.impl.TimeFieldImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebTimeField<V> extends io.jmix.ui.component.impl.WebTimeField<V> implements TimeField<V> {
+public class WebTimeField<V> extends TimeFieldImpl<V> implements TimeField<V> {
     @Override
     public void addValidator(Consumer<? super V> validator) {
         addValidator(validator::accept);

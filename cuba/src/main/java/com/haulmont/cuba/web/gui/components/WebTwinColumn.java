@@ -17,13 +17,14 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.TwinColumn;
+import io.jmix.ui.component.impl.TwinColumnImpl;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebTwinColumn<V> extends io.jmix.ui.component.impl.WebTwinColumn<V> implements TwinColumn<V> {
+public class WebTwinColumn<V> extends TwinColumnImpl<V> implements TwinColumn<V> {
 
     protected int columns;
 

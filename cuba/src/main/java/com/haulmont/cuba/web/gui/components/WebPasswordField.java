@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PasswordField;
+import io.jmix.ui.component.impl.PasswordFieldImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebPasswordField extends io.jmix.ui.component.impl.WebPasswordField implements PasswordField {
+public class WebPasswordField extends PasswordFieldImpl implements PasswordField {
     @Override
     public void addValidator(Consumer<? super String> validator) {
         addValidator(validator::accept);

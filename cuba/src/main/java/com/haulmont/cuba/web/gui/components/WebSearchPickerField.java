@@ -31,7 +31,7 @@ import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.OptionsBinding;
 import io.jmix.ui.component.data.options.OptionsBinder;
-import io.jmix.ui.component.impl.WebComboBox;
+import io.jmix.ui.component.impl.ComboBoxImpl;
 import io.jmix.ui.component.impl.WebResource;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.widget.JmixPickerField;
@@ -47,8 +47,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jmix.ui.component.impl.WebComboBox.NULL_ITEM_ICON_GENERATOR;
-import static io.jmix.ui.component.impl.WebComboBox.NULL_STYLE_GENERATOR;
+import static io.jmix.ui.component.impl.ComboBoxImpl.NULL_ITEM_ICON_GENERATOR;
+import static io.jmix.ui.component.impl.ComboBoxImpl.NULL_STYLE_GENERATOR;
 
 @Deprecated
 public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
@@ -441,7 +441,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         try {
             resource = optionImageProvider.apply(item);
         } catch (Exception e) {
-            LoggerFactory.getLogger(WebComboBox.class)
+            LoggerFactory.getLogger(ComboBoxImpl.class)
                     .warn("Error invoking OptionImageProvider apply method", e);
             return null;
         }

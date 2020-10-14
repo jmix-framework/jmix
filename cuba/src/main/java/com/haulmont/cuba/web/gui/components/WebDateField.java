@@ -17,12 +17,13 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.DateField;
+import io.jmix.ui.component.impl.DateFieldImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
 public class WebDateField<V extends Comparable<V>>
-        extends io.jmix.ui.component.impl.WebDateField<V>
+        extends DateFieldImpl<V>
         implements DateField<V> {
     @Override
     public void addValidator(Consumer<? super V> validator) {

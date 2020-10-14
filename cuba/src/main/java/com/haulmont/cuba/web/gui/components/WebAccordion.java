@@ -23,6 +23,7 @@ import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.impl.AccordionImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -33,7 +34,7 @@ import java.util.function.Consumer;
 import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
-public class WebAccordion extends io.jmix.ui.component.impl.WebAccordion implements Accordion {
+public class WebAccordion extends AccordionImpl implements Accordion {
 
     @Override
     public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {

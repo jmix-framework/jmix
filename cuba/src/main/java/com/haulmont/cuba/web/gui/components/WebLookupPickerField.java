@@ -19,13 +19,13 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
-import io.jmix.ui.component.impl.WebEntityComboBox;
+import io.jmix.ui.component.impl.EntityComboBoxImpl;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @Deprecated
-public class WebLookupPickerField<V extends Entity> extends WebEntityComboBox<V>
+public class WebLookupPickerField<V extends Entity> extends EntityComboBoxImpl<V>
         implements LookupPickerField<V> {
 
     protected V nullOption;

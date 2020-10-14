@@ -17,10 +17,11 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.ButtonsPanel;
+import io.jmix.ui.component.impl.ButtonsPanelImpl;
 
 /**
- * @deprecated Use {@link io.jmix.ui.component.impl.WebButtonsPanel} instead
+ * @deprecated Use {@link ButtonsPanelImpl} instead
  */
 @Deprecated
-public class WebButtonsPanel extends io.jmix.ui.component.impl.WebButtonsPanel implements ButtonsPanel {
+public class WebButtonsPanel extends ButtonsPanelImpl implements ButtonsPanel {
 }

@@ -17,11 +17,12 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PopupView;
+import io.jmix.ui.component.impl.PopupViewImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebPopupView extends io.jmix.ui.component.impl.WebPopupView implements PopupView {
+public class WebPopupView extends PopupViewImpl implements PopupView {
 
     @Override
     public void removePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener) {

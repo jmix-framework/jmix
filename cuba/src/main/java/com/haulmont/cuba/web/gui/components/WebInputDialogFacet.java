@@ -17,7 +17,8 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.InputDialogFacet;
+import io.jmix.ui.component.impl.InputDialogFacetImpl;
 
 @Deprecated
-public class WebInputDialogFacet extends io.jmix.ui.component.impl.WebInputDialogFacet implements InputDialogFacet {
+public class WebInputDialogFacet extends InputDialogFacetImpl implements InputDialogFacet {
 }

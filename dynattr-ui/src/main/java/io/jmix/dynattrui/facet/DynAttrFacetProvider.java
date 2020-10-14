@@ -38,7 +38,7 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public DynAttrFacet create() {
-        return new WebDynAttrFacet();
+        return new DynAttrFacetImpl();
     }
 
     @Override

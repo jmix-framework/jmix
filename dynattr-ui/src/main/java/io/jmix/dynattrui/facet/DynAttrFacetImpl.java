@@ -17,8 +17,8 @@
 package io.jmix.dynattrui.facet;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.ui.component.impl.WebAbstractFacet;
+import io.jmix.ui.component.impl.AbstractFacet;
 
 @Internal
-public class WebDynAttrFacet extends WebAbstractFacet implements DynAttrFacet {
+public class DynAttrFacetImpl extends AbstractFacet implements DynAttrFacet {
 }

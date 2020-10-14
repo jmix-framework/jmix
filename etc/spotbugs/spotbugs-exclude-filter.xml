@@ -95,12 +95,12 @@
 
     <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD"/>
-        <Class name="io.jmix.ui.sys.WebFragments"/>
+        <Class name="io.jmix.ui.sys.FragmentsImpl"/>
     </Match>
 
     <Match>
         <Bug pattern="NP_NONNULL_PARAM_VIOLATION"/>
-        <Class name="io.jmix.ui.component.impl.WebAbstractDataGrid$ActionMenuItemWrapper"/>
+        <Class name="io.jmix.ui.component.impl.AbstractDataGrid$ActionMenuItemWrapper"/>
         <Method name="performAction"/>
     </Match>
 
@@ -198,12 +198,12 @@
 
     <Match>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/> <!-- false positive -->
-        <Class name="io.jmix.ui.component.impl.WebEditorScreenFacet"/>
+        <Class name="io.jmix.ui.component.impl.EditorScreenFacetImpl"/>
     </Match>
 
     <Match>
         <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/> <!-- false positive -->
-        <Class name="io.jmix.ui.component.impl.WebLookupScreenFacet"/>
+        <Class name="io.jmix.ui.component.impl.LookupScreenFacetImpl"/>
     </Match>
 
 </FindBugsFilter>

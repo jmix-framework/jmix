@@ -18,9 +18,8 @@ package com.haulmont.cuba.gui.components.factories;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
-import com.haulmont.cuba.gui.components.EntityLinkField;
-import com.haulmont.cuba.gui.components.FileUploadField;
-import com.haulmont.cuba.gui.components.TimeField;
+import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.actions.GuiActionSupport;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -31,6 +30,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.factory.DefaultComponentGenerationStrategy;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -43,14 +43,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGenerationStrategy {
     public static final String NAME = "cuba_DefaultComponentGenerationStrategy";
 
+    protected GuiActionSupport guiActionSupport;
+
     @Autowired
     public CubaDefaultComponentGenerationStrategy(Messages messages,
                                                   UiComponents uiComponents,
                                                   EntityFieldCreationSupport entityFieldCreationSupport,
                                                   Metadata metadata,
                                                   MetadataTools metadataTools,
-                                                  Icons icons) {
+                                                  Icons icons,
+                                                  GuiActionSupport guiActionSupport) {
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
+
+        this.guiActionSupport = guiActionSupport;
     }
 
     @Override
@@ -120,5 +125,63 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
         }
 
         return timeField;
+    }
+
+    @Override
+    protected Component createEntityField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        String linkAttribute = null;
+        Element xmlDescriptor = context.getXmlDescriptor();
+        if (xmlDescriptor != null) {
+            linkAttribute = xmlDescriptor.attributeValue("link");
+        }
+
+        if (!Boolean.parseBoolean(linkAttribute)) {
+            Options options = context.getOptions();
+
+            PickerField pickerField;
+            if (options == null) {
+                pickerField = uiComponents.create(PickerField.class);
+                setValueSource(pickerField, context);
+
+                if (mpp.getMetaProperty().getType() == MetaProperty.Type.ASSOCIATION) {
+                    guiActionSupport.createActionById(pickerField, PickerField.ActionType.LOOKUP.getId());
+                    boolean actionsByMetaAnnotations = guiActionSupport.createActionsByMetaAnnotations(pickerField);
+                    if (!actionsByMetaAnnotations) {
+                        guiActionSupport.createActionById(pickerField, PickerField.ActionType.CLEAR.getId());
+                    }
+                } else {
+                    guiActionSupport.createActionById(pickerField, PickerField.ActionType.OPEN.getId());
+                    guiActionSupport.createActionById(pickerField, PickerField.ActionType.CLEAR.getId());
+                }
+            } else {
+                LookupPickerField lookupPickerField = uiComponents.create(LookupPickerField.class);
+
+                setValueSource(lookupPickerField, context);
+
+                lookupPickerField.setOptions(options);
+
+                pickerField = lookupPickerField;
+
+                guiActionSupport.createActionsByMetaAnnotations(pickerField);
+            }
+
+            if (xmlDescriptor != null) {
+                String captionProperty = xmlDescriptor.attributeValue("captionProperty");
+                if (StringUtils.isNotEmpty(captionProperty)) {
+                    pickerField.setCaptionMode(CaptionMode.PROPERTY);
+                    pickerField.setCaptionProperty(captionProperty);
+                }
+            }
+//            setValidators(pickerField, context);
+
+            return pickerField;
+        } else {
+            EntityLinkField linkField = uiComponents.create(EntityLinkField.class);
+
+            setValueSource(linkField, context);
+            setLinkFieldAttributes(linkField, context);
+
+            return linkField;
+        }
     }
 }

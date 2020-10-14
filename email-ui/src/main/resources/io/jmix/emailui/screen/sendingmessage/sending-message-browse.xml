@@ -1,0 +1,93 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browser.caption"
+        focusComponent="sendingMessageTable">
+    <data>
+        <collection
+                id="sendingMessageDc"
+                class="io.jmix.email.entity.SendingMessage"
+                fetchPlan="sendingMessage.browse">
+            <loader id="sendingMessagesDl">
+                <![CDATA[select sm from sys_SendingMessage sm]]>
+            </loader>
+        </collection>
+    </data>
+    <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
+                width="theme://cuba.gui.dialogSize.width.xlarge"
+                resizable="true"/>
+    <layout>
+        <split width="100%" height="100%" orientation="horizontal" pos="70">
+            <vbox id="leftBox" expand="table" spacing="true" height="100%" margin="false,true,false,false">
+                <!-- todo: filter -->
+                <!--<filter id="genericFilter" dataLoader="sendingMessagesDl" applyTo="sendingMessageTable">
+                    <properties include=".*"/>
+                </filter>-->
+                <table id="sendingMessageTable" width="100%">
+                    <actions>
+                        <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true"/>
+                        <action id="resendEmail" caption="msg://resendEmail" trackSelection="true"/>
+                    </actions>
+                    <columns>
+                        <column id="address" sortable="false"/>
+                        <column id="from"/>
+                        <column id="caption"/>
+                        <column id="status"/>
+                        <column id="bodyContentType"/>
+                        <column id="dateSent">
+                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                        </column>
+                        <column id="updateTs">
+                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                        </column>
+                        <column id="attachmentsName" sortable="false"/>
+                        <column id="attemptsCount"/>
+                        <column id="deadline"/>
+                        <column id="attemptsMade"/>
+                    </columns>
+                    <rows datasource="sendingMessageDc"/>
+                    <buttonsPanel id="buttonsPanel">
+                        <button id="downloadAttachmentBtn" action="sendingMessageTable.downloadAttachment"/>
+                        <button id="resendEmailBtn" action="sendingMessageTable.resendEmail"/>
+                    </buttonsPanel>
+                </table>
+            </vbox>
+
+            <vbox id="rightBox" width="100%" height="100%" margin="false;false;false;true">
+                <scrollBox width="100%" height="100%">
+                    <form id="fg" dataContainer="sendingMessageDc" editable="false"
+                          width="100%">
+                        <column width="100%">
+                            <field property="address"/>
+                            <field property="from"/>
+                            <field property="caption"/>
+                            <field property="contentText"/>
+                            <field property="bodyContentType"/>
+                            <field property="status"/>
+                            <field property="attachmentsName"/>
+                            <field property="dateSent"/>
+                            <field property="updateTs"/>
+                            <field property="deadline"/>
+                            <field property="attemptsCount"/>
+                            <field property="attemptsMade"/>
+                        </column>
+                    </form>
+                </scrollBox>
+            </vbox>
+        </split>
+    </layout>
+</window>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet author="email" id="1">
+
+        <createTable tableName="SYS_SENDING_MESSAGE">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="ADDRESS_TO" type="clob"/>
+            <column name="ADDRESS_FROM" type="varchar(100)"/>
+            <column name="ADDRESS_CC" type="clob"/>
+            <column name="ADDRESS_BCC" type="clob"/>
+            <column name="CAPTION" type="varchar(500)"/>
+            <column name="CONTENT_TEXT" type="clob"/>
+            <column name="CONTENT_TEXT_FILE" type="clob"/>
+            <column name="STATUS" type="int"/>
+            <column name="DATE_SENT" type="datetime"/>
+            <column name="ATTACHMENTS_NAME" type="clob"/>
+            <column name="DEADLINE" type="datetime"/>
+            <column name="ATTEMPTS_COUNT" type="int"/>
+            <column name="ATTEMPTS_MADE" type="int"/>
+            <column name="EMAIL_HEADERS" type="varchar(500)"/>
+            <column name="BODY_CONTENT_TYPE" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="SYS_SENDING_ATTACHMENT">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="MESSAGE_ID" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="FK_SYS_SENDING_ATTACHMENT_SENDING_MESSAGE"
+                             references="SYS_SENDING_MESSAGE(ID)"/>
+            </column>
+
+            <column name="CONTENT" type="blob"/>
+            <column name="CONTENT_FILE" type="clob"/>
+            <column name="NAME" type="varchar(500)"/>
+            <column name="CONTENT_ID" type="varchar(50)"/>
+            <column name="DISPOSITION" type="varchar(50)"/>
+            <column name="TEXT_ENCODING" type="varchar(50)"/>
+        </createTable>
+        
+        <createIndex tableName="SYS_SENDING_ATTACHMENT" indexName="SYS_SENDING_ATTACHMENT_MESSAGE_IDX">
+            <column name="MESSAGE_ID"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

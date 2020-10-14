@@ -47,7 +47,7 @@ public class FragmentImpl extends VBoxLayoutImpl implements Fragment, FragmentIm
     protected Set<Facet> facets = null; // lazily initialized hash set
 
     protected Map<String, Component> allComponents = new HashMap<>();
-    protected FrameActionsHolder actionsHolder = new FrameActionsHolder(this);
+    protected FrameActionsHolder actionsHolder;
 
     public FragmentImpl() {
     }
@@ -56,6 +56,7 @@ public class FragmentImpl extends VBoxLayoutImpl implements Fragment, FragmentIm
     protected void initComponent(JmixVerticalActionsLayout component) {
         super.initComponent(component);
 
+        actionsHolder = new FrameActionsHolder(this);
         component.addActionHandler(actionsHolder);
     }
 

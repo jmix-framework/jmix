@@ -16,10 +16,10 @@
 
 package io.jmix.ui.facet;
 
+import io.jmix.ui.component.impl.LookupScreenFacetImpl;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.component.LookupScreenFacet;
-import io.jmix.ui.component.impl.WebLookupScreenFacet;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class LookupScreenFacetProvider
 
     @Override
     public LookupScreenFacet create() {
-        WebLookupScreenFacet lookupScreenFacet = new WebLookupScreenFacet();
+        LookupScreenFacetImpl lookupScreenFacet = new LookupScreenFacetImpl();
         lookupScreenFacet.setApplicationContext(applicationContext);
         return lookupScreenFacet;
     }

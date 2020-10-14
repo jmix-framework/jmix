@@ -16,7 +16,7 @@
 
 package component_registration.component;
 
-import io.jmix.ui.component.impl.WebButton;
+import io.jmix.ui.component.impl.ButtonImpl;
 
-public class NewWebButton extends WebButton implements NewButton {
+public class NewWebButton extends ButtonImpl implements NewButton {
 }

@@ -22,7 +22,7 @@ import component_registration.screen.NewComponentRegistrationScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
-import io.jmix.ui.component.impl.WebResizableTextArea
+import io.jmix.ui.component.impl.ResizableTextAreaImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import io.jmix.ui.xml.layout.LoaderResolver
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,7 +76,7 @@ class ComponentRegistrationTest extends ScreenSpecification {
               will be overridden (due to @Order) and the loader class will not be registered at all.
               """
 
-        customField.getClass() == WebResizableTextArea
+        customField.getClass() == ResizableTextAreaImpl
         loaderClass == null
     }
 }

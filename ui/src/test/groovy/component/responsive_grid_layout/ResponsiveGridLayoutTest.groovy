@@ -23,8 +23,8 @@ import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiComponents
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.TextField
-import io.jmix.ui.component.impl.WebResponsiveGridLayout
-import io.jmix.ui.sys.WebUiComponents
+import io.jmix.ui.component.impl.ResponsiveGridLayoutImpl
+import io.jmix.ui.sys.UiComponentsImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -41,12 +41,12 @@ class ResponsiveGridLayoutTest extends ScreenSpecification {
     @Override
     void setup() {
         exportScreensPackages(["component.responsive_grid_layout"])
-        ((WebUiComponents) uiComponents).register(NAME, TestResponsiveGridLayout)
+        ((UiComponentsImpl) uiComponents).register(NAME, TestResponsiveGridLayout)
     }
 
     @Override
     void cleanup() {
-        ((WebUiComponents) uiComponents).register(NAME, WebResponsiveGridLayout)
+        ((UiComponentsImpl) uiComponents).register(NAME, ResponsiveGridLayoutImpl)
     }
 
     def "load component from XML"() {

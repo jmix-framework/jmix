@@ -52,19 +52,19 @@ class DataGridRenderersTest extends ScreenSpecification {
         where:
 
         id              | rendererClass
-        "button"        | WebButtonRenderer
-        "checkBox"      | WebCheckBoxRenderer
-        "clickableText" | WebClickableTextRenderer
-        "component"     | WebComponentRenderer
-        "date"          | WebDateRenderer
-        "icon"          | WebIconRenderer
-        "image"         | WebImageRenderer
-        "html"          | WebHtmlRenderer
-        "localDate"     | WebLocalDateRenderer
-        "localDateTime" | WebLocalDateTimeRenderer
-        "number"        | WebNumberRenderer
-        "progressBar"   | WebProgressBarRenderer
-        "text"          | WebTextRenderer
+        "button"        | ButtonRendererImpl
+        "checkBox"      | CheckBoxRendererImpl
+        "clickableText" | ClickableTextRendererImpl
+        "component"     | ComponentRendererImpl
+        "date"          | DateRendererImpl
+        "icon"          | IconRendererImpl
+        "image"         | ImageRendererImpl
+        "html"          | HtmlRendererImpl
+        "localDate"     | LocalDateRendererImpl
+        "localDateTime" | LocalDateTimeRendererImpl
+        "number"        | NumberRendererImpl
+        "progressBar"   | ProgressBarRendererImpl
+        "text"          | TextRendererImpl
     }
 
     def "NullRepresentation renderer parameter is applied for DataGrid column"(String id, String nullRepresentation) {

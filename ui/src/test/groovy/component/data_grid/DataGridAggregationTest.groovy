@@ -23,7 +23,7 @@ import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.AggregationInfo
 import io.jmix.ui.component.DataGrid
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems
-import io.jmix.ui.component.impl.WebDataGrid
+import io.jmix.ui.component.impl.DataGridImpl
 import io.jmix.ui.model.CollectionContainer
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
@@ -44,7 +44,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         def dataGridScreen = screens.create(DataGridAggregationTestScreen)
         dataGridScreen.show()
 
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
 
         when: "getting header aggregation row at 1 position"
         dataGrid.getHeaderRow(1)
@@ -69,7 +69,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         def dataGridScreen = screens.create(DataGridAggregationTestScreen)
         dataGridScreen.show()
 
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
 
         when: "appending header row and getting it from dataGrid"
         def header = dataGrid.appendHeaderRow()
@@ -85,7 +85,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         dataGridScreen.show()
 
         when: "getting a DataGrid with aggregation enabled"
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
         then: """aggregation row must be added and public API getHeaderRowCount() must return a value without
                  regard to the aggregation row, even though it physically stores it"""
         def internalHeaders = dataGrid.headerRows.size()
@@ -114,7 +114,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         def dataGridScreen = screens.create(DataGridAggregationTestScreen)
         dataGridScreen.show()
 
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
 
         when: "getting aggregation row at 0 position"
         dataGrid.getFooterRow(0)
@@ -139,7 +139,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         def dataGridScreen = screens.create(DataGridAggregationTestScreen)
         dataGridScreen.show()
 
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
 
         when: "prepending footer and getting it from dataGrid"
         def footer = dataGrid.prependFooterRow()
@@ -155,7 +155,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         dataGridScreen.show()
 
         when: "getting a DataGrid with aggregation enabled"
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationBottomDataGrid")
         then: """aggregation row must be added and public API getFooterRowCount() must return a value without regard to
                  the aggregation row, even though it physically stores it"""
         def internalFooters = dataGrid.footerRows.size()
@@ -184,7 +184,7 @@ class DataGridAggregationTest extends ScreenSpecification {
         def dataGridScreen = screens.create(DataGridAggregationTestScreen)
         dataGridScreen.show()
 
-        def dataGrid = (WebDataGrid) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
+        def dataGrid = (DataGridImpl) dataGridScreen.getWindow().getComponent("aggregationTopDataGrid")
         setDataGridItems(dataGrid)
 
         when: "aggregating values"

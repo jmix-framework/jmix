@@ -21,7 +21,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.MessageDialogFacet;
-import io.jmix.ui.component.impl.WebMessageDialogFacet;
+import io.jmix.ui.component.impl.MessageDialogFacetImpl;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -47,7 +47,7 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
 
     @Override
     public MessageDialogFacet create() {
-        return new WebMessageDialogFacet();
+        return new MessageDialogFacetImpl();
     }
 
     @Override

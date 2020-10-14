@@ -23,7 +23,7 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Window
-import io.jmix.ui.component.impl.WebTabWindow
+import io.jmix.ui.component.impl.TabWindowImpl
 import io.jmix.ui.icon.JmixIcon
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
@@ -160,7 +160,7 @@ class TabWindowPropertiesTest extends ScreenSpecification {
 
     @SuppressWarnings("GroovyAccessibility")
     private static String readCaptionFromTab(Window window) {
-        def tabWindow = window as WebTabWindow
+        def tabWindow = window as TabWindowImpl
         def tab = tabWindow.asTabWindow()
 
         if (tab == null) {
@@ -172,7 +172,7 @@ class TabWindowPropertiesTest extends ScreenSpecification {
 
     @SuppressWarnings("GroovyAccessibility")
     private static String readDescriptionFromTab(Window window) {
-        def tabWindow = window as WebTabWindow
+        def tabWindow = window as TabWindowImpl
         def tab = tabWindow.asTabWindow()
 
         if (tab == null) {
@@ -185,7 +185,7 @@ class TabWindowPropertiesTest extends ScreenSpecification {
     @SuppressWarnings("GroovyAccessibility")
     @Nonnull
     private static TabSheet.Tab getWindowTab(Window window) {
-        def tabWindow = window as WebTabWindow
+        def tabWindow = window as TabWindowImpl
         def tab = tabWindow.asTabWindow()
 
         if (tab == null) {

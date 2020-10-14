@@ -16,10 +16,10 @@
 
 package component.responsive_grid_layout.component;
 
-import io.jmix.ui.component.impl.WebResponsiveGridLayout;
+import io.jmix.ui.component.impl.ResponsiveGridLayoutImpl;
 import io.jmix.ui.widget.JmixResponsiveGridLayout;
 
-public class TestResponsiveGridLayout extends WebResponsiveGridLayout {
+public class TestResponsiveGridLayout extends ResponsiveGridLayoutImpl {
 
     @Override
     protected JmixResponsiveGridLayout createComponent() {

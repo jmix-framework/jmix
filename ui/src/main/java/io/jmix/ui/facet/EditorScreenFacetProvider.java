@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 import io.jmix.core.Metadata;
 import io.jmix.ui.builder.EditMode;
 import io.jmix.ui.component.EditorScreenFacet;
-import io.jmix.ui.component.impl.WebEditorScreenFacet;
+import io.jmix.ui.component.impl.EditorScreenFacetImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class EditorScreenFacetProvider
 
     @Override
     public EditorScreenFacet create() {
-        WebEditorScreenFacet editorScreenFacet = new WebEditorScreenFacet();
+        EditorScreenFacetImpl editorScreenFacet = new EditorScreenFacetImpl();
         editorScreenFacet.setApplicationContext(applicationContext);
         return editorScreenFacet;
     }

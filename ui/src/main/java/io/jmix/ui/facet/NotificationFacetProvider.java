@@ -22,7 +22,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.NotificationFacet;
-import io.jmix.ui.component.impl.WebNotificationFacet;
+import io.jmix.ui.component.impl.NotificationFacetImpl;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -48,7 +48,7 @@ public class NotificationFacetProvider implements FacetProvider<NotificationFace
 
     @Override
     public NotificationFacet create() {
-        return new WebNotificationFacet();
+        return new NotificationFacetImpl();
     }
 
     @Override

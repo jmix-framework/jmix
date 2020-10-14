@@ -38,7 +38,7 @@ public class ScreenSettingsFacetProvider implements FacetProvider<ScreenSettings
 
     @Override
     public ScreenSettingsFacet create() {
-        return new WebScreenSettingsFacet();
+        return new ScreenSettingsFacetImpl();
     }
 
     @Override

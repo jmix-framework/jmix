@@ -32,7 +32,7 @@ import io.jmix.ui.widget.JmixTextArea;
 import io.jmix.ui.widget.client.resizabletextarea.ResizeDirection;
 import org.apache.commons.lang3.StringUtils;
 
-import static io.jmix.ui.component.impl.WebAbstractTable.MAX_TEXT_LENGTH_GAP;
+import static io.jmix.ui.component.impl.AbstractTable.MAX_TEXT_LENGTH_GAP;
 
 public class AbbreviatedCellClickListener implements Table.CellClickListener {
 

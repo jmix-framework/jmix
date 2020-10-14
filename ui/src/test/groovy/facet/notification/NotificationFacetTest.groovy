@@ -25,8 +25,8 @@ import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.Notifications
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.ContentMode
-import io.jmix.ui.component.impl.WebButton
-import io.jmix.ui.component.impl.WebNotificationFacet
+import io.jmix.ui.component.impl.ButtonImpl
+import io.jmix.ui.component.impl.NotificationFacetImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
@@ -114,7 +114,7 @@ class NotificationFacetTest extends ScreenSpecification {
 
         when: 'Notification target button is clicked'
 
-        ((WebButton) screen.notificationButton)
+        ((ButtonImpl) screen.notificationButton)
                 .buttonClicked(null)
 
         then: 'Notification is shown'
@@ -127,7 +127,7 @@ class NotificationFacetTest extends ScreenSpecification {
     }
 
     def 'Notification should be bound to frame'() {
-        def notification = new WebNotificationFacet()
+        def notification = new NotificationFacetImpl()
 
         when: 'Trying to show Notification not bound to frame'
 
@@ -151,7 +151,7 @@ class NotificationFacetTest extends ScreenSpecification {
 
         def screen = screens.create(NotificationFacetTestScreen)
 
-        def notification = new WebNotificationFacet()
+        def notification = new NotificationFacetImpl()
 
         notification.setOwner(screen.getWindow())
         notification.setActionTarget('actionId')
@@ -171,7 +171,7 @@ class NotificationFacetTest extends ScreenSpecification {
 
         def screen = screens.create(NotificationFacetTestScreen)
 
-        def notification = new WebNotificationFacet()
+        def notification = new NotificationFacetImpl()
 
         notification.setOwner(screen.getWindow())
         notification.setActionTarget('missingAction')

@@ -19,7 +19,7 @@ package io.jmix.ui.settings.component.binder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.component.ResizableTextArea.ResizeDirection;
-import io.jmix.ui.component.impl.WebResizableTextArea;
+import io.jmix.ui.component.impl.ResizableTextAreaImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.ResizableTextAreaSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
@@ -31,7 +31,7 @@ public class ResizableTextAreaSettingsBinder implements ComponentSettingsBinder<
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebResizableTextArea.class;
+        return ResizableTextAreaImpl.class;
     }
 
     @Override

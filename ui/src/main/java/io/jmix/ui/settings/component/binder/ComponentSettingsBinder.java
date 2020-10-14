@@ -17,7 +17,7 @@
 package io.jmix.ui.settings.component.binder;
 
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.impl.WebTable;
+import io.jmix.ui.component.impl.TableImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.TableSettings;
@@ -28,7 +28,7 @@ import io.jmix.ui.settings.component.TableSettings;
 public interface ComponentSettingsBinder<V extends Component, S extends ComponentSettings> {
 
     /**
-     * @return component class, e.g. {@link WebTable}
+     * @return component class, e.g. {@link TableImpl}
      */
     Class<? extends Component> getComponentClass();
 

@@ -28,7 +28,7 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.navigation.*;
 import io.jmix.ui.screen.*;
@@ -164,7 +164,7 @@ public class ScreenNavigationHandler implements NavigationHandler {
                 "",
                 route,
                 Collections.emptyMap());
-        ((WebWindow) notFoundScreen.getWindow())
+        ((WindowImpl) notFoundScreen.getWindow())
                 .setResolvedState(state);
 
         notFoundScreen.show();
@@ -237,10 +237,10 @@ public class ScreenNavigationHandler implements NavigationHandler {
                         new UrlParamsChangedEvent(screen, params));
             }
 
-            ((WebWindow) screen.getWindow())
+            ((WindowImpl) screen.getWindow())
                     .setResolvedState(requestedState);
         } else {
-            ((WebWindow) screen.getWindow())
+            ((WindowImpl) screen.getWindow())
                     .setResolvedState(getNestedScreenState(screenRoute, requestedState));
         }
 

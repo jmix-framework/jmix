@@ -24,8 +24,6 @@ import java.util.function.Supplier;
  */
 public interface StreamResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 
-    String NAME = "ui_StreamResource";
-
     StreamResource setStreamSupplier(Supplier<InputStream> streamSupplier);
 
     Supplier<InputStream> getStreamSupplier();

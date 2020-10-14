@@ -28,7 +28,7 @@ import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
 import io.jmix.ui.component.InputDialogFacet;
-import io.jmix.ui.component.impl.WebInputDialogFacet;
+import io.jmix.ui.component.impl.InputDialogFacetImpl;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -75,7 +75,7 @@ public class InputDialogFacetProvider implements FacetProvider<InputDialogFacet>
 
     @Override
     public InputDialogFacet create() {
-        return new WebInputDialogFacet();
+        return new InputDialogFacetImpl();
     }
 
     @Override

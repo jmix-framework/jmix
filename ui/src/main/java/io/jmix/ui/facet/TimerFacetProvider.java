@@ -18,7 +18,7 @@ package io.jmix.ui.facet;
 
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Timer;
-import io.jmix.ui.component.impl.WebTimer;
+import io.jmix.ui.component.impl.TimerImpl;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -39,7 +39,7 @@ public class TimerFacetProvider implements FacetProvider<Timer> {
 
     @Override
     public Timer create() {
-        return new WebTimer();
+        return new TimerImpl();
     }
 
     @Override

@@ -22,7 +22,7 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.OptionDialogFacet;
-import io.jmix.ui.component.impl.WebOptionDialogFacet;
+import io.jmix.ui.component.impl.OptionDialogFacetImpl;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
@@ -61,7 +61,7 @@ public class OptionDialogFacetProvider
 
     @Override
     public OptionDialogFacet create() {
-        return new WebOptionDialogFacet();
+        return new OptionDialogFacetImpl();
     }
 
     @Override

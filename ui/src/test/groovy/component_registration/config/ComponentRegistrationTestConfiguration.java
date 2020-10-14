@@ -18,7 +18,7 @@ package component_registration.config;
 
 import component_registration.component.*;
 import io.jmix.ui.component.TextArea;
-import io.jmix.ui.component.impl.WebResizableTextArea;
+import io.jmix.ui.component.impl.ResizableTextAreaImpl;
 import io.jmix.ui.sys.registration.ComponentRegistration;
 import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import io.jmix.ui.xml.layout.loader.TextAreaLoader;
@@ -61,7 +61,7 @@ public class ComponentRegistrationTestConfiguration {
     @Order(100)
     protected ComponentRegistration orderField2() {
         return ComponentRegistrationBuilder.create(TEST_FIELD_NAME)
-                .withComponentClass(WebResizableTextArea.class)
+                .withComponentClass(ResizableTextAreaImpl.class)
                 .build();
     }
 }

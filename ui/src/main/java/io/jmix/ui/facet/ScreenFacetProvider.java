@@ -18,7 +18,7 @@ package io.jmix.ui.facet;
 
 import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.ScreenFacet;
-import io.jmix.ui.component.impl.WebScreenFacet;
+import io.jmix.ui.component.impl.ScreenFacetImpl;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class ScreenFacetProvider extends AbstractScreenFacetProvider<ScreenFacet
 
     @Override
     public ScreenFacet create() {
-        WebScreenFacet screenFacet = new WebScreenFacet();
+        ScreenFacetImpl screenFacet = new ScreenFacetImpl();
         screenFacet.setApplicationContext(applicationContext);
         return screenFacet;
     }

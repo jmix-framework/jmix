@@ -25,8 +25,8 @@ import io.jmix.ui.*;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.RootWindow;
-import io.jmix.ui.component.impl.WebAppWorkArea;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.AppWorkAreaImpl;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -136,7 +136,7 @@ public class WebUrlRouting implements UrlRouting {
             lastHistoryOperation = AppUIConstants.HISTORY_PUSH_OP;
         }
 
-        ((WebWindow) screen.getWindow()).setResolvedState(newState);
+        ((WindowImpl) screen.getWindow()).setResolvedState(newState);
 
         if (pushState) {
             ui.getHistory().forward(newState);
@@ -330,8 +330,8 @@ public class WebUrlRouting implements UrlRouting {
     }
 
     protected String getStateMark(Screen screen) {
-        WebWindow webWindow = (WebWindow) screen.getWindow();
-        NavigationState resolvedState = webWindow.getResolvedState();
+        WindowImpl windowImpl = (WindowImpl) screen.getWindow();
+        NavigationState resolvedState = windowImpl.getResolvedState();
         return resolvedState != null
                 ? resolvedState.getStateMark()
                 : NavigationState.EMPTY.getStateMark();
@@ -360,7 +360,7 @@ public class WebUrlRouting implements UrlRouting {
 
     @Nullable
     protected Screen findActiveScreenByState(NavigationState requestedState) {
-        WebAppWorkArea workArea = screens.getConfiguredWorkAreaOrNull();
+        AppWorkAreaImpl workArea = screens.getConfiguredWorkAreaOrNull();
 
         return workArea != null
                 ? findScreenByState(getOpenedScreens().getActiveScreens(), requestedState)

@@ -16,7 +16,7 @@
 
 package test_support.bean;
 
-import io.jmix.ui.component.impl.WebAppWorkArea;
+import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class TestWebBean {
     }
 
     @EventListener
-    public void onWorkAreaTabChangedEvent(WebAppWorkArea.WorkAreaTabChangedEvent evt) {
+    public void onWorkAreaTabChangedEvent(AppWorkAreaImpl.WorkAreaTabChangedEvent evt) {
         workAreaTabChangedEventHandled.set(true);
     }
 }

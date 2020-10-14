@@ -18,7 +18,7 @@ package io.jmix.ui.sys.registration;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.sys.WebUiComponents;
+import io.jmix.ui.sys.UiComponentsImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LoaderResolver;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class CustomComponentsRegistry {
     protected List<ComponentRegistration> componentRegistrations;
 
     @Autowired
-    protected WebUiComponents webUiComponents;
+    protected UiComponentsImpl webUiComponents;
     @Autowired
     protected CustomComponentsLoaderConfig loaderConfig;
     @Autowired

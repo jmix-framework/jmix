@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField, V>
-        extends WebAbstractComponent<T> implements Field<V> {
+        extends AbstractComponent<T> implements Field<V> {
 
     protected static final int VALIDATORS_LIST_INITIAL_CAPACITY = 4;
 

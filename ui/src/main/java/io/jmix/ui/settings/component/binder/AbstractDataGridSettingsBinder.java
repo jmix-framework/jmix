@@ -23,8 +23,8 @@ import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.impl.DataGridSettingsUtils;
-import io.jmix.ui.component.impl.WebDataGrid;
-import io.jmix.ui.component.impl.WebWrapperUtils;
+import io.jmix.ui.component.impl.DataGridImpl;
+import io.jmix.ui.component.impl.WrapperUtils;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.HasLoader;
@@ -43,7 +43,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebDataGrid.class;
+        return DataGridImpl.class;
     }
 
     @Override
@@ -95,7 +95,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
                         DataGrid.SortDirection sortDirection = dataGridSettings.getSortDirection();
                         if (sortDirection != null) {
                             List<GridSortOrder> sortOrders = Collections.singletonList(
-                                    new GridSortOrder<>(column, WebWrapperUtils.convertToGridSortDirection(sortDirection)));
+                                    new GridSortOrder<>(column, WrapperUtils.convertToGridSortDirection(sortDirection)));
                             grid.setSortOrder(sortOrders);
                         }
                     } finally {
@@ -135,7 +135,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
                 GridSortOrder sortOrder = sortOrders.get(0);
 
                 settings.setSortColumnId(sortOrder.getSorted().getId());
-                settings.setSortDirection(WebWrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
+                settings.setSortDirection(WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
             }
         }
 
@@ -154,7 +154,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
             GridSortOrder sortOrder = sortOrders.get(0);
 
             settings.setSortColumnId(sortOrder.getSorted().getId());
-            settings.setSortDirection(WebWrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
+            settings.setSortDirection(WrapperUtils.convertToDataGridSortDirection(sortOrder.getDirection()));
         }
 
         return settings;
@@ -248,7 +248,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
                     DataGrid.SortDirection sortDirection = settings.getSortDirection();
                     if (sortDirection != null) {
                         List<GridSortOrder> sortOrders = Collections.singletonList(
-                                new GridSortOrder(column, WebWrapperUtils.convertToGridSortDirection(sortDirection))
+                                new GridSortOrder(column, WrapperUtils.convertToGridSortDirection(sortDirection))
                         );
                         grid.setSortOrder(sortOrders);
                     }
@@ -314,7 +314,7 @@ public abstract class AbstractDataGridSettingsBinder implements DataLoadingSetti
         }
 
         com.vaadin.shared.data.sort.SortDirection settingsGridSort =
-                settingsSort != null ? WebWrapperUtils.convertToGridSortDirection(settingsSort) : null;
+                settingsSort != null ? WrapperUtils.convertToGridSortDirection(settingsSort) : null;
 
         return !Objects.equals(columnId, settingsSortColumnId)
                 || !Objects.equals(sort, settingsGridSort);

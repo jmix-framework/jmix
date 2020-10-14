@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class WebEmbedded extends WebAbstractComponent<com.vaadin.ui.Embedded> implements Embedded {
+public class WebEmbedded extends AbstractComponent<com.vaadin.ui.Embedded> implements Embedded {
 
     protected Map<String, String> parameters = null;
     protected Type type = Type.IMAGE;

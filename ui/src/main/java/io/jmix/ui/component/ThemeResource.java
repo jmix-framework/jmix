@@ -21,8 +21,6 @@ package io.jmix.ui.component;
  */
 public interface ThemeResource extends Resource {
 
-    String NAME = "ui_ThemeResource";
-
     /**
      * @param path path to the theme resource, e.g. "some/path/image.png"
      * @return current ThemeResource instance

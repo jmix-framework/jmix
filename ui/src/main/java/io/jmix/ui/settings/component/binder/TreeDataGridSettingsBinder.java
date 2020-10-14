@@ -21,7 +21,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.DataGrid.Column;
 import io.jmix.ui.component.TreeDataGrid;
-import io.jmix.ui.component.impl.WebTreeDataGrid;
+import io.jmix.ui.component.impl.TreeDataGridImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.DataGridSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
@@ -33,7 +33,7 @@ public class TreeDataGridSettingsBinder extends AbstractDataGridSettingsBinder {
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebTreeDataGrid.class;
+        return TreeDataGridImpl.class;
     }
 
     @Override

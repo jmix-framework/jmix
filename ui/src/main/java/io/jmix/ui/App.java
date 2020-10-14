@@ -352,7 +352,7 @@ public abstract class App {
      */
     @Deprecated
     @Nullable
-    public WebScreens getWindowManager() {
+    public ScreensImpl getWindowManager() {
         AppUI ui = AppUI.getCurrent();
         if (ui == null) {
             return null;
@@ -362,7 +362,7 @@ public abstract class App {
         if (topLevelWindow == null) {
             return null;
         } else {
-            return (WebScreens) UiControllerUtils.getScreenContext(topLevelWindow.getFrameOwner())
+            return (ScreensImpl) UiControllerUtils.getScreenContext(topLevelWindow.getFrameOwner())
                     .getScreens();
         }
     }

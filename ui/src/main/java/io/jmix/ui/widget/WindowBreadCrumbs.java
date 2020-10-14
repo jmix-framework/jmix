@@ -30,7 +30,7 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.AppWorkArea.Mode;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
@@ -129,11 +129,11 @@ public class WindowBreadCrumbs extends CssLayout {
     }
 
     protected boolean isCloseWithCloseButtonPrevented(@Nullable Window currentWindow) {
-        WebWindow webWindow = (WebWindow) currentWindow;
+        WindowImpl windowImpl = (WindowImpl) currentWindow;
 
-        if (webWindow != null) {
-            Window.BeforeCloseEvent event = new Window.BeforeCloseEvent(webWindow, CloseOriginType.CLOSE_BUTTON);
-            webWindow.fireBeforeClose(event);
+        if (windowImpl != null) {
+            Window.BeforeCloseEvent event = new Window.BeforeCloseEvent(windowImpl, CloseOriginType.CLOSE_BUTTON);
+            windowImpl.fireBeforeClose(event);
             return event.isClosePrevented();
         }
 

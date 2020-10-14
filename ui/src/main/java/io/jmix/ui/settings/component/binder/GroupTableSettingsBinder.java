@@ -24,7 +24,7 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.Table.Column;
 import io.jmix.ui.component.data.meta.EntityTableItems;
-import io.jmix.ui.component.impl.WebGroupTable;
+import io.jmix.ui.component.impl.GroupTableImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.GroupTableSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
@@ -53,7 +53,7 @@ public class GroupTableSettingsBinder extends AbstractTableSettingsBinder {
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebGroupTable.class;
+        return GroupTableImpl.class;
     }
 
     @Override

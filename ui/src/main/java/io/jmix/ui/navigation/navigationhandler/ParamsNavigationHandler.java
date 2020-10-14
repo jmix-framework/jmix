@@ -18,7 +18,7 @@ package io.jmix.ui.navigation.navigationhandler;
 
 import io.jmix.core.JmixOrder;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
@@ -59,7 +59,7 @@ public class ParamsNavigationHandler implements NavigationHandler {
                 ? requestedState.getParams()
                 : Collections.emptyMap();
 
-        WebWindow window = (WebWindow) screen.getWindow();
+        WindowImpl window = (WindowImpl) screen.getWindow();
         NavigationState resolvedState = window.getResolvedState();
 
         if (resolvedState == null

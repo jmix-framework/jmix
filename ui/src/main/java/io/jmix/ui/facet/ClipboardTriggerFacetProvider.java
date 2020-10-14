@@ -18,7 +18,7 @@ package io.jmix.ui.facet;
 
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.impl.WebClipboardTrigger;
+import io.jmix.ui.component.impl.ClipboardTriggerImpl;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.dom4j.Element;
@@ -37,7 +37,7 @@ public class ClipboardTriggerFacetProvider implements FacetProvider<ClipboardTri
 
     @Override
     public ClipboardTrigger create() {
-        return new WebClipboardTrigger();
+        return new ClipboardTriggerImpl();
     }
 
     @Override

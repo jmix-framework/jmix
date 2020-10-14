@@ -93,11 +93,11 @@ public class WebTablePagination extends WebPagination implements TablePagination
     protected void onSuccessfulDataRefresh() {
         super.onSuccessfulDataRefresh();
 
-        if (target instanceof WebAbstractTable) {
+        if (target instanceof AbstractTable) {
             target.withUnwrapped(com.vaadin.v7.ui.Table.class, vTable ->
                     vTable.setCurrentPageFirstItemIndex(0));
-        } else if (target instanceof WebAbstractDataGrid) {
-            ((WebAbstractDataGrid) target).scrollToStart();
+        } else if (target instanceof AbstractDataGrid) {
+            ((AbstractDataGrid) target).scrollToStart();
         }
     }
 

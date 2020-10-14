@@ -17,6 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.server.Sizeable;
+import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;

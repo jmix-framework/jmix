@@ -22,8 +22,8 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.UiConfiguration
-import io.jmix.ui.component.impl.WebButton
-import io.jmix.ui.component.impl.WebScreenFacet
+import io.jmix.ui.component.impl.ButtonImpl
+import io.jmix.ui.component.impl.ScreenFacetImpl
 import io.jmix.ui.screen.FrameOwner
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -132,7 +132,7 @@ class ScreenFacetTest extends ScreenSpecification {
         def screen = screens.create(ScreenFacetTestScreen)
         screen.show()
 
-        def screenFacet = screen.screenIdFacet as WebScreenFacet
+        def screenFacet = screen.screenIdFacet as ScreenFacetImpl
 
         when: 'ScreenFacet target action performed'
 
@@ -149,11 +149,11 @@ class ScreenFacetTest extends ScreenSpecification {
         def screen = screens.create(ScreenFacetTestScreen)
         screen.show()
 
-        def screenClassFacet = screen.screenClassFacet as WebScreenFacet
+        def screenClassFacet = screen.screenClassFacet as ScreenFacetImpl
 
         when: 'Screen target button clicked'
 
-        ((WebButton) screen.button).buttonClicked(null)
+        ((ButtonImpl) screen.button).buttonClicked(null)
 
         then: 'Screen is opened'
 
@@ -186,7 +186,7 @@ class ScreenFacetTest extends ScreenSpecification {
     }
 
     def 'ScreenFacet should be bound to frame'() {
-        def screenFacet = new WebScreenFacet()
+        def screenFacet = new ScreenFacetImpl()
 
         when: 'Trying to show screen not bound to frame'
 
@@ -211,7 +211,7 @@ class ScreenFacetTest extends ScreenSpecification {
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
         screenWithFacet.show()
 
-        def screenFacet = new WebScreenFacet()
+        def screenFacet = new ScreenFacetImpl()
         screenFacet.setOwner(screenWithFacet.getWindow())
 
         when: 'Both action and button are set as Screen target'
@@ -231,7 +231,7 @@ class ScreenFacetTest extends ScreenSpecification {
         def screenWithFacet = screens.create(ScreenFacetTestScreen)
         screenWithFacet.show()
 
-        def screenFacet = new WebScreenFacet()
+        def screenFacet = new ScreenFacetImpl()
         screenFacet.setOwner(screenWithFacet.getWindow())
 
         when: 'Missing action is set to Screen'

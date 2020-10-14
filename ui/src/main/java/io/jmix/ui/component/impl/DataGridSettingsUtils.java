@@ -17,7 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.component.impl.WebAbstractDataGrid;
 import io.jmix.ui.settings.component.binder.DataGridSettingsBinder;
 
 import java.util.List;
@@ -36,6 +35,6 @@ public final class DataGridSettingsUtils {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void restoreColumnsOrder(DataGrid dataGrid, List<DataGrid.Column> columns) {
-        ((WebAbstractDataGrid) dataGrid).restoreColumnsOrderAndUpdate(columns);
+        ((AbstractDataGrid) dataGrid).restoreColumnsOrderAndUpdate(columns);
     }
 }

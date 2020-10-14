@@ -22,8 +22,6 @@ package io.jmix.ui.component;
  */
 public interface RelativePathResource extends Resource, ResourceView.HasMimeType {
 
-    String NAME = "ui_RelativePathResource";
-
     /**
      * @param path path to the resource, e.g. "VAADIN/images/image.png"
      * @return current RelativePathResource instance

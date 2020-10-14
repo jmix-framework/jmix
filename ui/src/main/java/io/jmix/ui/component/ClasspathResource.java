@@ -26,8 +26,6 @@ package io.jmix.ui.component;
  */
 public interface ClasspathResource extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 
-    String NAME = "ui_ClasspathResource";
-
     ClasspathResource setPath(String path);
 
     String getPath();

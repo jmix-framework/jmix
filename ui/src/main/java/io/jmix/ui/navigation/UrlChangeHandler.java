@@ -27,7 +27,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.navigation.NavigationFilter.AccessCheckResult;
 import io.jmix.ui.screen.FrameOwner;
@@ -170,8 +170,8 @@ public class UrlChangeHandler implements InitializingBean {
         if (currentState == null
                 || currentState == NavigationState.EMPTY) {
             RootWindow topLevelWindow = ui.getTopLevelWindow();
-            if (topLevelWindow instanceof WebWindow) {
-                NavigationState topScreenState = ((WebWindow) topLevelWindow).getResolvedState();
+            if (topLevelWindow instanceof WindowImpl) {
+                NavigationState topScreenState = ((WindowImpl) topLevelWindow).getResolvedState();
 
                 urlTools.replaceState(topScreenState.asRoute(), ui);
             }
@@ -249,7 +249,7 @@ public class UrlChangeHandler implements InitializingBean {
         if (screen == null) {
             return NavigationState.EMPTY;
         }
-        NavigationState resolvedState = ((WebWindow) screen.getWindow()).getResolvedState();
+        NavigationState resolvedState = ((WindowImpl) screen.getWindow()).getResolvedState();
         return resolvedState != null
                 ? resolvedState
                 : NavigationState.EMPTY;
@@ -311,8 +311,8 @@ public class UrlChangeHandler implements InitializingBean {
     }
 
     protected String getStateMark(Screen screen) {
-        WebWindow webWindow = (WebWindow) screen.getWindow();
-        NavigationState resolvedState = webWindow.getResolvedState();
+        WindowImpl windowImpl = (WindowImpl) screen.getWindow();
+        NavigationState resolvedState = windowImpl.getResolvedState();
         return resolvedState != null
                 ? resolvedState.getStateMark()
                 : NavigationState.EMPTY.getStateMark();
@@ -368,9 +368,9 @@ public class UrlChangeHandler implements InitializingBean {
 
         boolean windowIsDefault;
         if (window instanceof Window.Wrapper) {
-            windowIsDefault = ((WebWindow) ((Window.Wrapper) window).getWrappedWindow()).isDefaultScreenWindow();
+            windowIsDefault = ((WindowImpl) ((Window.Wrapper) window).getWrappedWindow()).isDefaultScreenWindow();
         } else {
-            windowIsDefault = ((WebWindow) window).isDefaultScreenWindow();
+            windowIsDefault = ((WindowImpl) window).isDefaultScreenWindow();
         }
 
         return windowIsDefault;
@@ -404,7 +404,7 @@ public class UrlChangeHandler implements InitializingBean {
     protected boolean isWindowClosePrevented(Window window) {
         Window.BeforeCloseEvent event = new Window.BeforeCloseEvent(window, CloseOriginType.CLOSE_BUTTON);
 
-        ((WebWindow) window).fireBeforeClose(event);
+        ((WindowImpl) window).fireBeforeClose(event);
 
         return event.isClosePrevented();
     }

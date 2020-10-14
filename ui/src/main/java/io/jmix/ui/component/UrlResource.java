@@ -23,8 +23,6 @@ import java.net.URL;
  */
 public interface UrlResource extends Resource, ResourceView.HasMimeType {
 
-    String NAME = "ui_UrlResource";
-
     UrlResource setUrl(URL url);
 
     URL getUrl();

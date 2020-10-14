@@ -21,7 +21,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.impl.WebDataLoadCoordinator;
+import io.jmix.ui.component.impl.DataLoadCoordinatorImpl;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
@@ -53,7 +53,7 @@ public class DataLoadCoordinatorFacetProvider implements FacetProvider<DataLoadC
 
     @Override
     public DataLoadCoordinator create() {
-        return new WebDataLoadCoordinator(reflectionInspector);
+        return new DataLoadCoordinatorImpl(reflectionInspector);
     }
 
     @Override

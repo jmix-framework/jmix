@@ -22,8 +22,8 @@ import io.jmix.data.DataConfiguration
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.ContentMode
-import io.jmix.ui.component.impl.WebButton
-import io.jmix.ui.component.impl.WebOptionDialogFacet
+import io.jmix.ui.component.impl.ButtonImpl
+import io.jmix.ui.component.impl.OptionDialogFacetImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
@@ -88,7 +88,7 @@ class OptionDialogFacetTest extends ScreenSpecification {
 
         when: 'Dialog target button is clicked'
 
-        ((WebButton) screen.dialogButton).buttonClicked(null)
+        ((ButtonImpl) screen.dialogButton).buttonClicked(null)
 
         then: 'Dialog is shown'
 
@@ -96,7 +96,7 @@ class OptionDialogFacetTest extends ScreenSpecification {
     }
 
     def 'OptionDialog should be bound to frame'() {
-        def dialog = new WebOptionDialogFacet()
+        def dialog = new OptionDialogFacetImpl()
 
         when: 'Trying to show Dialog not bound to frame'
 
@@ -120,7 +120,7 @@ class OptionDialogFacetTest extends ScreenSpecification {
 
         def screen = screens.create(OptionDialogFacetTestScreen)
 
-        def dialog = new WebOptionDialogFacet()
+        def dialog = new OptionDialogFacetImpl()
         dialog.setOwner(screen.getWindow())
         dialog.setActionTarget('actionId')
         dialog.setButtonTarget('buttonId')
@@ -139,7 +139,7 @@ class OptionDialogFacetTest extends ScreenSpecification {
 
         def screen = screens.create(OptionDialogFacetTestScreen)
 
-        def dialog = new WebOptionDialogFacet()
+        def dialog = new OptionDialogFacetImpl()
         dialog.setOwner(screen.getWindow())
 
         when: 'Missing action is set as target'

@@ -53,7 +53,7 @@ import java.util.function.Function;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-public class WebPagination extends WebAbstractComponent<JmixPagination> implements Pagination, InitializingBean {
+public class WebPagination extends AbstractComponent<JmixPagination> implements Pagination, InitializingBean {
 
     protected static final String PAGINATION_STYLENAME = "c-pagination";
     protected static final String PAGINATION_COUNT_NUMBER_STYLENAME = "c-pagination-count-number";

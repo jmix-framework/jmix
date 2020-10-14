@@ -17,13 +17,13 @@
 package io.jmix.ui.settings.component.binder;
 
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.impl.WebTreeTable;
+import io.jmix.ui.component.impl.TreeTableImpl;
 
 @org.springframework.stereotype.Component("ui_TreeTableSettingsBinder")
 public class TreeTableSettingsBinder extends AbstractTableSettingsBinder {
 
     @Override
     public Class<? extends Component> getComponentClass() {
-        return WebTreeTable.class;
+        return TreeTableImpl.class;
     }
 }

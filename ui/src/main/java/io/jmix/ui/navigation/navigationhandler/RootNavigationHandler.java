@@ -26,7 +26,7 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.component.impl.WebWindow;
+import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.navigation.NavigationHandler;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlChangeHandler;
@@ -102,7 +102,7 @@ public class RootNavigationHandler implements NavigationHandler {
             UiControllerUtils.fireEvent(screen, UrlParamsChangedEvent.class,
                     new UrlParamsChangedEvent(screen, requestedState.getParams()));
 
-            ((WebWindow) screen.getWindow())
+            ((WindowImpl) screen.getWindow())
                     .setResolvedState(requestedState);
         }
 
@@ -119,7 +119,7 @@ public class RootNavigationHandler implements NavigationHandler {
             return false;
         }
 
-        String rootRoute = ((WebWindow) rootScreen.getWindow())
+        String rootRoute = ((WindowImpl) rootScreen.getWindow())
                 .getResolvedState()
                 .getRoot();
 

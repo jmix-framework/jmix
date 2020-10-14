@@ -21,8 +21,6 @@ package io.jmix.ui.component;
  */
 public interface FileStorageResource<T> extends Resource, ResourceView.HasMimeType, ResourceView.HasStreamSettings {
 
-    String NAME = "ui_FileStorageResource";
-
     FileStorageResource<T> setFileReference(T fileReference);
 
     T getFileReference();

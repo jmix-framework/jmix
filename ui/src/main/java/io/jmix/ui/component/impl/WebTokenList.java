@@ -49,7 +49,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WebTokenList<V>
-        extends WebV8AbstractField<JmixTokenList<V>, Collection<V>, Collection<V>>
+        extends AbstractField<JmixTokenList<V>, Collection<V>, Collection<V>>
         implements TokenList<V>, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(WebTokenList.class);

@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.Entity;
 import io.jmix.ui.Screens.LaunchMode;
 
 import javax.annotation.Nullable;

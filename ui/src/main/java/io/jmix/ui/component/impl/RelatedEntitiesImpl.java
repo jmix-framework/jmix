@@ -18,7 +18,10 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Label;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Actions;
@@ -234,33 +237,41 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
         if (defaultScreen != null
                 || (propertyOption != null && StringUtils.isNotEmpty(propertyOption.getScreenId()))) {
 
-            RelatedAction relatedAction = actions.create(RelatedAction.class, "related" + actionOrder.size());
-
-            relatedAction.setTarget(listComponent);
-            relatedAction.setMetaProperty(metaProperty);
-            relatedAction.setLaunchMode(launchMode);
-            relatedAction.setCaption(messageTools.getPropertyCaption(metaProperty));
-
-            if (defaultScreen != null) {
-                relatedAction.setScreenId(defaultScreen.getId());
-            }
-
-            if (propertyOption != null) {
-                if (StringUtils.isNotEmpty(propertyOption.getCaption())) {
-                    relatedAction.setCaption(propertyOption.getCaption());
-                }
-
-                if (StringUtils.isNotEmpty(propertyOption.getFilterCaption())) {
-                    relatedAction.setFilterCaption(propertyOption.getFilterCaption());
-                }
-
-                if (StringUtils.isNotEmpty(propertyOption.getScreenId())) {
-                    relatedAction.setScreenId(propertyOption.getScreenId());
-                }
-            }
+            Action relatedAction = createRelatedAction(metaProperty, defaultScreen, propertyOption);
 
             addAction(relatedAction);
         }
+    }
+
+    protected Action createRelatedAction(MetaProperty metaProperty,
+                                         @Nullable WindowInfo defaultScreen,
+                                         @Nullable PropertyOption propertyOption) {
+        RelatedAction relatedAction = actions.create(RelatedAction.class, "related" + actionOrder.size());
+
+        relatedAction.setTarget(listComponent);
+        relatedAction.setMetaProperty(metaProperty);
+        relatedAction.setLaunchMode(launchMode);
+        relatedAction.setCaption(messageTools.getPropertyCaption(metaProperty));
+
+        if (defaultScreen != null) {
+            relatedAction.setScreenId(defaultScreen.getId());
+        }
+
+        if (propertyOption != null) {
+            if (StringUtils.isNotEmpty(propertyOption.getCaption())) {
+                relatedAction.setCaption(propertyOption.getCaption());
+            }
+
+            if (StringUtils.isNotEmpty(propertyOption.getFilterCaption())) {
+                relatedAction.setFilterCaption(propertyOption.getFilterCaption());
+            }
+
+            if (StringUtils.isNotEmpty(propertyOption.getScreenId())) {
+                relatedAction.setScreenId(propertyOption.getScreenId());
+            }
+        }
+
+        return relatedAction;
     }
 
     protected static class PropertyOption {

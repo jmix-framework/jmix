@@ -32,6 +32,7 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -163,6 +164,7 @@ public class RelatedAction extends SecuredListAction
         RelatedEntitiesBuilder builder = relatedEntitiesApi.builder(frame.getFrameOwner())
                 .withMetaClass(metaClass)
                 .withMetaProperty(metaProperty)
+                .withSelectedEntities(target.getSelected())
                 .withFilterCaption(filterCaption);
 
         builder = screenInitializer.initBuilder(builder);

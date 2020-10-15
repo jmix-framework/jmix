@@ -16,8 +16,10 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.components.data.value.DatasourceValueSource;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.options.DatasourceOptions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.Options;
@@ -112,5 +114,23 @@ public class ComponentGenerationContext extends io.jmix.ui.component.ComponentGe
     @Deprecated
     public ComponentGenerationContext setComponentClass(@Nullable Class<? extends Component> componentClass) {
         return (ComponentGenerationContext) setTargetClass(componentClass);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public ValueSource getValueSource() {
+        return super.getValueSource() == null && getDatasource() != null
+                ? new DatasourceValueSource(getDatasource(), getProperty())
+                : super.getValueSource();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    @Override
+    public Options getOptions() {
+        return super.getOptions() == null && getOptionsDatasource() != null
+                ? new DatasourceOptions(getOptionsDatasource())
+                : super.getOptions();
     }
 }

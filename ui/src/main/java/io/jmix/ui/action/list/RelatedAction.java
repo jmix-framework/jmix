@@ -24,7 +24,7 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.relatedentities.RelatedEntitiesAPI;
+import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -32,7 +32,6 @@ import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -43,7 +42,7 @@ public class RelatedAction extends SecuredListAction
 
     public static final String ID = "related";
 
-    protected RelatedEntitiesAPI relatedEntitiesApi;
+    protected RelatedEntitiesSupport relatedEntitiesSupport;
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
     protected MetaProperty metaProperty;
@@ -58,8 +57,8 @@ public class RelatedAction extends SecuredListAction
     }
 
     @Autowired
-    public void setRelatedEntitiesApi(RelatedEntitiesAPI relatedEntitiesApi) {
-        this.relatedEntitiesApi = relatedEntitiesApi;
+    public void setRelatedEntitiesApi(RelatedEntitiesSupport relatedEntitiesSupport) {
+        this.relatedEntitiesSupport = relatedEntitiesSupport;
     }
 
     @Nullable
@@ -161,7 +160,7 @@ public class RelatedAction extends SecuredListAction
             throw new IllegalStateException("Target is not bound to a frame");
         }
 
-        RelatedEntitiesBuilder builder = relatedEntitiesApi.builder(frame.getFrameOwner())
+        RelatedEntitiesBuilder builder = relatedEntitiesSupport.builder(frame.getFrameOwner())
                 .withMetaClass(metaClass)
                 .withMetaProperty(metaProperty)
                 .withSelectedEntities(target.getSelected())

@@ -33,7 +33,7 @@ import java.util.function.Function;
  * Builder class creates screen for related entities.
  * For instance:
  * <pre>{@code
- *      RelatedEntitiesBuilder builder = relatedEntitiesAPI.builder(this);
+ *      RelatedEntitiesBuilder builder = RelatedEntitiesSupport.builder(this);
  *      Screen colourBrowser = builder
  *              .withEntityClass(Car.class)
  *              .withProperty("colour")

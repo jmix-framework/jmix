@@ -18,6 +18,7 @@ package io.jmix.ui.relatedentities;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Screens;
@@ -27,14 +28,15 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.stereotype.Component;
 
+@Internal
 @Component("ui_RelatedEntities")
-public class RelatedEntitiesBean implements RelatedEntitiesAPI {
+public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
 
     //    protected Messages messages;
     protected Metadata metadata;
     protected WindowConfig windowConfig;
 
-    public RelatedEntitiesBean(Metadata metadata, WindowConfig windowConfig) {
+    public RelatedEntitiesSupportImpl(Metadata metadata, WindowConfig windowConfig) {
 //        this.messages = messages;
         this.metadata = metadata;
         this.windowConfig = windowConfig;

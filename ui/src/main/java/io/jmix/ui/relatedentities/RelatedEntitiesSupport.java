@@ -18,7 +18,7 @@ package io.jmix.ui.relatedentities;
 
 import io.jmix.ui.screen.FrameOwner;
 
-public interface RelatedEntitiesAPI {
+public interface RelatedEntitiesSupport {
 
     /**
      * Creates a related screen builder.
@@ -27,7 +27,7 @@ public interface RelatedEntitiesAPI {
      * <p>
      * Example of creating screen with entity class and property:
      * <pre>{@code
-     *      RelatedEntitiesBuilder builder = relatedEntitiesAPI.builder(this);
+     *      RelatedEntitiesBuilder builder = RelatedEntitiesSupport.builder(this);
      *      Screen colourBrowser = builder
      *              .withEntityClass(Car.class)
      *              .withProperty("colour")

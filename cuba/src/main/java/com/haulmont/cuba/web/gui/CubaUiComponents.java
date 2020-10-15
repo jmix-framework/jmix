@@ -42,6 +42,7 @@ import io.jmix.ui.component.Label;
 import io.jmix.ui.component.MaskedField;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.RadioButtonGroup;
+import io.jmix.ui.component.RelatedEntities;
 import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.component.RichTextArea;
 import io.jmix.ui.component.Slider;
@@ -104,6 +105,7 @@ public class CubaUiComponents extends UiComponentsImpl {
         classes.put(LookupPickerField.NAME, WebLookupPickerField.class);
         classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
         classes.put(EntityLinkField.NAME, WebEntityLinkField.class);
+        classes.put(RelatedEntities.NAME, WebRelatedEntities.class);
 
         classes.put(OptionsList.NAME, WebOptionsList.class);
         classes.put(PickerField.NAME, WebPickerField.class);

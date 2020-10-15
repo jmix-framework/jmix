@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.actions;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.relatedentities.RelatedEntitiesAPI;
 import io.jmix.core.MessageTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -26,7 +27,6 @@ import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.RelatedEntities;
-import io.jmix.ui.relatedentities.RelatedEntitiesAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -54,7 +54,6 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
 
     protected OpenType openType = OpenType.THIS_TAB;
 
-    @Autowired
     protected RelatedEntitiesAPI relatedEntitiesApi;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
@@ -82,6 +81,11 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
         }
     }
 
+    @Autowired
+    public void setRelatedEntitiesApi(RelatedEntitiesAPI relatedEntitiesApi) {
+        this.relatedEntitiesApi = relatedEntitiesApi;
+    }
+
     public void setScreen(String screen) {
         this.screen = screen;
     }
@@ -101,12 +105,12 @@ public class RelatedAction extends ListAction implements Action.HasBeforeActionP
                 return;
         }
 
-        // TODO: gg, wait for Haulmont/jmix-ui#40
-//        RelatedEntitiesAPI.RelatedScreenDescriptor descriptor = new RelatedEntitiesAPI.RelatedScreenDescriptor(screen, openType);
-//        descriptor.setFilterCaption(filterCaption);
+        RelatedEntitiesAPI.RelatedScreenDescriptor descriptor =
+                new RelatedEntitiesAPI.RelatedScreenDescriptor(screen, openType);
+        descriptor.setFilterCaption(filterCaption);
 
         //noinspection unchecked
-//        relatedEntitiesApi.openRelatedScreen(target.getSelected(), metaClass, metaProperty, descriptor);
+        relatedEntitiesApi.openRelatedScreen(target.getSelected(), metaClass, metaProperty, descriptor);
     }
 
     @Override

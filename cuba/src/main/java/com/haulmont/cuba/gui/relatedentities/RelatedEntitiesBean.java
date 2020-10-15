@@ -52,6 +52,7 @@ import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
+import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.Screen;
@@ -73,7 +74,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
     @Inject
-    protected io.jmix.ui.relatedentities.RelatedEntitiesAPI relatedEntitiesAPI;
+    protected RelatedEntitiesSupport relatedEntitiesSupport;
 
     @Inject
     protected Messages messages;
@@ -100,7 +101,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
     @Override
     public RelatedEntitiesBuilder builder(FrameOwner frameOwner) {
-        return relatedEntitiesAPI.builder(frameOwner);
+        return relatedEntitiesSupport.builder(frameOwner);
     }
 
     @Override

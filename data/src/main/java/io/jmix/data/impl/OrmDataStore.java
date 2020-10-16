@@ -1100,7 +1100,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             return;
 
         metadataTools.traverseAttributesByFetchPlan(fetchPlan, rootEntity, loadedOnly, (entity, property) -> {
-            if (property.getRange().isClass() && !metadataTools.isEmbedded(property)) {
+            if (property.getRange().isClass() && !metadataTools.isEmbedded(property)
+                    && metadataTools.isPersistent(property)) {
                 Object value = getValue(entity, property.getName());
                 if (value != null) {
                     if (property.getRange().getCardinality().isMany()) {

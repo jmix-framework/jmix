@@ -245,7 +245,7 @@ public class JmixEntityManager implements EntityManager {
     public void detach(Object entity) {
         delegate.detach(entity);
         if (entity instanceof Entity) {
-            support.detach(this, (Entity) entity);
+            support.detach(this, entity);
         }
     }
 

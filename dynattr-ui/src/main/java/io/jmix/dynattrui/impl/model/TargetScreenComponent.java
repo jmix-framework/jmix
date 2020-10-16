@@ -38,12 +38,6 @@ public class TargetScreenComponent {
     @ModelProperty
     protected String component;
 
-    public TargetScreenComponent(String screen, String component) {
-        this.screen = screen;
-        this.component = component;
-        this.id = UUID.randomUUID();
-    }
-
     public UUID getId() {
         return id;
     }

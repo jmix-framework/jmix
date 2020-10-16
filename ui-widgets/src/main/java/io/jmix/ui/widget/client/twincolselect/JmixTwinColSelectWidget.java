@@ -145,6 +145,11 @@ public class JmixTwinColSelectWidget extends VTwinColSelect {
                 listBox.addItem(caption, value);
             }
         }
+
+        // remove extra
+        for (int i = listBox.getItemCount() - 1; i >= options.size(); i--) {
+            listBox.removeItem(i);
+        }
     }
 
     @Override

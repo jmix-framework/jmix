@@ -18,10 +18,10 @@ package spec.haulmont.cuba.web.components.composite.components.comments;
 
 import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DataGrid;
 import com.haulmont.cuba.web.model.compositecomponent.Comment;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.ComponentContainer;

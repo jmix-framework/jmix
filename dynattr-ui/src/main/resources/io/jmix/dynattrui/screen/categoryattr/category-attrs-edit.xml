@@ -82,7 +82,7 @@
                                 </validators>
                             </textField>
                             <entityPicker id="defaultEntityIdField"
-                                         caption="msg://io.jmix.dynattr.impl.model/CategoryAttribute.defaultEntityId">
+                                         caption="msg://io.jmix.dynattr.model/CategoryAttribute.defaultEntityId">
                                 <actions>
                                     <action id="lookup" type="entity_lookup"/>
                                     <action id="clear" type="entity_clear"/>

@@ -16,9 +16,9 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.data.TreeDataGridItems;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -37,9 +37,8 @@ public interface TreeDataGrid<E> extends DataGrid<E> {
 
     String NAME = "treeDataGrid";
 
-    static <T> TypeToken<TreeDataGrid<T>> of(Class<T> itemClass) {
-        return new TypeToken<TreeDataGrid<T>>() {
-        };
+    static <T> ParameterizedTypeReference<TreeDataGrid<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<TreeDataGrid<T>>() {};
     }
 
     /**

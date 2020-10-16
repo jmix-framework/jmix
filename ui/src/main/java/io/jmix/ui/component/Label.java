@@ -15,8 +15,8 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.ui.component.data.HasValueSource;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,24 +33,36 @@ public interface Label<V> extends Component, HasValue<V>, HasValueSource<V>, Has
 
     String NAME = "label";
 
-    static <T, V> TypeToken<Label<T>> of(Class<V> valueClass) {
-        return new TypeToken<Label<T>>(){};
+    static <T, V> ParameterizedTypeReference<Label<T>> of(Class<V> valueClass) {
+        return new ParameterizedTypeReference<Label<T>>() {};
     }
 
-    TypeToken<Label<String>> TYPE_DEFAULT = new TypeToken<Label<String>>(){};
-    TypeToken<Label<String>> TYPE_STRING = new TypeToken<Label<String>>(){};
+    ParameterizedTypeReference<Label<String>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<Label<String>>() {};
+    ParameterizedTypeReference<Label<String>> TYPE_STRING =
+            new ParameterizedTypeReference<Label<String>>() {};
 
-    TypeToken<Label<Integer>> TYPE_INTEGER = new TypeToken<Label<Integer>>(){};
-    TypeToken<Label<Long>> TYPE_LONG = new TypeToken<Label<Long>>(){};
-    TypeToken<Label<Double>> TYPE_DOUBLE = new TypeToken<Label<Double>>(){};
-    TypeToken<Label<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<Label<BigDecimal>>(){};
+    ParameterizedTypeReference<Label<Integer>> TYPE_INTEGER =
+            new ParameterizedTypeReference<Label<Integer>>() {};
+    ParameterizedTypeReference<Label<Long>> TYPE_LONG =
+            new ParameterizedTypeReference<Label<Long>>() {};
+    ParameterizedTypeReference<Label<Double>> TYPE_DOUBLE =
+            new ParameterizedTypeReference<Label<Double>>() {};
+    ParameterizedTypeReference<Label<BigDecimal>> TYPE_BIGDECIMAL =
+            new ParameterizedTypeReference<Label<BigDecimal>>() {};
 
-    TypeToken<Label<java.sql.Date>> TYPE_DATE = new TypeToken<Label<java.sql.Date>>(){};
-    TypeToken<Label<java.util.Date>> TYPE_DATETIME = new TypeToken<Label<java.util.Date>>(){};
-    TypeToken<Label<LocalDate>> TYPE_LOCALDATE = new TypeToken<Label<LocalDate>>(){};
-    TypeToken<Label<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<Label<LocalDateTime>>(){};
-    TypeToken<Label<java.sql.Time>> TYPE_TIME = new TypeToken<Label<java.sql.Time>>(){};
-    TypeToken<Label<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<Label<OffsetTime>>(){};
+    ParameterizedTypeReference<Label<java.sql.Date>> TYPE_DATE =
+            new ParameterizedTypeReference<Label<java.sql.Date>>() {};
+    ParameterizedTypeReference<Label<java.util.Date>> TYPE_DATETIME =
+            new ParameterizedTypeReference<Label<java.util.Date>>() {};
+    ParameterizedTypeReference<Label<LocalDate>> TYPE_LOCALDATE =
+            new ParameterizedTypeReference<Label<LocalDate>>() {};
+    ParameterizedTypeReference<Label<LocalDateTime>> TYPE_LOCALDATETIME =
+            new ParameterizedTypeReference<Label<LocalDateTime>>() {};
+    ParameterizedTypeReference<Label<java.sql.Time>> TYPE_TIME =
+            new ParameterizedTypeReference<Label<java.sql.Time>>() {};
+    ParameterizedTypeReference<Label<OffsetTime>> TYPE_OFFSETTIME =
+            new ParameterizedTypeReference<Label<OffsetTime>>() {};
 
     boolean isHtmlEnabled();
     void setHtmlEnabled(boolean htmlEnabled);

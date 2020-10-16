@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -48,20 +48,32 @@ public interface TextField<V>
 
     String NAME = "textField";
 
-    TypeToken<TextField<String>> TYPE_DEFAULT = new TypeToken<TextField<String>>(){};
-    TypeToken<TextField<String>> TYPE_STRING = new TypeToken<TextField<String>>(){};
+    ParameterizedTypeReference<TextField<String>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<TextField<String>>() {};
+    ParameterizedTypeReference<TextField<String>> TYPE_STRING =
+            new ParameterizedTypeReference<TextField<String>>() {};
 
-    TypeToken<TextField<Integer>> TYPE_INTEGER = new TypeToken<TextField<Integer>>(){};
-    TypeToken<TextField<Long>> TYPE_LONG = new TypeToken<TextField<Long>>(){};
-    TypeToken<TextField<Double>> TYPE_DOUBLE = new TypeToken<TextField<Double>>(){};
-    TypeToken<TextField<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<TextField<BigDecimal>>(){};
+    ParameterizedTypeReference<TextField<Integer>> TYPE_INTEGER =
+            new ParameterizedTypeReference<TextField<Integer>>() {};
+    ParameterizedTypeReference<TextField<Long>> TYPE_LONG =
+            new ParameterizedTypeReference<TextField<Long>>() {};
+    ParameterizedTypeReference<TextField<Double>> TYPE_DOUBLE =
+            new ParameterizedTypeReference<TextField<Double>>() {};
+    ParameterizedTypeReference<TextField<BigDecimal>> TYPE_BIGDECIMAL =
+            new ParameterizedTypeReference<TextField<BigDecimal>>() {};
 
-    TypeToken<TextField<Date>> TYPE_DATE = new TypeToken<TextField<Date>>(){};
-    TypeToken<TextField<java.util.Date>> TYPE_DATETIME = new TypeToken<TextField<java.util.Date>>(){};
-    TypeToken<TextField<LocalDate>> TYPE_LOCALDATE = new TypeToken<TextField<LocalDate>>(){};
-    TypeToken<TextField<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<TextField<LocalDateTime>>(){};
-    TypeToken<TextField<Time>> TYPE_TIME = new TypeToken<TextField<Time>>(){};
-    TypeToken<TextField<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TextField<OffsetTime>>(){};
+    ParameterizedTypeReference<TextField<Date>> TYPE_DATE =
+            new ParameterizedTypeReference<TextField<Date>>() {};
+    ParameterizedTypeReference<TextField<java.util.Date>> TYPE_DATETIME =
+            new ParameterizedTypeReference<TextField<java.util.Date>>() {};
+    ParameterizedTypeReference<TextField<LocalDate>> TYPE_LOCALDATE =
+            new ParameterizedTypeReference<TextField<LocalDate>>() {};
+    ParameterizedTypeReference<TextField<LocalDateTime>> TYPE_LOCALDATETIME =
+            new ParameterizedTypeReference<TextField<LocalDateTime>>() {};
+    ParameterizedTypeReference<TextField<Time>> TYPE_TIME =
+            new ParameterizedTypeReference<TextField<Time>>() {};
+    ParameterizedTypeReference<TextField<OffsetTime>> TYPE_OFFSETTIME =
+            new ParameterizedTypeReference<TextField<OffsetTime>>() {};
 
     /**
      * Returns a string representation of the value.

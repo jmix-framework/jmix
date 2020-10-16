@@ -16,9 +16,9 @@
 
 package io.jmix.ui;
 
-import com.google.common.reflect.TypeToken;
-import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.Component;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * Factory to create UI components in client independent manner.
@@ -48,10 +48,10 @@ public interface UiComponents {
     /**
      * Create a component instance by its type.
      *
-     * @param type component type token
-     * @return component instance for the current client type (web or desktop)
+     * @param type component type reference
+     * @return component instance
      * @see io.jmix.ui.component.Label#TYPE_DEFAULT
      * @see io.jmix.ui.component.TextField#TYPE_DEFAULT
      */
-    <T extends Component> T create(TypeToken<T> type);
+    <T extends Component> T create(ParameterizedTypeReference<T> type);
 }

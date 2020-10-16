@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.time.LocalDate;
@@ -32,13 +32,19 @@ import java.util.TimeZone;
 public interface DateField<V> extends Field<V>, HasDatatype<V>, Buffered, Component.Focusable, HasRange<V> {
     String NAME = "dateField";
 
-    TypeToken<DateField<java.util.Date>> TYPE_DEFAULT = new TypeToken<DateField<java.util.Date>>(){};
+    ParameterizedTypeReference<DateField<java.util.Date>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<DateField<java.util.Date>>() {};
 
-    TypeToken<DateField<java.sql.Date>> TYPE_DATE = new TypeToken<DateField<java.sql.Date>>(){};
-    TypeToken<DateField<java.util.Date>> TYPE_DATETIME = new TypeToken<DateField<java.util.Date>>(){};
-    TypeToken<DateField<LocalDate>> TYPE_LOCALDATE = new TypeToken<DateField<LocalDate>>(){};
-    TypeToken<DateField<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<DateField<LocalDateTime>>(){};
-    TypeToken<DateField<OffsetDateTime>> TYPE_OFFSETDATETIME = new TypeToken<DateField<OffsetDateTime>>(){};
+    ParameterizedTypeReference<DateField<java.sql.Date>> TYPE_DATE =
+            new ParameterizedTypeReference<DateField<java.sql.Date>>() {};
+    ParameterizedTypeReference<DateField<java.util.Date>> TYPE_DATETIME =
+            new ParameterizedTypeReference<DateField<java.util.Date>>() {};
+    ParameterizedTypeReference<DateField<LocalDate>> TYPE_LOCALDATE =
+            new ParameterizedTypeReference<DateField<LocalDate>>() {};
+    ParameterizedTypeReference<DateField<LocalDateTime>> TYPE_LOCALDATETIME =
+            new ParameterizedTypeReference<DateField<LocalDateTime>>() {};
+    ParameterizedTypeReference<DateField<OffsetDateTime>> TYPE_OFFSETDATETIME =
+            new ParameterizedTypeReference<DateField<OffsetDateTime>>() {};
 
     enum Resolution {
         SEC,

@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import com.google.common.base.Preconditions;
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -26,6 +25,7 @@ import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.InstanceContainer;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -49,9 +49,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
 
     String NAME = "dataGrid";
 
-    static <T> TypeToken<DataGrid<T>> of(Class<T> itemClass) {
-        return new TypeToken<DataGrid<T>>() {
-        };
+    static <T> ParameterizedTypeReference<DataGrid<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<DataGrid<T>>() {};
     }
 
     /**

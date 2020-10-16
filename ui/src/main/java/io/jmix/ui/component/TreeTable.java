@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * TreeTable extends the {@link Table} component so that it can also visualize a hierarchy of its Items in a similar
@@ -27,9 +27,8 @@ public interface TreeTable<E> extends Table<E> {
 
     String NAME = "treeTable";
 
-    static <T> TypeToken<TreeTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
-        return new TypeToken<TreeTable<T>>() {
-        };
+    static <T> ParameterizedTypeReference<TreeTable<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<TreeTable<T>>() {};
     }
 
     void expandAll();

@@ -15,9 +15,9 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.GroupInfo;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -33,9 +33,8 @@ public interface GroupTable<E> extends Table<E> {
 
     String NAME = "groupTable";
 
-    static <T> TypeToken<GroupTable<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
-        return new TypeToken<GroupTable<T>>() {
-        };
+    static <T> ParameterizedTypeReference<GroupTable<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<GroupTable<T>>() {};
     }
 
     /**

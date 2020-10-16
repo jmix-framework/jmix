@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.sql.Date;
@@ -32,13 +32,19 @@ import java.time.OffsetDateTime;
 public interface DatePicker<V> extends Field<V>, HasDatatype<V>, Component.Focusable, HasRange<V>, Buffered {
     String NAME = "datePicker";
 
-    TypeToken<DatePicker<Date>> TYPE_DEFAULT = new TypeToken<DatePicker<Date>>(){};
+    ParameterizedTypeReference<DatePicker<Date>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<DatePicker<Date>>() {};
 
-    TypeToken<DatePicker<Date>> TYPE_DATE = new TypeToken<DatePicker<Date>>(){};
-    TypeToken<DatePicker<java.util.Date>> TYPE_DATETIME = new TypeToken<DatePicker<java.util.Date>>(){};
-    TypeToken<DatePicker<LocalDate>> TYPE_LOCALDATE = new TypeToken<DatePicker<LocalDate>>(){};
-    TypeToken<DatePicker<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<DatePicker<LocalDateTime>>(){};
-    TypeToken<DatePicker<OffsetDateTime>> TYPE_OFFSETDATETIME = new TypeToken<DatePicker<OffsetDateTime>>(){};
+    ParameterizedTypeReference<DatePicker<Date>> TYPE_DATE =
+            new ParameterizedTypeReference<DatePicker<Date>>() {};
+    ParameterizedTypeReference<DatePicker<java.util.Date>> TYPE_DATETIME =
+            new ParameterizedTypeReference<DatePicker<java.util.Date>>() {};
+    ParameterizedTypeReference<DatePicker<LocalDate>> TYPE_LOCALDATE =
+            new ParameterizedTypeReference<DatePicker<LocalDate>>() {};
+    ParameterizedTypeReference<DatePicker<LocalDateTime>> TYPE_LOCALDATETIME =
+            new ParameterizedTypeReference<DatePicker<LocalDateTime>>() {};
+    ParameterizedTypeReference<DatePicker<OffsetDateTime>> TYPE_OFFSETDATETIME =
+            new ParameterizedTypeReference<DatePicker<OffsetDateTime>>() {};
 
     enum Resolution {
         DAY,

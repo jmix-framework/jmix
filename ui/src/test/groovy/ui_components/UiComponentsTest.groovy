@@ -17,6 +17,7 @@
 package ui_components
 
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.metamodel.datatype.impl.IntegerDatatype
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.Facets
 import io.jmix.ui.UiConfiguration
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Unroll
 import test_support.UiTestConfiguration
+import test_support.entity.Foo
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
 class UiComponentsTest extends ScreenSpecification {
@@ -126,8 +128,6 @@ class UiComponentsTest extends ScreenSpecification {
 
     @Unroll
     def "create standard facet: '#facet' with Facets"() {
-        given:
-
         expect:
 
         facets.create(facet) != null
@@ -149,5 +149,48 @@ class UiComponentsTest extends ScreenSpecification {
 
                 NotificationFacet,
         ]
+    }
+
+    @Unroll
+    def "create standard UI component: '#typeReference' with UiComponents"() {
+
+        expect:
+        uiComponents.create(typeReference) != null
+
+        where:
+        typeReference << [
+                ComboBox.TYPE_STRING,
+                CurrencyField.TYPE_DEFAULT,
+                DataGrid.of(Foo),
+                DateField.TYPE_DEFAULT,
+                DatePicker.TYPE_DEFAULT,
+                EntityComboBox.of(Foo),
+                EntityPicker.of(Foo),
+                EntitySuggestionField.of(Foo),
+                GroupTable.of(Foo),
+                Label.TYPE_DEFAULT,
+                MaskedField.TYPE_DEFAULT,
+                SuggestionField.of(Foo),
+                Table.of(Foo),
+                TextArea.TYPE_DEFAULT,
+                TextField.TYPE_DEFAULT,
+                TimeField.TYPE_DEFAULT,
+                Tree.of(Foo),
+                TreeDataGrid.of(Foo),
+                TreeTable.of(Foo),
+                ValuePicker.TYPE_STRING,
+                ValuesPicker.TYPE_STRING
+        ]
+    }
+
+    def "create standard UI component using TypeReference with UiComponents"() {
+
+        when:
+        TextField<Integer> textField = uiComponents.create(TextField.TYPE_INTEGER)
+
+        then:
+        noExceptionThrown()
+        textField != null
+        textField.getDatatype() instanceof IntegerDatatype
     }
 }

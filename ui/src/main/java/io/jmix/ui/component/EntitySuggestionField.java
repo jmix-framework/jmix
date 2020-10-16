@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * SuggestionPickerField adds to PickerField the ability to search an entity by user input.
@@ -27,8 +27,7 @@ public interface EntitySuggestionField<V> extends SuggestionField<V>, EntityPick
 
     String NAME = "entitySuggestionField";
 
-    static <T> TypeToken<EntitySuggestionField<T>> of(Class<T> valueClass) {
-        return new TypeToken<EntitySuggestionField<T>>() {
-        };
+    static <T> ParameterizedTypeReference<EntitySuggestionField<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<EntitySuggestionField<T>>() {};
     }
 }

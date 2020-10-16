@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -29,12 +29,17 @@ public interface CurrencyField<V extends Number> extends Field<V>, HasDatatype<V
 
     String NAME = "currencyField";
 
-    TypeToken<CurrencyField<BigDecimal>> TYPE_DEFAULT = new TypeToken<CurrencyField<BigDecimal>>(){};
-    TypeToken<CurrencyField<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<CurrencyField<BigDecimal>>(){};
+    ParameterizedTypeReference<CurrencyField<BigDecimal>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<CurrencyField<BigDecimal>>() {};
 
-    TypeToken<CurrencyField<Integer>> TYPE_INTEGER = new TypeToken<CurrencyField<Integer>>(){};
-    TypeToken<CurrencyField<Long>> TYPE_LONG = new TypeToken<CurrencyField<Long>>(){};
-    TypeToken<CurrencyField<Double>> TYPE_DOUBLE = new TypeToken<CurrencyField<Double>>(){};
+    ParameterizedTypeReference<CurrencyField<BigDecimal>> TYPE_BIGDECIMAL =
+            new ParameterizedTypeReference<CurrencyField<BigDecimal>>() {};
+    ParameterizedTypeReference<CurrencyField<Integer>> TYPE_INTEGER =
+            new ParameterizedTypeReference<CurrencyField<Integer>>() {};
+    ParameterizedTypeReference<CurrencyField<Long>> TYPE_LONG =
+            new ParameterizedTypeReference<CurrencyField<Long>>() {};
+    ParameterizedTypeReference<CurrencyField<Double>> TYPE_DOUBLE =
+            new ParameterizedTypeReference<CurrencyField<Double>>() {};
 
     /**
      * Sets the given <code>currency</code> to the field. Currency label will be displayed next to the text input

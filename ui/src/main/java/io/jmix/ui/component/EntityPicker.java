@@ -15,8 +15,8 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.metamodel.model.MetaClass;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 
@@ -30,8 +30,8 @@ public interface EntityPicker<V> extends ValuePicker<V>, LookupComponent<V> {
 
     String NAME = "entityPicker";
 
-    static <T> TypeToken<EntityPicker<T>> of(Class<T> valueClass) {
-        return new TypeToken<EntityPicker<T>>() {};
+    static <T> ParameterizedTypeReference<EntityPicker<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<EntityPicker<T>>() {};
     }
 
     @Nullable

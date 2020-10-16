@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -32,10 +32,11 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
 
     String NAME = "comboBox";
 
-    TypeToken<ComboBox<String>> TYPE_STRING = new TypeToken<ComboBox<String>>(){};
+    ParameterizedTypeReference<ComboBox<String>> TYPE_STRING =
+            new ParameterizedTypeReference<ComboBox<String>>() {};
 
-    static <T> TypeToken<ComboBox<T>> of(Class<T> valueClass) {
-        return new TypeToken<ComboBox<T>>() {};
+    static <T> ParameterizedTypeReference<ComboBox<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<ComboBox<T>>() {};
     }
 
     /**

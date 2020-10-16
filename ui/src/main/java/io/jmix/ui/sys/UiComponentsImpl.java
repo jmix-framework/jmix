@@ -16,7 +16,6 @@
 
 package io.jmix.ui.sys;
 
-import com.google.common.reflect.TypeToken;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -33,6 +32,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContextAware;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -192,12 +193,13 @@ public class UiComponentsImpl implements UiComponents {
         return (T) create(name);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public <T extends Component> T create(TypeToken<T> type) {
-        T t = (T) create((Class) type.getRawType());
+    public <T extends Component> T create(ParameterizedTypeReference<T> typeReference) {
+        ParameterizedType type = (ParameterizedType) typeReference.getType();
+        T t = create((Class<T>) type.getRawType());
         if (t instanceof HasDatatype) {
-            Type[] actualTypeArguments = ((ParameterizedType) type.getType()).getActualTypeArguments();
+            Type[] actualTypeArguments = type.getActualTypeArguments();
             if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class) {
                 Class actualTypeArgument = (Class) actualTypeArguments[0];
 

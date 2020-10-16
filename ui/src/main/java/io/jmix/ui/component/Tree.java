@@ -15,10 +15,10 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.data.TreeItems;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -34,9 +34,8 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
 
     String NAME = "tree";
 
-    static <T> TypeToken<Tree<T>> of(Class<T> itemClass) {
-        return new TypeToken<Tree<T>>() {
-        };
+    static <T> ParameterizedTypeReference<Tree<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<Tree<T>>() {};
     }
 
     void expandTree();

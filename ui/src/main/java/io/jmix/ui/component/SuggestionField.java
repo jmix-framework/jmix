@@ -16,8 +16,8 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.util.Preconditions;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -33,8 +33,8 @@ public interface SuggestionField<V> extends Field<V>,
 
     String NAME = "suggestionField";
 
-    static <T> TypeToken<SuggestionField<T>> of(Class<T> valueClass) {
-        return new TypeToken<SuggestionField<T>>() {};
+    static <T> ParameterizedTypeReference<SuggestionField<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<SuggestionField<T>>() {};
     }
 
     /**

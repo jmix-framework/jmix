@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.Collection;
 
@@ -24,9 +24,10 @@ public interface ValuesPicker<V> extends ValuePicker<Collection<V>> {
 
     String NAME = "valuesPicker";
 
-    TypeToken<ValuesPicker<String>> TYPE_STRING = new TypeToken<ValuesPicker<String>>(){};
+    ParameterizedTypeReference<ValuesPicker<String>> TYPE_STRING =
+            new ParameterizedTypeReference<ValuesPicker<String>>() {};
 
-    static <T> TypeToken<ValuesPicker<T>> of(Class<T> valueClass) {
-        return new TypeToken<ValuesPicker<T>>() {};
+    static <T> ParameterizedTypeReference<ValuesPicker<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<ValuesPicker<T>>() {};
     }
 }

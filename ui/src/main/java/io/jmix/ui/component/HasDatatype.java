@@ -27,7 +27,7 @@ public interface HasDatatype<V> {
      *
      * @param datatype {@link Datatype} instance
      */
-    void setDatatype(Datatype<V> datatype);
+    void setDatatype(@Nullable Datatype<V> datatype);
 
     /**
      * @return a datatype that is used by this component

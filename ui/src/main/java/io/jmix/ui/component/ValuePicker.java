@@ -16,8 +16,8 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.common.event.Subscription;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -33,10 +33,11 @@ public interface ValuePicker<V> extends Field<V>, HasFormatter<V>,
 
     String NAME = "valuePicker";
 
-    TypeToken<ValuePicker<String>> TYPE_STRING = new TypeToken<ValuePicker<String>>(){};
+    ParameterizedTypeReference<ValuePicker<String>> TYPE_STRING =
+            new ParameterizedTypeReference<ValuePicker<String>>() {};
 
-    static <T> TypeToken<ValuePicker<T>> of(Class<T> valueClass) {
-        return new TypeToken<ValuePicker<T>>() {};
+    static <T> ParameterizedTypeReference<ValuePicker<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<ValuePicker<T>>() {};
     }
 
     /**

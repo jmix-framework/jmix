@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -30,11 +30,15 @@ import java.time.OffsetTime;
 public interface TimeField<V> extends Field<V>, HasDatatype<V>, Buffered, Component.Focusable {
     String NAME = "timeField";
 
-    TypeToken<TimeField<Date>> TYPE_DEFAULT = new TypeToken<TimeField<Date>>(){};
+    ParameterizedTypeReference<TimeField<Date>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<TimeField<Date>>() {};
 
-    TypeToken<TimeField<Time>> TYPE_TIME = new TypeToken<TimeField<Time>>(){};
-    TypeToken<TimeField<LocalTime>> TYPE_LOCALTIME = new TypeToken<TimeField<LocalTime>>(){};
-    TypeToken<TimeField<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TimeField<OffsetTime>>(){};
+    ParameterizedTypeReference<TimeField<Time>> TYPE_TIME =
+            new ParameterizedTypeReference<TimeField<Time>>() {};
+    ParameterizedTypeReference<TimeField<LocalTime>> TYPE_LOCALTIME =
+            new ParameterizedTypeReference<TimeField<LocalTime>>() {};
+    ParameterizedTypeReference<TimeField<OffsetTime>> TYPE_OFFSETTIME =
+            new ParameterizedTypeReference<TimeField<OffsetTime>>() {};
 
     enum Resolution {
         SEC,

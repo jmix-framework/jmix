@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -42,20 +42,32 @@ public interface TextArea<V> extends TextInputField<V>,
 
     String NAME = "textArea";
 
-    TypeToken<TextArea<String>> TYPE_DEFAULT = new TypeToken<TextArea<String>>(){};
-    TypeToken<TextArea<String>> TYPE_STRING = new TypeToken<TextArea<String>>(){};
+    ParameterizedTypeReference<TextArea<String>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<TextArea<String>>() {};
+    ParameterizedTypeReference<TextArea<String>> TYPE_STRING =
+            new ParameterizedTypeReference<TextArea<String>>() {};
 
-    TypeToken<TextArea<Integer>> TYPE_INTEGER = new TypeToken<TextArea<Integer>>(){};
-    TypeToken<TextArea<Long>> TYPE_LONG = new TypeToken<TextArea<Long>>(){};
-    TypeToken<TextArea<Double>> TYPE_DOUBLE = new TypeToken<TextArea<Double>>(){};
-    TypeToken<TextArea<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<TextArea<BigDecimal>>(){};
+    ParameterizedTypeReference<TextArea<Integer>> TYPE_INTEGER =
+            new ParameterizedTypeReference<TextArea<Integer>>() {};
+    ParameterizedTypeReference<TextArea<Long>> TYPE_LONG =
+            new ParameterizedTypeReference<TextArea<Long>>() {};
+    ParameterizedTypeReference<TextArea<Double>> TYPE_DOUBLE =
+            new ParameterizedTypeReference<TextArea<Double>>() {};
+    ParameterizedTypeReference<TextArea<BigDecimal>> TYPE_BIGDECIMAL =
+            new ParameterizedTypeReference<TextArea<BigDecimal>>() {};
 
-    TypeToken<TextArea<Date>> TYPE_DATE = new TypeToken<TextArea<Date>>(){};
-    TypeToken<TextArea<java.util.Date>> TYPE_DATETIME = new TypeToken<TextArea<java.util.Date>>(){};
-    TypeToken<TextArea<LocalDate>> TYPE_LOCALDATE = new TypeToken<TextArea<LocalDate>>(){};
-    TypeToken<TextArea<LocalDateTime>> TYPE_LOCALDATETIME = new TypeToken<TextArea<LocalDateTime>>(){};
-    TypeToken<TextArea<Time>> TYPE_TIME = new TypeToken<TextArea<Time>>(){};
-    TypeToken<TextArea<OffsetTime>> TYPE_OFFSETTIME = new TypeToken<TextArea<OffsetTime>>(){};
+    ParameterizedTypeReference<TextArea<Date>> TYPE_DATE =
+            new ParameterizedTypeReference<TextArea<Date>>() {};
+    ParameterizedTypeReference<TextArea<java.util.Date>> TYPE_DATETIME =
+            new ParameterizedTypeReference<TextArea<java.util.Date>>() {};
+    ParameterizedTypeReference<TextArea<LocalDate>> TYPE_LOCALDATE =
+            new ParameterizedTypeReference<TextArea<LocalDate>>() {};
+    ParameterizedTypeReference<TextArea<LocalDateTime>> TYPE_LOCALDATETIME =
+            new ParameterizedTypeReference<TextArea<LocalDateTime>>() {};
+    ParameterizedTypeReference<TextArea<Time>> TYPE_TIME =
+            new ParameterizedTypeReference<TextArea<Time>>() {};
+    ParameterizedTypeReference<TextArea<OffsetTime>> TYPE_OFFSETTIME =
+            new ParameterizedTypeReference<TextArea<OffsetTime>>() {};
 
     /**
      * @return the number of rows

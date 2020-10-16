@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -45,15 +45,22 @@ public interface MaskedField<V>
 
     String NAME = "maskedField";
 
-    TypeToken<MaskedField<String>> TYPE_DEFAULT = new TypeToken<MaskedField<String>>(){};
-    TypeToken<MaskedField<String>> TYPE_STRING = new TypeToken<MaskedField<String>>(){};
+    ParameterizedTypeReference<MaskedField<String>> TYPE_DEFAULT =
+            new ParameterizedTypeReference<MaskedField<String>>() {};
+    ParameterizedTypeReference<MaskedField<String>> TYPE_STRING =
+            new ParameterizedTypeReference<MaskedField<String>>() {};
 
-    TypeToken<MaskedField<Integer>> TYPE_INTEGER = new TypeToken<MaskedField<Integer>>(){};
-    TypeToken<MaskedField<Long>> TYPE_LONG = new TypeToken<MaskedField<Long>>(){};
-    TypeToken<MaskedField<Double>> TYPE_DOUBLE = new TypeToken<MaskedField<Double>>(){};
-    TypeToken<MaskedField<BigDecimal>> TYPE_BIGDECIMAL = new TypeToken<MaskedField<BigDecimal>>(){};
+    ParameterizedTypeReference<MaskedField<Integer>> TYPE_INTEGER =
+            new ParameterizedTypeReference<MaskedField<Integer>>() {};
+    ParameterizedTypeReference<MaskedField<Long>> TYPE_LONG =
+            new ParameterizedTypeReference<MaskedField<Long>>() {};
+    ParameterizedTypeReference<MaskedField<Double>> TYPE_DOUBLE =
+            new ParameterizedTypeReference<MaskedField<Double>>() {};
+    ParameterizedTypeReference<MaskedField<BigDecimal>> TYPE_BIGDECIMAL =
+            new ParameterizedTypeReference<MaskedField<BigDecimal>>() {};
 
-    TypeToken<MaskedField<UUID>> TYPE_UUID = new TypeToken<MaskedField<UUID>>(){};
+    ParameterizedTypeReference<MaskedField<UUID>> TYPE_UUID =
+            new ParameterizedTypeReference<MaskedField<UUID>>() {};
 
     void setMask(String mask);
     String getMask();

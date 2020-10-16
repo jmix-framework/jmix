@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -31,6 +30,7 @@ import io.jmix.ui.model.InstanceContainer;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -59,9 +59,8 @@ public interface Table<E>
 
     String NAME = "table";
 
-    static <T> TypeToken<Table<T>> of(@SuppressWarnings("unused") Class<T> itemClass) {
-        return new TypeToken<Table<T>>() {
-        };
+    static <T> ParameterizedTypeReference<Table<T>> of(Class<T> itemClass) {
+        return new ParameterizedTypeReference<Table<T>>() {};
     }
 
     List<Column<E>> getColumns();

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import com.google.common.reflect.TypeToken;
+import org.springframework.core.ParameterizedTypeReference;
 
 /**
  * A components that adds to {@link EntityPicker} the ability to select an entity from drop-down list.
@@ -25,7 +25,7 @@ public interface EntityComboBox<V> extends ComboBox<V>, EntityPicker<V>, Support
 
     String NAME = "entityComboBox";
 
-    static <T> TypeToken<EntityComboBox<T>> of(Class<T> valueClass) {
-        return new TypeToken<EntityComboBox<T>>() {};
+    static <T> ParameterizedTypeReference<EntityComboBox<T>> of(Class<T> valueClass) {
+        return new ParameterizedTypeReference<EntityComboBox<T>>() {};
     }
 }

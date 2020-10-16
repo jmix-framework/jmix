@@ -25,7 +25,6 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.meta.OptionsBinding;
 import io.jmix.ui.component.data.options.OptionsBinder;
-import io.jmix.ui.component.impl.WebAbstractField;
 import io.jmix.ui.widget.JmixOptionGroup;
 import io.jmix.ui.widget.client.optiongroup.OptionGroupOrientation;
 import org.apache.commons.collections4.CollectionUtils;

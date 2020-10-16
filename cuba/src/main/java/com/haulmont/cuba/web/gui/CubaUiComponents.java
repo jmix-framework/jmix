@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.web.gui;
 
+import com.google.common.reflect.TypeToken;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.ButtonsPanel;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
@@ -62,7 +64,10 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.GridLayoutImpl;
 import io.jmix.ui.sys.UiComponentsImpl;
 
-public class CubaUiComponents extends UiComponentsImpl {
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+
+public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
 
     public static final String NAME = "cuba_UiComponents";
 
@@ -124,5 +129,20 @@ public class CubaUiComponents extends UiComponentsImpl {
         classes.put(FoldersPane.NAME, WebFoldersPane.class);
         classes.put(PopupView.NAME, WebPopupView.class);
         classes.put(BulkEditor.NAME, WebBulkEditor.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Component> T create(TypeToken<T> type) {
+        T t = (T) create((Class) type.getRawType());
+        if (t instanceof HasDatatype) {
+            Type[] actualTypeArguments = ((ParameterizedType) type.getType()).getActualTypeArguments();
+            if (actualTypeArguments.length == 1 && actualTypeArguments[0] instanceof Class) {
+                Class actualTypeArgument = (Class) actualTypeArguments[0];
+
+                ((HasDatatype) t).setDatatype(datatypeRegistry.find(actualTypeArgument));
+            }
+        }
+        return t;
     }
 }

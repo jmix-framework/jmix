@@ -17,6 +17,8 @@
 package test_support.bean;
 
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
+import io.jmix.ui.event.screen.ScreenClosedEvent;
+import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +29,22 @@ public class TestWebBean {
 
     public static final ThreadLocal<Boolean> testMethodInvoked = new ThreadLocal<>();
 
+    public static final ThreadLocal<Boolean> screenOpenedEventHandled = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> screenClosedEventHandled = new ThreadLocal<>();
     public static final ThreadLocal<Boolean> workAreaTabChangedEventHandled = new ThreadLocal<>();
 
     public void testMethod() {
         testMethodInvoked.set(true);
+    }
+
+    @EventListener
+    public void onScreenOpened(ScreenOpenedEvent evt) {
+        screenOpenedEventHandled.set(true);
+    }
+
+    @EventListener
+    public void onScreenClosed(ScreenClosedEvent evt) {
+        screenClosedEventHandled.set(true);
     }
 
     @EventListener

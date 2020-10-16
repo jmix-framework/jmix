@@ -39,6 +39,7 @@ import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.component.data.compatibility.DsSupport;
+import io.jmix.ui.event.screen.ScreenClosedEvent;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
@@ -50,6 +51,7 @@ import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
 import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
+import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -421,6 +423,8 @@ public class ScreensImpl implements Screens {
 
         afterShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.AFTER_SHOW, screen.getId()));
 
+        applicationContext.publishEvent(new ScreenOpenedEvent(screen));
+
         return OperationResult.success();
     }
 
@@ -566,6 +570,8 @@ public class ScreensImpl implements Screens {
         }
 
         fireEvent(screen, AfterDetachEvent.class, new AfterDetachEvent(screen));
+
+        applicationContext.publishEvent(new ScreenClosedEvent(screen));
 
         afterScreenRemove(screen);
     }

@@ -26,6 +26,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -52,8 +53,9 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
                                                   Metadata metadata,
                                                   MetadataTools metadataTools,
                                                   Icons icons,
+                                                  Actions actions,
                                                   GuiActionSupport guiActionSupport) {
-        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
 
         this.guiActionSupport = guiActionSupport;
     }

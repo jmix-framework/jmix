@@ -38,9 +38,11 @@ import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.valuespicker.SelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
+import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.CollectionContainer;
@@ -211,7 +213,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected TextField<BigDecimal> maxDecimalField;
     @Autowired
-    protected TokenList<CategoryAttribute> dependsOnAttributesField;
+    protected ValuesPicker<CategoryAttribute> dependsOnAttributesField;
 
     @Autowired
     protected CollectionContainer<TargetScreenComponent> targetScreensDc;
@@ -399,7 +401,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected void dependsOnAttributesFieldValidator(Collection<CategoryAttribute> categoryAttributes) {
         if (recalculationScriptField.getValue() != null
                 && CollectionUtils.isEmpty(categoryAttributes)) {
-            throw new ValidationException(messages.getMessage(CategoryAttrsEdit.class, "dependsOnAttributes.validationMsg"));
+            throw new ValidationException(
+                    messages.getMessage(CategoryAttrsEdit.class, "dependsOnAttributes.validationMsg"));
         }
     }
 
@@ -505,11 +508,11 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void initDependsOnAttributesField() {
-        List<CategoryAttribute> attributesOptions = getAttributesOptions();
-        if (attributesOptions != null) {
-            dependsOnAttributesField.setOptionsList(attributesOptions);
-        }
+        SelectAction<CategoryAttribute> selectAction =
+                (SelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
+        selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
     }
 
     protected void setupNumberFormat() {
@@ -756,16 +759,16 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         return options;
     }
 
-    @Nullable
     protected List<CategoryAttribute> getAttributesOptions() {
+        List<CategoryAttribute> optionsList = new ArrayList<>();
         CategoryAttribute attribute = getEditedEntity();
         List<CategoryAttribute> categoryAttributes = attribute.getCategory().getCategoryAttrs();
         if (categoryAttributes != null) {
-            List<CategoryAttribute> optionsList = new ArrayList<>(categoryAttributes);
+            optionsList.addAll(categoryAttributes);
             optionsList.remove(attribute);
             return optionsList;
         }
-        return null;
+        return optionsList;
     }
 
     protected void showMessageDialog(String caption, String message) {

@@ -120,10 +120,13 @@
                  margin="true">
                 <form id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
                     <column width="100%">
-                        <tokenList id="dependsOnAttributesField" property="configuration.dependsOnAttributes"
-                                   inline="true">
-                            <lookup lookup="false"/>
-                        </tokenList>
+                        <valuesPicker id="dependsOnAttributesField" property="configuration.dependsOnAttributes"
+                                      fieldEditable="true">
+                            <actions>
+                                <action id="select" type="values_select"/>
+                                <action id="clear" type="value_clear"/>
+                            </actions>
+                        </valuesPicker>
                         <comboBox id="optionsLoaderTypeField" property="configuration.optionsLoaderType"/>
                         <sourceCodeEditor id="optionsLoaderScriptField" property="configuration.optionsLoaderScript"
                                           showGutter="false"/>

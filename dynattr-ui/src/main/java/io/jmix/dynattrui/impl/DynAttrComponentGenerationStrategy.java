@@ -19,7 +19,6 @@ package io.jmix.dynattrui.impl;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -36,6 +35,8 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.action.valuespicker.SelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.data.options.MapOptions;
@@ -45,6 +46,7 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
@@ -114,7 +116,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             return null;
         }
 
-        Component resultComponent = null;
+        Component resultComponent;
         if (attribute.isCollection()) {
             resultComponent = createCollectionField(context, attribute);
         } else if (attribute.getDataType() == ENTITY) {
@@ -168,36 +170,25 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     }
 
     protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
-        /*ListEditor listEditor = uiComponents.create(ListEditor.NAME);
+        ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.NAME);
 
-        listEditor.setEntityJoinClause(attribute.getConfiguration().getJoinClause());
-        listEditor.setEntityWhereClause(attribute.getConfiguration().getWhereClause());
+        setValidators(valuesPicker, attribute);
+        setValueSource(valuesPicker, context);
 
-        setValidators(listEditor, attribute);
+        SelectAction selectAction = actions.create(SelectAction.class);
+        initValuesSelectActionByAttribute(selectAction, attribute);
 
-        AttributeType type = attribute.getDataType();
-
-        ListEditor.ItemType itemType = getListEditorItemType(attribute.getDataType());
-        listEditor.setItemType(itemType);
-
-        if (type == ENTITY) {
-            Class<?> javaType = attribute.getJavaType();
-            if (javaType != null) {
-                MetaClass metaClass = metadata.getClass(javaType);
-                listEditor.setEntityName(metaClass.getName());
-                listEditor.setUseLookupField(attribute.getConfiguration().isLookup());
-            }
+        if (valuesPicker.getValueSource() instanceof ContainerValueSource) {
+            ContainerValueSource valueSource = (ContainerValueSource) valuesPicker.getValueSource();
+            setValuesPickerOptionsLoader(valuesPicker, attribute, valueSource);
         }
 
-        if (type == ENUMERATION) {
-            //noinspection unchecked
-            listEditor.setOptionsMap(getLocalizedEnumerationMap(attribute));
-        }
+        valuesPicker.addAction(selectAction);
 
-        setValueSource(listEditor, context);
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        valuesPicker.addAction(valueClearAction);
 
-        return listEditor;*/
-        return null;
+        return valuesPicker;
     }
 
     protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
@@ -233,7 +224,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         ComboBox comboBox = uiComponents.create(ComboBox.class);
 
         if (context.getValueSource() instanceof ContainerValueSource) {
-            setOptionsLoader(comboBox, attribute, (ContainerValueSource) context.getValueSource());
+            setComboBoxOptionsLoader(comboBox, attribute, (ContainerValueSource) context.getValueSource());
         }
 
         setValueSource(comboBox, context);
@@ -276,7 +267,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             EntityComboBox entityComboBox = uiComponents.create(EntityComboBox.class);
 
             if (context.getValueSource() instanceof ContainerValueSource) {
-                setOptionsLoader(entityComboBox, attribute, (ContainerValueSource) context.getValueSource());
+                setComboBoxOptionsLoader(entityComboBox, attribute, (ContainerValueSource) context.getValueSource());
             }
 
             setValueSource(entityComboBox, context);
@@ -308,13 +299,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     protected void setValidators(Field field, AttributeDefinition attribute) {
         Collection<Validator<?>> validators = attributeValidators.getValidators(attribute);
         for (Validator<?> validator : validators) {
-            /*if (field instanceof ListEditor) {
-                //noinspection unchecked
-                ((ListEditor) field).addListItemValidator(validator);
-            } else {
-                //noinspection unchecked
-                field.addValidator(validator);
-            }*/
+            field.addValidator(validator);
         }
     }
 
@@ -355,27 +340,45 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }
 
-    /*protected ListEditor.ItemType getListEditorItemType(AttributeType attributeType) {
+    protected void initValuesSelectActionByAttribute(SelectAction selectAction, AttributeDefinition attribute) {
+        AttributeType attributeType = attribute.getDataType();
         switch (attributeType) {
-            case ENTITY:
-                return ListEditor.ItemType.ENTITY;
             case DATE:
-                return ListEditor.ItemType.DATETIME;
+                selectAction.setJavaClass(Date.class);
+                selectAction.setResolution(DateField.Resolution.MIN);
+                break;
             case DATE_WITHOUT_TIME:
-                return ListEditor.ItemType.DATE;
-            case DOUBLE:
-                return ListEditor.ItemType.DOUBLE;
-            case DECIMAL:
-                return ListEditor.ItemType.BIGDECIMAL;
-            case INTEGER:
-                return ListEditor.ItemType.INTEGER;
+                selectAction.setJavaClass(Date.class);
+                selectAction.setResolution(DateField.Resolution.DAY);
+                break;
             case STRING:
             case ENUMERATION:
-                return ListEditor.ItemType.STRING;
-            default:
-                throw new IllegalStateException(String.format("PropertyType %s not supported", attributeType));
+                selectAction.setJavaClass(String.class);
+                selectAction.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
+                break;
+            case DOUBLE:
+                selectAction.setJavaClass(Double.class);
+                break;
+            case DECIMAL:
+                selectAction.setJavaClass(BigDecimal.class);
+                break;
+            case INTEGER:
+                selectAction.setJavaClass(Integer.class);
+                break;
+            case BOOLEAN:
+                selectAction.setJavaClass(Boolean.class);
+                break;
+            case ENTITY:
+                Class<?> javaType = attribute.getJavaType();
+                if (javaType != null) {
+                    MetaClass metaClass = metadata.getClass(javaType);
+                    selectAction.setEntityName(metaClass.getName());
+                }
+                selectAction.setLookupScreenId(attribute.getConfiguration().getLookupScreen());
+                selectAction.setUseComboBox(attribute.getConfiguration().isLookup());
+                break;
         }
-    }*/
+    }
 
     protected Map<String, ?> getLocalizedEnumerationMap(AttributeDefinition attribute) {
         String enumeration = attribute.getEnumeration();
@@ -386,8 +389,44 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         return result;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void setValuesPickerOptionsLoader(ValuesPicker valuesPicker,
+                                                AttributeDefinition attribute,
+                                                ContainerValueSource valueSource) {
+        InstanceContainer<?> container = valueSource.getContainer();
+        Object entity = container.getItemOrNull();
+        if (entity != null) {
+            List options = optionsLoader.loadOptions(entity, attribute);
+            ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+                    .setOptions(new ListOptions(options));
+        }
+        container.addItemChangeListener(e -> {
+            List options = optionsLoader.loadOptions(e.getItem(), attribute);
 
-    protected void setOptionsLoader(ComboBox lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
+            ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+                    .setOptions(new ListOptions(options));
+        });
+
+        List<CategoryAttribute> dependsOnAttributes = attribute.getConfiguration().getDependsOnAttributes();
+        if (dependsOnAttributes != null && !dependsOnAttributes.isEmpty()) {
+            List<String> dependsOnAttributesCodes = dependsOnAttributes.stream()
+                    .map(a -> DynAttrUtils.getPropertyFromAttributeCode(a.getCode()))
+                    .collect(Collectors.toList());
+
+            container.addItemPropertyChangeListener(e -> {
+                if (dependsOnAttributesCodes.contains(e.getProperty())) {
+                    List options = optionsLoader.loadOptions(e.getItem(), attribute);
+                    ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+                            .setOptions(new ListOptions(options));
+                    if (!options.contains(valuesPicker.getValue())) {
+                        valuesPicker.setValue(null);
+                    }
+                }
+            });
+        }
+    }
+
+    protected void setComboBoxOptionsLoader(ComboBox lookupField, AttributeDefinition attribute, ContainerValueSource valueSource) {
         InstanceContainer<?> container = valueSource.getContainer();
         Object entity = container.getItemOrNull();
         if (entity != null) {

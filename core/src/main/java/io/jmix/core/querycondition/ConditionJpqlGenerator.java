@@ -17,13 +17,14 @@
 package io.jmix.core.querycondition;
 
 import com.google.common.base.Strings;
+import io.jmix.core.QueryParser;
 import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,8 +47,10 @@ public class ConditionJpqlGenerator {
             return query;
         }
         QueryTransformer transformer = queryTransformerFactory.transformer(query);
+        QueryParser parser = queryTransformerFactory.parser(query);
+        String entityAlias = parser.getEntityAlias();
         String joins = generateJoins(condition);
-        String where = generateWhere(condition);
+        String where = generateWhere(condition, entityAlias);
         if (!Strings.isNullOrEmpty(joins)) {
             transformer.addJoinAndWhere(joins, where);
         } else {
@@ -70,11 +73,13 @@ public class ConditionJpqlGenerator {
         } else if (condition instanceof JpqlCondition) {
             String join = ((JpqlCondition) condition).getValue("join");
             return join != null ? join : "";
+        } else if (condition instanceof PropertyCondition) {
+            return "";
         }
         throw new UnsupportedOperationException("Condition is not supported: " + condition);
     }
 
-    protected String generateWhere(Condition condition) {
+    protected String generateWhere(Condition condition, String entityAlias) {
         if (condition instanceof LogicalCondition) {
             LogicalCondition logical = (LogicalCondition) condition;
             List<Condition> conditions = logical.getConditions();
@@ -85,7 +90,7 @@ public class ConditionJpqlGenerator {
 
                 String op = logical.getType() == LogicalCondition.Type.AND ? " and " : " or ";
 
-                String where = conditions.stream().map(this::generateWhere)
+                String where = conditions.stream().map(c -> this.generateWhere(c, entityAlias))
                         .filter(StringUtils::isNotBlank)
                         .collect(Collectors.joining(op));
 
@@ -99,8 +104,53 @@ public class ConditionJpqlGenerator {
             }
         } else if (condition instanceof JpqlCondition) {
             return ((JpqlCondition) condition).getValue("where");
+        } else if (condition instanceof PropertyCondition) {
+            PropertyCondition propertyCondition = (PropertyCondition) condition;
+            if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                return String.format("%s.%s %s",
+                        entityAlias,
+                        propertyCondition.getProperty(),
+                        getJpqlOperation(propertyCondition));
+            } else {
+                return String.format("%s.%s %s :%s",
+                        entityAlias,
+                        propertyCondition.getProperty(),
+                        getJpqlOperation(propertyCondition),
+                        propertyCondition.getParameterName());
+            }
         }
         throw new UnsupportedOperationException("Condition is not supported: " + condition);
     }
 
+    private String getJpqlOperation(PropertyCondition condition) {
+        if (PropertyCondition.Operation.IS_NULL.equals(condition.getOperation())) {
+            return Boolean.TRUE.equals(condition.getParameterValue()) ? "is null" : "is not null";
+        } else {
+            switch (condition.getOperation()) {
+                case PropertyCondition.Operation.EQUAL:
+                    return "=";
+                case PropertyCondition.Operation.NOT_EQUAL:
+                    return "<>";
+                case PropertyCondition.Operation.GREATER:
+                    return ">";
+                case PropertyCondition.Operation.GREATER_OR_EQUAL:
+                    return ">=";
+                case PropertyCondition.Operation.LESS:
+                    return "<";
+                case PropertyCondition.Operation.LESS_OR_EQUAL:
+                    return "<=";
+                case PropertyCondition.Operation.CONTAINS:
+                case PropertyCondition.Operation.STARTS_WITH:
+                case PropertyCondition.Operation.ENDS_WITH:
+                    return "like";
+                case PropertyCondition.Operation.NOT_CONTAINS:
+                    return "not like";
+                case PropertyCondition.Operation.IS_NULL:
+                    return "is null";
+                case PropertyCondition.Operation.IS_NOT_NULL:
+                    return "is not null";
+            }
+        }
+        throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
+    }
 }

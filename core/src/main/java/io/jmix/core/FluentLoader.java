@@ -252,6 +252,18 @@ public class FluentLoader<E> {
         return new ByQuery<>(this, queryString, parameters, applicationContext);
     }
 
+    /**
+     * Sets additional query condition.
+     */
+    public ByQuery<E> condition(Condition condition) {
+        MetaClass metaClass = metadata.getClass(entityClass);
+        String entityName = metaClass.getName();
+        String queryString = String.format("select e from %s e", entityName);
+        ByQuery<E> byQuery = new ByQuery<>(this, queryString, applicationContext);
+        byQuery.condition(condition);
+        return byQuery;
+    }
+
     public static class ById<E> {
 
         private FluentLoader<E> loader;

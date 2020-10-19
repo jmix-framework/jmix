@@ -23,8 +23,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.ConditionJpqlGenerator;
+import io.jmix.core.querycondition.*;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -204,8 +203,57 @@ public class JpqlQueryBuilder {
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toSet());
             Condition actualized = condition.actualize(nonNullParamNames);
+            if (actualized != null) {
+                List<PropertyCondition> propertyConditions = collectNestedPropertyConditions(actualized);
+                for (PropertyCondition propertyCondition : propertyConditions) {
+                    String parameterName = propertyCondition.getParameterName();
+                    if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {
+                        //remove query parameter for unary operations (e.g. IS_NULL)
+                        resultParameters.remove(parameterName);
+                    } else {
+                        //PropertyCondition may take a value from queryParameters collection or from the
+                        //PropertyCondition.parameterValue attribute. queryParameters has higher priority.
+                        Object parameterValue;
+                        if (!nonNullParamNames.contains(parameterName)) {
+                            parameterValue = wrapQueryParameterValueForJpql(propertyCondition.getOperation(), propertyCondition.getParameterValue());
+                        } else {
+                            //modify the query parameter value (e.g. wrap value for "contains" jpql operation)
+                            Object queryParameterValue = queryParameters.get(parameterName);
+                            parameterValue = wrapQueryParameterValueForJpql(propertyCondition.getOperation(), queryParameterValue);
+                        }
+                        resultParameters.put(parameterName, parameterValue);
+                    }
+                }
+            }
             resultQuery = conditionJpqlGenerator.processQuery(resultQuery, actualized);
         }
+    }
+
+    @Nullable
+    private Object wrapQueryParameterValueForJpql(String operation, @Nullable Object parameterValue) {
+        if (parameterValue instanceof String) {
+            switch (operation) {
+                case PropertyCondition.Operation.CONTAINS:
+                case PropertyCondition.Operation.NOT_CONTAINS:
+                    return "(?i)%" + parameterValue + "%";
+                case PropertyCondition.Operation.STARTS_WITH:
+                    return "(?i)" + parameterValue + "%";
+                case PropertyCondition.Operation.ENDS_WITH:
+                    return "(?i)%" + parameterValue;
+            }
+        }
+        return parameterValue;
+    }
+
+    private List<PropertyCondition> collectNestedPropertyConditions(Condition rootCondition) {
+        List<PropertyCondition> propertyConditions = new ArrayList<>();
+        if (rootCondition instanceof LogicalCondition) {
+            ((LogicalCondition) rootCondition).getConditions().forEach(c ->
+                    propertyConditions.addAll(collectNestedPropertyConditions(c)));
+        } else if (rootCondition instanceof PropertyCondition) {
+            propertyConditions.add((PropertyCondition) rootCondition);
+        }
+        return propertyConditions;
     }
 
     protected void restrictByPreviousResults() {

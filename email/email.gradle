@@ -34,5 +34,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

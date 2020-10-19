@@ -21,7 +21,8 @@ import com.haulmont.cuba.gui.export.ExportFormat;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Messages;
-import io.jmix.email.Emailer;
+import io.jmix.email.EmailDataProvider;
+import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.jmix.emailui.screen.sendingmessage.attachments.SendingMessageAttachments;
@@ -64,7 +65,9 @@ public class SendingMessageBrowser extends Screen {
     @Autowired
     protected ScreenBuilders screenBuilders;
     @Autowired
-    protected Emailer emailer;
+    protected EmailDataProvider emailDataProvider;
+    @Autowired
+    protected EmailerProperties emailerProperties;
     @Autowired
     protected Form fg;
     @Autowired
@@ -151,7 +154,7 @@ public class SendingMessageBrowser extends Screen {
     protected void selectedItemChanged(SendingMessage item) {
         String contentText = null;
         if (item != null) {
-            contentText = emailer.loadContentText(item);
+            contentText = emailDataProvider.loadContentText(item);
         }
 
         if (StringUtils.isNotEmpty(contentText)) {
@@ -220,7 +223,7 @@ public class SendingMessageBrowser extends Screen {
     protected void exportFile(SendingAttachment attachment) {
         URI fd;
 
-        if (emailer.isFileStorageUsed()
+        if (emailerProperties.isFileStorageUsed()
                 && attachment.getContentFile() != null
                 && fileStorage.fileExists(attachment.getContentFile())) {
             fd = attachment.getContentFile();

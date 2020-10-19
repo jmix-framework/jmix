@@ -24,6 +24,7 @@ import io.jmix.core.FetchPlan;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.jmix.email.impl.EmailerImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,9 @@ public class EmailerManagementFacade {
     
     @Autowired
     protected EmailSmtpProperties smtpProperties;
+    
+    @Autowired
+    protected EmailDataProvider emailDataProvider;
 
     private static final Logger log = LoggerFactory.getLogger(EmailerImpl.class);
 
@@ -166,8 +170,8 @@ public class EmailerManagementFacade {
             tx.end();
         }
 
-        if (!resultList.isEmpty()) {
-            emailer.migrateEmailsToFileStorage(resultList);
+        if (CollectionUtils.isNotEmpty(resultList)) {
+            emailDataProvider.migrateEmailsToFileStorage(resultList);
         }
 
         return resultList.size();
@@ -190,8 +194,8 @@ public class EmailerManagementFacade {
             tx.end();
         }
 
-        if (!resultList.isEmpty()) {
-            emailer.migrateAttachmentsToFileStorage(resultList);
+        if (CollectionUtils.isNotEmpty(resultList)) {
+            emailDataProvider.migrateAttachmentsToFileStorage(resultList);
         }
 
         return resultList.size();

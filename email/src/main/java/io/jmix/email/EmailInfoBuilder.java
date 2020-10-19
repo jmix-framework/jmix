@@ -53,7 +53,7 @@ public class EmailInfoBuilder {
     private Map<String, Serializable> templateParameters;
     private String body;
     private String bodyContentType;
-    private EmailAttachment[] attachments;
+    private List<EmailAttachment> attachments;
     private List<EmailHeader> headers;
 
     /**
@@ -224,7 +224,7 @@ public class EmailInfoBuilder {
         return this;
     }
 
-    public EmailAttachment[] getAttachments() {
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 
@@ -232,18 +232,16 @@ public class EmailInfoBuilder {
      * @param attachments email attachments
      */
     public EmailInfoBuilder setAttachments(EmailAttachment... attachments) {
-        this.attachments = attachments;
+        this.attachments = Arrays.asList(attachments);
         return this;
     }
 
     public EmailInfoBuilder addAttachment(EmailAttachment attachment) {
         if (attachments == null) {
-            attachments = new EmailAttachment[] {attachment};
-            return this;
+            attachments = new ArrayList<>();
         }
 
-        attachments = Arrays.copyOf(attachments, attachments.length + 1);
-        attachments[attachments.length - 1] = attachment;
+        attachments.add(attachment);
         return this;
     }
 

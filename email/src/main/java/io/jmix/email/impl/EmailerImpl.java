@@ -16,23 +16,20 @@
 package io.jmix.email.impl;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.core.EntityManager;
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Transaction;
-import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.TemplateHelper;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.sun.mail.smtp.SMTPAddressFailedException;
-import io.jmix.core.*;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.Resources;
+import io.jmix.core.TimeSource;
 import io.jmix.core.security.Authenticator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,19 +40,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Component(Emailer.NAME)
 public class EmailerImpl implements Emailer {
-
-    protected static final String BODY_FILE_EXTENSION = "txt";
 
     private static final Logger log = LoggerFactory.getLogger(EmailerImpl.class);
 
@@ -71,13 +63,10 @@ public class EmailerImpl implements Emailer {
     protected TimeSource timeSource;
 
     @Autowired
-    protected Persistence persistence;
+    protected EmailDataProvider emailDataProvider;
 
     @Autowired
     protected Metadata metadata;
-
-    @Autowired
-    protected FetchPlanRepository repository;
 
     @Autowired
     protected Authenticator authenticator;
@@ -90,16 +79,6 @@ public class EmailerImpl implements Emailer {
 
     @Autowired
     protected MetadataTools metadataTools;
-
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
-
-    protected FileStorage<URI, String> fileStorage;
-
-    @Autowired
-    public void setFileStorage() {
-        fileStorage = fileStorageLocator.getDefault();
-    }
 
     @Override
     public void sendEmail(String address, String caption, String body, String bodyContentType,
@@ -128,7 +107,7 @@ public class EmailerImpl implements Emailer {
     public List<SendingMessage> sendEmailAsync(EmailInfo info, Integer attemptsCount, Date deadline) {
         prepareEmailInfo(info);
         List<SendingMessage> messages = splitEmail(info, attemptsCount, deadline);
-        persistMessages(messages, SendingStatus.QUEUE);
+        emailDataProvider.persistMessages(messages, SendingStatus.QUEUE);
         return messages;
     }
 
@@ -196,14 +175,11 @@ public class EmailerImpl implements Emailer {
         Objects.requireNonNull(sendingMessage.getFrom(), "sendingMessage.from is null");
         try {
             emailSender.sendEmail(sendingMessage);
-            markAsSent(sendingMessage);
+            emailDataProvider.updateStatus(sendingMessage, SendingStatus.SENT);
         } catch (Exception e) {
-            log.warn("Unable to send email to '" + sendingMessage.getAddress() + "'", e);
-            if (isNeedToRetry(e)) {
-                returnToQueue(sendingMessage);
-            } else {
-                markAsNonSent(sendingMessage);
-            }
+            log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
+            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOTSENT;
+            emailDataProvider.updateStatus(sendingMessage, newStatus);
         }
     }
 
@@ -224,14 +200,14 @@ public class EmailerImpl implements Emailer {
             try {
                 emailSender.sendEmail(sendingMessage);
                 if (persistedMessage != null) {
-                    markAsSent(persistedMessage);
+                    emailDataProvider.updateStatus(persistedMessage, SendingStatus.SENT);
                 }
             } catch (Exception e) {
-                log.warn("Unable to send email to '" + sendingMessage.getAddress() + "'", e);
+                log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
                 failedAddresses.add(sendingMessage.getAddress());
                 errorMessages.add(e.getMessage());
                 if (persistedMessage != null) {
-                    markAsNonSent(persistedMessage);
+                    emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOTSENT);
                 }
             }
         }
@@ -251,10 +227,10 @@ public class EmailerImpl implements Emailer {
         // to avoid additional overhead to load body and attachments back from FS
         try {
             SendingMessage clonedMessage = createClone(sendingMessage);
-            persistMessages(Collections.singletonList(clonedMessage), SendingStatus.SENDING);
+            emailDataProvider.persistMessages(Collections.singletonList(clonedMessage), SendingStatus.SENDING);
             return clonedMessage;
         } catch (Exception e) {
-            log.error("Failed to persist message " + sendingMessage.getCaption(), e);
+            log.error("Failed to persist message '{}'", sendingMessage.getCaption(), e);
             return null;
         }
     }
@@ -304,11 +280,9 @@ public class EmailerImpl implements Emailer {
     }
 
     protected String sendQueuedEmails() {
-        List<SendingMessage> messagesToSend = loadEmailsToSend();
+        List<SendingMessage> messagesToSend = emailDataProvider.loadEmailsToSend();
 
-        for (SendingMessage msg : messagesToSend) {
-            submitExecutorTask(msg);
-        }
+        messagesToSend.forEach(this::submitExecutorTask);
 
         if (messagesToSend.isEmpty()) {
             return "";
@@ -336,80 +310,12 @@ public class EmailerImpl implements Emailer {
             Runnable mailSendTask = new EmailSendTask(msg, authenticator);
             mailSendTaskExecutor.execute(mailSendTask);
         } catch (RejectedExecutionException e) {
-            returnToQueue(msg);
+            emailDataProvider.updateStatus(msg, SendingStatus.QUEUE);
         } catch (Exception e) {
-            log.error("Exception while sending email: ", e);
-            if (isNeedToRetry(e)) {
-                returnToQueue(msg);
-            } else {
-                markAsNonSent(msg);
-            }
-        }
-    }
+            log.error("Exception while sending email to '{}': ", msg.getAddress(), e);
 
-    protected List<SendingMessage> loadEmailsToSend() {
-        Date sendTimeoutTime = DateUtils.addSeconds(timeSource.currentTimestamp(), -emailerProperties.getSendingTimeoutSec());
-
-        List<SendingMessage> emailsToSend = new ArrayList<>();
-
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            TypedQuery<SendingMessage> query = em.createQuery(
-                    "select sm from sys_SendingMessage sm" +
-                            " where sm.status = :statusQueue or (sm.status = :statusSending and sm.updateTs < :time)" +
-                            " order by sm.createTs",
-                    SendingMessage.class
-            );
-            query.setParameter("statusQueue", SendingStatus.QUEUE.getId());
-            query.setParameter("time", sendTimeoutTime);
-            query.setParameter("statusSending", SendingStatus.SENDING.getId());
-
-            FetchPlan fetchPlan = repository.getFetchPlan(SendingMessage.class, "sendingMessage.loadFromQueue");
-            query.setView(fetchPlan);
-
-            query.setMaxResults(emailerProperties.getMessageQueueCapacity());
-
-            List<SendingMessage> resList = query.getResultList();
-
-            for (SendingMessage msg : resList) {
-                if (shouldMarkNotSent(msg)) {
-                    msg.setStatus(SendingStatus.NOTSENT);
-                } else {
-                    msg.setStatus(SendingStatus.SENDING);
-                    emailsToSend.add(msg);
-                }
-            }
-            tx.commit();
-        }
-
-        for (SendingMessage message : emailsToSend) {
-            loadBodyAndAttachments(message);
-        }
-        return emailsToSend;
-    }
-
-    @Override
-    public String loadContentText(SendingMessage sendingMessage) {
-        SendingMessage msg;
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            msg = em.reload(sendingMessage, "sendingMessage.loadContentText");
-            tx.commit();
-        }
-        Objects.requireNonNull(msg, "Sending message not found: " + sendingMessage.getId());
-
-        if (msg.getContentTextFile() != null) {
-            byte[] bodyContent;
-            try {
-                bodyContent = IOUtils.toByteArray(fileStorage.openStream(msg.getContentTextFile()));
-            } catch (IOException e) {
-                throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, "Unable to load file from file storage", e);
-            }
-            //noinspection UnnecessaryLocalVariable
-            String res = bodyTextFromByteArray(bodyContent);
-            return res;
-        } else {
-            return msg.getContentText();
+            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOTSENT;
+            emailDataProvider.updateStatus(msg, newStatus);
         }
     }
 
@@ -418,142 +324,10 @@ public class EmailerImpl implements Emailer {
         emailSender.updateSession();
     }
 
-    protected void loadBodyAndAttachments(SendingMessage message) {
-        try {
-            if (message.getContentTextFile() != null) {
-                byte[] bodyContent = IOUtils.toByteArray(fileStorage.openStream(message.getContentTextFile()));
-                String body = bodyTextFromByteArray(bodyContent);
-                message.setContentText(body);
-            }
-
-            for (SendingAttachment attachment : message.getAttachments()) {
-                if (attachment.getContentFile() != null) {
-                    byte[] content = IOUtils.toByteArray(fileStorage.openStream(attachment.getContentFile()));
-                    attachment.setContent(content);
-                }
-            }
-        } catch (IOException e) {
-            log.error("Failed to load body or attachments for " + message);
-        }
-    }
-
-    protected void persistMessages(List<SendingMessage> sendingMessageList, SendingStatus status) {
-        MessagePersistingContext context = new MessagePersistingContext();
-
-        try {
-            try (Transaction tx = persistence.createTransaction()) {
-                EntityManager em = persistence.getEntityManager();
-                for (SendingMessage message : sendingMessageList) {
-                    message.setStatus(status);
-                    persistSendingMessage(em, message, context);
-
-                }
-                tx.commit();
-            }
-            context.finished();
-        } finally {
-            removeOrphanFiles(context);
-        }
-    }
-
-    protected void removeOrphanFiles(MessagePersistingContext context) {
-        for (URI file : context.files) {
-            try {
-                fileStorage.removeFile(file);
-            } catch (Exception e) {
-                log.error("Failed to remove file " + file);
-            }
-        }
-    }
-
-    protected void persistSendingMessage(EntityManager em, SendingMessage message,
-                                         MessagePersistingContext context) {
-        boolean useFileStorage = emailerProperties.isFileStorageUsed();
-
-        if (useFileStorage) {
-            byte[] bodyBytes = bodyTextToBytes(message);
-
-            String fileName = "Email_" + message.getId() + "." + BODY_FILE_EXTENSION;
-            URI contentTextFile = fileStorage.createReference(fileName);
-
-            fileStorage.saveStream(contentTextFile, new ByteArrayInputStream(bodyBytes));
-            context.files.add(contentTextFile);
-            message.setContentTextFile(contentTextFile);
-            message.setContentText(null);
-        }
-
-        em.persist(message);
-
-        for (SendingAttachment attachment : message.getAttachments()) {
-            if (useFileStorage) {
-                URI contentFile = fileStorage.createReference(attachment.getName());
-                fileStorage.saveStream(contentFile, new ByteArrayInputStream(attachment.getContent()));
-                context.files.add(contentFile);
-                attachment.setContentFile(contentFile);
-                attachment.setContent(null);
-            }
-
-            em.persist(attachment);
-        }
-    }
-
-    protected void returnToQueue(SendingMessage sendingMessage) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            SendingMessage msg = em.merge(sendingMessage);
-
-            msg.setAttemptsMade(msg.getAttemptsMade() + 1);
-            msg.setStatus(SendingStatus.QUEUE);
-            if (emailerProperties.isFileStorageUsed()) {
-                msg.setContentText(null);
-            }
-
-            tx.commit();
-        } catch (Exception e) {
-            log.error("Error returning message to '{}' to the queue", sendingMessage.getAddress(), e);
-        }
-    }
-
-    protected void markAsSent(SendingMessage sendingMessage) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            SendingMessage msg = em.merge(sendingMessage);
-
-            msg.setStatus(SendingStatus.SENT);
-            msg.setAttemptsMade(msg.getAttemptsMade() + 1);
-            msg.setDateSent(timeSource.currentTimestamp());
-            if (emailerProperties.isFileStorageUsed()) {
-                msg.setContentText(null);
-            }
-
-            tx.commit();
-        } catch (Exception e) {
-            log.error("Error marking message to '{}' as sent", sendingMessage.getAddress(), e);
-        }
-    }
-
-    protected void markAsNonSent(SendingMessage sendingMessage) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            SendingMessage msg = em.merge(sendingMessage);
-
-            msg.setStatus(SendingStatus.NOTSENT);
-            msg.setAttemptsMade(msg.getAttemptsMade() + 1);
-            if (emailerProperties.isFileStorageUsed()) {
-                msg.setContentText(null);
-            }
-
-
-            tx.commit();
-        } catch (Exception e) {
-            log.error("Error marking message to '{}' as not sent", sendingMessage.getAddress(), e);
-        }
-    }
-
-    protected SendingMessage convertToSendingMessage(String address, String from, String cc, String bcc, String caption, String body,
+    protected SendingMessage convertToSendingMessage(String address, String from, @Nullable String cc, @Nullable String bcc, String caption, String body,
                                                      String bodyContentType,
                                                      @Nullable List<EmailHeader> headers,
-                                                     @Nullable EmailAttachment[] attachments,
+                                                     @Nullable List<EmailAttachment> attachments,
                                                      @Nullable Integer attemptsCount, @Nullable Date deadline) {
         SendingMessage sendingMessage = metadata.create(SendingMessage.class);
 
@@ -569,36 +343,34 @@ public class EmailerImpl implements Emailer {
 
         if (Strings.isNullOrEmpty(bodyContentType)) {
             bodyContentType = getContentBodyType(sendingMessage);
-            sendingMessage.setBodyContentType(bodyContentType);
-        } else {
-            sendingMessage.setBodyContentType(bodyContentType);
         }
+        sendingMessage.setBodyContentType(bodyContentType);
 
-        if (attachments != null && attachments.length > 0) {
+        if (CollectionUtils.isNotEmpty(attachments)) {
             StringBuilder attachmentsName = new StringBuilder();
-            List<SendingAttachment> sendingAttachments = new ArrayList<>(attachments.length);
-            for (EmailAttachment ea : attachments) {
+            List<SendingAttachment> sendingAttachments = new ArrayList<>(attachments.size());
+
+            attachments.forEach(ea -> {
                 attachmentsName.append(ea.getName()).append(";");
 
                 SendingAttachment sendingAttachment = toSendingAttachment(ea);
                 sendingAttachment.setMessage(sendingMessage);
                 sendingAttachments.add(sendingAttachment);
-            }
+            });
+
             sendingMessage.setAttachments(sendingAttachments);
             sendingMessage.setAttachmentsName(attachmentsName.toString());
         } else {
             sendingMessage.setAttachments(Collections.emptyList());
         }
 
-        if (headers != null && !headers.isEmpty()) {
-            StringBuilder headersLine = new StringBuilder();
-            for (EmailHeader header : headers) {
-                headersLine.append(header.toString()).append(SendingMessage.HEADERS_SEPARATOR);
-            }
-            sendingMessage.setHeaders(headersLine.toString());
-        } else {
-            sendingMessage.setHeaders(null);
+        String headersLine = null;
+        if (CollectionUtils.isNotEmpty(headers)) {
+            headersLine = headers.stream()
+                    .map(EmailHeader::toString)
+                    .collect(Collectors.joining(SendingMessage.HEADERS_SEPARATOR));
         }
+        sendingMessage.setHeaders(headersLine);
 
         replaceRecipientIfNecessary(sendingMessage);
 
@@ -608,11 +380,7 @@ public class EmailerImpl implements Emailer {
     protected String getContentBodyType(SendingMessage sendingMessage) {
         String bodyContentType;
         String text = sendingMessage.getContentText();
-        if (text.trim().startsWith("<html>")) {
-            bodyContentType = "text/html; charset=UTF-8";
-        } else {
-            bodyContentType = "text/plain; charset=UTF-8";
-        }
+        bodyContentType = text.trim().startsWith("<html>") ? "text/html; charset=UTF-8" : "text/plain; charset=UTF-8";
         log.debug("Content body type is not set for email '{}' with addresses: {}. Will be used '{}'.",
                 sendingMessage.getCaption(), sendingMessage.getAddress(), bodyContentType);
         return bodyContentType;
@@ -621,9 +389,7 @@ public class EmailerImpl implements Emailer {
     protected void replaceRecipientIfNecessary(SendingMessage msg) {
         if (emailerProperties.isSendAllToAdmin()) {
             String adminAddress = emailerProperties.getAdminAddress();
-            log.warn(String.format(
-                    "Replacing actual email recipient '%s' by admin address '%s'", msg.getAddress(), adminAddress
-            ));
+            log.warn("Replacing actual email recipient '{}' by admin address '{}'", msg.getAddress(), adminAddress);
             msg.setAddress(adminAddress);
         }
     }
@@ -638,15 +404,6 @@ public class EmailerImpl implements Emailer {
         return sendingAttachment;
     }
 
-    protected byte[] bodyTextToBytes(SendingMessage message) {
-        byte[] bodyBytes = message.getContentText().getBytes(StandardCharsets.UTF_8);
-        return bodyBytes;
-    }
-
-    protected String bodyTextFromByteArray(byte[] bodyContent) {
-        return new String(bodyContent, StandardCharsets.UTF_8);
-    }
-
     protected boolean isNeedToRetry(Exception e) {
         if (e instanceof MailSendException) {
             if (e.getCause() instanceof SMTPAddressFailedException) {
@@ -656,54 +413,6 @@ public class EmailerImpl implements Emailer {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void migrateEmailsToFileStorage(List<SendingMessage> messages) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-
-            for (SendingMessage msg : messages) {
-                migrateMessage(em, msg);
-            }
-            tx.commit();
-        }
-    }
-
-    @Override
-    public void migrateAttachmentsToFileStorage(List<SendingAttachment> attachments) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-
-            for (SendingAttachment attachment : attachments) {
-                migrateAttachment(em, attachment);
-            }
-
-            tx.commit();
-        }
-    }
-
-    @Override
-    public boolean isFileStorageUsed() {
-        return emailerProperties.isFileStorageUsed();
-    }
-
-    protected void migrateMessage(EntityManager em, SendingMessage msg) {
-        msg = em.merge(msg);
-        byte[] bodyBytes = bodyTextToBytes(msg);
-        String fileName = "Email_" + msg.getId() + "." + BODY_FILE_EXTENSION;
-        URI contentTextFile = fileStorage.createReference(fileName);
-        fileStorage.saveStream(contentTextFile, new ByteArrayInputStream(bodyBytes));
-        msg.setContentTextFile(contentTextFile);
-        msg.setContentText(null);
-    }
-
-    protected void migrateAttachment(EntityManager em, SendingAttachment attachment) {
-        attachment = em.merge(attachment);
-        URI contentFile = fileStorage.createReference(attachment.getName());
-        fileStorage.saveStream(contentFile, new ByteArrayInputStream(attachment.getContent()));
-        attachment.setContentFile(contentFile);
-        attachment.setContent(null);
     }
 
     protected static class EmailSendTask implements Runnable {
@@ -728,16 +437,8 @@ public class EmailerImpl implements Emailer {
                     authenticator.end();
                 }
             } catch (Exception e) {
-                log.error("Exception while sending email: ", e);
+                log.error("Exception while sending email to '{}': ", sendingMessage.getAddress(), e);
             }
-        }
-    }
-
-    protected static class MessagePersistingContext {
-        public final List<URI> files = new ArrayList<>();
-
-        public void finished() {
-            files.clear();
         }
     }
 

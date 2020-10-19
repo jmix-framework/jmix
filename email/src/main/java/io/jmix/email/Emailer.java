@@ -15,7 +15,6 @@
  */
 package io.jmix.email;
 
-import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 
 import javax.annotation.Nullable;
@@ -94,29 +93,7 @@ public interface Emailer {
     String processQueuedEmails();
 
     /**
-     * Migrate list of existing messages to be stored in file storage, in a single transaction.
-     */
-    void migrateEmailsToFileStorage(List<SendingMessage> messages);
-
-    /**
-     * Migrate list of existing email attachments to be stored in file storage, in a single transaction.
-     */
-    void migrateAttachmentsToFileStorage(List<SendingAttachment> attachments);
-
-    /**
-     * Loads content text for given message.
-     *
-     * @return email content text
-     */
-    String loadContentText(SendingMessage sendingMessage);
-
-    /**
      * Updates {@code Properties} for JavaMail {@code Session}
      */
     void updateSession();
-
-    /**
-     * @return true if email body text and attachments are stored in file storage instead of BLOB columns in database
-     */
-    boolean isFileStorageUsed();
 }

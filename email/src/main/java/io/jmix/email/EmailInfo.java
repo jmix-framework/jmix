@@ -52,7 +52,7 @@ public class EmailInfo implements Serializable {
     private Map<String, Serializable> templateParameters;
     private String body;
     private String bodyContentType;
-    private EmailAttachment[] attachments;
+    private List<EmailAttachment> attachments;
     private List<EmailHeader> headers;
 
 
@@ -70,7 +70,7 @@ public class EmailInfo implements Serializable {
               String body,
               String bodyContentType,
               List<EmailHeader> headers,
-              EmailAttachment... attachments) {
+              List<EmailAttachment> attachments) {
         this.addresses = addresses;
         this.cc = cc;
         this.bcc = bcc;
@@ -118,11 +118,11 @@ public class EmailInfo implements Serializable {
         this.body = body;
     }
 
-    public EmailAttachment[] getAttachments() {
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(EmailAttachment[] attachments) {
+    public void setAttachments(List<EmailAttachment> attachments) {
         this.attachments = attachments;
     }
 

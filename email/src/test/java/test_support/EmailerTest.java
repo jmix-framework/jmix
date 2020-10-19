@@ -24,16 +24,9 @@ import io.jmix.core.FileStorageLocator;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
-import io.jmix.email.Emailer;
-import io.jmix.email.EmailerConfigPropertiesAccess;
-import io.jmix.email.EmailerProperties;
+import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import io.jmix.email.SendingStatus;
-import io.jmix.email.EmailException;
-import io.jmix.email.EmailAttachment;
-import io.jmix.email.EmailInfo;
-import io.jmix.email.EmailInfoBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -65,6 +58,9 @@ public class EmailerTest {
 
     @Autowired
     private Emailer emailer;
+
+    @Autowired
+    private EmailDataProvider emailDataProvider;
 
     @Autowired
     private TestMailSender testMailSender;
@@ -699,7 +695,7 @@ public class EmailerTest {
 
         SendingMessage msg = reload(messages.get(0));
 
-        String actualBody = emailer.loadContentText(msg);
+        String actualBody = emailDataProvider.loadContentText(msg);
         assertEquals(body, actualBody);
     }
 
@@ -731,8 +727,8 @@ public class EmailerTest {
         assertNotNull(attachment.getContent());
         assertNull(attachment.getContentFile());
 
-        emailer.migrateEmailsToFileStorage(Lists.newArrayList(msg));
-        emailer.migrateAttachmentsToFileStorage(Lists.newArrayList(attachment));
+        emailDataProvider.migrateEmailsToFileStorage(Lists.newArrayList(msg));
+        emailDataProvider.migrateAttachmentsToFileStorage(Lists.newArrayList(attachment));
 
         // check file storage
         msg = reload(msg, "sendingMessage.loadFromQueue");
@@ -740,7 +736,7 @@ public class EmailerTest {
 
         assertNull(msg.getContentText());
         assertNotNull(msg.getContentTextFile());
-        assertEquals(body, emailer.loadContentText(msg));
+        assertEquals(body, emailDataProvider.loadContentText(msg));
 
         assertNull(attachment.getContent());
         assertNotNull(attachment.getContentFile());

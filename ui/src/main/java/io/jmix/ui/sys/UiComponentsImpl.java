@@ -16,22 +16,19 @@
 
 package io.jmix.ui.sys;
 
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.component.impl.*;
 import io.jmix.ui.component.mainwindow.*;
 import io.jmix.ui.component.mainwindow.impl.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.ApplicationContextAware;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.ParameterizedTypeReference;
 
 import java.lang.reflect.Constructor;
@@ -133,6 +130,7 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(Form.NAME, FormImpl.class);
 
         classes.put(EntityLinkField.NAME, EntityLinkFieldImpl.class);
+        classes.put(PropertyFilter.NAME, PropertyFilterImpl.class);
 
         /* Main window components */
 

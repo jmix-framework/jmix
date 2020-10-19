@@ -89,6 +89,7 @@ public class UiProperties {
     Integer defaultMaxFetchSize;
     Map<String, Integer> entityPageSize;
     Map<String, Integer> entityMaxFetchSize;
+    boolean propertyFilterAutoApply;
 
     public UiProperties(
             boolean testMode,
@@ -146,7 +147,8 @@ public class UiProperties {
             @DefaultValue("50") Integer defaultPageSize,
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityPageSize,
-            @Nullable Map<String, Integer> entityMaxFetchSize) {
+            @Nullable Map<String, Integer> entityMaxFetchSize,
+            @DefaultValue("true") boolean propertyFilterAutoApply) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
@@ -203,6 +205,7 @@ public class UiProperties {
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
+        this.propertyFilterAutoApply = propertyFilterAutoApply;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -496,5 +499,12 @@ public class UiProperties {
         if (forEntity != null)
             return forEntity;
         return defaultMaxFetchSize;
+    }
+
+    /**
+     * @return default value for the autoApply attribute of the {@link io.jmix.ui.component.PropertyFilter} component
+     */
+    public boolean isPropertyFilterAutoApply() {
+        return propertyFilterAutoApply;
     }
 }

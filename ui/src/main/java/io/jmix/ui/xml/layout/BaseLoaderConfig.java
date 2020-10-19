@@ -106,6 +106,7 @@ public abstract class BaseLoaderConfig {
         loaders.put(CapsLockIndicator.NAME, CapsLockIndicatorLoader.class);
 
         loaders.put(Form.NAME, FormLoader.class);
+        loaders.put(PropertyFilter.NAME, PropertyFilterLoader.class);
 
         loaders.put(Fragment.NAME, FragmentComponentLoader.class);
 

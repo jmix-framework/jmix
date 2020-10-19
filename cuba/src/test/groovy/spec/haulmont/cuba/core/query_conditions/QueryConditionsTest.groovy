@@ -36,11 +36,11 @@ class QueryConditionsTest extends CoreTestSpecification {
 
         condition instanceof LogicalCondition
         ((LogicalCondition) condition).type == LogicalCondition.Type.AND
-        PropertyCondition c1 = ((LogicalCondition) condition).conditions[0]
+        AbstractCondition c1 = ((LogicalCondition) condition).conditions[0]
         c1.getValue('where') == 'u.login like :login'
         c1.parameters == ['login']
 
-        PropertyCondition c2 = ((LogicalCondition) condition).conditions[1]
+        AbstractCondition c2 = ((LogicalCondition) condition).conditions[1]
         c2.getValue('join') == 'u.userRoles ur'
         c2.getValue('where') == 'ur.role.name = :roleName'
         c2.parameters == ['roleName']
@@ -74,11 +74,11 @@ class QueryConditionsTest extends CoreTestSpecification {
 
         condition instanceof LogicalCondition
         ((LogicalCondition) condition).type == LogicalCondition.Type.AND
-        PropertyCondition c1 = ((LogicalCondition) condition).conditions[0]
+        AbstractCondition c1 = ((LogicalCondition) condition).conditions[0]
         c1.getValue('param') == 'login=${login}'
         c1.parameters == ['login']
 
-        PropertyCondition c2 = ((LogicalCondition) condition).conditions[1]
+        AbstractCondition c2 = ((LogicalCondition) condition).conditions[1]
         c2.getValue('param') == 'role.name=${roleName}'
         c2.parameters == ['roleName']
 
@@ -122,20 +122,20 @@ class QueryConditionsTest extends CoreTestSpecification {
         ((LogicalCondition) actualized).type == LogicalCondition.Type.AND
         ((LogicalCondition) actualized).conditions.size() == 3
 
-        PropertyCondition c1 = ((LogicalCondition) actualized).conditions[0]
+        AbstractCondition c1 = ((LogicalCondition) actualized).conditions[0]
         c1.getValue('where') == 'u.login like :login'
 
-        PropertyCondition c2 = ((LogicalCondition) actualized).conditions[1]
+        AbstractCondition c2 = ((LogicalCondition) actualized).conditions[1]
         c2.getValue('where') == 'ur.role.name = :roleName'
 
         LogicalCondition or = ((LogicalCondition) actualized).conditions[2]
         or.type == LogicalCondition.Type.OR
         or.conditions.size() == 2
 
-        PropertyCondition c3 = or.conditions[0]
+        AbstractCondition c3 = or.conditions[0]
         c3.getValue('where') == 'f.foo = :foo'
 
-        PropertyCondition c4 = or.conditions[1]
+        AbstractCondition c4 = or.conditions[1]
         c4.getValue('where') == 'u.bar = :bar'
 
         query == 'select u from test$User u join u.userRoles ur, test$Foo f ' +
@@ -152,13 +152,13 @@ class QueryConditionsTest extends CoreTestSpecification {
         ((LogicalCondition) actualized).type == LogicalCondition.Type.AND
         ((LogicalCondition) actualized).conditions.size() == 3
 
-        PropertyCondition c11 = ((LogicalCondition) actualized).conditions[0]
+        AbstractCondition c11 = ((LogicalCondition) actualized).conditions[0]
         c11.getValue('where') == 'u.login like :login'
 
-        PropertyCondition c21 = ((LogicalCondition) actualized).conditions[1]
+        AbstractCondition c21 = ((LogicalCondition) actualized).conditions[1]
         c21.getValue('where') == 'ur.role.name = :roleName'
 
-        PropertyCondition c31 = ((LogicalCondition) actualized).conditions[2]
+        AbstractCondition c31 = ((LogicalCondition) actualized).conditions[2]
         c31.getValue('where') == 'f.foo = :foo'
 
         query == 'select u from test$User u join u.userRoles ur, test$Foo f ' +
@@ -175,10 +175,10 @@ class QueryConditionsTest extends CoreTestSpecification {
         ((LogicalCondition) actualized).type == LogicalCondition.Type.AND
         ((LogicalCondition) actualized).conditions.size() == 2
 
-        PropertyCondition c12 = ((LogicalCondition) actualized).conditions[0]
+        AbstractCondition c12 = ((LogicalCondition) actualized).conditions[0]
         c12.getValue('where') == 'u.login like :login'
 
-        PropertyCondition c22 = ((LogicalCondition) actualized).conditions[1]
+        AbstractCondition c22 = ((LogicalCondition) actualized).conditions[1]
         c22.getValue('where') == 'ur.role.name = :roleName'
 
         query == 'select u from test$User u join u.userRoles ur ' +
@@ -191,8 +191,8 @@ class QueryConditionsTest extends CoreTestSpecification {
 
         then:
 
-        actualized instanceof PropertyCondition
-        ((PropertyCondition) actualized).getValue('where') == 'ur.role.name = :roleName'
+        actualized instanceof AbstractCondition
+        ((AbstractCondition) actualized).getValue('where') == 'ur.role.name = :roleName'
 
         query == 'select u from test$User u join u.userRoles ur where ur.role.name = :roleName'
 

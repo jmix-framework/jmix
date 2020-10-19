@@ -1,13 +1,13 @@
 package spec.haulmont.cuba.core.query_conditions;
 
+import io.jmix.core.querycondition.AbstractCondition;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.PropertyCondition;
 
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SampleRestCondition extends PropertyCondition {
+public class SampleRestCondition extends AbstractCondition {
 
     public static final Pattern PARAMETER_PATTERN = Pattern.compile("\\$\\{([\\w.$]+)}");
 

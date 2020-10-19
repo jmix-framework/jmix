@@ -46,7 +46,7 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
-import io.jmix.ui.xml.layout.LoaderHelper;
+import io.jmix.ui.xml.layout.LoaderSupport;
 import io.jmix.ui.xml.layout.LoaderResolver;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
@@ -94,7 +94,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     @Deprecated
     protected LayoutLoaderConfig layoutLoaderConfig;
     protected LoaderResolver loaderResolver;
-    protected LoaderHelper loaderHelper;
+    protected LoaderSupport loaderSupport;
 
     protected Element element;
 
@@ -176,13 +176,13 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     @Override
-    public LoaderHelper getLoaderHelper() {
-        return loaderHelper;
+    public LoaderSupport getLoaderSupport() {
+        return loaderSupport;
     }
 
     @Override
-    public void setLoaderHelper(LoaderHelper loaderHelper) {
-        this.loaderHelper = loaderHelper;
+    public void setLoaderSupport(LoaderSupport loaderSupport) {
+        this.loaderSupport = loaderSupport;
     }
 
     @Deprecated
@@ -905,7 +905,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Optional<String> loadString(Element element, String attributeName) {
-        return getLoaderHelper().loadString(element, attributeName);
+        return getLoaderSupport().loadString(element, attributeName);
     }
 
     protected void loadString(Element element, String attributeName, Consumer<String> setter) {
@@ -914,7 +914,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Optional<Boolean> loadBoolean(Element element, String attributeName) {
-        return getLoaderHelper().loadBoolean(element, attributeName);
+        return getLoaderSupport().loadBoolean(element, attributeName);
     }
 
     protected void loadBoolean(Element element, String attributeName, Consumer<Boolean> setter) {
@@ -923,7 +923,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected Optional<Integer> loadInteger(Element element, String attributeName) {
-        return getLoaderHelper().loadInteger(element, attributeName);
+        return getLoaderSupport().loadInteger(element, attributeName);
     }
 
     protected void loadInteger(Element element, String attributeName, Consumer<Integer> setter) {
@@ -932,7 +932,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     }
 
     protected  <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
-        return getLoaderHelper().loadEnum(element, type, attributeName);
+        return getLoaderSupport().loadEnum(element, type, attributeName);
     }
 
     protected <T extends Enum<T>> void loadEnum(Element element, Class<T> type, String attributeName,

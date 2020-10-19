@@ -38,10 +38,11 @@ public class OptionDialogFacetImpl extends AbstractFacet implements OptionDialog
     protected SizeWithUnit width;
     protected SizeWithUnit height;
 
-    protected boolean maximized;
     protected String styleName;
 
     protected ContentMode contentMode = ContentMode.TEXT;
+
+    protected WindowMode windowMode = WindowMode.NORMAL;
 
     protected String actionId;
     protected String buttonId;
@@ -94,13 +95,13 @@ public class OptionDialogFacetImpl extends AbstractFacet implements OptionDialog
     }
 
     @Override
-    public void setMaximized(boolean maximized) {
-        this.maximized = maximized;
+    public void setWindowMode(WindowMode windowMode) {
+        this.windowMode = windowMode;
     }
 
     @Override
-    public boolean isMaximized() {
-        return maximized;
+    public WindowMode getWindowMode() {
+        return windowMode;
     }
 
     @Override
@@ -198,7 +199,7 @@ public class OptionDialogFacetImpl extends AbstractFacet implements OptionDialog
                 .withMessage(message)
                 .withContentMode(contentMode)
                 .withHtmlSanitizer(htmlSanitizerEnabled)
-                .withMaximized(maximized)
+                .withWindowMode(windowMode)
                 .withStyleName(styleName)
                 .withActions(createActions())
                 .show();

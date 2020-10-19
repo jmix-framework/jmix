@@ -73,7 +73,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param contentMode content mode
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TEXT")
     void setContentMode(ContentMode contentMode);
 
     /**
@@ -82,17 +82,17 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
     ContentMode getContentMode();
 
     /**
-     * Sets whether dialog should be maximized.
+     * Sets the mode of the dialog window
      *
-     * @param maximized maximized
+     * @param windowMode the mode of the dialog window
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
-    void setMaximized(boolean maximized);
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NORMAL")
+    void setWindowMode(WindowMode windowMode);
 
     /**
-     * @return whether dialog should be maximized
+     * @return the mode of the dialog window
      */
-    boolean isMaximized();
+    WindowMode getWindowMode();
 
     /**
      * Sets dialog style name.

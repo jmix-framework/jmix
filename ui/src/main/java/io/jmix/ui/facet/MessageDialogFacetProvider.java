@@ -21,13 +21,14 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.MessageDialogFacet;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.impl.MessageDialogFacetImpl;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import io.jmix.ui.xml.layout.LoaderSupport;
 import org.dom4j.Element;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -39,6 +40,8 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
     protected MessageTools messageTools;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected LoaderSupport loaderSupport;
 
     @Override
     public Class<MessageDialogFacet> getFacetClass() {
@@ -65,7 +68,10 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         loadHeight(facet, element);
 
         loadContentMode(facet, element);
-        loadMaximized(facet, element);
+
+        loaderSupport.loadEnum(element, WindowMode.class, "windowMode")
+                .ifPresent(facet::setWindowMode);
+
         loadModal(facet, element);
         loadStyleName(facet, element);
         loadCloseOnClickOutside(facet, element);
@@ -114,13 +120,6 @@ public class MessageDialogFacetProvider implements FacetProvider<MessageDialogFa
         String contentMode = element.attributeValue("contentMode");
         if (isNotEmpty(contentMode)) {
             facet.setContentMode(ContentMode.valueOf(contentMode));
-        }
-    }
-
-    protected void loadMaximized(MessageDialogFacet facet, Element element) {
-        String maximized = element.attributeValue("maximized");
-        if (isNotEmpty(maximized)) {
-            facet.setMaximized(Boolean.parseBoolean(maximized));
         }
     }
 

@@ -35,12 +35,12 @@ public class MessageDialogFacetImpl extends AbstractFacet implements MessageDial
     protected SizeWithUnit width;
     protected SizeWithUnit height;
 
-    protected boolean maximized;
     protected boolean modal;
 
     protected String styleName;
 
     protected ContentMode contentMode = ContentMode.TEXT;
+    protected WindowMode windowMode = WindowMode.NORMAL;
 
     protected String actionId;
     protected String buttonId;
@@ -82,13 +82,13 @@ public class MessageDialogFacetImpl extends AbstractFacet implements MessageDial
     }
 
     @Override
-    public void setMaximized(boolean maximized) {
-        this.maximized = maximized;
+    public void setWindowMode(WindowMode windowMode) {
+        this.windowMode = windowMode;
     }
 
     @Override
-    public boolean isMaximized() {
-        return maximized;
+    public WindowMode getWindowMode() {
+        return windowMode;
     }
 
     @Override
@@ -222,7 +222,7 @@ public class MessageDialogFacetImpl extends AbstractFacet implements MessageDial
                 .withMessage(message)
                 .withContentMode(contentMode)
                 .withHtmlSanitizer(htmlSanitizerEnabled)
-                .withMaximized(maximized)
+                .withWindowMode(windowMode)
                 .withModal(modal)
                 .withStyleName(styleName)
                 .withCloseOnClickOutside(closeOnClickOutside)

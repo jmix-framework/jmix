@@ -22,6 +22,7 @@ import io.jmix.data.DataConfiguration
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.ContentMode
+import io.jmix.ui.component.WindowMode
 import io.jmix.ui.component.impl.ButtonImpl
 import io.jmix.ui.component.impl.MessageDialogFacetImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -54,7 +55,7 @@ class MessageDialogFacetTest extends ScreenSpecification {
         messageDialog.width == 350
         messageDialog.styleName == 'msg-dialog-style'
         messageDialog.modal
-        messageDialog.maximized
+        messageDialog.windowMode == WindowMode.MAXIMIZED
         messageDialog.closeOnClickOutside
 
         when: 'MessageDialog is shown'

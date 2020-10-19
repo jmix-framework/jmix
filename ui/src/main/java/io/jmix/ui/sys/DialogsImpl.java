@@ -17,7 +17,6 @@
 package io.jmix.ui.sys;
 
 import com.vaadin.server.Sizeable;
-import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
@@ -38,6 +37,7 @@ import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -292,20 +292,14 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public boolean isMaximized() {
-            return window.getWindowMode() == WindowMode.MAXIMIZED;
-        }
-
-        @Override
-        public OptionDialogBuilder withMaximized(boolean maximized) {
-            window.setWindowMode(maximized ? WindowMode.MAXIMIZED : WindowMode.NORMAL);
+        public OptionDialogBuilder withWindowMode(WindowMode windowMode) {
+            window.setWindowMode(toVaadinWindowMode(windowMode));
             return this;
         }
 
         @Override
-        public OptionDialogBuilder maximized() {
-            withMaximized(true);
-            return this;
+        public WindowMode getWindowMode() {
+            return fromVaadinWindowMode(window.getWindowMode());
         }
 
         @Override
@@ -557,19 +551,14 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public boolean isMaximized() {
-            return window.getWindowMode() == WindowMode.MAXIMIZED;
-        }
-
-        @Override
-        public MessageDialogBuilder withMaximized(boolean maximized) {
-            window.setWindowMode(maximized ? WindowMode.MAXIMIZED : WindowMode.NORMAL);
+        public MessageDialogBuilder withWindowMode(WindowMode windowMode) {
+            window.setWindowMode(toVaadinWindowMode(windowMode));
             return this;
         }
 
         @Override
-        public MessageDialogBuilder maximized() {
-            return withMaximized(true);
+        public WindowMode getWindowMode() {
+            return fromVaadinWindowMode(window.getWindowMode());
         }
 
         @Override

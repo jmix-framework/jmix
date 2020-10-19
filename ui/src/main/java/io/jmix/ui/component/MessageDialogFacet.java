@@ -70,7 +70,7 @@ public interface MessageDialogFacet extends Facet {
      * Sets dialog message content mode.
      * @param contentMode content mode
      */
-    @StudioProperty(type = PropertyType.ENUMERATION)
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TEXT")
     void setContentMode(ContentMode contentMode);
 
     /**
@@ -79,16 +79,17 @@ public interface MessageDialogFacet extends Facet {
     ContentMode getContentMode();
 
     /**
-     * Sets whether dialog should be maximized.
-     * @param maximized maximized
+     * Sets the mode of the dialog window
+     *
+     * @param windowMode the mode of the dialog window
      */
-    @StudioProperty(type = PropertyType.BOOLEAN)
-    void setMaximized(boolean maximized);
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "NORMAL")
+    void setWindowMode(WindowMode windowMode);
 
     /**
-     * @return whether dialog should be maximized
+     * @return the mode of the dialog window
      */
-    boolean isMaximized();
+    WindowMode getWindowMode();
 
     /**
      * Sets whether dialog should be modal

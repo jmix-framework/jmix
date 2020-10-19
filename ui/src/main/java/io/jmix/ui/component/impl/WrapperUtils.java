@@ -995,4 +995,30 @@ public final class WrapperUtils {
 
         return ResponsiveGridLayout.OffsetValue.columns(offsetValue.getColumns());
     }
+
+    public static WindowMode fromVaadinWindowMode(com.vaadin.shared.ui.window.WindowMode windowMode) {
+        checkNotNullArgument(windowMode);
+
+        switch (windowMode) {
+            case NORMAL:
+                return WindowMode.NORMAL;
+            case MAXIMIZED:
+                return WindowMode.MAXIMIZED;
+            default:
+                throw new IllegalArgumentException("Can't be converted to DialogWindow.WindowMode: " + windowMode);
+        }
+    }
+
+    public static com.vaadin.shared.ui.window.WindowMode toVaadinWindowMode(WindowMode windowMode) {
+        checkNotNullArgument(windowMode);
+
+        switch (windowMode) {
+            case NORMAL:
+                return com.vaadin.shared.ui.window.WindowMode.NORMAL;
+            case MAXIMIZED:
+                return com.vaadin.shared.ui.window.WindowMode.MAXIMIZED;
+            default:
+                throw new IllegalArgumentException("Can't be converted to WindowMode: " + windowMode);
+        }
+    }
 }

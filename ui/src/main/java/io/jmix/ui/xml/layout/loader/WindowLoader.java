@@ -21,6 +21,7 @@ import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -172,10 +173,7 @@ public class WindowLoader extends ContainerLoader<Window> implements ComponentRo
                 dialog.setCloseOnClickOutside(parseBoolean(closeOnClickOutside));
             }
 
-            String maximized = dialogModeElement.attributeValue("maximized");
-            if (isNotEmpty(maximized) && parseBoolean(maximized)) {
-                dialog.setWindowMode(DialogWindow.WindowMode.MAXIMIZED);
-            }
+            loadEnum(dialogModeElement, WindowMode.class, "windowMode", dialog::setWindowMode);
 
             String positionX = dialogModeElement.attributeValue("positionX");
             if (isNotEmpty(positionX)) {

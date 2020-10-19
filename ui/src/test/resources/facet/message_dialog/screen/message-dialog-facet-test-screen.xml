@@ -27,7 +27,7 @@
                        width="350px"
                        styleName="msg-dialog-style"
                        modal="true"
-                       maximized="true"
+                       windowMode="MAXIMIZED"
                        closeOnClickOutside="true"/>
 
         <messageDialog id="dialogActionSub"

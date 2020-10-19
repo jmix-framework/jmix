@@ -22,16 +22,17 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ActionsAwareDialogFacet;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.OptionDialogFacet;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.impl.OptionDialogFacetImpl;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
+import io.jmix.ui.xml.layout.LoaderSupport;
 import org.dom4j.Element;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class OptionDialogFacetProvider
     protected ThemeConstantsManager themeConstantsManager;
     @Autowired
     protected UiProperties uiProperties;
+    @Autowired
+    protected LoaderSupport loaderSupport;
 
     @Override
     public Class<OptionDialogFacet> getFacetClass() {
@@ -80,8 +83,10 @@ public class OptionDialogFacetProvider
         loadHeight(facet, element);
 
         loadContentMode(facet, element);
-        loadMaximized(facet, element);
         loadStyleName(facet, element);
+
+        loaderSupport.loadEnum(element, WindowMode.class, "windowMode")
+                .ifPresent(facet::setWindowMode);
 
         loadHtmlSanitizerEnabled(facet, element);
 
@@ -131,13 +136,6 @@ public class OptionDialogFacetProvider
         String contentMode = element.attributeValue("contentMode");
         if (isNotEmpty(contentMode)) {
             facet.setContentMode(ContentMode.valueOf(contentMode));
-        }
-    }
-
-    protected void loadMaximized(OptionDialogFacet facet, Element element) {
-        String maximized = element.attributeValue("maximized");
-        if (isNotEmpty(maximized)) {
-            facet.setMaximized(Boolean.parseBoolean(maximized));
         }
     }
 

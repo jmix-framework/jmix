@@ -288,12 +288,12 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
 
     @Override
     public void setWindowMode(WindowMode mode) {
-        dialogWindow.setWindowMode(com.vaadin.shared.ui.window.WindowMode.valueOf(mode.name()));
+        dialogWindow.setWindowMode(WrapperUtils.toVaadinWindowMode(mode));
     }
 
     @Override
     public WindowMode getWindowMode() {
-        return WindowMode.valueOf(dialogWindow.getWindowMode().name());
+        return WrapperUtils.fromVaadinWindowMode(dialogWindow.getWindowMode());
     }
 
     @Override

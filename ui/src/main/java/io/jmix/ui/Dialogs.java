@@ -24,6 +24,7 @@ import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.component.ValidationErrors;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.screen.FrameOwner;
@@ -140,7 +141,7 @@ public interface Dialogs {
             extends DialogBuilder<OptionDialogBuilder>,
             HasMessage<OptionDialogBuilder>,
             HasContentMode<OptionDialogBuilder>,
-            HasMaximized<OptionDialogBuilder>,
+            HasWindowMode<OptionDialogBuilder>,
             HasStyleName<OptionDialogBuilder>,
             HasHtmlSanitizer<OptionDialogBuilder> {
         /**
@@ -170,7 +171,7 @@ public interface Dialogs {
             HasMessage<MessageDialogBuilder>,
             HasContentMode<MessageDialogBuilder>,
             HasModal<MessageDialogBuilder>,
-            HasMaximized<MessageDialogBuilder>,
+            HasWindowMode<MessageDialogBuilder>,
             HasStyleName<MessageDialogBuilder>,
             HasHtmlSanitizer<MessageDialogBuilder> {
         /**
@@ -621,30 +622,23 @@ public interface Dialogs {
     }
 
     /**
-     * Marker interface for Dialog Builders that have maximized setting.
+     * Marker interface for Dialog Builders that have window mode for dialog window.
      *
      * @param <T> return type of fluent API methods
      */
-    interface HasMaximized<T> {
+    interface HasWindowMode<T> {
         /**
-         * Sets whether dialog should be maximized.
+         * Sets the mode of the dialog window.
          *
-         * @param maximized maximized flag
+         * @param windowMode the mode of the dialog window
          * @return builder
          */
-        T withMaximized(boolean maximized);
+        T withWindowMode(WindowMode windowMode);
 
         /**
-         * Enables dialog maximized mode.
-         *
-         * @return builder
+         * @return the mode of the dialog window
          */
-        T maximized();
-
-        /**
-         * @return true if dialog will be maximized
-         */
-        boolean isMaximized();
+        WindowMode getWindowMode();
     }
 
     /**

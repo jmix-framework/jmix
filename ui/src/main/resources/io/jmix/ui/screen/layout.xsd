@@ -1059,6 +1059,13 @@
         </xs:union>
     </xs:simpleType>
 
+    <xs:simpleType name="windowMode">
+        <xs:restriction>
+            <xs:enumeration value="NORMAL"/>
+            <xs:enumeration value="MAXIMIZED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Interfaces -->
 
     <xs:attributeGroup name="hasId">
@@ -1339,7 +1346,7 @@
 
         <xs:attribute name="forceDialog" type="xs:boolean"/>
         <xs:attribute name="closeOnClickOutside" type="xs:boolean"/>
-        <xs:attribute name="maximized" type="xs:boolean"/>
+        <xs:attribute name="windowMode" type="windowMode"/>
 
         <xs:attribute name="positionX" type="xs:integer"/>
         <xs:attribute name="positionY" type="xs:integer"/>
@@ -3630,7 +3637,7 @@
         <xs:attribute name="message" type="resourceString"/>
 
         <xs:attribute name="contentMode" type="contentMode"/>
-        <xs:attribute name="maximized" type="xs:boolean"/>
+        <xs:attribute name="windowMode" type="windowMode"/>
         <xs:attribute name="styleName" type="xs:string"/>
 
         <xs:attributeGroup ref="hasSize"/>

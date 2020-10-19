@@ -170,18 +170,4 @@ public interface DialogWindow extends Window {
      * or -1 if unspecified
      */
     int getPositionY();
-
-    /**
-     * Supported dialog window modes.
-     */
-    enum WindowMode {
-        /**
-         * Normal mode. The window size and position is determined by the window state.
-         */
-        NORMAL,
-        /**
-         * Maximized mode. The window is positioned in the top left corner and fills the whole screen.
-         */
-        MAXIMIZED
-    }
 }

@@ -22,6 +22,7 @@ import io.jmix.data.DataConfiguration
 import io.jmix.ui.GuiDevelopmentException
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.ContentMode
+import io.jmix.ui.component.WindowMode
 import io.jmix.ui.component.impl.ButtonImpl
 import io.jmix.ui.component.impl.OptionDialogFacetImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -53,7 +54,7 @@ class OptionDialogFacetTest extends ScreenSpecification {
         optionDialog.height == 200
         optionDialog.width == 350
         optionDialog.styleName == 'opt-dialog-style'
-        optionDialog.maximized
+        optionDialog.windowMode == WindowMode.MAXIMIZED
 
         when: 'OptionDialog is shown'
 

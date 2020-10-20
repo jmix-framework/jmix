@@ -23,7 +23,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import javax.validation.constraints.NotNull;
 
 @ModelObject(name = "test_CustomerObject", annotatedPropertiesOnly = true)
-public class CustomerObject extends TestBaseModelObject {
+public class CustomerObject {
 
     @ModelProperty(mandatory = true)
     @InstanceName

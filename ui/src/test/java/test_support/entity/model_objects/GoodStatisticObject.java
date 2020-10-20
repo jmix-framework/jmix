@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @ModelObject(name = "test_GoodStatisticObject")
-public class GoodStatisticObject extends TestBaseModelObject {
+public class GoodStatisticObject {
 
     @ModelProperty
     @InstanceName

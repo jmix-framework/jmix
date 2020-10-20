@@ -27,7 +27,7 @@ import javax.persistence.ManyToOne;
 
 @Embeddable
 @ModelObject(name = "pc_Address")
-public class Address implements Entity {
+public class Address {
 
     private static final long serialVersionUID = 1425424514535608806L;
 

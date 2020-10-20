@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import java.util.Date;
 
 @ModelObject(name = "test_GoodInfo")
-public class GoodInfoObject extends TestBaseModelObject {
+public class GoodInfoObject {
 
     @ModelProperty
     protected String name;

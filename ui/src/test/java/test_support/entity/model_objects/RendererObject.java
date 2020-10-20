@@ -22,7 +22,7 @@ import io.jmix.core.metamodel.annotation.ModelProperty;
 import java.util.Date;
 
 @ModelObject(name = "test_RendererObject")
-public class RendererObject extends TestBaseModelObject {
+public class RendererObject {
 
     @ModelProperty
     protected String button;

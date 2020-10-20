@@ -19,7 +19,7 @@ package test_support.entity.model_objects;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
 @ModelObject(name = "test_OrderLineObject")
-public class OrderLineObject extends TestBaseModelObject {
+public class OrderLineObject {
 
     private OrderObject order;
 

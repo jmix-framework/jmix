@@ -16,7 +16,6 @@
 
 package test_support.entity;
 
-import io.jmix.core.Entity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -35,7 +34,7 @@ import java.util.UUID;
 
 @MappedSuperclass
 @ModelObject(name = "test_BaseEntity")
-public class TestBaseEntity implements Entity {
+public class TestBaseEntity {
     @Id
     @Column(name = "ID")
     @JmixGeneratedValue

@@ -18,6 +18,6 @@ package navigation.screen.with_type.by_class;
 import io.jmix.core.Entity;
 import io.jmix.ui.screen.StandardEditor;
 
-public abstract class AbstractL2Editor<T extends Entity> extends StandardEditor<T> {
+public abstract class AbstractL2Editor<T> extends StandardEditor<T> {
     
 }

@@ -23,7 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @ModelObject(name = "test_OrderObject")
-public class OrderObject extends TestBaseModelObject {
+public class OrderObject {
 
     private LocalDate date;
 

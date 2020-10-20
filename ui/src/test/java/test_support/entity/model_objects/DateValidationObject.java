@@ -28,7 +28,7 @@ import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
 @ModelObject(name = "test_DateValidationObject")
-public class DateValidationObject extends TestBaseModelObject {
+public class DateValidationObject {
 
     @Future
     @Temporal(TemporalType.TIMESTAMP)

@@ -23,7 +23,7 @@ import test_support.entity.sales.Product;
 import java.util.Set;
 
 @ModelObject(name = "test_Catalog")
-public class CatalogObject extends TestBaseModelObject {
+public class CatalogObject {
 
     @ModelProperty
     protected String name;

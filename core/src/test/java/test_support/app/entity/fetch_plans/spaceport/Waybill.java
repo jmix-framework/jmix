@@ -17,7 +17,6 @@
 package test_support.app.entity.fetch_plans.spaceport;
 
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
@@ -33,7 +32,7 @@ import java.util.UUID;
 @javax.persistence.Entity(name = "st_Waybill")
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Waybill implements Entity {
+public class Waybill {
     private static final long serialVersionUID = -5842090535415841578L;
 
     @ModelProperty(mandatory = true)

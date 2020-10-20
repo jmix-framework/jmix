@@ -16,7 +16,6 @@
 
 package test_support.app.entity.fetch_plans.spaceport;
 
-import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.ModelProperty;
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 @Table(name = "ST_WAYBILL_ITEM")
 @javax.persistence.Entity(name = "st_WaybillItem")
-public class WaybillItem implements Entity {
+public class WaybillItem {
     private static final long serialVersionUID = 5178883424732340774L;
 
     @ModelProperty(mandatory = true)

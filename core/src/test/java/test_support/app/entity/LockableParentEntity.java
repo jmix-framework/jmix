@@ -17,16 +17,14 @@
 package test_support.app.entity;
 
 import io.jmix.core.pessimisticlocking.PessimisticLock;
-import test_support.base.entity.BaseLockableEntity;
+import test_support.base.entity.BaseUuidEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name = "app_LockableParentEntity")
 @PessimisticLock(timeoutSec = 120)
-public class LockableParentEntity extends BaseLockableEntity {
-
-
+public class LockableParentEntity extends BaseUuidEntity {
     @Column(name = "NAME")
     private String name;
 

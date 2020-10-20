@@ -25,16 +25,10 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.model.Range
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Ignore
 import spock.lang.Specification
-
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
-import test_support.app.entity.model_objects.CustomerObject
-import test_support.app.entity.model_objects.CustomerObjectWithGeneratedId
-import test_support.app.entity.model_objects.CustomerObjectWithNullableId
-import test_support.app.entity.model_objects.OrderLineObject
-import test_support.app.entity.model_objects.OrderObject
+import test_support.app.entity.model_objects.*
 
 import java.time.LocalDate
 
@@ -112,8 +106,6 @@ class ModelObjectsMetadataTest extends Specification {
         1 * listener.propertyChanged(_)
     }
 
-    // TODO enhance non-annotated properties
-    @Ignore
     def "non-annotated properties are enhanced"() {
         def order = metadata.create(OrderObject)
 

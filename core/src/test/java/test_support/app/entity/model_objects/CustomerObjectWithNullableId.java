@@ -16,17 +16,11 @@
 
 package test_support.app.entity.model_objects;
 
-import io.jmix.core.EntityEntry;
-import io.jmix.core.Entity;
-import io.jmix.core.entity.NullableIdEntityEntry;
 import io.jmix.core.entity.annotation.JmixId;
-import io.jmix.core.impl.EntityInternals;
 import io.jmix.core.metamodel.annotation.ModelObject;
 
-import javax.annotation.Nullable;
-
 @ModelObject
-public class CustomerObjectWithNullableId implements Entity {
+public class CustomerObjectWithNullableId {
 
     @JmixId
     private String id;
@@ -48,51 +42,4 @@ public class CustomerObjectWithNullableId implements Entity {
     public void setName(String name) {
         this.name = name;
     }
-
-    // TODO Replace with enhancing - begin
-
-    private static class JmixEntityEntry extends NullableIdEntityEntry {
-        public JmixEntityEntry(Entity source) {
-            super(source);
-        }
-
-        @Nullable
-        @Override
-        public Object getEntityId() {
-            return ((CustomerObjectWithNullableId) getSource()).getId();
-        }
-
-        @Override
-        public void setEntityId(@Nullable Object id) {
-            ((CustomerObjectWithNullableId) getSource()).setId((String) id);
-        }
-    }
-
-    private EntityEntry _jmixEntityEntry = new JmixEntityEntry(this);
-
-    @Override
-    public EntityEntry __getEntityEntry() {
-        return _jmixEntityEntry;
-    }
-
-    @Override
-    public void __copyEntityEntry() {
-        JmixEntityEntry newEntry = new JmixEntityEntry(this);
-        newEntry.copy(_jmixEntityEntry);
-        _jmixEntityEntry = newEntry;
-    }
-
-    public boolean equals(Object var1) {
-        return EntityInternals.equals(this, var1);
-    }
-
-    public int hashCode() {
-        return EntityInternals.hashCode(this);
-    }
-
-    public String toString() {
-        return EntityInternals.toString(this);
-    }
-
-    // TODO Replace with enhancing - end
 }

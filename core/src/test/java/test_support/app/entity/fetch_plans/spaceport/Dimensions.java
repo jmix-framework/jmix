@@ -16,13 +16,11 @@
 
 package test_support.app.entity.fetch_plans.spaceport;
 
-import io.jmix.core.Entity;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-public class Dimensions implements Entity {
+public class Dimensions {
     private static final long serialVersionUID = 4270996463483093852L;
 
     @Column(name = "LENGTH")

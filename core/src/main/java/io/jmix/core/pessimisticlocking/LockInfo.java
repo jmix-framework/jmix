@@ -74,7 +74,6 @@ public class LockInfo implements Serializable {
     /**
      * @return locked object id
      */
-    @ModelProperty
     public String getObjectId() {
         return objectId;
     }
@@ -82,7 +81,6 @@ public class LockInfo implements Serializable {
     /**
      * @return locked object type
      */
-    @ModelProperty
     public String getObjectType() {
         return objectType;
     }
@@ -90,7 +88,6 @@ public class LockInfo implements Serializable {
     /**
      * @return when the lock occurred
      */
-    @ModelProperty
     public Date getSince() {
         return since;
     }
@@ -98,7 +95,6 @@ public class LockInfo implements Serializable {
     /**
      * @return username of the user which holds the lock
      */
-    @ModelProperty
     public String getUsername() {
         return username;
     }

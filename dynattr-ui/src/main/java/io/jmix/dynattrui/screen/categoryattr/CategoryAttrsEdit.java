@@ -321,9 +321,9 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected void onEditEnumerationBtnClick(Button.ClickEvent event) {
         AttributeEnumerationScreen enumerationScreen = screenBuilders.screen(this)
                 .withScreenClass(AttributeEnumerationScreen.class)
-                .withAfterCloseListener(afterScreenCloseEvent -> {
-                    if (afterScreenCloseEvent.closedWith(StandardOutcome.COMMIT)) {
-                        AttributeEnumerationScreen screen = afterScreenCloseEvent.getScreen();
+                .withAfterCloseListener(afterCloseEvent -> {
+                    if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+                        AttributeEnumerationScreen screen = (AttributeEnumerationScreen) afterCloseEvent.getSource();
                         getEditedEntity().setEnumeration(screen.getEnumeration());
                         getEditedEntity().setEnumerationLocales(screen.getEnumerationLocales());
                     }

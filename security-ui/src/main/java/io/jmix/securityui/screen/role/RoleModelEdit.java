@@ -302,10 +302,11 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
                 .show();
     }
 
-    private void addPoliciesFromMultiplePoliciesScreen(io.jmix.ui.builder.AfterScreenCloseEvent<? extends MultipleResourcePolicyModelCreateScreen> closeEvent) {
+    private void addPoliciesFromMultiplePoliciesScreen(AfterCloseEvent afterCloseEvent) {
         if (MultipleResourcePolicyModelCreateScreen.COMMIT_ACTION_ID
-                .equals(((StandardCloseAction) closeEvent.getCloseAction()).getActionId())) {
-            MultipleResourcePolicyModelCreateScreen screen = closeEvent.getScreen();
+                .equals(((StandardCloseAction) afterCloseEvent.getCloseAction()).getActionId())) {
+            MultipleResourcePolicyModelCreateScreen screen =
+                    (MultipleResourcePolicyModelCreateScreen) afterCloseEvent.getSource();
             for (ResourcePolicyModel resourcePolicyModel : screen.getResourcePolicies()) {
                 boolean policyExists = resourcePoliciesDc.getItems().stream()
                         .anyMatch(rpm -> resourcePolicyModel.getType().equals(rpm.getType()) &&

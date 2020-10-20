@@ -25,8 +25,9 @@ dependencies {
     api project(":ui")
 
     api 'org.junit.jupiter:junit-jupiter-api'
+    api 'org.junit.jupiter:junit-jupiter-engine'
+    api 'org.junit.vintage:junit-vintage-engine'
     api 'org.springframework:spring-test'
     api 'org.spockframework:spock-core'
     api 'org.spockframework:spock-spring'
-    api 'org.junit.jupiter:junit-jupiter-engine'
 }

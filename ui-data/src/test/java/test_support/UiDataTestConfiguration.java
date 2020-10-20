@@ -24,9 +24,10 @@ import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
-import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
 import io.jmix.uidata.UiDataConfiguration;
 import io.jmix.uidata.UiSettingsCache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -82,6 +83,7 @@ public class UiDataTestConfiguration {
     }
 
     @Bean("test_UiSettingsCache")
+    @Primary
     UiSettingsCache uiSettingsCache() {
         return new TestUiSettingsCache();
     }
@@ -89,5 +91,10 @@ public class UiDataTestConfiguration {
     @Bean("test_resizableTextAreaBinder")
     TestResizableTextAreaBinder resizableTextAreaBinder() {
         return new TestResizableTextAreaBinder();
+    }
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager();
     }
 }

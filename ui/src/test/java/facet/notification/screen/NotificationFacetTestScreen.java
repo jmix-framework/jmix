@@ -17,6 +17,7 @@
 package facet.notification.screen;
 
 
+import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.NotificationFacet;
@@ -56,7 +57,7 @@ public class NotificationFacetTestScreen extends Screen {
     }
 
     @Subscribe("testNotification")
-    public void onNotificationClosed(NotificationFacet.CloseEvent e) {
+    public void onNotificationClosed(Notifications.CloseEvent e) {
         closeEvtFired = true;
     }
 }

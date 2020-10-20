@@ -745,12 +745,8 @@ public class DialogsImpl implements Dialogs {
 
         @Override
         public InputDialogBuilder withCloseListener(Consumer<InputDialog.InputDialogCloseEvent> listener) {
-            inputDialog.setCloseListener(listener);
+            inputDialog.addCloseListener(listener);
             return this;
-        }
-
-        public Consumer<InputDialog.InputDialogCloseEvent> getCloseListener() {
-            return inputDialog.getCloseListener();
         }
 
         @Override

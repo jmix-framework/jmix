@@ -16,9 +16,11 @@
 
 package io.jmix.ui;
 
+import com.vaadin.ui.Notification;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.HasUserOriginated;
 
+import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
@@ -173,11 +175,6 @@ public interface Notifications {
         NotificationBuilder withCloseListener(Consumer<CloseEvent> closeListener);
 
         /**
-         * @return close listener
-         */
-        Consumer<CloseEvent> getCloseListener();
-
-        /**
          * Shows notification.
          */
         void show();
@@ -213,12 +210,18 @@ public interface Notifications {
      *
      * @see NotificationBuilder#withCloseListener(Consumer)
      */
-    class CloseEvent implements HasUserOriginated {
+    class CloseEvent extends EventObject implements HasUserOriginated {
 
         protected boolean userOriginated;
 
-        public CloseEvent(boolean userOriginated) {
+        public CloseEvent(Notification source, boolean userOriginated) {
+            super(source);
             this.userOriginated = userOriginated;
+        }
+
+        @Override
+        public Notification getSource() {
+            return (Notification) super.getSource();
         }
 
         @Override

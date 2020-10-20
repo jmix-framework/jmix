@@ -178,10 +178,16 @@ public class EditorBuilderProcessor {
         }
 
         if (builder instanceof EditorClassBuilder) {
-            @SuppressWarnings("unchecked")
-            Consumer<AfterScreenCloseEvent> closeListener = ((EditorClassBuilder) builder).getCloseListener();
-            if (closeListener != null) {
-                screen.addAfterCloseListener(new AfterCloseListenerAdapter(closeListener));
+            List<Consumer<Screen.AfterShowEvent>> afterShowListeners =
+                    ((EditorClassBuilder) builder).getAfterShowListeners();
+            for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+                screen.addAfterShowListener(afterShowListener);
+            }
+
+            List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners =
+                    ((EditorClassBuilder) builder).getAfterCloseListeners();
+            for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+                screen.addAfterCloseListener(afterCloseListener);
             }
         }
 

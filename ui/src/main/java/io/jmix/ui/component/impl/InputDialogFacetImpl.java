@@ -30,7 +30,9 @@ import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -56,6 +58,8 @@ public class InputDialogFacetImpl extends AbstractFacet implements InputDialogFa
     protected Collection<DialogAction<InputDialogFacet>> actions;
 
     protected Function<InputDialog.ValidationContext, ValidationErrors> validator;
+
+    protected List<Consumer<InputDialog.InputDialogCloseEvent>> closeListeners = new ArrayList<>();
 
     protected InputDialog inputDialog;
 
@@ -150,8 +154,13 @@ public class InputDialogFacetImpl extends AbstractFacet implements InputDialogFa
     }
 
     @Override
-    public Subscription addCloseListener(Consumer<CloseEvent> closeListener) {
-        return getEventHub().subscribe(CloseEvent.class, closeListener);
+    public Subscription addCloseListener(Consumer<InputDialog.InputDialogCloseEvent> closeListener) {
+        closeListeners.add(closeListener);
+        return () -> internalRemoveCloseListener(closeListener);
+    }
+
+    protected void internalRemoveCloseListener(Consumer<InputDialog.InputDialogCloseEvent> closeListener) {
+        closeListeners.remove(closeListener);
     }
 
     @Override
@@ -196,8 +205,11 @@ public class InputDialogFacetImpl extends AbstractFacet implements InputDialogFa
 
         builder.withCaption(caption)
                 .withParameters(parameters)
-                .withValidator(validator)
-                .withCloseListener(this::fireCloseActionEvent);
+                .withValidator(validator);
+
+        for (Consumer<InputDialog.InputDialogCloseEvent> closeListener : closeListeners) {
+            builder.withCloseListener(closeListener);
+        }
 
         if (dialogActions == null
                 && CollectionUtils.isEmpty(actions)) {
@@ -225,13 +237,6 @@ public class InputDialogFacetImpl extends AbstractFacet implements InputDialogFa
         super.setOwner(owner);
 
         subscribe();
-    }
-
-    protected void fireCloseActionEvent(InputDialog.InputDialogCloseEvent event) {
-        CloseEvent closeEvent = new CloseEvent(this,
-                event.getCloseAction(), event.getValues());
-
-        publish(CloseEvent.class, closeEvent);
     }
 
     protected void subscribe() {

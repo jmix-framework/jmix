@@ -18,6 +18,7 @@ package io.jmix.ui.sys;
 
 import com.vaadin.spring.annotation.UIScope;
 import com.vaadin.ui.Notification;
+import io.jmix.core.common.event.EventHub;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
@@ -82,7 +83,8 @@ public class NotificationsImpl implements Notifications {
 
         protected ContentMode contentMode = ContentMode.TEXT;
         protected NotificationType notificationType = NotificationType.HUMANIZED;
-        protected Consumer<CloseEvent> closeListener;
+
+        protected EventHub eventHub = new EventHub();
 
         public NotificationBuilderImpl() {
         }
@@ -182,13 +184,8 @@ public class NotificationsImpl implements Notifications {
 
         @Override
         public NotificationBuilder withCloseListener(Consumer<CloseEvent> closeListener) {
-            this.closeListener = closeListener;
+            eventHub.subscribe(CloseEvent.class, closeListener);
             return this;
-        }
-
-        @Override
-        public Consumer<CloseEvent> getCloseListener() {
-            return closeListener;
         }
 
         protected Notification.Type convertType(NotificationType notificationType) {
@@ -258,9 +255,10 @@ public class NotificationsImpl implements Notifications {
                 }
             }
 
-            if (closeListener != null) {
+            if (eventHub.hasSubscriptions(CloseEvent.class)) {
                 vNotification.addCloseListener(e ->
-                        closeListener.accept(new CloseEvent(e.isUserOriginated())));
+                        eventHub.publish(CloseEvent.class, new CloseEvent(e.getNotification(), e.isUserOriginated()))
+                );
             }
 
             return vNotification;

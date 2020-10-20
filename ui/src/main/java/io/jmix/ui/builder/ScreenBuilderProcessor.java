@@ -22,6 +22,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
@@ -47,10 +48,14 @@ public class ScreenBuilderProcessor {
 
             screen = screens.create(screenClass, builder.getLaunchMode(), builder.getOptions());
 
-            @SuppressWarnings("unchecked")
-            Consumer<AfterScreenCloseEvent> closeListener = screenClassBuilder.getCloseListener();
-            if (closeListener != null) {
-                screen.addAfterCloseListener(new AfterCloseListenerAdapter(closeListener));
+            List<Consumer<Screen.AfterShowEvent>> afterShowListeners = screenClassBuilder.getAfterShowListeners();
+            for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+                screen.addAfterShowListener(afterShowListener);
+            }
+
+            List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = screenClassBuilder.getAfterCloseListeners();
+            for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+                screen.addAfterCloseListener(afterCloseListener);
             }
         } else {
             if (builder.getScreenId() == null) {

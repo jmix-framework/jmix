@@ -29,6 +29,8 @@ import io.jmix.ui.component.NotificationFacet;
 import io.jmix.ui.screen.UiControllerUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,6 +48,8 @@ public class NotificationFacetImpl extends AbstractFacet implements Notification
 
     protected Supplier<String> captionProvider;
     protected Supplier<String> descriptionProvider;
+
+    protected List<Consumer<Notifications.CloseEvent>> closeListeners = new ArrayList<>();
 
     protected String actionId;
     protected String buttonId;
@@ -126,8 +130,13 @@ public class NotificationFacetImpl extends AbstractFacet implements Notification
     }
 
     @Override
-    public Subscription addCloseListener(Consumer<CloseEvent> listener) {
-        return getEventHub().subscribe(CloseEvent.class, listener);
+    public Subscription addCloseListener(Consumer<Notifications.CloseEvent> listener) {
+        closeListeners.add(listener);
+        return () -> internalRemoveCloseListener(listener);
+    }
+
+    protected void internalRemoveCloseListener(Consumer<Notifications.CloseEvent> listener) {
+        closeListeners.remove(listener);
     }
 
     @Override
@@ -211,16 +220,20 @@ public class NotificationFacetImpl extends AbstractFacet implements Notification
             description = descriptionProvider.get();
         }
 
-        notifications.create(type)
+        Notifications.NotificationBuilder builder = notifications.create(type)
                 .withCaption(caption)
                 .withDescription(description)
                 .withHideDelayMs(delayMs)
                 .withContentMode(contentMode)
                 .withHtmlSanitizer(htmlSanitizerEnabled)
                 .withStyleName(styleName)
-                .withPosition(position)
-                .withCloseListener(e -> publish(CloseEvent.class, new CloseEvent(this)))
-                .show();
+                .withPosition(position);
+
+        for (Consumer<Notifications.CloseEvent> closeListener : closeListeners) {
+            builder.withCloseListener(closeListener);
+        }
+
+        builder.show();
     }
 
     protected void subscribe() {

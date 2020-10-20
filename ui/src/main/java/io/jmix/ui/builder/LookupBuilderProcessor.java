@@ -138,10 +138,16 @@ public class LookupBuilderProcessor {
         }
 
         if (builder instanceof LookupClassBuilder) {
-            @SuppressWarnings("unchecked")
-            Consumer<AfterScreenCloseEvent> closeListener = ((LookupClassBuilder) builder).getCloseListener();
-            if (closeListener != null) {
-                screen.addAfterCloseListener(new AfterCloseListenerAdapter(closeListener));
+            List<Consumer<Screen.AfterShowEvent>> afterShowListeners =
+                    ((LookupClassBuilder) builder).getAfterShowListeners();
+            for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+                screen.addAfterShowListener(afterShowListener);
+            }
+
+            List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners =
+                    ((LookupClassBuilder) builder).getAfterCloseListeners();
+            for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+                screen.addAfterCloseListener(afterCloseListener);
             }
         }
 

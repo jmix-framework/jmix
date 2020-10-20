@@ -21,11 +21,8 @@ import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
 import io.jmix.ui.meta.*;
-import io.jmix.ui.screen.CloseAction;
 
 import javax.annotation.Nullable;
-import java.util.EventObject;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -146,7 +143,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * @param closeListener close listener
      * @return close event subscription
      */
-    Subscription addCloseListener(Consumer<CloseEvent> closeListener);
+    Subscription addCloseListener(Consumer<InputDialog.InputDialogCloseEvent> closeListener);
 
     /**
      * Sets input dialog result handler.
@@ -181,32 +178,4 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      * Shows InputDialog.
      */
     InputDialog show();
-
-    /**
-     * Event that is fired when InputDialog is closed.
-     */
-    class CloseEvent extends EventObject {
-
-        protected CloseAction closeAction;
-        protected Map<String, Object> values;
-
-        public CloseEvent(InputDialogFacet source, CloseAction closeAction, Map<String, Object> values) {
-            super(source);
-            this.closeAction = closeAction;
-            this.values = values;
-        }
-
-        @Override
-        public InputDialogFacet getSource() {
-            return (InputDialogFacet) super.getSource();
-        }
-
-        public CloseAction getCloseAction() {
-            return closeAction;
-        }
-
-        public Map<String, Object> getValues() {
-            return values;
-        }
-    }
 }

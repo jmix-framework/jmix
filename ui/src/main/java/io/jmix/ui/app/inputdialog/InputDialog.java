@@ -18,6 +18,7 @@ package io.jmix.ui.app.inputdialog;
 
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -41,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -116,7 +118,6 @@ public class InputDialog extends Screen {
     protected DialogActions dialogActions = DialogActions.OK_CANCEL;
     protected List<String> fieldIds;
 
-    protected Consumer<InputDialogCloseEvent> closeListener;
     protected Consumer<InputDialogResult> resultHandler;
     protected Function<ValidationContext, ValidationErrors> validator;
 
@@ -132,9 +133,9 @@ public class InputDialog extends Screen {
 
     @Subscribe
     protected void onAfterClose(AfterCloseEvent event) {
-        if (closeListener != null) {
-            closeListener.accept(new InputDialogCloseEvent(getValues(), event.getCloseAction()));
-        }
+        InputDialogCloseEvent closeEvent =
+                new InputDialogCloseEvent(event.getSource(), getValues(), event.getCloseAction());
+        getEventHub().publish(InputDialogCloseEvent.class, closeEvent);
     }
 
     /**
@@ -203,19 +204,13 @@ public class InputDialog extends Screen {
     }
 
     /**
-     * Add close listener to the dialog.
+     * Adds a close listener to the input dialog.
      *
      * @param listener close listener to add
+     * @return subscription
      */
-    public void setCloseListener(Consumer<InputDialogCloseEvent> listener) {
-        this.closeListener = listener;
-    }
-
-    /**
-     * @return close listener
-     */
-    public Consumer<InputDialogCloseEvent> getCloseListener() {
-        return closeListener;
+    public Subscription addCloseListener(Consumer<InputDialogCloseEvent> listener) {
+        return getEventHub().subscribe(InputDialogCloseEvent.class, listener);
     }
 
     /**
@@ -256,7 +251,7 @@ public class InputDialog extends Screen {
 
     /**
      * Sets handler for dialog actions (e.g. OK, CANCEL, etc) that are used in the dialog. Handler is invoked after
-     * close event and can be used instead of {@link #setCloseListener(Consumer)}.
+     * close event and can be used instead of {@link #addCloseListener(Consumer)}.
      * <p>
      * Note, it is worked only with {@link #setDialogActions(DialogActions)}. Custom actions are not handled.
      *
@@ -481,13 +476,19 @@ public class InputDialog extends Screen {
     /**
      * Event sent to a listener added using {@code withCloseListener()} method of the input dialog builder.
      */
-    public static class InputDialogCloseEvent {
+    public static class InputDialogCloseEvent extends EventObject {
         protected CloseAction closeAction;
         protected Map<String, Object> values;
 
-        public InputDialogCloseEvent(Map<String, Object> values, CloseAction closeAction) {
+        public InputDialogCloseEvent(Screen source, Map<String, Object> values, CloseAction closeAction) {
+            super(source);
             this.values = values;
             this.closeAction = closeAction;
+        }
+
+        @Override
+        public InputDialog getSource() {
+            return (InputDialog) super.getSource();
         }
 
         /**

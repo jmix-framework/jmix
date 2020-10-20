@@ -22,6 +22,8 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -30,7 +32,8 @@ import java.util.function.Consumer;
 public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
 
     protected Class<S> screenClass;
-    protected Consumer<AfterScreenCloseEvent<S>> closeListener;
+    protected List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterShowEvent>> afterShowListeners = new ArrayList<>();
 
     public ScreenClassBuilder(ScreenBuilder builder, Class<S> screenClass) {
         super(builder);
@@ -62,12 +65,22 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     }
 
     /**
+     * Adds {@link Screen.AfterShowEvent} listener to the screen.
+     *
+     * @param listener listener
+     */
+    public ScreenClassBuilder<S> withAfterShowListener(Consumer<Screen.AfterShowEvent> listener) {
+        afterShowListeners.add(listener);
+        return this;
+    }
+
+    /**
      * Adds {@link Screen.AfterCloseEvent} listener to the screen.
      *
      * @param listener listener
      */
-    public ScreenClassBuilder<S> withAfterCloseListener(Consumer<AfterScreenCloseEvent<S>> listener) {
-        this.closeListener = listener;
+    public ScreenClassBuilder<S> withAfterCloseListener(Consumer<Screen.AfterCloseEvent> listener) {
+        afterCloseListeners.add(listener);
         return this;
     }
 
@@ -80,11 +93,17 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     }
 
     /**
-     * Returns screen close listener.
+     * @return after show screen listeners
      */
-    @Nullable
-    public Consumer<AfterScreenCloseEvent<S>> getCloseListener() {
-        return closeListener;
+    public List<Consumer<Screen.AfterShowEvent>> getAfterShowListeners() {
+        return afterShowListeners;
+    }
+
+    /**
+     * @return after close screen listeners
+     */
+    public List<Consumer<Screen.AfterCloseEvent>> getAfterCloseListeners() {
+        return afterCloseListeners;
     }
 
     @Override

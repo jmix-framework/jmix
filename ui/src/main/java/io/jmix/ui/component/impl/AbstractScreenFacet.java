@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.impl;
 
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Screens;
@@ -33,9 +32,12 @@ import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerProperty;
 import io.jmix.ui.sys.UiControllerPropertyInjector;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -56,6 +58,9 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
 
     protected String actionId;
     protected String buttonId;
+
+    protected List<Consumer<Screen.AfterShowEvent>> afterShowListeners = new ArrayList<>();
+    protected List<Consumer<Screen.AfterCloseEvent>> afterCloseListeners = new ArrayList<>();
 
     protected S screen;
 
@@ -148,28 +153,33 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     }
 
     @Override
-    public Subscription addAfterShowEventListener(Consumer<AfterShowEvent> listener) {
-        return getEventHub().subscribe(AfterShowEvent.class, listener);
+    public Subscription addAfterShowEventListener(Consumer<Screen.AfterShowEvent> listener) {
+        afterShowListeners.add(listener);
+        return () -> internalRemoveAfterShowEventListener(listener);
+    }
+
+    protected void internalRemoveAfterShowEventListener(Consumer<Screen.AfterShowEvent> listener) {
+        afterShowListeners.remove(listener);
     }
 
     @Override
-    public Subscription addAfterCloseEventListener(Consumer<AfterCloseEvent> listener) {
-        return getEventHub().subscribe(AfterCloseEvent.class, listener);
+    public Subscription addAfterCloseEventListener(Consumer<Screen.AfterCloseEvent> listener) {
+        afterCloseListeners.add(listener);
+        return () -> internalRemoveAfterCloseEventListener(listener);
+    }
+
+    protected void internalRemoveAfterCloseEventListener(Consumer<Screen.AfterCloseEvent> listener) {
+        afterCloseListeners.remove(listener);
     }
 
     protected void initScreenListeners(Screen screen) {
-        screen.addAfterShowListener(this::fireAfterShowEvent);
-        screen.addAfterCloseListener(this::fireAfterCloseEvent);
-    }
+        for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
+            screen.addAfterShowListener(afterShowListener);
+        }
 
-    protected void fireAfterShowEvent(Screen.AfterShowEvent event) {
-        AfterShowEvent afterShowEvent = new AfterShowEvent(this, event.getSource());
-        publish(AfterShowEvent.class, afterShowEvent);
-    }
-
-    protected void fireAfterCloseEvent(Screen.AfterCloseEvent event) {
-        AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, event.getSource());
-        publish(AfterCloseEvent.class, afterCloseEvent);
+        for (Consumer<Screen.AfterCloseEvent> afterCloseListener : afterCloseListeners) {
+            screen.addAfterCloseListener(afterCloseListener);
+        }
     }
 
     protected void subscribe() {

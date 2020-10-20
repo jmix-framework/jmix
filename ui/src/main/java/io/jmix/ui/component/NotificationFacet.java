@@ -213,25 +213,10 @@ public interface NotificationFacet extends Facet {
     Supplier<String> getDescriptionProvider();
 
     /**
-     * Adds the given {@code Consumer} as notification {@link CloseEvent} listener.
+     * Adds the given {@code Consumer} as notification {@link Notifications.CloseEvent} listener.
      *
      * @param listener close event listener
      * @return close event subscription
      */
-    Subscription addCloseListener(Consumer<CloseEvent> listener);
-
-    /**
-     * Event that is fired when notification is closed.
-     */
-    class CloseEvent extends EventObject {
-
-        public CloseEvent(NotificationFacet source) {
-            super(source);
-        }
-
-        @Override
-        public NotificationFacet getSource() {
-            return (NotificationFacet) super.getSource();
-        }
-    }
+    Subscription addCloseListener(Consumer<Notifications.CloseEvent> listener);
 }

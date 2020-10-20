@@ -49,6 +49,7 @@ public class SessionsConfiguration<S extends Session> {
     }
 
     @Bean
+    @Primary
     protected SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }

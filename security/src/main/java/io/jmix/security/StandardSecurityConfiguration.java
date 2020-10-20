@@ -160,7 +160,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         return new JmixSessionAuthenticationStrategy();
     }
 
-    @Bean
+    @Bean(name = "sec_SessionRegistry")
     protected SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }

@@ -20,8 +20,10 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
+import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.xml.FacetLoader;
 import io.jmix.ui.xml.layout.loader.WindowLoader;
 import org.dom4j.Element;
@@ -31,6 +33,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAction;
+import static java.lang.Boolean.parseBoolean;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @ParametersAreNonnullByDefault
@@ -81,5 +85,22 @@ public class CubaWindowLoader extends WindowLoader {
                 getProperties(),
                 applicationContext.getBean(CubaProperties.class),
                 context);
+    }
+
+    @Override
+    protected void loadDialogOptions(Window resultComponent, Element element) {
+        super.loadDialogOptions(resultComponent, element);
+
+        Element dialogModeElement = element.element("dialogMode");
+        if (dialogModeElement != null
+                && resultComponent instanceof DialogWindow) {
+            // dialog mode applied only if opened as dialog
+            DialogWindow dialog = (DialogWindow) resultComponent;
+
+            String maximized = dialogModeElement.attributeValue("maximized");
+            if (isNotEmpty(maximized) && parseBoolean(maximized)) {
+                dialog.setWindowMode(WindowMode.MAXIMIZED);
+            }
+        }
     }
 }

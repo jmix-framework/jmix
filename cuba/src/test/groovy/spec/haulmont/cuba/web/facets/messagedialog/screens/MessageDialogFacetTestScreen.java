@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright (c) 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.dataloadcoordinator.screens;
+package spec.haulmont.cuba.web.facets.messagedialog.screens;
 
+import com.haulmont.cuba.gui.components.MessageDialogFacet;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.Button;
+import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("dlc-manual")
-@UiDescriptor("dlc-manual.xml")
-public class DlcManualScreen extends DlcBaseScreen {
+@UiController
+@UiDescriptor("message-dialog-facet-test-screen.xml")
+public class MessageDialogFacetTestScreen extends Screen {
+
+    @Autowired
+    public Action dialogAction;
+    @Autowired
+    public Button dialogButton;
+    @Autowired
+    public MessageDialogFacet messageDialog;
 }

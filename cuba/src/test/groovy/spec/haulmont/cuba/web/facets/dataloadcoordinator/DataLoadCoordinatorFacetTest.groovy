@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.dataloadcoordinator
+package spec.haulmont.cuba.web.facets.dataloadcoordinator
 
 import com.haulmont.cuba.core.model.OwnerCategory
 import io.jmix.ui.component.DataLoadCoordinator
 import spec.haulmont.cuba.web.UiScreenSpec
-import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualNoParamScreen
-import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualScreen
-import spec.haulmont.cuba.web.dataloadcoordinator.screens.DlcManualWithLoadDataBeforeShowScreen
+import spec.haulmont.cuba.web.facets.dataloadcoordinator.screens.DlcManualScreen
+import spec.haulmont.cuba.web.facets.dataloadcoordinator.screens.DlcManualWithLoadDataBeforeShowScreen
+import spec.haulmont.cuba.web.facets.dataloadcoordinator.screens.DlcManualNoParamScreen
 import spock.lang.Unroll
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataLoadCoordinatorFacetTest extends UiScreenSpec {
 
     def setup() {
-        exportScreensPackages(['spec.haulmont.cuba.web.dataloadcoordinator.screens'])
+        exportScreensPackages(['spec.haulmont.cuba.web.facets.dataloadcoordinator.screens'])
     }
 
     @Unroll

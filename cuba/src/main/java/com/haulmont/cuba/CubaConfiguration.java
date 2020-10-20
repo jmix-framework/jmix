@@ -31,6 +31,7 @@ import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
+import com.haulmont.cuba.web.sys.CubaDialogs;
 import com.haulmont.cuba.web.sys.CubaFragments;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import com.haulmont.cuba.web.sys.CubaScreens;
@@ -111,6 +112,13 @@ public class CubaConfiguration {
     @UIScope
     protected Fragments getFragments() {
         return new CubaFragments();
+    }
+
+    @Bean("cuba_Dialogs")
+    @Primary
+    @UIScope
+    protected Dialogs getDialogs() {
+        return new CubaDialogs();
     }
 
     @Bean("cuba_Messages")

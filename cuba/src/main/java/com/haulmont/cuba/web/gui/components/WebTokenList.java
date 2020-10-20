@@ -24,6 +24,7 @@ import com.haulmont.cuba.gui.components.CaptionMode;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
@@ -111,7 +112,7 @@ public class WebTokenList<V extends Entity> extends io.jmix.ui.component.impl.We
                 dialogWindow.setCloseOnClickOutside(openType.getCloseOnClickOutside());
             }
             if (openType.getMaximized() != null) {
-                dialogWindow.setWindowMode(openType.getMaximized() ? DialogWindow.WindowMode.MAXIMIZED : DialogWindow.WindowMode.NORMAL);
+                dialogWindow.setWindowMode(openType.getMaximized() ? WindowMode.MAXIMIZED : WindowMode.NORMAL);
             }
             if (openType.getModal() != null) {
                 dialogWindow.setModal(openType.getModal());

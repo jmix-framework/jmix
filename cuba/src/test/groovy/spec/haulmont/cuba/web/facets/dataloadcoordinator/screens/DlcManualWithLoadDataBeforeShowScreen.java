@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package spec.haulmont.cuba.web.dataloadcoordinator.screens;
+package spec.haulmont.cuba.web.facets.dataloadcoordinator.screens;
 
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@UiController("dlc-manual-noparam")
-@UiDescriptor("dlc-manual-noparam.xml")
-public class DlcManualNoParamScreen extends DlcBaseScreen {
+@UiController("dlc-manual-with-load-data-before-show")
+@UiDescriptor("dlc-manual.xml")
+@LoadDataBeforeShow
+public class DlcManualWithLoadDataBeforeShowScreen extends DlcBaseScreen {
 }

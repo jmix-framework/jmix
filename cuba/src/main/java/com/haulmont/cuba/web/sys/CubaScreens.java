@@ -335,7 +335,9 @@ public final class CubaScreens extends ScreensImpl implements WindowManager {
             builder.withCloseOnClickOutside(messageType.getCloseOnClickOutside());
         }
         if (messageType.getMaximized() != null) {
-            builder.withMaximized(messageType.getMaximized());
+            builder.withWindowMode(messageType.getMaximized()
+                    ? WindowMode.MAXIMIZED
+                    : WindowMode.NORMAL);
         }
 
         builder.show();
@@ -356,7 +358,9 @@ public final class CubaScreens extends ScreensImpl implements WindowManager {
             builder.withWidth(messageType.getWidth() + sizeUnit.getSymbol());
         }
         if (messageType.getMaximized() != null) {
-            builder.withMaximized(messageType.getMaximized());
+            builder.withWindowMode(messageType.getMaximized()
+                    ? WindowMode.MAXIMIZED
+                    : WindowMode.NORMAL);
         }
 
         builder.show();
@@ -395,7 +399,7 @@ public final class CubaScreens extends ScreensImpl implements WindowManager {
                 dialogWindow.setCloseOnClickOutside(openType.getCloseOnClickOutside());
             }
             if (openType.getMaximized() != null) {
-                dialogWindow.setWindowMode(openType.getMaximized() ? DialogWindow.WindowMode.MAXIMIZED : DialogWindow.WindowMode.NORMAL);
+                dialogWindow.setWindowMode(openType.getMaximized() ? WindowMode.MAXIMIZED : WindowMode.NORMAL);
             }
             if (openType.getModal() != null) {
                 dialogWindow.setModal(openType.getModal());

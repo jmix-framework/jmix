@@ -18,6 +18,7 @@ package io.jmix.gradle;
 
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.annotation.BooleanMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
@@ -28,13 +29,14 @@ public class MetaModelUtil {
     public static final String BASE_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.BaseEntityEntry";
     public static final String EMBEDDABLE_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.EmbeddableEntityEntry";
     public static final String NULLABLE_ID_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.NullableIdEntityEntry";
+    public static final String NO_ID_ENTITY_ENTRY_TYPE = "io.jmix.core.entity.NoIdEntityEntry";
 
     public static final String SETTERS_ENHANCED_TYPE = "io.jmix.core.entity.JmixSettersEnhanced";
     public static final String ENTITY_ENTRY_ENHANCED_TYPE = "io.jmix.core.entity.JmixEntityEntryEnhanced";
 
     public static final String TRANSIENT_ANNOTATION_TYPE = "javax.persistence.Transient";
     public static final String MODEL_PROPERTY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.ModelProperty";
-    public static final String DISABLE_ENHANCING_ANNOTATION_TYPE = "io.jmix.core.entity.annotations.DisableEnhancing";
+    public static final String DISABLE_ENHANCING_ANNOTATION_TYPE = "io.jmix.core.entity.annotation.DisableEnhancing";
     public static final String MODEL_OBJECT_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.ModelObject";
     public static final String ENTITY_ANNOTATION_TYPE = "javax.persistence.Entity";
     public static final String EMBEDDABLE_ANNOTATION_TYPE = "javax.persistence.Embeddable";
@@ -99,6 +101,15 @@ public class MetaModelUtil {
         return attribute != null && attribute.getAnnotation(MODEL_OBJECT_ANNOTATION_TYPE) != null;
     }
 
+    public static boolean isModelPropertiesAnnotatedOnly(CtClass ctClass) {
+        if (isModelObject(ctClass)) {
+            AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+            BooleanMemberValue annotatedPropertiesOnly = (BooleanMemberValue) attribute.getAnnotation(MODEL_OBJECT_ANNOTATION_TYPE).getMemberValue("annotatedPropertiesOnly");
+            return annotatedPropertiesOnly != null && annotatedPropertiesOnly.getValue();
+        }
+        return true;
+    }
+
     public static boolean isPkGeneratedValue(CtField field) {
         AnnotationsAttribute annotationsInfo = (AnnotationsAttribute) field.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
 
@@ -125,7 +136,7 @@ public class MetaModelUtil {
         return false;
     }
 
-    public static boolean isMetaPropertyField(CtClass ctClass, String fieldName) {
+    public static boolean isModelPropertyField(CtClass ctClass, String fieldName) {
         CtField ctField = findDeclaredField(ctClass, fieldName);
         return ctField != null && hasAnnotationOnField(ctField, MODEL_PROPERTY_ANNOTATION_TYPE);
     }

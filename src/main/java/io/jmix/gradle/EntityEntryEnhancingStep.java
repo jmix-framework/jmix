@@ -27,8 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static io.jmix.gradle.AnnotationsInfo.ClassAnnotation.EMBEDDABLE;
-import static io.jmix.gradle.AnnotationsInfo.ClassAnnotation.LEGACY_HAS_UUID;
+import static io.jmix.gradle.AnnotationsInfo.ClassAnnotation.*;
 import static io.jmix.gradle.AnnotationsInfo.FieldAnnotation.*;
 import static io.jmix.gradle.MetaModelUtil.*;
 
@@ -51,9 +50,9 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         if (info.hasMetadataChanges()) {
 
             boolean embeddable = info.hasClassAnnotation(EMBEDDABLE);
+            boolean modelObject = info.hasClassAnnotation(MODEL_OBJECT);
 
             if (info.getPrimaryKey() != null) {
-
                 makeEntityEntryClass(ctClass, info);
 
                 makeEntityEntryField(ctClass);
@@ -67,20 +66,19 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                 }
 
                 if (!embeddable) {
-                    makeEqualsMethod(ctClass);
-
-                    makeHashCodeMethod(ctClass);
-
-                    makeToStringMethod(ctClass);
-
-                    makeWriteObjectMethod(ctClass);
+                    makeJavaSystemMethods(ctClass);
                 }
             } else if (embeddable) {
                 makeEntityEntryField(ctClass);
 
                 makeEntityEntryMethods(ctClass, EMBEDDABLE_ENTITY_ENTRY_TYPE);
-            }
+            } else if (modelObject) {
+                makeEntityEntryField(ctClass);
 
+                makeEntityEntryMethods(ctClass, NO_ID_ENTITY_ENTRY_TYPE);
+
+                makeJavaSystemMethods(ctClass);
+            }
         }
         ctClass.addInterface(classPool.get(ENTITY_ENTRY_ENHANCED_TYPE));
     }
@@ -90,7 +88,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
      */
     protected void makeEntityEntryClass(CtClass ctClass, AnnotationsInfo info) throws CannotCompileException, NotFoundException, IOException {
 
-        CtField primaryKeyField = Objects.requireNonNull(info.getPrimaryKey());
+        CtField entityIdField = Objects.requireNonNull(info.getPrimaryKey());
 
         CtClass nestedCtClass = ctClass.makeNestedClass(GEN_ENTITY_ENTRY_CLASS_NAME, true);
 
@@ -107,7 +105,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                 null, null,
                 String.format("return ((%s)getSource()).get%s();",
                         ctClass.getName(),
-                        StringUtils.capitalize(primaryKeyField.getName())),
+                        StringUtils.capitalize(entityIdField.getName())),
                 nestedCtClass);
         nestedCtClass.addMethod(getIdMethod);
 
@@ -115,8 +113,8 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                 new CtClass[]{idType}, null,
                 String.format("((%s)getSource()).set%s((%s)$1);",
                         ctClass.getName(),
-                        StringUtils.capitalize(primaryKeyField.getName()),
-                        primaryKeyField.getType().getName()),
+                        StringUtils.capitalize(entityIdField.getName()),
+                        entityIdField.getType().getName()),
                 nestedCtClass);
         nestedCtClass.addMethod(setIdMethod);
 
@@ -361,6 +359,16 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
             constructor = CtNewConstructor.defaultConstructor(ctClass);
         }
         constructor.insertAfter(String.format("%s = new %s(this);", GEN_ENTITY_ENTRY_VAR_NAME, entryClassName));
+    }
+
+    protected void makeJavaSystemMethods(CtClass ctClass) throws NotFoundException, CannotCompileException {
+        makeEqualsMethod(ctClass);
+
+        makeHashCodeMethod(ctClass);
+
+        makeToStringMethod(ctClass);
+
+        makeWriteObjectMethod(ctClass);
     }
 
     protected void makeEqualsMethod(CtClass ctClass) throws NotFoundException, CannotCompileException {

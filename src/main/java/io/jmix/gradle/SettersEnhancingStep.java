@@ -57,37 +57,35 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
     }
 
     protected void enhanceSetters(CtClass ctClass) throws NotFoundException, CannotCompileException {
+        boolean modelPropertiesAnnotatedOnly = isModelPropertiesAnnotatedOnly(ctClass);
         for (CtMethod ctMethod : ctClass.getDeclaredMethods()) {
             if (!isSetterMethod(ctMethod)) {
                 continue;
             }
             String fieldName = generateFieldNameByMethod(ctMethod.getName());
 
-            // check if the setter is for a persistent or transient property (field is annotated with @MetaProperty)
-            if (!isPersistentField(ctClass, fieldName) && !isMetaPropertyField(ctClass, fieldName)) {
-                continue;
+            if (isPersistentField(ctClass, fieldName) || isModelPropertyField(ctClass, fieldName) || !modelPropertiesAnnotatedOnly) {
+                CtClass paramType = ctMethod.getParameterTypes()[0];
+
+                if (paramType.isPrimitive()) {
+                    throw new IllegalStateException(
+                            String.format("Unable to enhance field %s.%s with primitive type %s. Use type %s.",
+                                    ctClass.getName(), fieldName,
+                                    paramType.getSimpleName(), StringUtils.capitalize(paramType.getSimpleName())));
+                }
+
+                ctMethod.addLocalVariable("__prev", paramType);
+                ctMethod.addLocalVariable("__new", paramType);
+
+                ctMethod.insertBefore(
+                        "__prev = this.get" + StringUtils.capitalize(fieldName) + "();"
+                );
+
+                ctMethod.insertAfter(
+                        "__new = this.get" + StringUtils.capitalize(fieldName) + "();" +
+                                "io.jmix.core.impl.EntityInternals.fireListeners(this, \"" + fieldName + "\", __prev, __new);"
+                );
             }
-
-            CtClass paramType = ctMethod.getParameterTypes()[0];
-
-            if (paramType.isPrimitive()) {
-                throw new IllegalStateException(
-                        String.format("Unable to enhance field %s.%s with primitive type %s. Use type %s.",
-                                ctClass.getName(), fieldName,
-                                paramType.getSimpleName(), StringUtils.capitalize(paramType.getSimpleName())));
-            }
-
-            ctMethod.addLocalVariable("__prev", paramType);
-            ctMethod.addLocalVariable("__new", paramType);
-
-            ctMethod.insertBefore(
-                    "__prev = this.get" + StringUtils.capitalize(fieldName) + "();"
-            );
-
-            ctMethod.insertAfter(
-                    "__new = this.get" + StringUtils.capitalize(fieldName) + "();" +
-                            "io.jmix.core.impl.EntityInternals.fireListeners(this, \"" + fieldName + "\", __prev, __new);"
-            );
         }
     }
 

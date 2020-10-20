@@ -46,7 +46,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-@Component(EmailSender.NAME)
+@Component("email_EmailSender")
 public class EmailSenderImpl implements EmailSender {
 
     private static final Logger log = LoggerFactory.getLogger(EmailSenderImpl.class);
@@ -62,7 +62,7 @@ public class EmailSenderImpl implements EmailSender {
     @Autowired
     protected MeterRegistry meterRegistry;
 
-    @Resource(name = JmixMailSender.NAME)
+    @Autowired
     public void setMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }

@@ -23,7 +23,7 @@ import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("sys_SendingMessage.attachments")
+@UiController("email_SendingMessage.attachments")
 @UiDescriptor("sending-message-attachments.xml")
 public class SendingMessageAttachments extends StandardLookup<SendingAttachment> {
 

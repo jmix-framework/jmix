@@ -31,8 +31,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
-@javax.persistence.Entity(name = "sys_SendingAttachment")
-@Table(name = "SYS_SENDING_ATTACHMENT")
+@javax.persistence.Entity(name = "email_SendingAttachment")
+@Table(name = "EMAIL_SENDING_ATTACHMENT")
 @SystemLevel
 public class SendingAttachment implements Entity {
     private static final long serialVersionUID = -8253918579521701435L;

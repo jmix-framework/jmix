@@ -53,7 +53,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-@UiController("sys_SendingMessage.browse")
+@UiController("email_SendingMessage.browse")
 @UiDescriptor("sending-message-browse.xml")
 public class SendingMessageBrowser extends Screen {
 

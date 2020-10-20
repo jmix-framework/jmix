@@ -25,8 +25,6 @@ import javax.mail.MessagingException;
  * Should not be used from application code, use {@link Emailer}.
  */
 public interface EmailSender {
-    String NAME = "email_EmailSender";
-
     /**
      * Sends email with help of {@link org.springframework.mail.javamail.JavaMailSender}.
      * Message body and attachments' content must be loaded from file storage.

@@ -46,7 +46,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Component(Emailer.NAME)
+@Component("email_Emailer")
 public class EmailerImpl implements Emailer {
 
     private static final Logger log = LoggerFactory.getLogger(EmailerImpl.class);
@@ -429,7 +429,7 @@ public class EmailerImpl implements Emailer {
         @Override
         public void run() {
             try {
-                EmailerImpl emailer = AppBeans.get(Emailer.NAME);
+                EmailerImpl emailer = AppBeans.get(EmailerImpl.class);
                 authenticator.begin(emailer.getEmailerLogin());
                 try {
                     emailer.sendSendingMessage(sendingMessage);

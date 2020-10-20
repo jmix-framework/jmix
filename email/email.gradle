@@ -29,8 +29,6 @@ dependencies {
 
     api 'com.sun.mail:javax.mail'
 
-    api 'io.micrometer:micrometer-core'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'

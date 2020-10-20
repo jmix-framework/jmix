@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-@Component(EmailDataProvider.NAME)
+@Component("email_EmailDataProvider")
 public class EmailDataProviderImpl implements EmailDataProvider {
 
     protected static final String BODY_FILE_EXTENSION = "txt";
@@ -81,7 +81,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         try (Transaction tx = persistence.createTransaction()) {
             EntityManager em = persistence.getEntityManager();
             TypedQuery<SendingMessage> query = em.createQuery(
-                    "select sm from sys_SendingMessage sm" +
+                    "select sm from email_SendingMessage sm" +
                             " where sm.status = :statusQueue or (sm.status = :statusSending and sm.updateTs < :time)" +
                             " order by sm.createTs",
                     SendingMessage.class

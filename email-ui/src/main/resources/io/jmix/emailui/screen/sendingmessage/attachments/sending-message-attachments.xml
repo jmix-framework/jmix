@@ -23,7 +23,7 @@
                 class="io.jmix.email.entity.SendingAttachment"
                 fetchPlan="sendingAttachment.browse">
             <loader id="sendingAttachmentsDl">
-                <![CDATA[select sa from sys_SendingAttachment sa where sa.message.id = :messageId]]>
+                <![CDATA[select sa from email_SendingAttachment sa where sa.message.id = :messageId]]>
             </loader>
         </collection>
     </data>
@@ -32,7 +32,7 @@
         <!--<filter id="genericFilter" dataLoader="sendingAttachmentsDl" applyTo="table">
             <properties include=".*"/>
         </filter>-->
-        <table id="table" width="100%">
+        <table id="table" width="100%" dataContainer="attachmentsDc">
             <columns>
                 <column id="name"/>
                 <column id="encoding"/>
@@ -40,7 +40,6 @@
                 <column id="disposition"/>
                 <column id="updateTs"/>
             </columns>
-            <rows datasource="attachmentsDc"/>
         </table>
     </layout>
 </window>

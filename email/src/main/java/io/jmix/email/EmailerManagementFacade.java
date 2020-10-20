@@ -159,7 +159,7 @@ public class EmailerManagementFacade {
         Transaction tx = persistence.createTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            String qstr = "select m from sys_SendingMessage m where m.contentText is not null";
+            String qstr = "select m from email_SendingMessage m where m.contentText is not null";
             TypedQuery<SendingMessage> query = em.createQuery(qstr, SendingMessage.class);
             query.setMaxResults(50);
             query.setViewName(FetchPlan.INSTANCE_NAME);
@@ -182,7 +182,7 @@ public class EmailerManagementFacade {
         Transaction tx = persistence.createTransaction();
         try {
             EntityManager em = persistence.getEntityManager();
-            String qstr = "select a from sys_SendingAttachment a where a.content is not null";
+            String qstr = "select a from email_SendingAttachment a where a.content is not null";
             TypedQuery<SendingAttachment> query = em.createQuery(qstr, SendingAttachment.class);
             query.setMaxResults(50);
             query.setViewName(FetchPlan.INSTANCE_NAME);

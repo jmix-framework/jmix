@@ -25,9 +25,6 @@ import java.util.List;
  * Interface provides methods to load, store and update email message and attachment entities
  */
 public interface EmailDataProvider {
-
-    String NAME = "email_EmailDataProvider";
-
     /**
      * Loads email messages to be sent.
      */

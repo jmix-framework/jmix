@@ -23,7 +23,7 @@
                 class="io.jmix.email.entity.SendingMessage"
                 fetchPlan="sendingMessage.browse">
             <loader id="sendingMessagesDl">
-                <![CDATA[select sm from sys_SendingMessage sm]]>
+                <![CDATA[select sm from email_SendingMessage sm]]>
             </loader>
         </collection>
     </data>
@@ -37,7 +37,7 @@
                 <!--<filter id="genericFilter" dataLoader="sendingMessagesDl" applyTo="sendingMessageTable">
                     <properties include=".*"/>
                 </filter>-->
-                <table id="sendingMessageTable" width="100%">
+                <table id="sendingMessageTable" width="100%" dataContainer="sendingMessageDc">
                     <actions>
                         <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true"/>
                         <action id="resendEmail" caption="msg://resendEmail" trackSelection="true"/>
@@ -59,7 +59,6 @@
                         <column id="deadline"/>
                         <column id="attemptsMade"/>
                     </columns>
-                    <rows datasource="sendingMessageDc"/>
                     <buttonsPanel id="buttonsPanel">
                         <button id="downloadAttachmentBtn" action="sendingMessageTable.downloadAttachment"/>
                         <button id="resendEmailBtn" action="sendingMessageTable.resendEmail"/>

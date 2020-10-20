@@ -32,10 +32,6 @@ import java.util.List;
  * {@link #processQueuedEmails()} method.
  */
 public interface Emailer {
-
-    String NAME = "email_Emailer";
-
-
     /**
      * Send email synchronously.
      *

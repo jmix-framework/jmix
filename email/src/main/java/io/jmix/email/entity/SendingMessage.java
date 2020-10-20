@@ -38,8 +38,8 @@ import java.util.UUID;
  * Entity to store information about sending emails.
  *
  */
-@javax.persistence.Entity(name = "sys_SendingMessage")
-@Table(name = "SYS_SENDING_MESSAGE")
+@javax.persistence.Entity(name = "email_SendingMessage")
+@Table(name = "EMAIL_SENDING_MESSAGE")
 @SystemLevel
 public class SendingMessage implements Entity {
 

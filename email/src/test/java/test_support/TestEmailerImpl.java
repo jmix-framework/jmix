@@ -17,11 +17,8 @@
 package test_support;
 
 
-import io.jmix.email.Emailer;
 import io.jmix.email.impl.EmailerImpl;
-import org.springframework.stereotype.Component;
 
-@Component(Emailer.NAME)
 public class TestEmailerImpl extends EmailerImpl {
     @Override
     protected boolean applicationNotStartedYet() {

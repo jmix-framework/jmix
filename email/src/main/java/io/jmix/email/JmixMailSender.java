@@ -27,10 +27,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-@Component(JmixMailSender.NAME)
+@Component("email_MailSender")
 public class JmixMailSender extends JavaMailSenderImpl {
-
-    public static final String NAME = "email_MailSender";
 
     @Autowired
     protected EmailerProperties emailerProperties;

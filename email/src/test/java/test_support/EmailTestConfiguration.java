@@ -85,7 +85,8 @@ public class EmailTestConfiguration {
         return new ConcurrentMapCacheManager();
     }
 
-    @Bean(name = Emailer.NAME)
+    @Bean
+    @Primary
     public Emailer emailerApi() {
         return new TestEmailerImpl();
     }
@@ -96,7 +97,8 @@ public class EmailTestConfiguration {
         return new SyncTaskExecutor();
     }
 
-    @Bean(JmixMailSender.NAME)
+    @Bean
+    @Primary
     public JavaMailSender jmixMailSender() {
         return new TestMailSender();
     }

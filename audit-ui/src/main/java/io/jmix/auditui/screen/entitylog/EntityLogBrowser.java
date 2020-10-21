@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.auditui.screen;
+package io.jmix.auditui.screen.entitylog;
 
 import io.jmix.audit.EntityLog;
 import io.jmix.audit.entity.EntityLogAttr;
@@ -54,8 +54,6 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageBundle messageBundle;
     @Autowired
     protected WindowConfig windowConfig;
     @Autowired

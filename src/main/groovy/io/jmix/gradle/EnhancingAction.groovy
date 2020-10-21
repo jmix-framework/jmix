@@ -28,7 +28,12 @@ import org.gradle.api.artifacts.ResolvedDependency
 import static io.jmix.gradle.MetaModelUtil.*
 
 class EnhancingAction implements Action<Task> {
-    static String CONVERTERS_LIST_PROPERTY = "io.jmix.enhancing.converters-list"
+    static final String CONVERTERS_LIST_PROPERTY = "io.jmix.enhancing.converters-list"
+
+    static final String MAIN_SET_NAME = "main"
+    static final String TEST_SET_NAME = "test"
+
+    static final String MAIN_STORE_NAME = "main"
 
     private String sourceSetName
 
@@ -45,12 +50,25 @@ class EnhancingAction implements Action<Task> {
         ClassesInfo classesInfo = new ClassesInfo()
         def sourceSet = project.sourceSets.findByName(sourceSetName)
 
+        if (sourceSetName == TEST_SET_NAME) {
+            generateEntityClassesList(project, project.sourceSets.findByName(MAIN_SET_NAME), classesInfo)
+        }
+
         generateEntityClassesList(project, sourceSet, classesInfo)
+
+
+        if (sourceSetName == TEST_SET_NAME && classesInfo.modulePaths.size() > 1) {
+            //test sourceSet can have 0 or more Configurations. Production Configuration path should be removed in case of test Configuration presence
+            classesInfo.modulePaths.remove(0);
+        }
+
         project.logger.lifecycle("Found JPA entities: ${classesInfo.mappedClasses()}, other model objects: $classesInfo.nonMappedClasses")
 
         project.jmix.entitiesEnhancing.jpaConverters.each {
             classesInfo.converters.add(it)
         }
+
+        collectEntitiesFromJars(project, sourceSet, classesInfo)
 
         constructPersistenceXml(project, sourceSet, classesInfo)
 
@@ -59,7 +77,7 @@ class EnhancingAction implements Action<Task> {
         runJmixEnhancing(project, sourceSet, classesInfo)
     }
 
-    protected void generateEntityClassesList(Project project, sourceSet, ClassesInfo classesInfo/*classNames,  nonMappedClassNames, Map<String, String> storesByClasses*/) {
+    protected void generateEntityClassesList(Project project, sourceSet, ClassesInfo classesInfo) {
         ClassPool classPool = new ClassPool(null)
         classPool.appendSystemPath()
         classPool.insertClassPath(sourceSet.java.outputDir.absolutePath)
@@ -79,12 +97,13 @@ class EnhancingAction implements Action<Task> {
 
                     if (ctClass != null) {
                         if (isJpaEntity(ctClass) || isJpaMappedSuperclass(ctClass) || isJpaEmbeddable(ctClass)) {
-                            classesInfo.classesByStores[findStoreName(ctClass) ?: "main"].add(className)
-//todo taimanov "main" to constant
+                            classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
                         } else if (isJpaConverter(ctClass)) {
                             classesInfo.converters.add(className)
                         } else if (isModelObject(ctClass)) {
-                            classesInfo.nonMappedClasses.add(className)
+                            classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
+                        } else if (isModuleConfig(ctClass)) {
+                            classesInfo.modulePaths.add(ctClass.getPackageName().replace('.', '/'));
                         }
                     }
                 }
@@ -102,61 +121,75 @@ class EnhancingAction implements Action<Task> {
         return false
     }
 
+    protected void collectEntitiesFromJars(Project project, sourceSet, ClassesInfo classesInfo) {
+        def jars = sourceSet.compileClasspath.asList().findAll { it.name.endsWith('.jar') }
+        jars.each { lib ->
+            project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
+                Node doc = new XmlParser().parse(it)
+                def docPu = doc.'persistence-unit'[0]
+                List<String> currentEntities = docPu.'class'.collect { it.text() }
+                String storeName = docPu.@name
+                classesInfo.classesByStores[storeName ?: MAIN_STORE_NAME].addAll(currentEntities)
+
+                String converters = docPu.'properties'.'*'.find { it.@name == CONVERTERS_LIST_PROPERTY }?.@value
+
+                converters?.split(';')?.each { classesInfo.converters.add(it) }
+
+                project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+            }
+        }
+    }
+
     protected void constructPersistenceXml(Project project, sourceSet, ClassesInfo classesInfo) {
-        if (classesInfo.hasMappedClasses()) {
-            def jars = sourceSet.compileClasspath.asList().findAll { it.name.endsWith('.jar') }
-            jars.each { lib ->
-                project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
-                    Node doc = new XmlParser().parse(it)
-                    def docPu = doc.'persistence-unit'[0]
-                    List<String> currentEntities = docPu.'class'.collect { it.text() }
-                    String storeName = docPu.@name
-                    classesInfo.classesByStores[storeName ?: "main"].addAll(currentEntities)
+        for (String storeName : classesInfo.allStores()) {
+            String persistenceFilePath = "${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence/META-INF/persistence.xml"
 
-                    String converters = docPu.'properties'.'*'.find { it.@name == CONVERTERS_LIST_PROPERTY }?.@value
+            File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath")
 
-                    converters?.split(';')?.each { classesInfo.converters.add(it) }
+            def mappingFileName = "${classesInfo.modulePaths.last()}/$storeName-orm.xml";
 
-                    project.logger.info("Converters: '$converters'")
+            file.parentFile.mkdirs()
+            file.withWriter { writer ->
+                def xml = new MarkupBuilder(writer)
+                xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
+                xml.persistence(version: '2.0', xmlns: 'http://java.sun.com/xml/ns/persistence',
+                        'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
+                        'xsi:schemaLocation': "http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd") {
+                    'persistence-unit'(name: storeName) {
+                        'provider'('io.jmix.data.impl.JmixPersistenceProvider')
+                        'mapping-file'(mappingFileName)
 
-                    project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.")
+                        classesInfo.mappedStoreClasses(storeName).each { String name ->
+                            'class'(name)
+                        }
+                        'exclude-unlisted-classes'()
+                        'properties'() {
+                            'property'(name: 'eclipselink.weaving', value: 'static')
+                            'property'(name: CONVERTERS_LIST_PROPERTY, value: classesInfo.converters.join(';'))
+                        }
+                    }
                 }
             }
 
-            for (String storeName : classesInfo.allStores()) {
-                String persistenceFilePath = "${storeName == "main" ? "" : (storeName + '-')}persistence/META-INF/persistence.xml"
+            File ormFile = new File("$project.buildDir/resources/$sourceSetName/$mappingFileName");
+            ormFile.getParentFile().mkdirs()
 
-                File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath")
+            ormFile.withWriter { writer ->
+                def xml = new MarkupBuilder(writer)
+                xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
+                xml.'entity-mappings'(
+                        xmlns: 'http://xmlns.jcp.org/xml/ns/persistence/orm',
+                        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                        'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd',
+                        version: '2.1'
+                )
+            }
 
-
-                file.parentFile.mkdirs()
-                file.withWriter { writer ->
-                    def xml = new MarkupBuilder(writer)
-                    xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                    xml.persistence(version: '2.0', xmlns: 'http://java.sun.com/xml/ns/persistence',
-                            'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
-                            'xsi:schemaLocation': "http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd") {
-                        'persistence-unit'(name: storeName) {
-                            'provider'('io.jmix.data.impl.JmixPersistenceProvider')
-                            classesInfo.storeClasses(storeName).each { String name ->
-                                'class'(name)
-                            }
-                            'exclude-unlisted-classes'()
-                            'properties'() {
-                                'property'(name: 'eclipselink.weaving', value: 'static')
-                                'property'(name: CONVERTERS_LIST_PROPERTY, value: classesInfo.converters.join(';'))
-                            }
-                        }
-                    }
-                }
-
-                project.logger.info("Constructed $persistenceFilePath for ${project.displayName}.")
-                if ('main'.equals(sourceSetName)) {
-                    project.jar {
-                        from("$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/") {
-                            include persistenceFilePath
-                        }
-                    }
+            for (String currentPath : classesInfo.modulePaths) {
+                project.copy {
+                    from "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath"
+                    into "$project.buildDir/resources/$sourceSetName/$currentPath"
+                    rename "persistence.xml", "${storeName == "main" ? "" : (storeName + '-')}persistence.xml"
                 }
             }
         }
@@ -182,7 +215,7 @@ class EnhancingAction implements Action<Task> {
                 args "-loglevel"
                 args "INFO"
                 args "-persistenceinfo"
-                args "${project.buildDir}/tmp/entitiesEnhancing/$sourceSetName/${storeName == "main" ? "" : (storeName + '-')}persistence"
+                args "${project.buildDir}/tmp/entitiesEnhancing/$sourceSetName/${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence"
                 args sourceSet.java.outputDir.absolutePath
                 args sourceSet.java.outputDir.absolutePath
                 debug = project.hasProperty("debugEnhancing") ? Boolean.valueOf(project.getProperty("debugEnhancing")) : false
@@ -240,29 +273,26 @@ class EnhancingAction implements Action<Task> {
     private class ClassesInfo {
         Map<String, Set<String>> classesByStores = [:].withDefault { _ -> new HashSet<String>() }
         Set<String> converters = [] as Set<String>
-        Set<String> nonMappedClasses = [] as Set<String>
+        Map<String, Set<String>> nonMappedClasses = [:].withDefault { _ -> new HashSet<String>() }
+
+        List<String> modulePaths = []
 
         Collection<String> mappedClasses() {
             return classesByStores.values().flatten()
         }
 
         Collection<String> allEntities() {
-            return mappedClasses() + nonMappedClasses
+            return mappedClasses() + nonMappedClasses.values().flatten()
         }
 
-        Collection<String> storeClasses(String store) {
+        Collection<String> mappedStoreClasses(String store) {
             return classesByStores[store] + converters
-        }
-
-        def hasMappedClasses() {
-            return classesByStores.values().any { !it.isEmpty() } || !converters.isEmpty()
         }
 
         Collection<String> allStores() {
             return classesByStores.size() > 0 ? classesByStores.keySet() :
                     converters.size() > 0 ? ['main'] : []
         }
-
     }
 
 }

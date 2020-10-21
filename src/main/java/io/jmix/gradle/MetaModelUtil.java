@@ -100,6 +100,14 @@ public class MetaModelUtil {
         return attribute != null && attribute.getAnnotation("javax.persistence.MappedSuperclass") != null;
     }
 
+    public static boolean isModuleConfig(CtClass ctClass) {
+        AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+        return attribute != null
+                && (attribute.getAnnotation("io.jmix.core.annotation.JmixModule") != null
+                || attribute.getAnnotation("org.springframework.boot.autoconfigure.SpringBootApplication") != null
+                || attribute.getAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") != null);
+    }
+
     public static boolean isModelObject(CtClass ctClass) {
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
         return attribute != null && attribute.getAnnotation(MODEL_OBJECT_ANNOTATION_TYPE) != null;

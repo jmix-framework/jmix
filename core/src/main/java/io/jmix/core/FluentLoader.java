@@ -370,6 +370,11 @@ public class FluentLoader<E> {
             loader.accessConstraints = accessConstraints;
             return this;
         }
+
+        public ById<E> joinTransaction(boolean join) {
+            loader.joinTransaction = join;
+            return this;
+        }
     }
 
     public static class ByIds<E> {
@@ -483,6 +488,11 @@ public class FluentLoader<E> {
          */
         public ByIds<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        public ByIds<E> joinTransaction(boolean join) {
+            loader.joinTransaction = join;
             return this;
         }
     }
@@ -699,6 +709,11 @@ public class FluentLoader<E> {
          */
         public ByQuery<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
             loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        public ByQuery<E> joinTransaction(boolean join) {
+            loader.joinTransaction = join;
             return this;
         }
     }

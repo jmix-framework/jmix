@@ -87,8 +87,9 @@ public class CoreTestConfiguration {
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                 PersistenceConfigProcessor processor,
                                                                 JpaVendorAdapter jpaVendorAdapter,
-                                                                DbmsSpecifics dbmsSpecifics) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics);
+                                                                DbmsSpecifics dbmsSpecifics,
+                                                                JmixModules jmixModules) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

@@ -1511,7 +1511,7 @@ public interface Table<E>
         protected Collection<E> scope;
         protected boolean isTotalAggregation;
 
-        public AggregationDistributionContext(Column column, Object value, Collection<E> scope,
+        public AggregationDistributionContext(Column column, @Nullable Object value, Collection<E> scope,
                                               boolean isTotalAggregation) {
             this.column = column;
             this.value = value;
@@ -1527,6 +1527,7 @@ public interface Table<E>
             return column.getIdString();
         }
 
+        @Nullable
         public Object getValue() {
             return value;
         }

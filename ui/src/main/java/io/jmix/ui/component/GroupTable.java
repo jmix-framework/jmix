@@ -164,7 +164,7 @@ public interface GroupTable<E> extends Table<E> {
 
         protected GroupInfo groupInfo;
 
-        public GroupAggregationDistributionContext(Column column, Object value, Collection<V> scope,
+        public GroupAggregationDistributionContext(Column column, @Nullable Object value, Collection<V> scope,
                                                    @Nullable GroupInfo groupInfo, boolean isTotalAggregation) {
             super(column, value, scope, isTotalAggregation);
 

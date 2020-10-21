@@ -3301,6 +3301,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     }
 
+    @Nullable
     protected Object getParsedAggregationValue(String value, Object columnId) throws ParseException {
         Object parsedValue = value;
 

@@ -75,8 +75,9 @@ public class DataTestConfiguration {
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                 PersistenceConfigProcessor processor,
                                                                 JpaVendorAdapter jpaVendorAdapter,
-                                                                DbmsSpecifics dbmsSpecifics) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics);
+                                                                DbmsSpecifics dbmsSpecifics,
+                                                                JmixModules jmixModules) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean
@@ -108,8 +109,9 @@ public class DataTestConfiguration {
     @Bean
     LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(PersistenceConfigProcessor processor,
                                                                    JpaVendorAdapter jpaVendorAdapter,
-                                                                   DbmsSpecifics dbmsSpecifics) {
-        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), processor, jpaVendorAdapter, dbmsSpecifics);
+                                                                   DbmsSpecifics dbmsSpecifics,
+                                                                   JmixModules jmixModules) {
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

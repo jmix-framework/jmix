@@ -16,27 +16,50 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
 import io.jmix.data.persistence.DbmsSpecifics;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
 
 public class JmixEntityManagerFactoryBean extends LocalContainerEntityManagerFactoryBean {
 
     private String storeName;
     private DbmsSpecifics dbmsSpecifics;
 
+
+    protected JmixModules jmixModules;
+
     public JmixEntityManagerFactoryBean(String storeName,
                                         DataSource dataSource,
                                         PersistenceConfigProcessor persistenceConfigProcessor,
                                         JpaVendorAdapter jpaVendorAdapter,
-                                        DbmsSpecifics dbmsSpecifics) {
+                                        DbmsSpecifics dbmsSpecifics,
+                                        JmixModules jmixModules) {
         this.storeName = storeName;
         this.dbmsSpecifics = dbmsSpecifics;
-        setPersistenceXmlLocation("file:" + persistenceConfigProcessor.create(storeName));
+        this.jmixModules = jmixModules;
+
+        String modulePackage = jmixModules.getLast().getBasePackage().replace('.', '/');
+        String persistenceXmlPath = modulePackage + "/" + (storeName.equals("main") ? "" : storeName + "-") + "persistence.xml";
+        Resource persistenceXmlResource = new ClassPathResource(persistenceXmlPath);
+
+        try {
+            File persistenceXmlDir = persistenceXmlResource.getFile().getParentFile();
+            persistenceConfigProcessor.createOrmXml(storeName, persistenceXmlDir);
+        } catch (IOException e) {
+            logger.error("Cannot create orm.xml", e);
+        }
+
+        setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
+
         setDataSource(dataSource);
         setJpaVendorAdapter(jpaVendorAdapter);
     }

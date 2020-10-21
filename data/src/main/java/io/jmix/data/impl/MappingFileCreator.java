@@ -42,7 +42,7 @@ import java.util.*;
 /**
  * Generates an orm.xml file containing mapping overrides to support extended entities in associations.
  * Works together with {@link PersistenceConfigProcessor}.
-*/
+ */
 class MappingFileCreator {
 
     private static final Logger log = LoggerFactory.getLogger(MappingFileCreator.class);
@@ -55,12 +55,14 @@ class MappingFileCreator {
     private Collection<String> classNames;
     private Map<String, String> properties;
     private File dir;
+    private String storeName;
 
-    MappingFileCreator(Environment environment, Collection<String> classNames, Map<String, String> properties, File dir) {
+    MappingFileCreator(Environment environment, Collection<String> classNames, Map<String, String> properties, File dir, String storeName) {
         this.environment = environment;
         this.classNames = classNames;
         this.properties = properties;
         this.dir = dir;
+        this.storeName = storeName;
     }
 
     public boolean create() {
@@ -237,13 +239,13 @@ class MappingFileCreator {
     }
 
     private File writeDocument(Document doc) {
-        File file = new File(dir, "orm.xml");
+        File file = new File(dir, storeName + "-orm.xml");
         log.info("Creating file " + file);
 
         try (OutputStream os = new FileOutputStream(file)) {
             Dom4j.writeDocument(doc, true, os);
         } catch (IOException e) {
-            throw new RuntimeException("Cannot write orm.xml", e);
+            throw new RuntimeException("Cannot write " + storeName + "-orm.xml", e);
         }
         return file;
     }
@@ -256,10 +258,12 @@ class MappingFileCreator {
                 protected String getFetch(Field field) {
                     return field.getAnnotation(ManyToOne.class).fetch().name();
                 }
+
                 @Override
                 protected String getMappedBy(Field field) {
                     return null;
                 }
+
                 @Override
                 protected CascadeType[] getCascade(Field field) {
                     return field.getAnnotation(ManyToOne.class).cascade();
@@ -270,10 +274,12 @@ class MappingFileCreator {
                 protected String getFetch(Field field) {
                     return field.getAnnotation(OneToMany.class).fetch().name();
                 }
+
                 @Override
                 protected String getMappedBy(Field field) {
                     return field.getAnnotation(OneToMany.class).mappedBy();
                 }
+
                 @Override
                 protected CascadeType[] getCascade(Field field) {
                     return field.getAnnotation(OneToMany.class).cascade();
@@ -284,10 +290,12 @@ class MappingFileCreator {
                 protected String getFetch(Field field) {
                     return field.getAnnotation(OneToOne.class).fetch().name();
                 }
+
                 @Override
                 protected String getMappedBy(Field field) {
                     return field.getAnnotation(OneToOne.class).mappedBy();
                 }
+
                 @Override
                 protected CascadeType[] getCascade(Field field) {
                     return field.getAnnotation(OneToOne.class).cascade();
@@ -298,10 +306,12 @@ class MappingFileCreator {
                 protected String getFetch(Field field) {
                     return field.getAnnotation(ManyToMany.class).fetch().name();
                 }
+
                 @Override
                 protected String getMappedBy(Field field) {
                     return field.getAnnotation(ManyToMany.class).mappedBy();
                 }
+
                 @Override
                 protected CascadeType[] getCascade(Field field) {
                     return field.getAnnotation(ManyToMany.class).cascade();

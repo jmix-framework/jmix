@@ -84,6 +84,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
         map.put("javax.persistence.validation.mode", "NONE");
 
         map.put("eclipselink.session.customizer", new JmixEclipseLinkSessionCustomizer());
+        map.put("eclipselink.application-id", Integer.toString(System.identityHashCode(this)));
 
         for (String name : EnvironmentUtils.getPropertyNames(environment)) {
             if (name.startsWith("eclipselink.")) {

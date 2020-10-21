@@ -16,36 +16,26 @@
 
 package io.jmix.data.impl;
 
-import com.google.common.base.Strings;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
-import io.jmix.core.Stores;
-import io.jmix.core.common.util.Dom4j;
-import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
 import io.jmix.core.impl.scanning.JpaConverterDetector;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.persistence.DbmsSpecifics;
-import io.jmix.data.persistence.PersistenceXmlPostProcessor;
-import org.dom4j.Document;
-import org.dom4j.DocumentFactory;
-import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Generates a working persistence.xml file combining classes and properties from a set of given persistence.xml files,
- * defined in <code>cuba.persistenceConfig</code> app property.
+ * Generates orm.xml file.
  */
 @Component("data_PersistenceConfigProcessor")
 public class PersistenceConfigProcessor {
@@ -68,9 +58,7 @@ public class PersistenceConfigProcessor {
         this.classpathScanner = classpathScanner;
     }
 
-    public String create(String storeName) {
-        String fileName = getFileName(storeName);
-
+    public void createOrmXml(String storeName, File dir) {
         List<String> classes = new ArrayList<>();
 
         for (MetaClass metaClass : metadata.getClasses()) {
@@ -92,84 +80,14 @@ public class PersistenceConfigProcessor {
 
         classes.addAll(classpathScanner.getClassNames(JpaConverterDetector.class));
 
-        Map<String, String> properties = new HashMap<>(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
-
-        if (!Stores.isMain(storeName))
-            properties.put(PersistenceSupport.PROP_NAME, storeName);
-
-        File outFile;
-        try {
-            outFile = new File(fileName).getCanonicalFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        outFile.getParentFile().mkdirs();
-
         String disableOrmGenProp = environment.getProperty("jmix.disableOrmXmlGeneration");
         if (!Boolean.parseBoolean(disableOrmGenProp)) {
+            Map<String, String> properties = new HashMap<>(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
+
             MappingFileCreator mappingFileCreator =
-                    new MappingFileCreator(environment, classes, properties, outFile.getParentFile());
+                    new MappingFileCreator(environment, classes, properties, dir, storeName);
             mappingFileCreator.create();
         }
-
-        Document doc = DocumentFactory.getInstance().createDocument();
-        Element rootElem = doc.addElement("persistence", "http://java.sun.com/xml/ns/persistence");
-        rootElem.addAttribute("version", "2.0");
-        rootElem.addNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        rootElem.addAttribute("xsi:schemaLocation", "http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd");
-
-        Element puElem = rootElem.addElement("persistence-unit");
-        puElem.addAttribute("name", storeName);
-
-        puElem.addElement("provider").setText("io.jmix.data.impl.JmixPersistenceProvider");
-
-        for (String className : classes) {
-            puElem.addElement("class").setText(className);
-        }
-
-        puElem.addElement("exclude-unlisted-classes");
-
-        Element propertiesEl = puElem.element("properties");
-        if (propertiesEl != null)
-            puElem.remove(propertiesEl);
-
-        propertiesEl = puElem.addElement("properties");
-        for (Map.Entry<String, String> entry : properties.entrySet()) {
-            Element element = propertiesEl.addElement("property");
-            element.addAttribute("name", entry.getKey());
-            element.addAttribute("value", entry.getValue());
-        }
-
-        postProcess(doc);
-
-        log.info("Creating file " + outFile);
-        try (OutputStream os = new FileOutputStream(fileName);
-             Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-            Dom4j.writeDocument(doc, true, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return fileName;
     }
 
-    protected String getFileName(String storeName) {
-        String dir = Stores.isMain(storeName) ? "persistence" : storeName + "-persistence";
-        return environment.getProperty("jmix.core.workDir") + "/" + dir + "/META-INF/persistence.xml";
-    }
-
-    protected void postProcess(Document document) {
-        String postProcessorClassName = environment.getProperty("jmix.persistenceXmlPostProcessor");
-
-        if (!Strings.isNullOrEmpty(postProcessorClassName)) {
-            log.debug("Running persistence.xml post-processor: " + postProcessorClassName);
-            try {
-                Class processorClass = ReflectionHelper.loadClass(postProcessorClassName);
-                PersistenceXmlPostProcessor processor = (PersistenceXmlPostProcessor) processorClass.newInstance();
-                processor.process(document);
-            } catch (Exception e) {
-                throw new RuntimeException("Error post-processing persistence.xml", e);
-            }
-        }
-    }
 }

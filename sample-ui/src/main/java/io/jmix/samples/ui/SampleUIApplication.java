@@ -18,6 +18,7 @@ package io.jmix.samples.ui;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.samples.ui.entity.SampleUser;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import org.springframework.context.event.EventListener;
 import javax.sql.DataSource;
 
 @SpringBootApplication
-public class SampleUIApplication {
+public class SampleUIApplication extends CoreSecurityConfiguration {
 
 
 	@Autowired
@@ -38,7 +39,6 @@ public class SampleUIApplication {
 
 	@Autowired
 	private Authenticator authenticator;
-
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleUIApplication.class, args);

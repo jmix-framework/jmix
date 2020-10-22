@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -166,6 +167,7 @@ public class MenuConfig {
             MenuItem menuItem = null;
             MenuItem currentParentItem = parentItem;
             MenuItem nextToItem = null;
+            boolean addItem = true;
             boolean before = true;
             String nextTo = element.attributeValue("insertBefore");
             if (StringUtils.isBlank(nextTo)) {
@@ -190,7 +192,14 @@ public class MenuConfig {
                     log.warn("Invalid menu-config: 'id' attribute not defined");
                 }
 
-                menuItem = new MenuItem(currentParentItem, id);
+                MenuItem existingMenuItem = rootItems.stream()
+                        .filter(item -> Objects.nonNull(findItem(id, item)))
+                        .findFirst()
+                        .orElse(null);
+
+                menuItem = existingMenuItem != null ? existingMenuItem : new MenuItem(currentParentItem, id);
+                addItem = existingMenuItem == null;
+
                 menuItem.setMenu(true);
                 menuItem.setDescriptor(element);
                 loadIcon(element, menuItem);
@@ -219,10 +228,12 @@ public class MenuConfig {
                 log.warn(String.format("Unknown tag '%s' in menu-config", element.getName()));
             }
 
-            if (currentParentItem != null) {
-                addItem(currentParentItem.getChildren(), menuItem, nextToItem, before);
-            } else {
-                addItem(rootItems, menuItem, nextToItem, before);
+            if (addItem) {
+                if (currentParentItem != null) {
+                    addItem(currentParentItem.getChildren(), menuItem, nextToItem, before);
+                } else {
+                    addItem(rootItems, menuItem, nextToItem, before);
+                }
             }
         }
     }

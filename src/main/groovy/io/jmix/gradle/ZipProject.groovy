@@ -19,6 +19,9 @@ package io.jmix.gradle
 import org.apache.tools.ant.DirectoryScanner
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 
@@ -27,13 +30,18 @@ import org.gradle.api.tasks.options.Option
  */
 class ZipProject extends DefaultTask {
 
-    def excludeFromZip = []
-    def includeToZip = []
+    @Input
+    List<String> excludeFromZip = []
+
+    @Input
+    List<String> includeToZip = []
 
     @Option(option = "zipDir", description = "Where to place resulting ZIP")
+    @Internal // don't respect the dir in up-to-date checks
     def zipDir = "${project.rootDir}"
 
     @Option(option = "zipFileName", description = "Resulting ZIP file name with extension")
+    @Internal
     def zipFileName = "${project.name}.zip"
 
     @TaskAction

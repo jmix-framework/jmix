@@ -23,7 +23,11 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.*;
 import io.jmix.ui.component.mainwindow.*;
 import io.jmix.ui.component.mainwindow.impl.*;
+import io.jmix.ui.xml.layout.loader.CompositeComponentLayoutLoader;
+import io.jmix.ui.xml.layout.loader.CompositeComponentLoaderContext;
+import io.jmix.ui.xml.layout.loader.CompositeDescriptorLoader;
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -45,8 +49,6 @@ public class UiComponentsImpl implements UiComponents {
     protected ApplicationContext applicationContext;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
-    /*@Autowired
-    protected CompositeDescriptorLoader compositeDescriptorLoader;*/ // todo composite
 
     protected Map<String, Class<? extends Component>> classes = new ConcurrentHashMap<>();
     protected Map<Class, String> names = new ConcurrentHashMap<>();
@@ -227,8 +229,7 @@ public class UiComponentsImpl implements UiComponents {
     }
 
     protected void initCompositeComponent(Component instance, Class<? extends Component> componentClass) {
-        // todo composite
-        /*if (!(instance instanceof CompositeComponent)) {
+        if (!(instance instanceof CompositeComponent)) {
             return;
         }
 
@@ -249,7 +250,7 @@ public class UiComponentsImpl implements UiComponents {
         }
 
         CompositeComponent.CreateEvent event = new CompositeComponent.CreateEvent(compositeComponent);
-        CompositeComponentUtils.fireEvent(compositeComponent, CompositeComponent.CreateEvent.class, event);*/
+        CompositeComponentUtils.fireEvent(compositeComponent, CompositeComponent.CreateEvent.class, event);
     }
 
     protected String getPackage(Class<? extends Component> componentClass) {
@@ -257,20 +258,20 @@ public class UiComponentsImpl implements UiComponents {
         return javaPackage != null ? javaPackage.getName() : "";
     }
 
-    // todo composite
-    /*protected Component processCompositeDescriptor(Class<? extends Component> componentClass, String descriptorPath) {
+    protected Component processCompositeDescriptor(Class<? extends Component> componentClass, String descriptorPath) {
         CompositeComponentLoaderContext context = new CompositeComponentLoaderContext();
         context.setComponentClass(componentClass);
         context.setDescriptorPath(descriptorPath);
         context.setMessagesPack(getMessagePack(descriptorPath));
 
+        CompositeDescriptorLoader compositeDescriptorLoader = applicationContext.getBean(CompositeDescriptorLoader.class);
         Element element = compositeDescriptorLoader.load(descriptorPath);
 
         CompositeComponentLayoutLoader layoutLoader =
-                beanLocator.getPrototype(CompositeComponentLayoutLoader.NAME, context);
+                applicationContext.getBean(CompositeComponentLayoutLoader.class, context);
 
         return layoutLoader.createComponent(element);
-    }*/
+    }
 
     protected String getMessagePack(String descriptorPath) {
         if (descriptorPath.contains("/")) {

@@ -23,6 +23,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.*;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.component.CompositeDescriptor;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.ui.icon.Icons;
@@ -287,15 +288,14 @@ public class ExceptionDialog extends JmixWindow {
                 if (rootCause instanceof GuiDevelopmentException) {
                     GuiDevelopmentException guiDevException = (GuiDevelopmentException) rootCause;
                     ComponentLoader.Context context = guiDevException.getContext();
-                    // todo composite component
-                    /*if (context instanceof CompositeComponentContext) {
-                        Class<?> componentClass = ((CompositeComponentContext) context).getComponentClass();
+                    if (context instanceof ComponentLoader.CompositeComponentContext) {
+                        Class<?> componentClass = ((ComponentLoader.CompositeComponentContext) context).getComponentClass();
                         params.put("Component Class", componentClass);
                         CompositeDescriptor template = componentClass.getAnnotation(CompositeDescriptor.class);
                         if (template != null) {
                             params.put("XML descriptor", template.value());
                         }
-                    } else */
+                    } else
                     if (guiDevException.getFrameId() != null) {
                         String frameId = guiDevException.getFrameId();
                         params.put("Frame ID", frameId);

@@ -16,6 +16,11 @@
 
 package test_support;
 
+import component.composite.component.TestCommentaryPanel;
+import component.composite.component.TestProgrammaticCommentaryPanel;
+import component.composite.component.TestStepperField;
+import component.composite.loader.TestCommentaryPanelLoader;
+import component.composite.loader.TestStepperFieldLoader;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
@@ -29,6 +34,8 @@ import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.ui.menu.MenuBuilder;
 import io.jmix.ui.menu.MenuConfig;
 import io.jmix.ui.menu.SideMenuBuilder;
+import io.jmix.ui.sys.registration.ComponentRegistration;
+import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -114,5 +121,28 @@ public class UiTestConfiguration {
     @Primary
     public MenuBuilder appMenuBuilder() {
         return new TestAppMenuBuilder();
+    }
+
+    @Bean
+    public ComponentRegistration testProgrammaticCommentaryPanel() {
+        return ComponentRegistrationBuilder.create(TestProgrammaticCommentaryPanel.NAME)
+                .withComponentClass(TestProgrammaticCommentaryPanel.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration testCommentaryPanel() {
+        return ComponentRegistrationBuilder.create(TestCommentaryPanel.NAME)
+                .withComponentClass(TestCommentaryPanel.class)
+                .withComponentLoaderClass(TestCommentaryPanelLoader.class)
+                .build();
+    }
+
+    @Bean
+    public ComponentRegistration testStepperField() {
+        return ComponentRegistrationBuilder.create(TestStepperField.NAME)
+                .withComponentClass(TestStepperField.class)
+                .withComponentLoaderClass(TestStepperFieldLoader.class)
+                .build();
     }
 }

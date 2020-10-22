@@ -16,8 +16,7 @@
 
 <window xmlns="http://jmix.io/schema/ui/window"
         xmlns:c="http://jmix.io/schema/ui/jpql-condition"
-        caption="msg://browserCaption"
-        messagesPack="">
+        caption="msg://EntityLog.browse">
     <data>
         <collection id="loggedEntityDc"
                     class="io.jmix.audit.entity.LoggedEntity"

@@ -31,11 +31,16 @@ import java.util.List;
 /**
  * Email validator checks that String value is email or contains multiple emails separated by a semicolon or comma.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_EmailValidator" class="io.jmix.ui.component.validation.EmailValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_EmailValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected EmailValidator emailValidator() {
+ *          return new CustomEmailValidator();
+ *     }
+ * </pre>
  */
 @Component("ui_EmailValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

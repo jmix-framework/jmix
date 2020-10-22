@@ -37,11 +37,16 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  * <p>
  * For error message it uses template string and it is possible to use '${value}' key for formatted output.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *    &lt;bean id="ui_NegativeOrZeroValidator" class="io.jmix.ui.component.validation.NegativeOrZeroValidator" scope="prototype"/&gt;
- *    </pre>
+ *     &#64;Bean("ui_NegativeOrZeroValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected NegativeOrZeroValidator negativeOrZeroValidator() {
+ *          return new CustomNegativeOrZeroValidator();
+ *     }
+ * </pre>
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer, Double, Float
  */

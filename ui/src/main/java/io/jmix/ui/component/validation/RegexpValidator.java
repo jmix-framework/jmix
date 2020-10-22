@@ -36,11 +36,16 @@ import java.util.regex.Pattern;
  * <p>
  * For error message it uses template string and it is possible to use '${value}' key for formatted output.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_RegexpValidator" class="io.jmix.ui.component.validation.RegexpValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_RegexpValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected RegexpValidator regexpValidator(String regexp) {
+ *          return new CustomRegexpValidator(regexp);
+ *     }
+ * </pre>
 *
  * @see Pattern
  */

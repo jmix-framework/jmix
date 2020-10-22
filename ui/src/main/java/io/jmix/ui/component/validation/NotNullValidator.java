@@ -28,11 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * NotNull validator checks that value is not null.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_NotNullValidator" class="io.jmix.ui.component.validation.NotNullValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_NotNullValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected NotNullValidator notNullValidator() {
+ *          return new CustomNotNullValidator();
+ *     }
+ * </pre>
 *
  * @param <T> value type
  */

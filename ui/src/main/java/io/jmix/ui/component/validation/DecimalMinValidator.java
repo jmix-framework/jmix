@@ -41,11 +41,16 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  * <p>
  * For error message it uses template string and it is possible to use '${value}' and '${min}' keys for formatted output.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *   &lt;bean id="ui_DecimalMinValidator" class="io.jmix.ui.component.validation.DecimalMinValidator" scope="prototype"/&gt;
- *   </pre>
+ *     &#64;Bean("ui_DecimalMinValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected DecimalMinValidator decimalMinValidator(BigDecimal min) {
+ *          return new CustomDecimalMinValidator(min);
+ *     }
+ * </pre>
 *
  * @param <T> BigDecimal, BigInteger, Long, Integer and String that represents BigDecimal value with current locale
  */

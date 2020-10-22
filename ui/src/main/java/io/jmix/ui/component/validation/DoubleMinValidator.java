@@ -41,11 +41,16 @@ import static io.jmix.ui.component.validation.ValidatorHelper.getNumberConstrain
  * <p>
  * For error message it uses template string and it is possible to use '${value}' and '${min}' keys for formatted output.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *   &lt;bean id="ui_DoubleMinValidator" class="io.jmix.ui.component.validation.DoubleMinValidator" scope="prototype"/&gt;
- *   </pre>
+ *     &#64;Bean("ui_DoubleMinValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected DoubleMinValidator doubleMinValidator(Double min) {
+ *          return new CustomDoubleMinValidator(min);
+ *     }
+ * </pre>
 *
  * @param <T> Double and String that represents BigDouble value with current locale
  */

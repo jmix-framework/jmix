@@ -33,11 +33,16 @@ import java.util.Collection;
  * <p>
  * Note, that size validator for Collection doesn't use key 'value' for output error message.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_NotEmptyValidator" class="io.jmix.ui.component.validation.NotEmptyValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_NotEmptyValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected NotEmptyValidator notEmptyValidator() {
+ *          return new CustomNotEmptyValidator();
+ *     }
+ * </pre>
 *
  * @param <T> Collection or String
  */

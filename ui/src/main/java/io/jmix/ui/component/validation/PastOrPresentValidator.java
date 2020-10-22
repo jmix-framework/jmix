@@ -35,11 +35,16 @@ import java.util.Date;
  * <p>
  * Note, types that support TimeZones can be found in {@link DateTimeTransformations#isDateTypeSupportsTimeZones(Class)}
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_PastOrPresentValidator" class="io.jmix.ui.component.validation.PastOrPresentValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_PastOrPresentValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected PastOrPresentValidator pastOrPresentValidator() {
+ *          return new CustomPastOrPresentValidator();
+ *     }
+ * </pre>
 *
  * @param <T> {@link Date}, {@link LocalDate}, {@link LocalDateTime}, {@link LocalTime}, {@link OffsetDateTime},
  *            {@link OffsetTime}

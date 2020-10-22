@@ -29,11 +29,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * NotBlank validator checks that value contains at least one non-whitespace character.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_NotBlankValidator" class="io.jmix.ui.component.validation.NotBlankValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_NotBlankValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected NotBlankValidator notBlankValidator() {
+ *          return new CustomNotBlankValidator();
+ *     }
+ * </pre>
 */
 @Component("ui_NotBlankValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)

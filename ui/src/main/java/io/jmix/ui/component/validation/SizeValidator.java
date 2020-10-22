@@ -32,15 +32,21 @@ import java.util.Map;
 /**
  * Size validator is applicable for Collections and String values. It checks that value is in a specific range.
  * <p>
- * For error message it uses template string and it is possible to use following keys for formatted output: 'value', 'min' and 'max'.
+ * For error message it uses template string and it is possible to use following keys for formatted output:
+ * '${value}', '${min}' and '${max}'.
  * <p>
- * Note, that size validator for Collection doesn't use key 'value' for output error message.
+ * Note, that size validator for Collection doesn't use key '${value}' for output error message.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *     &lt;bean id="ui_SizeValidator" class="io.jmix.ui.component.validation.SizeValidator" scope="prototype"/&gt;
- *     </pre>
+ *     &#64;Bean("ui_SizeValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected SizeValidator sizeValidator() {
+ *          return new CustomSizeValidator();
+ *     }
+ * </pre>
 *
  * @param <T> Collection or String
  */

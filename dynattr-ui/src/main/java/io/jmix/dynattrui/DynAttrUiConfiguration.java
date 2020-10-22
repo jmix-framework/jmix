@@ -27,6 +27,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.Collections;
 
@@ -34,6 +35,7 @@ import java.util.Collections;
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DynAttrConfiguration.class, UiConfiguration.class})
+@PropertySource(name = "io.jmix.dynattrui", value = "classpath:/io/jmix/dynattrui/module.properties")
 public class DynAttrUiConfiguration {
 
     @Bean("dynattr_DynAttrUiUiControllers")

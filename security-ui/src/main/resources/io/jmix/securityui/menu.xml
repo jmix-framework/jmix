@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 
-<menu-config xmlns="http://schemas.haulmont.com/jmix/menu.xsd">
-    <menu id="security" caption="msg://io.jmix.securityui/menu.security">
+<menu-config xmlns="http://jmix.io/schema/ui/menu">
+    <menu id="administration">
         <item screen="sec_RoleModel.browse" caption="msg://io.jmix.securityui/menu.sec_RoleModel.browse"/>
     </menu>
 </menu-config>

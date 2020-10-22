@@ -38,11 +38,16 @@ import java.util.Collections;
  * <p>
  * For error message it uses template string and it is possible to use '${value}' key for formatted output.
  * <p>
- * In order to provide your own implementation globally, create a subclass and register it in {@code web-spring.xml},
+ * In order to provide your own implementation globally, create a subclass and register it in configuration class,
  * for example:
  * <pre>
- *   &lt;bean id="ui_GroovyScriptValidator" class="io.jmix.ui.component.validation.GroovyScriptValidator" scope="prototype"/&gt;
- *   </pre>
+ *     &#64;Bean("dynattr_GroovyScriptValidator")
+ *     &#64;Scope(BeanDefinition.SCOPE_PROTOTYPE)
+ *     &#64;Primary
+ *     protected GroovyScriptValidator groovyScriptValidator() {
+ *          return new CustomGroovyScriptValidator();
+ *     }
+ * </pre>
 *
  * @param <T> any Object
  */

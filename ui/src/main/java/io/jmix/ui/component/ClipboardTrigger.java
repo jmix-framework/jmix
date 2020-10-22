@@ -89,6 +89,11 @@ public interface ClipboardTrigger extends Facet {
             this.success = success;
         }
 
+        @Override
+        public ClipboardTrigger getSource() {
+            return (ClipboardTrigger) super.getSource();
+        }
+
         /**
          * @return true if the text content is set to the client-side clipboard
          */

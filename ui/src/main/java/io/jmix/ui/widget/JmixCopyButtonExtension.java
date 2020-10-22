@@ -85,6 +85,11 @@ public class JmixCopyButtonExtension extends AbstractExtension {
             this.success = success;
         }
 
+        @Override
+        public JmixCopyButtonExtension getSource() {
+            return (JmixCopyButtonExtension) super.getSource();
+        }
+
         public boolean isSuccess() {
             return success;
         }

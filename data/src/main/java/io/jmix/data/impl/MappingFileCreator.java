@@ -49,7 +49,7 @@ class MappingFileCreator {
 
     private static final String XMLNS = "http://xmlns.jcp.org/xml/ns/persistence/orm";
     private static final String SCHEMA_LOCATION = XMLNS + " http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd";
-    private static final String PERSISTENCE_VER = "2.1";
+    private static final String PERSISTENCE_VER = "2.2";
 
     private Environment environment;
     private Collection<String> classNames;

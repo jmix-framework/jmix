@@ -24,7 +24,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
-import javax.persistence.PersistenceException;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -47,29 +46,35 @@ public class JmixEntityManagerFactoryBean extends LocalContainerEntityManagerFac
         this.dbmsSpecifics = dbmsSpecifics;
         this.jmixModules = jmixModules;
 
-        String modulePackage = jmixModules.getLast().getBasePackage().replace('.', '/');
-        String persistenceXmlPath = modulePackage + "/" + (storeName.equals("main") ? "" : storeName + "-") + "persistence.xml";
-        Resource persistenceXmlResource = new ClassPathResource(persistenceXmlPath);
+        String persistenceXmlPath = getPersistenceXmlPath(storeName);
 
+        generateOrmXml(persistenceConfigProcessor, persistenceXmlPath);
+        setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
+        setDataSource(dataSource);
+        setJpaVendorAdapter(jpaVendorAdapter);
+        setupJpaProperties();
+    }
+
+    protected String getPersistenceXmlPath(String storeName) {
+        String modulePackage = jmixModules.getLast().getBasePackage().replace('.', '/');
+        return modulePackage + "/" + (Stores.isMain(storeName) ? "" : storeName + "-") + "persistence.xml";
+    }
+
+    protected void generateOrmXml(PersistenceConfigProcessor processor, String persistenceXmlPath) {
+        Resource persistenceXmlResource = new ClassPathResource(persistenceXmlPath);
         try {
             File persistenceXmlDir = persistenceXmlResource.getFile().getParentFile();
-            persistenceConfigProcessor.createOrmXml(storeName, persistenceXmlDir);
+            processor.createOrmXml(storeName, persistenceXmlDir);
         } catch (IOException e) {
             logger.error("Cannot create orm.xml", e);
         }
-
-        setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
-
-        setDataSource(dataSource);
-        setJpaVendorAdapter(jpaVendorAdapter);
     }
 
-    @Override
-    public void afterPropertiesSet() throws PersistenceException {
-        super.afterPropertiesSet();
 
+    protected void setupJpaProperties() {
         if (!Stores.isMain(storeName))
             getJpaPropertyMap().put(PersistenceSupport.PROP_NAME, storeName);
+
         getJpaPropertyMap().putAll(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
     }
 }

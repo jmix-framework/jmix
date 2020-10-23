@@ -23,6 +23,7 @@ import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.data.value.ValueBinder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -32,6 +33,13 @@ public abstract class AbstractViewComponent<T extends com.vaadin.ui.Component, P
 
     protected V internalValue;
     protected ValueBinding<V> valueBinding;
+
+    protected UiTestIdsSupport uiTestIdsSupport;
+
+    @Autowired
+    public void setUiTestIdsSupport(UiTestIdsSupport uiTestIdsSupport) {
+        this.uiTestIdsSupport = uiTestIdsSupport;
+    }
 
     @Nullable
     @Override
@@ -68,7 +76,7 @@ public abstract class AbstractViewComponent<T extends com.vaadin.ui.Component, P
         if (ui != null && ui.isTestMode()
                 && getComponent().getJTestId() == null) {
 
-            String testId = UiTestIds.getInferredTestId(valueSource);
+            String testId = uiTestIdsSupport.getInferredTestId(valueSource);
             if (testId != null) {
                 getComponent().setJTestId(testId);
             }

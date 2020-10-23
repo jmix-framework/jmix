@@ -128,6 +128,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     protected IconResolver iconResolver;
     protected Aggregations aggregations;
     protected AggregatableDelegate<Object> aggregatableDelegate;
+    protected UiTestIdsSupport uiTestIdsSupport;
 
     // Style names used by grid itself
     protected final List<String> internalStyles = new ArrayList<>(2);
@@ -288,6 +289,11 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     @Autowired
     public void setAggregations(Aggregations aggregations) {
         this.aggregations = aggregations;
+    }
+
+    @Autowired
+    public void setUiTestIdsSupport(UiTestIdsSupport uiTestIdsSupport) {
+        this.uiTestIdsSupport = uiTestIdsSupport;
     }
 
     @SuppressWarnings("unchecked")
@@ -942,7 +948,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         if (ui != null && ui.isTestMode()
                 && getComponent().getJTestId() == null) {
 
-            String testId = UiTestIds.getInferredTestId(items, "DataGrid");
+            String testId = uiTestIdsSupport.getInferredTestId(items, "DataGrid");
             if (testId != null) {
                 getComponent().setJTestId(testId);
                 componentComposition.setJTestId(testId + "_composition");

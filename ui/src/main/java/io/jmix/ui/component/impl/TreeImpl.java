@@ -103,6 +103,7 @@ public class TreeImpl<E>
     protected IconResolver iconResolver;
     protected MetadataTools metadataTools;
     protected Actions actions;
+    protected UiTestIdsSupport uiTestIdsSupport;
 
     protected SelectionMode selectionMode;
 
@@ -270,6 +271,11 @@ public class TreeImpl<E>
         this.actions = actions;
     }
 
+    @Autowired
+    public void setUiTestIdsSupport(UiTestIdsSupport uiTestIdsSupport) {
+        this.uiTestIdsSupport = uiTestIdsSupport;
+    }
+
     @Nullable
     @Override
     public TreeItems<E> getItems() {
@@ -304,7 +310,7 @@ public class TreeImpl<E>
         if (ui != null && ui.isTestMode()
                 && getComponent().getJTestId() == null) {
 
-            String testId = UiTestIds.getInferredTestId(items, "Tree");
+            String testId = uiTestIdsSupport.getInferredTestId(items, "Tree");
             if (testId != null) {
                 getComponent().setJTestId(testId);
                 componentComposition.setJTestId(testId + "_composition");

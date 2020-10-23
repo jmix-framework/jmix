@@ -157,6 +157,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected UiComponentsGenerator uiComponentsGenerator;
     protected Aggregations aggregations;
     protected AggregatableDelegate<Object> aggregatableDelegate;
+    protected UiTestIdsSupport uiTestIdsSupport;
 
     protected Locale locale;
 
@@ -298,6 +299,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     @Autowired
     public void setAggregations(Aggregations aggregations) {
         this.aggregations = aggregations;
+    }
+
+    @Autowired
+    public void setUiTestIdsSupport(UiTestIdsSupport uiTestIdsSupport) {
+        this.uiTestIdsSupport = uiTestIdsSupport;
     }
 
     @Override
@@ -1504,7 +1510,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         if (ui != null && ui.isTestMode()
                 && getComponent().getJTestId() == null) {
 
-            String testId = UiTestIds.getInferredTestId(items, "Table");
+            String testId = uiTestIdsSupport.getInferredTestId(items, "Table");
             if (testId != null) {
                 getComponent().setJTestId(testId);
                 componentComposition.setJTestId(testId + "_composition");

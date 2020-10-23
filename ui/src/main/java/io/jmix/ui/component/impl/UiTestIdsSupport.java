@@ -18,22 +18,21 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.component.data.ValueSource;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-public final class UiTestIds {
-
-    private UiTestIds() {
-    }
+@Component("ui_UiTestIdsSupport")
+public class UiTestIdsSupport {
 
     @Nullable
-    public static String getInferredTestId(ValueSource<?> valueSource) {
+    public String getInferredTestId(ValueSource<?> valueSource) {
         if (valueSource instanceof ContainerValueSource) {
-            ContainerValueSource dcValueSource = (ContainerValueSource) valueSource;
+            ContainerValueSource<?, ?> dcValueSource = (ContainerValueSource<?, ?>) valueSource;
 
             return StringUtils.join(dcValueSource.getMetaPropertyPath().getPropertyNames(), "_");
         }
@@ -42,21 +41,14 @@ public final class UiTestIds {
     }
 
     @Nullable
-    public static String getInferredTestId(DataUnit dataUnit, String suffix) {
+    public String getInferredTestId(DataUnit dataUnit, String suffix) {
         if (dataUnit instanceof ContainerDataUnit) {
-            ContainerDataUnit dcDataUnit = (ContainerDataUnit) dataUnit;
+            ContainerDataUnit<?> dcDataUnit = (ContainerDataUnit<?>) dataUnit;
 
             MetaClass entityMetaClass = dcDataUnit.getEntityMetaClass();
 
             return entityMetaClass.getName() + suffix;
-        } /* TODO: legacy-ui
-          else if (dataUnit instanceof DatasourceDataUnit) {
-            DatasourceDataUnit dsDataUnit = (DatasourceDataUnit) dataUnit;
-
-            MetaClass entityMetaClass = dsDataUnit.getDatasource().getMetaClass();
-
-            return entityMetaClass.getName() + suffix;
-        }*/
+        }
 
         return null;
     }

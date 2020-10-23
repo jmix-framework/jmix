@@ -152,9 +152,10 @@ class EnhancingAction implements Action<Task> {
             file.withWriter { writer ->
                 def xml = new MarkupBuilder(writer)
                 xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                xml.persistence(version: '2.0', xmlns: 'http://java.sun.com/xml/ns/persistence',
+                xml.persistence(version: '2.2', xmlns: 'http://java.sun.com/xml/ns/persistence',
                         'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
-                        'xsi:schemaLocation': "http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd") {
+                        'xsi:schemaLocation': "http://xmlns.jcp.org/xml/ns/persistence" +
+                                " http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd") {
                     'persistence-unit'(name: storeName) {
                         'provider'('io.jmix.data.impl.JmixPersistenceProvider')
                         'mapping-file'(mappingFileName)
@@ -180,8 +181,8 @@ class EnhancingAction implements Action<Task> {
                 xml.'entity-mappings'(
                         xmlns: 'http://xmlns.jcp.org/xml/ns/persistence/orm',
                         'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                        'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd',
-                        version: '2.1'
+                        'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd',
+                        version: '2.2'
                 )
             }
 

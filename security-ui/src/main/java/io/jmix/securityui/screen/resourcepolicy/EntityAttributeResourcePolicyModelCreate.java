@@ -126,9 +126,9 @@ public class EntityAttributeResourcePolicyModelCreate extends MultipleResourcePo
                 policy.setPolicyGroup(policyGroupField.getValue());
                 policy.setEffect(ResourcePolicyEffect.ALLOW);
                 if (attribute.getModify()) {
-                    policy.setAction(EntityAttributePolicyAction.UPDATE.getId());
+                    policy.setAction(EntityAttributePolicyAction.MODIFY.getId());
                 } else {
-                    policy.setAction(EntityAttributePolicyAction.READ.getId());
+                    policy.setAction(EntityAttributePolicyAction.VIEW.getId());
                 }
                 policies.add(policy);
             }

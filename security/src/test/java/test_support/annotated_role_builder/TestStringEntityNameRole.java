@@ -29,6 +29,6 @@ public interface TestStringEntityNameRole {
             actions = {EntityPolicyAction.CREATE})
     @EntityAttributePolicy(entityName = "test_Order",
             attributes = {"number"},
-            actions = EntityAttributePolicyAction.UPDATE)
+            action = EntityAttributePolicyAction.MODIFY)
     void order();
 }

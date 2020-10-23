@@ -54,8 +54,8 @@ public class EntityAttributeResourcePolicyModelEdit extends StandardEditor<Resou
     public void onBeforeShow(BeforeShowEvent event) {
         entityField.setOptionsMap(resourcePolicyEditorUtils.getEntityOptionsMap());
         actionField.setOptionsList(Arrays.asList(
-                EntityAttributePolicyAction.READ.getId(),
-                EntityAttributePolicyAction.UPDATE.getId()));
+                EntityAttributePolicyAction.VIEW.getId(),
+                EntityAttributePolicyAction.MODIFY.getId()));
 
         //fields with a null ValueSource are not disabled automatically by standard ViewAction
         entityField.setEditable(!this.isReadOnly());

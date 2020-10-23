@@ -19,7 +19,6 @@ package io.jmix.security.role.builder.extractor;
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -60,17 +59,16 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
                 continue;
             }
             String scope = policyAnnotation.scope();
+
             for (String attribute : policyAnnotation.attributes()) {
-                for (EntityAttributePolicyAction action : policyAnnotation.actions()) {
-                    String resource = entityName + "." + attribute;
-                    ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY_ATTRIBUTE, resource)
-                            .withAction(action.getId())
-                            .withScope(scope)
-                            .withPolicyGroup(method.getName())
-                            .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
-                            .build();
-                    resourcePolicies.add(resourcePolicy);
-                }
+                String resource = entityName + "." + attribute;
+                ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY_ATTRIBUTE, resource)
+                        .withAction(policyAnnotation.action().getId())
+                        .withScope(scope)
+                        .withPolicyGroup(method.getName())
+                        .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
+                        .build();
+                resourcePolicies.add(resourcePolicy);
             }
         }
         return resourcePolicies;

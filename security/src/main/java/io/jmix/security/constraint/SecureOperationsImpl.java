@@ -73,7 +73,8 @@ public class SecureOperationsImpl implements SecureOperations {
     public boolean isEntityAttrReadPermitted(MetaPropertyPath metaPropertyPath, PolicyStore policyStore) {
         for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
             if (!isEntityAttrPermitted(metaProperty.getDomain(), metaProperty.getName(),
-                    EntityAttributePolicyAction.READ, policyStore)) {
+                    new EntityAttributePolicyAction[]{EntityAttributePolicyAction.VIEW, EntityAttributePolicyAction.MODIFY},
+                    policyStore)) {
                 return false;
             }
         }
@@ -84,7 +85,8 @@ public class SecureOperationsImpl implements SecureOperations {
     public boolean isEntityAttrUpdatePermitted(MetaPropertyPath metaPropertyPath, PolicyStore policyStore) {
         for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
             if (!isEntityAttrPermitted(metaProperty.getDomain(), metaProperty.getName(),
-                    EntityAttributePolicyAction.UPDATE, policyStore)) {
+                    new EntityAttributePolicyAction[]{EntityAttributePolicyAction.MODIFY},
+                    policyStore)) {
                 return false;
             }
         }
@@ -93,27 +95,33 @@ public class SecureOperationsImpl implements SecureOperations {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isEntityAttrPermitted(MetaClass metaClass, String name,
-                                            EntityAttributePolicyAction policyAction,
+                                            EntityAttributePolicyAction[] policyActions,
                                             PolicyStore policyStore) {
 
         boolean result = policyStore.getEntityAttributesResourcePolicies(metaClass, name).stream()
-                .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
+                .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
 
         if (!result) {
             result = policyStore.getEntityAttributesResourcePolicies(metaClass, "*").stream()
-                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
+                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
         }
 
         if (!result) {
             result = policyStore.getEntityAttributesResourcePoliciesByWildcard("*", "*").stream()
-                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyAction));
+                    .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
         }
 
         return result;
     }
 
-    protected boolean isEntityAttrPermitted(ResourcePolicy policy, EntityAttributePolicyAction policyAction) {
-        return Objects.equals(policy.getAction(), policyAction.getId()) && Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW);
+    protected boolean isEntityAttrPermitted(ResourcePolicy policy, EntityAttributePolicyAction[] policyActions) {
+        for (EntityAttributePolicyAction policyAction : policyActions) {
+            if (Objects.equals(policy.getAction(), policyAction.getId())
+                    && Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

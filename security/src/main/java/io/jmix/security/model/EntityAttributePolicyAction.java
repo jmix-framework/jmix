@@ -22,8 +22,8 @@ package io.jmix.security.model;
  * @see ResourcePolicy
  */
 public enum EntityAttributePolicyAction {
-    READ("read"),
-    UPDATE("update");
+    VIEW("view"),
+    MODIFY("modify");
 
     private String id;
 

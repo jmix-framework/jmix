@@ -32,7 +32,7 @@ public interface TestDifferentResourcePoliciesOnMethodRole {
             scope = "rest")
     @EntityAttributePolicy(entityClass = TestOrder.class,
             attributes = {"number", "date"},
-            actions = EntityAttributePolicyAction.UPDATE)
+            action = EntityAttributePolicyAction.MODIFY)
     @SpecificPolicy(resources = {"app.order.someSpecificStuff", "app.order.anotherSpecificStuff"})
     void order();
 }

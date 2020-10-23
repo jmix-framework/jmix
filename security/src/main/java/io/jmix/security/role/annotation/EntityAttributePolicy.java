@@ -55,7 +55,7 @@ public @interface EntityAttributePolicy {
 
     String[] attributes();
 
-    EntityAttributePolicyAction[] actions();
+    EntityAttributePolicyAction action();
 
     String scope() default "";
 }

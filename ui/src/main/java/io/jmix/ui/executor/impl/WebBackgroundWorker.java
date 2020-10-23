@@ -267,6 +267,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
             unregister();
 
             try {
+                SecurityContextHelper.setAuthentication(authentication);
+
                 V result = future.get();
 
                 runnableTask.done(result);
@@ -294,6 +296,8 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     }
                 }
             } finally {
+                SecurityContextHelper.setAuthentication(null);
+
                 if (finalizer != null) {
                     finalizer.run();
                     finalizer = null;

@@ -144,7 +144,11 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
             @Override
             public void done(List<V> result) {
                 log.debug("Search results for '{}'", query);
-                handleSearchResult(result);
+                try {
+                    handleSearchResult(result);
+                } catch (RuntimeException e) {
+                    log.error("Error while processing search result", e);
+                }
             }
 
             @Override

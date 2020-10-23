@@ -24,9 +24,10 @@ import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.ValueBinding;
 import io.jmix.ui.component.data.value.ValueBinder;
 import io.jmix.ui.component.impl.AbstractComponent;
-import io.jmix.ui.component.impl.UiTestIds;
+import io.jmix.ui.component.impl.UiTestIdsSupport;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,6 +49,13 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
     protected ValueBinding<V> valueBinding;
 
     protected Subscription parentEditableChangeListener;
+
+    protected UiTestIdsSupport uiTestIdsSupport;
+
+    @Autowired
+    public void setUiTestIdsSupport(UiTestIdsSupport uiTestIdsSupport) {
+        this.uiTestIdsSupport = uiTestIdsSupport;
+    }
 
     @Nullable
     @Override
@@ -84,7 +92,7 @@ public abstract class WebAbstractField<T extends com.vaadin.v7.ui.AbstractField,
         if (ui != null && ui.isTestMode()
                 && getComponent().getJTestId() == null) {
 
-            String testId = UiTestIds.getInferredTestId(valueSource);
+            String testId = uiTestIdsSupport.getInferredTestId(valueSource);
             if (testId != null) {
                 getComponent().setJTestId(testId);
             }

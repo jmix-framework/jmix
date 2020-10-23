@@ -25,6 +25,7 @@ import com.haulmont.cuba.core.global.impl.MessagesImpl;
 import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
 import com.haulmont.cuba.core.sys.CubaNumberIdCache;
+import com.haulmont.cuba.gui.components.CubaUiTestIdsSupport;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
@@ -53,6 +54,7 @@ import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.impl.UiTestIdsSupport;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.presentation.TablePresentations;
@@ -246,6 +248,12 @@ public class CubaConfiguration {
     @Primary
     WindowConfig windowConfig() {
         return new com.haulmont.cuba.gui.config.WindowConfig();
+    }
+
+    @Bean("cuba_UiTestIdsSupport")
+    @Primary
+    UiTestIdsSupport uiTestIdsSupport() {
+        return new CubaUiTestIdsSupport();
     }
 
     @EventListener

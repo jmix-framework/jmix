@@ -383,6 +383,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         }
     }
 
+    @Override
     public Stream<Screen> getOpenedWorkAreaScreensStream() {
         if (getMode() == Mode.TABBED) {
             TabSheetBehaviour tabSheetBehaviour = getTabbedWindowContainer().getTabSheetBehaviour();
@@ -411,6 +412,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         return Stream.empty();
     }
 
+    @Override
     public Stream<Screen> getActiveWorkAreaScreensStream() {
         if (getMode() == Mode.TABBED) {
             TabSheetBehaviour tabSheetBehaviour = getTabbedWindowContainer().getTabSheetBehaviour();
@@ -437,6 +439,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         return Stream.empty();
     }
 
+    @Override
     public Collection<Screen> getCurrentBreadcrumbs() {
         TabWindowContainer layout = getCurrentWindowContainer();
 

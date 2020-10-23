@@ -17,10 +17,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.EventObject;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public interface AppWorkArea extends Component.BelongToFrame {
 
@@ -58,6 +61,11 @@ public interface AppWorkArea extends Component.BelongToFrame {
 
     void addStateChangeListener(Consumer<StateChangeEvent> listener);
     void removeStateChangeListener(Consumer<StateChangeEvent> listener);
+
+    Stream<Screen> getOpenedWorkAreaScreensStream();
+    Stream<Screen> getActiveWorkAreaScreensStream();
+
+    Collection<Screen> getCurrentBreadcrumbs();
 
     /**
      * @deprecated Use {@link Consumer} with {@link StateChangeEvent} type instead.

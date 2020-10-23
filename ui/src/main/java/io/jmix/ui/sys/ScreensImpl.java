@@ -705,10 +705,9 @@ public class ScreensImpl implements Screens {
             remove(dialogScreen);
         }
 
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
-
-        if (workArea != null) {
-            Collection<WindowStack> workAreaStacks = getWorkAreaStacks(workArea);
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
+        if (workArea instanceof AppWorkAreaImpl) {
+            Collection<WindowStack> workAreaStacks = getWorkAreaStacks((AppWorkAreaImpl) workArea);
 
             for (WindowStack workAreaStack : workAreaStacks) {
                 Collection<Screen> tabScreens = workAreaStack.getBreadcrumbs();
@@ -747,7 +746,7 @@ public class ScreensImpl implements Screens {
             return Stream.empty();
         }
 
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
         if (workArea == null) {
             return Stream.empty();
         }
@@ -761,7 +760,7 @@ public class ScreensImpl implements Screens {
             return Stream.empty();
         }
 
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
         if (workArea == null) {
             return Stream.empty();
         }
@@ -781,7 +780,7 @@ public class ScreensImpl implements Screens {
     }
 
     protected Collection<Screen> getCurrentBreadcrumbs() {
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
         if (workArea == null) {
             return Collections.emptyList();
         }
@@ -839,7 +838,7 @@ public class ScreensImpl implements Screens {
 
         if (controller instanceof HasWorkArea) {
             AppWorkArea workArea = ((HasWorkArea) controller).getWorkArea();
-            if (workArea != null) {
+            if (workArea instanceof AppWorkAreaImpl) {
                 return (AppWorkAreaImpl) workArea;
             }
         }
@@ -849,19 +848,15 @@ public class ScreensImpl implements Screens {
 
     @Override
     @Nullable
-    public AppWorkAreaImpl getConfiguredWorkAreaOrNull() {
+    public AppWorkArea getConfiguredWorkAreaOrNull() {
         RootWindow topLevelWindow = ui.getTopLevelWindow();
         if (topLevelWindow == null) {
             throw new IllegalStateException("There is no root screen opened");
         }
 
         Screen controller = topLevelWindow.getFrameOwner();
-
         if (controller instanceof HasWorkArea) {
-            AppWorkArea workArea = ((HasWorkArea) controller).getWorkArea();
-            if (workArea != null) {
-                return (AppWorkAreaImpl) workArea;
-            }
+            return ((HasWorkArea) controller).getWorkArea();
         }
 
         return null;
@@ -1264,7 +1259,7 @@ public class ScreensImpl implements Screens {
     protected void showDialogWindow(Screen screen) {
         DialogWindow window = (DialogWindow) screen.getWindow();
 
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
         if (workArea != null) {
             WindowImpl windowImpl = (WindowImpl) screen.getWindow();
             windowImpl.setResolvedState(createOrUpdateState(
@@ -1327,8 +1322,9 @@ public class ScreensImpl implements Screens {
     protected void handleTabWindowClose(HasTabSheetBehaviour targetTabSheet, com.vaadin.ui.Component tabContent) {
         WindowBreadCrumbs tabBreadCrumbs = ((TabWindowContainer) tabContent).getBreadCrumbs();
 
-        AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
-        if (workArea != null && workArea.isNotCloseable(tabBreadCrumbs.getCurrentWindow())) {
+        AppWorkArea workArea = getConfiguredWorkAreaOrNull();
+        if (workArea instanceof AppWorkAreaImpl
+                && ((AppWorkAreaImpl) workArea).isNotCloseable(tabBreadCrumbs.getCurrentWindow())) {
             return;
         }
 
@@ -1350,8 +1346,9 @@ public class ScreensImpl implements Screens {
         public void run() {
             Window windowToClose = breadCrumbs.getCurrentWindow();
             if (windowToClose != null) {
-                AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
-                if ((workArea == null || !workArea.isNotCloseable(breadCrumbs.getCurrentWindow()))
+                AppWorkArea workArea = getConfiguredWorkAreaOrNull();
+                if ((!(workArea instanceof AppWorkAreaImpl)
+                        || !((AppWorkAreaImpl) workArea).isNotCloseable(breadCrumbs.getCurrentWindow()))
                         && !isWindowClosePrevented(windowToClose, CloseOriginType.CLOSE_BUTTON)) {
                     windowToClose.getFrameOwner()
                             .close(WINDOW_CLOSE_ACTION)
@@ -1529,12 +1526,12 @@ public class ScreensImpl implements Screens {
 
         @Override
         public Collection<WindowStack> getWorkAreaStacks() {
-            AppWorkAreaImpl workArea = getConfiguredWorkAreaOrNull();
-            if (workArea == null) {
-                return Collections.emptyList();
+            AppWorkArea workArea = getConfiguredWorkAreaOrNull();
+            if (workArea instanceof AppWorkAreaImpl) {
+                return ScreensImpl.this.getWorkAreaStacks((AppWorkAreaImpl) workArea);
             }
 
-            return ScreensImpl.this.getWorkAreaStacks(workArea);
+            return Collections.emptyList();
         }
     }
 }

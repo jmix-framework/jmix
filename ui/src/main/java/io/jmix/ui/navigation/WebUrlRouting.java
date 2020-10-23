@@ -23,9 +23,9 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.*;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
+import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.component.RootWindow;
-import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.OpenMode;
@@ -360,7 +360,7 @@ public class WebUrlRouting implements UrlRouting {
 
     @Nullable
     protected Screen findActiveScreenByState(NavigationState requestedState) {
-        AppWorkAreaImpl workArea = screens.getConfiguredWorkAreaOrNull();
+        AppWorkArea workArea = screens.getConfiguredWorkAreaOrNull();
 
         return workArea != null
                 ? findScreenByState(getOpenedScreens().getActiveScreens(), requestedState)

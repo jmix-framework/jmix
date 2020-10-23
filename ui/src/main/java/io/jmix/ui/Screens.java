@@ -17,7 +17,6 @@
 package io.jmix.ui;
 
 import io.jmix.ui.component.AppWorkArea;
-import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.util.OperationResult;
 
@@ -128,7 +127,7 @@ public interface Screens {
     OpenedScreens getOpenedScreens();
 
     @Nullable
-    AppWorkAreaImpl getConfiguredWorkAreaOrNull();
+    AppWorkArea getConfiguredWorkAreaOrNull();
 
     /**
      * Marker interface for screen launch modes.

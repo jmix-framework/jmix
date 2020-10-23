@@ -24,6 +24,7 @@ import io.jmix.core.metamodel.datatype.Enumeration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
@@ -46,8 +47,9 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
                                                      EntityFieldCreationSupport entityFieldCreationSupport,
                                                      Metadata metadata,
                                                      MetadataTools metadataTools,
-                                                     Icons icons) {
-        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
+                                                     Icons icons,
+                                                     Actions actions) {
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
     }
 
     @Autowired

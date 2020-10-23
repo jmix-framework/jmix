@@ -21,10 +21,12 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.annotation.CurrencyValue;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.action.valuespicker.SelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
@@ -54,19 +56,22 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected Icons icons;
+    protected Actions actions;
 
     public AbstractComponentGenerationStrategy(Messages messages,
                                                UiComponents uiComponents,
                                                EntityFieldCreationSupport entityFieldCreationSupport,
                                                Metadata metadata,
                                                MetadataTools metadataTools,
-                                               Icons icons) {
+                                               Icons icons,
+                                               Actions actions) {
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.entityFieldCreationSupport = entityFieldCreationSupport;
         this.metadata = metadata;
         this.metadataTools = metadataTools;
         this.icons = icons;
+        this.actions = actions;
     }
 
     @Nullable
@@ -81,7 +86,9 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         Range mppRange = mpp.getRange();
         Component resultComponent = null;
 
-        if (mppRange.isDatatype()) {
+        if (Collection.class.isAssignableFrom(mpp.getMetaProperty().getJavaType())) {
+            resultComponent = createCollectionField(context, mpp);
+        } else if (mppRange.isDatatype()) {
             resultComponent = createDatatypeField(context, mpp);
         } else if (mppRange.isClass()) {
             resultComponent = createClassField(context, mpp);
@@ -92,16 +99,8 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         return resultComponent;
     }
 
-    @Nullable
     protected Component createClassField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        MetaProperty metaProperty = mpp.getMetaProperty();
-        Class<?> javaType = metaProperty.getJavaType();
-
-        if (!Collection.class.isAssignableFrom(javaType)) {
-            return createEntityField(context, mpp);
-        }
-
-        return null;
+        return createEntityField(context, mpp);
     }
 
     @Nullable
@@ -364,6 +363,28 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
 
             return linkField;
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Component createCollectionField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
+        setValueSource(valuesPicker, context);
+
+        SelectAction selectAction = actions.create(SelectAction.class);
+        Range range = mpp.getRange();
+        if (range.isClass()) {
+            selectAction.setEntityName(range.asClass().getName());
+        } else if (range.isDatatype()) {
+            selectAction.setJavaClass(range.asDatatype().getJavaClass());
+        } else if (range.isEnum()) {
+            selectAction.setEnumClass(range.asEnumeration().getJavaClass());
+        }
+        valuesPicker.addAction(selectAction);
+
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        valuesPicker.addAction(valueClearAction);
+
+        return valuesPicker;
     }
 
     protected void setLinkFieldAttributes(EntityLinkField linkField, ComponentGenerationContext context) {

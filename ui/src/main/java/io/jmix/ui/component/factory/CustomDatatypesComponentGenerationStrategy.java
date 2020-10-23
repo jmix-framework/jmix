@@ -21,6 +21,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -45,8 +46,9 @@ public class CustomDatatypesComponentGenerationStrategy extends AbstractComponen
                                                       EntityFieldCreationSupport entityFieldCreationSupport,
                                                       Metadata metadata,
                                                       MetadataTools metadataTools,
-                                                      Icons icons) {
-        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
+                                                      Icons icons,
+                                                      Actions actions) {
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
     }
 
     @Autowired

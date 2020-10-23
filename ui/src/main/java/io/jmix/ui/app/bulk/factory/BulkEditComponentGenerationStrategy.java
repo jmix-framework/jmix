@@ -21,12 +21,14 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.app.bulk.BulkEditorWindow;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.factory.AbstractComponentGenerationStrategy;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
@@ -39,13 +41,15 @@ public class BulkEditComponentGenerationStrategy extends AbstractComponentGenera
 
     protected static final int MAX_TEXTFIELD_STRING_LENGTH = 255;
 
+    @Autowired
     public BulkEditComponentGenerationStrategy(Messages messages,
                                                UiComponents uiComponents,
                                                EntityFieldCreationSupport entityFieldCreationSupport,
                                                Metadata metadata,
                                                MetadataTools metadataTools,
-                                               Icons icons) {
-        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons);
+                                               Icons icons,
+                                               Actions actions) {
+        super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
     }
 
 

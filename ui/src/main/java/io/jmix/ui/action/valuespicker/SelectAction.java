@@ -17,6 +17,7 @@
 package io.jmix.ui.action.valuespicker;
 
 import io.jmix.core.Messages;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
@@ -25,12 +26,18 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.app.valuespicker.selectvalue.SelectValueController;
 import io.jmix.ui.app.valuespicker.selectvalue.SelectValueController.SelectValueContext;
 import io.jmix.ui.builder.ScreenBuilder;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.DateField;
 import io.jmix.ui.component.ValuePicker;
 import io.jmix.ui.component.ValuePicker.ValuePickerAction;
 import io.jmix.ui.component.ValuesPicker;
+import io.jmix.ui.component.data.Options;
+import io.jmix.ui.component.data.meta.EntityValueSource;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.CloseAction;
@@ -40,6 +47,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.TimeZone;
+import java.util.function.Function;
 
 import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
 
@@ -68,7 +78,7 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     protected boolean editable = true;
 
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
-    protected SelectValueContext<V> selectValueContext;
+    protected SelectValueContext<V> selectValueContext = new SelectValueContext<>();
 
     public SelectAction() {
         this(ID);
@@ -111,7 +121,7 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
             setDescription(messages.getMessage("valuesPicker.action.select.tooltip"));
         }
 
-        setScreenId(DEFAULT_SELECT_VALUE_SCREEN);
+        setSelectValueScreenId(DEFAULT_SELECT_VALUE_SCREEN);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -150,45 +160,230 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     }
 
     /**
-     * Returns the lookup screen id if it was set by {@link #setScreenId(String)} or in the screen XML.
-     * Otherwise returns null.
+     * Returns the id of {@link SelectValueController} screen if it was set by {@link #setSelectValueScreenId(String)}
+     * or in the screen XML.
+     *
+     * @return the id of {@link SelectValueController} screen
      */
-    @Nullable
-    public String getScreenId() {
+    public String getSelectValueScreenId() {
         return screenInitializer.getScreenId();
     }
 
     /**
-     * Sets the lookup screen id.
+     * Sets the id of {@link SelectValueController} screen.
+     *
+     * @param selectValueScreenId the id of {@link SelectValueController} screen
      */
-    @StudioPropertiesItem
-    public void setScreenId(String screenId) {
-        screenInitializer.setScreenId(screenId);
+    @StudioPropertiesItem(type = PropertyType.STRING, defaultValue = DEFAULT_SELECT_VALUE_SCREEN)
+    public void setSelectValueScreenId(String selectValueScreenId) {
+        screenInitializer.setScreenId(selectValueScreenId);
     }
 
     /**
-     * Returns the lookup screen class if it was set by {@link #setScreenClass(Class)} or in the screen XML.
-     * Otherwise returns null.
+     * Returns the class of {@link SelectValueController} screen if it was set by
+     * {@link #setSelectValueScreenId(String)} or in the screen XML. Otherwise returns {@code null}.
+     *
+     * @return the class of {@link SelectValueController} screen
      */
     @Nullable
-    public Class getScreenClass() {
+    public Class getSelectValueScreenClass() {
         return screenInitializer.getScreenClass();
     }
 
     /**
-     * Sets the lookup screen id.
+     * Sets the class of {@link SelectValueController} screen.
+     *
+     * @param selectValueScreenClass the class of {@link SelectValueController} screen
      */
     @StudioPropertiesItem
-    public void setScreenClass(Class screenClass) {
-        screenInitializer.setScreenClass(screenClass);
+    public void setSelectValueScreenClass(Class selectValueScreenClass) {
+        screenInitializer.setScreenClass(selectValueScreenClass);
     }
 
-    public SelectValueContext<V> getSelectValueContext() {
-        return selectValueContext;
+    /**
+     * @return the lookup screen id
+     */
+    @Nullable
+    public String getLookupScreenId() {
+        return selectValueContext.getLookupScreenId();
     }
 
-    public void setSelectValueContext(SelectValueContext<V> selectValueContext) {
-        this.selectValueContext = selectValueContext;
+    /**
+     * Sets the lookup screen id to be passed into {@link SelectValueController} screen.
+     *
+     * @param lookupScreenId the lookup screen id
+     */
+    @StudioPropertiesItem(type = PropertyType.STRING)
+    public void setLookupScreenId(@Nullable String lookupScreenId) {
+        selectValueContext.setLookupScreenId(lookupScreenId);
+    }
+
+    /**
+     * @return the entity name which is used as the component value type
+     */
+    @Nullable
+    public String getEntityName() {
+        return selectValueContext.getEntityName();
+    }
+
+    /**
+     * Sets the entity name which is used as the component value type in {@link SelectValueController} screen.
+     *
+     * @param entityName the entity name which is used as the component value type
+     */
+    @StudioPropertiesItem(type = PropertyType.ENTITY_NAME)
+    public void setEntityName(@Nullable String entityName) {
+        selectValueContext.setEntityName(entityName);
+    }
+
+    /**
+     * @return the java class which is used as the component value type
+     */
+    @Nullable
+    public Class<?> getJavaClass() {
+        return selectValueContext.getJavaClass();
+    }
+
+    /**
+     * Sets the java class which is used as the component value type in {@link SelectValueController} screen.
+     *
+     * @param javaClass the java class which is used as the component value type
+     */
+    @StudioPropertiesItem(type = PropertyType.JAVA_CLASS_NAME)
+    public void setJavaClass(@Nullable Class<?> javaClass) {
+        selectValueContext.setJavaClass(javaClass);
+    }
+
+    /**
+     * @return the enumeration class which is used as the component value type
+     */
+    @Nullable
+    public Class<? extends Enum> getEnumClass() {
+        return selectValueContext.getEnumClass();
+    }
+
+    /**
+     * Sets the enumeration class which is used as the component value type in {@link SelectValueController} screen.
+     *
+     * @param enumClass the enumeration class which is used as the component value type
+     */
+    @StudioPropertiesItem(type = PropertyType.JAVA_CLASS_NAME)
+    public void setEnumClass(@Nullable Class<? extends Enum> enumClass) {
+        selectValueContext.setEnumClass(enumClass);
+    }
+
+    /**
+     * @return whether or not the {@link ComboBox} should be used in {@link SelectValueController} screen
+     */
+    public boolean isUseComboBox() {
+        return selectValueContext.isUseComboBox();
+    }
+
+    /**
+     * Sets whether the {@link ComboBox} should be used in {@link SelectValueController} screen.
+     *
+     * @param useComboBox whether the {@link ComboBox} should be used in {@link SelectValueController} screen
+     */
+    @StudioPropertiesItem(type = PropertyType.BOOLEAN, defaultValue = "false")
+    public void setUseComboBox(boolean useComboBox) {
+        selectValueContext.setUseComboBox(useComboBox);
+    }
+
+    /**
+     * @return the resolution of {@link DateField}
+     */
+    @Nullable
+    public DateField.Resolution getResolution() {
+        return selectValueContext.getResolution();
+    }
+
+    /**
+     * Sets the resolution of of {@link DateField} component. The {@link DateField} component is used to select values
+     * which have date value type. The component is used in {@link SelectValueController} screen.
+     *
+     * @param resolution the resolution of {@link DateField}
+     */
+    @StudioPropertiesItem(type = PropertyType.ENUMERATION)
+    public void setResolution(@Nullable DateField.Resolution resolution) {
+        selectValueContext.setResolution(resolution);
+    }
+
+    /**
+     * @return the time zone of {@link DateField}
+     */
+    @Nullable
+    public TimeZone getTimeZone() {
+        return selectValueContext.getTimeZone();
+    }
+
+    /**
+     * Sets the time zone of {@link DateField} component. The {@link DateField} component is used to select values
+     * which have date value type. The component is used in {@link SelectValueController} screen.
+     *
+     * @param timeZone the time zone of {@link DateField}
+     */
+    public void setTimeZone(@Nullable TimeZone timeZone) {
+        selectValueContext.setTimeZone(timeZone);
+    }
+
+    /**
+     * @return options
+     */
+    @Nullable
+    public Options<V> getOptions() {
+        return selectValueContext.getOptions();
+    }
+
+    /**
+     * Sets options which are used in {@link SelectValueController} screen.
+     *
+     * @param options options
+     */
+    public void setOptions(@Nullable Options<V> options) {
+        selectValueContext.setOptions(options);
+    }
+
+    /**
+     * @return caption provider for options
+     */
+    @Nullable
+    public Function<V, String> getOptionCaptionProvider() {
+        return selectValueContext.getOptionCaptionProvider();
+    }
+
+    /**
+     * Sets function that provides caption for option items.
+     *
+     * @param optionCaptionProvider caption provider for options
+     */
+    public void setOptionCaptionProvider(@Nullable Function<V, String> optionCaptionProvider) {
+        selectValueContext.setOptionCaptionProvider(optionCaptionProvider);
+    }
+
+    /**
+     * @return the collection of validators
+     */
+    public List<Validator<V>> getValidators() {
+        return selectValueContext.getValidators();
+    }
+
+    /**
+     * Sets the collection of {@link Validator}'s which are used in {@link SelectValueController} screen to validate
+     * component values.
+     *
+     * @param validators the collection of validators
+     */
+    public void setValidators(@Nullable List<Validator<V>> validators) {
+        selectValueContext.setValidators(validators);
+    }
+
+    /**
+     * Adds validator which is used in {@link SelectValueController} screen to validate component values.
+     *
+     * @param validator validator
+     */
+    public void addValidator(Validator<V> validator) {
+        selectValueContext.addValidator(validator);
     }
 
     @Override
@@ -205,19 +400,24 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     /**
      * Executes the action.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void execute() {
+        if (valuesPicker.getFrame() == null) {
+            throw new IllegalStateException("ValuesPicker component is not bound to a frame");
+        }
+
         ScreenBuilder builder = screenBuilders.screen(valuesPicker.getFrame().getFrameOwner());
         builder = screenInitializer.initBuilder(builder);
         Screen screen = builder.build();
 
         if (!(screen instanceof SelectValueController)) {
-            throw new IllegalArgumentException("Screen must implement " +
+            throw new IllegalArgumentException("Select value screen must implement " +
                     "'io.jmix.ui.app.valuespicker.selectvalue.SelectValueController");
         }
 
-        if (selectValueContext == null) {
-            throw new IllegalStateException("SelectValueContext is not set");
+        if (valuesPicker.getValueSource() instanceof EntityValueSource) {
+            initSelectValueComponentValueType((EntityValueSource) valuesPicker.getValueSource());
         }
 
         selectValueContext.setInitialValues(valuesPicker.getValue());
@@ -233,5 +433,19 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
         });
 
         screen.show();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void initSelectValueComponentValueType(EntityValueSource<?, ?> valueSource) {
+        Range range = valueSource.getMetaPropertyPath()
+                .getRange();
+
+        if (getEntityName() == null && range.isClass()) {
+            setEntityName(range.asClass().getName());
+        } else if (getJavaClass() == null && range.isDatatype()) {
+            setJavaClass(range.asDatatype().getJavaClass());
+        } else if (getEnumClass() == null && range.isEnum()) {
+            setEnumClass(range.asEnumeration().getJavaClass());
+        }
     }
 }

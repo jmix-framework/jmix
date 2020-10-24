@@ -107,6 +107,7 @@ public abstract class BaseLoaderConfig {
 
         loaders.put(Form.NAME, FormLoader.class);
         loaders.put(PropertyFilter.NAME, PropertyFilterLoader.class);
+        loaders.put(JavaScriptComponent.NAME, JavaScriptComponentLoader.class);
 
         loaders.put(Fragment.NAME, FragmentComponentLoader.class);
 

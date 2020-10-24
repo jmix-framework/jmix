@@ -133,6 +133,7 @@ public class UiComponentsImpl implements UiComponents {
 
         classes.put(EntityLinkField.NAME, EntityLinkFieldImpl.class);
         classes.put(PropertyFilter.NAME, PropertyFilterImpl.class);
+        classes.put(JavaScriptComponent.NAME, JavaScriptComponentImpl.class);
 
         /* Main window components */
 

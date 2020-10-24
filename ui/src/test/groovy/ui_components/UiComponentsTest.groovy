@@ -120,9 +120,9 @@ class UiComponentsTest extends ScreenSpecification {
                 UserIndicator.NAME,
                 UserActionsButton.NAME,
                 TimeZoneIndicator.NAME,
-                SideMenu.NAME
+                SideMenu.NAME,
 
-                // JavaScriptComponent.NAME todo javaScriptComponent
+                JavaScriptComponent.NAME
         ]
     }
 

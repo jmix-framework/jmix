@@ -22,7 +22,6 @@ import io.jmix.ui.component.Fragment;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.sys.ScreenViewsLoader;
 import io.jmix.ui.xml.FacetLoader;
 import io.jmix.ui.xml.layout.ComponentRootLoader;
 import org.dom4j.Element;
@@ -86,10 +85,6 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
         setComponentsRatio(resultComponent, layoutElement);
 
         loadFacets(resultComponent, element);
-    }
-
-    protected ScreenViewsLoader getScreenViewsLoader() {
-        return applicationContext.getBean(ScreenViewsLoader.class);
     }
 
     protected void loadDataElement(Element element) {

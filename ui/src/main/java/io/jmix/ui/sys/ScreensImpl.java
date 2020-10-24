@@ -38,7 +38,6 @@ import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.event.screen.AfterShowScreenEvent;
 import io.jmix.ui.event.screen.BeforeShowScreenEvent;
-import io.jmix.ui.component.data.compatibility.DsSupport;
 import io.jmix.ui.event.screen.ScreenClosedEvent;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
@@ -50,7 +49,6 @@ import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
-import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
@@ -110,8 +108,6 @@ public class ScreensImpl implements Screens {
     protected UrlTools urlTools;
     @Autowired
     protected WindowCreationHelper windowCreationHelper;
-    @Autowired
-    protected ScreenViewsLoader screenViewsLoader;
     @Autowired
     protected MeterRegistry meterRegistry;
     @Autowired
@@ -204,9 +200,7 @@ public class ScreensImpl implements Screens {
 
         Timer.Sample loadSample = Timer.start(meterRegistry);
 
-        ComponentLoaderContext componentLoaderContext = !applicationContext.getBeansOfType(DsSupport.class).isEmpty()
-                ? applicationContext.getBean(DsSupport.class).createComponentLoaderContext(options)
-                : new ComponentLoaderContext(options);
+        ComponentLoaderContext componentLoaderContext = createComponentLoaderContext(options);
 
         componentLoaderContext.setFullFrameId(windowInfo.getId());
         componentLoaderContext.setCurrentFrameId(windowInfo.getId());
@@ -245,6 +239,10 @@ public class ScreensImpl implements Screens {
         fireEvent(controller, AfterInitEvent.class, new AfterInitEvent(controller, options));
 
         return controller;
+    }
+
+    protected ComponentLoaderContext createComponentLoaderContext(ScreenOptions options) {
+        return new ComponentLoaderContext(options);
     }
 
     protected ScreenOpenDetails prepareScreenOpenDetails(Class<? extends Screen> resolvedScreenClass,
@@ -335,13 +333,6 @@ public class ScreensImpl implements Screens {
 
         LayoutLoader layoutLoader = applicationContext.getBean(LayoutLoader.class, componentLoaderContext);
         ComponentLoader<Window> windowLoader = layoutLoader.createWindowContent(window, element);
-
-        if (controller instanceof CubaLegacyFrame) {
-            screenViewsLoader.deployViews(element);
-
-            applicationContext.getBean(DsSupport.class)
-                    .initDsContext(controller, element, componentLoaderContext);
-        }
 
         windowLoader.loadComponent();
     }

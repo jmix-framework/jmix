@@ -35,11 +35,9 @@ import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.sys.UiControllerReflectionInspector.AnnotatedMethod;
 import io.jmix.ui.sys.UiControllerReflectionInspector.InjectElement;
 import io.jmix.ui.sys.UiControllerReflectionInspector.ScreenIntrospectionData;
-import io.jmix.ui.sys.compatibility.LegacyDependencyResolver;
 import io.jmix.ui.sys.delegate.InstalledBiFunction;
 import io.jmix.ui.sys.delegate.InstalledConsumer;
 import io.jmix.ui.sys.delegate.InstalledFunction;
@@ -680,12 +678,6 @@ public class UiControllerDependencyInjector {
                     return applicationContext.getBean(type);
                 }
             }
-        }
-
-        // TODO: legacy-ui
-        if (frameOwner instanceof CubaLegacyFrame) {
-            return applicationContext.getBean(LegacyDependencyResolver.class)
-                    .resolveDependency(frameOwner, type, name);
         }
 
         return null;

@@ -21,7 +21,6 @@ import com.haulmont.cuba.gui.components.RowsCount;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.HorizontalLayout;
 import io.jmix.ui.component.VisibilityChangeNotifier;
-import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.widget.JmixCssActionsLayout;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -54,7 +53,7 @@ public class DataGridDelegate implements HasRowsCount {
                              JmixCssActionsLayout componentComposition,
                              Runnable visibilityChangeHandler) {
         if (this.rowsCount != null && topPanel != null) {
-            topPanel.removeComponent(WebComponentsHelper.unwrap(this.rowsCount));
+            topPanel.removeComponent(this.rowsCount.unwrap(com.vaadin.ui.Component.class));
             this.rowsCount.setParent(null);
         }
         setRowsCount(rowsCount);
@@ -69,7 +68,7 @@ public class DataGridDelegate implements HasRowsCount {
                 componentComposition.addComponentAsFirst(topPanel); // creates new top panel
             }
             rowsCount.setWidthAuto();
-            com.vaadin.ui.Component rc = WebComponentsHelper.unwrap(rowsCount);
+            com.vaadin.ui.Component rc = rowsCount.unwrap(com.vaadin.ui.Component.class);
             topPanel.addComponent(rc);
 
             if (rowsCount instanceof VisibilityChangeNotifier) {

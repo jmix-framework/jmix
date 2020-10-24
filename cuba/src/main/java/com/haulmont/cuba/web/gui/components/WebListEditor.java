@@ -25,7 +25,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.data.Options;
-import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.component.impl.AbstractField;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -209,7 +208,7 @@ public class WebListEditor<V> extends AbstractField<WebListEditor.CubaListEditor
         private final Component content;
 
         public CubaListEditor(HBoxLayout mainLayout) {
-            content = WebComponentsHelper.unwrap(mainLayout);
+            content = mainLayout.unwrap(Component.class);
         }
 
         @Override

@@ -30,7 +30,6 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.impl.AbstractComponent;
-import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.security.UiPermissionDescriptor;
 import io.jmix.ui.security.UiPermissionValue;
 import io.jmix.ui.sys.TestIdManager;
@@ -85,10 +84,8 @@ public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements 
         AppUI ui = AppUI.getCurrent();
         if (ui != null && id != null) {
             for (final FieldConfig fc : fields.values()) {
-                com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fc.getComponentNN());
-                if (composition != null) {
-                    composition.setId(ui.getTestIdManager().getTestId(id + "_" + fc.getId()));
-                }
+                com.vaadin.ui.Component composition = ComponentsHelper.getComposition(fc.getComponentNN());
+                composition.setId(ui.getTestIdManager().getTestId(id + "_" + fc.getId()));
             }
         }
     }
@@ -99,7 +96,7 @@ public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements 
 
         if (id != null && AppUI.getCurrent().isTestMode()) {
             for (FieldConfig fc : fields.values()) {
-                com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fc.getComponentNN());
+                com.vaadin.ui.Component composition = ComponentsHelper.getComposition(fc.getComponentNN());
                 if (composition != null) {
                     composition.setJTestId(fc.getId());
                 }
@@ -272,7 +269,7 @@ public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements 
         int insertRowIndex = 0;
         for (FieldConfig fc : columnFCs) {
             if (fc.isBound()) {
-                com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fc.getComponentNN());
+                com.vaadin.ui.Component composition = ComponentsHelper.getComposition(fc.getComponentNN());
                 component.addComponent(composition, colIndex, insertRowIndex);
                 insertRowIndex++;
             }
@@ -314,7 +311,7 @@ public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements 
             applyFieldDefaults(fci);
         }
 
-        com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fci.getComponentNN());
+        com.vaadin.ui.Component composition = ComponentsHelper.getComposition(fci.getComponentNN());
         assignDebugId(fci, composition);
 
         component.setRows(detectRowsCount());
@@ -525,7 +522,7 @@ public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements 
                     applyFieldDefaults(fci);
                 }
 
-                com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(fieldComponent);
+                com.vaadin.ui.Component composition = ComponentsHelper.getComposition(fieldComponent);
                 assignDebugId(fc, composition);
 
                 int columnIndex = fci.getColumn();

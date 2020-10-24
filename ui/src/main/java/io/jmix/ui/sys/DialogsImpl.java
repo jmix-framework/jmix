@@ -60,7 +60,7 @@ import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static io.jmix.ui.component.impl.WebComponentsHelper.setClickShortcut;
+import static io.jmix.ui.component.ComponentsHelper.setClickShortcut;
 import static io.jmix.ui.component.impl.WrapperUtils.*;
 
 @UIScope

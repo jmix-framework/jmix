@@ -15,10 +15,17 @@
  */
 package io.jmix.ui.component;
 
+import com.vaadin.server.Sizeable;
+import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ValuePathHelper;
+import io.jmix.ui.widget.JmixGroupBox;
+import io.jmix.ui.widget.JmixHorizontalActionsLayout;
+import io.jmix.ui.widget.JmixScrollBoxLayout;
+import io.jmix.ui.widget.JmixVerticalActionsLayout;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,10 +33,16 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static io.jmix.ui.component.Component.AUTO_SIZE;
+
 /**
  * Utility class working with GenericUI components.
  */
 public abstract class ComponentsHelper {
+
+    private ComponentsHelper() {
+    }
+
     /**
      * Returns the collection of components within the specified container and all of its children.
      *
@@ -643,5 +656,307 @@ public abstract class ComponentsHelper {
         } else {
             component.removeStyleName(styleName);
         }
+    }
+
+    /**
+     * Searches for action with the given {@code actionId} inside of {@code frame}.
+     *
+     * @param frame    frame
+     * @param actionId action id
+     * @return action instance or null if action not found
+     */
+    @Nullable
+    public static Action findAction(Frame frame, String actionId) {
+        Action action = frame.getAction(actionId);
+
+        if (action == null) {
+            String postfixActionId = null;
+            int dotIdx = actionId.indexOf('.');
+            if (dotIdx > 0) {
+                postfixActionId = actionId.substring(dotIdx + 1);
+            }
+
+            for (io.jmix.ui.component.Component c : frame.getComponents()) {
+                if (c instanceof ActionsHolder) {
+                    ActionsHolder actionsHolder = (ActionsHolder) c;
+                    action = actionsHolder.getAction(actionId);
+                    if (action == null) {
+                        action = actionsHolder.getAction(postfixActionId);
+                    }
+                    if (action != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return action;
+    }
+
+    /**
+     * Checks whether the given layout is vertical.
+     *
+     * @param layout a layout to check
+     * @return whether the layout is vertical
+     */
+    public static boolean isVerticalLayout(AbstractOrderedLayout layout) {
+        return (layout instanceof VerticalLayout)
+                || (layout instanceof JmixVerticalActionsLayout);
+    }
+
+    /**
+     * Checks whether the given layout is horizontal.
+     *
+     * @param layout a layout to check
+     * @return whether the layout is horizontal
+     */
+    public static boolean isHorizontalLayout(AbstractOrderedLayout layout) {
+        return (layout instanceof HorizontalLayout)
+                || (layout instanceof JmixHorizontalActionsLayout);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends com.vaadin.ui.Component> Collection<T> getComponents(com.vaadin.ui.HasComponents container, Class<T> aClass) {
+        List<T> res = new ArrayList<>();
+        for (Object aContainer : container) {
+            com.vaadin.ui.Component component = (com.vaadin.ui.Component) aContainer;
+            if (aClass.isAssignableFrom(component.getClass())) {
+                res.add((T) component);
+            } else if (com.vaadin.ui.HasComponents.class.isAssignableFrom(component.getClass())) {
+                res.addAll(getComponents((com.vaadin.ui.HasComponents) component, aClass));
+            }
+        }
+
+        return res;
+    }
+
+    /**
+     * Returns underlying Vaadin component implementation.
+     *
+     * @param component GUI component
+     * @return Vaadin component
+     * @see #getComposition(io.jmix.ui.component.Component)
+     */
+    public static com.vaadin.ui.Component unwrap(io.jmix.ui.component.Component component) {
+        Object comp = component;
+        while (comp instanceof io.jmix.ui.component.Component.Wrapper) {
+            comp = ((io.jmix.ui.component.Component.Wrapper) comp).getComponent();
+        }
+
+        return comp instanceof io.jmix.ui.component.Component
+                ? ((io.jmix.ui.component.Component) comp).unwrapComposition(com.vaadin.ui.Component.class)
+                : (com.vaadin.ui.Component) comp;
+    }
+
+    /**
+     * Returns underlying Vaadin component, which serves as the outermost container for the supplied GUI component.
+     * For simple components like {@link io.jmix.ui.component.Button} this method returns the same
+     * result as {@link #unwrap(io.jmix.ui.component.Component)}.
+     *
+     * @param component GUI component
+     * @return Vaadin component
+     * @see #unwrap(io.jmix.ui.component.Component)
+     */
+    public static com.vaadin.ui.Component getComposition(io.jmix.ui.component.Component component) {
+        Object comp = component;
+        while (comp instanceof io.jmix.ui.component.Component.Wrapper) {
+            comp = ((io.jmix.ui.component.Component.Wrapper) comp).getComposition();
+        }
+
+        return comp instanceof io.jmix.ui.component.Component
+                ? ((io.jmix.ui.component.Component) comp).unwrapComposition(com.vaadin.ui.Component.class)
+                : (com.vaadin.ui.Component) comp;
+    }
+
+    public static void expand(AbstractOrderedLayout layout,
+                              com.vaadin.ui.Component component, String height, String width) {
+        if (!isHorizontalLayout(layout)
+                && (StringUtils.isEmpty(height) || AUTO_SIZE.equals(height) || height.endsWith("%"))) {
+            component.setHeight(100, Sizeable.Unit.PERCENTAGE);
+        }
+
+        if (!isVerticalLayout(layout)
+                && (StringUtils.isEmpty(width) || AUTO_SIZE.equals(width) || width.endsWith("%"))) {
+            component.setWidth(100, Sizeable.Unit.PERCENTAGE);
+        }
+
+        layout.setExpandRatio(component, 1);
+    }
+
+    /**
+     * Checks if the component should be visible to the client. Returns false if
+     * the child should not be sent to the client, true otherwise.
+     *
+     * @param child The child to check
+     * @return true if the child is visible to the client, false otherwise
+     */
+    public static boolean isComponentVisibleToClient(com.vaadin.ui.Component child) {
+        if (!child.isVisible()) {
+            return false;
+        }
+        com.vaadin.ui.HasComponents parent = child.getParent();
+
+        if (parent instanceof SelectiveRenderer) {
+            if (!((SelectiveRenderer) parent).isRendered(child)) {
+                return false;
+            }
+        }
+
+        if (parent != null) {
+            return isComponentVisibleToClient(parent);
+        } else {
+            // 'true' - UI has no parent and visibility was checked above,
+            // otherwise - component which is not attached to any UI
+            return child instanceof UI;
+
+        }
+    }
+
+    /**
+     * Tests if component visible and its container visible.
+     *
+     * @param child component
+     * @return component visibility
+     */
+    public static boolean isComponentVisible(com.vaadin.ui.Component child) {
+        if (child.getParent() instanceof com.vaadin.ui.TabSheet) {
+            com.vaadin.ui.TabSheet tabSheet = (com.vaadin.ui.TabSheet) child.getParent();
+            com.vaadin.ui.TabSheet.Tab tab = tabSheet.getTab(child);
+            if (!tab.isVisible()) {
+                return false;
+            }
+        }
+
+        if (child.getParent() instanceof JmixGroupBox) {
+            // ignore groupbox content container visibility
+            return isComponentVisible(child.getParent());
+        }
+        return child.isVisible() && (child.getParent() == null
+                || isComponentVisible(child.getParent()));
+    }
+
+    /**
+     * Tests if component enabled and visible and its container enabled.
+     *
+     * @param child component
+     * @return component enabled state
+     */
+    public static boolean isComponentEnabled(com.vaadin.ui.Component child) {
+        if (child.getParent() instanceof com.vaadin.ui.TabSheet) {
+            com.vaadin.ui.TabSheet tabSheet = (com.vaadin.ui.TabSheet) child.getParent();
+            TabSheet.Tab tab = tabSheet.getTab(child);
+            if (!tab.isEnabled()) {
+                return false;
+            }
+        }
+
+        return child.isEnabled() && (child.getParent() == null
+                || isComponentEnabled(child.getParent())) && isComponentVisible(child);
+    }
+
+    public static boolean isComponentExpanded(io.jmix.ui.component.Component component) {
+        com.vaadin.ui.Component vComponent = component.unwrapComposition(com.vaadin.ui.Component.class);
+        if (vComponent.getParent() instanceof AbstractOrderedLayout) {
+            AbstractOrderedLayout layout = (AbstractOrderedLayout) vComponent.getParent();
+            return (int) layout.getExpandRatio(vComponent) == 1;
+        }
+
+        return false;
+    }
+
+    public static ShortcutTriggeredEvent getShortcutEvent(io.jmix.ui.component.Component source,
+                                                          com.vaadin.ui.Component target) {
+        com.vaadin.ui.Component vaadinSource = getVaadinSource(source);
+
+        if (vaadinSource == target) {
+            return new ShortcutTriggeredEvent(source, source);
+        }
+
+        if (source instanceof io.jmix.ui.component.HasComponents) {
+            io.jmix.ui.component.HasComponents container = (io.jmix.ui.component.HasComponents) source;
+            io.jmix.ui.component.Component childComponent =
+                    findChildComponent(container, target);
+            return new ShortcutTriggeredEvent(source, childComponent);
+        }
+
+        return new ShortcutTriggeredEvent(source, null);
+    }
+
+    public static com.vaadin.ui.Component getVaadinSource(io.jmix.ui.component.Component source) {
+        com.vaadin.ui.Component component = source.unwrapComposition(com.vaadin.ui.Component.class);
+        if (component instanceof AbstractSingleComponentContainer) {
+            return ((AbstractSingleComponentContainer) component).getContent();
+        }
+
+
+        if (component instanceof JmixScrollBoxLayout) {
+            return ((JmixScrollBoxLayout) component).getComponent(0);
+        }
+
+        return component;
+    }
+
+    @Nullable
+    public static io.jmix.ui.component.Component findChildComponent(io.jmix.ui.component.HasComponents container,
+                                                                    com.vaadin.ui.Component target) {
+        com.vaadin.ui.Component vaadinSource = getVaadinSource(((io.jmix.ui.component.Component) container));
+        Collection<io.jmix.ui.component.Component> components = container.getOwnComponents();
+
+        return findChildComponent(components, vaadinSource, target);
+    }
+
+    @Nullable
+    public static io.jmix.ui.component.Component findChildComponent(
+            Collection<io.jmix.ui.component.Component> components,
+            com.vaadin.ui.Component vaadinSource, com.vaadin.ui.Component target) {
+        com.vaadin.ui.Component targetComponent = getDirectChildComponent(target, vaadinSource);
+
+        for (io.jmix.ui.component.Component component : components) {
+            com.vaadin.ui.Component unwrapped = component.unwrapComposition(com.vaadin.ui.Component.class);
+            if (unwrapped == targetComponent) {
+                io.jmix.ui.component.Component child = null;
+
+                if (component instanceof io.jmix.ui.component.HasComponents) {
+                    child = findChildComponent((io.jmix.ui.component.HasComponents) component, target);
+                }
+
+
+                if (component instanceof HasButtonsPanel) {
+                    ButtonsPanel buttonsPanel = ((HasButtonsPanel) component).getButtonsPanel();
+                    if (buttonsPanel != null) {
+                        if (getVaadinSource(buttonsPanel) == target) {
+                            return buttonsPanel;
+                        } else {
+                            child = findChildComponent(buttonsPanel, target);
+                        }
+                    }
+                }
+
+                return child != null ? child : component;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return the direct child component of the layout which contains the component involved to event
+     */
+    @Nullable
+    public static com.vaadin.ui.Component getDirectChildComponent(com.vaadin.ui.Component targetComponent,
+                                                                  com.vaadin.ui.Component vaadinSource) {
+        while (targetComponent != null
+                && targetComponent.getParent() != vaadinSource) {
+            targetComponent = targetComponent.getParent();
+        }
+
+        return targetComponent;
+    }
+
+    public static void setClickShortcut(com.vaadin.ui.Button button, String shortcut) {
+        KeyCombination closeCombination = KeyCombination.create(shortcut);
+        int[] closeModifiers = KeyCombination.Modifier.codes(closeCombination.getModifiers());
+        int closeCode = closeCombination.getKey().getCode();
+
+        button.setClickShortcut(closeCode, closeModifiers);
     }
 }

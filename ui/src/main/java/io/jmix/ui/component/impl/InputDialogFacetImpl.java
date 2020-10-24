@@ -260,7 +260,7 @@ public class InputDialogFacetImpl extends AbstractFacet implements InputDialogFa
     }
 
     protected void subscribeOnAction(Frame owner) {
-        Action action = WebComponentsHelper.findAction(owner, actionId);
+        Action action = ComponentsHelper.findAction(owner, actionId);
 
         if (!(action instanceof BaseAction)) {
             throw new GuiDevelopmentException(

@@ -94,7 +94,7 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
         }
 
         if (ownComponents.contains(childComponent)) {
-            int existingIndex = getComponentContent().getComponentIndex(WebComponentsHelper.getComposition(childComponent));
+            int existingIndex = getComponentContent().getComponentIndex(ComponentsHelper.getComposition(childComponent));
             if (index > existingIndex) {
                 index--;
             }
@@ -102,7 +102,7 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
             remove(childComponent);
         }
 
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.getComposition(childComponent);
+        com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
         getComponentContent().addComponent(vComponent, index);
         getComponentContent().setComponentAlignment(vComponent, WrapperUtils.toVaadinAlignment(childComponent.getAlignment()));
 
@@ -145,7 +145,7 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
 
     @Override
     public void remove(Component childComponent) {
-        getComponentContent().removeComponent(WebComponentsHelper.getComposition(childComponent));
+        getComponentContent().removeComponent(ComponentsHelper.getComposition(childComponent));
         ownComponents.remove(childComponent);
 
         childComponent.setParent(null);
@@ -227,13 +227,13 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
 
     @Override
     public void expand(Component component, String height, String width) {
-        com.vaadin.ui.Component expandedComponent = WebComponentsHelper.getComposition(component);
-        WebComponentsHelper.expand(getComponentContent(), expandedComponent, height, width);
+        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(component);
+        ComponentsHelper.expand(getComponentContent(), expandedComponent, height, width);
     }
 
     @Override
     public boolean isExpanded(Component component) {
-        return ownComponents.contains(component) && WebComponentsHelper.isComponentExpanded(component);
+        return ownComponents.contains(component) && ComponentsHelper.isComponentExpanded(component);
     }
 
     @Override

@@ -250,7 +250,7 @@ public class MessageDialogFacetImpl extends AbstractFacet implements MessageDial
     }
 
     protected void subscribeOnAction(Frame owner) {
-        Action action = WebComponentsHelper.findAction(owner, actionId);
+        Action action = ComponentsHelper.findAction(owner, actionId);
 
         if (!(action instanceof BaseAction)) {
             throw new GuiDevelopmentException(

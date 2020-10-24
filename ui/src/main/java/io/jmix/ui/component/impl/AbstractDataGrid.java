@@ -1513,7 +1513,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                         "io.jmix.ui.component.Buffered");
             }
 
-            Component content = WebComponentsHelper.getComposition(columnComponent);
+            Component content = ComponentsHelper.getComposition(columnComponent);
 
             //noinspection unchecked
             JmixEditorField wrapper = new DataGridEditorCustomField(columnComponent) {
@@ -2054,7 +2054,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     @Override
     public void setButtonsPanel(@Nullable ButtonsPanel panel) {
         if (buttonsPanel != null && topPanel != null) {
-            topPanel.removeComponent(WebComponentsHelper.unwrap(buttonsPanel));
+            topPanel.removeComponent(buttonsPanel.unwrap(Component.class));
             buttonsPanel.setParent(null);
         }
         buttonsPanel = panel;
@@ -2092,7 +2092,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     @Override
     public void setPagination(@Nullable TablePagination pagination) {
         if (this.pagination != null && topPanel != null) {
-            topPanel.removeComponent(WebComponentsHelper.unwrap(this.pagination));
+            topPanel.removeComponent(this.pagination.unwrap(Component.class));
             this.pagination.setParent(null);
         }
         this.pagination = pagination;
@@ -2107,7 +2107,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                 componentComposition.addComponentAsFirst(topPanel);
             }
             pagination.setWidthAuto();
-            Component rc = WebComponentsHelper.unwrap(pagination);
+            Component rc = pagination.unwrap(Component.class);
             topPanel.addComponent(rc);
 
             if (pagination instanceof VisibilityChangeNotifier) {

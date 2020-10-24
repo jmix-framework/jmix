@@ -433,7 +433,7 @@ public class ResponsiveGridLayoutImpl extends AbstractComponent<JmixResponsiveGr
 
             assignFrame(component);
 
-            getVaadinGridElement().setComponent(WebComponentsHelper.getComposition(component));
+            getVaadinGridElement().setComponent(ComponentsHelper.getComposition(component));
         }
 
         protected void assignFrame(Component component) {

@@ -67,7 +67,7 @@ public class HtmlBoxLayoutImpl extends AbstractComponent<JmixCustomLayout> imple
             throw new IllegalStateException("Component already has parent");
         }
 
-        final com.vaadin.ui.Component vComponent = WebComponentsHelper.getComposition(childComponent);
+        final com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
 
         if (childComponent.getId() != null) {
             component.addComponent(vComponent, childComponent.getId());
@@ -94,7 +94,7 @@ public class HtmlBoxLayoutImpl extends AbstractComponent<JmixCustomLayout> imple
         if (childComponent.getId() != null) {
             component.removeComponent(childComponent.getId());
         } else {
-            component.removeComponent(WebComponentsHelper.getComposition(childComponent));
+            component.removeComponent(ComponentsHelper.getComposition(childComponent));
         }
         ownComponents.remove(childComponent);
 

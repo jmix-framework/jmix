@@ -48,7 +48,7 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
         }
 
         if (ownComponents.contains(childComponent)) {
-            int existingIndex = component.getComponentIndex(WebComponentsHelper.getComposition(childComponent));
+            int existingIndex = component.getComponentIndex(ComponentsHelper.getComposition(childComponent));
             if (index > existingIndex) {
                 index--;
             }
@@ -56,7 +56,7 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
             remove(childComponent);
         }
 
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.getComposition(childComponent);
+        com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
         component.addComponent(vComponent, index);
 
         if (frame != null) {
@@ -90,7 +90,7 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
 
     @Override
     public void remove(Component childComponent) {
-        component.removeComponent(WebComponentsHelper.getComposition(childComponent));
+        component.removeComponent(ComponentsHelper.getComposition(childComponent));
         ownComponents.remove(childComponent);
 
         childComponent.setParent(null);

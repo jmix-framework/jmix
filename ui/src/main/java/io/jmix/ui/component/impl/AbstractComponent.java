@@ -281,7 +281,7 @@ public abstract class AbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public boolean isEnabledRecursive() {
-        return WebComponentsHelper.isComponentEnabled(getComposition());
+        return ComponentsHelper.isComponentEnabled(getComposition());
     }
 
     @Override
@@ -296,7 +296,7 @@ public abstract class AbstractComponent<T extends com.vaadin.ui.Component>
 
     @Override
     public boolean isVisibleRecursive() {
-        return WebComponentsHelper.isComponentVisible(getComposition());
+        return ComponentsHelper.isComponentVisible(getComposition());
     }
 
     @Override

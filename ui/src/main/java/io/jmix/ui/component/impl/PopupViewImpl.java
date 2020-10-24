@@ -20,6 +20,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Label;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.PopupView;
 import io.jmix.ui.widget.JmixPopupView;
@@ -216,7 +217,7 @@ public class PopupViewImpl extends AbstractComponent<JmixPopupView> implements P
     protected class PopupContent implements com.vaadin.ui.PopupView.Content {
         @Override
         public final com.vaadin.ui.Component getPopupComponent() {
-            return WebComponentsHelper.getComposition(popupContent);
+            return ComponentsHelper.getComposition(popupContent);
         }
 
         @Override

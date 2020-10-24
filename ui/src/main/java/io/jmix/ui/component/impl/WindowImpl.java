@@ -551,8 +551,8 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
                 if (!(child instanceof Editable) || ((Editable) child).isEditable()) {
 
                     com.vaadin.ui.Component vComponent = child.unwrapComposition(com.vaadin.ui.Component.class);
-                    if (WebComponentsHelper.isComponentVisible(vComponent)
-                            && WebComponentsHelper.isComponentEnabled(vComponent)) {
+                    if (ComponentsHelper.isComponentVisible(vComponent)
+                            && ComponentsHelper.isComponentEnabled(vComponent)) {
                         return (Component.Focusable) child;
                     }
                 }
@@ -873,7 +873,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
     @Override
     public void expand(Component component, String height, String width) {
         com.vaadin.ui.Component expandedComponent = component.unwrapComposition(com.vaadin.ui.Component.class);
-        WebComponentsHelper.expand((AbstractOrderedLayout) getContainer(), expandedComponent, height, width);
+        ComponentsHelper.expand((AbstractOrderedLayout) getContainer(), expandedComponent, height, width);
     }
 
     @Override
@@ -896,7 +896,7 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
 
     @Override
     public boolean isExpanded(Component component) {
-        return ownComponents.contains(component) && WebComponentsHelper.isComponentExpanded(component);
+        return ownComponents.contains(component) && ComponentsHelper.isComponentExpanded(component);
     }
 
     @Override

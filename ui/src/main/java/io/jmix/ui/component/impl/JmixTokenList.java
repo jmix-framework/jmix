@@ -23,6 +23,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomField;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.widget.JmixScrollBoxLayout;
@@ -155,7 +156,7 @@ public class JmixTokenList<T> extends CustomField<Collection<T>> {
 
         if (!owner.isSimple()) {
             owner.entityComboBox.setWidthAuto();
-            editor.addComponent(WebComponentsHelper.getComposition(owner.entityComboBox));
+            editor.addComponent(ComponentsHelper.getComposition(owner.entityComboBox));
         }
         owner.entityComboBox.setVisible(!owner.isSimple());
 

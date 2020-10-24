@@ -21,10 +21,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.ScreenFacet;
+import io.jmix.ui.component.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -202,7 +199,7 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     }
 
     protected void subscribeOnAction(Frame owner) {
-        Action action = WebComponentsHelper.findAction(owner, actionId);
+        Action action = ComponentsHelper.findAction(owner, actionId);
 
         if (!(action instanceof BaseAction)) {
             throw new GuiDevelopmentException(

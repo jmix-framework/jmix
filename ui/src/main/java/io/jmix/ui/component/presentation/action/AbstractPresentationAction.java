@@ -19,7 +19,6 @@ package io.jmix.ui.component.presentation.action;
 import io.jmix.core.Messages;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.widget.JmixEnhancedTable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public abstract class AbstractPresentationAction extends AbstractAction {
         super(id);
 
         this.table = table;
-        this.tableImpl = (JmixEnhancedTable) WebComponentsHelper.unwrap(table);
+        this.tableImpl = table.unwrap(JmixEnhancedTable.class);
         this.settingsBinder = settingsBinder;
     }
 

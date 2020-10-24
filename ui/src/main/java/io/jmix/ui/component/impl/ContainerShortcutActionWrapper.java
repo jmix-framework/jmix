@@ -16,10 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.component.ShortcutAction;
-import io.jmix.ui.component.ShortcutTriggeredEvent;
+import io.jmix.ui.component.*;
 
 public class ContainerShortcutActionWrapper extends com.vaadin.event.ShortcutListener {
 
@@ -27,7 +24,8 @@ public class ContainerShortcutActionWrapper extends com.vaadin.event.ShortcutLis
     protected ComponentContainer container;
     protected KeyCombination keyCombination;
 
-    public ContainerShortcutActionWrapper(ShortcutAction action, ComponentContainer container, KeyCombination keyCombination) {
+    public ContainerShortcutActionWrapper(ShortcutAction action,
+                                          ComponentContainer container, KeyCombination keyCombination) {
         super(null, keyCombination.getKey().getCode(), KeyCombination.Modifier.codes(keyCombination.getModifiers()));
         this.action = action;
         this.keyCombination = keyCombination;
@@ -36,7 +34,7 @@ public class ContainerShortcutActionWrapper extends com.vaadin.event.ShortcutLis
 
     @Override
     public void handleAction(Object sender, Object target) {
-        ShortcutTriggeredEvent event = WebComponentsHelper.getShortcutEvent(container,
+        ShortcutTriggeredEvent event = ComponentsHelper.getShortcutEvent(container,
                 (com.vaadin.ui.Component) target);
         action.getHandler().accept(event);
     }

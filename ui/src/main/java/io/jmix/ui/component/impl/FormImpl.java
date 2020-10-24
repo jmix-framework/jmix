@@ -80,10 +80,8 @@ public class FormImpl extends AbstractComponent<JmixFormLayout> implements Form,
         AppUI ui = AppUI.getCurrent();
         if (ui != null && id != null) {
             for (final Component component : getOwnComponents()) {
-                com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(component);
-                if (composition != null) {
-                    composition.setId(ui.getTestIdManager().getTestId(id + "_" + component.getId()));
-                }
+                com.vaadin.ui.Component composition = ComponentsHelper.getComposition(component);
+                composition.setId(ui.getTestIdManager().getTestId(id + "_" + component.getId()));
             }
         }
     }
@@ -207,7 +205,7 @@ public class FormImpl extends AbstractComponent<JmixFormLayout> implements Form,
     }
 
     protected void managedComponentAssigned(Component childComponent) {
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.getComposition(childComponent);
+        com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
         assignTypicalAttributes(childComponent);
         assignDebugId(vComponent, childComponent.getId());
         applyDefaults(childComponent);
@@ -326,7 +324,7 @@ public class FormImpl extends AbstractComponent<JmixFormLayout> implements Form,
         this.component.removeAllComponents();
 
         for (ComponentArea componentArea : componentAreas) {
-            com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(componentArea.getComponent());
+            com.vaadin.ui.Component composition = ComponentsHelper.getComposition(componentArea.getComponent());
             this.component.addComponent(composition,
                     componentArea.getStartColumn(), componentArea.getStartRow(),
                     componentArea.getEndColumn(), componentArea.getEndRow());

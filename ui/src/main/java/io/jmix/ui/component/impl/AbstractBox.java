@@ -163,8 +163,8 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
 
     @Override
     public void expand(Component childComponent, String height, String width) {
-        com.vaadin.ui.Component expandedComponent = WebComponentsHelper.getComposition(childComponent);
-        WebComponentsHelper.expand(component, expandedComponent, height, width);
+        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(childComponent);
+        ComponentsHelper.expand(component, expandedComponent, height, width);
     }
 
     @Override
@@ -187,7 +187,7 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
 
     @Override
     public boolean isExpanded(Component component) {
-        return ownComponents.contains(component) && WebComponentsHelper.isComponentExpanded(component);
+        return ownComponents.contains(component) && ComponentsHelper.isComponentExpanded(component);
     }
 
     @Override

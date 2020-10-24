@@ -22,7 +22,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.impl.WebComponentsHelper;
 import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.presentation.PresentationsChangeListener;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -75,7 +74,7 @@ public class TablePresentationsLayout extends VerticalLayout {
 
         setSizeUndefined();
         setStyleName(TABLE_PREFS_STYLENAME);
-        setParent((HasComponents) WebComponentsHelper.unwrap(component));
+        setParent(component.unwrap(HasComponents.class));
 
         initLayout();
 

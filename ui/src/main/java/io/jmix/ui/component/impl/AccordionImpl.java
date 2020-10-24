@@ -204,7 +204,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         }
 
         protected com.vaadin.ui.Accordion.Tab getVaadinTab() {
-            com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(tabComponent);
+            com.vaadin.ui.Component composition = ComponentsHelper.getComposition(tabComponent);
             return AccordionImpl.this.component.getTab(composition);
         }
 
@@ -298,7 +298,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         tabs.remove(name);
 
         Component childComponent = tab.getComponent();
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.unwrap(childComponent);
+        com.vaadin.ui.Component vComponent = childComponent.unwrap(com.vaadin.ui.Component.class);
         this.component.removeComponent(vComponent);
 
         tabMapping.remove(vComponent);
@@ -452,7 +452,8 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
 
     @Override
     public void setSelectedTab(Accordion.Tab tab) {
-        this.component.setSelectedTab(WebComponentsHelper.unwrap(((Tab) tab).getComponent()));
+        Component component = ((Tab) tab).getComponent();
+        this.component.setSelectedTab(component.unwrap(com.vaadin.ui.Component.class));
     }
 
     @Override
@@ -462,7 +463,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
             throw new IllegalStateException(String.format("Can't find tab '%s'", name));
         }
 
-        this.component.setSelectedTab(WebComponentsHelper.unwrap(tab.getComponent()));
+        this.component.setSelectedTab(tab.getComponent().unwrap(com.vaadin.ui.Component.class));
     }
 
     @Nullable
@@ -592,7 +593,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
                 Component lazyContent = loader.getResultComponent();
 
                 tabContent.add(lazyContent);
-                com.vaadin.ui.Component impl = WebComponentsHelper.getComposition(lazyContent);
+                com.vaadin.ui.Component impl = ComponentsHelper.getComposition(lazyContent);
                 impl.setSizeFull();
 
                 lazyContent.setParent(AccordionImpl.this);

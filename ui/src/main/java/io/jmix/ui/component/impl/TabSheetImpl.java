@@ -192,7 +192,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         }
 
         protected com.vaadin.ui.TabSheet.Tab getVaadinTab() {
-            com.vaadin.ui.Component composition = WebComponentsHelper.getComposition(tabComponent);
+            com.vaadin.ui.Component composition = ComponentsHelper.getComposition(tabComponent);
             return TabSheetImpl.this.component.getTab(composition);
         }
 
@@ -330,7 +330,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
 
         this.tabs.put(name, tab);
 
-        final com.vaadin.ui.Component tabComponent = WebComponentsHelper.getComposition(childComponent);
+        final com.vaadin.ui.Component tabComponent = ComponentsHelper.getComposition(childComponent);
         tabComponent.setSizeFull();
 
         tabMapping.put(tabComponent, new ComponentDescriptor(name, childComponent));
@@ -434,7 +434,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         tabs.remove(name);
 
         Component childComponent = tab.getComponent();
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.unwrap(childComponent);
+        com.vaadin.ui.Component vComponent = childComponent.unwrap(com.vaadin.ui.Component.class);
         this.component.removeComponent(vComponent);
 
         tabMapping.remove(vComponent);
@@ -642,7 +642,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
                 Component lazyContent = loader.getResultComponent();
 
                 tabContent.add(lazyContent);
-                com.vaadin.ui.Component impl = WebComponentsHelper.getComposition(lazyContent);
+                com.vaadin.ui.Component impl = ComponentsHelper.getComposition(lazyContent);
                 impl.setSizeFull();
 
                 lazyContent.setParent(TabSheetImpl.this);

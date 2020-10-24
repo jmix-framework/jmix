@@ -20,7 +20,7 @@ import component.web_components_helper.screen.WebComponentsHelperTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
-import io.jmix.ui.component.impl.WebComponentsHelper
+import io.jmix.ui.component.ComponentsHelper
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
@@ -43,7 +43,7 @@ class WebComponentsHelperTest extends ScreenSpecification {
 
         when: 'Finding screen action'
 
-        def screenAction = WebComponentsHelper.findAction(frame, 'screenAction')
+        def screenAction = ComponentsHelper.findAction(frame, 'screenAction')
 
         then: 'Action found'
 
@@ -51,7 +51,7 @@ class WebComponentsHelperTest extends ScreenSpecification {
 
         when: 'Finding Table action'
 
-        def tableAction = WebComponentsHelper.findAction(frame, 'table.createAction')
+        def tableAction = ComponentsHelper.findAction(frame, 'table.createAction')
 
         then: 'Action found'
 
@@ -59,7 +59,7 @@ class WebComponentsHelperTest extends ScreenSpecification {
 
         when: 'Finding EntityComboBox action'
 
-        def lpfAction = WebComponentsHelper.findAction(frame, 'entityComboBox.lpfAction')
+        def lpfAction = ComponentsHelper.findAction(frame, 'entityComboBox.lpfAction')
 
         then: 'Action found'
 

@@ -108,7 +108,7 @@ public class ScrollBoxLayoutImpl extends AbstractComponent<JmixScrollBoxLayout> 
         }
 
         if (ownComponents.contains(childComponent)) {
-            int existingIndex = getContent().getComponentIndex(WebComponentsHelper.getComposition(childComponent));
+            int existingIndex = getContent().getComponentIndex(ComponentsHelper.getComposition(childComponent));
             if (index > existingIndex) {
                 index--;
             }
@@ -116,7 +116,7 @@ public class ScrollBoxLayoutImpl extends AbstractComponent<JmixScrollBoxLayout> 
             remove(childComponent);
         }
 
-        com.vaadin.ui.Component vComponent = WebComponentsHelper.getComposition(childComponent);
+        com.vaadin.ui.Component vComponent = ComponentsHelper.getComposition(childComponent);
         getContent().addComponent(vComponent, index);
         getContent().setComponentAlignment(vComponent, WrapperUtils.toVaadinAlignment(childComponent.getAlignment()));
 

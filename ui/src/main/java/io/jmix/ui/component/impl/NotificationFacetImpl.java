@@ -21,11 +21,7 @@ import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ContentMode;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.NotificationFacet;
+import io.jmix.ui.component.*;
 import io.jmix.ui.screen.UiControllerUtils;
 
 import javax.annotation.Nullable;
@@ -256,7 +252,7 @@ public class NotificationFacetImpl extends AbstractFacet implements Notification
     }
 
     protected void subscribeOnAction(Frame owner) {
-        Action action = WebComponentsHelper.findAction(owner, actionId);
+        Action action = ComponentsHelper.findAction(owner, actionId);
 
         if (!(action instanceof BaseAction)) {
             throw new GuiDevelopmentException(

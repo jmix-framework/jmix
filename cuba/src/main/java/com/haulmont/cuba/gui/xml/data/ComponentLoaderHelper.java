@@ -27,6 +27,7 @@ import com.haulmont.cuba.gui.components.validators.DoubleValidator;
 import com.haulmont.cuba.gui.components.validators.IntegerValidator;
 import com.haulmont.cuba.gui.components.validators.LongValidator;
 import com.haulmont.cuba.gui.components.validators.ScriptValidator;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
 import com.haulmont.cuba.gui.xml.DeclarativeTrackingAction;
 import io.jmix.core.ClassManager;
@@ -42,7 +43,6 @@ import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Attribute;
@@ -121,7 +121,7 @@ public final class ComponentLoaderHelper {
 
     public static boolean isLegacyFrame(ComponentLoader.Context context) {
         return context instanceof ComponentLoader.ComponentContext
-                && ((ComponentLoader.ComponentContext) context).getFrame().getFrameOwner() instanceof CubaLegacyFrame;
+                && ((ComponentLoader.ComponentContext) context).getFrame().getFrameOwner() instanceof LegacyFrame;
     }
 
     public static void loadSettingsEnabled(HasSettings component, Element element) {

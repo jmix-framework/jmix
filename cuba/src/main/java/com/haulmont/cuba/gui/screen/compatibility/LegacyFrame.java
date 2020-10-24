@@ -29,14 +29,12 @@ import io.jmix.ui.component.HasSpacing;
 import io.jmix.ui.component.OrderedContainer;
 import io.jmix.ui.component.Validatable;
 import io.jmix.ui.component.ValidationException;
-import io.jmix.ui.screen.compatibility.CubaLegacyFrame;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public interface LegacyFrame extends
-        CubaLegacyFrame,
         Component.HasXmlDescriptor,
         Component.HasCaption,
         Component.HasIcon,

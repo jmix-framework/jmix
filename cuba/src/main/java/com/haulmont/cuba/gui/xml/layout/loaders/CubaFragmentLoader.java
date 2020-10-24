@@ -23,6 +23,7 @@ import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import io.jmix.ui.component.Fragment;
@@ -42,6 +43,10 @@ public class CubaFragmentLoader extends FragmentLoader {
         }
 
         super.loadComponent();
+    }
+
+    protected ScreenViewsLoader getScreenViewsLoader() {
+        return applicationContext.getBean(ScreenViewsLoader.class);
     }
 
     @Override

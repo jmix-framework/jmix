@@ -20,13 +20,16 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
+import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
+import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
+import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
-import com.haulmont.cuba.gui.screen.compatibility.ScreenEditorWrapper;
-import com.haulmont.cuba.gui.screen.compatibility.ScreenFragmentWrapper;
-import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
-import com.haulmont.cuba.gui.screen.compatibility.ScreenWrapper;
+import com.haulmont.cuba.gui.screen.compatibility.*;
+import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import io.jmix.core.Entity;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.Notifications.NotificationType;
@@ -36,7 +39,12 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.SelectHandlerAdapter;
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.screen.*;
+import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import io.jmix.ui.sys.ScreensImpl;
+import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
+import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -47,6 +55,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes", "unchecked", "DeprecatedIsStillUsed", "deprecation"})
 @Deprecated
 public final class CubaScreens extends ScreensImpl implements WindowManager {
+
+    @Autowired
+    protected ScreenViewsLoader screenViewsLoader;
+
+    protected DataSupplier defaultDataSupplier = new GenericDataSupplier();
 
     @Override
     public Collection<Window> getOpenWindows() {
@@ -417,6 +430,65 @@ public final class CubaScreens extends ScreensImpl implements WindowManager {
 
         if (openType.getCloseable() != null) {
             window.setCloseable(openType.getCloseable());
+        }
+    }
+
+    @Override
+    protected ComponentLoaderContext createComponentLoaderContext(ScreenOptions options) {
+        return new com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext(options);
+    }
+
+    @Override
+    protected <T extends Screen> void loadWindowFromXml(Element element, WindowInfo windowInfo, Window window,
+                                                        T controller, ComponentLoaderContext componentLoaderContext) {
+        if (controller instanceof LegacyFrame) {
+            screenViewsLoader.deployViews(element);
+
+            initDsContext(controller, element, componentLoaderContext);
+
+            DsContext dsContext = ((LegacyFrame) controller).getDsContext();
+            if (dsContext != null) {
+                dsContext.setFrameContext(controller.getWindow().getContext());
+            }
+        }
+
+        super.loadWindowFromXml(element, windowInfo, window, controller, componentLoaderContext);
+    }
+
+    protected void initDsContext(Screen screen, Element screenDescriptor, ComponentLoaderContext context) {
+        DsContext dsContext = loadDsContext(screenDescriptor);
+        initDatasources(screen.getWindow(), dsContext, context.getParams());
+
+        ((com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext) context).setDsContext(dsContext);
+    }
+
+    protected DsContext loadDsContext(Element element) {
+        DataSupplier dataSupplier;
+
+        String dataSupplierClass = element.attributeValue("dataSupplier");
+        if (StringUtils.isEmpty(dataSupplierClass)) {
+            dataSupplier = defaultDataSupplier;
+        } else {
+            Class<Object> aClass = ReflectionHelper.getClass(dataSupplierClass);
+            try {
+                dataSupplier = (DataSupplier) aClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new RuntimeException("Unable to create data supplier for screen", e);
+            }
+        }
+
+        //noinspection UnnecessaryLocalVariable
+        DsContext dsContext = new DsContextLoader(dataSupplier).loadDatasources(element.element("dsContext"), null, null);
+        return dsContext;
+    }
+
+    protected void initDatasources(Window window, DsContext dsContext, @SuppressWarnings("unused") Map<String, Object> params) {
+        ((LegacyFrame) window.getFrameOwner()).setDsContext(dsContext);
+
+        for (Datasource ds : dsContext.getAll()) {
+            if (Datasource.State.NOT_INITIALIZED.equals(ds.getState()) && ds instanceof DatasourceImplementation) {
+                ((DatasourceImplementation) ds).initialized();
+            }
         }
     }
 }

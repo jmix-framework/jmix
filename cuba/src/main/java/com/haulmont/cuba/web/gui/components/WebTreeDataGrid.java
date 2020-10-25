@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DataGrid;
+import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.gui.components.data.datagrid.AggregatableDataGridItems;
@@ -67,7 +68,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
 public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
-        implements TreeDataGrid<E> {
+        implements TreeDataGrid<E>, LookupComponent.LookupSelectionChangeNotifier<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected DataGridDelegate dataGridDelegate;
@@ -548,6 +549,12 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
         } else {
             return super.__aggregateValues();
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
+        unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

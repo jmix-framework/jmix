@@ -22,7 +22,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.LookupScreen;
 

@@ -61,7 +61,7 @@ import java.util.function.Supplier;
  */
 @Deprecated
 public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>,
-        HasCaptionMode, HasOptionCaptionProvider<V>, HasOptionIconProvider<V> {
+        HasCaptionMode, HasOptionCaptionProvider<V>, HasOptionIconProvider<V>, LookupComponent<V> {
 
     String NAME = "pickerField";
 

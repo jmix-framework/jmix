@@ -32,7 +32,8 @@ import io.jmix.ui.component.data.TreeItems;
  */
 @SuppressWarnings("rawtypes")
 @Deprecated
-public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode {
+public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.component.Tree<E>, HasItemCaptionMode,
+        LookupComponent<E> {
 
     static <T extends Entity> TypeToken<Tree<T>> of(Class<T> itemClass) {
         return new TypeToken<Tree<T>>() {};

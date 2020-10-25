@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.presentation.LegacyPresentationsDelegate;
@@ -39,9 +40,11 @@ import org.dom4j.Element;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Deprecated
-public class WebTable<E extends Entity> extends TableImpl<E> implements Table<E> {
+public class WebTable<E extends Entity> extends TableImpl<E>
+        implements Table<E>, LookupComponent.LookupSelectionChangeNotifier<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected LegacyPresentationsDelegate presentationsDelegate;
@@ -195,5 +198,11 @@ public class WebTable<E extends Entity> extends TableImpl<E> implements Table<E>
         } else {
             return super.__aggregate(container, context);
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
+        unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
     }
 }

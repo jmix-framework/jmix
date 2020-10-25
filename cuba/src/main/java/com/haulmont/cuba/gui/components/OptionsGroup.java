@@ -19,7 +19,6 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasOrientation;
-import io.jmix.ui.component.LookupComponent;
 
 /**
  * Component compatible with {@link Datasource}.

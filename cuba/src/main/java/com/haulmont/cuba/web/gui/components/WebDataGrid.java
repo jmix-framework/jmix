@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DataGrid;
+import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.data.datagrid.AggregatableDataGridItems;
 import com.haulmont.cuba.gui.components.valueprovider.DataGridConverterBasedValueProvider;
@@ -65,7 +66,8 @@ import java.util.stream.Collectors;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 @Deprecated
-public class WebDataGrid<E extends Entity> extends DataGridImpl<E> implements DataGrid<E> {
+public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
+        implements DataGrid<E>, LookupComponent.LookupSelectionChangeNotifier<E> {
 
     protected LegacySettingsDelegate settingsDelegate;
     protected DataGridDelegate dataGridDelegate;
@@ -542,6 +544,12 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E> implements Da
         } else {
             return super.__aggregateValues();
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
+        unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
     }
 
     protected static class ColumnImpl<E extends Entity>

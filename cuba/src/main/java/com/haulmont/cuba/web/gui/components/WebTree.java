@@ -16,10 +16,21 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.Tree;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.impl.TreeImpl;
 
+import java.util.function.Consumer;
+
 @Deprecated
-public class WebTree<E extends Entity> extends TreeImpl<E> implements Tree<E> {
+public class WebTree<E extends Entity>
+        extends TreeImpl<E>
+        implements Tree<E>, LookupComponent.LookupSelectionChangeNotifier<E> {
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
+    public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
+        unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
+    }
 }

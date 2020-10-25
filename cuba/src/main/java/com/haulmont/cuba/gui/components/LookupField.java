@@ -20,7 +20,6 @@ import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.components.compatibility.LookupFieldFilterPredicateAdapter;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.LookupComponent;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;

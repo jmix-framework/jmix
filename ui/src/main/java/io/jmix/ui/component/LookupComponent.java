@@ -40,13 +40,14 @@ public interface LookupComponent<E> extends Component {
      * Component that fires {@link LookupSelectionChangeEvent} when lookup selected items set is changed.
      */
     interface LookupSelectionChangeNotifier<T> extends LookupComponent<T> {
-        Subscription addLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
 
         /**
-         * @deprecated Use {@link Subscription} instead
+         * Adds a listener that invoked when lookup selected items set is changed.
+         *
+         * @param listener a listener to add
+         * @return {@link Subscription}
          */
-        @Deprecated
-        void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
+        Subscription addLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<T>> listener);
     }
 
     class LookupSelectionChangeEvent<T> extends EventObject {

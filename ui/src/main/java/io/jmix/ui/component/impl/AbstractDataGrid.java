@@ -2505,16 +2505,10 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public Subscription addLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
         return getEventHub().subscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
-        unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
     }
 
     @Nullable

@@ -196,10 +196,10 @@ public interface JavaScriptComponent extends Component,
         protected DependencyType type;
 
         public ClientDependency(String path) {
-            this.path = path;
+            this(path, null);
         }
 
-        public ClientDependency(String path, DependencyType type) {
+        public ClientDependency(String path, @Nullable DependencyType type) {
             this.path = path;
             this.type = type;
         }

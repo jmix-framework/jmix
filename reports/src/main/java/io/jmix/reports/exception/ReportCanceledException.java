@@ -17,9 +17,6 @@
 package io.jmix.reports.exception;
 
 
-import io.jmix.core.Logging;
-
-@Logging(value = Logging.Type.NONE)
 public class ReportCanceledException extends ReportingException {
     private static final long serialVersionUID = 1543263739485152663L;
 

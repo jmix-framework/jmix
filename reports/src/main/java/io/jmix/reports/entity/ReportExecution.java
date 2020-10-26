@@ -43,7 +43,7 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
     private String reportCode;
 
     @Column(name = "PRINCIPAL")
-    private Object user;
+    private String user;
 
     @Column(name = "START_TIME", nullable = false)
     private Date startTime;
@@ -122,11 +122,11 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
         this.reportCode = reportCode;
     }
 
-    public Object getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Object user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

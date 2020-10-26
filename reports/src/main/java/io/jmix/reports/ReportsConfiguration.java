@@ -14,21 +14,15 @@ import com.haulmont.yarg.util.groovy.Scripting;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.reports.gui.definition.edit.crosstab.CrossTabTableDecorator;
 import io.jmix.reports.libintegration.*;
 import io.jmix.reports.util.DataSetFactory;
 import io.jmix.ui.UiConfiguration;
-import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 
-import javax.persistence.Basic;
 import javax.sql.DataSource;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,15 +43,6 @@ public class ReportsConfiguration {
 
     @Autowired
     protected ReportingApi reportingApi;
-
-    @Bean("reports_ReportsUiControllers")
-    public UiControllersConfiguration screens(ApplicationContext applicationContext,
-                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
-        UiControllersConfiguration uiControllers
-                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
-        uiControllers.setBasePackages(Collections.singletonList("io.jmix.reports.gui"));
-        return uiControllers;
-    }
 
     @Bean("reporting_lib_Scripting")
     public Scripting scripting() {
@@ -210,15 +195,8 @@ public class ReportsConfiguration {
         return jmixReporting;
     }
 
-    @Bean("reports_DataSetFactory")
-    public DataSetFactory dataSetFactory(){
-        return new DataSetFactory();
-    }
 
-    @Bean("reports_CrossTabOrientationTableDecorator")
-    public CrossTabTableDecorator crossTabTableDecorator(){
-        return new CrossTabTableDecorator();
-    }
+
 
     //TODO ReportExceptionHandler
 

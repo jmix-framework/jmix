@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
  * Template for {@link Report}
  *
  */
-@Entity(name = "report$ReportTemplate")
+@Entity(name = "report_ReportTemplate")
 @Table(name = "REPORT_TEMPLATE")
 @SystemLevel
 @NamePattern("#getCaption|code,name,customDefinition,custom,alterable")

@@ -1,6 +1,8 @@
 rootProject.name = 'jmix-reports'
 
 include 'reports'
+include 'reports-ui'
+include 'reports-rest'
 include 'reports-starter'
 
 rootProject.children.each { p1 ->

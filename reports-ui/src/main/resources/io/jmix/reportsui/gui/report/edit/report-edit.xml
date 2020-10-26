@@ -1,0 +1,120 @@
+<!--
+  ~ Copyright (c) 2008-2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://reportEditor">
+
+    <data>
+        <instance id="reportDc"
+                  class="io.jmix.reports.entity.Report">
+            <fetchPlan extends="report.edit"/>
+            <loader/>
+            <collection id="parametersDc" property="inputParameters"/>
+            <collection id="valuesFormatsDc" property="valuesFormats"/>
+            <collection id="rolesDc" property="roles"/>
+            <collection id="reportScreensDc" property="reportScreens"/>
+            <collection id="templatesDc" property="templates"/>
+            <collection id="bandsDc" property="bands"/>
+            <collection id="stringParametersDc" property="inputParameters"/>
+        </instance>
+
+        <collection id="availableParentBandsDc" class="io.jmix.reports.entity.BandDefinition" provided="true"/>
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup">
+            <loader id="groupsDl">
+                <query>
+                    select rg from report_ReportGroup rg order by rg.createTs asc
+                </query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+<!--    <dsContext>-->
+<!--        <datasource-->
+<!--                id="reportDs"-->
+<!--                class="com.haulmont.reports.entity.Report"-->
+<!--                view="report.edit">-->
+<!--            <collectionDatasource id="parametersDs" property="inputParameters"-->
+<!--                                  datasourceClass="com.haulmont.reports.gui.datasource.InputParametersDataSource"/>-->
+<!--            <collectionDatasource id="valuesFormatsDs" property="valuesFormats"-->
+<!--                                  datasourceClass="com.haulmont.reports.gui.datasource.ValuesFormatsDataSource"/>-->
+<!--            <collectionDatasource id="rolesDs" property="roles"/>-->
+<!--            <collectionDatasource id="reportScreensDs" property="reportScreens"/>-->
+<!--            <collectionDatasource id="templatesDs" property="templates"/>-->
+<!--            <collectionDatasource id="bandsDs" property="bands"/>-->
+<!--            <hierarchicalDatasource id="treeDs" property="bands" hierarchyProperty="parentBandDefinition"-->
+<!--                                    datasourceClass="com.haulmont.reports.gui.datasource.BandsHierarchicalPropertyDatasource">-->
+<!--                <collectionDatasource id="dataSetsDs" property="dataSets"-->
+<!--                                      datasourceClass="com.haulmont.reports.gui.datasource.DatasetsDatasource"/>-->
+<!--            </hierarchicalDatasource>-->
+<!--            <collectionDatasource id="stringParametersDs"-->
+<!--                                  property="inputParameters"-->
+<!--                                  datasourceClass="com.haulmont.reports.gui.datasource.TextInputParametersDataSource"/>-->
+<!--        </datasource>-->
+
+<!--        <collectionDatasource id="availableParentBandsDs" class="com.haulmont.reports.entity.BandDefinition"-->
+<!--                              allowCommit="false" refreshMode="NEVER"/>-->
+
+<!--        <collectionDatasource id="groupsDs" class="com.haulmont.reports.entity.ReportGroup" view="_local">-->
+<!--            <query>-->
+<!--                <![CDATA[ select rg from report$ReportGroup rg order by rg.createTs asc ]]>-->
+<!--            </query>-->
+<!--        </collectionDatasource>-->
+
+<!--        <collectionDatasource id="lookupRolesDs" class="com.haulmont.cuba.security.entity.Role" view="_local"-->
+<!--                              datasourceClass="com.haulmont.reports.gui.datasource.RolesDatasource">-->
+<!--        </collectionDatasource>-->
+<!--    </dsContext>-->
+    <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
+                width="theme://cuba.gui.report.report-edit.dialogSize.width"
+                resizable="true"/>
+    <layout expand="tabsheet" spacing="true">
+        <tabSheet id="tabsheet" width="100%">
+            <tab id="generalTab" caption="msg://generalTab">
+                <frame src="/io/jmix/reportsui/gui/report/edit/tabs/general.xml" id="generalFrame" width="100%"
+                       height="100%"/>
+            </tab>
+            <tab id="parametersAndFormatsTab" caption="msg://parametersAndFormatsTab">
+                <hbox width="100%" height="100%" spacing="true" margin="false;true;true;true">
+                    <frame src="/io/jmix/reportsui/gui/report/edit/tabs/parameters.xml" id="parametersFrame"
+                           height="100%" width="100%"/>
+                    <frame src="/io/jmix/reportsui/gui/report/edit/tabs/formats.xml" id="formatsFrame" height="100%"
+                           width="100%"/>
+                </hbox>
+            </tab>
+            <tab id="templatesTab" caption="msg://templatesTab">
+                <frame src="/io/jmix/reportsui/gui/report/edit/tabs/templates.xml" id="templatesFrame" width="100%"
+                       height="100%"/>
+            </tab>
+            <tab id="securityTab" caption="msg://securityTab">
+                <frame src="/io/jmix/reportsui/gui/report/edit/tabs/security.xml" id="securityFrame" width="100%"
+                       height="100%"/>
+            </tab>
+            <tab id="localesTab" caption="msg://localesTab">
+                <frame src="/io/jmix/reportsui/gui/report/edit/tabs/locales.xml" id="localesFrame" width="100%"
+                       height="100%"/>
+            </tab>
+        </tabSheet>
+        <hbox spacing="true">
+            <button id="windowCommitAndClose" action="windowCommitAndClose" icon="font-icon:CHECK"/>
+            <button id="windowCommit" action="windowCommit"/>
+            <button id="run"/>
+            <button id="windowClose" action="windowClose" icon="font-icon:BAN"/>
+        </hbox>
+    </layout>
+</window>

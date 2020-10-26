@@ -8,24 +8,24 @@ package io.jmix.reports;
 import com.google.common.collect.Sets;
 import com.haulmont.cuba.core.Persistence;
 import com.haulmont.cuba.core.app.FileStorageAPI;
-import io.jmix.core.JmixEntity;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.entity.contracts.Id;
 import com.haulmont.cuba.core.global.*;
+import com.haulmont.yarg.reporting.ReportOutputDocument;
+import com.haulmont.yarg.structure.ReportOutputType;
+import io.jmix.core.JmixEntity;
 import io.jmix.core.TimeSource;
+import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.reports.entity.CubaReportOutputType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportExecution;
-import com.haulmont.yarg.reporting.ReportOutputDocument;
-import com.haulmont.yarg.structure.ReportOutputType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,7 +38,7 @@ public class ReportExecutionHistoryRecorderBean implements ReportExecutionHistor
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    protected UserSessionSource userSessionSource;
+    protected CurrentAuthentication currentAuthentication;
     @Autowired
     protected TimeSource timeSource;
     //TODO Server info API
@@ -50,8 +50,6 @@ public class ReportExecutionHistoryRecorderBean implements ReportExecutionHistor
     protected Persistence persistence;
     @Autowired
     protected FileStorageAPI fileStorageAPI;
-    @Autowired
-    protected Authentication authentication;
 
     @Override
     public ReportExecution startExecution(Report report, Map<String, Object> params) {
@@ -60,7 +58,7 @@ public class ReportExecutionHistoryRecorderBean implements ReportExecutionHistor
         execution.setReport(report);
         execution.setReportName(report.getName());
         execution.setReportCode(report.getCode());
-        execution.setUser(userSessionSource.getUserSession().getUser());
+        execution.setUser(currentAuthentication.getUser().getUsername());
         execution.setStartTime(timeSource.currentTimestamp());
         //TODO server info api
 //        execution.setServerId(serverInfoAPI.getServerId());
@@ -116,7 +114,7 @@ public class ReportExecutionHistoryRecorderBean implements ReportExecutionHistor
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, Object> entry : params.entrySet()) {
             Object value = (entry.getValue() instanceof JmixEntity)
-                    ? String.format("%s-%s", metadata.getClass(entry.getValue().getClass()), Id.of((JmixEntity)entry.getValue()).getValue())
+                    ? String.format("%s-%s", metadata.getClass(entry.getValue().getClass()), Id.of((JmixEntity) entry.getValue()).getValue())
                     : entry.getValue();
             builder.append(String.format("key: %s, value: %s", entry.getKey(), value)).append("\n");
         }
@@ -161,21 +159,22 @@ public class ReportExecutionHistoryRecorderBean implements ReportExecutionHistor
     }
 
     /**
-     * It is not rare for large reports to execute longer than {@link ServerConfig#getUserSessionExpirationTimeoutSec()}.
+     * It is not rare for large reports to execute longer than {@link //TODO fix javadoc ServerConfig#getUserSessionExpirationTimeoutSec()}.
      * In this case when report is finished - user session is already expired and can't be used to make changes to database.
      */
     protected void handleSessionExpired(Runnable action) {
-        boolean userSessionIsValid = userSessionSource.checkCurrentUserSession();
-        if (userSessionIsValid) {
-            action.run();
-        } else {
-            log.debug("No valid user session, record history under system user");
-            //TODO with system user
+        //TODO handle session expired
+//        boolean userSessionIsValid = currentAuthentication.getAuthentication();
+//        if (userSessionIsValid) {
+//            action.run();
+//        } else {
+//            log.debug("No valid user session, record history under system user");
+        //TODO with system user
 //            authentication.withSystemUser(() -> {
 //                action.run();
 //                return null;
 //            });
-        }
+//        }
     }
 
     @Override

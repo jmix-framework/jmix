@@ -78,7 +78,6 @@ public final class Id<T> implements Serializable {
     /**
      * @param id          entity id
      * @param entityClass entity class
-     * @param <K>         type of entity key
      * @param <T>         entity type
      * @return Id of the passed entity
      */

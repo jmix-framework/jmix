@@ -28,7 +28,7 @@ import static java.lang.annotation.ElementType.FIELD;
  * Marked entity field will be used to store information about user deleted entity.
  * <p>
  * Cannot be used without {@link DeletedDate}.
- * <br/>
+ * <br>
  * Only one field of a class can have this annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)

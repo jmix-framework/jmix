@@ -69,7 +69,7 @@ public class FetchPlanBuilder {
     }
 
     /**
-     * Builds fetch plan and makes builder immutable.<br/>
+     * Builds fetch plan and makes builder immutable.<br>
      * Subsequent method invocations returns the same object.
      *
      * @return created FetchPlan

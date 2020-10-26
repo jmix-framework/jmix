@@ -22,7 +22,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import java.util.UUID;
 
 /**
- * Used to clearly identify entity.<br/>
+ * Used to clearly identify entity.<br>
  * Property selection performs as follows:
  * <ol>
  *     <li>{@link Id} property used if it has {@link UUID} type and {@link JmixGeneratedValue} annotation,</li>

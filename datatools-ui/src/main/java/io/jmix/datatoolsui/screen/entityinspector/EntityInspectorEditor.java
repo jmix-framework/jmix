@@ -272,7 +272,6 @@ public class EntityInspectorEditor extends StandardEditor {
      *
      * @param table        table
      * @param metaProperty property representing table's data
-     * @return buttons panel
      */
     protected void createButtonsPanel(Table table, MetaProperty metaProperty) {
         ButtonsPanel propertyButtonsPanel = table.getButtonsPanel();

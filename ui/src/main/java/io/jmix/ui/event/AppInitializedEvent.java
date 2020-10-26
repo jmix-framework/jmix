@@ -22,8 +22,6 @@ import org.springframework.security.core.context.SecurityContext;
 
 /**
  * Event that is fired after {@link App} initialization. Single instance of App is bound to single HTTP session.
- * <br>
-// * Note that: there is no active {@link UserSession} and no {@link SecurityContext} set at the moment of event firing.
  */
 public class AppInitializedEvent extends ApplicationEvent {
 

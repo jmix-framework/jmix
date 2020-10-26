@@ -17,6 +17,7 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
+import io.jmix.ui.menu.MenuConfig;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface AppMenu extends Component.BelongToFrame, Component.Focusable {
     String NAME = "menu";
 
     /**
-     * Load menu structure from {@link com.haulmont.cuba.gui.config.MenuConfig}
+     * Load menu structure from {@link MenuConfig}
      */
     void loadMenu();
 

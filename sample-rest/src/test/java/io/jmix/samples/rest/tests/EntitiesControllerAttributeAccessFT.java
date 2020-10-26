@@ -7,11 +7,18 @@ package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.security.impl.CoreUser;
+import io.jmix.samples.rest.security.FullAccessRole;
+import io.jmix.security.role.assignment.RoleAssignment;
+import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
+@TestPropertySource(properties = {
+        "cuba.rest.requiresSecurityToken = true"
+})
 @Disabled
 public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerFT {
 
@@ -33,6 +43,8 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
      * Entitites ids
      */
     private String driver1UuidString, driver2UuidString, car1UuidString, car2UuidString;
+
+
     /**
      * User ids
      */
@@ -50,32 +62,18 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 
     private UUID groupUuid = UUID.fromString("0fa2b1a5-1d68-4d69-9fbd-dff348347f93");
 
-//    @Before
-//    public void setUp() throws Exception {
-//        prepareDb();
-//
-//        Connectors.jmx(SampleJmxService.class)
-//                .setAttributeAccessEnabledForRest(true);
-//        Connectors.jmx(SampleJmxService.class)
-//                .setRestRequiresSecurityToken(true);
-//        Connectors.jmx(WebConfigStorageJmxService.class)
-//                .setAppProperty("cuba.rest.requiresSecurityToken", "true");
-//        driverReadUserToken = getAuthToken(driverReadUserLogin, driverReadUserPassword);
-//    }
+    @BeforeEach
+    public void setUp() throws Exception {
+        super.setUp();
+        driverReadUserToken = getAuthToken(baseUrl, driverReadUserLogin, driverReadUserPassword);
+    }
 
-//    @After
-//    public void tearDown() throws SQLException {
-//        Connectors.jmx(SampleJmxService.class)
-//                .setAttributeAccessEnabledForRest(false);
-//        Connectors.jmx(SampleJmxService.class)
-//                .setRestRequiresSecurityToken(false);
-//        Connectors.jmx(WebConfigStorageJmxService.class)
-//                .setAppProperty("cuba.rest.requiresSecurityToken", "false");
-//        dirtyData.cleanup(conn);
-//
-//        if (conn != null)
-//            conn.close();
-//    }
+    @AfterEach
+    public void tearDown() throws SQLException {
+        dirtyData.cleanup(conn);
+        if (conn != null)
+            conn.close();
+    }
 
     @Test
     public void createNewEntity() throws Exception {
@@ -100,7 +98,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
             driverId = UUID.fromString(idString);
 
             ReadContext ctx = parseResponse(response);
-            assertEquals("ref$ExtDriver", ctx.read("$._entityName"));
+            assertEquals("ref$Driver", ctx.read("$._entityName"));
             assertEquals(driverId.toString(), ctx.read("$.id"));
             assertNotNull(ctx.read("$.createTs"));
             assertNotNull(ctx.read("$.version"));
@@ -120,7 +118,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 
     @Test
     public void findDriverWithNotPermittedName() throws Exception {
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -132,7 +130,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 
     @Test
     public void findDriverWithPermittedName() throws Exception {
-        String url = "/entities/ref$Driver/" + driver2UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver2UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -145,7 +143,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     @Test
     public void updateDriverNameNotPermitted() throws Exception {
         String securityToken;
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         Map<String, String> params = new HashMap<>();
         params.put("responseView", "driverWithStatusAndName");
 
@@ -186,7 +184,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 //                .setEntityAttributePermissionChecking(true);
         try {
             String securityToken;
-            String url = "/entities/ref$Driver/" + driver1UuidString;
+            String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
             try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
                 assertEquals(HttpStatus.SC_OK, statusCode(response));
                 ReadContext ctx = parseResponse(response);
@@ -196,7 +194,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
                 assertNotNull(securityToken);
             }
 
-            url = "/entities/ref$Driver/" + driver1UuidString;
+            url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
             Map<String, String> replacements = new HashMap<>();
             replacements.put("$DRIVER_ID$", driver1UuidString);
             replacements.put("$SECURITY_TOKEN$", securityToken);
@@ -228,7 +226,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     @Test
     public void updateDriverStatusRequired() throws Exception {
         String securityToken;
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -252,7 +250,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     public void findDriverWithNonPermittedCountryInAddress() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverEdit");
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -270,7 +268,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
         String addressSecurityToken;
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverEdit");
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -321,7 +319,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     public void findDriverWithNonPermittedOneToManyAllocation() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverWithAllocations");
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -335,7 +333,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     public void findDriverWithPermittedOneToManyAllocation() throws Exception {
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverWithAllocations");
-        String url = "/entities/ref$Driver/" + driver2UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver2UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -353,7 +351,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
         String allocationId;
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverWithAllocations");
-        String url = "/entities/ref$Driver/" + driver1UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -395,7 +393,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
         String allocationId;
         Map<String, String> params = new HashMap<>();
         params.put("view", "driverWithAllocations");
-        String url = "/entities/ref$Driver/" + driver2UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver2UuidString;
         try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, params)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -432,7 +430,7 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 
     @Test
     public void updateDriverWithoutSecurityToken() throws Exception {
-        String url = "/entities/ref$Driver/" + driver2UuidString;
+        String url = baseUrl + "/entities/ref$Driver/" + driver2UuidString;
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$DRIVER_ID$", driver2UuidString);
         String json = getFileContent("attributeAccess_updateDriverWithoutSecurityToken.json", replacements);
@@ -442,12 +440,11 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
     }
 
 
-//    private void prepareDb() throws Exception {
-//        Class.forName("org.hsqldb.jdbc.JDBCDriver");
-//        conn = DriverManager.getConnection(DB_URL, "sa", "");
-//        createDbData();
-//        createDbUsers();
-//    }
+    public void prepareDb() throws Exception {
+        Class.forName("org.hsqldb.jdbc.JDBCDriver");
+        createDbData();
+        createDbUsers();
+    }
 
     private void createDbData() throws SQLException {
         UUID driverUuid = dirtyData.createDriverUuid();
@@ -507,28 +504,40 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
         );
     }
 
-//    private void createDbUsers() throws SQLException {
+    private void createDbUsers() throws SQLException {
+        UUID companyGroupId = dirtyData.createGroupUuid();
+        executePrepared("insert into sample_rest_sec_group(id, version, name) " +
+                        "values(?, ?, ?)",
+                companyGroupId,
+                1l,
+                "Company"
+        );
+
 //        //can read cars, used for attributes access testing
 //        driverReadUserId = dirtyData.createUserUuid();
-//        String pwd = encryption.getPasswordHash(driverReadUserId, driverReadUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
+//        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
+//                        "values(?, ?, ?, ?, ?)",
 //                driverReadUserId,
 //                1l,
 //                driverReadUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
+//                companyGroupId, //"Company" group
 //                driverReadUserLogin.toLowerCase()
 //        );
-//        executePrepared("insert into sec_user_role(id, version, user_id, role_name) " +
+//        executePrepared("insert into sample_rest_sec_user_role(id, version, user_id, role_name) " +
 //                        "values(?, ?, ?, ?)",
 //                UUID.randomUUID(),
 //                1l,
 //                driverReadUserId,
 //                "rest-full-access"
 //        );
-//    }
+
+        CoreUser driverRead = new CoreUser(driverReadUserLogin, "{noop}" + driverReadUserPassword, driverReadUserLogin.toLowerCase());
+        userRepository.addUser(driverRead);
+        RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
+        roleAssignmentEntity.setRoleCode("system-full-access");
+        roleAssignmentEntity.setUsername(driverRead.getUsername());
+        roleAssignmentProvider.addAssignment(new RoleAssignment(driverRead.getUsername(), FullAccessRole.NAME));
+    }
 
     private void executePrepared(String sql, Object... params) throws SQLException {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

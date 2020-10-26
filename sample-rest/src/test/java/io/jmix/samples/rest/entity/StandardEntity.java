@@ -42,7 +42,7 @@ public abstract class StandardEntity {
     protected UUID id;
 
     @Version
-    @Column(name = "VERSION", nullable = false)
+    @Column(name = "VERSION")
     protected Integer version;
 
     @CreatedDate

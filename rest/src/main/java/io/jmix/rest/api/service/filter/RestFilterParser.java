@@ -21,17 +21,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Entity;
+import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-//import io.jmix.ui.filter.ParametersHelper;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.*;
 
@@ -276,13 +276,12 @@ public class RestFilterParser {
     protected Object transformValue(Object value, RestFilterOp operator) {
         switch (operator) {
             case CONTAINS:
-                // todo ParametersHelper
-//            case DOES_NOT_CONTAIN:
-//                return ParametersHelper.CASE_INSENSITIVE_MARKER + "%" + QueryUtils.escapeForLike((String) value) + "%";
-//            case STARTS_WITH:
-//                return ParametersHelper.CASE_INSENSITIVE_MARKER + QueryUtils.escapeForLike((String) value) + "%";
-//            case ENDS_WITH:
-//                return ParametersHelper.CASE_INSENSITIVE_MARKER + "%" + QueryUtils.escapeForLike((String) value);
+            case DOES_NOT_CONTAIN:
+                return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + QueryUtils.escapeForLike((String) value) + "%";
+            case STARTS_WITH:
+                return QueryUtils.CASE_INSENSITIVE_MARKER + QueryUtils.escapeForLike((String) value) + "%";
+            case ENDS_WITH:
+                return QueryUtils.CASE_INSENSITIVE_MARKER + "%" + QueryUtils.escapeForLike((String) value);
         }
 
         return value;

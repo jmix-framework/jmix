@@ -19,6 +19,8 @@ package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.Id;
+import io.jmix.samples.rest.entity.driver.Model;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -33,16 +35,16 @@ import java.util.*;
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
-public class EntitiesControllerFT extends AbstractRestControllerFT {
 
-    private String carUuidString;
+class EntitiesControllerFT extends AbstractRestControllerFT {
+
+    protected String carUuidString;
     private String carDocumentationUuidString;
     private String secondCarUuidString;
     private String colourUuidString;
     private String repairUuidString;
     private String modelUuidString;
-    private String model2UuidString;
+    protected String model2UuidString;
     private String repair2UuidString;
     private String model3UuidString;
     private String driverUuidString;
@@ -60,7 +62,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
      * Should load an entity with _local attributes only
      */
     @Test
-    public void loadEntityById() throws Exception {
+    void loadEntityById() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -83,7 +85,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityWithDynamicAttributes() throws Exception {
+    void loadEntityWithDynamicAttributes() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("dynamicAttributes", "true");
@@ -92,12 +94,13 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
             assertEquals("VWV000", ctx.read("$._instanceName"));
-            assertEquals("10", ctx.read("$.+numberOfSeatsAttr"));
+            //TODO Dynamic attribute
+//            assertEquals("10", ctx.read("$.+numberOfSeatsAttr"));
         }
     }
 
     @Test
-    public void loadEntityWithInvalidInstanceName() throws Exception {
+    void loadEntityWithInvalidInstanceName() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("view", "car-without-vin");
@@ -113,7 +116,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
      * Should load an entity with attributes defined in the view
      */
     @Test
-    public void loadEntityByIdWithView() throws Exception {
+    void loadEntityByIdWithView() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("view", "carEdit");
@@ -132,7 +135,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityByIdWithMissingView() throws Exception {
+    void loadEntityByIdWithMissingView() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("view", "missingViewName");
@@ -145,7 +148,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityByIdWithInvalidId() throws Exception {
+    void loadEntityByIdWithInvalidId() throws Exception {
         String invalidId = "A";
         String url = baseUrl + "/entities/ref_Car/" + invalidId;
         Map<String, String> params = new HashMap<>();
@@ -158,7 +161,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityWithLobFieldByIdWithView() throws Exception {
+    void loadEntityWithLobFieldByIdWithView() throws Exception {
         String url = baseUrl + "/entities/ref$ExtDriver/" + driverUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("view", "test1");
@@ -171,7 +174,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesWithLobFieldWithView() throws Exception {
+    void loadEntitiesWithLobFieldWithView() throws Exception {
         String url = baseUrl + "/entities/ref$ExtDriver";
         Map<String, String> params = new HashMap<>();
         params.put("view", "test1");
@@ -185,7 +188,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityByIdWithViewAndReturnNullsOption() throws Exception {
+    void loadEntityByIdWithViewAndReturnNullsOption() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("view", "carEdit");
@@ -203,7 +206,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityWithNonExistingId() throws Exception {
+    void loadEntityWithNonExistingId() throws Exception {
         UUID randomId = UUID.randomUUID();
         String url = baseUrl + "/entities/ref_Car/" + randomId;
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
@@ -215,7 +218,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityWithNonExistingMetaClass() throws Exception {
+    void loadEntityWithNonExistingMetaClass() throws Exception {
         UUID randomId = UUID.randomUUID();
         String url = baseUrl + "/entities/ref$NonExistingMetaClass/" + randomId;
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
@@ -228,7 +231,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 
 
     @Test
-    public void loadEntitiesList() throws Exception {
+    void loadEntitiesList() throws Exception {
         String url = baseUrl + "/entities/ref$Colour";
         Map<String, String> params = new HashMap<>();
         try (CloseableHttpResponse response = sendGet(url, oauthToken, params)) {
@@ -249,7 +252,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithCountHeader() throws Exception {
+    void loadEntitiesListWithCountHeader() throws Exception {
         String url = baseUrl + "/entities/ref$Colour";
         Map<String, String> params = new HashMap<>();
         params.put("returnCount", "true");
@@ -273,7 +276,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithOrder() throws Exception {
+    void loadEntitiesListWithOrder() throws Exception {
         String url = baseUrl + "/entities/ref$Colour";
         Map<String, String> params = new HashMap<>();
         params.put("sort", "name");
@@ -299,7 +302,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithMultipleOrder() throws Exception {
+    void loadEntitiesListWithMultipleOrder() throws Exception {
         String url = baseUrl + "/entities/ref$Colour";
         Map<String, String> params = new HashMap<>();
 
@@ -321,7 +324,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithLimitAndOffset() throws Exception {
+    void loadEntitiesListWithLimitAndOffset() throws Exception {
         String url = baseUrl + "/entities/ref$Colour";
         Map<String, String> params = new HashMap<>();
         params.put("limit", "3");
@@ -336,7 +339,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithView() throws Exception {
+    void loadEntitiesListWithView() throws Exception {
         String url = baseUrl + "/entities/ref_Car";
         Map<String, String> params = new HashMap<>();
         params.put("view", "carEdit");
@@ -352,7 +355,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithViewAndReturnNulls() throws Exception {
+    void loadEntitiesListWithViewAndReturnNulls() throws Exception {
         String url = baseUrl + "/entities/ref_Car";
         Map<String, String> params = new HashMap<>();
         params.put("view", "carEdit");
@@ -369,7 +372,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithFilterGet() throws Exception {
+    void loadEntitiesListWithFilterGet() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilter.json", null);
         Map<String, String> params = new HashMap<>();
@@ -385,7 +388,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithFilterPost() throws Exception {
+    void loadEntitiesListWithFilterPost() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterPost1.json", null);
         Map<String, String> params = new HashMap<>();
@@ -400,7 +403,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithFilterAndCountGet() throws Exception {
+    void loadEntitiesListWithFilterAndCountGet() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilter.json", null);
         Map<String, String> params = new HashMap<>();
@@ -418,7 +421,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesFilterIsNull() throws Exception {
+    void loadEntitiesFilterIsNull() throws Exception {
         String url = baseUrl + "/entities/ref_Car/search";
         String json = getFileContent("entitiesFilterIsNull.json", null);
         Map<String, String> params = new HashMap<>();
@@ -431,7 +434,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithFilterAndCountPost() throws Exception {
+    void loadEntitiesListWithFilterAndCountPost() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterPost2.json", null);
         Map<String, String> params = new HashMap<>();
@@ -448,7 +451,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithInvalidFilterGet() throws Exception {
+    void loadEntitiesListWithInvalidFilterGet() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterInvalid.json", null);
         Map<String, String> params = new HashMap<>();
@@ -462,7 +465,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithInvalidFilterPost() throws Exception {
+    void loadEntitiesListWithInvalidFilterPost() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterInvalidPost.json", null);
         Map<String, String> params = new HashMap<>();
@@ -475,7 +478,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithInvalidFilterPost2() throws Exception {
+    void loadEntitiesListWithInvalidFilterPost2() throws Exception {
         String url = baseUrl + "/entities/ref$Colour/search";
         String json = getFileContent("entitiesFilterInvalidPost2.json", null);
         Map<String, String> params = new HashMap<>();
@@ -488,7 +491,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesFilterStartsWith() throws Exception {
+    void loadEntitiesFilterStartsWith() throws Exception {
         String url = baseUrl + "/entities/ref_Car/search";
         String json = getFileContent("entitiesFilterStartsWith.json", null);
         Map<String, String> params = new HashMap<>();
@@ -503,7 +506,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesFilterWithViewPost() throws Exception {
+    void loadEntitiesFilterWithViewPost() throws Exception {
         String url = baseUrl + "/entities/ref_Car/search";
         String json = getFileContent("entitiesFilterWithView.json", null);
         Map<String, String> params = new HashMap<>();
@@ -520,7 +523,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     /**
      * viewName is supported fo backward compatibility
      */
-    public void loadEntitiesFilterWithViewNamePost() throws Exception {
+    void loadEntitiesFilterWithViewNamePost() throws Exception {
         String url = baseUrl + "/entities/ref_Car/search";
         String json = getFileContent("entitiesFilterWithViewName.json", null);
         Map<String, String> params = new HashMap<>();
@@ -534,7 +537,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntity() throws Exception {
+    void createNewEntity() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", modelUuidString);
         String json = getFileContent("car.json", replacements);
@@ -599,7 +602,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithDynamicAttribute() throws Exception {
+    @Disabled
+    void createNewEntityWithDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String numberOfSeats = "10";
         replacements.put("$NUMBER_OF_SEATS$", numberOfSeats);
@@ -637,7 +641,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithStringKey() throws Exception {
+    void createNewEntityWithStringKey() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("newCurrency.json", replacements);
 
@@ -676,11 +680,10 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithoutResponseView() throws Exception {
+    void createNewEntityWithoutResponseView() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", model3UuidString);
         String json = getFileContent("carWithModel.json", replacements);
-
         UUID carId;
         String url = baseUrl + "/entities/ref_Car";
 
@@ -706,7 +709,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithResponseView() throws Exception {
+    void createNewEntityWithResponseView() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", model3UuidString);
 
@@ -729,7 +732,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 
             ReadContext ctx = parseResponse(response);
 
-            assertEquals(4, (int) ctx.read("$.length()"));
+            assertEquals(8, (int) ctx.read("$.length()"));
             assertEquals(carId.toString(), ctx.read("$.id"));
             assertEquals("123", ctx.read("$._instanceName"));
             assertEquals("ref_Car", ctx.read("$._entityName"));
@@ -741,7 +744,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithInvalidJSON() throws Exception {
+    void createNewEntityWithInvalidJSON() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("invalidDriver.json", replacements);
         String url = baseUrl + "/entities/ref$Driver";
@@ -754,7 +757,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithNonExistingReference() throws Exception {
+    void createNewEntityWithNonExistingReference() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", UUID.randomUUID().toString());
         String json = getFileContent("car.json", replacements);
@@ -767,8 +770,10 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithDeletedReference() throws Exception {
-        executePrepared("update REF_MODEL set DELETE_TS = CURRENT_TIMESTAMP where id = ?", UUID.fromString(model3UuidString));
+    @Disabled
+        //TODO An attempt to save an entity with reference to some not persisted entity.
+    void createNewEntityWithDeletedReference() throws Exception {
+        dataManager.remove(Id.of(UUID.fromString(model3UuidString), Model.class));
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", model3UuidString);
         String json = getFileContent("carWithModel.json", replacements);
@@ -787,7 +792,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createEntityWithEnum() throws Exception {
+    void createEntityWithEnum() throws Exception {
         String json = getFileContent("createEntityWithEnum.json", null);
         String url = baseUrl + "/entities/ref$Driver";
 
@@ -818,7 +823,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createEntityWithTransientProperty() throws Exception {
+    void createEntityWithTransientProperty() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$DEBTOR_ID$", debtorUuidString);
 
@@ -852,7 +857,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createAndReadNewEntityFromCustomDataStore() throws Exception {
+    void createAndReadNewEntityFromCustomDataStore() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createMem1Customer.json", replacements);
 
@@ -877,7 +882,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals("Bob", ctx.read("$.name"));
         }
 
-        url = "/entities/ref$Mem1Customer/" + customerId.toString();
+        url = baseUrl + "/entities/ref$Mem1Customer/" + customerId.toString();
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -889,7 +894,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 
 
     @Test
-    public void updateCar() throws Exception {
+    void updateCar() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         replacements.put("$MODEL_ID$", model2UuidString);
@@ -924,56 +929,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithVersion() throws Exception {
-//        Connectors.jmx(WebConfigStorageJmxService.class)
-//                .setAppProperty("cuba.rest.optimisticLockingEnabled", "true");
-        try {
-            Map<String, String> replacements = new HashMap<>();
-            replacements.put("$CAR_ID$", carUuidString);
-            replacements.put("$MODEL_ID$", model2UuidString);
-            String json = getFileContent("updateCar.json", replacements);
-
-            String url = baseUrl + "/entities/ref_Car/" + carUuidString;
-            Map<String, String> params = new HashMap<>();
-            params.put("responseView", "carWithModel");
-
-            try (CloseableHttpResponse response = sendPut(url, oauthToken, json, params)) {
-                assertEquals(HttpStatus.SC_OK, statusCode(response));
-
-                ReadContext ctx = parseResponse(response);
-                assertEquals("ref_Car", ctx.read("$._entityName"));
-                assertEquals(carUuidString, ctx.read("$.id"));
-                assertEquals(model2UuidString, ctx.read("$.model.id"));
-                assertNotNull(ctx.read("$.updateTs"));
-                assertNotNull(ctx.read("$.version"));
-
-            }
-
-            json = getFileContent("updateCarWithVersion.json", replacements);
-            try (CloseableHttpResponse response = sendPut(url, oauthToken, json, null)) {
-                assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
-
-                ReadContext ctx = parseResponse(response);
-                assertEquals("Optimistic lock", ctx.read("$.error"));
-            }
-
-            try (PreparedStatement stmt = conn.prepareStatement("select VIN, MODEL_ID from REF_CAR where ID = ?")) {
-                stmt.setObject(1, UUID.fromString(carUuidString));
-                ResultSet rs = stmt.executeQuery();
-                assertTrue(rs.next());
-                String vin = rs.getString("VIN");
-                assertEquals("Modified vin", vin);
-                Object modelId = rs.getObject("MODEL_ID");
-                assertEquals(model2UuidString, modelId);
-            }
-        } finally {
-//            Connectors.jmx(WebConfigStorageJmxService.class)
-//                    .setAppProperty("cuba.rest.optimisticLockingEnabled", "false");
-        }
-    }
-
-    @Test
-    public void updateCarWithExistingDynamicAttribute() throws Exception {
+    @Disabled
+    void updateCarWithExistingDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String dynamicAttributeValue = "ZZZ";
         replacements.put("$DYNAMIC_ATTRIBUTE_VALUE$", dynamicAttributeValue);
@@ -984,7 +941,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
+            //TODO Dynamic attribute
+//            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
@@ -997,7 +955,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithNullDynamicAttribute() throws Exception {
+    @Disabled
+    void updateCarWithNullDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("updateCarWithNullDynamicAttribute.json", replacements);
 
@@ -1006,7 +965,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            assertNull(ctx.read("$.+numberOfSeatsAttr"));
+            //TODO Dynamic attribute
+//            assertNull(ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
@@ -1019,7 +979,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithNonExistingDynamicAttribute() throws Exception {
+    @Disabled
+    void updateCarWithNonExistingDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String dynamicAttributeValue = "ZZZ";
         replacements.put("$DYNAMIC_ATTRIBUTE_VALUE$", dynamicAttributeValue);
@@ -1030,7 +991,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(secondCarUuidString, ctx.read("$.id"));
-            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
+            //TODO Dynamic attribute
+//            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from SYS_ATTR_VALUE where ENTITY_ID = ?")) {
@@ -1045,7 +1007,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithNullReference() throws Exception {
+    void updateCarWithNullReference() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         String json = getFileContent("updateCarWithNullReference.json", replacements);
@@ -1069,7 +1031,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithNullReferenceOneToOneComposition() throws Exception {
+    void updateCarWithNullReferenceOneToOneComposition() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         String json = getFileContent("updateCarWithNullReferenceOneToOneComposition.json", replacements);
@@ -1107,7 +1069,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createCarWithTwoLevelComposition() throws Exception {
+    void createCarWithTwoLevelComposition() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         String json = getFileContent("createCarWithTwoLevelComposition.json", replacements);
@@ -1179,7 +1141,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
      * Tests that items of composition collection may be both updated and removed
      */
     @Test
-    public void updateCarRepairs() throws Exception {
+    void updateCarRepairs() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         replacements.put("$REPAIR_ID$", repairUuidString);
@@ -1203,7 +1165,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateNonExistingCar() throws Exception {
+    void updateNonExistingCar() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String carId = UUID.randomUUID().toString();
         replacements.put("$CAR_ID$", carId);
@@ -1217,7 +1179,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateEntityWithInvalidJson() throws Exception {
+    void updateEntityWithInvalidJson() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("invalidDriver.json", replacements);
         String url = baseUrl + "/entities/ref$Driver/" + driverUuidString;
@@ -1234,7 +1196,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
      * 'address.country' should remain the same
      */
     @Test
-    public void updateDriverWithAddress() throws Exception {
+    void updateDriverWithAddress() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$DRIVER_ID$", driverUuidString);
         String json = getFileContent("driverWithAddress.json", replacements);
@@ -1256,7 +1218,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createEntityWithManyToManyAssociation() throws Exception {
+    void createEntityWithManyToManyAssociation() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String plantName = "Plant-3";
         replacements.put("$PLANT_NAME$", plantName);
@@ -1304,7 +1266,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 
 
     @Test
-    public void updateManyToManyAssociationCheckRemoveAbsent() throws Exception {
+    void updateManyToManyAssociationCheckRemoveAbsent() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$PLANT_ID$", plantUuidString);
         replacements.put("$MODEL_1_ID$", modelUuidString);
@@ -1321,7 +1283,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
             String modelId = rs.getString("MODEL_ID");
-            assertEquals(modelId, modelId);
+            assertEquals(modelUuidString, modelId);
             assertFalse(rs.next());
         }
 
@@ -1337,7 +1299,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateManyToManyAssociationErrorOnMissing() throws Exception {
+    void updateManyToManyAssociationErrorOnMissing() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$PLANT_ID$", plantUuidString);
         replacements.put("$MODEL_1_ID$", modelUuidString);
@@ -1351,7 +1313,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateBaseDbGeneratedIdEntity() throws Exception {
+    void updateBaseDbGeneratedIdEntity() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("createIdentityCustomer.json", replacements);
 
@@ -1372,7 +1334,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
             assertNotNull(customerId);
         }
 
-        url = "/entities/ref$IdentityCustomer/" + customerId;
+        url = baseUrl + "/entities/ref$IdentityCustomer/" + customerId;
         json = getFileContent("updateBaseDbGeneratedIdEntity.json", replacements);
         Map<String, String> params = new HashMap<>();
         params.put("responseView", "identityCustomerWithName");
@@ -1395,7 +1357,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 
 
     @Test
-    public void deleteCar() throws Exception {
+    void deleteCar() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
@@ -1410,7 +1372,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void deleteNonExistingCar() throws Exception {
+    void deleteNonExistingCar() throws Exception {
         String url = baseUrl + "/entities/ref_Car/" + UUID.randomUUID();
         try (CloseableHttpResponse response = sendDelete(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_NOT_FOUND, statusCode(response));
@@ -1418,7 +1380,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityByIdWithTransform() throws Exception {
+    void loadEntityByIdWithTransform() throws Exception {
         String url = baseUrl + "/entities/ref$OldCar/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("modelVersion", "1.0");
@@ -1450,7 +1412,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntitiesListWithTransform() throws Exception {
+    void loadEntitiesListWithTransform() throws Exception {
         String url = baseUrl + "/entities/ref$OldCar";
         Map<String, String> params = new HashMap<>();
         params.put("modelVersion", "1.0");
@@ -1479,7 +1441,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithTransform() throws Exception {
+    void createNewEntityWithTransform() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$MODEL_ID$", modelUuidString);
         String json = getFileContent("oldCar.json", replacements);
@@ -1547,7 +1509,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void updateCarWithTransform() throws Exception {
+    void updateCarWithTransform() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         replacements.put("$CAR_ID$", carUuidString);
         replacements.put("$MODEL_ID$", model2UuidString);
@@ -1582,7 +1544,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void deleteCarWithTransform() throws Exception {
+    void deleteCarWithTransform() throws Exception {
         String url = baseUrl + "/entities/ref$OldCar/" + carUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("modelVersion", "1.0");
@@ -1600,7 +1562,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void loadEntityByIdWithCustomTransform() throws Exception {
+    void loadEntityByIdWithCustomTransform() throws Exception {
         String url = baseUrl + "/entities/ref$Repair/" + repairUuidString;
         Map<String, String> params = new HashMap<>();
         params.put("modelVersion", "1.0");
@@ -1622,7 +1584,7 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void createNewEntityWithCustomTransform() throws Exception {
+    void createNewEntityWithCustomTransform() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("oldRepair.json", replacements);
 
@@ -1783,15 +1745,14 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
                 "Bob"
         );
 
-//        UUID carCategoryId = dirtyData.createCategoryId();
-////        String debtorUuidString = carCategoryId.toString();
+        UUID carCategoryId = dirtyData.createCategoryId();
 //        executePrepared("insert into sys_category (id, name, entity_type, discriminator, version) values (?, ?, ?, 0, 1)",
 //                carCategoryId,
 //                "carCategory",
 //                "ref_Car"
 //        );
-//
-//        UUID seatsNumberCategoryAttrId = dirtyData.createCategoryAttributeId();
+
+        UUID seatsNumberCategoryAttrId = dirtyData.createCategoryAttributeId();
 //        executePrepared("insert into sys_category_attr (id, name, code, category_entity_type, category_id, data_type, " +
 //                        "is_collection, version) values (?,?,?, ?, ?, ?,false, 1)",
 //                seatsNumberCategoryAttrId,
@@ -1801,8 +1762,8 @@ public class EntitiesControllerFT extends AbstractRestControllerFT {
 //                carCategoryId,
 //                "STRING"
 //        );
-//
-//        numberOfSeatsCategoryAttrValueId = dirtyData.createCategoryAttributeValueId();
+
+        numberOfSeatsCategoryAttrValueId = dirtyData.createCategoryAttributeValueId();
 //        executePrepared("insert into sys_attr_value (id, category_attr_id, code, entity_id, string_value, version) values (?, ?, ?, ?, ?, 1)",
 //                numberOfSeatsCategoryAttrValueId,
 //                seatsNumberCategoryAttrId,

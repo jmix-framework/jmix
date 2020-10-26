@@ -52,7 +52,7 @@ public class RestControllerUtils {
      * Finds metaClass by entityName. Throws a RestAPIException if metaClass not found
      */
     public MetaClass getMetaClass(String entityName) {
-        MetaClass metaClass = metadata.getClass(entityName);
+        MetaClass metaClass = metadata.findClass(entityName);
         if (metaClass == null) {
             throw new RestAPIException("MetaClass not found",
                     String.format("MetaClass %s not found", entityName),

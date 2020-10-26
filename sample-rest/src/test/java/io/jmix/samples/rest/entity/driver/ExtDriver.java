@@ -1,10 +1,12 @@
 package io.jmix.samples.rest.entity.driver;
 
+import io.jmix.core.entity.annotation.ReplaceEntity;
 import io.jmix.core.metamodel.annotation.InstanceName;
 
 import javax.persistence.*;
 
 @Entity(name = "ref$ExtDriver")
+@ReplaceEntity(Driver.class)
 public class ExtDriver extends Driver {
 
     private static final long serialVersionUID = 5271478633053259678L;

@@ -48,6 +48,47 @@
     </fetchPlan>
 
     <fetchPlan class="io.jmix.samples.rest.entity.driver.Driver"
+               extends="_local"
+               name="driverWithAllocations">
+        <property name="address"
+                  fetchPlan="_local"/>
+        <property name="allocations">
+            <property name="car" fetchPlan="_instance_name"/>
+        </property>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.samples.rest.entity.driver.Driver"
+               extends="_local"
+               name="driverEdit">
+        <!--        <property name="callsign"-->
+        <!--                  fetchPlan="_instance_name"/>-->
+        <!--        <property name="driverGroup"-->
+        <!--                  fetchPlan="_instance_name"/>-->
+        <property name="address"
+                  fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.samples.rest.entity.multidb.Mem1Customer"
+               name="mem1CustomerWithName">
+        <property name="name"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.samples.rest.entity.driver.ExtDriver"
+               extends="_local"
+               name="test1">
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.samples.rest.entity.identity.IdentityCustomer"
+               name="identityCustomerWithName">
+        <property name="name"/>
+    </fetchPlan>
+    <fetchPlan class="io.jmix.samples.rest.entity.debtor.Case"
+               name="caseWithTransientProperty">
+        <property name="nonPersistent1"/>
+        <property name="test1"/>
+    </fetchPlan>
+
+    <fetchPlan class="io.jmix.samples.rest.entity.driver.Driver"
                name="driverWithStatusAndName">
         <property name="status"/>
         <property name="name"/>

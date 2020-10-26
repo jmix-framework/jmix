@@ -6,6 +6,7 @@
 package io.jmix.samples.rest.tests;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
@@ -56,7 +57,10 @@ public abstract class AbstractRestControllerFT {
     protected InMemoryRoleAssignmentProvider roleAssignmentProvider;
 
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
+
+    @Autowired
+    protected DataManager dataManager;
 
     protected CoreUser admin;
 

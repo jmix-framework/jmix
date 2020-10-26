@@ -62,9 +62,7 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
         String url = baseUrl + "/metadata/entities/ref$Driver";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             ReadContext ctx = parseResponse(response);
-            //todo ReplaceEntity
-            assertEquals("ref$Driver", ctx.read("$.entityName"));
-//            assertEquals("ref$ExtDriver", ctx.read("$.entityName"));
+            assertEquals("ref$ExtDriver", ctx.read("$.entityName"));
 
             assertEquals("io.jmix.samples.rest.entity.driver.DriverStatus", ctx.read("$.properties[?(@.name == 'status')].type", List.class).get(0));
             assertEquals("ENUM", ctx.read("$.properties[?(@.name == 'status')].attributeType", List.class).get(0));

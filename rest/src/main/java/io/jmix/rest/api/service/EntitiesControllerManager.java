@@ -418,7 +418,9 @@ public class EntitiesControllerManager {
                 .buildAndExpand(EntityValues.getId(entity).toString());
 
         if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithFetchPlan(entity, responseView)) {
-            entity = dataManager.load(new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
+            LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView));
+            loadContext.setId(EntityValues.getId(entity));
+            entity = dataManager.load(loadContext);
         }
         restControllerUtils.applyAttributesSecurity(entity);
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
@@ -443,7 +445,9 @@ public class EntitiesControllerManager {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 Object mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
                 if (!entityStates.isLoadedWithFetchPlan(mainEntity, responseView)) {
-                    mainEntity = dataManager.load(new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
+                    LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView));
+                    loadContext.setId(EntityValues.getId(mainEntity));
+                    mainEntity = dataManager.load(loadContext);
                 }
                 restControllerUtils.applyAttributesSecurity(mainEntity);
                 mainCollectionEntity.add(mainEntity);
@@ -495,7 +499,9 @@ public class EntitiesControllerManager {
         // the main entity that will be returned
         Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, entityJson, entityId);
         if (restProperties.isResponseViewEnabled() && responseView != null && !entityStates.isLoadedWithFetchPlan(entity, responseView)) {
-            entity = dataManager.load(new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
+            LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView));
+            loadContext.setId(EntityValues.getId(entity));
+            entity = dataManager.load(loadContext);
         }
         restControllerUtils.applyAttributesSecurity(entity);
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
@@ -517,7 +523,9 @@ public class EntitiesControllerManager {
                 String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
                 Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
                 if (!entityStates.isLoadedWithFetchPlan(entity, responseView)) {
-                    entity = dataManager.load(new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView)));
+                    LoadContext loadContext = new LoadContext<>(metaClass).setFetchPlan(restControllerUtils.getView(metaClass, responseView));
+                    loadContext.setId(EntityValues.getId(entity));
+                    entity = dataManager.load(loadContext);
                 }
                 restControllerUtils.applyAttributesSecurity(entity);
                 entities.add(entity);
@@ -725,7 +733,6 @@ public class EntitiesControllerManager {
             //noinspection ConstantConditions
             return fetchPlans.builder(metaClass.getJavaClass())
                     .add(metadataTools.getPrimaryKeyName(metaClass))
-                    .addFetchPlan(FetchPlan.INSTANCE_NAME)
                     .build();
         }
 

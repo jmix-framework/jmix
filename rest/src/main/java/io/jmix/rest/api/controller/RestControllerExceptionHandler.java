@@ -29,6 +29,7 @@ import io.jmix.rest.api.exception.ConstraintViolationInfo;
 import io.jmix.rest.api.exception.ErrorInfo;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.eclipse.persistence.exceptions.OptimisticLockException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,14 @@ public class RestControllerExceptionHandler {
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleException(Exception e) {
         log.error("Exception in REST controller", e);
+        List<Throwable> list = ExceptionUtils.getThrowableList(e);
+        for (Throwable throwable : list) {
+            Throwable cause = throwable.getCause();
+            if (cause instanceof OptimisticLockException) {
+                ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", cause.getMessage());
+                return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+            }
+        }
         ErrorInfo errorInfo = new ErrorInfo("Server error", "");
         return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }

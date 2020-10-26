@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  * {@link #entityClass()}.
  * <p>
  * Example:
- * <pre>
+ * {@code <pre>
  * &#064;Role(name = "TestPredicateRoleLevelPolicyRole", code = "TestPredicateRoleLevelPolicyRole")
  * public interface TestPredicateRoleLevelPolicyRole {
  *
@@ -41,7 +41,7 @@ import java.lang.annotation.Target;
  *         return testOrder -> testOrder.getNumber().startsWith("a");
  *     }
  * }
- * </pre>
+ * </pre>}
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

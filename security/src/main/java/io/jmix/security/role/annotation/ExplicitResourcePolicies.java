@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  *
  * Example:
  *
- * <pre>
+ * {@code <pre>
  * &#064;Role(name = "Test role", code = "testRole")
  * public interface TestExplicitResourcePoliciesRole {
  *
@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  *         return resourcePolicies;
  *     }
  * }
- * </pre>
+ * </pre>}
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

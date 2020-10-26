@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * io.jmix.security.model.Role} objects are created using the information from the annotated interface.
  * <p>
  * Role definition example:
- *
+ * {@code
  * <pre>
  * &#064;Role(code = "orderView", name = "Order view")
  * public interface OrderViewRole {
@@ -65,7 +65,7 @@ import java.lang.annotation.Target;
  *         return order -> order.getNumber().startsWith("0");
  *     }
  * }
- * </pre>
+ * </pre>}
  * <p>
  * Role interface may have any number of methods. Methods can have any names, methods are used only to group policies
  * logically. Policies may be grouped by entity they relate (as in the example above) or by type (one method will have

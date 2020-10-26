@@ -142,54 +142,55 @@ class EnhancingAction implements Action<Task> {
 
     protected void constructPersistenceXml(Project project, sourceSet, ClassesInfo classesInfo) {
         for (String storeName : classesInfo.allStores()) {
-            String persistenceFilePath = "${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence/META-INF/persistence.xml"
+            for (String modulePath : classesInfo.modulePaths) {
+                String persistenceFilePath = "${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence/META-INF/persistence.xml"
 
-            File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath")
+                File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath")
 
-            def mappingFileName = "${classesInfo.modulePaths.last()}/$storeName-orm.xml";
+                def mappingFileName = "$modulePath/$storeName-orm.xml";
 
-            file.parentFile.mkdirs()
-            file.withWriter { writer ->
-                def xml = new MarkupBuilder(writer)
-                xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                xml.persistence(version: '2.2', xmlns: 'http://java.sun.com/xml/ns/persistence',
-                        'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
-                        'xsi:schemaLocation': "http://xmlns.jcp.org/xml/ns/persistence" +
-                                " http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd") {
-                    'persistence-unit'(name: storeName) {
-                        'provider'('io.jmix.data.impl.JmixPersistenceProvider')
-                        'mapping-file'(mappingFileName)
+                file.parentFile.mkdirs()
+                file.withWriter { writer ->
+                    def xml = new MarkupBuilder(writer)
+                    xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
+                    xml.persistence(version: '2.2', xmlns: 'http://java.sun.com/xml/ns/persistence',
+                            'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
+                            'xsi:schemaLocation': "http://xmlns.jcp.org/xml/ns/persistence" +
+                                    " http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd") {
+                        'persistence-unit'(name: storeName) {
+                            'provider'('io.jmix.data.impl.JmixPersistenceProvider')
+                            'mapping-file'(mappingFileName)
 
-                        classesInfo.mappedStoreClasses(storeName).each { String name ->
-                            'class'(name)
-                        }
-                        'exclude-unlisted-classes'()
-                        'properties'() {
-                            'property'(name: 'eclipselink.weaving', value: 'static')
-                            'property'(name: CONVERTERS_LIST_PROPERTY, value: classesInfo.converters.join(';'))
+                            classesInfo.mappedStoreClasses(storeName).each { String name ->
+                                'class'(name)
+                            }
+                            'exclude-unlisted-classes'()
+                            'properties'() {
+                                'property'(name: 'eclipselink.weaving', value: 'static')
+                                'property'(name: CONVERTERS_LIST_PROPERTY, value: classesInfo.converters.join(';'))
+                            }
                         }
                     }
                 }
-            }
 
-            File ormFile = new File("$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$mappingFileName");
-            ormFile.getParentFile().mkdirs()
+                File ormFile = new File("$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$mappingFileName");
+                ormFile.getParentFile().mkdirs()
 
-            ormFile.withWriter { writer ->
-                def xml = new MarkupBuilder(writer)
-                xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                xml.'entity-mappings'(
-                        xmlns: 'http://xmlns.jcp.org/xml/ns/persistence/orm',
-                        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                        'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd',
-                        version: '2.2'
-                )
-            }
+                ormFile.withWriter { writer ->
+                    def xml = new MarkupBuilder(writer)
+                    xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
+                    xml.'entity-mappings'(
+                            xmlns: 'http://xmlns.jcp.org/xml/ns/persistence/orm',
+                            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                            'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd',
+                            version: '2.2'
+                    )
+                }
 
-            for (String currentPath : classesInfo.modulePaths) {
+
                 project.copy {
                     from "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath"
-                    into "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$currentPath"
+                    into "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$modulePath"
                     rename "persistence.xml", "${storeName == "main" ? "" : (storeName + '-')}persistence.xml"
                 }
             }

@@ -51,7 +51,10 @@ class JmixPlugin implements Plugin<Project> {
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.7-2-jmix')
 
                 project.tasks.findByName('compileJava').doLast(new EnhancingAction('main'))
+                project.tasks.findByName('classes').doLast({ EnhancingAction.copyGeneratedFiles(project, 'main') })
+
                 project.tasks.findByName('compileTestJava').doLast(new EnhancingAction('test'))
+                project.tasks.findByName('testClasses').doLast({ EnhancingAction.copyGeneratedFiles(project, 'test') })
             }
 
             // Exclude client-side logger for each configuration except 'widgets'

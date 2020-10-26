@@ -172,7 +172,7 @@ class EnhancingAction implements Action<Task> {
                 }
             }
 
-            File ormFile = new File("$project.buildDir/resources/$sourceSetName/$mappingFileName");
+            File ormFile = new File("$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$mappingFileName");
             ormFile.getParentFile().mkdirs()
 
             ormFile.withWriter { writer ->
@@ -189,10 +189,17 @@ class EnhancingAction implements Action<Task> {
             for (String currentPath : classesInfo.modulePaths) {
                 project.copy {
                     from "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath"
-                    into "$project.buildDir/resources/$sourceSetName/$currentPath"
+                    into "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$currentPath"
                     rename "persistence.xml", "${storeName == "main" ? "" : (storeName + '-')}persistence.xml"
                 }
             }
+        }
+    }
+
+    static void copyGeneratedFiles(Project project, String sourceSetName) {
+        project.copy {
+            from "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/"
+            into "$project.buildDir/resources/$sourceSetName/"
         }
     }
 

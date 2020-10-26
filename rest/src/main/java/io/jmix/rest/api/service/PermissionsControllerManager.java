@@ -17,6 +17,7 @@
 package io.jmix.rest.api.service;
 
 import io.jmix.core.security.PermissionType;
+import io.jmix.rest.api.controller.PermissionsController;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;

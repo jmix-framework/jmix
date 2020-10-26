@@ -16,6 +16,7 @@
 
 package io.jmix.rest.api.auth;
 
+import io.jmix.core.security.LoginException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
@@ -35,7 +36,7 @@ public interface OAuthTokenIssuer {
      * @param loginParams params that are passed to login mechanism
      * @return result with logged in user session and newly generated OAuth2 access token
      * @throws BadCredentialsException in case of user is now allowed to use REST-API or middleware
-     *                                 throws {@link com.haulmont.cuba.security.global.LoginException} during login
+     *                                 throws {@link LoginException} during login
      */
     OAuth2AccessTokenResult issueToken(String login, Locale locale, Map<String, Object> loginParams);
 
@@ -45,7 +46,7 @@ public interface OAuthTokenIssuer {
      * @param tokenRequest login and token parameters
      * @return result with logged in user session and newly generated OAuth2 access token
      * @throws BadCredentialsException in case of user is now allowed to use REST-API or middleware
-     *                                 throws {@link com.haulmont.cuba.security.global.LoginException} during login
+     *                                 throws {@link LoginException} during login
      */
     OAuth2AccessTokenResult issueToken(OAuth2AccessTokenRequest tokenRequest);
 

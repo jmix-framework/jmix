@@ -22,7 +22,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
- * JMX interface for {@link com.haulmont.addon.rest.rest.ServerTokenStore}
+ * JMX interface for {@link ServerTokenStore}
  */
 @ManagedResource(description = "Manages user REST API tokens")
 public interface ServerTokenStoreMBean {

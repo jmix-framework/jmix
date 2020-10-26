@@ -19,11 +19,14 @@ package io.jmix.core;
 import java.util.Collection;
 
 public class QueryUtils {
-    
+
     public static final String ESCAPE_CHARACTER = "\\";
+
+    public static final String CASE_INSENSITIVE_MARKER = "(?i)";
 
     /**
      * Escapes a parameter value for a 'like' operation in JPQL query
+     *
      * @param value parameter value
      * @return escaped parameter value
      */

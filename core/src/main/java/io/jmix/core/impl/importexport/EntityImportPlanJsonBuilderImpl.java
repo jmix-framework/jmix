@@ -69,8 +69,10 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
 
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
             String propertyName = entry.getKey();
-            MetaProperty metaProperty = metaClass.getProperty(propertyName);
-
+            MetaProperty metaProperty = metaClass.findProperty(propertyName);
+            if (metaProperty == null) {
+                continue;
+            }
             Range propertyRange = metaProperty.getRange();
             Class<?> propertyType = metaProperty.getJavaType();
             if (propertyRange.isDatatype() || propertyRange.isEnum()) {

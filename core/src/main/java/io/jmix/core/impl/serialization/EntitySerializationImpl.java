@@ -288,15 +288,15 @@ public class EntitySerializationImpl implements EntitySerialization {
                     FetchPlanProperty fetchPlanProperty = null;
                     //todo dynamic attribute
 //                    if (!DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-//                        if (fetchPlan != null) {
-//                            fetchPlanProperty = fetchPlan.getProperty(metaProperty.getName());
-//                            if (fetchPlanProperty == null) continue;
-//                        }
-//
-//                        if (!entityStates.isNew(entity)
-//                                && !entityStates.isLoaded(entity, metaProperty.getName())) {
-//                            continue;
-//                        }
+                    if (fetchPlan != null) {
+                        fetchPlanProperty = fetchPlan.getProperty(metaProperty.getName());
+                        if (fetchPlanProperty == null) continue;
+                    }
+
+                    if (!entityStates.isNew(entity)
+                            && !entityStates.isLoaded(entity, metaProperty.getName())) {
+                        continue;
+                    }
 //                    }
 
                     Object fieldValue = EntityValues.getValue(entity, metaProperty.getName());

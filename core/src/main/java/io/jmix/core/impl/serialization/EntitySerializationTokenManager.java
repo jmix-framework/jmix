@@ -79,24 +79,20 @@ public class EntitySerializationTokenManager {
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
         SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
-        if (securityState.getErasedData() != null) {
-            JsonObject tokenObject = new JsonObject();
-
-            securityState.getErasedData().asMap().forEach((k, v) -> addCollectionId(tokenObject, k, v));
-
-            tokenObject.addProperty(ENTITY_NAME_KEY, metaClass.getName());
-            if (!metadataTools.hasCompositePrimaryKey(metaClass)) {
-                addSingleId(tokenObject, ENTITY_ID_KEY, EntityValues.getId(entity));
-            }
-
-            try {
-                return Base64.getEncoder().encodeToString(
-                        createCipher(Cipher.ENCRYPT_MODE).doFinal(tokenObject.toString().getBytes(StandardCharsets.UTF_8)));
-            } catch (IllegalBlockSizeException | BadPaddingException e) {
-                throw new RuntimeException("An error occurred while generating security token", e);
-            }
+        JsonObject tokenObject = new JsonObject();
+        tokenObject.addProperty(ENTITY_NAME_KEY, metaClass.getName());
+        if (!metadataTools.hasCompositePrimaryKey(metaClass)) {
+            addSingleId(tokenObject, ENTITY_ID_KEY, EntityValues.getId(entity));
         }
-        return null;
+        if (securityState.getErasedData() != null) {
+            securityState.getErasedData().asMap().forEach((k, v) -> addCollectionId(tokenObject, k, v));
+        }
+        try {
+            return Base64.getEncoder().encodeToString(
+                    createCipher(Cipher.ENCRYPT_MODE).doFinal(tokenObject.toString().getBytes(StandardCharsets.UTF_8)));
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new RuntimeException("An error occurred while generating security token", e);
+        }
     }
 
     /**

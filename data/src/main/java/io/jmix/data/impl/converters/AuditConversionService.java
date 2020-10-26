@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.Date;
 
 /**
- * Used for current time conversion from {@link Date} to {@link CreatedDate}, {@link LastModifiedDate} and {@link DeletedDate} field types.<br/>
+ * Used for current time conversion from {@link Date} to {@link CreatedDate}, {@link LastModifiedDate} and {@link DeletedDate} field types.<br>
  * <p>
  * Also converts current user to {@link CreatedBy}, {@link LastModifiedBy} and {@link DeletedBy} field types
  */

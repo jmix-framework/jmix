@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.upload;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.FileStorageException;
+import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.TaskLifeCycle;
 
 import javax.annotation.Nullable;
@@ -138,9 +139,9 @@ public interface FileUploadingAPI {
      * Upload a file from the client's temporary storage into the middleware FileStorage.
      * <br>
      * This method is intended for integration with BackgroundTasks and should be called from
-     * {@link com.haulmont.cuba.gui.executors.BackgroundTask#run(com.haulmont.cuba.gui.executors.TaskLifeCycle)}
+     * {@link BackgroundTask#run(TaskLifeCycle)}
      * <br>
-     * {@link com.haulmont.cuba.gui.executors.TaskLifeCycle#getParams()} map must contain the following entries with
+     * {@link TaskLifeCycle#getParams()} map must contain the following entries with
      * String keys:
      * <ul>
      *     <li>{@code fileId} - file ID in the temporary storage</li>

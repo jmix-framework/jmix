@@ -27,8 +27,6 @@ import javax.validation.Validator;
 
 
 /**
- * Validator that applies JSR303 rules for {@link Field} instance using {@link BeanValidation}.
- *
  * @deprecated Use {@link BeanPropertyValidator} instead
  */
 @Deprecated

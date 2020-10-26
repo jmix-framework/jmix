@@ -59,12 +59,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Object, String)}.
      *
      * @param entity     instance
      * @param propertyPath attribute path
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String)}
+     * @deprecated replaced by {@link EntityValues#getValueEx(Object, String)}
      */
     @Deprecated
     public static <T> T getValueEx(Entity entity, String propertyPath) {
@@ -72,12 +72,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, PropertyPath)}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Object, PropertyPath)}.
      *
      * @param entity     entity
      * @param propertyPath attribute path
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, PropertyPath)}
+     * @deprecated replaced by {@link EntityValues#getValueEx(Object, PropertyPath)}
      */
     @Deprecated
     public static <T> T getValueEx(Entity entity, PropertyPath propertyPath) {
@@ -85,12 +85,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Entity, String[])}.
+     * Get value of an attribute according to the rules described in {@link EntityValues#getValueEx(Object, String[])}.
      *
      * @param entity   entity
      * @param properties path to the attribute
      * @return attribute value
-     * @deprecated replaced by {@link EntityValues#getValueEx(Entity, String[])}
+     * @deprecated replaced by {@link EntityValues#getValueEx(Object, String[])}
      */
     @Deprecated
     public static <T> T getValueEx(Entity entity, String[] properties) {
@@ -98,12 +98,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Object, String, Object)}.
      *
      * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
-     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, String, Object)}
+     * @deprecated replaced by {@link EntityValues#setValueEx(Object, String, Object)}
      */
     @Deprecated
     public static void setValueEx(Entity entity, String propertyPath, Object value) {
@@ -111,12 +111,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Object, PropertyPath, Object)}.
      *
      * @param entity     entity
      * @param propertyPath path to the attribute
      * @param value        attribute value
-     * @deprecated replaced by {@link EntityValues#setValueEx(Entity, PropertyPath, Object)}
+     * @deprecated replaced by {@link EntityValues#setValueEx(Object, PropertyPath, Object)}
      */
     @Deprecated
     public static void setValueEx(Entity entity, PropertyPath propertyPath, Object value) {
@@ -124,12 +124,12 @@ public final class InstanceUtils {
     }
 
     /**
-     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Entity, String[], Object)}.
+     * Set value of an attribute according to the rules described in {@link EntityValues#setValueEx(Object, String[], Object)}.
      *
      * @param entity     entity
      * @param properties path to the attribute
      * @param value      attribute value
-     * @deprecated replaces by {@link EntityValues#setValueEx(Entity, String[], Object)}
+     * @deprecated replaces by {@link EntityValues#setValueEx(Object, String[], Object)}
      */
     @Deprecated
     public static void setValueEx(Entity entity, String[] properties, Object value) {

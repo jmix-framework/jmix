@@ -134,7 +134,7 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makeDetached(Entity)
+     * @see EntityStates#makeDetached(Object)
      */
     public static void makeDetached(Entity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);
@@ -146,7 +146,7 @@ public class PersistenceHelper {
     }
 
     /**
-     * @see EntityStates#makePatch(Entity)
+     * @see EntityStates#makePatch(Object)
      */
     public static void makePatch(Entity entity) {
         EntityStates entityStates = AppBeans.get(EntityStates.class);

@@ -51,7 +51,7 @@ public interface EntityManager {
      * @return the instance that the state was merged to
      * @throws IllegalArgumentException if instance is not an entity or is a removed entity
      * @see EntityStates#isNew(Object)
-     * @see EntityStates#makePatch(Entity)
+     * @see EntityStates#makePatch(Object)
      */
     <T extends Entity> T merge(T entity);
 

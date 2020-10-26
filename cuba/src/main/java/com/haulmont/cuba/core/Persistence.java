@@ -64,7 +64,7 @@ public interface Persistence {
      * <p>A {@code RuntimeException} thrown in the transactional code enforces a rollback.
      *
      * @param storeName data store name
-     * @param callable  transactional code in the form of {@link io.jmix.core.Transaction.Callable}
+     * @param callable  transactional code in the form of {@link Transaction.Callable}
      * @param <T>       result type
      * @return          result object
      * @see #runInTransaction(Transaction.Runnable)
@@ -84,7 +84,7 @@ public interface Persistence {
      * <p>A {@code RuntimeException} thrown in the transactional code enforces a rollback.
      *
      * @param storeName data store name
-     * @param runnable  transactional code in the form of {@link io.jmix.core.Transaction.Runnable}
+     * @param runnable  transactional code in the form of {@link Transaction.Runnable}
      * @see #callInTransaction(Transaction.Callable)
      */
     void runInTransaction(String storeName, Transaction.Runnable runnable);

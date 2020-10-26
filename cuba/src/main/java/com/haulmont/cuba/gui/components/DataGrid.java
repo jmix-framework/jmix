@@ -104,7 +104,7 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @throws IllegalStateException    if the editor is not enabled or already editing an item in buffered mode
      * @throws IllegalArgumentException if datasource doesn't contain item with given id
      * @see #setEditorEnabled(boolean)
-     * @deprecated Use {@link #edit(Entity)}
+     * @deprecated Use {@link #edit(Object)}
      */
     @Deprecated
     void editItem(Object itemId);

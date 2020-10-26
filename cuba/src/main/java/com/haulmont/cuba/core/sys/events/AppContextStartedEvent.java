@@ -16,13 +16,14 @@
 
 package com.haulmont.cuba.core.sys.events;
 
+import com.haulmont.cuba.core.sys.AppContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ApplicationContextEvent;
 
 /**
  * Application lifecycle event.
  * <p>
- * Published after {@link AppContextInitializedEvent} and after running all {@link AppContext.Listener}s.
+ * Published after {@link AppContextInitializedEvent}.
  */
 public class AppContextStartedEvent extends ApplicationContextEvent {
 

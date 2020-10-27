@@ -36,6 +36,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@Deprecated
 public class WebListEditor<V> extends AbstractField<WebListEditor.CubaListEditor<V>, List<V>, List<V>>
         implements ListEditor<V>, InitializingBean {
 

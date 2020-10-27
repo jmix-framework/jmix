@@ -129,6 +129,7 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(FoldersPane.NAME, WebFoldersPane.class);
         classes.put(PopupView.NAME, WebPopupView.class);
         classes.put(BulkEditor.NAME, WebBulkEditor.class);
+        classes.put(ListEditor.NAME, WebListEditor.class);
     }
 
     @SuppressWarnings("unchecked")

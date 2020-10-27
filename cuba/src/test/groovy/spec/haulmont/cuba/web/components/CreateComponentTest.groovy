@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.web.components
 
 import com.haulmont.cuba.gui.components.*
+import com.haulmont.cuba.gui.components.mainwindow.FoldersPane
 import com.haulmont.cuba.web.gui.components.CubaDataLoadCoordinator
 import io.jmix.ui.Facets
 import io.jmix.ui.component.RelatedEntities
@@ -52,11 +53,11 @@ class CreateComponentTest extends UiScreenSpec {
                 FieldGroup.NAME,
                 RowsCount.NAME,
                 RelatedEntities.NAME,
-                // BulkEditor.NAME, todo bulk editor
-                // ListEditor.NAME, todo list editor
+                BulkEditor.NAME,
+                ListEditor.NAME,
 
-                // FoldersPane.NAME, todo folders pane
-                // FtsField.NAME, todo
+                FoldersPane.NAME,
+                // FtsField.NAME, todo fts field
         ]
     }
 

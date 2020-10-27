@@ -35,6 +35,7 @@ import io.jmix.ui.component.data.Options;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.screen.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -52,6 +53,9 @@ import java.util.stream.Collectors;
 @Component(ListEditorDelegate.NAME)
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class ListEditorDelegateImpl<V> implements ListEditorDelegate<V> {
+
+    private static final Logger log = LoggerFactory.getLogger(ListEditorDelegateImpl.class);
+
     /* Beans */
     protected UiComponents uiComponents;
 
@@ -90,9 +94,6 @@ public class ListEditorDelegateImpl<V> implements ListEditorDelegate<V> {
 
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
-
-    @Autowired
-    protected Logger log;
 
     @Autowired
     public void setUiComponents(UiComponents uiComponents) {

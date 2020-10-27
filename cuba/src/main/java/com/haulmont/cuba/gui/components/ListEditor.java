@@ -33,7 +33,9 @@ import java.util.function.Supplier;
  * The component is used for displaying and editing a collection of values.
  *
  * WARNING: for internal use only!
+ * @deprecated Use {@link io.jmix.ui.component.ValuesPicker} instead
  */
+@Deprecated
 public interface ListEditor<V> extends OptionsField<List<V>, V>, Component.Focusable {
 
     String NAME = "listEditor";

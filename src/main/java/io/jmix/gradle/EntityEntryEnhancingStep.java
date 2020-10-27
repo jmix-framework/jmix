@@ -50,7 +50,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         if (info.hasMetadataChanges()) {
 
             boolean embeddable = info.hasClassAnnotation(EMBEDDABLE);
-            boolean modelObject = info.hasClassAnnotation(MODEL_OBJECT);
+            boolean jmixEntity = info.hasClassAnnotation(JMIX_ENTITY);
 
             if (info.getPrimaryKey() != null) {
                 makeEntityEntryClass(ctClass, info);
@@ -72,7 +72,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
                 makeEntityEntryField(ctClass);
 
                 makeEntityEntryMethods(ctClass, EMBEDDABLE_ENTITY_ENTRY_TYPE);
-            } else if (modelObject) {
+            } else if (jmixEntity) {
                 makeEntityEntryField(ctClass);
 
                 makeEntityEntryMethods(ctClass, NO_ID_ENTITY_ENTRY_TYPE);

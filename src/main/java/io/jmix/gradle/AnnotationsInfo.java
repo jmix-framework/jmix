@@ -183,7 +183,7 @@ public class AnnotationsInfo {
 
         VERSION("javax.persistence.Version"),
 
-        ID("javax.persistence.Id"), //todo make not unique and support composite primary keys in EnhancingStep
+        ID("javax.persistence.Id"),
         EMBEDDED_ID("javax.persistence.EmbeddedId"),
         JMIX_ID("io.jmix.core.entity.annotation.JmixId"),
         JMIX_GENERATED_VALUE("io.jmix.core.entity.annotation.JmixGeneratedValue", false);
@@ -219,7 +219,7 @@ public class AnnotationsInfo {
 
 
     public enum ClassAnnotation {
-        MODEL_OBJECT(MetaModelUtil.MODEL_OBJECT_ANNOTATION_TYPE),
+        JMIX_ENTITY(MetaModelUtil.JMIX_ENTITY_ANNOTATION_TYPE),
         EMBEDDABLE(MetaModelUtil.EMBEDDABLE_ANNOTATION_TYPE),
         LEGACY_HAS_UUID("LEGACY_HAS_UUID");
 

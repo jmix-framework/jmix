@@ -67,7 +67,7 @@ public abstract class BaseEnhancingStep implements EnhancingStep {
 
     public boolean isEnhancingSupported(CtClass ctClass) {
         return isJpaEntity(ctClass) || isJpaEmbeddable(ctClass) || isJpaMappedSuperclass(ctClass)
-                || isModelObject(ctClass);
+                || isJmixEntity(ctClass);
     }
 
     @Override

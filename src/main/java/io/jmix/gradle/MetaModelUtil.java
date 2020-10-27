@@ -38,9 +38,9 @@ public class MetaModelUtil {
     public static final String ENTITY_ENTRY_ENHANCED_TYPE = "io.jmix.core.entity.JmixEntityEntryEnhanced";
 
     public static final String TRANSIENT_ANNOTATION_TYPE = "javax.persistence.Transient";
-    public static final String MODEL_PROPERTY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.ModelProperty";
+    public static final String JMIX_PROPERTY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.JmixProperty";
     public static final String DISABLE_ENHANCING_ANNOTATION_TYPE = "io.jmix.core.entity.annotation.DisableEnhancing";
-    public static final String MODEL_OBJECT_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.ModelObject";
+    public static final String JMIX_ENTITY_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.JmixEntity";
     public static final String ENTITY_ANNOTATION_TYPE = "javax.persistence.Entity";
     public static final String EMBEDDABLE_ANNOTATION_TYPE = "javax.persistence.Embeddable";
     public static final String CONVERTER_ANNOTATION_TYPE = "javax.persistence.Converter";
@@ -108,15 +108,15 @@ public class MetaModelUtil {
                 || attribute.getAnnotation("org.springframework.boot.autoconfigure.EnableAutoConfiguration") != null);
     }
 
-    public static boolean isModelObject(CtClass ctClass) {
+    public static boolean isJmixEntity(CtClass ctClass) {
         AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
-        return attribute != null && attribute.getAnnotation(MODEL_OBJECT_ANNOTATION_TYPE) != null;
+        return attribute != null && attribute.getAnnotation(JMIX_ENTITY_ANNOTATION_TYPE) != null;
     }
 
-    public static boolean isModelPropertiesAnnotatedOnly(CtClass ctClass) {
-        if (isModelObject(ctClass)) {
+    public static boolean isJmixPropertiesAnnotatedOnly(CtClass ctClass) {
+        if (isJmixEntity(ctClass)) {
             AnnotationsAttribute attribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
-            BooleanMemberValue annotatedPropertiesOnly = (BooleanMemberValue) attribute.getAnnotation(MODEL_OBJECT_ANNOTATION_TYPE).getMemberValue("annotatedPropertiesOnly");
+            BooleanMemberValue annotatedPropertiesOnly = (BooleanMemberValue) attribute.getAnnotation(JMIX_ENTITY_ANNOTATION_TYPE).getMemberValue("annotatedPropertiesOnly");
             return annotatedPropertiesOnly != null && annotatedPropertiesOnly.getValue();
         }
         return true;
@@ -148,9 +148,14 @@ public class MetaModelUtil {
         return false;
     }
 
-    public static boolean isModelPropertyField(CtClass ctClass, String fieldName) {
+    public static boolean isJmixPropertyField(CtClass ctClass, String fieldName) {
         CtField ctField = findDeclaredField(ctClass, fieldName);
-        return ctField != null && hasAnnotationOnField(ctField, MODEL_PROPERTY_ANNOTATION_TYPE);
+        return ctField != null && hasAnnotationOnField(ctField, JMIX_PROPERTY_ANNOTATION_TYPE);
+    }
+
+    public static boolean isTransientField(CtClass ctClass, String fieldName) {
+        CtField ctField = findDeclaredField(ctClass, fieldName);
+        return ctField != null && hasAnnotationOnField(ctField, TRANSIENT_ANNOTATION_TYPE);
     }
 
     public static boolean isSetterMethod(CtMethod ctMethod) throws NotFoundException {

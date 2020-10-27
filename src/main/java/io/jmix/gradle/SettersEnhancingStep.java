@@ -57,14 +57,20 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
     }
 
     protected void enhanceSetters(CtClass ctClass) throws NotFoundException, CannotCompileException {
-        boolean modelPropertiesAnnotatedOnly = isModelPropertiesAnnotatedOnly(ctClass);
+        boolean jmixPropertiesAnnotatedOnly = isJmixPropertiesAnnotatedOnly(ctClass);
+        boolean isPersistentEntity = isJpaEntity(ctClass) || isJpaEmbeddable(ctClass) || isJpaMappedSuperclass(ctClass);
         for (CtMethod ctMethod : ctClass.getDeclaredMethods()) {
             if (!isSetterMethod(ctMethod)) {
                 continue;
             }
             String fieldName = generateFieldNameByMethod(ctMethod.getName());
+            CtField field = findDeclaredField(ctClass, fieldName);
 
-            if (isPersistentField(ctClass, fieldName) || isModelPropertyField(ctClass, fieldName) || !modelPropertiesAnnotatedOnly) {
+            if (field == null || isPersistentEntity && isTransientField(ctClass, fieldName)) {
+                continue;
+            }
+
+            if (isPersistentField(ctClass, fieldName) || isJmixPropertyField(ctClass, fieldName) || !jmixPropertiesAnnotatedOnly) {
                 CtClass paramType = ctMethod.getParameterTypes()[0];
 
                 if (paramType.isPrimitive()) {

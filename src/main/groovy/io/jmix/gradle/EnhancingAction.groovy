@@ -100,7 +100,7 @@ class EnhancingAction implements Action<Task> {
                             classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
                         } else if (isJpaConverter(ctClass)) {
                             classesInfo.converters.add(className)
-                        } else if (isModelObject(ctClass)) {
+                        } else if (isJmixEntity(ctClass)) {
                             classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
                         } else if (isModuleConfig(ctClass)) {
                             classesInfo.modulePaths.add(ctClass.getPackageName().replace('.', '/'));

@@ -19,8 +19,8 @@ package io.jmix.core.pessimisticlocking;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.annotation.Nullable;
 import javax.persistence.Id;
@@ -31,7 +31,7 @@ import java.util.UUID;
 /**
  * Describes a pessimistic lock of an object.
  */
-@ModelObject(name = "sys_LockInfo")
+@JmixEntity(name = "sys_LockInfo")
 @SystemLevel
 public class LockInfo implements Serializable {
 
@@ -43,7 +43,7 @@ public class LockInfo implements Serializable {
     private final String username;
 
     @Id
-    @ModelProperty
+    @JmixProperty
     @JmixGeneratedValue
     protected UUID id;
 

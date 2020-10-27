@@ -19,9 +19,9 @@ package metadata
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
-
 import test_support.addon1.TestAddon1Configuration
 import test_support.addon1.entity.TestAddon1Entity
 import test_support.app.TestAppConfiguration
@@ -29,8 +29,6 @@ import test_support.app.entity.Address
 import test_support.app.entity.Owner
 import test_support.app.entity.Pet
 import test_support.base.entity.BaseEntity
-
-import org.springframework.beans.factory.annotation.Autowired
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class MetadataToolsTest extends Specification {
@@ -53,7 +51,7 @@ class MetadataToolsTest extends Specification {
     def "non-persistent entities"() {
         expect:
 
-        // @ModelObject
+        // @JmixEntity
         !metadataTools.isPersistent(TestAddon1Entity)
 
         // @MappedSuperclass
@@ -87,7 +85,7 @@ class MetadataToolsTest extends Specification {
     def "non-persistent properties"() {
         expect:
 
-        // @ModelProperty in @Entity
+        // @JmixProperty in @Entity
         !metadataTools.isPersistent(metadata.getClass(Pet).getProperty('nick'))
 
         // property of @MappedSuperclass

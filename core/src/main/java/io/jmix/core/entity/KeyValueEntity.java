@@ -21,7 +21,7 @@ import io.jmix.core.EntityEntry;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.DisableEnhancing;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import org.springframework.lang.NonNull;
 
@@ -43,7 +43,7 @@ import java.util.UUID;
  * person.setValue("lastName", "Simpson");
  * </pre>
  */
-@ModelObject(name = "sys_KeyValueEntity")
+@JmixEntity(name = "sys_KeyValueEntity")
 @SystemLevel
 @DisableEnhancing
 public class KeyValueEntity

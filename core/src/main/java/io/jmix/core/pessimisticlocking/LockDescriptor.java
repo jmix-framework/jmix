@@ -17,23 +17,23 @@
 package io.jmix.core.pessimisticlocking;
 
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 
 /**
  * The {@code LockDescriptor} contains configuration information about a pessimistic lock.
  */
-@ModelObject(name = "sys_LockDescriptor")
+@JmixEntity(name = "sys_LockDescriptor")
 @SystemLevel
 public class LockDescriptor {
 
     @Id
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     private String name;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     private Integer timeoutSec;
 
     LockDescriptor() {

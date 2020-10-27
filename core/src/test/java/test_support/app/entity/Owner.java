@@ -18,6 +18,7 @@ package test_support.app.entity;
 
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.base.entity.BaseEntity;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
 @Entity(name = "app_Owner")
+@JmixEntity
 public class Owner extends BaseEntity {
 
     private static final long serialVersionUID = -552022260926623206L;

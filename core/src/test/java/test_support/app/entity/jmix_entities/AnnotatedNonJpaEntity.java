@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,31 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test_support.base.entity;
 
-import io.jmix.core.UuidProvider;
+package test_support.app.entity.jmix_entities;
+
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
-@MappedSuperclass
-@JmixEntity(name = "base_BaseUuidEntity")
-public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> {
+@JmixEntity(annotatedPropertiesOnly = true)
+public class AnnotatedNonJpaEntity {
 
-    private static final long serialVersionUID = -2217624132287086972L;
-
-    @Id
-    @Column(name = "ID")
+    @JmixId
     @JmixGeneratedValue
-    protected UUID id;
+    @JmixProperty
+    private UUID id;
 
-    public BaseUuidEntity() {
-        id = UuidProvider.createUuid();
-    }
+    @JmixProperty
+    private String allowedProperty;
+
+    private String forbiddenProperty;
 
     public UUID getId() {
         return id;
@@ -45,5 +42,21 @@ public abstract class BaseUuidEntity extends BaseGenericIdEntity<UUID> {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getAllowedProperty() {
+        return allowedProperty;
+    }
+
+    public void setAllowedProperty(String allowedProperty) {
+        this.allowedProperty = allowedProperty;
+    }
+
+    public String getForbiddenProperty() {
+        return forbiddenProperty;
+    }
+
+    public void setForbiddenProperty(String forbiddenProperty) {
+        this.forbiddenProperty = forbiddenProperty;
     }
 }

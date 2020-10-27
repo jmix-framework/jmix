@@ -17,6 +17,7 @@
 package io.jmix.core.impl;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
@@ -227,22 +228,27 @@ public class MetaModelLoader {
     @Nullable
     protected String getMetaClassName(Class<?> javaClass) {
         javax.persistence.Entity entityAnnotation = javaClass.getAnnotation(javax.persistence.Entity.class);
-        MappedSuperclass mappedSuperclassAnnotation = javaClass.getAnnotation(MappedSuperclass.class);
 
-        ModelObject modelObjectAnnotation = javaClass.getAnnotation(ModelObject.class);
-        Embeddable embeddableAnnotation = javaClass.getAnnotation(Embeddable.class);
+        JmixEntity jmixEntityAnnotation = javaClass.getAnnotation(JmixEntity.class);
 
-        if ((entityAnnotation == null && mappedSuperclassAnnotation == null) &&
-                (embeddableAnnotation == null) && (modelObjectAnnotation == null)) {
-            log.trace("Class '{}' isn't annotated as metadata entity, ignore it", javaClass.getName());
+        if (jmixEntityAnnotation == null) {
+            log.trace("Class '{}' isn't annotated as JmixEntity, ignore it", javaClass.getName());
             return null;
         }
 
         String name = null;
         if (entityAnnotation != null) {
             name = entityAnnotation.name();
-        } else if (modelObjectAnnotation != null) {
-            name = modelObjectAnnotation.name();
+
+            String jmixName = jmixEntityAnnotation.name();
+            if (!Strings.isNullOrEmpty(jmixName) && !jmixName.equals(name)) {
+                throw new RuntimeException(
+                        String.format("Different names in @Entity and @JmixEntity annotations for class %s: '%s' and '%s'.\n" +
+                                        "@JmixEntity name should be empty or the same as @Entity name if @Entity annotation present.",
+                                javaClass.getName(), name, jmixName));
+            }
+        } else {
+            name = jmixEntityAnnotation.name();
         }
 
         if (StringUtils.isEmpty(name)) {
@@ -263,7 +269,10 @@ public class MetaModelLoader {
 
             final String fieldName = field.getName();
 
-            if (isMetaPropertyField(field) || (useNonAnnotatedProperties(clazz) && isFieldWithGetter(field, clazz))) {
+            if (isJmixProperty(field) ||
+                    (useNonAnnotatedProperties(clazz)
+                            && (isMetaPropertyField(field) || isFieldWithGetter(field, clazz))
+                            && !isTransientFieldOfJpaEntity(clazz, field))) {
                 MetaPropertyImpl property = (MetaPropertyImpl) metaClass.findProperty(fieldName);
                 if (property == null) {
                     MetadataObjectInfo<MetaProperty> info;
@@ -322,8 +331,8 @@ public class MetaModelLoader {
     }
 
     private boolean useNonAnnotatedProperties(Class<?> javaClass) {
-        ModelObject modelObjectAnnotation = javaClass.getAnnotation(ModelObject.class);
-        return modelObjectAnnotation != null && !modelObjectAnnotation.annotatedPropertiesOnly();
+        JmixEntity jmixEntityAnnotation = javaClass.getAnnotation(JmixEntity.class);
+        return jmixEntityAnnotation != null && !jmixEntityAnnotation.annotatedPropertiesOnly();
     }
 
     private boolean isFieldWithGetter(Field field, Class<?> javaClass) {
@@ -343,12 +352,19 @@ public class MetaModelLoader {
                 || field.isAnnotationPresent(ManyToMany.class)
                 || field.isAnnotationPresent(OneToOne.class)
                 || field.isAnnotationPresent(Embedded.class)
-                || field.isAnnotationPresent(EmbeddedId.class)
-                || field.isAnnotationPresent(ModelProperty.class);
+                || field.isAnnotationPresent(EmbeddedId.class);
+    }
+
+    protected boolean isJmixProperty(Field field) {
+        return field.isAnnotationPresent(JmixProperty.class);
+    }
+
+    protected boolean isTransientFieldOfJpaEntity(Class clazz, Field field) {
+        return field.isAnnotationPresent(Transient.class) && hasJpaAnnotation(clazz);
     }
 
     protected boolean isMetaPropertyMethod(Method method) {
-        return method.isAnnotationPresent(ModelProperty.class);
+        return method.isAnnotationPresent(JmixProperty.class);
     }
 
     protected MetadataObjectInfo<MetaProperty> loadProperty(Session session, MetaClassImpl metaClass, Field field) {
@@ -572,10 +588,10 @@ public class MetaModelLoader {
         OneToOne oneToOneAnnotation = field.getAnnotation(OneToOne.class);
         ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
 
-        ModelProperty modelPropertyAnnotation =
-                field.getAnnotation(ModelProperty.class);
+        JmixProperty jmixPropertyAnnotation =
+                field.getAnnotation(JmixProperty.class);
 
-        boolean superMandatory = (modelPropertyAnnotation != null && modelPropertyAnnotation.mandatory())
+        boolean superMandatory = (jmixPropertyAnnotation != null && jmixPropertyAnnotation.mandatory())
                 || (field.getAnnotation(NotNull.class) != null
                 && isDefinedForDefaultValidationGroup(field.getAnnotation(NotNull.class)));  // @NotNull without groups
 

@@ -1,6 +1,7 @@
 package test_support.app.entity.fetch_plans;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.ManyToOne;
 import java.util.Date;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "app_ChildTestEntity")
 public class ChildTestEntity {
 

@@ -18,11 +18,11 @@ package test_support.app.entity.model_objects;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.util.UUID;
 
-@ModelObject
+@JmixEntity
 public class CustomerObjectWithGeneratedId {
 
     @JmixId

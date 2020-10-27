@@ -17,11 +17,13 @@
 package test_support.app.entity.nullable_id;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_NFOO")
 @Entity(name = "test_NFoo")
+@JmixEntity
 public class NFoo {
 
     @Id

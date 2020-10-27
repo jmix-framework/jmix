@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  */
 @Target({java.lang.annotation.ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModelObject {
+public @interface JmixEntity {
 
     /**
      * Name of the class in the metadata.
@@ -34,7 +34,7 @@ public @interface ModelObject {
 
     /**
      * By default, all properties of the class are included in metadata. Set this attribute to true in order to include
-     * only properties explicitly annotated with {@link ModelProperty}.
+     * only properties explicitly annotated with {@link JmixProperty}.
      */
     boolean annotatedPropertiesOnly() default false;
 }

@@ -19,7 +19,7 @@ package test_support.app.entity;
 
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.LocaleUtils;
 
 import javax.persistence.Column;
@@ -27,7 +27,7 @@ import javax.persistence.Embeddable;
 import java.util.Locale;
 
 @Embeddable
-@ModelObject(name = "app_Address")
+@JmixEntity(name = "app_Address")
 public class Address {
 
     @Column(name = "CITY")

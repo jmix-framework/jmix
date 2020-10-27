@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package test_support.app.entity.sales;
+package test_support.app.entity.jmix_entities;
 
-
-import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.datatype.impl.EnumUtils;
-import test_support.base.entity.BaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.Date;
+import java.util.List;
 
-@JmixEntity
-@Entity(name = "core_Customer")
-@Table(name = "CORE_CUSTOMER")
-public class Customer extends BaseEntity {
+@JmixEntity(name = "test_nonJpaEntity")
+public class NonJpaEntity {
 
-    @Column(name = "NAME")
-    @InstanceName
     private String name;
 
-    @Column(name = "STATUS")
-    private String status;
+    private List<EntityWithJmix> entities;
+
+    @Transient
+    private Date oddDate;
 
     public String getName() {
         return name;
@@ -46,11 +40,19 @@ public class Customer extends BaseEntity {
         this.name = name;
     }
 
-    public Status getStatus() {
-        return EnumUtils.fromId(Status.class, status, null);
+    public List<EntityWithJmix> getEntities() {
+        return entities;
     }
 
-    public void setStatus(Status status) {
-        this.status = status.getId();
+    public void setEntities(List<EntityWithJmix> entities) {
+        this.entities = entities;
+    }
+
+    public Date getOddDate() {
+        return oddDate;
+    }
+
+    public void setOddDate(Date oddDate) {
+        this.oddDate = oddDate;
     }
 }

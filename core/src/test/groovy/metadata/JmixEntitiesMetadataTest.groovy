@@ -33,7 +33,7 @@ import test_support.app.entity.model_objects.*
 import java.time.LocalDate
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
-class ModelObjectsMetadataTest extends Specification {
+class JmixEntitiesMetadataTest extends Specification {
 
     @Autowired
     Metadata metadata

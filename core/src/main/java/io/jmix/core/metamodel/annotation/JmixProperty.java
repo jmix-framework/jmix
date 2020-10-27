@@ -24,11 +24,10 @@ import java.lang.annotation.Target;
 /**
  * This annotation is used to define a non-persistent attribute, or to specify additional properties of a persistent
  * attribute.
- *
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ModelProperty {
+public @interface JmixProperty {
 
     /**
      * Whether the attribute is required.

@@ -18,12 +18,14 @@ package test_support.app.entity.nullable_and_generated_id;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Table(name = "TEST_NGBAR")
 @Entity(name = "test_NGBar")
+@JmixEntity
 public class NGBar {
 
     @Id

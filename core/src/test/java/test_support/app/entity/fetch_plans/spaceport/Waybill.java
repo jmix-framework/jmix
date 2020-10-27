@@ -21,7 +21,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 import java.util.List;
@@ -30,12 +31,13 @@ import java.util.UUID;
 @PublishEntityChangedEvents
 @Table(name = "ST_WAYBILL")
 @javax.persistence.Entity(name = "st_Waybill")
+@JmixEntity
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Waybill {
     private static final long serialVersionUID = -5842090535415841578L;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     @JmixGeneratedValue
     @Id
     private UUID id;

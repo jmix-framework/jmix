@@ -39,11 +39,11 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * Registers external UI components that should be used by the framework.
  * <p>
  * For instance, in the spring {@link Configuration} class create {@link ComponentRegistration} bean.
- * <pre>{@code
- * @Configuration
+ * <pre>
+ * &#64;Configuration
  * public class ComponentConfiguration {
  *
- *     @Bean
+ *     &#64;Bean
  *     public ComponentRegistration extButton() {
  *         return ComponentRegistrationBuilder.create(ExtButton.NAME)
  *                 .withComponentClass(ExtWebButton.class)
@@ -51,30 +51,30 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  *                 .build();
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * <p><br>
  * Note, the order of providing {@link ComponentRegistration} beans is very important
  * because components with the same name will be filtered if they have lower priority.
  * For instance, the configuration provides two {@link ComponentRegistration} with
  * the same name:
- * <pre>{@code
- * @Bean
- * @Order(100)
+ * <pre>
+ * &#64;Bean
+ * &#64;Order(100)
  * public ComponentRegistration extButton() {
  *     return ComponentRegistrationBuilder.create(ExtButton.NAME)
  *             .withComponentClass(ExtWebButton.class)
  *             .build();
  * }
- * @Bean
- * @Order(200)
+ * &#64;Bean
+ * &#64;Order(200)
  * public ComponentRegistration extButton1() {
  *     return ComponentRegistrationBuilder.create(ExtButton.NAME)
  *             .withComponentClass(ExtWebButton.class)
  *             .withComponentLoaderClass(ExtButtonLoader.class)
  *             .build();
  * }
- * }</pre>
+ * </pre>
  * Component with loader will be filtered as it has a lower priority. Another example,
  * the configuration provides {@link ComponentRegistration} that overrides registration
  * from some add-on. In this case, if the component from the add-on has lower priority

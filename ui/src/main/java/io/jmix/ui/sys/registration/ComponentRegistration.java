@@ -23,11 +23,11 @@ import javax.annotation.Nullable;
 
 /**
  * Registers a UI component in the framework. For instance:
- * <pre>{@code
- * @Configuration
+ * <pre>
+ * &#64;Configuration
  * public class ComponentConfiguration {
  *
- *     @Bean
+ *     &#64;Bean
  *     public ComponentRegistration extButton() {
  *         return ComponentRegistrationBuilder.create(ExtButton.NAME)
  *                 .withComponentClass(ExtWebButton.class)
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  *                 .build();
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * @see ComponentRegistrationBuilder
  * @see CustomComponentsRegistry

@@ -23,11 +23,11 @@ import io.jmix.ui.xml.layout.ComponentLoader;
  * Builds registration object that is used for adding or overriding UI components in the framework
  * <p>
  * For instance:
- * <pre>{@code
- * @Configuration
+ * <pre>
+ * &#64;Configuration
  * public class ComponentConfiguration {
  *
- *     @Bean
+ *     &#64;Bean
  *     public ComponentRegistration extButton() {
  *         return ComponentRegistrationBuilder.create(ExtButton.NAME)
  *                 .withComponentClass(ExtWebButton.class)
@@ -35,7 +35,7 @@ import io.jmix.ui.xml.layout.ComponentLoader;
  *                 .build();
  *     }
  * }
- * }</pre>
+ * </pre>
  *
  * @see ComponentRegistration
  * @see CustomComponentsRegistry

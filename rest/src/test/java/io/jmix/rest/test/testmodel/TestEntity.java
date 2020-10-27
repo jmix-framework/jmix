@@ -16,11 +16,14 @@
 
 package io.jmix.rest.test.testmodel;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 /**
  *
  */
+@JmixEntity
 @Entity(name = "test$TestEntity")
 @Table(name = "TEST_TEST_ENTITY")
 public class TestEntity extends BaseEntity {

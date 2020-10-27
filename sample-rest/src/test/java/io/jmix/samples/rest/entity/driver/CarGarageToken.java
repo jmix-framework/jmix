@@ -17,6 +17,7 @@
 package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity(name = "ref$CarGarageToken")
+@JmixEntity
 @Table(name = "REF_CAR_GARAGE_TOKEN")
 public class CarGarageToken extends StandardEntity {
 

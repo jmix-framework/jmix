@@ -16,6 +16,7 @@
 package io.jmix.samples.rest.entity.sec;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import javax.persistence.*;
  * User access group.
  */
 @Entity(name = "sec$Group")
+@JmixEntity
 @Table(name = "SAMPLE_REST_SEC_GROUP")
 public class Group extends StandardEntity {
     private static final long serialVersionUID = -4581386806900761785L;

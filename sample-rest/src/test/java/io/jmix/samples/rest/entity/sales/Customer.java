@@ -19,6 +19,7 @@ package io.jmix.samples.rest.entity.sales;
 
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 import io.jmix.samples.rest.entity.StandardEntity;
 
@@ -27,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "sales$Customer")
+@JmixEntity
 @Table(name = "SALES_CUSTOMER")
 @PublishEntityChangedEvents
 public class Customer extends StandardEntity {

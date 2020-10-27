@@ -17,6 +17,7 @@
 package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -26,6 +27,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity(name = "ref$Seller")
+@JmixEntity
 @Table(name = "REF_SELLER")
 public class Seller extends StandardEntity {
 

@@ -19,12 +19,14 @@ package io.jmix.samples.rest.entity.driver;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "ref$Driver")
+@JmixEntity
 @Table(name = "REF_DRIVER")
 public class Driver extends StandardEntity {
 

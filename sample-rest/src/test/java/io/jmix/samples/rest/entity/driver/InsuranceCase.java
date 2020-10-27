@@ -18,11 +18,13 @@ package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "ref$InsuranceCase")
+@JmixEntity
 @Table(name = "REF_INSURANCE_CASE")
 public class InsuranceCase extends StandardEntity {
 

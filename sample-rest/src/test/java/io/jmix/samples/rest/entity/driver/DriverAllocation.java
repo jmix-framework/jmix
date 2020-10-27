@@ -19,6 +19,7 @@ package io.jmix.samples.rest.entity.driver;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity(name = "ref$DriverAllocation")
+@JmixEntity
 @Table(name = "REF_DRIVER_ALLOC")
 public class DriverAllocation extends StandardEntity {
 

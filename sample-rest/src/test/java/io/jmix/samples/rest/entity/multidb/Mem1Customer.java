@@ -7,21 +7,21 @@ package io.jmix.samples.rest.entity.multidb;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.Id;
 import java.util.UUID;
 
-@ModelObject(name = "ref$Mem1Customer")
+@JmixEntity(name = "ref$Mem1Customer")
 @Store(name = "mem1")
 public class Mem1Customer {
     @Id
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty
+    @JmixProperty
     @InstanceName
     private String name;
 

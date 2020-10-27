@@ -18,7 +18,8 @@ package io.jmix.samples.rest.entity.debtor;
 
 
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Table(name = "DEBT_CASE")
 @Entity(name = "debt$Case")
+@JmixEntity
 public class Case extends StandardEntity {
     @Column(name = "TEST1", length = 50)
     protected String test1;
@@ -63,12 +65,12 @@ public class Case extends StandardEntity {
     protected Debtor debtor;
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties({"test1", "test2"})
     protected String nonPersistent1;
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     protected List<Debtor> doubleDebtor;
 
     private static final long serialVersionUID = 5403048066474211978L;

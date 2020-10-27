@@ -20,6 +20,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 import io.jmix.samples.rest.entity.sec.User;
 
@@ -27,6 +28,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "ref$Card")
+@JmixEntity
 @Table(name = "REF_CARD")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "CARD_TYPE", discriminatorType = DiscriminatorType.INTEGER)

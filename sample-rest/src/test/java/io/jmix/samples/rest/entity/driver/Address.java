@@ -16,14 +16,14 @@
 
 package io.jmix.samples.rest.entity.driver;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.sql.Date;
 
 @Embeddable
-@ModelObject(name = "ref$Address")
+@JmixEntity(name = "ref$Address")
 public class Address {
 
     private static final long serialVersionUID = -6835930349916854264L;

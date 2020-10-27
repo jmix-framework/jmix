@@ -20,6 +20,7 @@ import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.validation.group.RestApiChecks;
 import io.jmix.samples.rest.validation.TestCurrencyClassConstraint;
 import org.springframework.data.annotation.CreatedBy;
@@ -35,6 +36,7 @@ import java.util.UUID;
 
 @TestCurrencyClassConstraint(groups = RestApiChecks.class)
 @Entity(name = "ref$Currency")
+@JmixEntity
 @Table(name = "REF_CURRENCY")
 public class Currency {
     private static final long serialVersionUID = 6912352294666689769L;

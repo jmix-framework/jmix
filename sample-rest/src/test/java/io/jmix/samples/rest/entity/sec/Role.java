@@ -16,6 +16,7 @@
 package io.jmix.samples.rest.entity.sec;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
  * User role.
  */
 @Entity(name = "sec$Role")
+@JmixEntity
 @Table(name = "SAMPLE_REST_SEC_ROLE")
 public class Role extends StandardEntity {
     private static final long serialVersionUID = -4889116218059626402L;

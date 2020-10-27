@@ -7,14 +7,14 @@ package io.jmix.samples.rest.entity.multidb;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 
-@ModelObject(name = "ref$Mem1LongIdEntity")
+@JmixEntity(name = "ref$Mem1LongIdEntity")
 @Store(name = "mem1")
 public class Mem1LongIdEntity {
     @Id
@@ -22,7 +22,7 @@ public class Mem1LongIdEntity {
     @JmixGeneratedValue
     protected Long id;
 
-    @ModelProperty
+    @JmixProperty
     @InstanceName
     private String name;
 

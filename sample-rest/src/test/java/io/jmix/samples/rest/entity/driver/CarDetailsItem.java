@@ -17,11 +17,13 @@
 package io.jmix.samples.rest.entity.driver;
 
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "ref$CarDetailsItem")
+@JmixEntity
 @Table(name = "REF_CAR_DETAILS_ITEM")
 public class CarDetailsItem extends StandardEntity {
 

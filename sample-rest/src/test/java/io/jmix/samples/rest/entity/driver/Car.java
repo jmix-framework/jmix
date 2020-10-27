@@ -21,7 +21,8 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity(name = "ref_Car")
+@JmixEntity
 @Table(name = "REF_CAR")
 @Listeners("jmix_CarDetachListener")
 public class Car extends StandardEntity {
@@ -84,7 +86,7 @@ public class Car extends StandardEntity {
 
     // Test meta property enhancing in persistent entity
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Integer repairCost;
 
@@ -106,7 +108,7 @@ public class Car extends StandardEntity {
 
     // This attribute is set by CarDetachListener
     @Transient
-    @ModelProperty
+    @JmixProperty
     protected String currencyCode;
 
     public String getVin() {
@@ -183,12 +185,12 @@ public class Car extends StandardEntity {
         this.repairPrice = repairPrice;
     }
 
-    @ModelProperty
+    @JmixProperty
     public Integer getRepairCount() {
         return repairCount;
     }
 
-    @ModelProperty
+    @JmixProperty
     public void setRepairCount(Integer repairCount) {
         this.repairCount = repairCount;
     }

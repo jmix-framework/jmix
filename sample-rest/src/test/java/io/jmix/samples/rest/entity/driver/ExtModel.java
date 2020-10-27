@@ -16,11 +16,14 @@
 
 package io.jmix.samples.rest.entity.driver;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name = "ref$ExtModel")
+@JmixEntity
 public class ExtModel extends Model {
 
     @Column(name = "LAUNCH_YEAR")

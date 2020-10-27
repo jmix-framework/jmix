@@ -19,6 +19,7 @@ package io.jmix.samples.rest.entity.debtor;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.Column;
@@ -29,6 +30,7 @@ import java.util.Set;
 
 @Table(name = "DEBT_DEBTOR")
 @Entity(name = "debt$Debtor")
+@JmixEntity
 public class Debtor extends StandardEntity {
     @Column(name = "TITLE", nullable = false, length = 50)
     protected String title;

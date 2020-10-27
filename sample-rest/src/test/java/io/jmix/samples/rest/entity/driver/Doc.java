@@ -18,12 +18,14 @@ package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity(name = "ref$Doc")
+@JmixEntity
 @Table(name = "REF_DOC")
 @DiscriminatorValue("100")
 @PrimaryKeyJoinColumn(name = "CARD_ID", referencedColumnName = "ID")

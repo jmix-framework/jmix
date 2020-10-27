@@ -17,9 +17,12 @@
 package io.jmix.samples.rest.entity.identity;
 
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "ref$IdentityCustomer")
+@JmixEntity
 @Table(name = "REF_IK_CUSTOMER")
 public class IdentityCustomer {
 

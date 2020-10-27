@@ -21,6 +21,7 @@ import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ import java.sql.Date;
 import java.util.Set;
 
 @Entity(name = "ref$Repair")
+@JmixEntity
 @Table(name = "REF_REPAIR")
 public class Repair extends StandardEntity {
 

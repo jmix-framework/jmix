@@ -20,6 +20,7 @@ import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
@@ -29,6 +30,7 @@ import java.util.List;
  * User
  */
 @Entity(name = "sec$User")
+@JmixEntity
 @Table(name = "SAMPLE_REST_SEC_USER")
 public class User extends StandardEntity {
     private static final long serialVersionUID = 5007187642916030394L;

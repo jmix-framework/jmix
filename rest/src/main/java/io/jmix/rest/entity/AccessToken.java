@@ -18,6 +18,7 @@ package io.jmix.rest.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 import java.util.Date;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "sys$AccessToken")
 @Table(name = "SYS_ACCESS_TOKEN")
 @SystemLevel

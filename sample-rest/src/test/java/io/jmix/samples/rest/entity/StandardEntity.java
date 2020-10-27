@@ -19,7 +19,7 @@ package io.jmix.samples.rest.entity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @MappedSuperclass
-@ModelObject(name = "sys$StandardEntity")
+@JmixEntity(name = "sys$StandardEntity")
 public abstract class StandardEntity {
 
     @Id

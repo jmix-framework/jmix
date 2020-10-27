@@ -18,20 +18,20 @@ package io.jmix.samples.rest.entity.driver;
 
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 
-@ModelObject(name = "jmix$NotPersistentStringIdEntity")
+@JmixEntity(name = "jmix$NotPersistentStringIdEntity")
 public class NotPersistentStringIdEntity {
 
     @Id
-    @ModelProperty
+    @JmixProperty
     protected String identifier;
 
     @InstanceName
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
     public String getIdentifier() {

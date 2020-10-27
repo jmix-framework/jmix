@@ -17,12 +17,14 @@
 package io.jmix.samples.rest.entity.driver;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "ref$Plant")
+@JmixEntity
 @Table(name = "REF_PLANT")
 public class Plant extends StandardEntity {
 

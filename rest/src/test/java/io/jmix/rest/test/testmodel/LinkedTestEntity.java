@@ -16,6 +16,8 @@
 
 package io.jmix.rest.test.testmodel;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -23,6 +25,7 @@ import javax.persistence.Table;
 /**
  *
  */
+@JmixEntity
 @Entity(name = "test$LinkedTestEntity")
 @Table(name = "TEST_LINKED_TEST_ENTITY")
 public class LinkedTestEntity extends BaseEntity {

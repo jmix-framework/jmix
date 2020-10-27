@@ -19,6 +19,7 @@ package io.jmix.samples.rest.entity.driver;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.samples.rest.entity.StandardEntity;
 
 import javax.annotation.PostConstruct;
@@ -29,6 +30,7 @@ import javax.persistence.Table;
 import java.util.Set;
 
 @Entity(name = "ref$Model")
+@JmixEntity
 @Table(name = "REF_MODEL")
 public class Model extends StandardEntity {
 

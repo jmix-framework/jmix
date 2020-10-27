@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.UiProperties;
+
 /**
  * Describes the default ways a window was closed.
  */
@@ -33,7 +35,7 @@ public enum CloseOriginType implements Window.CloseOrigin {
     CLOSE_BUTTON,
 
     /**
-     * A screen is closed with {@link ClientConfig#getCloseShortcut()}.
+     * A screen is closed with {@link UiProperties#getCloseShortcut()}.
      */
     SHORTCUT
 }

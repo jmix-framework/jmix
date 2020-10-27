@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @NamePattern("%s|name")
 @Table(name = "TEST_SEVERAL_FETCH_GROUPS_TARIFF")
 @Entity(name = "test$SeveralFetchGroups_Tariff")
+@JmixEntity
 public class SeveralFetchGroups_Tariff extends StandardEntity {
     private static final long serialVersionUID = -7877967845883729537L;
 

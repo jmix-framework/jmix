@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.core.entity;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -27,7 +27,7 @@ import java.util.Date;
  * Optimistically locked, implements Updatable and SoftDelete.
  */
 @MappedSuperclass
-@ModelObject(name = "sys$StandardEntity")
+@JmixEntity(name = "sys$StandardEntity")
 public abstract class StandardEntity extends BaseUuidEntity implements Versioned, Creatable, Updatable, SoftDelete {
 
     private static final long serialVersionUID = 5642226839555253331L;

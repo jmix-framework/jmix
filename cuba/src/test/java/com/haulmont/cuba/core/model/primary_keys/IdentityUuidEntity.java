@@ -16,9 +16,10 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
+import com.haulmont.cuba.core.entity.BaseIdentityIdEntity;
 import com.haulmont.cuba.core.entity.HasUuid;
 import io.jmix.core.UuidProvider;
-import com.haulmont.cuba.core.entity.BaseIdentityIdEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity(name = "test$IdentityUuidEntity")
+@JmixEntity
 @Table(name = "TEST_IDENTITY_UUID")
 @AttributeOverride(name = "uuid", column = @Column(name = "UUID"))
 public class IdentityUuidEntity extends BaseIdentityIdEntity implements HasUuid {

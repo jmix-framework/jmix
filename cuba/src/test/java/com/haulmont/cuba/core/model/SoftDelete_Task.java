@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @NamePattern("%s|message")
 @Table(name = "TEST_SOFT_DELETE_TASK")
 @Entity(name = "test$SoftDelete_Task")
+@JmixEntity
 public class SoftDelete_Task extends StandardEntity {
     private static final long serialVersionUID = 1528766577320321656L;
 

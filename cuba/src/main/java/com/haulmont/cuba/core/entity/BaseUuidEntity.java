@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.entity;
 import io.jmix.core.Entity;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -31,7 +31,7 @@ import java.util.UUID;
  * Inherit from it if you need an entity without optimistic locking, create, update and soft deletion info.
  */
 @MappedSuperclass
-@ModelObject(name = "sys_BaseUuidEntity")
+@JmixEntity(name = "sys_BaseUuidEntity")
 public abstract class BaseUuidEntity implements Entity, HasUuid {
 
     private static final long serialVersionUID = -2217624132287086972L;

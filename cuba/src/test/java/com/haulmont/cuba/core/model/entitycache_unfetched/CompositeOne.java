@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.entitycache_unfetched;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Table(name = "TEST_COMPOSITE_ONE")
 @Entity(name = "test$CompositeOne")
+@JmixEntity
 public class CompositeOne extends StandardEntity {
     private static final long serialVersionUID = -2076214407457694228L;
 

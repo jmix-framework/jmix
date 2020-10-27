@@ -17,13 +17,13 @@
 package com.haulmont.cuba.core.model.sales;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 @Embeddable
-@ModelObject(name = "test_Address")
+@JmixEntity(name = "test_Address")
 public class Address implements Entity {
 
     @Column(name = "CITY")

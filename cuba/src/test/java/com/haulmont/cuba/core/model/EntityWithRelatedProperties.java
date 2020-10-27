@@ -16,16 +16,18 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$EntityWithRelatedProperties")
+@JmixEntity
 @Table(name = "TEST_ENTITY_WITH_RELATED_PROPERTIES")
 @NamePattern("%s|name")
 public class EntityWithRelatedProperties extends StandardEntity {
@@ -39,13 +41,13 @@ public class EntityWithRelatedProperties extends StandardEntity {
     @Column(name = "NOT_RELATED_ATTR")
     private String notRelatedAttr;
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties({"name", "surname"})
     public String getNickName() {
         return name + " MegaCool " + surname;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties({"name", "surname"})
     public String getSomeAttr() {
         return getNickName() + " additional string";

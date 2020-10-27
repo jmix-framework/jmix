@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$Many2ManyRef")
+@JmixEntity
 @Table(name = "TEST_MANY2MANY_REF")
 public class Many2ManyRef extends StandardEntity {
 

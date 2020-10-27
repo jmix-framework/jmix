@@ -29,7 +29,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@ModelObject(name = "sec$DynamicAttributesCondition", annotatedPropertiesOnly = true)
+@JmixEntity(name = "sec$DynamicAttributesCondition", annotatedPropertiesOnly = true)
 @SystemLevel
 public class DynamicAttributesCondition extends AbstractCondition {
 

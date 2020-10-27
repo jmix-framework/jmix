@@ -17,17 +17,17 @@
 
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 /**
  * Diff between properties in entity snapshots
  */
-@ModelObject(name = "sys$EntityPropertyDiff")
+@JmixEntity(name = "sys$EntityPropertyDiff")
 @SystemLevel
 public abstract class EntityPropertyDiff extends BaseUuidEntity {
     private static final long serialVersionUID = -6467322033937742101L;
@@ -59,22 +59,22 @@ public abstract class EntityPropertyDiff extends BaseUuidEntity {
         return metaClassName;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getName() {
         return propertyCaption;
     }
 
-    @ModelProperty
+    @JmixProperty
     public void setName(String name) {
         propertyCaption = name;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getLabel() {
         return label;
     }
 
-    @ModelProperty
+    @JmixProperty
     public void setLabel(String label) {
         this.label = label;
     }
@@ -91,32 +91,32 @@ public abstract class EntityPropertyDiff extends BaseUuidEntity {
         return null;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getBeforeString() {
         return "";
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getAfterString() {
         return "";
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getBeforeCaption() {
         return getBeforeString();
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getAfterCaption() {
         return getAfterString();
     }
 
-    @ModelProperty
+    @JmixProperty
     public ItemState getItemState() {
         return ItemState.Normal;
     }
 
-    @ModelProperty
+    @JmixProperty
     public void setItemState(ItemState itemState) {
     }
 

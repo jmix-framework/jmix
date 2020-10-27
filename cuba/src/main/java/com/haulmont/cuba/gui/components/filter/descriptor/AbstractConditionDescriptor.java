@@ -17,19 +17,19 @@
 
 package com.haulmont.cuba.gui.components.filter.descriptor;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.model.MetaClass;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import org.dom4j.Element;
 
 /**
  * Class that encapsulates common filter condition descriptor behaviour. Condition descriptors are used for
  * generating condition objects.
  */
-@ModelObject(name = "sec$AbstractConditionDescriptor", annotatedPropertiesOnly = true)
+@JmixEntity(name = "sec$AbstractConditionDescriptor", annotatedPropertiesOnly = true)
 @SystemLevel
 public abstract class AbstractConditionDescriptor extends BaseUuidEntity {
 
@@ -62,7 +62,7 @@ public abstract class AbstractConditionDescriptor extends BaseUuidEntity {
         return caption;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getLocCaption() {
         return locCaption;
     }
@@ -105,7 +105,7 @@ public abstract class AbstractConditionDescriptor extends BaseUuidEntity {
 
     public abstract String getEntityParamView();
 
-    @ModelProperty
+    @JmixProperty
     public String getTreeCaption() {
         return getLocCaption();
     }

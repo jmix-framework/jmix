@@ -17,12 +17,12 @@
 
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.FetchPlan;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Diff object for Entity Snapshots
  */
-@ModelObject(name = "test$EntityDiff", annotatedPropertiesOnly = true)
+@JmixEntity(name = "test$EntityDiff", annotatedPropertiesOnly = true)
 @SystemLevel
 public class EntityDiff extends BaseUuidEntity {
 
@@ -100,7 +100,7 @@ public class EntityDiff extends BaseUuidEntity {
         this.propertyDiffs = propertyDiffs;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getLabel(){
         String label = "";
         if (beforeSnapshot != null)

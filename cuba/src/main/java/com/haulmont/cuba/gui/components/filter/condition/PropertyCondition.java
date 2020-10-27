@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.components.filter.condition;
 
 import com.google.common.base.Strings;
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
@@ -33,12 +34,11 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.filter.ConditionType;
 import io.jmix.ui.filter.Op;
-import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.dom4j.Element;
@@ -47,7 +47,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@ModelObject(name = "sec$PropertyCondition")
+@JmixEntity(name = "sec$PropertyCondition")
 @SystemLevel
 public class PropertyCondition extends AbstractCondition {
 

@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.model.number_id;
 
 import com.haulmont.cuba.core.entity.BaseLongIdEntity;
 import com.haulmont.cuba.core.entity.annotation.IdSequence;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 
 @Table(name = "TEST_NUMBER_ID_SEQ_NAME_FIRST")
 @Entity(name = "test$NumberIdSeqNameFirst")
+@JmixEntity
 @IdSequence(name = "seq_number_id_name")
 public class NumberIdSeqNameFirst extends BaseLongIdEntity {
 

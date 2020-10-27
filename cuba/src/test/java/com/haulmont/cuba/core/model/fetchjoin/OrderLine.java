@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model.fetchjoin;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "JOINTEST_ORDER_LINE")
 @Entity(name = "jointest$OrderLine")
+@JmixEntity
 public class OrderLine extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

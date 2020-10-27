@@ -16,8 +16,9 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.math.BigDecimal;
 @NamePattern("%s|name")
 @Table(name = "JOINTEST_PRODUCT")
 @Entity(name = "jointest$Product")
+@JmixEntity
 public class Product extends StandardEntity {
     private static final long serialVersionUID = 431094222022716546L;
 

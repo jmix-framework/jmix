@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.beanvalidation;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 @Entity(name = "test$ValidatedEntity")
+@JmixEntity
 @Table(name = "TEST_VALIDATED_ENTITY")
 public class ValidatedEntity extends StandardEntity {
     @Length(min = 5, max = 2147483647)

@@ -17,10 +17,11 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -30,6 +31,7 @@ import java.util.Set;
  * User access group.
  */
 @Entity(name = "test$Group")
+@JmixEntity
 @Table(name = "TEST_GROUP")
 @NamePattern("%s|name")
 public class Group extends StandardEntity {

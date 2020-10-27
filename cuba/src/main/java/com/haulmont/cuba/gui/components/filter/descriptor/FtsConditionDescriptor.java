@@ -21,9 +21,9 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.FtsCondition;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
-@ModelObject(name = "sec$FtsConditionDescriptor")
+@JmixEntity(name = "sec$FtsConditionDescriptor")
 @SystemLevel
 public class FtsConditionDescriptor extends AbstractConditionDescriptor {
 

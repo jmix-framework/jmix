@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model.primary_keys;
 
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Table;
 
 @javax.persistence.Entity(name = "test$CompositeKeyEntity")
+@JmixEntity
 @Table(name = "TEST_COMPOSITE_KEY")
 public class CompositeKeyEntity implements Entity {
 

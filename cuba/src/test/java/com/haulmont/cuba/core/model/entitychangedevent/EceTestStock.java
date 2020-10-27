@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.entitychangedevent;
 
-import io.jmix.core.DeletePolicy;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test_EceTestStock")
+@JmixEntity
 @Table(name = "TEST_ECE_STOCK")
 @PublishEntityChangedEvents
 public class EceTestStock extends StandardEntity {

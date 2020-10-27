@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 
 @Table(name = "TEST_FETCH_SAME_LINK_B_ENTITY")
 @Entity(name = "test$FetchSameLinkBEntity")
+@JmixEntity
 public class FetchSameLinkBEntity extends StandardEntity {
     private static final long serialVersionUID = 1236279239009133835L;
 

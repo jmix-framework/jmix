@@ -16,19 +16,19 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Date;
 
 /**
  * Describes a pessimistic lock of an object.
  */
-@ModelObject(name = "sys$LockInfo")
+@JmixEntity(name = "sys$LockInfo")
 @SystemLevel
 public class LockInfo extends BaseUuidEntity {
 
@@ -50,7 +50,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return locked object id
      */
-    @ModelProperty
+    @JmixProperty
     public String getEntityId() {
         return entityId;
     }
@@ -58,7 +58,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return locked object type
      */
-    @ModelProperty
+    @JmixProperty
     public String getEntityName() {
         return entityName;
     }
@@ -66,7 +66,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return when the lock occurred
      */
-    @ModelProperty
+    @JmixProperty
     public Date getSince() {
         return since;
     }
@@ -74,7 +74,7 @@ public class LockInfo extends BaseUuidEntity {
     /**
      * @return a user which holds the lock
      */
-    @ModelProperty
+    @JmixProperty
     public User getUser() {
         return user;
     }

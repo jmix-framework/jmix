@@ -18,11 +18,13 @@ package com.haulmont.cuba.core.model;
 
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 @Entity(name = "test_PetclinicOwner")
+@JmixEntity
 @Table(name = "TEST_PC_OWNER")
 @NamePattern("#getCaption|name")
 public class Owner extends StandardEntity {

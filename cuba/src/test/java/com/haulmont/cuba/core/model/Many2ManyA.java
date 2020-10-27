@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.DeletePolicy;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "test$Many2ManyA")
+@JmixEntity
 @Table(name = "TEST_MANY2MANY_A")
 public class Many2ManyA extends StandardEntity {
 

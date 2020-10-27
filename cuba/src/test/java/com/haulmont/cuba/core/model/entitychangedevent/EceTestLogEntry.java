@@ -18,12 +18,14 @@ package com.haulmont.cuba.core.model.entitychangedevent;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test_EceTestLog")
+@JmixEntity
 @Table(name = "TEST_ECE_LOG")
 @PublishEntityChangedEvents
 public class EceTestLogEntry extends StandardEntity {

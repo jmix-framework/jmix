@@ -16,6 +16,7 @@
 package com.haulmont.cuba.core.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Lob;
@@ -27,6 +28,7 @@ import java.util.Date;
  * Entity for working with configuration parameters (see com.haulmont.cuba.core.config.Config).<br>
  * Should not be used in application code.
  */
+@JmixEntity
 @javax.persistence.Entity(name = "sys$Config")
 @Table(name = "SYS_CONFIG")
 @SystemLevel

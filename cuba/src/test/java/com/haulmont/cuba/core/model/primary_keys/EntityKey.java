@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model.primary_keys;
 
 import io.jmix.core.Entity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
+@JmixEntity
 public class EntityKey implements Entity {
 
     @Column(name = "TENANT")

@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Table(name = "TEST_FETCH_SAME_MAIN_ENTITY")
 @Entity(name = "test$FetchSameMainEntity")
+@JmixEntity
 public class FetchSameMainEntity extends StandardEntity {
     private static final long serialVersionUID = -463279237482816313L;
 

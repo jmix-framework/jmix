@@ -27,7 +27,7 @@ import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -554,7 +554,7 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
             if (!properties.isEmpty()) {
                 String orderBy = properties.stream()
                         .filter(m -> m != null
-                                && m.getAnnotatedElement().getAnnotation(ModelProperty.class) == null)
+                                && m.getAnnotatedElement().getAnnotation(JmixProperty.class) == null)
                         .map(m -> "e." + m.getName())
                         .collect(Collectors.joining(", "));
 

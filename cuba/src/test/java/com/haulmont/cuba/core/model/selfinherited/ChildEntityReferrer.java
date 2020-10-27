@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model.selfinherited;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_CHILD_ENTITY_REFERRER")
 @Entity(name = "test$ChildEntityReferrer")
+@JmixEntity
 public class ChildEntityReferrer extends StandardEntity {
     private static final long serialVersionUID = 3582114532586946444L;
 

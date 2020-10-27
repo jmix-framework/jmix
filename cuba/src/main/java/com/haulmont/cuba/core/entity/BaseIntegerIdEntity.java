@@ -17,7 +17,7 @@ package com.haulmont.cuba.core.entity;
 
 import io.jmix.core.Entity;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -27,7 +27,7 @@ import javax.persistence.MappedSuperclass;
  * Base class for entities with Integer identifier.
  */
 @MappedSuperclass
-@ModelObject(name = "sys$BaseIntegerIdEntity")
+@JmixEntity(name = "sys$BaseIntegerIdEntity")
 public abstract class BaseIntegerIdEntity implements Entity {
 
     private static final long serialVersionUID = 1748237513475338490L;

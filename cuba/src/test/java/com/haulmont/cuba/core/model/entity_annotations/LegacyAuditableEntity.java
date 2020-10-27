@@ -16,9 +16,10 @@
 
 package com.haulmont.cuba.core.model.entity_annotations;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.entity.Updatable;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.util.Date;
 
 @Table(name = "TEST_LEGACY_AUDITABLE")
 @Entity(name = "test$LegacyAuditable")
+@JmixEntity
 public class LegacyAuditableEntity extends BaseUuidEntity implements Creatable, Updatable {
     private static final long serialVersionUID = 16315856594452571L;
 

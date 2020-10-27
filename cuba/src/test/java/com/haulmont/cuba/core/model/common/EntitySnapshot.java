@@ -18,6 +18,7 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.UserSessionSource;
@@ -25,9 +26,9 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.datatype.Datatype;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,7 @@ import java.util.Date;
  * Snapshot for entity.
  */
 @Entity(name = "test$EntitySnapshot")
+@JmixEntity
 @Table(name = "TEST_ENTITY_SNAPSHOT")
 @SystemLevel
 public class EntitySnapshot extends BaseUuidEntity implements Creatable {
@@ -140,8 +142,8 @@ public class EntitySnapshot extends BaseUuidEntity implements Creatable {
         return author;
     }
 
-    @ModelProperty
-    @DependsOnProperties({"snapshotDate","author"})
+    @JmixProperty
+    @DependsOnProperties({"snapshotDate", "author"})
     public String getLabel() {
         String name = "";
         if (author != null && StringUtils.isNotEmpty(this.author.getCaption())) {
@@ -158,7 +160,7 @@ public class EntitySnapshot extends BaseUuidEntity implements Creatable {
         return StringUtils.trim(name);
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties("snapshotDate")
     public Date getChangeDate() {
         return this.snapshotDate;

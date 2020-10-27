@@ -16,16 +16,18 @@
 
 package com.haulmont.cuba.core.model.deletepolicy;
 
-import io.jmix.core.DeletePolicy;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.entity.annotation.OnDelete;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
+import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @NamePattern("%s|firstFld")
 @Table(name = "TEST_DELETE_POLICY_ONE_TO_ONE_FIRST")
 @Entity(name = "test$DeletePolicyOneToOne_First")
+@JmixEntity
 public class DeletePolicy_OneToOne_First extends StandardEntity {
     private static final long serialVersionUID = 6107554609928541090L;
 

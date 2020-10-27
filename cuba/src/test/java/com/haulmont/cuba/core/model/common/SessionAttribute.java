@@ -16,15 +16,17 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 
 @Entity(name = "test$SessionAttribute")
+@JmixEntity
 @Table(name = "TEST_SESSION_ATTR")
 @SystemLevel
 public class SessionAttribute extends StandardEntity {
@@ -98,7 +100,7 @@ public class SessionAttribute extends StandardEntity {
         this.sysTenantId = sysTenantId;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getDatatypeCaption() {
         Messages messages = AppBeans.get(Messages.class);
         return messages.getMainMessage("Datatype." + datatype);

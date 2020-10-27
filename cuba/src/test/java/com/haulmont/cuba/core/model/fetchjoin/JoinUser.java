@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.fetchjoin;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
@@ -25,6 +26,7 @@ import javax.persistence.*;
 @DiscriminatorValue("USR")
 @Table(name = "TEST_JOIN_USER")
 @Entity(name = "test$JoinUser")
+@JmixEntity
 public class JoinUser extends StandardEntity {
     private static final long serialVersionUID = 8413746332270252589L;
 

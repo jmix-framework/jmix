@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.embedded;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @NamePattern("%s|name")
 @Table(name = "TEST_ADDRESS_EMBEDDED_CONTAINER")
 @Entity(name = "test$AddressEmbeddedContainer")
+@JmixEntity
 public class AddressEmbeddedContainer extends StandardEntity {
     private static final long serialVersionUID = -4916441077527921725L;
 

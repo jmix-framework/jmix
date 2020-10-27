@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.BaseLongIdEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_MULTI_LINK_ENTITY")
 @Entity(name = "test$MultiLinkEntity")
+@JmixEntity
 public class MultiLinkEntity extends BaseLongIdEntity {
     private static final long serialVersionUID = -826856596780392051L;
 

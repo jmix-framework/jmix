@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.fetchjoin;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
@@ -25,6 +26,7 @@ import javax.persistence.*;
 @DiscriminatorValue("BS_TST_TP")
 @Table(name = "TEST_BASE_JOIN_TYPE")
 @Entity(name = "test$BaseJoinType")
+@JmixEntity
 public class BaseJoinType extends StandardEntity {
     private static final long serialVersionUID = 5524255739719690932L;
 

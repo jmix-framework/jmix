@@ -16,10 +16,11 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.DeletePolicy;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
@@ -27,6 +28,7 @@ import javax.persistence.*;
  * Link between users and roles.
  */
 @Entity(name = "test$UserRole")
+@JmixEntity
 @Table(name = "TEST_USER_ROLE")
 @SystemLevel
 public class UserRole extends StandardEntity {

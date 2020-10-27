@@ -16,12 +16,14 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test$SoftDeleteOneToOneA")
+@JmixEntity
 @Table(name = "TEST_SOFT_DELETE_OTO_A")
 @NamePattern("%s|name")
 public class SoftDeleteOneToOneA extends StandardEntity {

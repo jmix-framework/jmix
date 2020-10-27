@@ -17,16 +17,13 @@
 package com.haulmont.cuba.core.model.sales;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "TEST_ORDER_LINE_PARAM")
 @Entity(name = "test$OrderLineParam")
+@JmixEntity
 public class OrderLineParam extends StandardEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

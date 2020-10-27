@@ -17,10 +17,12 @@
 package com.haulmont.cuba.core.model.jpa_cascade;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test$JpaCascadeItem")
+@JmixEntity
 @Table(name = "TEST_JPA_CASCADE_ITEM")
 public class JpaCascadeItem extends StandardEntity {
 

@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components.filter.descriptor;
 
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 
 /**
@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.MetaClass;
  * It is used as parent node for property condition descriptors and custom condition descriptors.
  *
  */
-@ModelObject(name = "sec$HeaderConditionDescriptor")
+@JmixEntity(name = "sec$HeaderConditionDescriptor")
 @SystemLevel
 public class HeaderConditionDescriptor extends AbstractConditionDescriptor {
 

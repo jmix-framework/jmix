@@ -16,9 +16,10 @@
 
 package com.haulmont.cuba.core.model.entity_annotations;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,6 +28,7 @@ import java.util.Date;
 
 @Table(name = "TEST_ANNOTATED_SOFT_DELETE_ENTITY")
 @Entity(name = "test$AnnotatedSoftDeleteEntity")
+@JmixEntity
 public class AnnotatedSoftDeleteEntity extends BaseUuidEntity {
     private static final long serialVersionUID = -428994652664330271L;
 

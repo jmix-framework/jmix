@@ -16,9 +16,10 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,6 +28,7 @@ import java.util.Date;
  * User access groups hierarchy.
  */
 @Entity(name = "test$GroupHierarchy")
+@JmixEntity
 @Table(name = "TEST_GROUP_HIERARCHY")
 @SystemLevel
 public class GroupHierarchy extends BaseUuidEntity implements Creatable {

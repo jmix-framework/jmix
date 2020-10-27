@@ -16,11 +16,12 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
-import io.jmix.core.DeletePolicy;
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
-import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -30,6 +31,7 @@ import java.util.List;
 @NamePattern("%s|orderNumber")
 @Table(name = "JOINTEST_ORDER")
 @Entity(name = "jointest$Order")
+@JmixEntity
 public class Order extends StandardEntity {
     private static final long serialVersionUID = -698889274469884277L;
 

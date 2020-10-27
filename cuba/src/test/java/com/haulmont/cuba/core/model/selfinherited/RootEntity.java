@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.selfinherited;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.List;
 @DiscriminatorValue("R")
 @Table(name = "TEST_ROOT_ENTITY")
 @Entity(name = "test$RootEntity")
+@JmixEntity
 public class RootEntity extends StandardEntity {
     private static final long serialVersionUID = -7617820146992722574L;
 

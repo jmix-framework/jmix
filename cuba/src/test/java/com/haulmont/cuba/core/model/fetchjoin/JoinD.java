@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model.fetchjoin;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$JoinD")
+@JmixEntity
 @Table(name = "TEST_JOIN_D")
 public class JoinD extends StandardEntity {
     private static final long serialVersionUID = -847840181747408652L;

@@ -16,8 +16,9 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @NamePattern("%s|name")
 @Table(name = "TEST_MANY2_MANY_FETCH_SAME2")
 @Entity(name = "test$Many2Many_FetchSame2")
+@JmixEntity
 public class Many2Many_FetchSame2 extends StandardEntity {
     private static final long serialVersionUID = -8287667692509037970L;
 

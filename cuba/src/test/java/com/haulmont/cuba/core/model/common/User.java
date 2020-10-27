@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -36,6 +37,7 @@ import java.util.List;
  * User
  */
 @Entity(name = "test$User")
+@JmixEntity
 @Table(name = "TEST_USER")
 @NamePattern("#getCaption|login,name")
 @Listeners("test_UserEntityListener")

@@ -16,7 +16,7 @@
 package com.haulmont.cuba.core.entity;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
@@ -24,7 +24,7 @@ import javax.persistence.*;
  * Base class for entities with Long Identity identifier.
  */
 @MappedSuperclass
-@ModelObject(name = "sys$BaseIdentityIdEntity")
+@JmixEntity(name = "sys$BaseIdentityIdEntity")
 public abstract class BaseIdentityIdEntity implements Entity {
 
     private static final long serialVersionUID = 3083677558630811496L;

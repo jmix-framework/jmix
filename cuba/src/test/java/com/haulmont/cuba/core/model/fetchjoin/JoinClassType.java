@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import java.util.List;
 @Table(name = "TEST_JOIN_CLASS_TYPE")
 @DiscriminatorValue("TST_CLS")
 @Entity(name = "test$JoinClassType")
+@JmixEntity
 public class JoinClassType extends BaseJoinType {
     private static final long serialVersionUID = -4326065998006020710L;
 

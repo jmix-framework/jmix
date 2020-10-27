@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.model.number_id;
 
 import com.haulmont.cuba.core.entity.BaseLongIdEntity;
 import com.haulmont.cuba.core.entity.annotation.IdSequence;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 @DiscriminatorValue("R")
 @Table(name = "TEST_NUMBER_ID_SEQ_NAME_SECOND")
 @Entity(name = "test$NumberIdSeqNameSecond")
+@JmixEntity
 @IdSequence(name = "seq_number_id_name")
 public class NumberIdSeqNameSecond extends BaseLongIdEntity {
 

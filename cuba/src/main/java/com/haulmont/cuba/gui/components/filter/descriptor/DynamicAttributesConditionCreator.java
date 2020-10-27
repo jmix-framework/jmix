@@ -22,10 +22,10 @@ import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.RandomStringUtils;
 
-@ModelObject(name = "sec$DynamicAttributesConditionCreator")
+@JmixEntity(name = "sec$DynamicAttributesConditionCreator")
 @SystemLevel
 public class DynamicAttributesConditionCreator extends AbstractConditionDescriptor {
 

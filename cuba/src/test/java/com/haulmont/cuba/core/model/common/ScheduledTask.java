@@ -18,12 +18,13 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.entity.SoftDelete;
 import com.haulmont.cuba.core.entity.Updatable;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +36,7 @@ import java.util.Date;
  * Entity that stores an information about a scheduled task.
  */
 @Entity(name = "test$ScheduledTask")
+@JmixEntity
 @Table(name = "TEST_SCHEDULED_TASK")
 @NamePattern("#name|beanName,methodName,className,scriptName")
 @SystemLevel
@@ -383,7 +385,7 @@ public class ScheduledTask extends BaseUuidEntity implements Creatable, Updatabl
         this.currentStartTimestamp = currentStartTimestamp;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String name() {
         if (beanName != null && methodName != null) {
             return beanName + "." + methodName;
@@ -394,7 +396,7 @@ public class ScheduledTask extends BaseUuidEntity implements Creatable, Updatabl
         }
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getMethodParametersString() {
         return "";
     }

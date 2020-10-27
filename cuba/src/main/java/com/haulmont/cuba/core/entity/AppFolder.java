@@ -18,15 +18,12 @@ package com.haulmont.cuba.core.entity;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
+@JmixEntity
 @Entity(name = "sys$AppFolder")
 @Table(name = "SYS_APP_FOLDER")
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")
@@ -42,7 +39,7 @@ public class AppFolder extends AbstractSearchFolder {
     @Column(name = "QUANTITY_SCRIPT", length = 200)
     protected String quantityScript;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Integer quantity;
 

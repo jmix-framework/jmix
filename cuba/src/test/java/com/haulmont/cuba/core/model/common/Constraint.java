@@ -17,6 +17,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.security.ConstraintOperationType;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ import javax.persistence.*;
  * Security constraint definition entity.
  */
 @Entity(name = "test$Constraint")
+@JmixEntity
 @Table(name = "TEST_CONSTRAINT")
 @SystemLevel
 public class Constraint extends StandardEntity {

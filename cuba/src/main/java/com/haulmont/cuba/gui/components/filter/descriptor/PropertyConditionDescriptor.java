@@ -27,7 +27,7 @@ import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -40,7 +40,7 @@ import java.util.EnumSet;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-@ModelObject(name = "sec$PropertyConditionDescriptor")
+@JmixEntity(name = "sec$PropertyConditionDescriptor")
 @SystemLevel
 public class PropertyConditionDescriptor extends AbstractConditionDescriptor {
     protected String entityParamWhere;

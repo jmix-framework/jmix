@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.BaseLongIdEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 
 @Table(name = "TEST_LINK_ENTITY")
 @Entity(name = "test$LinkEntity")
+@JmixEntity
 public class LinkEntity extends BaseLongIdEntity {
     private static final long serialVersionUID = -5716370895790404564L;
 

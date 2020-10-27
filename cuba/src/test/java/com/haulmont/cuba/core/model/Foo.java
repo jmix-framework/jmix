@@ -16,13 +16,15 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.metamodel.annotation.InstanceName;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name = "test$Foo")
+@JmixEntity
 public class Foo extends BaseUuidEntity {
 
     @Column(name = "NAME")

@@ -16,13 +16,14 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 
 import javax.annotation.PostConstruct;
@@ -35,6 +36,7 @@ import java.util.Set;
  * Created by <code>EntityLog</code> bean.
  */
 @Entity(name = "test$EntityLog")
+@JmixEntity
 @Table(name = "TEST_ENTITY_LOG")
 @SystemLevel
 public class EntityLogItem extends BaseUuidEntity implements Creatable {
@@ -102,7 +104,7 @@ public class EntityLogItem extends BaseUuidEntity implements Creatable {
     private String entityInstanceName;
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     private Set<EntityLogAttr> attributes;
 
     @Column(name = "CHANGES")

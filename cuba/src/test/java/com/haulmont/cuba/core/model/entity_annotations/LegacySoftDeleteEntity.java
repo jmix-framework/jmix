@@ -16,8 +16,9 @@
 
 package com.haulmont.cuba.core.model.entity_annotations;
 
-import com.haulmont.cuba.core.entity.SoftDelete;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import com.haulmont.cuba.core.entity.SoftDelete;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import java.util.Date;
 
 @Table(name = "TEST_LEGACY_SOFT_DELETE")
 @Entity(name = "test$LegacySoftDelete")
+@JmixEntity
 public class LegacySoftDeleteEntity extends BaseUuidEntity implements SoftDelete {
 
     private static final long serialVersionUID = 4969179630137721426L;

@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @NamePattern("%s|party")
 @Table(name = "JOINTEST_SALES_PERSON")
 @Entity(name = "jointest$SalesPerson")
+@JmixEntity
 public class SalesPerson extends StandardEntity {
     private static final long serialVersionUID = -3909350001169083443L;
 

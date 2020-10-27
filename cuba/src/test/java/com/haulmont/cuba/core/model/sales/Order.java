@@ -17,6 +17,7 @@
 package com.haulmont.cuba.core.model.sales;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.DeletePolicy;
@@ -24,7 +25,7 @@ import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity(name = "test$Order")
+@JmixEntity
 @Table(name = "TEST_ORDER")
 @NamePattern("No %s for %s|number,customer")
 @PublishEntityChangedEvents

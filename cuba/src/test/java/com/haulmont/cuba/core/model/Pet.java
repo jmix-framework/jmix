@@ -16,13 +16,15 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 
 @Entity(name = "test_PetclinicPet")
+@JmixEntity
 @Table(name = "TEST_PC_PET")
 @NamePattern("%s|name")
 public class Pet extends StandardEntity {
@@ -32,10 +34,10 @@ public class Pet extends StandardEntity {
     @Column(name = "NAME")
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String nick;
 
-    @ModelProperty
+    @JmixProperty
     public String getDescription() {
         return "Name: " + name + ", nick: " + nick;
     }

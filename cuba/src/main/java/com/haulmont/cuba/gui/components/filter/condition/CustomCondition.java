@@ -24,14 +24,14 @@ import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEd
 import com.haulmont.cuba.gui.components.filter.operationedit.CustomOperationEditor;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.ui.filter.ConditionType;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-@ModelObject(name = "sec$CustomCondition")
+@JmixEntity(name = "sec$CustomCondition")
 @SystemLevel
 public class CustomCondition extends AbstractCondition {
 

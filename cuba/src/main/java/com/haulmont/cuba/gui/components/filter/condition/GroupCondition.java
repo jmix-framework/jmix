@@ -22,13 +22,13 @@ import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescript
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import com.haulmont.cuba.gui.components.filter.operationedit.GroupOperationEditor;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.dom4j.Element;
 
 /**
  * Base GUI class for grouping conditions (AND &amp; OR).
  */
-@ModelObject(name = "sec$GroupCondition")
+@JmixEntity(name = "sec$GroupCondition")
 @SystemLevel
 public class GroupCondition extends AbstractCondition {
 

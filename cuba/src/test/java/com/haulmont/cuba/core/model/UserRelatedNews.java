@@ -16,15 +16,17 @@
 
 package com.haulmont.cuba.core.model;
 
+import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 
 @Entity(name = "test$UserRelatedNews")
+@JmixEntity
 @Table(name = "TEST_USER_RELATED_NEWS")
 @NamePattern("%s|name")
 public class UserRelatedNews extends StandardEntity {
@@ -63,7 +65,7 @@ public class UserRelatedNews extends StandardEntity {
         this.parent = parent;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties("user")
     public String getUserLogin() {
         return user.getLogin();

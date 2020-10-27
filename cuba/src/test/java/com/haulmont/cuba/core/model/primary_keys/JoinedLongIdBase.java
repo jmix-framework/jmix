@@ -17,10 +17,12 @@
 package com.haulmont.cuba.core.model.primary_keys;
 
 import com.haulmont.cuba.core.entity.BaseLongIdEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Entity(name = "test$JoinedLongIdBase")
+@JmixEntity
 @Table(name = "TEST_JOINED_LONGID_BASE")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class JoinedLongIdBase extends BaseLongIdEntity {

@@ -17,10 +17,11 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -29,6 +30,7 @@ import java.util.Set;
  * User role.
  */
 @Entity(name = "test$Role")
+@JmixEntity
 @Table(name = "TEST_ROLE")
 @NamePattern("%s [%s]|locName,name")
 public class Role extends StandardEntity {
@@ -59,7 +61,7 @@ public class Role extends StandardEntity {
     private Set<Permission> permissions;
 
     @Transient
-    private boolean isPredefined = false;
+    private boolean predefined = false;
 
     public String getName() {
         return name;
@@ -109,12 +111,12 @@ public class Role extends StandardEntity {
         this.defaultRole = defaultRole;
     }
 
-    public boolean isPredefined() {
-        return isPredefined;
+    public boolean getPredefined() {
+        return predefined;
     }
 
     public void setPredefined(boolean predefined) {
-        isPredefined = predefined;
+        this.predefined = predefined;
     }
 
     public String getSysTenantId() {

@@ -22,17 +22,16 @@ import com.haulmont.cuba.core.global.Messages;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
  * Search folder settings.
  */
+
+@JmixEntity
 @Entity(name = "sec$SearchFolder")
 @Table(name = "SEC_SEARCH_FOLDER")
 @PrimaryKeyJoinColumn(name = "FOLDER_ID", referencedColumnName = "ID")

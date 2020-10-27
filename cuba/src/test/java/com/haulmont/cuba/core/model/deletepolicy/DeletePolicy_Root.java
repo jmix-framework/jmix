@@ -16,15 +16,17 @@
 
 package com.haulmont.cuba.core.model.deletepolicy;
 
-import io.jmix.core.DeletePolicy;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_DELETE_POLICY_ROOT")
 @Entity(name = "test$DeletePolicy_Root")
+@JmixEntity
 public class DeletePolicy_Root extends StandardEntity {
     private static final long serialVersionUID = 1516955237934477402L;
 

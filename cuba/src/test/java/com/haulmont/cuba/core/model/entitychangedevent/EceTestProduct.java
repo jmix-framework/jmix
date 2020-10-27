@@ -16,15 +16,17 @@
 
 package com.haulmont.cuba.core.model.entitychangedevent;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
-import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test_EceTestProduct")
+@JmixEntity
 @Table(name = "TEST_ECE_PRODUCT")
 @NamePattern("%s|name")
 @PublishEntityChangedEvents

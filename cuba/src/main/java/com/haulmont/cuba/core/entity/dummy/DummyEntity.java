@@ -17,9 +17,11 @@
 package com.haulmont.cuba.core.entity.dummy;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity
 public class DummyEntity extends StandardEntity {
     private static final long serialVersionUID = -7814076878004728831L;

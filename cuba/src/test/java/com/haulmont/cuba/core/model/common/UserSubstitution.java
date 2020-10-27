@@ -16,10 +16,11 @@
  */
 package com.haulmont.cuba.core.model.common;
 
-import io.jmix.core.DeletePolicy;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.Date;
  * User substitution definition.
  */
 @Entity(name = "test$UserSubstitution")
+@JmixEntity
 @Table(name = "TEST_USER_SUBSTITUTION")
 @SystemLevel
 public class UserSubstitution extends StandardEntity {

@@ -16,9 +16,10 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @javax.persistence.Entity(name = "test$FileDescriptor")
+@JmixEntity
 @Table(name = "TEST_FILE")
 @NamePattern("%s (%s)|name,createDate,extension")
 @SystemLevel

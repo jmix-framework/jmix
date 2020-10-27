@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.sales;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$Product")
+@JmixEntity
 @Table(name = "TEST_PRODUCT")
 @NamePattern("%s|name")
 public class Product extends StandardEntity {

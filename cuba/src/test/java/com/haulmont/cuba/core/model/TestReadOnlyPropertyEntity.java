@@ -17,7 +17,8 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,15 +26,16 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity(name = "test_ReadOnlyPropertyEntity")
+@JmixEntity
 public class TestReadOnlyPropertyEntity extends BaseUuidEntity {
 
     @Column(name = "NAME")
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String roName;
 
-    @ModelProperty
+    @JmixProperty
     private List<Foo> roList;
 
     public String getName() {

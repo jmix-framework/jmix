@@ -19,9 +19,11 @@ package com.haulmont.cuba.core.entity;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
+@JmixEntity
 @Entity(name = "sys$Folder")
 @Table(name = "SYS_FOLDER")
 @Inheritance(strategy = InheritanceType.JOINED)

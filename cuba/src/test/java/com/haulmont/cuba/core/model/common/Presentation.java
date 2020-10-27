@@ -17,10 +17,11 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import com.haulmont.cuba.core.entity.Updatable;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.Date;
  * A screen presentation settings.
  */
 @Entity(name = "test$Presentation")
+@JmixEntity
 @Table(name = "TEST_PRESENTATION")
 @NamePattern("%s|name")
 @SystemLevel

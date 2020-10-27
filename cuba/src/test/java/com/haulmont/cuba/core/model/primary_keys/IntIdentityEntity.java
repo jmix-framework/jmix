@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import com.haulmont.cuba.core.entity.BaseIntIdentityIdEntity;
+import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$IntIdentityEntity")
+@JmixEntity
 @Table(name = "TEST_INT_IDENTITY")
 @PublishEntityChangedEvents
 public class IntIdentityEntity extends BaseIntIdentityIdEntity {

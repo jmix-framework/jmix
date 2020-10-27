@@ -17,18 +17,18 @@
 package com.haulmont.cuba.core.model.not_persistent;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 @MappedSuperclass
-@ModelObject(name = "test$BaseEntityWithNonPersistentProperty")
+@JmixEntity(name = "test$BaseEntityWithNonPersistentProperty")
 public class BaseEntityWithNonPersistentProperty extends StandardEntity {
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     protected String reason;
 
     public String getReason() {

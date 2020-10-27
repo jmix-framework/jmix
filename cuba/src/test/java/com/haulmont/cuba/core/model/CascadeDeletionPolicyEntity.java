@@ -16,15 +16,17 @@
 
 package com.haulmont.cuba.core.model;
 
-import io.jmix.core.DeletePolicy;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.entity.annotation.OnDelete;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.DeletePolicy;
+import io.jmix.core.entity.annotation.OnDelete;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity(name = "test$CascadeDeletionPolicyEntity")
+@JmixEntity
 @Table(name = "TEST_CASCADE_DELETION_POLICY_ENTITY")
 @NamePattern("%s|name")
 public class CascadeDeletionPolicyEntity extends StandardEntity {

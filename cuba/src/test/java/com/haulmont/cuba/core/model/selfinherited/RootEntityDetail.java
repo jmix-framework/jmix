@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model.selfinherited;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_ROOT_ENTITY_DETAIL")
 @Entity(name = "test$RootEntityDetail")
+@JmixEntity
 public class RootEntityDetail extends StandardEntity {
 
     private static final long serialVersionUID = -3794606860555343620L;

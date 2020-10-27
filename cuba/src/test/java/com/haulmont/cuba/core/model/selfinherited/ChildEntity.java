@@ -17,12 +17,14 @@
 package com.haulmont.cuba.core.model.selfinherited;
 
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @DiscriminatorValue("C")
 @Entity(name = "test$ChildEntity")
+@JmixEntity
 @Table(name = "TEST_CHILD_ENTITY")
 @PrimaryKeyJoinColumn(name = "ENTITY_ID", referencedColumnName = "ID")
 public class ChildEntity extends RootEntity {

@@ -2,12 +2,12 @@ package com.haulmont.cuba.core.model.embeddedwithinheritance;
 
 
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@ModelObject(name = "test_EmbeddedVerificationInfo")
+@JmixEntity(name = "test_EmbeddedVerificationInfo")
 @Embeddable
 public class VerificationInfo {
 

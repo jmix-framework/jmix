@@ -16,28 +16,28 @@
 
 package com.haulmont.cuba.web.model.sample;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Date;
 
-@ModelObject(name = "test_GoodInfo")
+@JmixEntity(name = "test_GoodInfo")
 public class GoodInfo extends BaseUuidEntity {
 
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected Date createDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Date expirationDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Double weight;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean isFragile;
 
     public String getName() {

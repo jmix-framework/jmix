@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model.entitycache_unfetched;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_COMPOSITE_PROPERTY_TWO")
 @Entity(name = "test$CompositePropertyTwo")
+@JmixEntity
 public class CompositePropertyTwo extends StandardEntity {
     private static final long serialVersionUID = -8575729305979249294L;
 

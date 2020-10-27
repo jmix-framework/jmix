@@ -16,52 +16,52 @@
 
 package com.haulmont.cuba.web.model.sample;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Date;
 
-@ModelObject(name = "test_RendererEntity")
+@JmixEntity(name = "test_RendererEntity")
 public class RendererEntity extends BaseUuidEntity {
 
-    @ModelProperty
+    @JmixProperty
     protected String button;
 
-    @ModelProperty
+    @JmixProperty
     protected String component;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean checkBox;
 
-    @ModelProperty
+    @JmixProperty
     protected String clickableText;
 
-    @ModelProperty
+    @JmixProperty
     protected Date date;
 
-    @ModelProperty
+    @JmixProperty
     protected String icon;
 
-    @ModelProperty
+    @JmixProperty
     protected String image;
 
-    @ModelProperty
+    @JmixProperty
     protected String html;
 
-    @ModelProperty
+    @JmixProperty
     protected String localDate;
 
-    @ModelProperty
+    @JmixProperty
     protected String localDateTime;
 
-    @ModelProperty
+    @JmixProperty
     protected Double number;
 
-    @ModelProperty
+    @JmixProperty
     protected Double progressBar;
 
-    @ModelProperty
+    @JmixProperty
     protected String text;
 
     public String getButton() {

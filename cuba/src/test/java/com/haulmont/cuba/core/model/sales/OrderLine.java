@@ -16,14 +16,16 @@
 
 package com.haulmont.cuba.core.model.sales;
 
+import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
-import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_ORDER_LINE")
 @Entity(name = "test$OrderLine")
+@JmixEntity
 @NamePattern("%s %s|product,quantity")
 @PublishEntityChangedEvents
 public class OrderLine extends StandardEntity {

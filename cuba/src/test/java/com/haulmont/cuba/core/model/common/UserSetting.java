@@ -16,9 +16,10 @@
  */
 package com.haulmont.cuba.core.model.common;
 
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.entity.Creatable;
 import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -28,6 +29,7 @@ import java.util.Date;
  * Used by <code>UserSettingServiceBean</code>.
  */
 @Entity(name = "test$UserSetting")
+@JmixEntity
 @Table(name = "TEST_USER_SETTING")
 @SystemLevel
 public class UserSetting extends BaseUuidEntity implements Creatable {

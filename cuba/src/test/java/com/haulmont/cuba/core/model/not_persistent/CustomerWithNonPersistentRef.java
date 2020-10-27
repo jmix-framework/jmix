@@ -16,13 +16,15 @@
 
 package com.haulmont.cuba.core.model.not_persistent;
 
-import com.haulmont.cuba.core.model.primary_keys.EntityKey;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.model.primary_keys.EntityKey;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 
 @Entity(name = "test$CustomerWithNonPersistentRef")
+@JmixEntity
 @Table(name = "TEST_CUSTOMER_W_NPERS_REF")
 @NamePattern("%s|name")
 public class CustomerWithNonPersistentRef extends BaseEntityWithNonPersistentProperty {
@@ -33,7 +35,7 @@ public class CustomerWithNonPersistentRef extends BaseEntityWithNonPersistentPro
     @Embedded
     private EntityKey entityKey;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     private TestNotPersistentEntity notPersistentEntity;
 

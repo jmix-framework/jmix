@@ -18,6 +18,7 @@
 package com.haulmont.cuba.gui.components.filter.condition;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
@@ -26,9 +27,8 @@ import com.haulmont.cuba.gui.components.filter.descriptor.AbstractConditionDescr
 import com.haulmont.cuba.gui.components.filter.operationedit.AbstractOperationEditor;
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 /**
  * Class that encapsulates common filter condition behaviour.
  */
-@ModelObject(name = "sec$AbstractCondition", annotatedPropertiesOnly = true)
+@JmixEntity(name = "sec$AbstractCondition", annotatedPropertiesOnly = true)
 @SystemLevel
 public abstract class AbstractCondition extends BaseUuidEntity {
 
@@ -61,7 +61,7 @@ public abstract class AbstractCondition extends BaseUuidEntity {
     protected String paramName;
     protected String caption;
     protected String messagesPack;
-    @ModelProperty
+    @JmixProperty
     protected String locCaption;
     protected String filterComponentName;
     protected String text;

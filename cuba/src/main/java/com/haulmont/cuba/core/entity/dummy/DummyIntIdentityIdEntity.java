@@ -18,9 +18,11 @@ package com.haulmont.cuba.core.entity.dummy;
 
 import com.haulmont.cuba.core.entity.BaseIntIdentityIdEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity
 @SystemLevel
 public class DummyIntIdentityIdEntity extends BaseIntIdentityIdEntity {

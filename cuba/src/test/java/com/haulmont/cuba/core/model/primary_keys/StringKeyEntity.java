@@ -16,13 +16,18 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
-import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import com.haulmont.chile.core.annotations.NamePattern;
+import io.jmix.core.Entity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @javax.persistence.Entity(name = "test$StringKeyEntity")
+@JmixEntity
 @Table(name = "TEST_STRING_KEY")
 @NamePattern("%s|code")
 public class StringKeyEntity implements Entity {
@@ -36,7 +41,7 @@ public class StringKeyEntity implements Entity {
     @Column(name = "NAME")
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected String description;
 

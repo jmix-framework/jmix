@@ -16,10 +16,13 @@
 
 package com.haulmont.cuba.core.model.self_reference;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity(name = "test_SelfReferencedEntity")
+@JmixEntity
 @Table(name = "TEST_SELF_REFERENCED_ENTITY")
 public class SelfReferencedEntity extends BaseDictEntity {
 

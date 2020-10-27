@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model.deletepolicy;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_DELETE_POLICY_ONE_TO_MANY_FIRST")
 @Entity(name = "test$DeletePolicy_OneToMany_First")
+@JmixEntity
 public class DeletePolicy_OneToMany_First extends StandardEntity {
     private static final long serialVersionUID = -1562606439091454258L;
 

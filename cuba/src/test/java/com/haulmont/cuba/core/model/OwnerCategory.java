@@ -16,8 +16,9 @@
 
 package com.haulmont.cuba.core.model;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 @NamePattern("%s|name")
 @Table(name = "PC_OWNER_CATEGORY")
 @Entity(name = "pc_OwnerCategory")
+@JmixEntity
 public class OwnerCategory extends StandardEntity {
     private static final long serialVersionUID = 8093594220733213612L;
 

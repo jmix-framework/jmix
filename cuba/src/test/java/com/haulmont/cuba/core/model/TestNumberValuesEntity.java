@@ -17,8 +17,8 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.NumberFormat;
 
 import java.math.BigDecimal;
@@ -26,66 +26,66 @@ import java.math.BigDecimal;
 /**
  *
  */
-@ModelObject(name = "sys$TestNumberValuesEntity")
+@JmixEntity(name = "sys$TestNumberValuesEntity")
 public class TestNumberValuesEntity extends BaseUuidEntity {
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,###.###")
     private BigDecimal decimalField1;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "0.00")
     private BigDecimal decimalField2;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#")
     private BigDecimal decimalField3;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,###.###", decimalSeparator = "_", groupingSeparator = "`")
     private BigDecimal decimalField4;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,###.###")
     private Double doubleField1;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "0.00")
     private Double doubleField2;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#")
     private Double doubleField3;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,###.###")
     private Float floatField1;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "0.00")
     private Float floatField2;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#")
     private Float floatField3;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#")
     private Integer intField1;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,##0")
     private Integer intField2;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#")
     private Long longField1;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#,##0")
     private Long longField2;
 
-    @ModelProperty
+    @JmixProperty
     @NumberFormat(pattern = "#%")
     private BigDecimal percentField;
 

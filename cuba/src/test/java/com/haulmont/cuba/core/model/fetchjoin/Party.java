@@ -16,8 +16,9 @@
 
 package com.haulmont.cuba.core.model.fetchjoin;
 
-import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 @NamePattern("%s|name")
 @Table(name = "JOINTEST_PARTY")
 @Entity(name = "jointest$Party")
+@JmixEntity
 public class Party extends StandardEntity {
     private static final long serialVersionUID = -5813169106213079170L;
 

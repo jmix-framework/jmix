@@ -17,19 +17,19 @@
 package com.haulmont.cuba.core.model.not_persistent;
 
 import io.jmix.core.Entity;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 
-@ModelObject(name = "test$NotPersistentStringIdEntity")
+@JmixEntity(name = "test$NotPersistentStringIdEntity")
 public class NotPersistentStringIdEntity implements Entity {
 
     @Id
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String identifier;
 
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
     public String getName() {

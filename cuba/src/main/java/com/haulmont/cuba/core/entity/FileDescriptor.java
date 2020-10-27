@@ -22,12 +22,14 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.util.Date;
 
+@JmixEntity
 @javax.persistence.Entity(name = "sys$FileDescriptor")
 @Table(name = "SYS_FILE")
 @SystemLevel

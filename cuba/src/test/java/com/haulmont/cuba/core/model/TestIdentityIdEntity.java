@@ -17,11 +17,13 @@
 package com.haulmont.cuba.core.model;
 
 import com.haulmont.cuba.core.entity.BaseIdentityIdEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name = "test$IdentityIdEntity")
+@JmixEntity
 public class TestIdentityIdEntity extends BaseIdentityIdEntity {
 
     @Column(name = "NAME")

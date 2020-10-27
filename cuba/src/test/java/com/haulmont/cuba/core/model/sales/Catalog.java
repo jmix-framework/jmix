@@ -17,12 +17,12 @@
 package com.haulmont.cuba.core.model.sales;
 
 import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import java.util.Set;
 
-@ModelObject(name = "test_Catalog")
+@JmixEntity(name = "test_Catalog")
 public class Catalog extends BaseUuidEntity {
 
     @Column(name = "name")

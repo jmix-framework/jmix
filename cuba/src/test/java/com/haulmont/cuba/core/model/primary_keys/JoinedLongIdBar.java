@@ -16,11 +16,14 @@
 
 package com.haulmont.cuba.core.model.primary_keys;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity(name = "test$JoinedLongIdBar")
+@JmixEntity
 @Table(name = "TEST_JOINED_LONGID_BAR")
 public class JoinedLongIdBar extends JoinedLongIdBase {
 

@@ -18,6 +18,7 @@ package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
@@ -26,6 +27,7 @@ import javax.persistence.*;
  * <br>The {@link #value} may be 0,1,2 for {@link PermissionType#ENTITY_ATTR} and 0,1 for others.
  */
 @Entity(name = "test$Permission")
+@JmixEntity
 @Table(name = "TEST_PERMISSION")
 @SystemLevel
 public class Permission extends StandardEntity {

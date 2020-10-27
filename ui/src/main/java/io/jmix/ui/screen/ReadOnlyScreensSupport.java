@@ -54,7 +54,7 @@ public class ReadOnlyScreensSupport {
      * The following components and actions change their state:
      * <ul>
      *     <li>All {@link Editable} components that has a not null {@link ValueSource}</li>
-     *     <li>All {@link Action.DisabledWhenScreenReadOnly} actions obtained from {@link ActionsHolder} components</li>
+     *     <li>All {@link Action.AdjustWhenScreenReadOnly} actions obtained from {@link ActionsHolder} components</li>
      *     <li>All own screen actions except {@link EditorScreen#WINDOW_CLOSE}
      *     and {@link EditorScreen#ENABLE_EDITING}</li>
      * </ul>
@@ -73,7 +73,7 @@ public class ReadOnlyScreensSupport {
      * The following components and actions change their state:
      * <ul>
      *     <li>All {@link Editable} components that has a not null {@link ValueSource}</li>
-     *     <li>All {@link Action.DisabledWhenScreenReadOnly} actions obtained from {@link ActionsHolder} components</li>
+     *     <li>All {@link Action.AdjustWhenScreenReadOnly} actions obtained from {@link ActionsHolder} components</li>
      *     <li>All own screen actions except {@link EditorScreen#WINDOW_CLOSE}
      *     and {@link EditorScreen#ENABLE_EDITING}</li>
      * </ul>

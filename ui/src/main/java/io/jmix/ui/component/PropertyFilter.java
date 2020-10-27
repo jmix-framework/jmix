@@ -22,8 +22,8 @@ import io.jmix.ui.model.DataLoader;
 /**
  * PropertyFilter is a UI component used for filtering entities returned by the {@link DataLoader}. The component is
  * related to entity property and can automatically render proper layout for setting a condition value. In general case
- * a PropertyFilter layout contains a label with entity property caption, operation label (=, contains, >, etc.) and a
- * field for editing a property value.
+ * a PropertyFilter layout contains a label with entity property caption, operation label (=, contains, &#62;, etc.) and
+ * a field for editing a property value.
  */
 public interface PropertyFilter<V> extends Component, Component.BelongToFrame, HasValue<V>, Component.HasCaption {
 

@@ -122,7 +122,7 @@ public interface TreeDataGrid<E> extends DataGrid<E> {
      * children, does nothing.
      *
      * @param items the items to expand
-     * @see TreeDataGrid#expand(E[])
+     * @see TreeDataGrid#expand(Object[]) 
      */
     void expand(Collection<E> items);
 
@@ -185,7 +185,7 @@ public interface TreeDataGrid<E> extends DataGrid<E> {
      * For items that are already collapsed, does nothing.
      *
      * @param items the items to collapse
-     * @see TreeDataGrid#collapse(E[])
+     * @see TreeDataGrid#collapse(Object[]) 
      */
     void collapse(Collection<E> items);
 

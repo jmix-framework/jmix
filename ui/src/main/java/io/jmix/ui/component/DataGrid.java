@@ -433,7 +433,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * Sets whether or not the item editor UI is enabled for this DataGrid.
      * When the editor is enabled, the user can open it by double-clicking
      * a row or hitting enter when a row is focused. The editor can also be opened
-     * programmatically using the {@link #edit(E)} method.
+     * programmatically using the {@link #edit(Object)} method.
      *
      * @param isEnabled {@code true} to enable the feature, {@code false} otherwise
      * @see #getEditedItem()
@@ -750,7 +750,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * Scrolls to a certain item, using {@link ScrollDestination#ANY}.
      *
      * @param item item to scroll to
-     * @see #scrollTo(E, ScrollDestination)
+     * @see #scrollTo(Object, ScrollDestination) 
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -761,7 +761,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param item        item to scroll to
      * @param destination value specifying desired position of scrolled-to row
-     * @see #scrollTo(E)
+     * @see #scrollTo(Object) 
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -770,8 +770,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     /**
      * Scrolls to the first data item.
      *
-     * @see #scrollTo(E)
-     * @see #scrollTo(E, ScrollDestination)
+     * @see #scrollTo(Object) 
+     * @see #scrollTo(Object, ScrollDestination) 
      * @see #scrollToEnd()
      */
     void scrollToStart();
@@ -779,8 +779,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     /**
      * Scrolls to the last data item.
      *
-     * @see #scrollTo(E)
-     * @see #scrollTo(E, ScrollDestination)
+     * @see #scrollTo(Object)
+     * @see #scrollTo(Object, ScrollDestination)
      * @see #scrollToStart()
      */
     void scrollToEnd();
@@ -2591,7 +2591,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * editable when the item editor is active.
          *
          * @return {@code true} if this column is editable, {@code false} otherwise
-         * @see DataGrid#edit(E)
+         * @see DataGrid#edit(Object) 
          * @see #setEditable(boolean)
          */
         boolean isEditable();
@@ -2608,7 +2608,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * not) be edited even in principle should be set non-editable.
          *
          * @param editable {@code true} if this column should be editable, {@code false} otherwise
-         * @see DataGrid#edit(E)
+         * @see DataGrid#edit(Object) 
          * @see DataGrid#isEditorActive()
          */
         void setEditable(boolean editable);

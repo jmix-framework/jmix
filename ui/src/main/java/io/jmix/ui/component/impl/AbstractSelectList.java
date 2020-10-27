@@ -29,7 +29,6 @@ import io.jmix.ui.component.data.options.OptionsBinder;
 import io.jmix.ui.widget.listselect.JmixAbstractListSelect;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.InitializingBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -45,7 +44,7 @@ import java.util.stream.Stream;
 /**
  * Base class for list select components.
  *
- * @param <V> single value type or Collection<I>
+ * @param <V> single value type or Collection
  * @param <I> item type
  * @param <T> Vaadin component type
  */

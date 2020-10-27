@@ -100,13 +100,12 @@ public interface CollectionLoader<E> extends BaseCollectionLoader {
     void setFetchPlan(FetchPlan fetchPlan);
 
     /**
-     * @deprecated replaced by {@link CollectionLoader#(FetchPlan)}
+     * @deprecated replaced by {@link CollectionLoader#setFetchPlan(String)}
      */
     @Deprecated
     default void setView(String viewName) {
         setFetchPlan(viewName);
     }
-
 
     /**
      * Sets the name of the fetch plan which is used when loading.

@@ -16,11 +16,13 @@
 
 package test_support.entity.lazyloading;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_ONE_TO_ONE_FIELD_ENTITY")
+@JmixEntity
 @Entity(name = "test_OneToOneFieldEntity")
 public class OneToOneFieldEntity extends BaseEntity {
     @Column(name = "NAME")

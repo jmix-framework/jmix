@@ -17,9 +17,11 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
+@JmixEntity
 @Entity(name = "exttest_ExtDoc")
 @Table(name = "EXTTEST_EXT_DOC")
 @DiscriminatorValue("200")

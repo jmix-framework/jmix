@@ -16,7 +16,8 @@
 
 package test_support.entity;
 
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.sales.Customer;
 
 import javax.persistence.Column;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Table(name = "TEST_ENTITY_WITH_NON_PERSISTENT_REF")
+@JmixEntity
 @Entity(name = "data_TestEntityWithNonPersistentRef")
 public class TestEntityWithNonPersistentRef extends BaseEntity {
     private static final long serialVersionUID = 4905445097979368646L;
@@ -32,7 +34,7 @@ public class TestEntityWithNonPersistentRef extends BaseEntity {
     @Column(name = "NAME")
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     private Customer customer;
 

@@ -17,10 +17,12 @@
 package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "test_IdentityUuidEntity")
 @Table(name = "TEST_IDENTITY_UUID_ENTITY")
 public class TestIdentityUuidEntity {

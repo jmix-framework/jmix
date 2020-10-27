@@ -16,11 +16,14 @@
 
 package test_support.entity.number_id_generation;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @DiscriminatorValue("C")
+@JmixEntity
 @Entity(name = "test$NumberIdSingleTableChild")
 public class NumberIdSingleTableChild extends NumberIdSingleTableRoot {
 

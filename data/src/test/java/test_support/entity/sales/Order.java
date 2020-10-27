@@ -20,6 +20,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 import test_support.entity.sec.User;
 
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+@JmixEntity
 @Entity(name = "sales_Order")
 @Table(name = "SALES_ORDER")
 @PublishEntityChangedEvents

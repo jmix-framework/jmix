@@ -18,12 +18,14 @@ package test_support.entity.number_id_generation;
 
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorValue("R")
 @Table(name = "TEST_NUMBER_ID_JOINED_ROOT")
+@JmixEntity
 @Entity(name = "test$NumberIdJoinedRoot")
 public class NumberIdJoinedRoot {
     @Id

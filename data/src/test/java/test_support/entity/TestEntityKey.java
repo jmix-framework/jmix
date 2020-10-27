@@ -17,11 +17,14 @@
 package test_support.entity;
 
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
+@JmixEntity
 public class TestEntityKey {
     @Column(name = "TENANT")
     private Integer tenant;

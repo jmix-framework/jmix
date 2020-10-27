@@ -5,12 +5,14 @@
 package test_support.entity.cars;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@JmixEntity
 @Entity(name = "cars_Colour")
 @Table(name = "CARS_COLOUR")
 public class Colour extends BaseEntity {

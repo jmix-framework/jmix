@@ -1,8 +1,11 @@
 package test_support.entity.sales;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity(name = "sales_OrderLineB")
 public class OrderLineB extends OrderLine {
 

@@ -18,10 +18,12 @@ package test_support.entity.number_id_generation;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 
 @Table(name = "TEST_INTEGER_ID_ENTITY")
+@JmixEntity
 @Entity(name = "test_TestIntegerIdEntity")
 public class TestIntegerIdEntity {
 

@@ -17,6 +17,7 @@
 package test_support.entity.soft_delete;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Table(name = "TEST_HARDDELETE_ENTITY")
+@JmixEntity
 @Entity(name = "test_HardDeleteEntity")
 public class HardDeleteEntity {
 

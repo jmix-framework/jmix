@@ -16,6 +16,7 @@
 package test_support.entity.sec;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
@@ -23,6 +24,7 @@ import javax.persistence.*;
 /**
  * User access group.
  */
+@JmixEntity
 @Entity(name = "sec$Group")
 @Table(name = "SEC_GROUP")
 public class Group extends BaseEntity {

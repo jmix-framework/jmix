@@ -17,11 +17,13 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity(name = "exttest_ExtModel")
 @ReplaceEntity(Model.class)
 public class ExtModel extends Model {

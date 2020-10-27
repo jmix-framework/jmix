@@ -18,6 +18,7 @@ package test_support.entity.auditing;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,6 +27,7 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Table(name = "TEST_NOT_AUDITABLE")
+@JmixEntity
 @Entity(name = "test_NotAuditable")
 public class NotAuditableSubclass {
     @Id

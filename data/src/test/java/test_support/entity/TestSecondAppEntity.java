@@ -16,8 +16,11 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
+@JmixEntity
 @Entity(name = "test_TestSecondAppEntity")
 @Table(name = "TEST_SECOND_APP_ENTITY")
 public class TestSecondAppEntity extends BaseEntity {

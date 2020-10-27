@@ -18,6 +18,7 @@ package test_support.entity.auditing;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Table(name = "TEST_SOFTDELETE_AUDITABLE_ENTITY")
+@JmixEntity
 @Entity(name = "test_SoftDeleteAuditableEntity")
 public class SoftDeleteAuditableEntity extends AuditableSubclass {
     private static final long serialVersionUID = -3766659443394014860L;

@@ -7,13 +7,15 @@ package test_support.entity.multidb;
 
 
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "test_Db1Order")
 @Table(name = "ORDER_")
 @Store(name = "db1")
@@ -33,7 +35,7 @@ public class Db1Order {
     private Db1Customer customer;
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties("mem1CustomerId")
     private Mem1Customer mem1Customer;
 

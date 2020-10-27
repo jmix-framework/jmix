@@ -6,11 +6,13 @@
 package test_support.entity.multidb;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
 import java.util.List;
 
+@JmixEntity
 @Entity(name = "test_Db1Customer")
 @Table(name = "CUSTOMER")
 @Store(name = "db1")

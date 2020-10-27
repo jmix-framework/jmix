@@ -17,13 +17,15 @@
 package test_support.entity;
 
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.sec.User;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@JmixEntity
 @Entity(name = "test_TestAppEntity")
 @Table(name = "TEST_APP_ENTITY")
 public class TestAppEntity extends BaseEntity {
@@ -70,13 +72,13 @@ public class TestAppEntity extends BaseEntity {
         this.items = items;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties("appDate")
     public Date getChangeDate() {
         return this.appDate;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties({"author", "number"})
     public String getLabel() {
         return String.format("%s-%s", author != null ? author.getLogin() : "", number);

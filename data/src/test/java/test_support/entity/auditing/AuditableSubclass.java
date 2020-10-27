@@ -16,6 +16,7 @@
 
 package test_support.entity.auditing;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Table(name = "TEST_AUDITABLE_SUBCLASS")
+@JmixEntity
 @Entity(name = "test_AuditableSubclass")
 public class AuditableSubclass extends CreatableSubclass {
     private static final long serialVersionUID = -2432809166567946764L;

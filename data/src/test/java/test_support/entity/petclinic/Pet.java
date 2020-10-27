@@ -17,11 +17,13 @@
 package test_support.entity.petclinic;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
 
+@JmixEntity
 @Entity(name = "app_Pet")
 public class Pet extends BaseEntity {
 
@@ -31,10 +33,10 @@ public class Pet extends BaseEntity {
     @InstanceName
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String nick;
 
-    @ModelProperty
+    @JmixProperty
     public String getDescription() {
         return "Name: " + name + ", nick: " + nick;
     }

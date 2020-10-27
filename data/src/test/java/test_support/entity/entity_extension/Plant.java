@@ -18,11 +18,13 @@ package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.Set;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "exttest_Plant")
 @Table(name = "EXTTEST_PLANT")
 public class Plant {

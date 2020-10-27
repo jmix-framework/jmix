@@ -18,11 +18,13 @@ package test_support.entity.entity_extension;
 
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "exttest_Bar")
 @Table(name = "EXTTEST_BAR")
 @Store(name = "db1")

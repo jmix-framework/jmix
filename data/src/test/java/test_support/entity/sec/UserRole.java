@@ -18,6 +18,7 @@ package test_support.entity.sec;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ import javax.persistence.*;
 /**
  * Link between users and roles.
  */
+@JmixEntity
 @Entity(name = "sec$UserRole")
 @Table(name = "SEC_USER_ROLE")
 @SystemLevel

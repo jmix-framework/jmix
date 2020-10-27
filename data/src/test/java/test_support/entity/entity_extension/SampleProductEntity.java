@@ -17,10 +17,12 @@
 package test_support.entity.entity_extension;
 
 import io.jmix.core.entity.annotation.ReplaceEntity;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity(name = "exttest_SampleProductEntity")
 @ReplaceEntity(SamplePlatformEntity.class)
 public class SampleProductEntity extends SamplePlatformEntity {

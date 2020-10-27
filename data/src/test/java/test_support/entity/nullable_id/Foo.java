@@ -18,11 +18,13 @@ package test_support.entity.nullable_id;
 
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_NULLABLE_ID_FOO")
+@JmixEntity
 @Entity(name = "test_nullable_id_Foo")
 public class Foo {
     private static final long serialVersionUID = -7482913193245107031L;

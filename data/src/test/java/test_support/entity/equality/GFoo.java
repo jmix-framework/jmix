@@ -19,11 +19,13 @@ package test_support.entity.equality;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Table(name = "TEST_GFOO")
+@JmixEntity
 @Entity(name = "test_GFoo")
 public class GFoo {
 

@@ -16,11 +16,14 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@JmixEntity
 @Entity(name = "test_TestCompositeKeyEntity")
 @Table(name = "TEST_COMPOSITE_KEY_ENTITY")
 public class TestCompositeKeyEntity {

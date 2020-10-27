@@ -16,6 +16,8 @@
 
 package test_support.entity.number_id_generation;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -23,6 +25,7 @@ import javax.persistence.Table;
 
 @DiscriminatorValue("C")
 @Table(name = "TEST_NUMBER_ID_JOINED_CHILD")
+@JmixEntity
 @Entity(name = "test$NumberIdJoinedChild")
 public class NumberIdJoinedChild extends NumberIdJoinedRoot {
 

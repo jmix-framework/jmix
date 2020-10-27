@@ -17,12 +17,14 @@
 package test_support.entity.petclinic;
 
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 
+@JmixEntity
 @Entity(name = "app_Owner")
 public class Owner extends BaseEntity {
 

@@ -16,13 +16,13 @@
 
 package test_support.entity;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "test_TestNotStoredEntity")
+@JmixEntity(name = "test_TestNotStoredEntity")
 public class TestNotStoredEntity extends BaseEntity {
 
-    @ModelProperty
+    @JmixProperty
     private String name;
 
     public String getName() {

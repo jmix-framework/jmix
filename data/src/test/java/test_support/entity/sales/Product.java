@@ -17,12 +17,14 @@
 package test_support.entity.sales;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@JmixEntity
 @Entity(name = "sales_Product")
 @Table(name = "SALES_PRODUCT")
 public class Product extends BaseEntity {

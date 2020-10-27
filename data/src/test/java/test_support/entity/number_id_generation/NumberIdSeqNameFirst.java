@@ -18,6 +18,7 @@ package test_support.entity.number_id_generation;
 
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name = "TEST_NUMBER_ID_SEQ_NAME_FIRST")
+@JmixEntity
 @Entity(name = "test$NumberIdSeqNameFirst")
 public class NumberIdSeqNameFirst {
     @Id

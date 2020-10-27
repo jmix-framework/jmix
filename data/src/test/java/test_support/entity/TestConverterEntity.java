@@ -17,11 +17,13 @@
 package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.net.URI;
 import java.util.UUID;
 
+@JmixEntity
 @Entity(name = "test_TestConverterEntity")
 @Table(name = "TEST_CONVERTER_ENTITY")
 public class TestConverterEntity {

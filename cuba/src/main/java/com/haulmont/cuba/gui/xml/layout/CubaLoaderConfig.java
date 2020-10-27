@@ -151,6 +151,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(GroupBoxLayout.NAME, CubaGroupBoxLayoutLoader.class);
         loaders.put(SplitPanel.NAME, CubaSplitPanelLoader.class);
         loaders.put(PopupButton.NAME, CubaPopupButtonLoader.class);
+        loaders.put(Embedded.NAME, EmbeddedLoader.class);
 
         loaders.put(FoldersPane.NAME, FoldersPaneLoader.class);
     }

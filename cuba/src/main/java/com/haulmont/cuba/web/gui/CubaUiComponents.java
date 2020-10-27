@@ -130,6 +130,7 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(PopupView.NAME, WebPopupView.class);
         classes.put(BulkEditor.NAME, WebBulkEditor.class);
         classes.put(ListEditor.NAME, WebListEditor.class);
+        classes.put(Embedded.NAME, WebEmbedded.class);
     }
 
     @SuppressWarnings("unchecked")

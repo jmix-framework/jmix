@@ -55,6 +55,7 @@ class CreateComponentTest extends UiScreenSpec {
                 RelatedEntities.NAME,
                 BulkEditor.NAME,
                 ListEditor.NAME,
+                Embedded.NAME,
 
                 FoldersPane.NAME,
                 // FtsField.NAME, todo fts field

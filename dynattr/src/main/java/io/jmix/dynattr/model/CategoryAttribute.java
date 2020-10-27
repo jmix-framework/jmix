@@ -29,7 +29,8 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.ConfigurationExclusionStrategy;
@@ -46,6 +47,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
+@JmixEntity
 @Entity(name = "sys_CategoryAttribute")
 @Table(name = "SYS_CATEGORY_ATTR")
 @SystemLevel
@@ -549,7 +551,7 @@ public class CategoryAttribute implements Serializable {
     }
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     public CategoryAttributeConfiguration getConfiguration() {
         if (configuration == null) {
             if (!Strings.isNullOrEmpty(getAttributeConfigurationJson())) {

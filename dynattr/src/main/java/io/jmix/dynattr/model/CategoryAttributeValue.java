@@ -26,6 +26,7 @@ import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.data.entity.ReferenceToEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+@JmixEntity
 @javax.persistence.Entity(name = "sys_CategoryAttributeValue")
 @Table(name = "SYS_ATTR_VALUE")
 @SystemLevel

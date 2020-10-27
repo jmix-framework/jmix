@@ -18,8 +18,8 @@ package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.dynattr.OptionsLoaderType;
 
 import javax.annotation.Nullable;
@@ -31,61 +31,61 @@ import java.util.List;
 import java.util.UUID;
 
 
-@ModelObject(name = "sys_CategoryAttributeConfiguration")
+@JmixEntity(name = "sys_CategoryAttributeConfiguration")
 @SystemLevel
 public class CategoryAttributeConfiguration implements Serializable {
     private static final long serialVersionUID = 2670605418267938507L;
 
     @Id
-    @ModelProperty
+    @JmixProperty
     protected String id;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer minInt;
 
-    @ModelProperty
+    @JmixProperty
     protected Double minDouble;
 
-    @ModelProperty
+    @JmixProperty
     protected BigDecimal minDecimal;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer maxInt;
 
-    @ModelProperty
+    @JmixProperty
     protected Double maxDouble;
 
-    @ModelProperty
+    @JmixProperty
     protected BigDecimal maxDecimal;
 
-    @ModelProperty
+    @JmixProperty
     protected String validatorGroovyScript;
 
-    @ModelProperty
+    @JmixProperty
     protected String columnName;
 
-    @ModelProperty
+    @JmixProperty
     protected String columnAlignment;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer columnWidth;
 
-    @ModelProperty
+    @JmixProperty
     protected String numberFormatPattern;
 
-    @ModelProperty
+    @JmixProperty
     protected String optionsLoaderType;
 
-    @ModelProperty
+    @JmixProperty
     protected String optionsLoaderScript;
 
-    @ModelProperty
+    @JmixProperty
     protected String recalculationScript;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer columnNumber;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer rowNumber;
 
 //    todo
@@ -95,7 +95,7 @@ public class CategoryAttributeConfiguration implements Serializable {
 //    @Transient
 //    protected List<UUID> dependsOnCategoryAttributesIds;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected transient List<CategoryAttribute> dependsOnAttributes;
 

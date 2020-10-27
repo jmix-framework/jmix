@@ -18,13 +18,13 @@ package io.jmix.dynattrui.impl.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 import java.util.UUID;
 
-@ModelObject(name = "sys_TargetScreenComponent")
+@JmixEntity(name = "sys_TargetScreenComponent")
 @SystemLevel
 public class TargetScreenComponent {
 
@@ -32,10 +32,10 @@ public class TargetScreenComponent {
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty
+    @JmixProperty
     protected String screen;
 
-    @ModelProperty
+    @JmixProperty
     protected String component;
 
     public UUID getId() {

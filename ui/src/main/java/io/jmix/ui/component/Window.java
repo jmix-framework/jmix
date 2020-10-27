@@ -336,7 +336,7 @@ public interface Window extends Frame, Component.HasCaption, Component.HasIcon {
          * Cross field validation is triggered before {@code AbstractWindow#postValidate} hook. TODO: legacy-ui
          *
          * @param crossFieldValidate cross field validate flag
-         * @see io.jmix.core.BeanValidation
+         * @see javax.validation.Validator
          */
         void setCrossFieldValidate(boolean crossFieldValidate);
     }

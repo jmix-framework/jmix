@@ -21,7 +21,8 @@ import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.data.entity.ReferenceToEntity;
 import org.springframework.data.annotation.CreatedBy;
@@ -38,6 +39,7 @@ import java.util.UUID;
  * Record containing information about entity lifecycle event.
  * Created by <code>EntityLog</code> bean.
  */
+@JmixEntity
 @Entity(name = "audit_EntityLog")
 @Table(name = "AUDIT_ENTITY_LOG")
 @Listeners("audit_EntityLogItemDetachListener")
@@ -113,7 +115,7 @@ public class EntityLogItem implements Serializable {
     private transient Object dbGeneratedIdEntity;
 
     @Transient
-    @ModelProperty
+    @JmixProperty
     private Set<EntityLogAttr> attributes;
 
     @Lob

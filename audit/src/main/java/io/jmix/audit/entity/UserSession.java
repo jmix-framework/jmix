@@ -18,15 +18,15 @@ package io.jmix.audit.entity;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.session.SessionInformation;
 
 import javax.persistence.Transient;
 import java.util.Date;
 
-@ModelObject(name = "audit_UserSession", annotatedPropertiesOnly = true)
+@JmixEntity(name = "audit_UserSession", annotatedPropertiesOnly = true)
 @SystemLevel
 @Internal
 public class UserSession {
@@ -46,17 +46,17 @@ public class UserSession {
         return sessionInformation.getPrincipal();
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getSessionId() {
         return sessionInformation.getSessionId();
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getPrincipalName() {
         return new TestingAuthenticationToken(getPrincipal(), null).getName();
     }
 
-    @ModelProperty
+    @JmixProperty
     public Date getLastRequest() {
         return sessionInformation.getLastRequest();
     }

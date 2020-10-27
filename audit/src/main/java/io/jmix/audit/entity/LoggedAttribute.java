@@ -19,6 +19,7 @@ package io.jmix.audit.entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -30,6 +31,7 @@ import java.util.UUID;
 /**
  * Configuration element of <code>EntityLog</code> bean.
  */
+@JmixEntity
 @Entity(name = "audit_LoggedAttribute")
 @Table(name = "AUDIT_LOGGED_ATTR",
         uniqueConstraints = @UniqueConstraint(name = "AUDIT_LOGGED_ATTR_UNIQ_NAME", columnNames = {"ENTITY_ID", "NAME"}))

@@ -16,11 +16,13 @@
 
 package test_support.testmodel;
 
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.*;
 
 @Entity(name = "test$StringKeyEntity")
+@JmixEntity
 @Table(name = "TEST_STRING_KEY")
 public class StringKeyEntity {
 
@@ -33,7 +35,7 @@ public class StringKeyEntity {
     @Column(name = "NAME")
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected String description;
 

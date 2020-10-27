@@ -18,8 +18,8 @@ package io.jmix.audit.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -28,7 +28,7 @@ import java.util.UUID;
 /**
  * Record containing changed entity attribute.
  */
-@ModelObject(name = "audit_EntityLogAttr")
+@JmixEntity(name = "audit_EntityLogAttr")
 @SystemLevel
 public class EntityLogAttr implements Serializable {
 
@@ -43,25 +43,25 @@ public class EntityLogAttr implements Serializable {
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty
+    @JmixProperty
     private EntityLogItem logItem;
 
-    @ModelProperty
+    @JmixProperty
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String value;
 
-    @ModelProperty
+    @JmixProperty
     private String oldValue;
 
-    @ModelProperty
+    @JmixProperty
     private String valueId;
 
-    @ModelProperty
+    @JmixProperty
     private String oldValueId;
 
-    @ModelProperty
+    @JmixProperty
     private String messagesPack;
 
     public UUID getId() {

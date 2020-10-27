@@ -18,8 +18,8 @@ package io.jmix.securityui.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.security.model.RoleType;
 
 import javax.persistence.Id;
@@ -28,37 +28,37 @@ import java.util.*;
 /**
  * Non-persistent entity used to display roles in UI
  */
-@ModelObject(name = "sec_RoleModel")
+@JmixEntity(name = "sec_RoleModel")
 public class RoleModel {
 
     @Id
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String code;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     private String source;
 
-    @ModelProperty
+    @JmixProperty
     private RoleType roleType;
 
     @Composition
-    @ModelProperty
+    @JmixProperty
     private Collection<ResourcePolicyModel> resourcePolicies;
 
     @Composition
-    @ModelProperty
+    @JmixProperty
     private Collection<RowLevelPolicyModel> rowLevelPolicies;
 
-    @ModelProperty
+    @JmixProperty
     private Map<String, String> customProperties = new HashMap<>();
 
-    @ModelProperty
+    @JmixProperty
     private Set<String> childRoles;
 
     public UUID getId() {

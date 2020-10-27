@@ -16,10 +16,13 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity(name = "test_Customer")
+@JmixEntity
 public class TestCustomer extends BaseEntity {
 
     @Column(name = "NAME")

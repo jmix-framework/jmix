@@ -23,6 +23,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.model.RoleType;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -39,6 +40,7 @@ import java.util.UUID;
 
 @Table(name = "SEC_ROLE_ENTITY")
 @Entity(name = "sec_RoleEntity")
+@JmixEntity
 public class RoleEntity implements Serializable {
     private static final long serialVersionUID = -1587602133446436634L;
 

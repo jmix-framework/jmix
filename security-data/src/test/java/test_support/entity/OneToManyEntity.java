@@ -16,6 +16,8 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -24,6 +26,7 @@ import java.util.List;
 
 @Table(name = "TEST_ONE_TO_MANY_ENTITY")
 @Entity(name = "test_OneToManyEntity")
+@JmixEntity
 public class OneToManyEntity extends BaseEntity {
     @Column(name = "NAME")
     protected String name;

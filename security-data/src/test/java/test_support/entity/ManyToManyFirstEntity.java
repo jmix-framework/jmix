@@ -1,10 +1,13 @@
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Table(name = "TEST_MANY_TO_MANY_FIRST_ENTITY")
 @Entity(name = "test_ManyToManyFirstEntity")
+@JmixEntity
 public class ManyToManyFirstEntity extends BaseEntity {
     @Column(name = "NAME")
     protected String name;

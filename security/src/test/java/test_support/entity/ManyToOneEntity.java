@@ -16,10 +16,13 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 @Table(name = "TEST_MANY_TO_ONE_ENTITY")
 @Entity(name = "test_ManyToOneEntity")
+@JmixEntity
 public class ManyToOneEntity extends BaseEntity {
     @Column(name = "NAME")
     protected String name;

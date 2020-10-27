@@ -17,8 +17,8 @@
 package io.jmix.securityui.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 import java.util.HashMap;
@@ -28,32 +28,32 @@ import java.util.UUID;
 /**
  * Non-persistent entity used to display resource policies in UI
  */
-@ModelObject(name = "sec_ResourcePolicyModel")
+@JmixEntity(name = "sec_ResourcePolicyModel")
 public class ResourcePolicyModel {
 
     @Id
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     private String type;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     private String resource;
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     private String action;
 
-    @ModelProperty
+    @JmixProperty
     private String effect;
 
-    @ModelProperty
+    @JmixProperty
     private String scope;
 
-    @ModelProperty
+    @JmixProperty
     private String policyGroup;
 
-    @ModelProperty
+    @JmixProperty
     private Map<String, String> customProperties = new HashMap<>();
 
     public UUID getId() {

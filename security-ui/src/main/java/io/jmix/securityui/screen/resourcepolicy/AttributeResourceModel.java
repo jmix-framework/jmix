@@ -17,8 +17,8 @@
 package io.jmix.securityui.screen.resourcepolicy;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Id;
 import java.util.UUID;
@@ -26,23 +26,23 @@ import java.util.UUID;
 /**
  * Class is used to display the attributes list in the {@link EntityAttributeResourcePolicyModelCreate} screen.
  */
-@ModelObject(name = "sec_AttributeResourceModel")
+@JmixEntity(name = "sec_AttributeResourceModel")
 public class AttributeResourceModel {
 
     @Id
     @JmixGeneratedValue
     protected UUID id;
 
-    @ModelProperty
+    @JmixProperty
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String caption;
 
-    @ModelProperty
+    @JmixProperty
     private Boolean view = false;
 
-    @ModelProperty
+    @JmixProperty
     private Boolean modify = false;
 
     public UUID getId() {

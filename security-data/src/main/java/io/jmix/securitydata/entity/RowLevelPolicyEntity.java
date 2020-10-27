@@ -19,6 +19,7 @@ package io.jmix.securitydata.entity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
 import org.springframework.data.annotation.CreatedBy;
@@ -34,6 +35,7 @@ import java.util.UUID;
 
 @Table(name = "SEC_ROW_LEVEL_POLICY_ENTITY")
 @Entity(name = "sec_RowLevelPolicyEntity")
+@JmixEntity
 public class RowLevelPolicyEntity implements Serializable {
     private static final long serialVersionUID = -8009316149061437606L;
 

@@ -16,9 +16,12 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "test_NullableIdItemEntity")
+@JmixEntity
 @Table(name = "TEST_NULLABLE_ID_ITEM_ENTITY")
 public class TestNullableIdItemEntity {
 

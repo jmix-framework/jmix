@@ -16,51 +16,51 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Date;
 
-@ModelObject(name = "test_RendererObject")
+@JmixEntity(name = "test_RendererObject")
 public class RendererObject {
 
-    @ModelProperty
+    @JmixProperty
     protected String button;
 
-    @ModelProperty
+    @JmixProperty
     protected String component;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean checkBox;
 
-    @ModelProperty
+    @JmixProperty
     protected String clickableText;
 
-    @ModelProperty
+    @JmixProperty
     protected Date date;
 
-    @ModelProperty
+    @JmixProperty
     protected String icon;
 
-    @ModelProperty
+    @JmixProperty
     protected String image;
 
-    @ModelProperty
+    @JmixProperty
     protected String html;
 
-    @ModelProperty
+    @JmixProperty
     protected String localDate;
 
-    @ModelProperty
+    @JmixProperty
     protected String localDateTime;
 
-    @ModelProperty
+    @JmixProperty
     protected Double number;
 
-    @ModelProperty
+    @JmixProperty
     protected Double progressBar;
 
-    @ModelProperty
+    @JmixProperty
     protected String text;
 
     public String getButton() {

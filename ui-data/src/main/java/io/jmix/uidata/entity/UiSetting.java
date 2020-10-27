@@ -17,6 +17,7 @@ package io.jmix.uidata.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.uidata.UserSettingServiceImpl;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -32,6 +33,7 @@ import java.util.UUID;
  * @see UserSettingServiceImpl
  */
 @Entity(name = "ui_Setting")
+@JmixEntity
 @Table(name = "UI_SETTING")
 @SystemLevel
 public class UiSetting implements Serializable {

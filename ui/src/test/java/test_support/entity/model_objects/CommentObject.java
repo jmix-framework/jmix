@@ -16,13 +16,13 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "test_CommentObject")
+@JmixEntity(name = "test_CommentObject")
 public class CommentObject {
 
-    @ModelProperty
+    @JmixProperty
     protected String text;
 
     public String getText() {

@@ -16,9 +16,12 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "test$IdentityIdEntity")
+@JmixEntity
 @Table(name = "TEST_IDENTITY_ID_ENTITY")
 public class TestIdentityIdEntity {
 

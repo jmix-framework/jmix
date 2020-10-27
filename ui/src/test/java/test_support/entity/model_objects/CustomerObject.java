@@ -17,15 +17,15 @@
 package test_support.entity.model_objects;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.validation.constraints.NotNull;
 
-@ModelObject(name = "test_CustomerObject", annotatedPropertiesOnly = true)
+@JmixEntity(name = "test_CustomerObject", annotatedPropertiesOnly = true)
 public class CustomerObject {
 
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     @InstanceName
     @NotNull
     private String name;

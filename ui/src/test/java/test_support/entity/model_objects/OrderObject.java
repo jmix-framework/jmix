@@ -17,12 +17,12 @@
 package test_support.entity.model_objects;
 
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@ModelObject(name = "test_OrderObject")
+@JmixEntity(name = "test_OrderObject")
 public class OrderObject {
 
     private LocalDate date;

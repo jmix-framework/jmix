@@ -19,6 +19,7 @@ import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -34,6 +35,7 @@ import java.util.UUID;
 /**
  * User
  */
+@JmixEntity
 @Entity(name = "sample_User")
 @Table(name = "SAMPLE_USER")
 //@Listeners("jmix_UserEntityListener")

@@ -17,7 +17,8 @@
 package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "test_ReadOnlyPropertyEntity")
+@JmixEntity
 @Table(name = "TEST_READONLY_PROPERTY_ENTITY")
 public class TestReadOnlyPropertyEntity {
 
@@ -41,10 +43,10 @@ public class TestReadOnlyPropertyEntity {
     @Column(name = "NAME")
     private String name;
 
-    @ModelProperty
+    @JmixProperty
     private String roName;
 
-    @ModelProperty
+    @JmixProperty
     private List<Foo> roList;
 
     public TestReadOnlyPropertyEntity() {
@@ -75,7 +77,7 @@ public class TestReadOnlyPropertyEntity {
         return roList;
     }
 
-    @ModelProperty
+    @JmixProperty
     public Foo getRoFoo() {
         return roList.isEmpty() ? null : roList.get(0);
     }

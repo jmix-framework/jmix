@@ -16,27 +16,27 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.Date;
 
-@ModelObject(name = "test_GoodInfo")
+@JmixEntity(name = "test_GoodInfo")
 public class GoodInfoObject {
 
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected Date createDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Date expirationDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Double weight;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean isFragile;
 
     public String getName() {

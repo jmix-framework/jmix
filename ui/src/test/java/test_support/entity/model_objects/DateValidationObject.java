@@ -16,8 +16,8 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,57 +27,57 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.PastOrPresent;
 import java.util.Date;
 
-@ModelObject(name = "test_DateValidationObject")
+@JmixEntity(name = "test_DateValidationObject")
 public class DateValidationObject {
 
     @Future
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date futureDatePicker;
 
     @Past
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date pastDatePicker;
 
     @FutureOrPresent
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date futureOrPresentDatePicker;
 
     @PastOrPresent
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date pastOrPresentDatePicker;
 
     @Future
     @Temporal(TemporalType.DATE)
-    @ModelProperty
+    @JmixProperty
     protected Date specificFutureDatePicker;
 
     @Future
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date futureDateField;
 
     @Past
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date pastDateField;
 
     @FutureOrPresent
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date futureOrPresentDateField;
 
     @PastOrPresent
     @Temporal(TemporalType.TIMESTAMP)
-    @ModelProperty
+    @JmixProperty
     protected Date pastOrPresentDateField;
 
     @Future
     @Temporal(TemporalType.DATE)
-    @ModelProperty
+    @JmixProperty
     protected Date specificFutureDateField;
 
     public void setFutureDatePicker(Date futureDatePicker) {

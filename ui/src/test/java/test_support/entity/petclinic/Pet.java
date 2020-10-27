@@ -17,16 +17,13 @@
 package test_support.entity.petclinic;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity(name = "pc_Pet")
+@JmixEntity
 @Table(name = "PC_PET")
 public class Pet extends TestBaseEntity {
     private static final long serialVersionUID = 4081018156220238819L;

@@ -19,6 +19,7 @@ package test_support.entity.sales;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @Table(name = "TEST_ORDER_LINE")
 @Entity(name = "test_OrderLine")
+@JmixEntity
 public class OrderLine extends TestBaseEntity {
     private static final long serialVersionUID = 5682981871475199801L;
 

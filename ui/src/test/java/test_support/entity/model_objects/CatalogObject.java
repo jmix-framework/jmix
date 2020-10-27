@@ -16,19 +16,19 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import test_support.entity.sales.Product;
 
 import java.util.Set;
 
-@ModelObject(name = "test_Catalog")
+@JmixEntity(name = "test_Catalog")
 public class CatalogObject {
 
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected Set<Product> products;
 
     public String getName() {

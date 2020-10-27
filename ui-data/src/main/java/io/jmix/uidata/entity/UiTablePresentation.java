@@ -18,6 +18,7 @@ package io.jmix.uidata.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.ui.presentation.model.TablePresentation;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,6 +35,7 @@ import java.util.UUID;
  * A screen presentation settings.
  */
 @Entity(name = "ui_TablePresentation")
+@JmixEntity
 @Table(name = "UI_TABLE_PRESENTATION")
 @SystemLevel
 public class UiTablePresentation implements TablePresentation, Serializable {

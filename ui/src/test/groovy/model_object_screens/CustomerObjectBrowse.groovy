@@ -38,7 +38,7 @@ class CustomerObjectBrowse extends StandardLookup<CustomerObject> {
 
     @Install(to = "customerObjectsDl", target = Target.DATA_LOADER)
     private List<CustomerObject> customerObjectsDlLoadDelegate(LoadContext<CustomerObject> loadContext) {
-        return TestModelObjectsStorage.getInstance().getAll(CustomerObject.class)
+        return TestJmixEntitiesStorage.getInstance().getAll(CustomerObject.class)
     }
 
 }

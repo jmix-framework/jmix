@@ -21,6 +21,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * User
  */
 @Entity(name = "sec$User")
+@JmixEntity
 @Table(name = "SEC_USER")
 public class User extends TestBaseEntity {
 

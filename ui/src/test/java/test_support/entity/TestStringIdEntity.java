@@ -16,12 +16,15 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity(name = "test$StringIdEntity")
+@JmixEntity
 @Table(name = "TEST_STRING_ID_ENTITY")
 public class TestStringIdEntity {
 

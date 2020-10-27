@@ -17,6 +17,7 @@
 package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import javax.persistence.Table;
 import java.util.UUID;
 
 @Entity(name = "test_Foo")
+@JmixEntity
 @Table(name = "TEST_FOO")
 public class Foo {
 

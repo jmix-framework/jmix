@@ -16,9 +16,12 @@
 
 package test_support.entity;
 
+import io.jmix.core.metamodel.annotation.JmixEntity;
+
 import javax.persistence.*;
 
 @Entity(name = "test_JpaLifecycleCallbacksEntity")
+@JmixEntity
 @Table(name = "TEST_JPA_LIFECYCLE_CALLBACKS_ENTITY")
 public class TestJpaLifecycleCallbacksEntity extends TestBaseEntity {
 

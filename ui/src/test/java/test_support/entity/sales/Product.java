@@ -17,6 +17,7 @@
 package test_support.entity.sales;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity(name = "test_Product")
+@JmixEntity
 @Table(name = "TEST_PRODUCT")
 public class Product extends TestBaseEntity {
 

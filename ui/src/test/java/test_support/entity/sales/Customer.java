@@ -18,17 +18,14 @@ package test_support.entity.sales;
 
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.pessimisticlocking.PessimisticLock;
 import test_support.entity.TestBaseEntity;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity(name = "test_Customer")
+@JmixEntity
 @Table(name = "TEST_CUSTOMER")
 @PessimisticLock(timeoutSec = 60)
 public class Customer extends TestBaseEntity {

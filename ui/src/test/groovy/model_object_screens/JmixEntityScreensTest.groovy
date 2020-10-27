@@ -33,7 +33,7 @@ import test_support.entity.model_objects.OrderLineObject
 import java.time.LocalDate
 
 @ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
-class ModelObjectScreensTest extends ScreenSpecification {
+class JmixEntityScreensTest extends ScreenSpecification {
 
     @Autowired
     ScreenBuilders screenBuilders
@@ -47,7 +47,7 @@ class ModelObjectScreensTest extends ScreenSpecification {
 
     @Override
     void cleanup() {
-        TestModelObjectsStorage.instance.clear()
+        TestJmixEntitiesStorage.instance.clear()
     }
 
     def "browse and edit CustomerObject"() {
@@ -109,7 +109,7 @@ class ModelObjectScreensTest extends ScreenSpecification {
     def "create Order with Customer"() {
         def customer = metadata.create(CustomerObject)
         customer.name = 'Joe'
-        TestModelObjectsStorage.getInstance().save(customer)
+        TestJmixEntitiesStorage.getInstance().save(customer)
 
         screens.create("main", OpenMode.ROOT).show()
 
@@ -176,7 +176,7 @@ class ModelObjectScreensTest extends ScreenSpecification {
         def orderLine = orderEditor.lineObjectsDc.items[0]
         orderLine.product == 'p1'
         orderLine.quantity == 10d
-        TestModelObjectsStorage.instance.getAll(OrderLineObject).isEmpty() // because of composition
+        TestJmixEntitiesStorage.instance.getAll(OrderLineObject).isEmpty() // because of composition
 
         when:
         orderEditor.closeWithCommit()
@@ -185,7 +185,7 @@ class ModelObjectScreensTest extends ScreenSpecification {
         orderBrowser.orderObjectsDc.items.size() == 1
         def order = orderBrowser.orderObjectsDc.items[0]
         order.lines.size() == 1
-        order.lines[0] == TestModelObjectsStorage.instance.getAll(OrderLineObject)[0]
+        order.lines[0] == TestJmixEntitiesStorage.instance.getAll(OrderLineObject)[0]
 
         when: "edit"
         orderBrowser.orderObjectsTable.setSelected(orderBrowser.orderObjectsDc.items[0])

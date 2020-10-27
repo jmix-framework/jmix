@@ -51,7 +51,7 @@ class OrderObjectEdit extends StandardEditor<OrderObject> {
     @Install(target = Target.DATA_CONTEXT)
     private Set<Object> commitDelegate(SaveContext saveContext) {
         for (Object entity : saveContext.getEntitiesToSave()) {
-            TestModelObjectsStorage.getInstance().save(entity)
+            TestJmixEntitiesStorage.getInstance().save(entity)
         }
         return new HashSet<>(saveContext.getEntitiesToSave())
     }

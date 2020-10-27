@@ -18,6 +18,7 @@ package test_support.entity;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @Table(name = "TEST_UIDATA_PROJECT")
 @Entity(name = "test_uidata_Project")
+@JmixEntity
 public class Project {
     private static final long serialVersionUID = 1662802734694727725L;
 

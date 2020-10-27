@@ -35,6 +35,6 @@ class OrderObjectBrowse extends StandardLookup<OrderObject> {
 
     @Install(to = "orderObjectsDl", target = Target.DATA_LOADER)
     private List<OrderObject> orderObjectsDlLoadDelegate(LoadContext<OrderObject> loadContext) {
-        return TestModelObjectsStorage.getInstance().getAll(OrderObject.class)
+        return TestJmixEntitiesStorage.getInstance().getAll(OrderObject.class)
     }
 }

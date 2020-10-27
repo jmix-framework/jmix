@@ -20,6 +20,7 @@ import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 import test_support.entity.sec.User;
 
@@ -29,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity(name = "test_Order")
+@JmixEntity
 @Table(name = "TEST_ORDER")
 public class Order extends TestBaseEntity {
 

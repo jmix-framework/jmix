@@ -17,35 +17,35 @@
 package test_support.entity.model_objects;
 
 import io.jmix.core.metamodel.annotation.InstanceName;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-@ModelObject(name = "test_GoodStatisticObject")
+@JmixEntity(name = "test_GoodStatisticObject")
 public class GoodStatisticObject {
 
-    @ModelProperty
+    @JmixProperty
     @InstanceName
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected Date fromDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Date toDate;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer sales;
 
-    @ModelProperty
+    @JmixProperty
     protected Long count;
 
-    @ModelProperty
+    @JmixProperty
     protected Double usages;
 
-    @ModelProperty
+    @JmixProperty
     protected BigDecimal price;
 
     public String getName() {

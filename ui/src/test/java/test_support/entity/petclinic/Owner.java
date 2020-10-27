@@ -18,12 +18,14 @@ package test_support.entity.petclinic;
 
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.TestBaseEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 @Entity(name = "pc_Owner")
+@JmixEntity
 @Table(name = "PC_OWNER")
 public class Owner extends TestBaseEntity {
 

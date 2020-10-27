@@ -22,13 +22,13 @@ import io.jmix.core.entity.EntityValues
 import javax.annotation.Nullable
 import java.util.concurrent.ConcurrentHashMap
 
-class TestModelObjectsStorage {
+class TestJmixEntitiesStorage {
 
     private Map<Object, Object> storage = new ConcurrentHashMap<>()
 
-    private static TestModelObjectsStorage INSTANCE = new TestModelObjectsStorage()
+    private static TestJmixEntitiesStorage INSTANCE = new TestJmixEntitiesStorage()
 
-    static TestModelObjectsStorage getInstance() {
+    static TestJmixEntitiesStorage getInstance() {
         return INSTANCE;
     }
 

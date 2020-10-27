@@ -16,9 +16,9 @@
 
 package test_support.entity.model_objects;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 
-@ModelObject(name = "test_OrderLineObject")
+@JmixEntity(name = "test_OrderLineObject")
 public class OrderLineObject {
 
     private OrderObject order;

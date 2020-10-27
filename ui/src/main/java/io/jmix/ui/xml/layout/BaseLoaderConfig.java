@@ -89,7 +89,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(Tree.NAME, TreeLoader.class);
         loaders.put(TabSheet.NAME, TabSheetLoader.class);
         loaders.put(Accordion.NAME, AccordionLoader.class);
-        loaders.put(Embedded.NAME, EmbeddedLoader.class);
         loaders.put(Image.NAME, ImageLoader.class);
         loaders.put(BrowserFrame.NAME, BrowserFrameLoader.class);
 //        loaders.put(Filter.NAME, FilterLoader.class); // todo filter

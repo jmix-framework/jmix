@@ -112,7 +112,6 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(TabSheet.NAME, TabSheetImpl.class);
         classes.put(Accordion.NAME, AccordionImpl.class);
         classes.put(Calendar.NAME, CalendarImpl.class);
-        classes.put(Embedded.NAME, WebEmbedded.class);
         classes.put(Image.NAME, ImageImpl.class);
         classes.put(BrowserFrame.NAME, BrowserFrameImpl.class);
 //        classes.put(Filter.NAME, WebFilter.class); // todo filter

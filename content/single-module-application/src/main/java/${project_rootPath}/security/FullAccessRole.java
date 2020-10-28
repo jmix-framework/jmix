@@ -14,7 +14,7 @@ public interface FullAccessRole {
     String ROLE_NAME = "system-full-access";
 
     @EntityPolicy(entityName = "*", actions = {EntityPolicyAction.ALL})
-    @EntityAttributePolicy(entityName = "*", attributes = "*", action = MODIFY)
+    @EntityAttributePolicy(entityName = "*", attributes = "*", action = EntityAttributePolicyAction.MODIFY)
     @ScreenPolicy(screenIds = "*")
     @MenuPolicy(menuIds = "*")
     @SpecificPolicy(resources = "*")

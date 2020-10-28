@@ -16,14 +16,10 @@
 package io.jmix.email.impl;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.TemplateHelper;
-import com.haulmont.cuba.core.sys.AppContext;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Resources;
-import io.jmix.core.TimeSource;
 import io.jmix.core.security.Authenticator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
@@ -33,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Component;
@@ -60,9 +57,6 @@ public class EmailerImpl implements Emailer {
     protected TaskExecutor mailSendTaskExecutor;
 
     @Autowired
-    protected TimeSource timeSource;
-
-    @Autowired
     protected EmailDataProvider emailDataProvider;
 
     @Autowired
@@ -79,6 +73,9 @@ public class EmailerImpl implements Emailer {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @Override
     public void sendEmail(String address, String caption, String body, String bodyContentType,
@@ -97,21 +94,25 @@ public class EmailerImpl implements Emailer {
     }
 
     @Override
-    public List<SendingMessage> sendEmailAsync(EmailInfo info) {
+    public SendingMessage sendEmailAsync(EmailInfo info) {
         //noinspection UnnecessaryLocalVariable
-        List<SendingMessage> result = sendEmailAsync(info, null, null);
+        SendingMessage result = sendEmailAsync(info, null, null);
         return result;
     }
 
     @Override
-    public List<SendingMessage> sendEmailAsync(EmailInfo info, Integer attemptsCount, Date deadline) {
+    public SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {
         prepareEmailInfo(info);
-        List<SendingMessage> messages = splitEmail(info, attemptsCount, deadline);
-        emailDataProvider.persistMessages(messages, SendingStatus.QUEUE);
-        return messages;
+        SendingMessage message = convertToSendingMessage(info, attemptsCount, deadline);
+        emailDataProvider.persistMessage(message, SendingStatus.QUEUE);
+        return message;
     }
 
     protected void prepareEmailInfo(EmailInfo emailInfo) {
+        if (StringUtils.isBlank(emailInfo.getAddresses())) {
+            throw new IllegalArgumentException("Addresses are not specified");
+        }
+
         processBodyTemplate(emailInfo);
 
         if (emailInfo.getFrom() == null) {
@@ -137,34 +138,59 @@ public class EmailerImpl implements Emailer {
             throw new IllegalArgumentException("Could not find template by path: " + templatePath);
         }
         //todo: template helper is not implemented yet
-        String body = TemplateHelper.processTemplate(templateContents, params);
-        info.setBody(body);
+        /*String body = TemplateHelper.processTemplate(templateContents, params);
+        info.setBody(body);*/
     }
 
-    protected List<SendingMessage> splitEmail(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {
-        List<SendingMessage> sendingMessageList = new ArrayList<>();
-        if (info.isSendInOneMessage()) {
-            if (StringUtils.isNotBlank(info.getAddresses())) {
-                SendingMessage sendingMessage = convertToSendingMessage(info.getAddresses(), info.getFrom(), info.getCc(),
-                        info.getBcc(), info.getCaption(), info.getBody(), info.getBodyContentType(), info.getHeaders(),
-                        info.getAttachments(), attemptsCount, deadline);
+    protected SendingMessage convertToSendingMessage(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {
+        SendingMessage sendingMessage = metadata.create(SendingMessage.class);
 
-                sendingMessageList.add(sendingMessage);
-            }
-        } else {
-            String[] splitAddresses = info.getAddresses().split("[,;]");
-            for (String address : splitAddresses) {
-                address = address.trim();
-                if (StringUtils.isNotBlank(address)) {
-                    SendingMessage sendingMessage = convertToSendingMessage(address, info.getFrom(), null,
-                            null, info.getCaption(), info.getBody(), info.getBodyContentType(), info.getHeaders(),
-                            info.getAttachments(), attemptsCount, deadline);
+        sendingMessage.setAddress(info.getAddresses());
+        sendingMessage.setCc(info.getCc());
+        sendingMessage.setBcc(info.getBcc());
+        sendingMessage.setFrom(info.getFrom());
+        sendingMessage.setContentText(info.getBody());
+        sendingMessage.setCaption(info.getCaption());
+        sendingMessage.setAttemptsCount(attemptsCount);
+        sendingMessage.setDeadline(deadline);
+        sendingMessage.setAttemptsMade(0);
 
-                    sendingMessageList.add(sendingMessage);
-                }
-            }
+        String bodyContentType = info.getBodyContentType();
+        if (Strings.isNullOrEmpty(bodyContentType)) {
+            bodyContentType = getContentBodyType(sendingMessage);
         }
-        return sendingMessageList;
+        sendingMessage.setBodyContentType(bodyContentType);
+
+        List<EmailAttachment> attachments = info.getAttachments();
+        if (CollectionUtils.isNotEmpty(attachments)) {
+            StringBuilder attachmentsName = new StringBuilder();
+            List<SendingAttachment> sendingAttachments = new ArrayList<>(attachments.size());
+
+            attachments.forEach(ea -> {
+                attachmentsName.append(ea.getName()).append(";");
+
+                SendingAttachment sendingAttachment = toSendingAttachment(ea);
+                sendingAttachment.setMessage(sendingMessage);
+                sendingAttachments.add(sendingAttachment);
+            });
+
+            sendingMessage.setAttachments(sendingAttachments);
+            sendingMessage.setAttachmentsName(attachmentsName.toString());
+        } else {
+            sendingMessage.setAttachments(Collections.emptyList());
+        }
+
+        String headersLine = null;
+        if (CollectionUtils.isNotEmpty(info.getHeaders())) {
+            headersLine = info.getHeaders().stream()
+                    .map(EmailHeader::toString)
+                    .collect(Collectors.joining(SendingMessage.HEADERS_SEPARATOR));
+        }
+        sendingMessage.setHeaders(headersLine);
+
+        replaceRecipientIfNecessary(sendingMessage);
+
+        return sendingMessage;
     }
 
     protected void sendSendingMessage(SendingMessage sendingMessage) {
@@ -189,26 +215,24 @@ public class EmailerImpl implements Emailer {
         Objects.requireNonNull(emailInfo.getBody(), "body is null");
         Objects.requireNonNull(emailInfo.getFrom(), "from is null");
 
-        List<SendingMessage> messages = splitEmail(emailInfo, null, null);
+        SendingMessage sendingMessage = convertToSendingMessage(emailInfo, null, null);
 
         List<String> failedAddresses = new ArrayList<>();
         List<String> errorMessages = new ArrayList<>();
 
-        for (SendingMessage sendingMessage : messages) {
-            SendingMessage persistedMessage = persistMessageIfPossible(sendingMessage);
+        SendingMessage persistedMessage = persistMessageIfPossible(sendingMessage);
 
-            try {
-                emailSender.sendEmail(sendingMessage);
-                if (persistedMessage != null) {
-                    emailDataProvider.updateStatus(persistedMessage, SendingStatus.SENT);
-                }
-            } catch (Exception e) {
-                log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
-                failedAddresses.add(sendingMessage.getAddress());
-                errorMessages.add(e.getMessage());
-                if (persistedMessage != null) {
-                    emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOTSENT);
-                }
+        try {
+            emailSender.sendEmail(sendingMessage);
+            if (persistedMessage != null) {
+                emailDataProvider.updateStatus(persistedMessage, SendingStatus.SENT);
+            }
+        } catch (Exception e) {
+            log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
+            failedAddresses.add(sendingMessage.getAddress());
+            errorMessages.add(e.getMessage());
+            if (persistedMessage != null) {
+                emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOTSENT);
             }
         }
 
@@ -227,7 +251,7 @@ public class EmailerImpl implements Emailer {
         // to avoid additional overhead to load body and attachments back from FS
         try {
             SendingMessage clonedMessage = createClone(sendingMessage);
-            emailDataProvider.persistMessages(Collections.singletonList(clonedMessage), SendingStatus.SENDING);
+            emailDataProvider.persistMessage(clonedMessage, SendingStatus.SENDING);
             return clonedMessage;
         } catch (Exception e) {
             log.error("Failed to persist message '{}'", sendingMessage.getCaption(), e);
@@ -250,10 +274,6 @@ public class EmailerImpl implements Emailer {
 
     @Override
     public String processQueuedEmails() {
-        if (applicationNotStartedYet()) {
-            return null;
-        }
-
         int callsToSkip = emailerProperties.getDelayCallCount();
         int count = callCount.getAndAdd(1);
         if (count < callsToSkip) {
@@ -262,7 +282,7 @@ public class EmailerImpl implements Emailer {
 
         String resultMessage;
         try {
-            authenticator.begin(getEmailerLogin());
+            authenticator.begin(emailerProperties.getUserLogin());
             try {
                 resultMessage = sendQueuedEmails();
             } finally {
@@ -273,10 +293,6 @@ public class EmailerImpl implements Emailer {
             resultMessage = e.getMessage();
         }
         return resultMessage;
-    }
-
-    protected boolean applicationNotStartedYet() {
-        return !AppContext.isStarted();
     }
 
     protected String sendQueuedEmails() {
@@ -291,23 +307,9 @@ public class EmailerImpl implements Emailer {
         return String.format("Processed %d emails", messagesToSend.size());
     }
 
-    protected boolean shouldMarkNotSent(SendingMessage sendingMessage) {
-        Date deadline = sendingMessage.getDeadline();
-        if (deadline != null && deadline.before(timeSource.currentTimestamp())) {
-            return true;
-        }
-
-        Integer messageAttemptsLimit = sendingMessage.getAttemptsCount();
-        int defaultLimit = emailerProperties.getDefaultSendingAttemptsCount();
-        int attemptsLimit = messageAttemptsLimit != null ? messageAttemptsLimit : defaultLimit;
-        //noinspection UnnecessaryLocalVariable
-        boolean res = sendingMessage.getAttemptsMade() != null && sendingMessage.getAttemptsMade() >= attemptsLimit;
-        return res;
-    }
-
     protected void submitExecutorTask(SendingMessage msg) {
         try {
-            Runnable mailSendTask = new EmailSendTask(msg, authenticator);
+            Runnable mailSendTask = applicationContext.getBean(EmailSendTask.class, msg);
             mailSendTaskExecutor.execute(mailSendTask);
         } catch (RejectedExecutionException e) {
             emailDataProvider.updateStatus(msg, SendingStatus.QUEUE);
@@ -317,64 +319,6 @@ public class EmailerImpl implements Emailer {
             SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOTSENT;
             emailDataProvider.updateStatus(msg, newStatus);
         }
-    }
-
-    @Override
-    public void updateSession() {
-        emailSender.updateSession();
-    }
-
-    protected SendingMessage convertToSendingMessage(String address, String from, @Nullable String cc, @Nullable String bcc, String caption, String body,
-                                                     String bodyContentType,
-                                                     @Nullable List<EmailHeader> headers,
-                                                     @Nullable List<EmailAttachment> attachments,
-                                                     @Nullable Integer attemptsCount, @Nullable Date deadline) {
-        SendingMessage sendingMessage = metadata.create(SendingMessage.class);
-
-        sendingMessage.setAddress(address);
-        sendingMessage.setCc(cc);
-        sendingMessage.setBcc(bcc);
-        sendingMessage.setFrom(from);
-        sendingMessage.setContentText(body);
-        sendingMessage.setCaption(caption);
-        sendingMessage.setAttemptsCount(attemptsCount);
-        sendingMessage.setDeadline(deadline);
-        sendingMessage.setAttemptsMade(0);
-
-        if (Strings.isNullOrEmpty(bodyContentType)) {
-            bodyContentType = getContentBodyType(sendingMessage);
-        }
-        sendingMessage.setBodyContentType(bodyContentType);
-
-        if (CollectionUtils.isNotEmpty(attachments)) {
-            StringBuilder attachmentsName = new StringBuilder();
-            List<SendingAttachment> sendingAttachments = new ArrayList<>(attachments.size());
-
-            attachments.forEach(ea -> {
-                attachmentsName.append(ea.getName()).append(";");
-
-                SendingAttachment sendingAttachment = toSendingAttachment(ea);
-                sendingAttachment.setMessage(sendingMessage);
-                sendingAttachments.add(sendingAttachment);
-            });
-
-            sendingMessage.setAttachments(sendingAttachments);
-            sendingMessage.setAttachmentsName(attachmentsName.toString());
-        } else {
-            sendingMessage.setAttachments(Collections.emptyList());
-        }
-
-        String headersLine = null;
-        if (CollectionUtils.isNotEmpty(headers)) {
-            headersLine = headers.stream()
-                    .map(EmailHeader::toString)
-                    .collect(Collectors.joining(SendingMessage.HEADERS_SEPARATOR));
-        }
-        sendingMessage.setHeaders(headersLine);
-
-        replaceRecipientIfNecessary(sendingMessage);
-
-        return sendingMessage;
     }
 
     protected String getContentBodyType(SendingMessage sendingMessage) {
@@ -413,36 +357,5 @@ public class EmailerImpl implements Emailer {
             return false;
         }
         return true;
-    }
-
-    protected static class EmailSendTask implements Runnable {
-
-        private SendingMessage sendingMessage;
-        private static final Logger log = LoggerFactory.getLogger(EmailSendTask.class);
-        private Authenticator authenticator;
-
-        public EmailSendTask(SendingMessage message, Authenticator authenticator) {
-            this.sendingMessage = message;
-            this.authenticator = authenticator;
-        }
-
-        @Override
-        public void run() {
-            try {
-                EmailerImpl emailer = AppBeans.get(EmailerImpl.class);
-                authenticator.begin(emailer.getEmailerLogin());
-                try {
-                    emailer.sendSendingMessage(sendingMessage);
-                } finally {
-                    authenticator.end();
-                }
-            } catch (Exception e) {
-                log.error("Exception while sending email to '{}': ", sendingMessage.getAddress(), e);
-            }
-        }
-    }
-
-    protected String getEmailerLogin() {
-        return emailerProperties.getUserLogin();
     }
 }

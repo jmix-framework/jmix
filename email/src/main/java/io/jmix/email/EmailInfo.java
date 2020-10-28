@@ -32,20 +32,14 @@ public class EmailInfo implements Serializable {
 
     private static final long serialVersionUID = -382773435130109083L;
 
-    public static final String HTML_CONTENT_TYPE = "text/html; charset=UTF-8";
-    public static final String TEXT_CONTENT_TYPE = "text/plain; charset=UTF-8";
-
     /**
      * Recipient email addresses separated with "," or ";" symbol.
      * <p>
-     * Flag {@code sendInOneMessage} is for backward compatibility with previous CUBA versions.
-     * If {@code sendInOneMessage = true} then one message will be sent for all recipients and it will include CC and BCC.
-     * Otherwise CC and BCC are ignored and multiple messages by the number of recipients in addresses will be sent.
+     * One message will be sent for all recipients and it will include CC and BCC.
      */
     private String addresses;
     private String cc;
     private String bcc;
-    private boolean sendInOneMessage = false;
     private String caption;
     private String from;
     private String templatePath;
@@ -62,7 +56,6 @@ public class EmailInfo implements Serializable {
     EmailInfo(String addresses,
               String cc,
               String bcc,
-              boolean sendInOneMessage,
               String caption,
               String from,
               String templatePath,
@@ -74,7 +67,6 @@ public class EmailInfo implements Serializable {
         this.addresses = addresses;
         this.cc = cc;
         this.bcc = bcc;
-        this.sendInOneMessage = sendInOneMessage;
         this.caption = caption;
         this.from = from;
         this.templatePath = templatePath;
@@ -178,13 +170,5 @@ public class EmailInfo implements Serializable {
 
     public void setBcc(String bcc) {
         this.bcc = bcc;
-    }
-
-    public boolean isSendInOneMessage() {
-        return sendInOneMessage;
-    }
-
-    public void setSendInOneMessage(boolean sendInOneMessage) {
-        this.sendInOneMessage = sendInOneMessage;
     }
 }

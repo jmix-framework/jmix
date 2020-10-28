@@ -17,10 +17,10 @@
 package test_support;
 
 
-import io.jmix.email.JmixMailSender;
 import org.junit.Assert;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 import javax.mail.internet.MimeMessage;
@@ -33,7 +33,7 @@ import java.util.List;
  *
  */
 @Component
-public class TestMailSender extends JmixMailSender {
+public class TestMailSender extends JavaMailSenderImpl {
     private List<MimeMessage> myMessages = new ArrayList<>();
 
     private boolean mustFail;

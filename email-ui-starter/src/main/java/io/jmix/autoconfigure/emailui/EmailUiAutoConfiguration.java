@@ -16,17 +16,12 @@
 
 package io.jmix.autoconfigure.emailui;
 
-import com.haulmont.cuba.CubaConfiguration;
-import io.jmix.core.CoreConfiguration;
 import io.jmix.email.EmailConfiguration;
 import io.jmix.emailui.EmailUiConfiguration;
-import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
-import io.jmix.ui.UiConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({CoreConfiguration.class, UiConfiguration.class, EmailConfiguration.class, EmailUiConfiguration.class, 
-        CubaConfiguration.class, FileSystemFileStorageConfiguration.class})
+@Import({EmailConfiguration.class, EmailUiConfiguration.class})
 public class EmailUiAutoConfiguration {
 }

@@ -16,6 +16,8 @@
 
 package io.jmix.email;
 
+import io.jmix.email.entity.SendingAttachment;
+import io.jmix.email.entity.SendingMessage;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -25,7 +27,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class EmailerProperties {
 
     String fromAddress;
-    boolean utf8Enabled;
     int delayCallCount;
     int messageQueueCapacity;
     int defaultSendingAttemptsCount;
@@ -36,17 +37,15 @@ public class EmailerProperties {
     String userLogin;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
-                             @DefaultValue("false") boolean utf8Enabled,
                              @DefaultValue("2") int delayCallCount,
                              @DefaultValue("100") int messageQueueCapacity,
                              @DefaultValue("10") int defaultSendingAttemptsCount,
                              @DefaultValue("240") int sendingTimeoutSec,
                              @DefaultValue("admin@localhost") String adminAddress,
                              @DefaultValue("false") boolean sendAllToAdmin,
-                             @DefaultValue("true") boolean isFileStorageUsed,
+                             @DefaultValue("false") boolean isFileStorageUsed,
                              @DefaultValue("admin") String userLogin) {
         this.fromAddress = fromAddress;
-        this.utf8Enabled = utf8Enabled;
         this.delayCallCount = delayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
         this.defaultSendingAttemptsCount = defaultSendingAttemptsCount;
@@ -62,13 +61,6 @@ public class EmailerProperties {
      */
     public String getFromAddress() {
         return fromAddress;
-    }
-
-    /**
-     * @return true if UTF-8 strings are allowed in message headers, e.g., in addresses
-     */
-    public boolean isUtf8Enabled() {
-        return utf8Enabled;
     }
 
     /**
@@ -128,8 +120,8 @@ public class EmailerProperties {
      * instead of BLOB columns in database.
      * Should be used if application stores lots of emails and/or email attachments.
      *
-     * @see io.jmix.email.entity.SendingMessage#contentTextFile
-     * @see io.jmix.email.entity.SendingAttachment#contentFile
+     * @see SendingMessage#getContentText()
+     * @see SendingAttachment#getContentFile()
      * 
      * @return true if email body text and attachments are stored in file storage instead of BLOB columns in database.
      * 

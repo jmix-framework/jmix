@@ -17,17 +17,15 @@
 package test_support;
 
 import com.google.common.collect.Lists;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.LoadContext;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.TimeSource;
+import io.jmix.core.*;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
@@ -47,6 +44,7 @@ import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -76,6 +74,12 @@ public class EmailerTest {
 
     @Autowired
     private FileStorageLocator fileStorageLocator;
+
+    @Autowired
+    private Metadata metadata;
+
+    @Autowired
+    private FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     private InMemoryUserRepository userRepository;
@@ -150,7 +154,6 @@ public class EmailerTest {
                 .setAddresses("testemail@example.com,testemail2@example.com")
                 .setCaption("Test Email")
                 .setBody("Test Body")
-                .setSendInOneMessage(true)
                 .setCc("testemail3@example.com,testemail4@example.com")
                 .setBcc("testemail5@example.com,testemail6@example.com")
                 .build();
@@ -218,18 +221,18 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(myInfo);
-        assertEquals(1, messages.size());
+        SendingMessage message = emailer.sendEmailAsync(myInfo);
+        assertNotNull(message);
 
         // not sent yet
-        SendingMessage sendingMsg = reload(messages.get(0), "sendingMessage.loadFromQueue");
+        SendingMessage sendingMsg = reload(message, "sendingMessage.loadFromQueue");
         assertNotNull(sendingMsg.getContentTextFile());
         assertNull(sendingMsg.getContentText());             // null
 
         // run scheduler
         emailer.processQueuedEmails();
 
-        sendingMsg = reload(messages.get(0), "sendingMessage.loadFromQueue");
+        sendingMsg = reload(message, "sendingMessage.loadFromQueue");
         assertNotNull(sendingMsg.getContentTextFile());
         assertNull(sendingMsg.getContentText());             // null??
     }
@@ -244,12 +247,12 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(myInfo);
-        assertEquals(1, messages.size());
+        SendingMessage message = emailer.sendEmailAsync(myInfo);
+        assertNotNull(message);
 
         // not sent yet
         assertTrue(testMailSender.isEmpty());
-        SendingMessage sendingMsg = reload(messages.get(0));
+        SendingMessage sendingMsg = reload(message);
         assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
         // run scheduler
@@ -266,7 +269,7 @@ public class EmailerTest {
         assertEquals(body, getBody(msg));
         assertTrue(getBodyContentType(msg).startsWith("text/plain;"));
 
-        sendingMsg = reload(messages.get(0));
+        sendingMsg = reload(message);
         assertEquals(SendingStatus.SENT, sendingMsg.getStatus());
     }
 
@@ -293,7 +296,7 @@ public class EmailerTest {
         EmailInfo myInfo;
 
         // synchronous
-        EmailerConfigPropertiesAccess.setFromAddress(emailerProperties,"implicit@example.com");
+        EmailerConfigPropertiesAccess.setFromAddress(emailerProperties, "implicit@example.com");
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
                 .setCaption("Test Email")
@@ -303,7 +306,7 @@ public class EmailerTest {
         assertEquals("implicit@example.com", testMailSender.fetchSentEmail().getFrom()[0].toString());
 
         // asynchronous
-        EmailerConfigPropertiesAccess.setFromAddress(emailerProperties,"implicit2@example.com");
+        EmailerConfigPropertiesAccess.setFromAddress(emailerProperties, "implicit2@example.com");
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
                 .setCaption("Test Email")
@@ -373,12 +376,12 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
-        assertEquals(1, messages.size());
+        SendingMessage message = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
+        assertNotNull(message);
 
         // not sent yet
         assertTrue(testMailSender.isEmpty());
-        SendingMessage sendingMsg = reload(messages.get(0));
+        SendingMessage sendingMsg = reload(message);
         assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
         // will fail
@@ -425,12 +428,12 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
-        assertEquals(1, messages.size());
+        SendingMessage message = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
+        assertNotNull(message);
 
         // not sent yet
         assertTrue(testMailSender.isEmpty());
-        SendingMessage sendingMsg = reload(messages.get(0));
+        SendingMessage sendingMsg = reload(message);
         assertEquals(SendingStatus.QUEUE, sendingMsg.getStatus());
 
         // will fail
@@ -473,25 +476,20 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(myInfo);
-        assertEquals(3, messages.size());
+        SendingMessage message = emailer.sendEmailAsync(myInfo);
+        assertNotNull(message);
 
         assertTrue(testMailSender.isEmpty());
         emailer.processQueuedEmails();
-
-        Set<String> recipientSet = new HashSet<>();
+        
         // check
-        assertEquals(3, testMailSender.getBufferSize());
-        for (int i = 0; i < 3; i++) {
-            MimeMessage msg = testMailSender.fetchSentEmail();
-            Address[] msgRecipients = msg.getAllRecipients();
-            assertEquals(1, msgRecipients.length);
-            recipientSet.add(msgRecipients[0].toString());
-        }
+        assertEquals(1, testMailSender.getBufferSize());
+        MimeMessage msg = testMailSender.fetchSentEmail();
 
-        assertTrue(recipientSet.contains("misha@example.com"));
-        assertTrue(recipientSet.contains("kolya@example.com"));
-        assertTrue(recipientSet.contains("tanya@example.com"));
+        assertEquals(3, msg.getAllRecipients().length);
+        assertEquals("misha@example.com", msg.getAllRecipients()[0].toString());
+        assertEquals("kolya@example.com", msg.getAllRecipients()[1].toString());
+        assertEquals("tanya@example.com", msg.getAllRecipients()[2].toString());
     }
 
     @Test
@@ -574,7 +572,7 @@ public class EmailerTest {
         Object content = firstAttachment.getContent();
         assertTrue(content instanceof InputStream);
         byte[] data = IOUtils.toByteArray((InputStream) content);
-        assertEquals(attachmentText, new String(data, "ISO-8859-1"));
+        assertEquals(attachmentText, new String(data, StandardCharsets.ISO_8859_1));
 
         // disposition
         assertEquals(Part.ATTACHMENT, firstAttachment.getDisposition());
@@ -691,9 +689,9 @@ public class EmailerTest {
                 .setCaption("Test")
                 .setBody(body)
                 .build();
-        List<SendingMessage> messages = emailer.sendEmailAsync(emailInfo);
+        SendingMessage message = emailer.sendEmailAsync(emailInfo);
 
-        SendingMessage msg = reload(messages.get(0));
+        SendingMessage msg = reload(message);
 
         String actualBody = emailDataProvider.loadContentText(msg);
         assertEquals(body, actualBody);
@@ -714,12 +712,12 @@ public class EmailerTest {
                 .setAttachments(fileAttachment)
                 .build();
 
-        List<SendingMessage> messages = emailer.sendEmailAsync(emailInfo);
+        SendingMessage message = emailer.sendEmailAsync(emailInfo);
         SendingMessage msg;
         SendingAttachment attachment;
 
         // check DB storage
-        msg = reload(messages.get(0), "sendingMessage.loadFromQueue");
+        msg = reload(message, "sendingMessage.loadFromQueue");
         attachment = msg.getAttachments().get(0);
 
         assertNotNull(msg.getContentText());
@@ -792,11 +790,16 @@ public class EmailerTest {
         return reload(sendingMessage, null);
     }
 
-    private SendingMessage reload(SendingMessage sendingMessage, String fetchPlan) {
-        LoadContext<SendingMessage> loadContext = LoadContext.create(SendingMessage.class).setId(sendingMessage.getId());
-        if (fetchPlan != null)
-            loadContext.setFetchPlan(fetchPlan);
-
+    private SendingMessage reload(SendingMessage sendingMessage, String fetchPlanName) {
+        MetaClass metaClass = metadata.getClass(SendingMessage.class);
+        LoadContext<SendingMessage> loadContext = new LoadContext<>(metaClass);
+        loadContext.setId(sendingMessage.getId());
+        if (StringUtils.isNotEmpty(fetchPlanName)) {
+            FetchPlan fetchPlan = fetchPlanRepository.findFetchPlan(metaClass, fetchPlanName);
+            if (fetchPlan != null) {
+                loadContext.setFetchPlan(fetchPlan);
+            }
+        }
         return dataManager.load(loadContext);
     }
 

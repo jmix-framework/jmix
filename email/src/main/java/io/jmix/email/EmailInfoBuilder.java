@@ -16,11 +16,6 @@
 
 package io.jmix.email;
 
-import com.haulmont.cuba.core.global.AppBeans;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -37,16 +32,10 @@ import java.util.*;
  *               .setBody("Some email body")
  *               .build();</pre>
  */
-@Component(EmailInfoBuilder.NAME)
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class EmailInfoBuilder {
-
-    public static final String NAME = "email_EmailInfoBuilder";
-
     private String addresses;
     private String cc;
     private String bcc;
-    private boolean sendInOneMessage = false;
     private String caption;
     private String from;
     private String templatePath;
@@ -67,7 +56,7 @@ public class EmailInfoBuilder {
      *
      */
     public static EmailInfoBuilder create() {
-        return AppBeans.getPrototype(NAME);
+        return new EmailInfoBuilder();
     }
 
     /**
@@ -80,13 +69,13 @@ public class EmailInfoBuilder {
      * @param body            email body
      */
     public static EmailInfoBuilder create(String addresses, String caption, String body) {
-        return AppBeans.getPrototype(NAME, addresses, caption, body);
+        return new EmailInfoBuilder(addresses, caption, body);
     }
 
     /**
      * INTERNAL
      */
-    public EmailInfoBuilder(String addresses, String caption, String body) {
+    EmailInfoBuilder(String addresses, String caption, String body) {
         this.addresses = addresses;
         this.caption = caption;
         this.body = body;
@@ -95,7 +84,7 @@ public class EmailInfoBuilder {
     /**
      * INTERNAL
      */
-    public EmailInfoBuilder() {
+    EmailInfoBuilder() {
 
     }
 
@@ -126,20 +115,6 @@ public class EmailInfoBuilder {
 
     public EmailInfoBuilder setBcc(String bcc) {
         this.bcc = bcc;
-        return this;
-    }
-
-    public boolean isSendInOneMessage() {
-        return sendInOneMessage;
-    }
-
-    /**
-     * Flag {@code sendInOneMessage} is for backward compatibility with previous CUBA versions.
-     * If {@code sendInOneMessage = true} then one message will be sent for all recipients and it will include CC and BCC.
-     * Otherwise CC and BCC are ignored and multiple messages by the number of recipients in addresses will be sent.
-     */
-    public EmailInfoBuilder setSendInOneMessage(boolean sendInOneMessage) {
-        this.sendInOneMessage = sendInOneMessage;
         return this;
     }
 
@@ -236,6 +211,11 @@ public class EmailInfoBuilder {
         return this;
     }
 
+    public EmailInfoBuilder setAttachments(List<EmailAttachment> attachments) {
+        this.attachments = attachments;
+        return this;
+    }
+
     public EmailInfoBuilder addAttachment(EmailAttachment attachment) {
         if (attachments == null) {
             attachments = new ArrayList<>();
@@ -263,7 +243,7 @@ public class EmailInfoBuilder {
     }
 
     public EmailInfo build() {
-        return new EmailInfo(addresses, cc, bcc, sendInOneMessage, caption, from, templatePath, templateParameters,
+        return new EmailInfo(addresses, cc, bcc, caption, from, templatePath, templateParameters,
                 body, bodyContentType, headers, attachments);
     }
 }

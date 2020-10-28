@@ -16,11 +16,9 @@
 
 package io.jmix.email;
 
-import com.haulmont.cuba.core.EntityManager;
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Transaction;
-import com.haulmont.cuba.core.TypedQuery;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.data.PersistenceHints;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.jmix.email.impl.EmailerImpl;
@@ -30,10 +28,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Properties;
 
 @ManagedResource(objectName = "jmix.email:type=Emailer", description = "Manages email messages")
 @Component("email_EmailerManagementFacade")
@@ -42,19 +46,29 @@ public class EmailerManagementFacade {
     @Autowired
     protected Emailer emailer;
 
+    protected TransactionTemplate transaction;
+
+    @PersistenceContext
+    protected EntityManager entityManager;
+
     @Autowired
-    protected Persistence persistence;
+    protected FetchPlanRepository fetchPlanRepository;
 
     @Autowired
     protected EmailerProperties emailerProperties;
-    
+
     @Autowired
-    protected EmailSmtpProperties smtpProperties;
-    
+    protected JavaMailSenderImpl javaMailSender;
+
+    protected Properties javaMailProperties;
+
     @Autowired
     protected EmailDataProvider emailDataProvider;
 
-    private static final Logger log = LoggerFactory.getLogger(EmailerImpl.class);
+    @Autowired
+    protected void setJavaMailProperties() {
+        javaMailProperties = javaMailSender.getJavaMailProperties();
+    }
 
     @ManagedAttribute(description = "Default \"from\" address")
     public String getFromAddress() {
@@ -62,49 +76,45 @@ public class EmailerManagementFacade {
     }
 
     @ManagedAttribute(description = "SMTP server address")
+    @Nullable
     public String getSmtpHost() {
-        return smtpProperties.getHost();
+        return javaMailSender.getHost();
     }
 
     @ManagedAttribute(description = "SMTP server port")
     public int getSmtpPort() {
-        return smtpProperties.getPort();
+        return javaMailSender.getPort();
     }
 
     @ManagedAttribute(description = "User name for the SMTP server authentication")
+    @Nullable
     public String getSmtpUser() {
-        return smtpProperties.getUser();
+        return javaMailSender.getUsername();
     }
 
     @ManagedAttribute(description = "Whether to authenticate on SMTP server")
-    public boolean getSmtpAuthRequired() {
-        return smtpProperties.isAuthRequired();
+    public String getSmtpAuthRequired() {
+        return javaMailProperties.getProperty("mail.smtp.auth");
     }
 
     @ManagedAttribute(description = "Whether to use STARTTLS command during the SMTP server authentication")
-    public boolean getStarttlsEnable() {
-        return smtpProperties.isStartTlsEnabled();
+    public String getStarttlsEnable() {
+        return  javaMailProperties.getProperty("mail.smtp.starttls.enable");
     }
 
     @ManagedAttribute(description = "If set to true, use SSL to connect")
-    public boolean getSmtpSslEnabled() {
-        return smtpProperties.isSslEnabled();
+    public String getSmtpSslEnabled() {
+        return javaMailProperties.getProperty("mail.smtp.ssl.enable");
     }
 
     @ManagedAttribute(description = "SMTP I/O timeout value in seconds")
-    public int getSmtpTimeoutSec() {
-        return smtpProperties.getTimeoutSec();
+    public String getSmtpTimeoutSec() {
+        return javaMailProperties.getProperty("mail.smtp.timeout");
     }
 
     @ManagedAttribute(description = "SMTP connection timeout value in seconds")
-    public int getSmtpConnectionTimeoutSec() {
-        return smtpProperties.getConnectionTimeoutSec();
-    }
-
-    //todo: @Authenticated
-    @ManagedOperation(description = "Update properties for JavaMail session")
-    public void updateSession() {
-        emailer.updateSession();
+    public String getSmtpConnectionTimeoutSec() {
+        return javaMailProperties.getProperty("mail.smtp.connectiontimeout");
     }
 
     //todo: @Authenticated
@@ -135,69 +145,56 @@ public class EmailerManagementFacade {
         do {
             try {
                 processed = migrateMessagesBatch();
-                log.info(String.format("Migrated %d emails", processed));
             } catch (Exception e) {
                 throw new RuntimeException("Failed to migrate batch", e);
             }
         } while (processed > 0);
-        log.info("Finished migrating emails");
         do {
             try {
                 processed = migrateAttachmentsBatch();
-                log.info(String.format("Migrated %d attachments", processed));
             } catch (Exception e) {
                 throw new RuntimeException("Failed to migrate batch", e);
             }
         } while (processed > 0);
-        log.info("Finished migrating attachments");
 
         return "Finished";
     }
 
     protected int migrateMessagesBatch() {
-        List<SendingMessage> resultList;
-        Transaction tx = persistence.createTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
-            String qstr = "select m from email_SendingMessage m where m.contentText is not null";
-            TypedQuery<SendingMessage> query = em.createQuery(qstr, SendingMessage.class);
-            query.setMaxResults(50);
-            query.setViewName(FetchPlan.INSTANCE_NAME);
-
-            resultList = query.getResultList();
-            tx.commit();
-        } finally {
-            tx.end();
-        }
+        List<SendingMessage> resultList = transaction.execute(status -> loadMessagesBatch());
 
         if (CollectionUtils.isNotEmpty(resultList)) {
             emailDataProvider.migrateEmailsToFileStorage(resultList);
         }
 
-        return resultList.size();
+        return resultList != null ? resultList.size() : 0;
     }
 
     protected int migrateAttachmentsBatch() {
-        List<SendingAttachment> resultList;
-        Transaction tx = persistence.createTransaction();
-        try {
-            EntityManager em = persistence.getEntityManager();
-            String qstr = "select a from email_SendingAttachment a where a.content is not null";
-            TypedQuery<SendingAttachment> query = em.createQuery(qstr, SendingAttachment.class);
-            query.setMaxResults(50);
-            query.setViewName(FetchPlan.INSTANCE_NAME);
-
-            resultList = query.getResultList();
-
-            tx.commit();
-        } finally {
-            tx.end();
-        }
+        List<SendingAttachment> resultList = transaction.execute(status -> loadAttachmentsBatch());
 
         if (CollectionUtils.isNotEmpty(resultList)) {
             emailDataProvider.migrateAttachmentsToFileStorage(resultList);
         }
 
-        return resultList.size();
+        return resultList != null ? resultList.size() : 0;
+    }
+
+    protected List<SendingMessage> loadMessagesBatch() {
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingMessage.class, FetchPlan.INSTANCE_NAME);
+        return entityManager.createQuery("select m from email_SendingMessage m where m.contentText is not null",
+                SendingMessage.class)
+                .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
+                .setMaxResults(50)
+                .getResultList();
+    }
+
+    protected List<SendingAttachment> loadAttachmentsBatch() {
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingAttachment.class, FetchPlan.INSTANCE_NAME);
+        return entityManager.createQuery("select a from email_SendingAttachment a where a.content is not null",
+                SendingAttachment.class)
+                .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
+                .setMaxResults(50)
+                .getResultList();
     }
 }

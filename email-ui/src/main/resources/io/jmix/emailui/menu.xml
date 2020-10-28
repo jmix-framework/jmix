@@ -1,3 +1,4 @@
+
 <!--
   ~ Copyright 2020 Haulmont.
   ~
@@ -14,13 +15,8 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://browser.caption">
-
-    <layout spacing="true" width="100%">
-        <textField id="emailTextField" caption="msg://emailTextFieldCaption" width="100%"/>
-        <textField id="ccTextField" caption="msg://ccTextFieldCaption" width="100%"/>
-        <textField id="bccTextField" caption="msg://bccTextFieldCaption" width="100%"/>
-        <button id="resendEmailBtn" caption="msg://resendBtnCaption"/>
-    </layout>
-</window>
+<menu-config xmlns="http://jmix.io/schema/ui/menu">
+    <menu id="administration">
+        <item screen="email_SendingMessage.browse"/>
+    </menu>
+</menu-config>

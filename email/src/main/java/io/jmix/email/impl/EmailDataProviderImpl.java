@@ -16,11 +16,8 @@
 
 package io.jmix.email.impl;
 
-import com.haulmont.cuba.core.EntityManager;
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.Transaction;
-import com.haulmont.cuba.core.TypedQuery;
 import io.jmix.core.*;
+import io.jmix.data.PersistenceHints;
 import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.SendingStatus;
@@ -32,8 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -56,20 +58,25 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     @Autowired
     protected TimeSource timeSource;
 
+    @PersistenceContext
+    protected EntityManager entityManager;
+
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    @Autowired
-    protected Persistence persistence;
-
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
+    protected TransactionTemplate transaction;
 
     protected FileStorage<URI, String> fileStorage;
 
     @Autowired
-    public void setFileStorage() {
+    public void setFileStorage(FileStorageLocator fileStorageLocator) {
         fileStorage = fileStorageLocator.getDefault();
+    }
+
+    @Autowired
+    protected void setTransactionManager(PlatformTransactionManager transactionManager) {
+        transaction = new TransactionTemplate(transactionManager);
+        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @Override
@@ -77,25 +84,19 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         Date sendTimeoutTime = DateUtils.addSeconds(timeSource.currentTimestamp(), -emailerProperties.getSendingTimeoutSec());
 
         List<SendingMessage> emailsToSend = new ArrayList<>();
-
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            TypedQuery<SendingMessage> query = em.createQuery(
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingMessage.class, "sendingMessage.loadFromQueue");
+        transaction.executeWithoutResult(status -> {
+            List<SendingMessage> resList = entityManager.createQuery(
                     "select sm from email_SendingMessage sm" +
                             " where sm.status = :statusQueue or (sm.status = :statusSending and sm.updateTs < :time)" +
                             " order by sm.createTs",
-                    SendingMessage.class
-            );
-            query.setParameter("statusQueue", SendingStatus.QUEUE.getId());
-            query.setParameter("time", sendTimeoutTime);
-            query.setParameter("statusSending", SendingStatus.SENDING.getId());
-
-            FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingMessage.class, "sendingMessage.loadFromQueue");
-            query.setView(fetchPlan);
-
-            query.setMaxResults(emailerProperties.getMessageQueueCapacity());
-
-            List<SendingMessage> resList = query.getResultList();
+                    SendingMessage.class)
+                    .setParameter("statusQueue", SendingStatus.QUEUE.getId())
+                    .setParameter("time", sendTimeoutTime)
+                    .setParameter("statusSending", SendingStatus.SENDING.getId())
+                    .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
+                    .setMaxResults(emailerProperties.getMessageQueueCapacity())
+                    .getResultList();
 
             resList.forEach(msg -> {
                 if (shouldMarkNotSent(msg)) {
@@ -105,8 +106,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                     emailsToSend.add(msg);
                 }
             });
-            tx.commit();
-        }
+        });
 
         emailsToSend.forEach(this::loadBodyAndAttachments);
 
@@ -115,20 +115,19 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     @Override
     public void updateStatus(SendingMessage sendingMessage, SendingStatus status) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            SendingMessage msg = em.merge(sendingMessage);
+        try {
+            transaction.executeWithoutResult(transactionStatus -> {
+                SendingMessage msg = entityManager.merge(sendingMessage);
 
-            msg.setStatus(status);
-            msg.setAttemptsMade(msg.getAttemptsMade() + 1);
-            if (status == SendingStatus.SENT) {
-                msg.setDateSent(timeSource.currentTimestamp());
-            }
-            if (emailerProperties.isFileStorageUsed()) {
-                msg.setContentText(null);
-            }
-
-            tx.commit();
+                msg.setStatus(status);
+                msg.setAttemptsMade(msg.getAttemptsMade() + 1);
+                if (status == SendingStatus.SENT) {
+                    msg.setDateSent(timeSource.currentTimestamp());
+                }
+                if (emailerProperties.isFileStorageUsed()) {
+                    msg.setContentText(null);
+                }
+            });
         } catch (Exception e) {
             log.error(buildErrorMessage(status), sendingMessage.getAddress(), e);
         }
@@ -136,12 +135,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     @Override
     public String loadContentText(SendingMessage sendingMessage) {
-        SendingMessage msg;
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            msg = em.reload(sendingMessage, "sendingMessage.loadContentText");
-            tx.commit();
-        }
+        SendingMessage msg = transaction.execute(status -> reloadSendingMessage(sendingMessage, "sendingMessage.loadContentText"));
+
         Objects.requireNonNull(msg, "Sending message not found: " + sendingMessage.getId());
 
         if (msg.getContentTextFile() != null) {
@@ -160,17 +155,13 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     }
 
     @Override
-    public void persistMessages(List<SendingMessage> sendingMessageList, SendingStatus status) {
+    public void persistMessage(SendingMessage sendingMessage, SendingStatus status) {
         MessagePersistingContext context = new MessagePersistingContext();
         try {
-            try (Transaction tx = persistence.createTransaction()) {
-                EntityManager em = persistence.getEntityManager();
-                sendingMessageList.forEach(message -> {
-                    message.setStatus(status);
-                    persistSendingMessage(em, message, context);
-                });
-                tx.commit();
-            }
+            transaction.executeWithoutResult(transactionStatus -> {
+                sendingMessage.setStatus(status);
+                persistSendingMessage(sendingMessage, context);
+            });
             context.finished();
         } finally {
             removeOrphanFiles(context);
@@ -179,20 +170,12 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     @Override
     public void migrateEmailsToFileStorage(List<SendingMessage> messages) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            messages.forEach(msg -> migrateMessage(em, msg));
-            tx.commit();
-        }
+        transaction.executeWithoutResult(transactionStatus -> messages.forEach(this::migrateMessage));
     }
 
     @Override
     public void migrateAttachmentsToFileStorage(List<SendingAttachment> attachments) {
-        try (Transaction tx = persistence.createTransaction()) {
-            EntityManager em = persistence.getEntityManager();
-            attachments.forEach(attachment -> migrateAttachment(em, attachment));
-            tx.commit();
-        }
+        transaction.executeWithoutResult(transactionStatus -> attachments.forEach(this::migrateAttachment));
     }
 
     protected String buildErrorMessage(SendingStatus status) {
@@ -207,8 +190,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         return "Error updating status of message for '{}'";
     }
 
-    protected void migrateMessage(EntityManager em, SendingMessage msg) {
-        msg = em.merge(msg);
+    protected void migrateMessage(SendingMessage msg) {
+        msg = entityManager.merge(msg);
         byte[] bodyBytes = bodyTextToBytes(msg);
         String fileName = getFileName(msg);
         URI contentTextFile = createContentFile(null, bodyBytes, fileName);
@@ -216,8 +199,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         msg.setContentText(null);
     }
 
-    protected void migrateAttachment(EntityManager em, SendingAttachment attachment) {
-        attachment = em.merge(attachment);
+    protected void migrateAttachment(SendingAttachment attachment) {
+        attachment = entityManager.merge(attachment);
         URI contentFile = createContentFile(null, attachment.getContent(), attachment.getName());
         attachment.setContentFile(contentFile);
         attachment.setContent(null);
@@ -256,7 +239,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         }
     }
 
-    protected void persistSendingMessage(EntityManager em, SendingMessage message, MessagePersistingContext context) {
+    protected void persistSendingMessage(SendingMessage message, MessagePersistingContext context) {
         boolean useFileStorage = emailerProperties.isFileStorageUsed();
 
         if (useFileStorage) {
@@ -268,7 +251,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             message.setContentText(null);
         }
 
-        em.persist(message);
+        entityManager.persist(message);
 
         message.getAttachments().forEach(attachment -> {
             if (useFileStorage) {
@@ -277,7 +260,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                 attachment.setContent(null);
             }
 
-            em.persist(attachment);
+            entityManager.persist(attachment);
         });
     }
 
@@ -288,6 +271,14 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             context.files.add(contentTextFile);
         }
         return contentTextFile;
+    }
+
+    protected SendingMessage reloadSendingMessage(SendingMessage sendingMessage, String fetchPlanName) {
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingMessage.class, fetchPlanName);
+        return entityManager.createQuery("select sm from email_SendingMessage sm where sm.id = :id", SendingMessage.class)
+                .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
+                .setParameter("id", sendingMessage.getId())
+                .getSingleResult();
     }
 
     protected String getFileName(SendingMessage msg) {

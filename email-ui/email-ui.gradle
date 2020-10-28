@@ -26,7 +26,6 @@ dependencies {
     api project(':email')
 
     api 'io.jmix.ui:jmix-ui'
-    api 'io.jmix.cuba:jmix-cuba'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'

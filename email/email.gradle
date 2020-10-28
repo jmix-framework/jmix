@@ -23,9 +23,10 @@ archivesBaseName = 'jmix-email'
 dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
-    api 'io.jmix.cuba:jmix-cuba'
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
+    api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
+    api 'io.jmix.security:jmix-security'
 
     api 'com.sun.mail:javax.mail'
 

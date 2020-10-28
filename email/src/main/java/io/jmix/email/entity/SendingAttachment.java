@@ -16,25 +16,27 @@
 
 package io.jmix.email.entity;
 
-import io.jmix.core.Entity;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
-@javax.persistence.Entity(name = "email_SendingAttachment")
+@Entity(name = "email_SendingAttachment")
 @Table(name = "EMAIL_SENDING_ATTACHMENT")
 @SystemLevel
-public class SendingAttachment implements Entity {
+@JmixEntity
+public class SendingAttachment implements Serializable {
     private static final long serialVersionUID = -8253918579521701435L;
 
     @Id

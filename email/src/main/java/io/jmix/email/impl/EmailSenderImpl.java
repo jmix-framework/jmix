@@ -23,7 +23,6 @@ import io.jmix.core.FileTypesHelper;
 import io.jmix.core.TimeSource;
 import io.jmix.email.EmailHeader;
 import io.jmix.email.EmailSender;
-import io.jmix.email.JmixMailSender;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.annotation.Resource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
@@ -51,6 +49,7 @@ public class EmailSenderImpl implements EmailSender {
 
     private static final Logger log = LoggerFactory.getLogger(EmailSenderImpl.class);
 
+    @Autowired
     protected JavaMailSender mailSender;
 
     @Autowired
@@ -62,11 +61,6 @@ public class EmailSenderImpl implements EmailSender {
     @Autowired
     protected MeterRegistry meterRegistry;
 
-    @Autowired
-    public void setMailSender(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
     @Override
     public void sendEmail(SendingMessage sendingMessage) throws MessagingException {
         MimeMessage msg = createMimeMessage(sendingMessage);
@@ -76,13 +70,6 @@ public class EmailSenderImpl implements EmailSender {
         sample.stop(meterRegistry.timer("jmix.EmailSender.send"));
 
         log.info("Email '{}' to '{}' has been sent successfully", msg.getSubject(), sendingMessage.getAddress());
-    }
-
-    @Override
-    public void updateSession() {
-        if (mailSender instanceof JmixMailSender) {
-            ((JmixMailSender) mailSender).updateSession();
-        }
     }
 
     protected MimeMessage createMimeMessage(SendingMessage sendingMessage) throws MessagingException {

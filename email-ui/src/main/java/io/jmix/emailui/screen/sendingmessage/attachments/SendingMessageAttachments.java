@@ -18,13 +18,13 @@ package io.jmix.emailui.screen.sendingmessage.attachments;
 
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import io.jmix.ui.component.DialogWindow;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController("email_SendingMessage.attachments")
 @UiDescriptor("sending-message-attachments.xml")
+@LookupComponent("table")
 public class SendingMessageAttachments extends StandardLookup<SendingAttachment> {
 
     protected SendingMessage message;
@@ -36,11 +36,6 @@ public class SendingMessageAttachments extends StandardLookup<SendingAttachment>
     protected void onBeforeShow(BeforeShowEvent event) {
         sendingAttachmentsDl.setParameter("messageId", message.getId());
         sendingAttachmentsDl.load();
-
-        DialogWindow window = (DialogWindow) getWindow();
-        window.setWidth("800px");
-        window.setHeight("500px");
-        window.setResizable(true);
     }
 
     public void setMessage(SendingMessage message) {

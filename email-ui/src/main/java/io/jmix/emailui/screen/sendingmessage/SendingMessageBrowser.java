@@ -16,9 +16,8 @@
 
 package io.jmix.emailui.screen.sendingmessage;
 
-import com.haulmont.cuba.gui.data.DataSupplier;
-import com.haulmont.cuba.gui.export.ExportFormat;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.DataManager;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Messages;
 import io.jmix.email.EmailDataProvider;
@@ -33,6 +32,7 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
+import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.DownloadFormat;
@@ -47,7 +47,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Named;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -56,8 +55,6 @@ import java.util.UUID;
 @UiController("email_SendingMessage.browse")
 @UiDescriptor("sending-message-browse.xml")
 public class SendingMessageBrowser extends Screen {
-
-    protected static final String CONTENT_TEXT = "contentText";
 
     @Autowired
     protected CollectionContainer<SendingMessage> sendingMessageDc;
@@ -77,20 +74,17 @@ public class SendingMessageBrowser extends Screen {
     @Autowired
     protected Table<SendingMessage> sendingMessageTable;
     @Autowired
-    protected TemporaryStorage fileUploading;
+    protected TemporaryStorage temporaryStorage;
     @Autowired
-    protected DataSupplier dataSupplier;
+    protected DataManager dataManager;
     @Autowired
-    protected Downloader exportDisplay;
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
+    protected Downloader downloader;
     @Autowired
     protected FileSystemFileStorage fileStorage;
     @Autowired
     protected Messages messages;
-
-    @Named("fg.bodyContentType")
-    protected TextField<String> bodyContentTypeField;
+    @Autowired
+    protected TextField<String> bodyContentType;
 
     protected Button showContentButton;
 
@@ -105,11 +99,14 @@ public class SendingMessageBrowser extends Screen {
     @Autowired
     protected Notifications notifications;
 
+    @Autowired
+    public void setFileStorage(FileStorageLocator fileStorageLocator) {
+        fileStorage = fileStorageLocator.getDefault();
+    }
+    
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
-        fileStorage = fileStorageLocator.getDefault();
-
-        fg.add(buildContextTextField(), 1, 4);
+        fg.add(buildContextTextField(), 0, 3);
 
         sendingMessageDc.addItemChangeListener(e -> selectedItemChanged(e.getItem()));
     }
@@ -117,11 +114,12 @@ public class SendingMessageBrowser extends Screen {
     protected Component buildContextTextField() {
         VBoxLayout contentArea = uiComponents.create(VBoxLayout.class);
         contentArea.setSpacing(true);
+        contentArea.setCaption(messages.getMessage(SendingMessage.class, "SendingMessage.contentText"));
 
         contentTextArea = uiComponents.create(TextArea.NAME);
         contentTextArea.setWidth("100%");
         contentTextArea.setEditable(false);
-        contentTextArea.setHeight(themeConstants.get("cuba.gui.SendingMessageBrowser.contentTextArea.height"));
+        contentTextArea.setHeight(themeConstants.get("jmix.ui.email.SendingMessageBrowser.contentTextArea.height"));
         contentTextArea.setEditable(false);
 
         showContentButton = uiComponents.create(Button.class);
@@ -133,17 +131,17 @@ public class SendingMessageBrowser extends Screen {
                     ByteArrayDataProvider dataProvider = new ByteArrayDataProvider(textAreaValue.getBytes(StandardCharsets.UTF_8),
                             uiProperties.getSaveExportedByteArrayDataThresholdBytes(), coreProperties.getTempDir());
 
-                    String type = bodyContentTypeField.getRawValue();
-                    if (StringUtils.containsIgnoreCase(type, ExportFormat.HTML.getContentType())) {
-                        exportDisplay.download(dataProvider, "email-preview.html", DownloadFormat.HTML);
+                    String type = bodyContentType.getRawValue();
+                    if (StringUtils.containsIgnoreCase(type, DownloadFormat.HTML.getContentType())) {
+                        downloader.download(dataProvider, "email-preview.html", DownloadFormat.HTML);
                     } else {
-                        exportDisplay.download(dataProvider, "email-preview.txt", DownloadFormat.TEXT);
+                        downloader.download(dataProvider, "email-preview.txt", DownloadFormat.TEXT);
                     }
                 }
             }
         });
         showContentButton.setEnabled(false);
-        showContentButton.setCaption(messages.getMessage(getClass(), "sendingMessage.showContent"));
+        showContentButton.setCaption(messages.getMessage(getClass(), "showContent"));
 
         contentArea.add(contentTextArea);
         contentArea.add(showContentButton);
@@ -157,17 +155,13 @@ public class SendingMessageBrowser extends Screen {
             contentText = emailDataProvider.loadContentText(item);
         }
 
-        if (StringUtils.isNotEmpty(contentText)) {
-            showContentButton.setEnabled(true);
-        } else {
-            showContentButton.setEnabled(false);
-        }
+        showContentButton.setEnabled(StringUtils.isNotEmpty(contentText));
 
         contentTextArea.setValue(contentText);
     }
 
     @Subscribe("sendingMessageTable.downloadAttachment")
-    public void download() {
+    public void download(Action.ActionPerformedEvent event) {
         SendingMessage message = sendingMessageTable.getSingleSelected();
         if (message != null) {
             List<SendingAttachment> attachments = getAttachments(message);
@@ -186,7 +180,7 @@ public class SendingMessageBrowser extends Screen {
     }
 
     @Subscribe("sendingMessageTable.resendEmail")
-    public void resendEmail() {
+    public void resendEmail(Action.ActionPerformedEvent event) {
         ResendMessage resendMessage = screenBuilders.screen(this)
                 .withOpenMode(OpenMode.DIALOG)
                 .withScreenClass(ResendMessage.class)
@@ -210,13 +204,17 @@ public class SendingMessageBrowser extends Screen {
     }
 
     protected List<SendingAttachment> getAttachments(SendingMessage message) {
-        return dataSupplier.reload(message, "sendingMessage.loadFromQueue").getAttachments();
+        SendingMessage msg = dataManager.load(SendingMessage.class)
+                .fetchPlan("sendingMessage.loadFromQueue")
+                .id(message.getId())
+                .one();
+        return msg.getAttachments();
     }
 
     protected URI getReference(SendingAttachment attachment) {
-        UUID uuid = fileUploading.saveFile(attachment.getContent());
+        UUID uuid = temporaryStorage.saveFile(attachment.getContent());
         URI reference = fileStorage.createReference(attachment.getName());
-        fileUploading.putFileIntoStorage(uuid, reference);
+        temporaryStorage.putFileIntoStorage(uuid, reference);
         return reference;
     }
 
@@ -231,6 +229,6 @@ public class SendingMessageBrowser extends Screen {
             fd = getReference(attachment);
         }
 
-        exportDisplay.download(new FileDataProvider<>(fd, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
+        downloader.download(new FileDataProvider<>(fd, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
     }
 }

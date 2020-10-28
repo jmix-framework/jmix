@@ -19,7 +19,6 @@ import io.jmix.email.entity.SendingMessage;
 
 import javax.annotation.Nullable;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -63,21 +62,21 @@ public interface Emailer {
      * @param deadline      Emailer tries to send message till deadline.
      *                      If deadline has come and message has not been sent, status of this message is changed to
      *                      {@link SendingStatus#NOTSENT}
-     * @return list of created {@link SendingMessage}s
+     * @return created {@link SendingMessage}
      */
-    List<SendingMessage> sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline);
+    SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline);
 
     /**
      * Send email asynchronously.
      * <p>
-     * This method creates a list of {@link SendingMessage} instances, saves it to the database and returns immediately.
+     * This method creates a {@link SendingMessage}, saves it to the database and returns immediately.
      * The actual sending is performed by the {@link #processQueuedEmails()} method which should be invoked by a
      * scheduled task.
      *
      * @param info email details
-     * @return list of created {@link SendingMessage}s
+     * @return created {@link SendingMessage}
      */
-    List<SendingMessage> sendEmailAsync(EmailInfo info);
+    SendingMessage sendEmailAsync(EmailInfo info);
 
     /**
      * Send emails added to the queue.
@@ -87,9 +86,4 @@ public interface Emailer {
      * @return short message describing how many emails were sent, or error message
      */
     String processQueuedEmails();
-
-    /**
-     * Updates {@code Properties} for JavaMail {@code Session}
-     */
-    void updateSession();
 }

@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @UiController("ResendMessage")
 @UiDescriptor("resend-message.xml")
@@ -46,8 +47,6 @@ public class ResendMessage extends Screen {
 
     @Autowired
     protected Emailer emailer;
-    @Autowired
-    protected FileStorageLocator fileStorageLocator;
 
     protected FileSystemFileStorage fileStorage;
     
@@ -57,16 +56,24 @@ public class ResendMessage extends Screen {
     protected Messages messages;
     @Autowired
     protected TextField<String> emailTextField;
+    @Autowired
+    protected TextField<String> ccTextField;
+    @Autowired
+    protected TextField<String> bccTextField;
+
+    @Autowired
+    public void setFileStorage(FileStorageLocator fileStorageLocator) {
+        fileStorage = fileStorageLocator.getDefault();
+    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         if (message != null) {
             emailTextField.setValue(message.getAddress());
+            ccTextField.setValue(message.getCc());
+            bccTextField.setValue(message.getBcc());
         }
-
-        fileStorage = fileStorageLocator.getDefault();
     }
-
 
     public void setMessage(SendingMessage message) {
         this.message = message;
@@ -81,9 +88,9 @@ public class ResendMessage extends Screen {
                     .setBody(emailBody(message))
                     .setFrom(message.getFrom())
                     .setBodyContentType(message.getBodyContentType())
-                    .setAttachments(getAttachmentsArray(message.getAttachments()))
-                    .setBcc(message.getBcc())
-                    .setCc(message.getCc())
+                    .setAttachments(getEmailAttachments(message.getAttachments()))
+                    .setBcc(bccTextField.getValue())
+                    .setCc(ccTextField.getValue())
                     .setHeaders(parseHeadersString(message.getHeaders()))
                     .build();
             try {
@@ -101,7 +108,7 @@ public class ResendMessage extends Screen {
 
     protected String emailBody(SendingMessage message) {
         if (message.getContentTextFile() != null) {
-            try (InputStream inputStream = fileStorage.openStream(message.getContentTextFile());) {
+            try (InputStream inputStream = fileStorage.openStream(message.getContentTextFile())) {
                 return IOUtils.toString(inputStream, Charset.defaultCharset());
             } catch (IOException e) {
                 throw new RuntimeException("Can't read message body from the file", e);
@@ -120,19 +127,31 @@ public class ResendMessage extends Screen {
         return emailHeadersList;
     }
 
-    protected EmailAttachment[] getAttachmentsArray(List<SendingAttachment> sendingAttachments) {
-        EmailAttachment[] emailAttachments = new EmailAttachment[sendingAttachments.size()];
-        for (int i = 0; i < sendingAttachments.size(); i++) {
-            SendingAttachment sendingAttachment = sendingAttachments.get(i);
-            EmailAttachment emailAttachment = new EmailAttachment(
-                    sendingAttachment.getContent(),
-                    sendingAttachment.getName(),
-                    sendingAttachment.getContentId(),
-                    sendingAttachment.getDisposition(),
-                    sendingAttachment.getEncoding()
-            );
-            emailAttachments[i] = emailAttachment;
+    protected List<EmailAttachment> getEmailAttachments(List<SendingAttachment> sendingAttachments) {
+        return sendingAttachments
+                .stream()
+                .map(this::convertToEmailAttachment)
+                .collect(Collectors.toList());
+    }
+
+    protected EmailAttachment convertToEmailAttachment(SendingAttachment sendingAttachment) {
+        return new EmailAttachment(
+                attachmentBody(sendingAttachment),
+                sendingAttachment.getName(),
+                sendingAttachment.getContentId(),
+                sendingAttachment.getDisposition(),
+                sendingAttachment.getEncoding()
+        );
+    }
+
+    protected byte[] attachmentBody(SendingAttachment attachment) {
+        if (attachment.getContentFile() != null) {
+            try (InputStream inputStream = fileStorage.openStream(attachment.getContentFile())) {
+                return IOUtils.toByteArray(inputStream);
+            } catch (IOException e) {
+                throw new RuntimeException("Can't read message body from the file", e);
+            }
         }
-        return emailAttachments;
+        return attachment.getContent();
     }
 }

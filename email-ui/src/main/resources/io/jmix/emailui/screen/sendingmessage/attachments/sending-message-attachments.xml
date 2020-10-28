@@ -15,19 +15,26 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        messagesPack=""
-        caption="msg://caption">
+        caption="msg://caption"
+        focusComponent="table">
     <data>
         <collection
                 id="attachmentsDc"
                 class="io.jmix.email.entity.SendingAttachment"
                 fetchPlan="sendingAttachment.browse">
             <loader id="sendingAttachmentsDl">
-                <![CDATA[select sa from email_SendingAttachment sa where sa.message.id = :messageId]]>
+                <query>
+                    <![CDATA[select sa from email_SendingAttachment sa where sa.message.id = :messageId]]>
+                </query>
             </loader>
         </collection>
     </data>
-    <layout expand="table">
+
+    <dialogMode height="500"
+                width="850"
+                resizable="true"/>
+
+    <layout spacing="true" expand="table">
         <!-- todo generic filter-->
         <!--<filter id="genericFilter" dataLoader="sendingAttachmentsDl" applyTo="table">
             <properties include=".*"/>
@@ -40,6 +47,11 @@
                 <column id="disposition"/>
                 <column id="updateTs"/>
             </columns>
+            <pagination/>
         </table>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
     </layout>
 </window>

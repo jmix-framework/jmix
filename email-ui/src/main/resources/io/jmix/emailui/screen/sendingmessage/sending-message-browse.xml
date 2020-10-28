@@ -23,16 +23,23 @@
                 class="io.jmix.email.entity.SendingMessage"
                 fetchPlan="sendingMessage.browse">
             <loader id="sendingMessagesDl">
-                <![CDATA[select sm from email_SendingMessage sm]]>
+                <query>
+                    <![CDATA[select sm from email_SendingMessage sm]]>
+                </query>
             </loader>
         </collection>
     </data>
-    <dialogMode height="theme://cuba.gui.dialogSize.height.xlarge"
-                width="theme://cuba.gui.dialogSize.width.xlarge"
+    <dialogMode height="theme://jmix.ui.dialogSize.height.xlarge"
+                width="theme://jmix.ui.dialogSize.width.xlarge"
                 resizable="true"/>
+
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
     <layout>
         <split width="100%" height="100%" orientation="horizontal" pos="70">
-            <vbox id="leftBox" expand="table" spacing="true" height="100%" margin="false,true,false,false">
+            <vbox id="leftBox" expand="sendingMessageTable" spacing="true" height="100%" margin="false,true,false,false">
                 <!-- todo: filter -->
                 <!--<filter id="genericFilter" dataLoader="sendingMessagesDl" applyTo="sendingMessageTable">
                     <properties include=".*"/>
@@ -44,6 +51,8 @@
                     </actions>
                     <columns>
                         <column id="address" sortable="false"/>
+                        <column id="cc"/>
+                        <column id="bcc"/>
                         <column id="from"/>
                         <column id="caption"/>
                         <column id="status"/>
@@ -59,6 +68,7 @@
                         <column id="deadline"/>
                         <column id="attemptsMade"/>
                     </columns>
+                    <pagination/>
                     <buttonsPanel id="buttonsPanel">
                         <button id="downloadAttachmentBtn" action="sendingMessageTable.downloadAttachment"/>
                         <button id="resendEmailBtn" action="sendingMessageTable.resendEmail"/>
@@ -71,18 +81,17 @@
                     <form id="fg" dataContainer="sendingMessageDc" editable="false"
                           width="100%">
                         <column width="100%">
-                            <field property="address"/>
-                            <field property="from"/>
-                            <field property="caption"/>
-                            <field property="contentText"/>
-                            <field property="bodyContentType"/>
-                            <field property="status"/>
-                            <field property="attachmentsName"/>
-                            <field property="dateSent"/>
-                            <field property="updateTs"/>
-                            <field property="deadline"/>
-                            <field property="attemptsCount"/>
-                            <field property="attemptsMade"/>
+                            <field id="address" property="address"/>
+                            <field id="from" property="from"/>
+                            <field id="caption" property="caption"/>
+                            <field id="bodyContentType" property="bodyContentType"/>
+                            <field id="status" property="status"/>
+                            <field id="attachmentsName" property="attachmentsName"/>
+                            <field id="dateSent" property="dateSent"/>
+                            <field id="updateTs" property="updateTs"/>
+                            <field id="deadline" property="deadline"/>
+                            <field id="attemptsCount" property="attemptsCount"/>
+                            <field id="attemptsMade" property="attemptsMade"/>
                         </column>
                     </form>
                 </scrollBox>

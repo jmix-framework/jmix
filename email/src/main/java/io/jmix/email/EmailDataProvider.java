@@ -46,9 +46,9 @@ public interface EmailDataProvider {
     String loadContentText(SendingMessage sendingMessage);
 
     /**
-     * Stores given messages with specified status.
+     * Stores given message with specified status.
      */
-    void persistMessages(List<SendingMessage> sendingMessageList, SendingStatus status);
+    void persistMessage(SendingMessage sendingMessage, SendingStatus status);
 
     /**
      * Migrate list of existing messages to be stored in file storage, in a single transaction.

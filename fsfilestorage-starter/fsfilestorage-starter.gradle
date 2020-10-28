@@ -15,7 +15,7 @@
  */
 
 group = 'io.jmix.fsfilestorage'
-archivesBaseName = 'jmix-starter-fsfilestorage'
+archivesBaseName = 'jmix-fsfilestorage-starter'
 
 dependencies {
     api project(':fsfilestorage')

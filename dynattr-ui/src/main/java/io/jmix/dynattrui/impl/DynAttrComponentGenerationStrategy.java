@@ -471,7 +471,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             Map<String, String> screensMap = screensHelper.getAvailableBrowserScreens(javaType);
             if (windowConfig.findWindowInfo(screen) != null && screensMap.containsValue(screen)) {
                 lookupAction.setScreenId(screen);
-                lookupAction.setLaunchMode(OpenMode.THIS_TAB);
+                lookupAction.setOpenMode(OpenMode.THIS_TAB);
             } else {
 //                lookupAction.setLookupScreen(CommonLookupController.SCREEN_ID);
 //                lookupAction.setLookupScreenParams(ParamsMap.of(CommonLookupController.CLASS_PARAMETER, metaClass));

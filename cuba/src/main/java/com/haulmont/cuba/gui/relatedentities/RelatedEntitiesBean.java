@@ -51,7 +51,6 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.filter.Op;
-import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
 import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.MapScreenOptions;
@@ -101,7 +100,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
     @Override
     public RelatedEntitiesBuilder builder(FrameOwner frameOwner) {
-        return relatedEntitiesSupport.builder(frameOwner);
+        return new RelatedEntitiesBuilder(relatedEntitiesSupport.builder(frameOwner));
     }
 
     @Override

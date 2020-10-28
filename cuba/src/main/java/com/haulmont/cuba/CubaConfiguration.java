@@ -53,6 +53,7 @@ import io.jmix.security.SecurityConfiguration;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.*;
+import io.jmix.ui.bulk.BulkEditors;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.impl.UiTestIdsSupport;
 import io.jmix.ui.menu.MenuItemCommands;
@@ -252,8 +253,20 @@ public class CubaConfiguration {
 
     @Bean("cuba_UiTestIdsSupport")
     @Primary
-    UiTestIdsSupport uiTestIdsSupport() {
+    protected UiTestIdsSupport uiTestIdsSupport() {
         return new CubaUiTestIdsSupport();
+    }
+
+    @Bean("cuba_ScreenBuilders")
+    @Primary
+    protected ScreenBuilders screenBuilders() {
+        return new com.haulmont.cuba.gui.ScreenBuilders();
+    }
+
+    @Bean("cuba_BulkEditors")
+    @Primary
+    protected BulkEditors bulkEditors() {
+        return new com.haulmont.cuba.gui.BulkEditors();
     }
 
     @EventListener

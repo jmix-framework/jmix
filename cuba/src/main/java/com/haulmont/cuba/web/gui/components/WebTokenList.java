@@ -89,7 +89,7 @@ public class WebTokenList<V extends Entity> extends io.jmix.ui.component.impl.We
         Preconditions.checkNotNullArgument(lookupOpenMode);
 
         lookupOpenType = lookupOpenMode;
-        launchMode = lookupOpenMode.getOpenMode();
+        openMode = lookupOpenMode.getOpenMode();
     }
 
     @Override

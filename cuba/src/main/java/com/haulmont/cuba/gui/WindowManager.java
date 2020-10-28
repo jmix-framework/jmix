@@ -226,7 +226,7 @@ public interface WindowManager {
      *            OpenType.DIALOG.width(300).resizable(false), params);
      * </pre>
      *
-     * @deprecated use {@link Screens.LaunchMode} instead
+     * @deprecated use {@link OpenMode} instead
      */
     @Deprecated
     final class OpenType {

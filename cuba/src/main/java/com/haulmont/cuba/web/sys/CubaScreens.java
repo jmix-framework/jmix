@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.sys;
 
+import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
@@ -41,6 +42,7 @@ import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.screen.*;
 import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import io.jmix.ui.sys.ScreensImpl;
+import io.jmix.ui.sys.WindowContextImpl;
 import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -54,7 +56,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings({"rawtypes", "unchecked", "DeprecatedIsStillUsed", "deprecation"})
 @Deprecated
-public final class CubaScreens extends ScreensImpl implements WindowManager {
+public final class CubaScreens extends ScreensImpl implements Screens, WindowManager {
 
     @Autowired
     protected ScreenViewsLoader screenViewsLoader;
@@ -277,6 +279,11 @@ public final class CubaScreens extends ScreensImpl implements WindowManager {
         }
 
         return screenFragment instanceof Frame ? (Frame) screenFragment : new ScreenFragmentWrapper(screenFragment);
+    }
+
+    @Override
+    protected WindowContextImpl createWindowContext(Window window, ScreenOpenDetails openDetails) {
+        return new com.haulmont.cuba.gui.sys.WindowContextImpl(window, openDetails.getOpenMode());
     }
 
     @Override

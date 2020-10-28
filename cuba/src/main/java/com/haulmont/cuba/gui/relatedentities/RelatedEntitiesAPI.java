@@ -20,7 +20,6 @@ import com.haulmont.cuba.gui.WindowManager;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
 import io.jmix.ui.screen.FrameOwner;
 
 import javax.annotation.Nullable;

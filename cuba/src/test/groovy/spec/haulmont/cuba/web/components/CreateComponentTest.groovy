@@ -63,18 +63,17 @@ class CreateComponentTest extends UiScreenSpec {
 
     @Unroll
     def "create standard facet: '#facet' with Facets"() {
-        given:
-
         expect:
-
         facets.create(facet) != null
 
         where:
-
         facet << [
                 CubaDataLoadCoordinator,
                 InputDialogFacet,
-                Timer
+                Timer,
+                ScreenFacet,
+                LookupScreenFacet,
+                EditorScreenFacet
         ]
     }
 }

@@ -32,12 +32,12 @@ public class WebRelatedEntities extends RelatedEntitiesImpl implements RelatedEn
 
     @Override
     public OpenType getOpenType() {
-        return OpenType.valueOf(((OpenMode) launchMode).name());
+        return OpenType.valueOf(openMode.name());
     }
 
     @Override
     public void setOpenType(OpenType openType) {
-        setLaunchMode(openType.getOpenMode());
+        setOpenMode(openType.getOpenMode());
     }
 
     @Override

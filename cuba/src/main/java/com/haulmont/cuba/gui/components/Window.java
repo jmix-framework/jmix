@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import io.jmix.ui.screen.StandardCloseAction;
 import io.jmix.ui.util.OperationResult;
@@ -24,10 +25,9 @@ import javax.annotation.Nullable;
 
 @Deprecated
 public interface Window extends io.jmix.ui.component.Window {
-    interface HasFoldersPane {
-        @Nullable
-        FoldersPane getFoldersPane();
-    }
+
+    @Override
+    WindowContext getContext();
 
     /**
      * Close the screen.
@@ -44,5 +44,10 @@ public interface Window extends io.jmix.ui.component.Window {
     default boolean close(String actionId, boolean force) {
         OperationResult result = getFrameOwner().close(new StandardCloseAction(actionId, !force));
         return result.getStatus() == OperationResult.Status.SUCCESS;
+    }
+
+    interface HasFoldersPane {
+        @Nullable
+        FoldersPane getFoldersPane();
     }
 }

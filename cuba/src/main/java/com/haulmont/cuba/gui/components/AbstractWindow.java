@@ -702,7 +702,7 @@ public class AbstractWindow extends Screen
     }
 
     @Override
-    public WindowContext getContext() {
+    public com.haulmont.cuba.gui.WindowContext getContext() {
         return ((Window) frame).getContext();
     }
 

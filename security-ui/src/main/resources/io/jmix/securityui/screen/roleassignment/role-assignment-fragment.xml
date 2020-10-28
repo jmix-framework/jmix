@@ -34,7 +34,7 @@
             <actions>
                 <action id="add" type="add">
                     <properties>
-                        <property name="launchMode" value="DIALOG"/>
+                        <property name="openMode" value="DIALOG"/>
                         <property name="screenClass" value="io.jmix.securityui.screen.role.RoleModelLookup"/>
                     </properties>
                 </action>

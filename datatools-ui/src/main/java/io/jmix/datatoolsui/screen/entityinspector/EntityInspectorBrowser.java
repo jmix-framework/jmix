@@ -356,7 +356,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     private CreateAction createCreateAction(Table table) {
         CreateAction createAction = actions.create(CreateAction.class);
-        createAction.setLaunchMode(OpenMode.THIS_TAB);
+        createAction.setOpenMode(OpenMode.THIS_TAB);
         createAction.setTarget(table);
         createAction.setScreenClass(EntityInspectorEditor.class);
         createAction.setNewEntitySupplier(() -> metadata.create(selectedMeta));
@@ -366,7 +366,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     private EditAction createEditAction(Table table) {
         EditAction editAction = actions.create(EditAction.class);
-        editAction.setLaunchMode(OpenMode.THIS_TAB);
+        editAction.setOpenMode(OpenMode.THIS_TAB);
         editAction.setTarget(table);
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(uiProperties.getTableInsertShortcut());

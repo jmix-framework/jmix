@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.Screens;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
@@ -48,7 +47,7 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     protected String screenId;
     protected Class<S> screenClass;
 
-    protected Screens.LaunchMode launchMode = OpenMode.NEW_TAB;
+    protected OpenMode openMode = OpenMode.NEW_TAB;
 
     protected Supplier<ScreenOptions> optionsProvider;
     protected Collection<UiControllerProperty> properties;
@@ -89,13 +88,13 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
     }
 
     @Override
-    public void setLaunchMode(Screens.LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     @Override
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public void setOpenMode(OpenMode openMode) {
+        this.openMode = openMode;
     }
 
     @Override
@@ -229,7 +228,7 @@ public abstract class AbstractScreenFacet<S extends Screen> extends AbstractFace
             }
 
             UiControllerPropertyInjector injector = applicationContext.getBean(UiControllerPropertyInjector.class,
-                            screen, owner.getFrameOwner(), properties);
+                    screen, owner.getFrameOwner(), properties);
 
             injector.inject();
         }

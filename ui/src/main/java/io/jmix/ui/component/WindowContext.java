@@ -16,14 +16,15 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.Screens;
+import io.jmix.ui.screen.OpenMode;
 
 /**
  * Provides access to window parameters and component values.
  */
 public interface WindowContext extends FrameContext {
+
     /**
      * How the window is opened.
      */
-    Screens.LaunchMode getLaunchMode();
+    OpenMode getOpenMode();
 }

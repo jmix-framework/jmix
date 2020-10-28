@@ -16,8 +16,6 @@
 
 package io.jmix.ui.builder;
 
-
-import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -43,7 +41,7 @@ public class LookupBuilder<E> {
     protected Predicate<LookupScreen.ValidationContext<E>> selectValidator;
     protected Function<Collection<E>, Collection<E>> transformation;
     protected Consumer<Collection<E>> selectHandler;
-    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
     protected CollectionContainer<E> container;
 
@@ -56,7 +54,7 @@ public class LookupBuilder<E> {
         this.origin = builder.origin;
         this.handler = builder.handler;
 
-        this.launchMode = builder.launchMode;
+        this.openMode = builder.openMode;
         this.options = builder.options;
         this.selectHandler = builder.selectHandler;
         this.selectValidator = builder.selectValidator;
@@ -74,24 +72,13 @@ public class LookupBuilder<E> {
     }
 
     /**
-     * Sets {@link Screens.LaunchMode} for the lookup screen and returns the builder for chaining.
-     * <p>For example: {@code builder.withLaunchMode(OpenMode.DIALOG).build();}
-     */
-    public LookupBuilder<E> withLaunchMode(Screens.LaunchMode launchMode) {
-        checkNotNullArgument(launchMode);
-
-        this.launchMode = launchMode;
-        return this;
-    }
-
-    /**
      * Sets {@link OpenMode} for the lookup screen and returns the builder for chaining.
      * <p>For example: {@code builder.withOpenMode(OpenMode.DIALOG).build();}
      */
     public LookupBuilder<E> withOpenMode(OpenMode openMode) {
         checkNotNullArgument(openMode);
 
-        this.launchMode = openMode;
+        this.openMode = openMode;
         return this;
     }
 
@@ -194,10 +181,10 @@ public class LookupBuilder<E> {
     }
 
     /**
-     * Returns launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}.
+     * Returns launch mode set by {@link #withOpenMode(OpenMode)}.
      */
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**

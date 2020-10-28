@@ -74,7 +74,7 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
     private void initActionScreenParameters(@Nullable Action.ScreenOpeningAction action) {
         if (action != null) {
             // Opening screen in another mode will close editor
-            action.setLaunchMode(OpenMode.DIALOG);
+            action.setOpenMode(OpenMode.DIALOG);
             // In case of adding special logic for a screen opened from DataGrid editor
             action.setScreenOptionsSupplier(() ->
                     new MapScreenOptions(ParamsMap.of("dataGridEditor", true)));

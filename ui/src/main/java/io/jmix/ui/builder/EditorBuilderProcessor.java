@@ -297,7 +297,7 @@ public class EditorBuilderProcessor {
                 throw new IllegalArgumentException("Screen class is not set");
             }
 
-            screen = screens.create(screenClass, builder.getLaunchMode(), builder.getOptions());
+            screen = screens.create(screenClass, builder.getOpenMode(), builder.getOptions());
         } else {
             String editorScreenId = null;
 
@@ -325,7 +325,7 @@ public class EditorBuilderProcessor {
 //                options = new MapScreenOptions(paramsMap);
 //            }
 
-            screen = screens.create(editorScreenId, builder.getLaunchMode(), options);
+            screen = screens.create(editorScreenId, builder.getOpenMode(), options);
         }
 
         if (!(screen instanceof EditorScreen)) {

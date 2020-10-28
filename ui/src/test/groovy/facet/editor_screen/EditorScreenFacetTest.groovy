@@ -49,7 +49,7 @@ class EditorScreenFacetTest extends ScreenSpecification {
         then: 'All EditorScreenFacet settings are correctly loaded'
 
         editorScreenFacet.id == 'editorScreenFacet'
-        editorScreenFacet.launchMode == OpenMode.DIALOG
+        editorScreenFacet.openMode == OpenMode.DIALOG
         editorScreenFacet.entityClass == Order
         editorScreenFacet.actionTarget == 'action'
         editorScreenFacet.entityPicker == screenWithFacet.orderField

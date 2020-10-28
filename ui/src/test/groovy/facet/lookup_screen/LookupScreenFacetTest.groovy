@@ -51,7 +51,7 @@ class LookupScreenFacetTest extends ScreenSpecification {
 
         lookupScreenFacet.id == 'lookupScreen'
         lookupScreenFacet.entityClass == Order
-        lookupScreenFacet.launchMode == OpenMode.DIALOG
+        lookupScreenFacet.openMode == OpenMode.DIALOG
         lookupScreenFacet.actionTarget == 'action'
         lookupScreenFacet.entityPicker == screenWithFacet.orderPicker
         lookupScreenFacet.container == screenWithFacet.ordersDc

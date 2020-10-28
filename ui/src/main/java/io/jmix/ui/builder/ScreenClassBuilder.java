@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.ui.Screens;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -42,12 +41,6 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     }
 
     @Override
-    public ScreenClassBuilder<S> withLaunchMode(Screens.LaunchMode launchMode) {
-        super.withLaunchMode(launchMode);
-        return this;
-    }
-
-    @Override
     public ScreenClassBuilder<S> withOpenMode(OpenMode openMode) {
         super.withOpenMode(openMode);
         return this;
@@ -60,7 +53,7 @@ public class ScreenClassBuilder<S extends Screen> extends ScreenBuilder {
     }
 
     @Override
-    public ScreenClassBuilder<S> withScreenId(String screenId) {
+    public ScreenBuilder withScreenId(String screenId) {
         throw new IllegalStateException("ScreenClassBuilder does not support screenId");
     }
 

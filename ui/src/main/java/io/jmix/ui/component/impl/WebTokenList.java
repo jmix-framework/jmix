@@ -67,7 +67,7 @@ public class WebTokenList<V>
     protected Action lookupAction;
     protected String lookupScreen;
     protected Map<String, Object> lookupScreenParams;
-    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
 
     protected Position position = Position.TOP;
     protected boolean inline;
@@ -237,13 +237,13 @@ public class WebTokenList<V>
     }
 
     @Override
-    public Screens.LaunchMode getLookupLaunchMode() {
-        return launchMode;
+    public OpenMode getLookupLaunchMode() {
+        return openMode;
     }
 
     @Override
-    public void setLookupLaunchMode(Screens.LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public void setLookupLaunchMode(OpenMode openMode) {
+        this.openMode = openMode;
     }
 
     @Override
@@ -377,7 +377,7 @@ public class WebTokenList<V>
     protected Screen createLookupScreen(@Nullable Runnable afterLookupSelect) {
         Screen lookupScreen = screenBuilders.lookup(getLookupEntityClass(), getFrame().getFrameOwner())
                 .withScreenId(getLookupScreenInternal())
-                .withLaunchMode(launchMode)
+                .withOpenMode(openMode)
                 .withOptions(new MapScreenOptions(getLookupScreenParamsInternal()))
                 .withSelectHandler(selected -> {
                     handleLookupSelection(selected);

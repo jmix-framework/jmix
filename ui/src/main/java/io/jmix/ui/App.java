@@ -267,7 +267,7 @@ public abstract class App {
      * Initialize new TopLevelWindow and replace current.
      *
      * @param topLevelWindowId target top level window id
-     * @deprecated Use {@link Screens#create(Class, Screens.LaunchMode)} with {@link OpenMode#ROOT}
+     * @deprecated Use {@link Screens#create(Class, OpenMode)} with {@link OpenMode#ROOT}
      */
     @Deprecated
     public void navigateTo(String topLevelWindowId) {

@@ -29,9 +29,9 @@ public class LookupScreenFacetProvider
         extends AbstractEntityAwareScreenFacetProvider<LookupScreenFacet> {
 
     @Autowired
-    protected ApplicationContext applicationContext;
-    @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected ApplicationContext applicationContext;
 
     @Override
     public Class<LookupScreenFacet> getFacetClass() {

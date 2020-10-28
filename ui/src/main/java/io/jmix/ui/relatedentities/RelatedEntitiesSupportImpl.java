@@ -123,8 +123,9 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
         FrameOwner origin = builder.getOrigin();
         Screens screens = UiControllerUtils.getScreenContext(origin).getScreens();
 
-        if (builder.getScreenClass() != null) {
-            return screens.create(builder.getScreenClass(), builder.getLaunchMode(), builder.getOptions());
+        if (builder instanceof RelatedEntitiesClassBuilder) {
+            return screens.create(((RelatedEntitiesClassBuilder<?>) builder).getScreenClass(),
+                    builder.getOpenMode(), builder.getOptions());
         } else {
             String screenId = builder.getScreenId();
             if (Strings.isNullOrEmpty(screenId)) {
@@ -137,7 +138,7 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
                 }
             }
 
-            return screens.create(screenId, builder.getLaunchMode(), builder.getOptions());
+            return screens.create(screenId, builder.getOpenMode(), builder.getOptions());
         }
     }
 }

@@ -79,7 +79,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
     protected void loadOpenMode(RelatedEntities resultComponent, Element element) {
         String openMode = element.attributeValue("openMode");
         if (StringUtils.isNotEmpty(openMode)) {
-            resultComponent.setLaunchMode(OpenMode.valueOf(openMode));
+            resultComponent.setOpenMode(OpenMode.valueOf(openMode));
         }
     }
 

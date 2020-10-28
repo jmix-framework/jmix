@@ -302,8 +302,8 @@ public class WebUrlRouting implements UrlRouting {
     }
 
     protected boolean omitParams(Screen screen) {
-        Screens.LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
-        if (OpenMode.THIS_TAB != launchMode) {
+        OpenMode openMode = screen.getWindow().getContext().getOpenMode();
+        if (OpenMode.THIS_TAB != openMode) {
             return false;
         }
 

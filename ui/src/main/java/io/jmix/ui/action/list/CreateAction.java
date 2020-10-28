@@ -20,7 +20,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -80,23 +79,16 @@ public class CreateAction<E> extends ListAction
         this.primary = true;
     }
 
-    /**
-     * Returns the editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)} or in the screen XML.
-     * Otherwise returns null.
-     */
     @Nullable
     @Override
-    public LaunchMode getLaunchMode() {
-        return screenInitializer.getLaunchMode();
+    public OpenMode getOpenMode() {
+        return screenInitializer.getOpenMode();
     }
 
-    /**
-     * Sets the editor screen open mode.
-     */
     @StudioPropertiesItem
     @Override
-    public void setLaunchMode(@Nullable LaunchMode launchMode) {
-        screenInitializer.setLaunchMode(launchMode);
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        screenInitializer.setOpenMode(openMode);
     }
 
     /**

@@ -16,12 +16,10 @@
 
 package io.jmix.ui.screen;
 
-import io.jmix.ui.Screens;
-
 /**
  * Standard launch modes of {@link Screen}s.
  */
-public enum OpenMode implements Screens.LaunchMode {
+public enum OpenMode {
     /**
      * Open a screen in new tab of the main window.
      * <br> In Web Client with {@code AppWindow.Mode.SINGLE} the new screen replaces current screen.

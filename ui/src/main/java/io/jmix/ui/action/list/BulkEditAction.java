@@ -25,7 +25,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.bulk.BulkEditors;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.app.bulk.FieldSorter;
@@ -39,6 +38,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.PropertyType;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
+import io.jmix.ui.screen.OpenMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -68,7 +68,7 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
     protected String exclude;
     protected FieldSorter fieldSorter;
     protected List<String> includeProperties;
-    protected LaunchMode launchMode;
+    protected OpenMode openMode;
     protected Boolean loadDynamicAttributes;
     protected Boolean useConfirmDialog;
 
@@ -144,20 +144,20 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
     }
 
     /**
-     * Returns the bulk editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)} or in the screen XML.
+     * Returns the bulk editor screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
-    public LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**
      * Sets the bulk editor screen open mode.
      */
     @StudioPropertiesItem(defaultValue = "DIALOG")
-    public void setLaunchMode(LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public void setOpenMode(OpenMode openMode) {
+        this.openMode = openMode;
     }
 
     /**
@@ -309,8 +309,8 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
             builder = builder.withIncludeProperties(includeProperties);
         }
 
-        if (launchMode != null) {
-            builder = builder.withLaunchMode(launchMode);
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
         }
 
         if (useConfirmDialog != null) {

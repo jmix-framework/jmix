@@ -132,7 +132,7 @@ public class EditorScreenFacetImpl<E, S extends Screen & EditorScreen<E>>
                 .withContainer(container)
                 .withAddFirst(addFirst)
                 .withScreenId(screenId)
-                .withLaunchMode(launchMode)
+                .withOpenMode(openMode)
                 .withOptions(getScreenOptions())
                 .withInitializer(initializer)
                 .withTransformation(transformation)

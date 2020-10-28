@@ -17,7 +17,6 @@
 package io.jmix.ui.bulk;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.Screens;
 import io.jmix.ui.app.bulk.BulkEditorWindow;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.app.bulk.FieldSorter;
@@ -33,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+
 /**
  * A builder that creates a new {@link BulkEditorWindow} with defined parameters.
  *
@@ -45,7 +46,7 @@ public class EditorBuilder<E> {
     protected final Collection<E> entities;
     protected final Function<EditorBuilder<E>, BulkEditorWindow<E>> handler;
 
-    protected Screens.LaunchMode launchMode = OpenMode.DIALOG;
+    protected OpenMode openMode = OpenMode.DIALOG;
     protected ListComponent<E> listComponent;
 
     protected String exclude;
@@ -62,7 +63,7 @@ public class EditorBuilder<E> {
         this.handler = builder.handler;
         this.entities = builder.entities;
 
-        this.launchMode = builder.launchMode;
+        this.openMode = builder.openMode;
         this.listComponent = builder.listComponent;
 
         this.exclude = builder.exclude;
@@ -83,13 +84,15 @@ public class EditorBuilder<E> {
     }
 
     /**
-     * Sets screen launch mode.
+     * Sets screen open mode.
      *
-     * @param launchMode the launch mode to set
+     * @param openMode the open mode to set
      * @return this builder
      */
-    public EditorBuilder<E> withLaunchMode(Screens.LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public EditorBuilder<E> withOpenMode(OpenMode openMode) {
+        checkNotNullArgument(openMode);
+
+        this.openMode = openMode;
         return this;
     }
 
@@ -210,9 +213,8 @@ public class EditorBuilder<E> {
     /**
      * @return screen launch mode
      */
-    @Nullable
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**

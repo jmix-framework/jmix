@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -46,12 +45,6 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends L
         super(builder);
 
         this.screenClass = screenClass;
-    }
-
-    @Override
-    public LookupClassBuilder<E, S> withLaunchMode(Screens.LaunchMode launchMode) {
-        super.withLaunchMode(launchMode);
-        return this;
     }
 
     @Override

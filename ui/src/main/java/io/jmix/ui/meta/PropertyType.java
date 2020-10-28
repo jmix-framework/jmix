@@ -18,6 +18,7 @@ package io.jmix.ui.meta;
 
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.screen.Screen;
 
 /**
  * Type of UI component property.
@@ -149,5 +150,25 @@ public enum PropertyType {
      *
      * @see Datatype
      */
-    DATATYPE_ID
+    DATATYPE_ID,
+
+    /**
+     * Keyboard shortcut.
+     */
+    SHORTCUT,
+
+    /**
+     * FQN of screen class.
+     */
+    SCREEN_CLASS_NAME,
+
+    /**
+     * Screen ID
+     */
+    SCREEN_ID,
+
+    /**
+     * Standard launch modes of {@link Screen}s.
+     */
+    SCREEN_OPEN_MODE
 }

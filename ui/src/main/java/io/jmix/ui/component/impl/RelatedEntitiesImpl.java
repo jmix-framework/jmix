@@ -25,7 +25,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.Actions;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
@@ -56,7 +55,7 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
     protected ScreensHelper screensHelper;
 
     protected ListComponent<E> listComponent;
-    protected LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
 
     protected Map<String, PropertyOption> propertyOptions = new HashMap<>();
 
@@ -97,17 +96,17 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
     }
 
     @Override
-    public LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     @Override
-    public void setLaunchMode(LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public void setOpenMode(OpenMode openMode) {
+        this.openMode = openMode;
 
         for (Action action : getActions()) {
             if (action instanceof RelatedAction) {
-                ((RelatedAction) action).setLaunchMode(launchMode);
+                ((RelatedAction) action).setOpenMode(openMode);
             }
         }
     }
@@ -250,7 +249,7 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
 
         relatedAction.setTarget(listComponent);
         relatedAction.setMetaProperty(metaProperty);
-        relatedAction.setLaunchMode(launchMode);
+        relatedAction.setOpenMode(openMode);
         relatedAction.setCaption(messageTools.getPropertyCaption(metaProperty));
 
         if (defaultScreen != null) {

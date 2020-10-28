@@ -54,7 +54,7 @@ class ScreenFacetTest extends ScreenSpecification {
 
         screenIdFacet.id == 'screenIdFacet'
         screenIdFacet.screenId == 'test_FacetTestScreen'
-        screenIdFacet.launchMode == OpenMode.NEW_TAB
+        screenIdFacet.openMode == OpenMode.NEW_TAB
         screenIdFacet.actionTarget == 'action'
 
         screenIdFacet.properties.find { p -> p.name == 'boolProp' }

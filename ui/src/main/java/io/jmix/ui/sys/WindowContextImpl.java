@@ -17,20 +17,20 @@
 package io.jmix.ui.sys;
 
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.component.WindowContext;
+import io.jmix.ui.screen.OpenMode;
 
 public class WindowContextImpl extends FrameContextImpl implements WindowContext {
 
-    private final LaunchMode launchMode;
+    private final OpenMode openMode;
 
-    public WindowContextImpl(Frame window, LaunchMode launchMode) {
+    public WindowContextImpl(Frame window, OpenMode openMode) {
         super(window);
-        this.launchMode = launchMode;
+        this.openMode = openMode;
     }
 
     @Override
-    public LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 }

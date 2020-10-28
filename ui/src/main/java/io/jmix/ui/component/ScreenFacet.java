@@ -17,19 +17,15 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import org.springframework.context.ApplicationContextAware;
-import io.jmix.ui.Screens;
-import io.jmix.ui.meta.PropertyType;
-import io.jmix.ui.meta.StudioFacet;
-import io.jmix.ui.meta.StudioProperties;
-import io.jmix.ui.meta.StudioProperty;
+import io.jmix.ui.meta.*;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.UiControllerProperty;
+import org.springframework.context.ApplicationContextAware;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -41,7 +37,7 @@ import java.util.function.Supplier;
         caption = "Screen",
         description = "Prepares and shows screens",
         defaultProperty = "screenId",
-        category = "Non-visual"
+        category = "Facets"
 )
 @StudioProperties(
         properties = {
@@ -79,16 +75,17 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
     Class<S> getScreenClass();
 
     /**
-     * Sets screen {@link Screens.LaunchMode}.
-     *
-     * @param launchMode launch mode
+     * @return screen {@link OpenMode}
      */
-    void setLaunchMode(Screens.LaunchMode launchMode);
+    OpenMode getOpenMode();
 
     /**
-     * @return screen {@link Screens.LaunchMode}
+     * Sets screen {@link OpenMode}.
+     *
+     * @param openMode an open mode to set
      */
-    Screens.LaunchMode getLaunchMode();
+    @StudioProperty(name = "openMode", type = PropertyType.SCREEN_OPEN_MODE, defaultValue = "NEW_TAB")
+    void setOpenMode(OpenMode openMode);
 
     /**
      * Sets the given {@code Supplier} as screen options provider.
@@ -108,6 +105,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param properties screen properties
      */
+    @StudioElementsGroup(xmlElement = "properties")
     void setProperties(Collection<UiControllerProperty> properties);
 
     /**

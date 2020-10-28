@@ -52,42 +52,42 @@ public interface Screens {
      * Creates a screen by its controller class.
      *
      * @param screenClass screen controller class
-     * @param launchMode  how the screen should be opened
+     * @param openMode    how the screen should be opened
      */
-    default <T extends Screen> T create(Class<T> screenClass, LaunchMode launchMode) {
-        return create(screenClass, launchMode, FrameOwner.NO_OPTIONS);
+    default <T extends Screen> T create(Class<T> screenClass, OpenMode openMode) {
+        return create(screenClass, openMode, FrameOwner.NO_OPTIONS);
     }
 
     /**
      * Creates a screen by its screen id.
      *
-     * @param screenId   screen id
-     * @param launchMode how the screen should be opened
+     * @param screenId screen id
+     * @param openMode how the screen should be opened
      */
-    default Screen create(String screenId, LaunchMode launchMode) {
-        return create(screenId, launchMode, FrameOwner.NO_OPTIONS);
+    default Screen create(String screenId, OpenMode openMode) {
+        return create(screenId, openMode, FrameOwner.NO_OPTIONS);
     }
 
     /**
      * Creates a screen by its controller class.
      *
      * @param screenClass screen controller class
-     * @param launchMode  how the screen should be opened
+     * @param openMode    how the screen should be opened
      * @param options     screen parameters
      */
-    <T extends Screen> T create(Class<T> screenClass, LaunchMode launchMode, ScreenOptions options);
+    <T extends Screen> T create(Class<T> screenClass, OpenMode openMode, ScreenOptions options);
 
     /**
      * Creates a screen by its screen id.
      *
-     * @param screenId   screen id
-     * @param launchMode how the screen should be opened
-     * @param options    screen parameters
+     * @param screenId screen id
+     * @param openMode how the screen should be opened
+     * @param options  screen parameters
      */
-    Screen create(String screenId, LaunchMode launchMode, ScreenOptions options);
+    Screen create(String screenId, OpenMode openMode, ScreenOptions options);
 
     /**
-     * Displays the given screen according to its {@link LaunchMode}.
+     * Displays the given screen according to its {@link OpenMode}.
      *
      * @param screen screen
      * @return {@link OperationResult#success()} if screen is shown or otherwise {@link OperationResult#fail()}
@@ -128,14 +128,6 @@ public interface Screens {
 
     @Nullable
     AppWorkArea getConfiguredWorkAreaOrNull();
-
-    /**
-     * Marker interface for screen launch modes.
-     *
-     * @see OpenMode
-     */
-    interface LaunchMode {
-    }
 
     /**
      * Represents single tab / window stack in {@link AppWorkArea}.

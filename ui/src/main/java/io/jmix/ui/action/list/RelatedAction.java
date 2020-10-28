@@ -18,7 +18,6 @@ package io.jmix.ui.action.list;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
@@ -26,6 +25,7 @@ import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.ActionScreenInitializer;
@@ -63,13 +63,13 @@ public class RelatedAction extends SecuredListAction
 
     @Nullable
     @Override
-    public LaunchMode getLaunchMode() {
-        return screenInitializer.getLaunchMode();
+    public OpenMode getOpenMode() {
+        return screenInitializer.getOpenMode();
     }
 
     @Override
-    public void setLaunchMode(@Nullable LaunchMode launchMode) {
-        screenInitializer.setLaunchMode(launchMode);
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        screenInitializer.setOpenMode(openMode);
     }
 
     @Nullable

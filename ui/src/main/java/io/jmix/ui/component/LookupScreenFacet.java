@@ -43,7 +43,7 @@ import java.util.function.Predicate;
                 @StudioProperty(name = "id", type = PropertyType.COMPONENT_ID, required = true)
         }
 )
-public interface LookupScreenFacet<E, S extends Screen>
+public interface LookupScreenFacet<E, S extends Screen & LookupScreen<E>>
         extends ScreenFacet<S>, EntityAwareScreenFacet<E> {
 
     /**

@@ -16,12 +16,12 @@
 package io.jmix.ui.action;
 
 import io.jmix.core.security.ConstraintOperationType;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.screen.Install;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
@@ -254,16 +254,16 @@ public interface Action {
     interface ScreenOpeningAction {
 
         /**
-         * Returns the editor screen open mode if it was set by {@link #setLaunchMode(LaunchMode)}
+         * Returns the editor screen open mode if it was set by {@link #setOpenMode(OpenMode)}
          * or in the screen XML, otherwise returns null.
          */
         @Nullable
-        LaunchMode getLaunchMode();
+        OpenMode getOpenMode();
 
         /**
          * Sets the editor screen open mode.
          */
-        void setLaunchMode(@Nullable LaunchMode launchMode);
+        void setOpenMode(@Nullable OpenMode openMode);
 
         /**
          * Returns the editor screen id if it was set by {@link #setScreenId(String)}

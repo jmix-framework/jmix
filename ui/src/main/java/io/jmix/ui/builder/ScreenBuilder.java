@@ -16,8 +16,6 @@
 
 package io.jmix.ui.builder;
 
-
-import io.jmix.ui.Screens;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -36,7 +34,7 @@ public class ScreenBuilder {
     protected final FrameOwner origin;
     protected final Function<ScreenBuilder, Screen> handler;
 
-    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
     protected String screenId;
 
@@ -45,7 +43,7 @@ public class ScreenBuilder {
         this.handler = builder.handler;
 
         this.options = builder.options;
-        this.launchMode = builder.launchMode;
+        this.openMode = builder.openMode;
         this.screenId = builder.screenId;
     }
 
@@ -55,24 +53,13 @@ public class ScreenBuilder {
     }
 
     /**
-     * Sets {@link Screens.LaunchMode} for the screen and returns the builder for chaining.
-     * <p>For example: {@code builder.withLaunchMode(OpenMode.DIALOG).build();}
-     */
-    public ScreenBuilder withLaunchMode(Screens.LaunchMode launchMode) {
-        checkNotNullArgument(launchMode);
-
-        this.launchMode = launchMode;
-        return this;
-    }
-
-    /**
-     * Sets {@link Screens.LaunchMode} for the screen and returns the builder for chaining.
+     * Sets {@link OpenMode} for the screen and returns the builder for chaining.
      * <p>For example: {@code builder.withOpenMode(OpenMode.DIALOG).build();}
      */
     public ScreenBuilder withOpenMode(OpenMode openMode) {
         checkNotNullArgument(openMode);
 
-        this.launchMode = openMode;
+        this.openMode = openMode;
         return this;
     }
 
@@ -109,10 +96,10 @@ public class ScreenBuilder {
     }
 
     /**
-     * Returns launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}.
+     * Returns open mode set by {@link #withOpenMode(OpenMode)}.
      */
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**

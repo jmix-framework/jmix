@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -80,12 +79,6 @@ public class EditorClassBuilder<E, S extends Screen & EditorScreen<E>> extends E
     @Override
     public EditorClassBuilder<E, S> withAddFirst(boolean addFirst) {
         super.withAddFirst(addFirst);
-        return this;
-    }
-
-    @Override
-    public EditorClassBuilder<E, S> withLaunchMode(Screens.LaunchMode launchMode) {
-        super.withLaunchMode(launchMode);
         return this;
     }
 

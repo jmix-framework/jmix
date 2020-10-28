@@ -20,7 +20,6 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -86,13 +85,13 @@ public class LookupAction<E> extends BaseAction
     }
 
     /**
-     * Returns the lookup screen open mode if it was set by {@link #setLaunchMode(LaunchMode)} or in the screen XML.
+     * Returns the lookup screen open mode if it was set by {@link #setOpenMode(OpenMode)} or in the screen XML.
      * Otherwise returns null.
      */
     @Nullable
     @Override
-    public LaunchMode getLaunchMode() {
-        return screenInitializer.getLaunchMode();
+    public OpenMode getOpenMode() {
+        return screenInitializer.getOpenMode();
     }
 
     /**
@@ -100,8 +99,8 @@ public class LookupAction<E> extends BaseAction
      */
     @StudioPropertiesItem
     @Override
-    public void setLaunchMode(@Nullable LaunchMode launchMode) {
-        screenInitializer.setLaunchMode(launchMode);
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        screenInitializer.setOpenMode(openMode);
     }
 
     /**

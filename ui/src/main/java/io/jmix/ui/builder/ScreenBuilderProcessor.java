@@ -46,7 +46,7 @@ public class ScreenBuilderProcessor {
                 throw new IllegalArgumentException("Screen class is not set");
             }
 
-            screen = screens.create(screenClass, builder.getLaunchMode(), builder.getOptions());
+            screen = screens.create(screenClass, builder.getOpenMode(), builder.getOptions());
 
             List<Consumer<Screen.AfterShowEvent>> afterShowListeners = screenClassBuilder.getAfterShowListeners();
             for (Consumer<Screen.AfterShowEvent> afterShowListener : afterShowListeners) {
@@ -62,7 +62,7 @@ public class ScreenBuilderProcessor {
                 throw new IllegalArgumentException("Screen id is not set");
             }
 
-            screen = screens.create(builder.getScreenId(), builder.getLaunchMode(), builder.getOptions());
+            screen = screens.create(builder.getScreenId(), builder.getOpenMode(), builder.getOptions());
         }
 
         return screen;

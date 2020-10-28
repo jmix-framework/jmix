@@ -130,29 +130,29 @@ public class ScreensImpl implements Screens {
 
 
     @Override
-    public <T extends Screen> T create(Class<T> requiredScreenClass, LaunchMode launchMode, ScreenOptions options) {
+    public <T extends Screen> T create(Class<T> requiredScreenClass, OpenMode openMode, ScreenOptions options) {
         checkNotNullArgument(requiredScreenClass);
-        checkNotNullArgument(launchMode);
+        checkNotNullArgument(openMode);
         checkNotNullArgument(options);
 
         WindowInfo windowInfo = getScreenInfo(requiredScreenClass).resolve();
 
-        return createScreen(windowInfo, launchMode, options);
+        return createScreen(windowInfo, openMode, options);
     }
 
     @Override
-    public Screen create(String screenId, LaunchMode launchMode, ScreenOptions options) {
+    public Screen create(String screenId, OpenMode openMode, ScreenOptions options) {
         checkNotNullArgument(screenId);
-        checkNotNullArgument(launchMode);
+        checkNotNullArgument(openMode);
         checkNotNullArgument(options);
 
         // load screen class only once
         WindowInfo windowInfo = windowConfig.getWindowInfo(screenId).resolve();
 
-        return createScreen(windowInfo, launchMode, options);
+        return createScreen(windowInfo, openMode, options);
     }
 
-    protected <T extends Screen> T createScreen(WindowInfo windowInfo, LaunchMode launchMode, ScreenOptions options) {
+    protected <T extends Screen> T createScreen(WindowInfo windowInfo, OpenMode openMode, ScreenOptions options) {
         if (windowInfo.getType() != WindowInfo.Type.SCREEN) {
             throw new IllegalArgumentException(
                     String.format("Unable to create screen %s with type %s", windowInfo.getId(), windowInfo.getType())
@@ -165,7 +165,7 @@ public class ScreensImpl implements Screens {
         // load XML document here in order to get metadata before Window creation, e.g. forceDialog from <dialogMode>
         Element element = loadScreenXml(windowInfo, options);
 
-        ScreenOpenDetails openDetails = prepareScreenOpenDetails(resolvedScreenClass, element, launchMode);
+        ScreenOpenDetails openDetails = prepareScreenOpenDetails(resolvedScreenClass, element, openMode);
 
         checkPermissions(openDetails.getOpenMode(), windowInfo);
 
@@ -247,43 +247,39 @@ public class ScreensImpl implements Screens {
 
     protected ScreenOpenDetails prepareScreenOpenDetails(Class<? extends Screen> resolvedScreenClass,
                                                          @Nullable Element element,
-                                                         LaunchMode requiredLaunchMode) {
-        if (!(requiredLaunchMode instanceof OpenMode)) {
-            throw new UnsupportedOperationException("Unsupported LaunchMode " + requiredLaunchMode);
-        }
-
-        // check if we need to change launchMode to DIALOG
+                                                         OpenMode requiredOpenMode) {
+        // check if we need to change openMode to DIALOG
         boolean forceDialog = false;
-        OpenMode launchMode = (OpenMode) requiredLaunchMode;
+        OpenMode openMode = requiredOpenMode;
 
         if (element != null && element.element("dialogMode") != null) {
             String forceDialogAttr = element.element("dialogMode").attributeValue("forceDialog");
             if (StringUtils.isNotEmpty(forceDialogAttr)
                     && Boolean.parseBoolean(forceDialogAttr)) {
-                launchMode = OpenMode.DIALOG;
+                openMode = OpenMode.DIALOG;
             }
         }
 
         DialogMode dialogMode = resolvedScreenClass.getAnnotation(DialogMode.class);
         if (dialogMode != null && dialogMode.forceDialog()) {
-            launchMode = OpenMode.DIALOG;
+            openMode = OpenMode.DIALOG;
         }
 
-        if (launchMode != OpenMode.DIALOG
-                && launchMode != OpenMode.ROOT) {
+        if (openMode != OpenMode.DIALOG
+                && openMode != OpenMode.ROOT) {
             if (hasModalDialogWindow()) {
-                launchMode = OpenMode.DIALOG;
+                openMode = OpenMode.DIALOG;
                 forceDialog = true;
             }
         }
 
-        if (launchMode == OpenMode.THIS_TAB) {
+        if (openMode == OpenMode.THIS_TAB) {
             AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
             switch (workArea.getMode()) {
                 case SINGLE:
                     if (workArea.getSingleWindowContainer().getWindowContainer() == null) {
-                        launchMode = OpenMode.NEW_TAB;
+                        openMode = OpenMode.NEW_TAB;
                     }
                     break;
 
@@ -291,18 +287,18 @@ public class ScreensImpl implements Screens {
                     TabSheetBehaviour tabSheetBehaviour = workArea.getTabbedWindowContainer().getTabSheetBehaviour();
 
                     if (tabSheetBehaviour.getComponentCount() == 0) {
-                        launchMode = OpenMode.NEW_TAB;
+                        openMode = OpenMode.NEW_TAB;
                     }
                     break;
 
                 default:
                     throw new UnsupportedOperationException("Unsupported AppWorkArea mode");
             }
-        } else if (launchMode == OpenMode.NEW_WINDOW) {
-            launchMode = OpenMode.NEW_TAB;
+        } else if (openMode == OpenMode.NEW_WINDOW) {
+            openMode = OpenMode.NEW_TAB;
         }
 
-        return new ScreenOpenDetails(forceDialog, launchMode);
+        return new ScreenOpenDetails(forceDialog, openMode);
     }
 
     @Nullable
@@ -374,32 +370,27 @@ public class ScreensImpl implements Screens {
 
         beforeShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.BEFORE_SHOW, screen.getId()));
 
-        LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
+        OpenMode openMode = screen.getWindow().getContext().getOpenMode();
+        switch (openMode) {
+            case ROOT:
+                showRootWindow(screen);
+                break;
 
-        if (launchMode instanceof OpenMode) {
-            OpenMode openMode = (OpenMode) launchMode;
+            case THIS_TAB:
+                showThisTabWindow(screen);
+                break;
 
-            switch (openMode) {
-                case ROOT:
-                    showRootWindow(screen);
-                    break;
+            case NEW_WINDOW:
+            case NEW_TAB:
+                showNewTabWindow(screen);
+                break;
 
-                case THIS_TAB:
-                    showThisTabWindow(screen);
-                    break;
+            case DIALOG:
+                showDialogWindow(screen);
+                break;
 
-                case NEW_WINDOW:
-                case NEW_TAB:
-                    showNewTabWindow(screen);
-                    break;
-
-                case DIALOG:
-                    showDialogWindow(screen);
-                    break;
-
-                default:
-                    throw new UnsupportedOperationException("Unsupported OpenMode " + openMode);
-            }
+            default:
+                throw new UnsupportedOperationException("Unsupported OpenMode " + openMode);
         }
 
         userActionsLog.trace("Screen {} {} opened", screen.getId(), screen.getClass());
@@ -421,10 +412,10 @@ public class ScreensImpl implements Screens {
 
     @Override
     public OperationResult showFromNavigation(Screen screen) {
-        LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
+        OpenMode openMode = screen.getWindow().getContext().getOpenMode();
 
-        if (launchMode == OpenMode.NEW_TAB
-                || launchMode == OpenMode.NEW_WINDOW) {
+        if (openMode == OpenMode.NEW_TAB
+                || openMode == OpenMode.NEW_WINDOW) {
             AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
             if (workArea.getMode() == Mode.SINGLE) {
@@ -504,10 +495,10 @@ public class ScreensImpl implements Screens {
     }
 
     protected boolean isMaxTabCountExceeded(Screen screen) {
-        LaunchMode launchMode = screen.getWindow().getContext().getLaunchMode();
+        OpenMode openMode = screen.getWindow().getContext().getOpenMode();
 
-        if (launchMode == OpenMode.NEW_TAB
-                || launchMode == OpenMode.NEW_WINDOW) {
+        if (openMode == OpenMode.NEW_TAB
+                || openMode == OpenMode.NEW_WINDOW) {
             AppWorkAreaImpl workArea = getConfiguredWorkArea();
 
             if (workArea.getMode() == Mode.TABBED) {
@@ -533,31 +524,27 @@ public class ScreensImpl implements Screens {
 
         WindowImplementation windowImpl = (WindowImplementation) screen.getWindow();
 
-        LaunchMode launchMode = windowImpl.getContext().getLaunchMode();
-        if (launchMode instanceof OpenMode) {
-            OpenMode openMode = (OpenMode) launchMode;
+        OpenMode openMode = windowImpl.getContext().getOpenMode();
+        switch (openMode) {
+            case DIALOG:
+                removeDialogWindow(screen);
+                break;
 
-            switch (openMode) {
-                case DIALOG:
-                    removeDialogWindow(screen);
-                    break;
+            case NEW_TAB:
+            case NEW_WINDOW:
+                removeNewTabWindow(screen);
+                break;
 
-                case NEW_TAB:
-                case NEW_WINDOW:
-                    removeNewTabWindow(screen);
-                    break;
+            case ROOT:
+                removeRootWindow(screen);
+                break;
 
-                case ROOT:
-                    removeRootWindow(screen);
-                    break;
+            case THIS_TAB:
+                removeThisTabWindow(screen);
+                break;
 
-                case THIS_TAB:
-                    removeThisTabWindow(screen);
-                    break;
-
-                default:
-                    throw new UnsupportedOperationException("Unsupported OpenMode");
-            }
+            default:
+                throw new UnsupportedOperationException("Unsupported OpenMode");
         }
 
         fireEvent(screen, AfterDetachEvent.class, new AfterDetachEvent(screen));
@@ -922,15 +909,19 @@ public class ScreensImpl implements Screens {
                 throw new UnsupportedOperationException("Unsupported launch mode " + openMode);
         }
 
-        WindowContextImpl windowContext = new WindowContextImpl(window, openDetails.getOpenMode());
+        WindowContextImpl windowContext = createWindowContext(window, openDetails);
         ((WindowImplementation) window).setContext(windowContext);
 
         return window;
     }
 
-    protected void checkPermissions(LaunchMode launchMode, WindowInfo windowInfo) {
+    protected WindowContextImpl createWindowContext(Window window, ScreenOpenDetails openDetails) {
+        return new WindowContextImpl(window, openDetails.getOpenMode());
+    }
+
+    protected void checkPermissions(OpenMode openMode, WindowInfo windowInfo) {
         // ROOT windows are always permitted
-        if (launchMode != OpenMode.ROOT) {
+        if (openMode != OpenMode.ROOT) {
             UiShowScreenContext showScreenContext = new UiShowScreenContext(windowInfo.getId());
             accessManager.applyRegisteredConstraints(showScreenContext);
 

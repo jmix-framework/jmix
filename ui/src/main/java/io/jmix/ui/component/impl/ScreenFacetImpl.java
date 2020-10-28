@@ -53,9 +53,9 @@ public class ScreenFacetImpl<S extends Screen> extends AbstractScreenFacet<S> {
                 .getScreens();
 
         if (screenId != null) {
-            screen = (S) screens.create(screenId, launchMode, getScreenOptions());
+            screen = (S) screens.create(screenId, openMode, getScreenOptions());
         } else if (screenClass != null) {
-            screen = screens.create(screenClass, launchMode, getScreenOptions());
+            screen = screens.create(screenClass, openMode, getScreenOptions());
         } else {
             throw new DevelopmentException("Unable to open screen because no screen id or screen class are specified");
         }

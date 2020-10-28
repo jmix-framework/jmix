@@ -16,7 +16,6 @@
 
 package io.jmix.ui.builder;
 
-import io.jmix.ui.Screens;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.model.CollectionContainer;
@@ -43,7 +42,7 @@ public class EditorBuilder<E> {
     protected CollectionContainer<E> container;
     protected Consumer<E> initializer;
     protected Function<E, E> transformation;
-    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
     protected ListComponent<E> listComponent;
     protected HasValue<E> field;
@@ -54,7 +53,7 @@ public class EditorBuilder<E> {
 
     protected Boolean addFirst;
 
-    protected EditorBuilder(EditorBuilder<E> builder) {
+    public EditorBuilder(EditorBuilder<E> builder) {
         this.origin = builder.origin;
         this.entityClass = builder.entityClass;
         this.handler = builder.handler;
@@ -67,7 +66,7 @@ public class EditorBuilder<E> {
         this.container = builder.container;
         this.initializer = builder.initializer;
         this.options = builder.options;
-        this.launchMode = builder.launchMode;
+        this.openMode = builder.openMode;
         this.parentDataContext = builder.parentDataContext;
         this.listComponent = builder.listComponent;
         this.field = builder.field;
@@ -158,24 +157,13 @@ public class EditorBuilder<E> {
     }
 
     /**
-     * Sets {@link Screens.LaunchMode} for the editor screen and returns the builder for chaining.
-     * <p>For example: {@code builder.withLaunchMode(OpenMode.DIALOG).build();}
-     */
-    public EditorBuilder<E> withLaunchMode(Screens.LaunchMode launchMode) {
-        checkNotNullArgument(launchMode);
-
-        this.launchMode = launchMode;
-        return this;
-    }
-
-    /**
      * Sets {@link OpenMode} for the editor screen and returns the builder for chaining.
      * <p>For example: {@code builder.withOpenMode(OpenMode.DIALOG).build();}
      */
     public EditorBuilder<E> withOpenMode(OpenMode openMode) {
         checkNotNullArgument(openMode);
 
-        this.launchMode = openMode;
+        this.openMode = openMode;
         return this;
     }
 
@@ -308,10 +296,10 @@ public class EditorBuilder<E> {
     }
 
     /**
-     * Returns launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}.
+     * Returns launch mode set by {@link #withOpenMode(OpenMode)}.
      */
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**

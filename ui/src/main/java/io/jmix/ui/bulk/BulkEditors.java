@@ -18,7 +18,6 @@ package io.jmix.ui.bulk;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Screens;
-import io.jmix.ui.WindowConfig;
 import io.jmix.ui.app.bulk.BulkEditorController.BulkEditorContext;
 import io.jmix.ui.app.bulk.BulkEditorWindow;
 import io.jmix.ui.component.ListComponent;
@@ -48,16 +47,10 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 /**
  * A bean that creates an instance of {@link EditorBuilder}.
  */
-@Component("cuba_BulkEditors")
+@Component("ui_BulkEditors")
 public class BulkEditors {
 
     private static final Logger log = LoggerFactory.getLogger(BulkEditors.class);
-
-    protected WindowConfig windowConfig;
-
-    public BulkEditors(WindowConfig windowConfig) {
-        this.windowConfig = windowConfig;
-    }
 
     public <E> EditorBuilder<E> builder(MetaClass metaClass,
                                         Collection<E> entities, FrameOwner origin) {
@@ -78,7 +71,7 @@ public class BulkEditors {
         }
 
         //noinspection unchecked
-        BulkEditorWindow<E> bulkEditorWindow = screens.create(BulkEditorWindow.class, builder.launchMode);
+        BulkEditorWindow<E> bulkEditorWindow = screens.create(BulkEditorWindow.class, builder.openMode);
 
         BulkEditorContext<E> context = createBulkEditorContext(builder);
         bulkEditorWindow.setBulkEditorContext(context);

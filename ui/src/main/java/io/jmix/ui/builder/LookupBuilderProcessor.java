@@ -165,7 +165,7 @@ public class LookupBuilderProcessor {
                 throw new IllegalArgumentException("Screen class is not set");
             }
 
-            screen = screens.create(screenClass, builder.getLaunchMode(), builder.getOptions());
+            screen = screens.create(screenClass, builder.getOpenMode(), builder.getOptions());
         } else {
             String lookupScreenId;
             if (builder.getScreenId() != null) {
@@ -178,7 +178,7 @@ public class LookupBuilderProcessor {
                 throw new IllegalArgumentException("Screen id is not set");
             }
 
-            screen = screens.create(lookupScreenId, builder.getLaunchMode(), builder.getOptions());
+            screen = screens.create(lookupScreenId, builder.getOpenMode(), builder.getOptions());
         }
         return screen;
     }

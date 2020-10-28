@@ -16,7 +16,7 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.Screens.LaunchMode;
+import io.jmix.ui.screen.OpenMode;
 
 import javax.annotation.Nullable;
 
@@ -26,9 +26,9 @@ public interface RelatedEntities<E> extends Component,
 
     String NAME = "relatedEntities";
 
-    LaunchMode getLaunchMode();
+    OpenMode getOpenMode();
 
-    void setLaunchMode(LaunchMode launchMode);
+    void setOpenMode(OpenMode openMode);
 
     @Nullable
     String getExcludePropertiesRegex();

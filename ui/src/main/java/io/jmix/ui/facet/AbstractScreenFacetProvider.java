@@ -89,7 +89,7 @@ public abstract class AbstractScreenFacetProvider<T extends ScreenFacet>
     protected void loadOpenMode(T facet, Element element) {
         String openMode = element.attributeValue("openMode");
         if (isNotEmpty(openMode)) {
-            facet.setLaunchMode(OpenMode.valueOf(openMode));
+            facet.setOpenMode(OpenMode.valueOf(openMode));
         }
     }
 

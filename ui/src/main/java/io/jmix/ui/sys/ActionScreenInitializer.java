@@ -16,11 +16,11 @@
 
 package io.jmix.ui.sys;
 
-import io.jmix.ui.Screens.LaunchMode;
 import io.jmix.ui.builder.EditorBuilder;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.builder.ScreenBuilder;
 import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
+import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
@@ -33,7 +33,7 @@ import java.util.function.Supplier;
  */
 public class ActionScreenInitializer {
 
-    protected LaunchMode launchMode;
+    protected OpenMode openMode;
     protected String screenId;
     protected Class<? extends Screen> screenClass;
     protected Supplier<ScreenOptions> screenOptionsSupplier;
@@ -41,8 +41,8 @@ public class ActionScreenInitializer {
     protected Consumer<Screen.AfterCloseEvent> afterCloseHandler;
 
     @Nullable
-    public LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     @Nullable
@@ -55,8 +55,8 @@ public class ActionScreenInitializer {
         return screenClass;
     }
 
-    public void setLaunchMode(@Nullable LaunchMode launchMode) {
-        this.launchMode = launchMode;
+    public void setOpenMode(@Nullable OpenMode openMode) {
+        this.openMode = openMode;
     }
 
     public void setScreenId(@Nullable String screenId) {
@@ -93,8 +93,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (launchMode != null) {
-            builder = builder.withLaunchMode(launchMode);
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
         }
 
         return builder;
@@ -114,8 +114,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (launchMode != null) {
-            builder = builder.withLaunchMode(launchMode);
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
         }
 
         return builder;
@@ -135,8 +135,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (launchMode != null) {
-            builder = builder.withLaunchMode(launchMode);
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
         }
 
         return builder;
@@ -156,8 +156,8 @@ public class ActionScreenInitializer {
             builder = builder.withOptions(screenOptions);
         }
 
-        if (launchMode != null) {
-            builder = builder.withLaunchMode(launchMode);
+        if (openMode != null) {
+            builder = builder.withOpenMode(openMode);
         }
 
         return builder;

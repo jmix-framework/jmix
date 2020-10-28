@@ -99,7 +99,7 @@ public class LookupScreenFacetImpl<E, S extends Screen & LookupScreen<E>>
                 .withListComponent(listComponent)
                 .withContainer(container)
                 .withScreenId(screenId)
-                .withLaunchMode(launchMode)
+                .withOpenMode(openMode)
                 .withOptions(getScreenOptions())
                 .withSelectValidator(selectValidator)
                 .withSelectHandler(selectHandler)

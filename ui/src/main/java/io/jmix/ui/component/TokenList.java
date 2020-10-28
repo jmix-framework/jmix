@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.Screens;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapEntityOptions;
@@ -185,18 +184,20 @@ public interface TokenList<V> extends Field<Collection<V>>,
     Map<String, Object> getLookupScreenParams();
 
     /**
+     * TODO: remove when moving to compatibility module
      * @return launch mode for Lookup screen
      * @see #getLookupProvider()
      */
-    Screens.LaunchMode getLookupLaunchMode();
+    OpenMode getLookupLaunchMode();
 
     /**
+     * TODO: remove when moving to compatibility module
      * Sets launch mode for Lookup screen. Uses {@link OpenMode#THIS_TAB} if not set.
      *
-     * @param launchMode screen open mode
+     * @param openMode screen open mode
      * @see #setLookupProvider(Supplier)
      */
-    void setLookupLaunchMode(Screens.LaunchMode launchMode);
+    void setLookupLaunchMode(OpenMode openMode);
 
     /**
      * @return clear button is enabled

@@ -16,10 +16,8 @@
 
 package io.jmix.ui.relatedentities;
 
-import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.Screens;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
@@ -28,6 +26,8 @@ import io.jmix.ui.screen.ScreenOptions;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Function;
+
+import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Builder class creates screen for related entities.
@@ -52,9 +52,8 @@ public class RelatedEntitiesBuilder {
     protected Class<?> entityClass;
     protected MetaClass metaClass;
 
-    protected Screens.LaunchMode launchMode = OpenMode.THIS_TAB;
+    protected OpenMode openMode = OpenMode.THIS_TAB;
     protected String screenId;
-    protected Class<? extends Screen> screenClass;
 
     protected FrameOwner origin;
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
@@ -70,9 +69,8 @@ public class RelatedEntitiesBuilder {
         this.entityClass = builder.entityClass;
         this.metaClass = builder.metaClass;
 
-        this.launchMode = builder.launchMode;
+        this.openMode = builder.openMode;
         this.screenId = builder.screenId;
-        this.screenClass = builder.screenClass;
 
         this.origin = builder.origin;
         this.options = builder.options;
@@ -111,11 +109,10 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * @return launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}
+     * @return open mode set by {@link #withOpenMode(OpenMode)}
      */
-    @Nullable
-    public Screens.LaunchMode getLaunchMode() {
-        return launchMode;
+    public OpenMode getOpenMode() {
+        return openMode;
     }
 
     /**
@@ -124,14 +121,6 @@ public class RelatedEntitiesBuilder {
     @Nullable
     public String getScreenId() {
         return screenId;
-    }
-
-    /**
-     * @return a screen class
-     */
-    @Nullable
-    public Class<? extends Screen> getScreenClass() {
-        return screenClass;
     }
 
     /**
@@ -144,7 +133,6 @@ public class RelatedEntitiesBuilder {
     /**
      * @return screen options set by {@link #withOptions(ScreenOptions)}
      */
-    @Nullable
     public ScreenOptions getOptions() {
         return options;
     }
@@ -207,19 +195,6 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * Sets {@link Screens.LaunchMode} for the related entities screen and returns the builder for chaining.
-     * <p>
-     * For example: {@code builder.withLaunchMode(OpenMode.DIALOG).build();}
-     *
-     * @param launchMode launch mode
-     * @return current instance of builder
-     */
-    public RelatedEntitiesBuilder withLaunchMode(Screens.LaunchMode launchMode) {
-        this.launchMode = launchMode;
-        return this;
-    }
-
-    /**
      * Sets {@link OpenMode} for the lookup screen and returns the builder for chaining.
      * <p>
      * For example: {@code builder.withOpenMode(OpenMode.DIALOG).build();}
@@ -228,7 +203,9 @@ public class RelatedEntitiesBuilder {
      * @return current instance of builder
      */
     public RelatedEntitiesBuilder withOpenMode(OpenMode openMode) {
-        this.launchMode = openMode;
+        checkNotNullArgument(openMode);
+
+        this.openMode = openMode;
         return this;
     }
 
@@ -244,14 +221,13 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * Sets screen class and returns the builder for chaining.
+     * Sets screen class and returns the {@link RelatedEntitiesClassBuilder} for chaining.
      *
      * @param screenClass class of the screen controller
-     * @return current instance of builder
+     * @return RelatedEntitiesClassBuilder with copied fields
      */
-    public RelatedEntitiesBuilder withScreenClass(Class<? extends Screen> screenClass) {
-        this.screenClass = screenClass;
-        return this;
+    public <S extends Screen> RelatedEntitiesClassBuilder<S> withScreenClass(Class<S> screenClass) {
+        return new RelatedEntitiesClassBuilder<>(this, screenClass);
     }
 
     /**
@@ -261,6 +237,8 @@ public class RelatedEntitiesBuilder {
      * @return current instance of builder
      */
     public RelatedEntitiesBuilder withOptions(ScreenOptions options) {
+        checkNotNullArgument(options);
+
         this.options = options;
         return this;
     }

@@ -16,7 +16,6 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.yarg.formatters.CustomReport;
@@ -33,6 +32,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -45,8 +46,21 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
+@Component("report_CustomFormatter")
 public class CustomFormatter implements CustomReport {
     private static final Logger log = LoggerFactory.getLogger(CustomFormatter.class);
+
+    @Autowired
+    protected Scripting scripting;
+
+    @Autowired
+    protected Configuration configuration;
+
+    @Autowired
+    protected ReportingConfig reportingConfig;
+
+    @Autowired
+    protected CoreProperties coreProperties;
 
     public static final String PARAMS = "params";
     private static final String ROOT_BAND = "rootBand";
@@ -62,18 +76,11 @@ public class CustomFormatter implements CustomReport {
     protected Report report;
     protected ReportTemplate template;
     protected Map<String, Object> params;
-    protected Scripting scripting;
-    protected Configuration configuration;
-    protected ReportingConfig reportingConfig;
-    protected CoreProperties coreProperties;
+
 
     public CustomFormatter(Report report, ReportTemplate template) {
         this.report = report;
         this.template = template;
-        this.scripting = AppBeans.get(Scripting.class);
-        this.configuration = AppBeans.get(Configuration.class);
-        this.reportingConfig = AppBeans.get(ReportingConfig.class);
-        this.coreProperties = AppBeans.get(CoreProperties.class);
     }
 
     @Override
@@ -120,7 +127,7 @@ public class CustomFormatter implements CustomReport {
         scriptParams.put(PARAMS, params);
         scriptParams.put(ROOT_BAND, rootBand);
 
-        if(Pattern.matches(PATH_GROOVY_FILE, customDefinition)) {
+        if (Pattern.matches(PATH_GROOVY_FILE, customDefinition)) {
             result = scripting.runGroovyScript(customDefinition, scriptParams);
         } else {
             result = scripting.evaluateGroovy(customDefinition, scriptParams);

@@ -39,21 +39,31 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.xml.layout.ComponentsFactory;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-
+@org.springframework.stereotype.Component("report_ParameterFieldCreator")
 public class ParameterFieldCreator {
 
     public static final String COMMON_LOOKUP_SCREEN_ID = "commonLookup";
 
     protected ComponentsFactory componentsFactory = AppBeans.get(ComponentsFactory.class);
 
-    protected Messages messages = AppBeans.get(Messages.class);
-    protected Metadata metadata = AppBeans.get(Metadata.class);
-    protected Scripting scripting = AppBeans.get(Scripting.class);
-    protected ReportService reportService = AppBeans.get(ReportService.class);
-    protected QueryTransformerFactory queryTransformerFactory = AppBeans.get(QueryTransformerFactory.class);
+    @Autowired
+    protected Messages messages;
+
+    @Autowired
+    protected Metadata metadata;
+
+    @Autowired
+    protected Scripting scripting;
+
+    @Autowired
+    protected ReportService reportService;
+
+    @Autowired
+    protected QueryTransformerFactory queryTransformerFactory;
 
     protected LegacyFrame frame;
 

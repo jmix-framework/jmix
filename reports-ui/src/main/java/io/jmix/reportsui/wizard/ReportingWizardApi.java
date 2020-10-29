@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard;
+package io.jmix.reportsui.wizard;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.metamodel.model.MetaClass;

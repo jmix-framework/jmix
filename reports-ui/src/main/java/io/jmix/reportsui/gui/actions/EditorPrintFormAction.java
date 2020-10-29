@@ -28,10 +28,17 @@ import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
 public class EditorPrintFormAction extends AbstractPrintFormAction {
+
+    @Autowired
+    protected Messages messages;
+
+    @Autowired
+    protected Metadata metadata;
 
     protected final EditorScreen editor;
     protected final String reportOutputName;
@@ -42,8 +49,6 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
 
     public EditorPrintFormAction(String id, EditorScreen editor, @Nullable String reportOutputName) {
         super(id);
-
-        Messages messages = AppBeans.get(Messages.NAME);
 
         this.editor = editor;
         this.caption = messages.getMessage(getClass(), "actions.Report");
@@ -59,11 +64,9 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
         }
         JmixEntity entity = editor.getEditedEntity();
         if (entity != null) {
-            MetaClass metaClass = AppBeans.get(Metadata.class).getClass(entity);
+            MetaClass metaClass = metadata.getClass(entity);
             openRunReportScreen((Screen) editor, entity, metaClass, reportOutputName);
         } else {
-            Messages messages = AppBeans.get(Messages.NAME);
-
             Notifications notifications = UiControllerUtils.getScreenContext((FrameOwner) editor).getNotifications();
 
             notifications.create()

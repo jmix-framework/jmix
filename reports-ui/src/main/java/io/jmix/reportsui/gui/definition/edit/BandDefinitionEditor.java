@@ -144,6 +144,8 @@ public class BandDefinitionEditor extends AbstractFrame implements Suggester {
     protected Stores stores;
     @Autowired
     protected ReportingClientConfig reportingClientConfig;
+    @Autowired
+    protected Messages messages;
 
     protected SourceCodeEditor.Mode dataSetScriptFieldMode = SourceCodeEditor.Mode.Text;
 
@@ -172,8 +174,7 @@ public class BandDefinitionEditor extends AbstractFrame implements Suggester {
         String report = reportDs.getItem().getName();
 
         if (ObjectUtils.isNotEmpty(group) && ObjectUtils.isNotEmpty(report)) {
-            return AppBeans.get(Messages.class)
-                    .formatMessage(getClass(), "scriptEditorDialog.captionFormat", report, bandDefinitionDs.getItem().getName());
+            return messages.formatMessage(getClass(), "scriptEditorDialog.captionFormat", report, bandDefinitionDs.getItem().getName());
         }
         return null;
     }

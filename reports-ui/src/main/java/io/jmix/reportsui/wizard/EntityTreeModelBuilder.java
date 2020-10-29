@@ -14,34 +14,43 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard;
+package io.jmix.reportsui.wizard;
 
+import com.haulmont.cuba.core.entity.FileDescriptor;
+import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Configuration;
-import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.ReportingConfig;
 import io.jmix.reports.app.EntityTree;
 import io.jmix.reports.app.EntityTreeStructureInfo;
 import io.jmix.reports.entity.wizard.EntityTreeNode;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Component(EntityTreeModelBuilderApi.NAME)
+@Component("report_EntityTreeModelBuilder")
 @Scope("prototype")
 public class EntityTreeModelBuilder implements EntityTreeModelBuilderApi {
-    protected MessageTools messageTools = AppBeans.get(MessageTools.NAME);
-    protected ReportingWizardApi reportingWizardApi = AppBeans.get(ReportingWizardApi.NAME);
-    protected int entityTreeModelMaxDeep = AppBeans.get(ReportingConfig.class).getEntityTreeModelMaxDeep();
-    protected Metadata metadata = AppBeans.get(Metadata.NAME);
+
+    @Autowired
+    protected MessageTools messageTools;
+
+    @Autowired
+    protected ReportingWizardApi reportingWizardApi;
+
+    @Autowired
+    protected ReportingConfig reportingConfig;
+
+    @Autowired
+    protected Metadata metadata;
+
+    protected int entityTreeModelMaxDeep = reportingConfig.getEntityTreeModelMaxDeep();
 
     public int getEntityTreeModelMaxDeep() {
         return entityTreeModelMaxDeep;

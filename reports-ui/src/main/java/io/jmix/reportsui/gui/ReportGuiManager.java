@@ -747,7 +747,7 @@ public class ReportGuiManager {
         ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);
 
         WindowManager wm = (WindowManager) screenContext.getScreens();
-        WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo("report$inputParameters");
+        WindowInfo windowInfo = windowConfig.getWindowInfo("report$inputParameters");
 
         wm.openWindow(windowInfo, OpenType.DIALOG, params);
     }

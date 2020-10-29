@@ -16,20 +16,22 @@
 
 package io.jmix.reportsui.gui.report.validators;
 
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import com.haulmont.cuba.gui.components.Field;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.component.validation.AbstractValidator;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class ReportBandNameValidator implements Field.Validator {
-    protected Messages messages = AppBeans.get(Messages.class);
+@Component("report_ReportBandNameValidator")
+public class ReportBandNameValidator extends AbstractValidator<String> {
+
+    @Autowired
+    protected Messages messages;
 
     @Override
-    public void validate(Object value) throws ValidationException {
-        String stringValue = (String) value;
-
-        if (StringUtils.isNotEmpty(stringValue) && !stringValue.matches("[\\w]*")) {
+    public void accept(String value) {
+        if (StringUtils.isNotEmpty(value) && !value.matches("[\\w]*")) {
             String incorrectBandName = messages.getMessage(ReportBandNameValidator.class, "incorrectBandName");
             throw new ValidationException(incorrectBandName);
         }

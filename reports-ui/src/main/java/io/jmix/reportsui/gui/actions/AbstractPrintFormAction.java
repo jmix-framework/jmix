@@ -16,11 +16,13 @@
 
 package io.jmix.reportsui.gui.actions;
 
+import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.WindowManager;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
-import com.haulmont.cuba.core.global.*;
-import com.haulmont.cuba.gui.WindowManager;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -37,6 +39,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.Nullable;
@@ -45,8 +48,11 @@ import java.util.Map;
 
 public abstract class AbstractPrintFormAction extends AbstractAction implements Action.HasBeforeActionPerformedHandler {
 
-    protected ReportGuiManager reportGuiManager = AppBeans.get(ReportGuiManager.class);
-    protected DataManager dataManager = AppBeans.get(DataManager.class);
+    @Autowired
+    protected ReportGuiManager reportGuiManager;
+
+    @Autowired
+    protected DataManager dataManager;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
 

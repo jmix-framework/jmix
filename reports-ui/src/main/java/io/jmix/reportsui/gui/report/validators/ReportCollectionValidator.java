@@ -16,12 +16,14 @@
 
 package io.jmix.reportsui.gui.report.validators;
 
-import com.haulmont.cuba.gui.components.Field;
+import io.jmix.ui.component.Field;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.component.validation.AbstractValidator;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-
-public class ReportCollectionValidator implements Field.Validator {
+@Component("report_ReportCollectionValidator")
+public class ReportCollectionValidator extends AbstractValidator {
 
     protected Field field;
 
@@ -30,7 +32,7 @@ public class ReportCollectionValidator implements Field.Validator {
     }
 
     @Override
-    public void validate(Object value) throws ValidationException {
+    public void accept(Object value) {
         if (ObjectUtils.isEmpty(value)) {
             throw new ValidationException(field.getRequiredMessage());
         }

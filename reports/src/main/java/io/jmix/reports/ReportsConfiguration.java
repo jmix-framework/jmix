@@ -13,6 +13,7 @@ import com.haulmont.yarg.structure.BandOrientation;
 import com.haulmont.yarg.util.groovy.Scripting;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.reports.libintegration.*;
 import io.jmix.reports.util.DataSetFactory;

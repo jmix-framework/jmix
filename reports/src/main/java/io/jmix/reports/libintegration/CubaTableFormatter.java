@@ -36,6 +36,8 @@ import io.jmix.reports.entity.table.TemplateTableColumn;
 import io.jmix.reports.entity.table.TemplateTableDescription;
 import io.jmix.reports.exception.ReportingException;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.*;
@@ -43,18 +45,23 @@ import java.util.*;
 import static io.jmix.reports.app.EntityMap.INSTANCE_NAME_KEY;
 import static io.jmix.reports.entity.wizard.ReportRegion.HEADER_BAND_PREFIX;
 
+@Component("report_CubaTableFormatter")
 public class CubaTableFormatter extends AbstractFormatter {
 
+    @Autowired
     protected MessageTools messageTools;
+
+    @Autowired
     protected Metadata metadata;
+
+    @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
     protected StandardSerialization standardSerialization;
 
-    public CubaTableFormatter(FormatterFactoryInput formatterFactoryInput) {
+    protected CubaTableFormatter(FormatterFactoryInput formatterFactoryInput) {
         super(formatterFactoryInput);
-        messageTools = AppBeans.get(MessageTools.class);
-        metadata = AppBeans.get(Metadata.class);
-        standardSerialization = AppBeans.get(StandardSerialization.class);
     }
 
     @Override

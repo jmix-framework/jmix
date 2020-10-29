@@ -239,7 +239,7 @@ public class ReportEditor extends AbstractEditor<Report> {
         super.ready();
 
         if (!StringUtils.isEmpty(getItem().getName())) {
-            setCaption(AppBeans.get(Messages.class).formatMessage(getClass(), "reportEditor.format", getItem().getName()));
+            setCaption(messages.formatMessage(getClass(), "reportEditor.format", getItem().getName()));
         }
     }
 
@@ -462,7 +462,7 @@ public class ReportEditor extends AbstractEditor<Report> {
         for (WindowInfo windowInfo : windowInfoCollection) {
             String id = windowInfo.getId();
             String menuId = "menu-config." + id;
-            String localeMsg = AppBeans.get(Messages.class).getMessage(messages.getMainMessage(menuId));
+            String localeMsg = messages.getMessage(messages.getMainMessage(menuId));
             String title = menuId.equals(localeMsg) ? id : id + " ( " + localeMsg + " )";
             screens.put(title, id);
         }

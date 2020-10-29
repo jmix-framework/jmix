@@ -15,25 +15,23 @@
  */
 package io.jmix.reportsui.web.exception;
 
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
-import io.jmix.reports.exception.*;
 import com.vaadin.ui.Window;
-import io.jmix.ui.App;
+import io.jmix.reports.exception.*;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.exception.AbstractGenericExceptionHandler;
+import io.jmix.ui.exception.AbstractUiExceptionHandler;
 import io.jmix.ui.widget.ExceptionDialog;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
 /**
  * Handles reporting exceptions.
- *
  */
-public class ReportExceptionHandler extends AbstractGenericExceptionHandler {
+public class ReportExceptionHandler extends AbstractUiExceptionHandler {
+
+    @Autowired
+    protected Messages messages;
 
     public ReportExceptionHandler() {
         super(
@@ -47,9 +45,7 @@ public class ReportExceptionHandler extends AbstractGenericExceptionHandler {
     }
 
     @Override
-    protected void doHandle(String className, String message, @Nullable Throwable throwable) {
-        Messages messages = AppBeans.get(Messages.class);
-
+    protected void doHandle(String className, String message, @Nullable Throwable throwable, UiContext context) {
         if (FailedToConnectToOpenOfficeException.class.getName().equals(className)) {
             String msg = messages.getMessage(getClass(), "reportException.failedConnectToOffice");
             //TODO show notifications
@@ -79,5 +75,4 @@ public class ReportExceptionHandler extends AbstractGenericExceptionHandler {
             dialog.focus();
         }
     }
-
 }

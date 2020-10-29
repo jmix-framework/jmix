@@ -23,6 +23,7 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import io.jmix.reports.entity.wizard.OrderableEntity;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -37,6 +38,9 @@ import java.util.*;
  * </ul>
  */
 public class OrderableItemMoveAction<T extends ListComponent<E>, E  extends OrderableEntity> extends AbstractAction {
+
+    @Autowired
+    protected Metadata metadata;
 
     protected T listComponent;
     protected Direction direction;
@@ -118,7 +122,6 @@ public class OrderableItemMoveAction<T extends ListComponent<E>, E  extends Orde
         if (listComponent.getDatasource() instanceof CollectionDatasource.Sortable) {
             CollectionDatasource.Sortable.SortInfo sortInfo = new CollectionDatasource.Sortable.SortInfo();
             sortInfo.setOrder(CollectionDatasource.Sortable.Order.ASC);
-            Metadata metadata = AppBeans.get(Metadata.class);
             sortInfo.setPropertyPath(metadata.getClass(listComponent.getSingleSelected()).getPropertyPath("orderNum"));
             ((CollectionDatasource.Sortable) listComponent.getDatasource()).sort(new CollectionDatasource.Sortable.SortInfo[]{sortInfo});
         }

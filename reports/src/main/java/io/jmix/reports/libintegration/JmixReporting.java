@@ -37,6 +37,7 @@ import io.jmix.ui.filter.ParametersHelper;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +49,15 @@ public class JmixReporting extends Reporting {
     protected Scripting scripting;
 
     protected ReportingApi reportingApi;
+
+    @Autowired
+    protected Resources resources;
+
+    @Autowired
+    protected Persistence persistence;
+
+    @Autowired
+    protected Metadata metadata;
 
     public void setScripting(Scripting scripting) {
         this.scripting = scripting;
@@ -117,11 +127,11 @@ public class JmixReporting extends Reporting {
         Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put("params", params);
         scriptParams.put("paramValue", paramValue);
-        scriptParams.put("persistence", AppBeans.get(Persistence.class));
-        scriptParams.put("metadata", AppBeans.get(Metadata.class));
+        scriptParams.put("persistence", persistence);
+        scriptParams.put("metadata", metadata);
         script = StringUtils.trim(script);
         if (script.endsWith(".groovy")) {
-            script = AppBeans.get(Resources.class).getResourceAsString(script);
+            script = resources.getResourceAsString(script);
         }
         return scripting.evaluateGroovy(script, scriptParams);
     }

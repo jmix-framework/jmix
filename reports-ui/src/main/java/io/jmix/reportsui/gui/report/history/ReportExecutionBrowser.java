@@ -48,11 +48,12 @@ public class ReportExecutionBrowser extends StandardLookup {
     protected MessageBundle messageBundle;
     @Autowired
     protected Downloader downloader;
+    @Autowired
+    protected SecondsToTextFormatter durationFormatter;
 
     @WindowParam(name = REPORTS_PARAMETER)
     protected List<Report> filterByReports;
 
-    protected Function<Long, String> durationFormatter = new SecondsToTextFormatter();
 
     @Subscribe
     protected void onInit(InitEvent event) {

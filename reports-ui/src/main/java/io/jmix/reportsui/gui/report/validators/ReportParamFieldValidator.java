@@ -16,18 +16,22 @@
 
 package io.jmix.reportsui.gui.report.validators;
 
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.gui.components.Field;
 import io.jmix.core.DevelopmentException;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportParametersValidationException;
 import io.jmix.reportsui.gui.ReportParameterValidator;
 import io.jmix.ui.component.ValidationException;
+import io.jmix.ui.component.validation.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class ReportParamFieldValidator implements Field.Validator {
-    protected ReportParameterValidator reportParameterValidator = AppBeans.get(ReportParameterValidator.NAME);
+@Component("report_ReportParamFieldValidator")
+public class ReportParamFieldValidator implements Validator {
 
-    private ReportInputParameter inputParameter;
+    @Autowired
+    protected ReportParameterValidator reportParameterValidator;
+
+    private final ReportInputParameter inputParameter;
 
     public ReportParamFieldValidator(ReportInputParameter inputParameter) {
         if (inputParameter == null) {
@@ -38,10 +42,10 @@ public class ReportParamFieldValidator implements Field.Validator {
     }
 
     @Override
-    public void validate(Object value) throws ValidationException {
-        if (value != null) {
+    public void accept(Object o) {
+        if (o != null) {
             try {
-                reportParameterValidator.validateParameterValue(inputParameter, value);
+                reportParameterValidator.validateParameterValue(inputParameter, o);
             } catch (ReportParametersValidationException e) {
                 throw new ValidationException(e.getMessage());
             }

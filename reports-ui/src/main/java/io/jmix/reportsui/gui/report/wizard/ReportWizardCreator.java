@@ -136,12 +136,13 @@ public class ReportWizardCreator extends AbstractWindow implements MainWizardFra
     protected ReportWizardService reportWizardService;
     @Autowired
     protected ThemeConstants themeConstants;
+    @Autowired
+    protected ReportGuiManager reportGuiManager;
 
     protected StepFrame detailsStepFrame;
     protected StepFrame regionsStepFrame;
     protected StepFrame saveStepFrame;
     protected StepFrameManager stepFrameManager;
-    protected ReportGuiManager reportGuiManager = AppBeans.get(ReportGuiManager.class);
 
     protected byte[] lastGeneratedTemplate;
     protected Report lastGeneratedTmpReport;

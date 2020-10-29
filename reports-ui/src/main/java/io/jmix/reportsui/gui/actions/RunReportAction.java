@@ -34,6 +34,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.gui.OpenType;
 import io.jmix.ui.screen.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 
@@ -41,9 +42,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class RunReportAction extends AbstractAction implements Action.HasBeforeActionPerformedHandler {
 
-    protected FrameOwner screen;
+    @Autowired
+    protected ReportGuiManager reportGuiManager;
 
-    protected ReportGuiManager reportGuiManager = AppBeans.get(ReportGuiManager.class);
+    @Autowired
+    protected Messages messages;
+
+    protected FrameOwner screen;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
 
@@ -65,7 +70,6 @@ public class RunReportAction extends AbstractAction implements Action.HasBeforeA
         checkArgument(screen != null, "Can not create RunReportAction with null window");
 
         this.screen = screen;
-        Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage(getClass(), "actions.RunReport");
         this.icon = "icons/reports-print.png";
     }
@@ -77,7 +81,6 @@ public class RunReportAction extends AbstractAction implements Action.HasBeforeA
     public RunReportAction(String id) {
         super(id);
 
-        Messages messages = AppBeans.get(Messages.NAME);
         this.caption = messages.getMessage(getClass(), "actions.RunReport");
         this.icon = "icons/reports-print.png";
     }

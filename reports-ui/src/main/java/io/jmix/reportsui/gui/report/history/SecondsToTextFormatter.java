@@ -16,8 +16,9 @@
 
 package io.jmix.reportsui.gui.report.history;
 
-import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -26,13 +27,11 @@ import java.util.function.Function;
  * Formats period in form of: {hours} h {minutes} min {seconds} sec. Zero most significant values are not displayed: e.g
  * '13 h 45 min 38 sec', '45 min 38 sec', '38 sec'
  */
+@Component("report_SecondsToTextFormatter")
 public class SecondsToTextFormatter implements Function<Long, String> {
 
-    private Messages messages;
-
-    public SecondsToTextFormatter() {
-        messages = AppBeans.get(Messages.NAME);
-    }
+    @Autowired
+    protected Messages messages;
 
     @Override
     public String apply(Long value) {

@@ -43,7 +43,7 @@
                 <column id="email"/>
                 <column id="enabled"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="usersTable.create"/>

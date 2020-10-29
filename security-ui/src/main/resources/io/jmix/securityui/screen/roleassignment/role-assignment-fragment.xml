@@ -45,7 +45,7 @@
                 <column id="roleCode"/>
 <!--                <column id="source"/>-->
             </columns>
-            <pagination/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="addBtn" action="roleAssignmentsTable.add"/>

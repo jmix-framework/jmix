@@ -44,7 +44,7 @@
                 <column id="source"/>
                 <column id="roleType"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <popupButton id="createBtn" caption="msg://RoleModelBrowse.create"

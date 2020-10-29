@@ -69,7 +69,7 @@ javaPlatform {
 dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE")
 
-    def baseVersion = '0.1.0'
+    def baseVersion = '0.2.0'
 
     constraints {
         api "io.jmix.audit:jmix-audit:${snapshotOr(baseVersion)}"

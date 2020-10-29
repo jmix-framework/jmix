@@ -48,6 +48,7 @@
 @import "components/nativeselect/nativeselect";
 @import "components/notification/notification";
 @import "components/orderedlayout/orderedlayout";
+@import "components/pagination/pagination";
 @import "components/panel/panel";
 @import "components/pickerfield/pickerfield";
 @import "components/pivottable/pivottable";
@@ -57,6 +58,7 @@
 @import "components/radiobuttongroup/radiobuttongroup";
 @import "components/richtextarea/richtextarea";
 @import "components/sidemenu/sidemenu";
+@import "components/simplepagination/simplepagination";
 @import "components/drawer/drawer";
 @import "components/slider/slider";
 @import "components/sourcecodeeditor/sourcecodeeditor";
@@ -143,6 +145,8 @@
   @include he-sourcecodeeditor;
   @include he-suggestionfield;
   @include he-searchselect;
+  @include he-pagination;
+  @include he-simplepagination;
 
   @include he-login-window;
   @include he-main-window;
@@ -787,6 +791,24 @@
 
   --currencyfield-currency-disabled-background-color: var(--dim-color);
   --currencyfield-currency-disabled-text-color: var(--text-dim-color);
+
+  /* Pagination */
+
+  --pagination-page-color: var(--button-default-color);
+  --pagination-page-text-color: var(--button-default-text-color);
+  --pagination-page-hover-color: var(--button-default-hover-color);
+  --pagination-page-active-color: var(--button-default-active-color);
+  --pagination-page-disabled-color: var(--button-default-disabled-color);
+  --pagination-page-disabled-text-color: var(--button-default-disabled-text-color);
+  --pagination-page-focused-border-color: var(--pagination-page-color);
+
+  --pagination-selected-page-color: var(--button-primary-color);
+  --pagination-selected-page-text-color: var(--button-primary-text-color);
+  --pagination-selected-page-hover-color: var(--button-primary-hover-color);
+  --pagination-selected-page-active-color: var(--button-primary-active-color);
+  --pagination-selected-page-disabled-color: var(--button-primary-disabled-color);
+  --pagination-selected-page-disabled-text-color: var(--button-primary-disabled-text-color);
+  --pagination-selected-page-focused-border-color: var(--pagination-selected-page-color);
 
   /* PivotTable */
 

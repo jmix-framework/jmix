@@ -86,6 +86,7 @@
 @import "components/slider/slider";
 @import "components/responsivegridlayout/responsivegridlayout";
 @import "components/pagination/pagination";
+@import "components/simplepagination/simplepagination";
 
 // Application specific
 @import "app/log-control";
@@ -174,6 +175,7 @@
   @include halo-slider;
   @include halo-responsivegridlayout;
   @include halo-pagination;
+  @include halo-simplepagination;
 
   @include halo-cuba-groupbox;
   @include halo-cuba-tokenlist;

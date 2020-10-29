@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package component.pagination.screen;
+package component.simplepagination.screen;
 
+import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
@@ -24,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import test_support.entity.sales.Customer;
 
 @UiController
-@UiDescriptor("table-pagination-test-screen.xml")
-public class TablePaginationTestScreen extends Screen {
+@UiDescriptor("pagination-listcomponent-test-screen.xml")
+public class PaginationListComponentTestScreen extends Screen {
 
     @Autowired
-    public Table<Customer> customerTable;
+    public Table<Customer> customerTableMetaClassSimple;
+
+    @Autowired
+    public DataGrid<Customer> customerDataGridMetaClassSimple;
 }

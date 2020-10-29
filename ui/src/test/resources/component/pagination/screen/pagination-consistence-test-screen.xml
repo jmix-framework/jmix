@@ -17,7 +17,7 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <collection id="customersDc" class="test_support.entity.sales.Customer">
-            <loader id="customersLd" maxResults="2">
+            <loader id="customersLd" maxResults="1">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
@@ -26,15 +26,15 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <table id="customerTable"
-               dataContainer="customersDc">
-            <columns>
-                <column id="name"/>
-                <column id="email"/>
-                <column id="status"/>
-            </columns>
-            <pagination/>
-            <rows/>
-        </table>
+        <simplePagination id="simplePagination"
+                    itemsPerPageVisible="true"
+                    itemsPerPageOptions="1, 2, 3">
+            <loaderProvider loaderId="customersLd"/>
+        </simplePagination>
+        <pagination id="pagination"
+                    itemsPerPageVisible="true"
+                    itemsPerPageOptions="1, 2, 4">
+            <containerProvider dataContainer="customersDc"/>
+        </pagination>
     </layout>
 </window>

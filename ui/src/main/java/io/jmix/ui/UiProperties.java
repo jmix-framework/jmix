@@ -82,7 +82,7 @@ public class UiProperties {
     int saveExportedByteArrayDataThresholdBytes;
     long webJarResourcesCacheTime;
     boolean productionMode;
-    String paginationMaxResults;
+    String paginationItemsPerPageOptions;
     Map<String, String> entityFieldType;
     Map<String, List<String>> entityFieldActions;
     Integer defaultPageSize;
@@ -141,7 +141,7 @@ public class UiProperties {
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
             @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
             @DefaultValue("true") boolean productionMode,
-            @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationMaxResults,
+            @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationItemsPerPageOptions,
             @Nullable Map<String, String> entityFieldType,
             @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("50") Integer defaultPageSize,
@@ -198,7 +198,7 @@ public class UiProperties {
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
         this.webJarResourcesCacheTime = webJarResourcesCacheTime;
         this.productionMode = productionMode;
-        this.paginationMaxResults = paginationMaxResults;
+        this.paginationItemsPerPageOptions = paginationItemsPerPageOptions;
         this.entityFieldType = entityFieldType == null ? Collections.emptyMap() : entityFieldType;
         this.entityFieldActions = entityFieldActions == null ? Collections.emptyMap() : entityFieldActions;
         this.defaultPageSize = defaultPageSize;
@@ -465,10 +465,10 @@ public class UiProperties {
     }
 
     /**
-     * @return string that contains separated by comma options for max rows per page in Pagination component.
+     * @return string that contains separated by comma options for rows per page ComboBox.
      */
-    public String getPaginationMaxResults() {
-        return paginationMaxResults;
+    public String getPaginationItemsPerPageOptions() {
+        return paginationItemsPerPageOptions;
     }
 
     public Map<String, String> getEntityFieldType() {

@@ -55,23 +55,20 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.component.columnmanager.ColumnManager;
-import io.jmix.ui.component.data.BindingState;
-import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.data.ValueConversionException;
+import io.jmix.ui.component.data.*;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.formatter.Formatter;
+import io.jmix.ui.component.pagination.data.*;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.DataComponents;
-import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.model.*;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
@@ -187,7 +184,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected HorizontalLayout topPanel;
 
     protected ButtonsPanel buttonsPanel;
-    protected TablePagination pagination;
+    protected PaginationComponent pagination;
 
     protected Map<Table.Column, String> aggregationCells = null;
 
@@ -871,12 +868,17 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     @Nullable
     @Override
-    public TablePagination getPagination() {
+    public PaginationComponent getPagination() {
         return pagination;
     }
 
     @Override
-    public void setPagination(@Nullable TablePagination pagination) {
+    public void setPagination(@Nullable PaginationComponent pagination) {
+        if (pagination != null && !(pagination instanceof SimplePagination)) {
+            throw new IllegalStateException(String.format("Table does not support pagination type `%s`",
+                    pagination.getClass().getCanonicalName()));
+        }
+
         if (this.pagination != null && topPanel != null) {
             topPanel.removeComponent(this.pagination.unwrap(com.vaadin.ui.Component.class));
         }
@@ -888,17 +890,43 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 componentComposition.addComponentAsFirst(topPanel);
             }
             pagination.setWidthAuto();
-            com.vaadin.ui.Component rc = pagination.unwrap(com.vaadin.ui.Component.class);
-            topPanel.addComponent(rc);
+            com.vaadin.ui.Component pg = pagination.unwrap(com.vaadin.ui.Component.class);
+            topPanel.addComponent(pg);
 
             if (pagination instanceof VisibilityChangeNotifier) {
                 ((VisibilityChangeNotifier) pagination).addVisibilityChangeListener(event ->
                         updateCompositionStylesTopPanelVisible()
                 );
             }
+
+            pagination.addAfterRefreshListener(this::onPaginationAfterRefresh);
         }
 
         updateCompositionStylesTopPanelVisible();
+    }
+
+    private void onPaginationAfterRefresh(PaginationComponent.AfterRefreshEvent event) {
+        component.setCurrentPageFirstItemIndex(0);
+    }
+
+    public void setupPaginationDataSourceProvider() {
+        if (pagination == null) {
+            return;
+        }
+
+        DataUnit items = getItems();
+
+        PaginationDataSourceProvider provider;
+        if (items instanceof ContainerDataUnit) {
+            provider = applicationContext.getBean(PaginationDataUnitProvider.class, items);
+        } else if (items instanceof EmptyDataUnit
+                && items instanceof EntityDataUnit) {
+            provider = new PaginationEmptyProvider(((EntityDataUnit) items).getEntityMetaClass());
+        } else {
+            throw new IllegalStateException("Unsupported data unit type: " + items);
+        }
+
+        pagination.setDataSourceProvider(provider);
     }
 
     // if buttons panel becomes hidden we need to set top panel height to 0
@@ -1472,9 +1500,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
             }
 
-            if (pagination != null) {
-                pagination.setTablePaginationTarget(this);
-            }
+            setupPaginationDataSourceProvider();
 
             if (!canBeSorted(tableItems)) {
                 setSortable(false);

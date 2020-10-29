@@ -123,8 +123,8 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(TokenList.NAME, WebTokenList.class);
         classes.put(TwinColumn.NAME, TwinColumnImpl.class);
         classes.put(ProgressBar.NAME, ProgressBarImpl.class);
-        classes.put(Pagination.NAME, WebPagination.class);
-        classes.put(TablePagination.NAME, WebTablePagination.class);
+        classes.put(Pagination.NAME, PaginationImpl.class);
+        classes.put(SimplePagination.NAME, SimplePaginationImpl.class);
         classes.put(RelatedEntities.NAME, RelatedEntitiesImpl.class);
         classes.put(DatePicker.NAME, DatePickerImpl.class);
         classes.put(CapsLockIndicator.NAME, CapsLockIndicatorImpl.class);

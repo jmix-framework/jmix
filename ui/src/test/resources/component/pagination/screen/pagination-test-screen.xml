@@ -21,18 +21,13 @@
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
-        <collection id="customersDc1" class="test_support.entity.sales.Customer">
-            <loader id="customersLdSMR" maxResults="2">
+        <collection id="customersDcCustomOptions" class="test_support.entity.sales.Customer">
+            <loader id="customersLdCustomOptions" maxResults="2">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
-        <collection id="customersDc2" class="test_support.entity.sales.Customer">
-            <loader id="customersLdNoSMR" maxResults="2">
-                <query><![CDATA[select e from test_Customer e]]></query>
-            </loader>
-        </collection>
-        <collection id="customersDc3" class="test_support.entity.sales.Customer">
-            <loader id="customersLdPostponed" maxResults="2">
+        <collection id="customersDcDefaultValue" class="test_support.entity.sales.Customer">
+            <loader id="customersLdDefaultValue" maxResults="2">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
@@ -41,20 +36,21 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <pagination id="pagination"
-                    dataLoader="customersLd"/>
-        <pagination id="paginationCustomSMR"
-                    dataLoader="customersLd"
-                    maxResultValues="12, 9, 23, -6, 41, 0"/>
-        <pagination id="paginationNoSMR"
-                    dataLoader="customersLdNoSMR"
-                    maxResultValues="1,5"/>
-        <pagination id="paginationSMR"
-                    dataLoader="customersLdSMR"
-                    showMaxResults="true"
-                    maxResultValues="1,5"/>
-        <pagination id="postponedPaginationSMR"
-                    showMaxResults="true"/>
-        <pagination id="postponedPaginationNoSMR"/>
+        <pagination id="pagination">
+            <loaderProvider loaderId="customersLd"/>
+        </pagination>
+        <pagination id="paginationWithoutDataSource"
+                    itemsPerPageVisible="true"/>
+        <pagination id="paginationCustomOptions"
+                    itemsPerPageOptions="12, 9, 23, 41, 1, -10, 99999"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLdCustomOptions"/>
+        </pagination>
+        <pagination id="paginationDefaultValue"
+                    itemsPerPageDefaultValue="9"
+                    itemsPerPageOptions="12, 9, 23, 41, 1"
+                    itemsPerPageVisible="true">
+            <loaderProvider loaderId="customersLdDefaultValue"/>
+        </pagination>
     </layout>
 </window>

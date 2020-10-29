@@ -16,152 +16,69 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.DataLoadContext;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.model.BaseCollectionLoader;
 
-import javax.annotation.Nullable;
 import java.util.EventObject;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
- * Component that makes a data binding to load data by pages.
+ * Component that makes a data binding to load data by pages. It contains page numbers that enable the
+ * user to select a specific page.
  */
-public interface Pagination extends Component.BelongToFrame {
+public interface Pagination extends PaginationComponent {
+
     String NAME = "pagination";
 
-    enum State {
-        FIRST_COMPLETE,     // "63 rows"
-        FIRST_INCOMPLETE,   // "1-100 rows of [?] >"
-        MIDDLE,             // "< 101-200 rows of [?] >"
-        LAST                // "< 201-252 rows"
-    }
-
-    enum ContentAlignment {
-        LEFT, RIGHT
-    }
-
     /**
-     * @return whether rows count should be loaded automatically
+     * @return maximum number of visible pages.
      */
-    boolean getAutoLoad();
+    int getMaxVisiblePages();
 
     /**
-     * Sets whether rows count should be loaded automatically.
+     * Sets maximum number of visible pages.
+     */
+    void setMaxVisiblePages(int maxVisiblePages);
+
+    /**
+     * Adds page change listener. Is fired when page number is changed.
      *
-     * @param autoLoad pass true to enable auto load, or false otherwise
-     */
-    void setAutoLoad(boolean autoLoad);
-
-    /**
-     * @return delegate which is used to get the total number of rows when user clicks "total count" or "last page".
-     */
-    @Nullable
-    Function<DataLoadContext, Long> getTotalCountDelegate();
-
-    /**
-     * Sets delegate which is used to get the total number of rows when user clicks "total count" or "last page".
-     */
-    void setTotalCountDelegate(Function<DataLoadContext, Long> delegate);
-
-    /**
-     * Sets a loader that should be used for pagination.
-     *
-     * @param loader loader to set
-     */
-    void setLoaderTarget(BaseCollectionLoader loader);
-
-    /**
-     * @return a loader that is used for pagination.
-     */
-    @Nullable
-    BaseCollectionLoader getLoaderTarget();
-
-    /**
-     * Sets content alignment inside Pagination component. Position is LEFT by default.
-     *
-     * @param alignment buttons alignment
-     */
-    void setContentAlignment(ContentAlignment alignment);
-
-    /**
-     * @return content alignment inside Pagination component. Position is LEFT by default.
-     */
-    ContentAlignment getContentAlignment();
-
-    /**
-     * @return true if ComboBox with max results is shown
-     */
-    boolean isShowMaxResults();
-
-    /**
-     * Shows or hides ComboBox with max results. False by default.
-     *
-     * @param showMaxResults whether show max results or not
-     */
-    void setShowMaxResults(boolean showMaxResults);
-
-    /**
-     * @return true if null option should be visible in the max results ComboBox.
-     */
-    boolean isShowNullMaxResult();
-
-    /**
-     * Sets null option visible or hidden in the max results ComboBox. True by default.
-     *
-     * @param showNullMaxResult whether null option visible or not
-     */
-    void setShowNullMaxResult(boolean showNullMaxResult);
-
-    /**
-     * @return max results options
-     */
-    List<Integer> getMaxResultOptions();
-
-    /**
-     * Sets max results options which should be used in the ComboBox. Values less than or equal to 0 is not allowed and
-     * will be removed.
-     *
-     * @param maxResults max result options
-     */
-    void setMaxResultOptions(List<Integer> maxResults);
-
-    /**
      * @param listener listener to add
      * @return a registration object for removing an event listener
      */
-    Subscription addBeforeRefreshListener(Consumer<Pagination.BeforeRefreshEvent> listener);
+    Subscription addPageChangeListener(Consumer<PageChangeEvent> listener);
 
     /**
-     * Event that is fired before refreshing the data container when the user clicks next, previous, etc.
-     * <br>
-     * You can prevent the data container refresh by invoking {@link Pagination.BeforeRefreshEvent#preventRefresh()},
-     * for example:
-     * <pre>{@code
-     * usersTable.getPagination().addBeforeRefreshListener(refreshEvent -> {
-     *     // check modified data and prevent refresh
-     *     refreshEvent.preventRefresh();
-     * });
-     * }</pre>
+     * Event that is fired when user goes to another page.
      */
-    class BeforeRefreshEvent extends EventObject {
-        protected boolean refreshPrevented = false;
+    class PageChangeEvent extends EventObject {
 
-        public BeforeRefreshEvent(Pagination source) {
+        protected int previousPageNumber;
+        protected int pageNumber;
+
+        public PageChangeEvent(Pagination source, int previousPageNumber, int pageNumber) {
             super(source);
+
+            this.previousPageNumber = previousPageNumber;
+            this.pageNumber = pageNumber;
+        }
+
+        @Override
+        public Pagination getSource() {
+            return (Pagination) super.getSource();
         }
 
         /**
-         * If invoked, the component will not refresh the data container.
+         * @return previous page number
          */
-        public void preventRefresh() {
-            refreshPrevented = true;
+        public int getPreviousPageNumber() {
+            return previousPageNumber;
         }
 
-        public boolean isRefreshPrevented() {
-            return refreshPrevented;
+        /**
+         * @return current page number
+         */
+        public int getPageNumber() {
+            return pageNumber;
         }
     }
 }

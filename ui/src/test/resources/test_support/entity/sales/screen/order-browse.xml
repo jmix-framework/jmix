@@ -41,7 +41,7 @@
                 <column id="date"/>
                 <column id="customer"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
         </groupTable>
     </layout>
 </window>

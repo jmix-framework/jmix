@@ -14,63 +14,68 @@
  * limitations under the License.
  */
 
-$c-pagination-wrapper-margin-right: round($v-layout-spacing-horizontal/2) !default;
-$c-pagination-wrapper-margin-bottom: round($v-layout-spacing-vertical/2) !default;
+/**
+ * Sets border radius for first (left-top, left-bottom) and last (right-top, right-bottom) page buttons.
+ */
+$jmix-pagination-page-border-radius: $v-border-radius !default;
 
-@mixin halo-pagination($primary-stylename: c-pagination) {
+@mixin halo-pagination($primary-stylename: jmix-pagination) {
 
- .#{$primary-stylename},
- .#{$primary-stylename}-wrapper {
-   height: $v-unit-size;
- }
+ .#{$primary-stylename} {
+   padding-left: 1px;
 
- .#{$primary-stylename}-wrapper > * {
-   vertical-align: middle;
-   margin-right: $c-pagination-wrapper-margin-right;
-   margin-bottom: $c-pagination-wrapper-margin-bottom;
- }
+   & > * {
+     vertical-align: middle;
+   }
 
- .#{$primary-stylename}-wrapper.content-right-align {
-   text-align: right;
- }
+   .v-button.#{$primary-stylename}-navigation-btn,
+   .v-button.#{$primary-stylename}-page {
+     border-radius: 0;
+     padding: 0 round($v-unit-size/4);
+     line-height: $v-font-size;
+     margin-left: -1px;
 
- .v-button.#{$primary-stylename}-change-page {
-   height: round($v-unit-size/1.5);
-   width: ceil($v-unit-size * 2 / 3);
-   padding: 0 round($v-unit-size/6);
-   line-height: $v-font-size;
+     @include halo-pagination-page-min-width-style($v-unit-size, $v-font-size);
+   }
 
-   img.v-icon {
-     margin-left: -2px;
+   .#{$primary-stylename}-itemsperpage-layout .#{$primary-stylename}-itemsperpage-label {
+     line-height: $v-unit-size;
+     margin-right: $jmix-pagination-wrapper-margin-right;
    }
  }
 
- .#{$primary-stylename}-status {
-   line-height: $v-unit-size;
+ .v-button.#{$primary-stylename}-navigation-btn:focus:after,
+ .v-button.#{$primary-stylename}-page:focus:after {
+   border-color: first-color(valo-border());
+
+   @include box-shadow(none);
  }
 
- .#{$primary-stylename}-count {
-   height: round($v-unit-size/1.5);
+ .#{$primary-stylename}-page.selected-page {
+   border-color: $v-selection-color;
+   color: valo-font-color($v-selection-color, 0.9);
+   z-index: 1;
+
+   @include valo-gradient($v-selection-color);
+   @include box-shadow(none);
  }
 
- .#{$primary-stylename}.c-table-pagination {
-   padding-left: round($v-layout-spacing-horizontal/2);
+ .v-button.#{$primary-stylename}-page.selected-page:focus:after {
+   border-color: $v-focus-color;
  }
 
- .#{$primary-stylename}-maxresult-layout {
-    .#{$primary-stylename}-maxresult-label {
-      line-height: $v-unit-size;
-      margin-right: $c-pagination-wrapper-margin-right;
-    }
+ .v-button.#{$primary-stylename}-navigation-btn.first {
+   border-top-left-radius: $jmix-pagination-page-border-radius;
+   border-bottom-left-radius: $jmix-pagination-page-border-radius;
  }
 
- .v-button.v-button-link.#{$primary-stylename}-count-number {
-   text-decoration: none;
-   opacity: inherit;
-
-   .v-button-wrap .v-button-caption {
-     text-decoration: none;
-     color: $v-font-color;
-   }
+ .v-button.#{$primary-stylename}-navigation-btn.last {
+   border-top-right-radius: $jmix-pagination-page-border-radius;
+   border-bottom-right-radius: $jmix-pagination-page-border-radius;
+   margin-right: $jmix-pagination-wrapper-margin-right;
  }
+}
+
+@mixin halo-pagination-page-min-width-style($unit-size: $v-unit-size, $font-size: $v-font-size) {
+  min-width: floor($unit-size + $font-size/3);
 }

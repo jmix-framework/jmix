@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-@mixin hover-pagination($primary-stylename: c-pagination) {
+package io.jmix.ui.component.pagination.data;
 
-  .#{$primary-stylename}-count {
-    height: round(($v-unit-size / 7) * 6);
-  }
+import io.jmix.ui.model.*;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-  .v-button.v-button-link.#{$primary-stylename}-count-number {
-    text-decoration: none;
-    opacity: inherit;
+@Component("ui_PaginationLoaderProvider")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
+public class PaginationLoaderProvider extends AbstractPaginationDataSourceProvider {
 
-    .v-button-wrap .v-button-caption {
-      text-decoration: none;
-      color: $v-font-color;
+    public PaginationLoaderProvider(BaseCollectionLoader loader) {
+        this.loader = loader;
+        this.container = loader.getContainer();
+
+        attachCollectionChangeListener();
     }
-  }
 }

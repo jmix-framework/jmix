@@ -17,14 +17,13 @@
 package component.pagination
 
 import com.vaadin.data.provider.Query
+import component.pagination.screen.PaginationConsistenceTestScreen
 import component.pagination.screen.PaginationTestScreen
-import component.pagination.screen.TablePaginationMetaClassTestScreen
-import component.pagination.screen.TablePaginationTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
-import io.jmix.core.Messages
 import io.jmix.data.DataConfiguration
 import io.jmix.ui.UiConfiguration
+import io.jmix.ui.component.impl.PaginationImpl
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import io.jmix.ui.widget.JmixPagination
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,11 +43,6 @@ class PaginationTest extends ScreenSpecification {
     @Autowired
     DataManager dataManager
 
-    @Autowired
-    Messages messages
-
-    def loaderMaxResult = 2
-
     @Override
     void setup() {
         exportScreensPackages(["component.pagination"])
@@ -61,188 +55,143 @@ class PaginationTest extends ScreenSpecification {
         jdbc.update('delete from TEST_CUSTOMER')
     }
 
-    def "Pagination click on next button"() {
+    def "pagination clicks on: last, previous, first, next"() {
         given: "We have 5 pages"
         showTestMainScreen()
 
-        when: "Click on 'next' button"
-        def screen = getScreens().create(PaginationTestScreen)
+        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
         screen.show()
 
-        def vPagination = screen.pagination.unwrap(JmixPagination)
-        vPagination.nextButton.click()
-
-        then: "All buttons should be visible"
-        vPagination.firstButton.isVisible()
-        vPagination.prevButton.isVisible()
-
-        vPagination.lastButton.isVisible()
-        vPagination.nextButton.isVisible()
-    }
-
-    def "Pagination click on last button"() {
-        given: "We have 5 pages"
-        showTestMainScreen()
+        def firstBtn = screen.pagination.unwrap(JmixPagination).firstButton
+        def previousBtn = screen.pagination.unwrap(JmixPagination).prevButton
+        def nextBtn = screen.pagination.unwrap(JmixPagination).nextButton
+        def lastBtn = screen.pagination.unwrap(JmixPagination).lastButton
 
         when: "Click on 'last' button"
-        def screen = getScreens().create(PaginationTestScreen)
-        screen.show()
+        lastBtn.click()
 
-        def vPagination = screen.pagination.unwrap(JmixPagination)
-        vPagination.lastButton.click()
+        then: "Last and next buttons should be disabled"
+        def firstPreviousEnabled = [(firstBtn.isEnabled()), previousBtn.isEnabled(), nextBtn.isEnabled(), lastBtn.isEnabled()]
+        firstPreviousEnabled == [true, true, false, false]
 
-        then: "Last and next buttons should be hidden"
-        vPagination.firstButton.isVisible()
-        vPagination.prevButton.isVisible()
+        when: "Click on 'previous' button"
+        previousBtn.click()
 
-        !vPagination.lastButton.isVisible()
-        !vPagination.nextButton.isVisible()
-    }
-
-    def "Pagination click on first button"() {
-        given: "We have 5 pages"
-        showTestMainScreen()
-
-        when: "Set the last page on Pagination"
-        def screen = getScreens().create(PaginationTestScreen)
-        screen.show()
-
-        def vPagination = screen.pagination.unwrap(JmixPagination)
-        vPagination.lastButton.click() // set the last page
-
-        then: "First and previous buttons should be visible"
-        vPagination.firstButton.isVisible()
-        vPagination.prevButton.isVisible()
+        then: "All buttons should be enabled"
+        def allEnabled = [(firstBtn.isEnabled()), previousBtn.isEnabled(), nextBtn.isEnabled(), lastBtn.isEnabled()]
+        allEnabled == [true, true, true, true]
 
         when: "Click on 'first' button"
-        vPagination.firstButton.click() // set the first page
+        firstBtn.click()
 
-        then: "First and previous buttons should be hidden"
-        !vPagination.firstButton.isVisible()
-        !vPagination.prevButton.isVisible()
+        then: "First and previous buttons should be disabled"
+        def lastNextEnabled = [(firstBtn.isEnabled()), previousBtn.isEnabled(), nextBtn.isEnabled(), lastBtn.isEnabled()]
+        lastNextEnabled == [false, false, true, true]
+
+        when: "Click on 'next' button"
+        nextBtn.click()
+
+        then: "All buttons should be enabled"
+        def allEnabled1 = [(firstBtn.isEnabled()), previousBtn.isEnabled(), nextBtn.isEnabled(), lastBtn.isEnabled()]
+        allEnabled1 == [true, true, true, true]
     }
 
-    def "Pagination click on previous button"() {
-        given: "We have 5 pages"
+    def "pagination with custom ItemsPerPage options"() {
         showTestMainScreen()
 
-        when: "Click on 'next' button, then click on 'previous'"
-        def screen = getScreens().create(PaginationTestScreen)
+        when: "Load options with the order: 12, 9, 23, 41, 1, -10, 99999"
+        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
         screen.show()
 
-        def vPagination = screen.pagination.unwrap(JmixPagination)
-        vPagination.nextButton.click()
-        vPagination.prevButton.click() // return to the first page
-
-        then: "First and previous buttons should be hidden"
-        !vPagination.firstButton.isVisible()
-        !vPagination.prevButton.isVisible()
-    }
-
-    def "Pagination with custom max result options"() {
-        showTestMainScreen()
-
-        when: "Load options with the order: 12, 9, 23, -6, 41, 0"
-        def screen = getScreens().create(PaginationTestScreen)
-        screen.show()
-
-        def vPagination = screen.paginationCustomSMR.unwrap(JmixPagination)
-        def maxResults = vPagination.maxResultComboBox.getDataProvider()
+        def itemsPerPageComoBox = screen.paginationCustomOptions.unwrap(JmixPagination).itemsPerPageComboBox
+        def maxResults = itemsPerPageComoBox.getDataProvider()
                 .fetch(new Query<Integer, ?>())
                 .collect(Collectors.toList())
 
-        def expectedMaxResults = [9, 12, 23, 41]
-
-        then: "Component should skip values less than or equal to 0"
+        def expectedMaxResults = [1, 9, 12, 23, 41, 10000]
+        then: """
+              Component should skip options less than or equal to 0.
+              Options greater than entity's max fetch size will be replaced by it
+              """
         maxResults == expectedMaxResults
     }
 
-    def "Change Pagination MaxResults visibility at runtime"() {
+    def "pagination initial ItemsPerPage value"() {
         showTestMainScreen()
 
         when: "Show screen"
-        def screen = getScreens().create(PaginationTestScreen)
+        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
         screen.show()
 
         then: """
-              Pagination without MaxResults should load items according to Loader's maxResult.
-              Pagination with MaxResults should load according to option value from ComboBox.
+              Pagination without ItemsPerPage should use loader's maxResult.
+              Pagination with ItemsPerPage should load according to option value from ComboBox.
               """
-        // Firstly if Loader's value does not exist in MaxResult ComboBox
-        // component will find the nearest value for Loader's maxResult
-        screen.customersLdNoSMR.container.items.size() == loaderMaxResult
-        // just used value from loader
-        screen.customersLdSMR.container.items.size() == 1
 
-        when: "Show MaxResult in pagination"
-        screen.paginationNoSMR.setShowMaxResults(true)
+        // Pagination WITHOUT ItemsPerPage will use loader's maxResult
+        screen.pagination.dataSourceProvider.size() == 2
 
-        then: "Value from MaxResult ComboBox should be used"
-        screen.customersLdNoSMR.container.items.size() == 1
+        // Pagination WITH ItemsPerPage will try to use entityPageSize, but if options
+        // don't contain this value, component will find the closest value in options.
+        screen.getPaginationCustomOptionsCB().getValue() == 41
 
-        when: "Hide MaxResult in pagination"
-        screen.paginationSMR.setShowMaxResults(false)
-
-        then: "Value from Loader's maxResult should be used"
-        screen.customersLdSMR.container.items.size() == loaderMaxResult
+        // Pagination with itemsPerPageDefaultValue = 9
+        screen.getPaginationDefaultValueCB().getValue() == 9
     }
 
-    def "Pagination with postponed setting Loader"() {
+    def "pagination changes affect another pagination with the same loader"() {
+        showTestMainScreen()
+
+        def screen = (PaginationConsistenceTestScreen) getScreens().create(PaginationConsistenceTestScreen)
+        screen.show()
+
+        when: "Change page from Pagination with SIMPLE mode"
+        screen.jmixSimplePagination.nextButton.click()
+
+        then: "Pagination with EXTENDED mode should change page accordingly"
+        ((PaginationImpl) screen.pagination).pages.getCurrentPageNumber() == 2
+
+        when: "Change ItemsPerPage value from Pagination with SIMPLE mode"
+        screen.jmixSimplePagination.itemsPerPageComboBox.setValue(2)
+
+        then: "Pagination with EXTENDED mode should change value accordingly"
+        screen.jmixSimplePagination.itemsPerPageComboBox.getValue() == 2
+
+        // vice versa
+
+        when: "Change page from Pagination with EXTENDED mode"
+        screen.jmixPagination.nextButton.click()
+
+        then: "Pagination with SIMPLE mode should change page accordingly"
+        screen.jmixSimplePagination.label.value.contains("3-4")
+
+        when: "Change ItemsPerPage value from Pagination with EXTENDED mode"
+        screen.jmixPagination.itemsPerPageLayout.itemsPerPageComboBox.setValue(1)
+
+        then: "Pagination with SIMPLE mode should change value accordingly"
+        screen.jmixSimplePagination.itemsPerPageComboBox.getValue() == 1
+    }
+
+    def "pagination without data source provider"() {
         showTestMainScreen()
 
         when: "Show screen"
-        def screen = getScreens().create(PaginationTestScreen)
+
+        def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
         screen.show()
 
         then: """
-              Pagination without MaxResults should have "0 rows" label.
-              Pagination with MaxResults should have disabled ComboBox.
+              Pagination in EXTENDED mode should have disabled change buttons and
+              ItemsPerPage ComboBox
               """
-        def vPaginationNoSMR = screen.postponedPaginationNoSMR.unwrap(JmixPagination)
-        vPaginationNoSMR.label.value == messages.getMessage("", "pagination.status.label.disabledValue")
 
-        def vPaginationSMR = screen.postponedPaginationSMR.unwrap(JmixPagination)
-        !vPaginationSMR.maxResultComboBox.enabled
+        def jmixPagination = screen.paginationWithoutDataSource.unwrap(JmixPagination)
 
-        when: "Set loader with items to Pagination without MaxResult"
-        screen.postponedPaginationNoSMR.setLoaderTarget(screen.customersLdPostponed)
+        !jmixPagination.itemsPerPageComboBox.enabled
 
-        then: "Label message should be updated"
-        vPaginationNoSMR.label.value != messages.getMessage("", "pagination.status.label.disabledValue")
-
-        when: "Set loader with items to Pagination with MaxResult"
-        screen.postponedPaginationSMR.setLoaderTarget(screen.customersLdPostponed)
-
-        then: """
-              ComboBox should be enabled and loader should reload items
-              according to the ComboBox's value.
-              """
-        vPaginationSMR.maxResultComboBox.enabled
-        screen.customersLdPostponed.maxResults != loaderMaxResult
-    }
-
-    def "TablePagination table with data container"() {
-        showTestMainScreen()
-
-        when: "Open screen with Table and Pagination"
-        def screen = getScreens().create(TablePaginationTestScreen)
-        screen.show()
-
-        then:
-        noExceptionThrown()
-    }
-
-    def "TablePagination empty table with MetaClass"() {
-        showTestMainScreen()
-
-        when: "Load empty table with MetaClass"
-        def screen = getScreens().create(TablePaginationMetaClassTestScreen)
-        screen.show()
-
-        then: "No exception should be thrown and Pagination should be hidden"
-        noExceptionThrown()
-
-        def vPagination = screen.customerTableMetaClass.getPagination().unwrap(JmixPagination)
-        !vPagination.maxResultComboBox.isEnabled()
+        !jmixPagination.firstButton.isEnabled()
+        !jmixPagination.prevButton.isEnabled()
+        !jmixPagination.nextButton.isEnabled()
+        !jmixPagination.lastButton.isEnabled()
     }
 }

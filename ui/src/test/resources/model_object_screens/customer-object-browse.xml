@@ -31,7 +31,7 @@
             <columns>
                 <column id="name"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
         </groupTable>
     </layout>
 </window>

@@ -1,0 +1,63 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+    <data>
+        <collection id="customersDc" class="test_support.entity.sales.Customer">
+            <loader id="customersLd" maxResults="2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc1" class="test_support.entity.sales.Customer">
+            <loader id="customersLdIPP" maxResults="2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc2" class="test_support.entity.sales.Customer">
+            <loader id="customersLdNoIPP" maxResults="2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersDc3" class="test_support.entity.sales.Customer">
+            <loader id="customersLdPostponed" maxResults="2">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+    </data>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <simplePagination id="pagination">
+            <loaderProvider loaderId="customersLd"/>
+        </simplePagination>
+        <simplePagination id="paginationCustomIPP"
+                    itemsPerPageOptions="12, 9, 23, 41, 1">
+            <loaderProvider loaderId="customersLd"/>
+        </simplePagination>
+        <simplePagination id="paginationNoIPP"
+                    itemsPerPageOptions="1,5">
+            <containerProvider dataContainer="customersDc2"/>
+        </simplePagination>
+        <simplePagination id="paginationIPP"
+                    itemsPerPageVisible="true"
+                    itemsPerPageOptions="1,5">
+            <containerProvider dataContainer="customersDc1"/>
+        </simplePagination>
+        <simplePagination id="paginationWithoutDataSource"
+                    itemsPerPageVisible="true"/>
+    </layout>
+</window>

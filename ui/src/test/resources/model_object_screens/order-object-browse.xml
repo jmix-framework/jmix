@@ -33,7 +33,7 @@
                 <column id="number"/>
                 <column id="customer"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
         </groupTable>
     </layout>
 </window>

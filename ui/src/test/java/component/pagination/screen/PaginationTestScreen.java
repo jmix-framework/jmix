@@ -16,13 +16,13 @@
 
 package component.pagination.screen;
 
+import com.vaadin.ui.ComboBox;
 import io.jmix.ui.component.Pagination;
-import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.widget.JmixPagination;
 import org.springframework.beans.factory.annotation.Autowired;
-import test_support.entity.sales.Customer;
 
 @UiController
 @UiDescriptor("pagination-test-screen.xml")
@@ -32,29 +32,19 @@ public class PaginationTestScreen extends Screen {
     public Pagination pagination;
 
     @Autowired
-    public Pagination paginationCustomSMR;
+    public Pagination paginationWithoutDataSource;
 
     @Autowired
-    public Pagination paginationNoSMR;
+    public Pagination paginationCustomOptions;
 
     @Autowired
-    public Pagination paginationSMR;
+    public Pagination paginationDefaultValue;
 
-    @Autowired
-    public Pagination postponedPaginationSMR;
+    public ComboBox<Integer> getPaginationCustomOptionsCB() {
+        return paginationCustomOptions.unwrap(JmixPagination.class).getItemsPerPageComboBox();
+    }
 
-    @Autowired
-    public Pagination postponedPaginationNoSMR;
-
-    @Autowired
-    public CollectionLoader<Customer> customersLd;
-
-    @Autowired
-    public CollectionLoader<Customer> customersLdNoSMR;
-
-    @Autowired
-    public CollectionLoader<Customer> customersLdSMR;
-
-    @Autowired
-    public CollectionLoader<Customer> customersLdPostponed;
+    public ComboBox<Integer> getPaginationDefaultValueCB() {
+        return paginationDefaultValue.unwrap(JmixPagination.class).getItemsPerPageComboBox();
+    }
 }

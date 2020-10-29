@@ -45,7 +45,7 @@ import static io.jmix.ui.component.MouseEventDetails.MouseButton;
  */
 public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Component.HasCaption,
         Component.HasIcon, HasContextHelp, HasHtmlCaption, HasHtmlDescription, LookupComponent<E>,
-        Component.Focusable, HasSubParts, HasHtmlSanitizer, HasTablePagination {
+        Component.Focusable, HasSubParts, HasHtmlSanitizer, HasPagination {
 
     String NAME = "dataGrid";
 

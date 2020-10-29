@@ -106,7 +106,7 @@ class UiComponentsTest extends ScreenSpecification {
                 TwinColumn.NAME,
                 ProgressBar.NAME,
                 Pagination.NAME,
-                TablePagination.NAME,
+                SimplePagination.NAME,
                 DatePicker.NAME,
                 CapsLockIndicator.NAME,
                 Form.NAME,

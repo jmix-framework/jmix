@@ -16,150 +16,30 @@
 
 package io.jmix.ui.widget;
 
-import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.themes.ValoTheme;
-import io.jmix.ui.component.Pagination;
+import org.apache.commons.lang3.StringUtils;
 
-public class JmixPagination extends JmixCssActionsLayout {
+public class JmixPagination extends JmixAbstractPagination {
 
-    public static final String CONTENT_RIGHT_ALIGN_STYLE = "content-right-align";
-
-    protected Pagination.ContentAlignment contentAlignment = Pagination.ContentAlignment.LEFT;
-
-    protected ComponentContainer contentLayout;
-    protected Button prevButton;
-    protected Button nextButton;
-    protected Button firstButton;
-    protected Button lastButton;
-    protected Label label;
-    protected Button countButton;
-
-    protected ComponentContainer maxResultLayout;
-    protected Label maxResultLabel;
-    protected ComboBox<Integer> maxResultComboBox;
+    protected static final String PRIMARY_STYLENAME = "jmix-pagination";
 
     public JmixPagination() {
-        contentLayout = createContentLayout();
-        contentLayout.setWidth(100, Unit.PERCENTAGE);
+        super(PRIMARY_STYLENAME);
 
-        addComponent(contentLayout);
+        createNavigationButtons();
+        createContentLayout();
     }
 
-    protected ComponentContainer createContentLayout() {
-        JmixCssActionsLayout contentLayout = new JmixCssActionsLayout();
-        contentLayout.setStyleName("c-pagination-wrapper");
-        contentLayout.setSpacing(true);
+    protected void createContentLayout() {
+        setStyleName(PRIMARY_STYLENAME);
 
-        maxResultLayout = createMaxResultLayout();
-        maxResultLayout.setVisible(false);
-        contentLayout.addComponent(maxResultLayout);
+        addComponents(getFirstButton(), getPrevButton(), getNextButton(), getLastButton());
 
-        firstButton = new JmixButton();
-        firstButton.setStyleName("c-pagination-change-page");
-        firstButton.addStyleName("c-pagination-first");
-        contentLayout.addComponent(firstButton);
-
-        prevButton = new JmixButton();
-        prevButton.setStyleName("c-pagination-change-page");
-        prevButton.addStyleName("c-pagination-prev");
-        contentLayout.addComponent(prevButton);
-
-        label = new Label();
-        label.setWidthUndefined();
-        label.setStyleName("c-pagination-status");
-        contentLayout.addComponent(label);
-
-        countButton = new JmixButton("[?]");
-        countButton.setWidthUndefined();
-        countButton.setStyleName(ValoTheme.BUTTON_LINK);
-        countButton.addStyleName("c-pagination-count");
-        countButton.setTabIndex(-1);
-        contentLayout.addComponent(countButton);
-
-        nextButton = new JmixButton();
-        nextButton.setStyleName("c-pagination-change-page");
-        nextButton.addStyleName("c-pagination-next");
-        contentLayout.addComponent(nextButton);
-
-        lastButton = new JmixButton();
-        lastButton.setStyleName("c-pagination-change-page");
-        lastButton.addStyleName("c-pagination-last");
-        contentLayout.addComponent(lastButton);
-
-        return contentLayout;
+        getItemsPerPageLayout().setVisible(false);
+        addComponent(getItemsPerPageLayout());
     }
 
-    public Pagination.ContentAlignment getContentAlignment() {
-        return contentAlignment;
-    }
-
-    public void setContentAlignment(Pagination.ContentAlignment contentAlignment) {
-        if (this.contentAlignment != contentAlignment) {
-            this.contentAlignment = contentAlignment;
-
-            if (contentAlignment == Pagination.ContentAlignment.LEFT) {
-                contentLayout.removeStyleName(CONTENT_RIGHT_ALIGN_STYLE);
-            } else {
-                contentLayout.addStyleName(CONTENT_RIGHT_ALIGN_STYLE);
-            }
-
-            markAsDirty();
-        }
-    }
-
-    public Label getLabel() {
-        return label;
-    }
-
-    public Button getCountButton() {
-        return countButton;
-    }
-
-    public Button getPrevButton() {
-        return prevButton;
-    }
-
-    public Button getNextButton() {
-        return nextButton;
-    }
-
-    public Button getFirstButton() {
-        return firstButton;
-    }
-
-    public Button getLastButton() {
-        return lastButton;
-    }
-
-    public Label getMaxResultLabel() {
-        return maxResultLabel;
-    }
-
-    public ComboBox<Integer> getMaxResultComboBox() {
-        return maxResultComboBox;
-    }
-
-    public ComponentContainer getMaxResultLayout() {
-        return maxResultLayout;
-    }
-
-    protected ComponentContainer createMaxResultLayout() {
-        JmixCssActionsLayout maxResultsLayout = new JmixCssActionsLayout();
-        maxResultsLayout.setStyleName("c-pagination-maxresult-layout");
-
-        maxResultLabel = new JmixLabel();
-        maxResultLabel.setStyleName("c-pagination-maxresult-label");
-        maxResultsLayout.addComponent(maxResultLabel);
-
-        maxResultComboBox = new JmixComboBox<>();
-        maxResultComboBox.setStyleName("c-pagination-maxresult-options");
-        maxResultComboBox.setEmptySelectionAllowed(false);
-        maxResultComboBox.setTextInputAllowed(false);
-        maxResultsLayout.addComponent(maxResultComboBox);
-
-        return maxResultsLayout;
+    @Override
+    public String getStyleName() {
+        return StringUtils.normalizeSpace(super.getStyleName().replace(PRIMARY_STYLENAME, ""));
     }
 }

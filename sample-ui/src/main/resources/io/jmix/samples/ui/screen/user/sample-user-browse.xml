@@ -34,7 +34,7 @@
                 <column id="firstName"/>
                 <column id="lastName"/>
             </columns>
-            <pagination/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="usersTable.create"/>

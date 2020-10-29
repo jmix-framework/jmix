@@ -56,18 +56,23 @@ import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
+import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.ValueSourceProvider;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataGridItems;
+import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
 import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
+import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataUnitProvider;
+import io.jmix.ui.component.pagination.data.PaginationEmptyProvider;
 import io.jmix.ui.component.renderer.RendererWrapper;
 import io.jmix.ui.component.valueprovider.EntityValueProvider;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
@@ -157,7 +162,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     protected GridComposition componentComposition;
     protected HorizontalLayout topPanel;
     protected ButtonsPanel buttonsPanel;
-    protected TablePagination pagination;
+    protected PaginationComponent pagination;
 
     protected List<Function<? super E, String>> rowStyleProviders;
 
@@ -916,9 +921,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
             initShowInfoAction();
 
-            if (pagination != null) {
-                pagination.setTablePaginationTarget(this);
-            }
+            setupPaginationDataSourceProvider();
 
             if (!canBeSorted(dataGridItems)) {
                 setSortable(false);
@@ -2085,12 +2088,17 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     @Nullable
     @Override
-    public TablePagination getPagination() {
+    public PaginationComponent getPagination() {
         return pagination;
     }
 
     @Override
-    public void setPagination(@Nullable TablePagination pagination) {
+    public void setPagination(@Nullable PaginationComponent pagination) {
+        if (pagination != null && !(pagination instanceof SimplePagination)) {
+            throw new IllegalStateException(String.format("DataGrid does not support pagination type `%s`",
+                    pagination.getClass().getCanonicalName()));
+        }
+
         if (this.pagination != null && topPanel != null) {
             topPanel.removeComponent(this.pagination.unwrap(Component.class));
             this.pagination.setParent(null);
@@ -2115,9 +2123,35 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                         updateCompositionStylesTopPanelVisible()
                 );
             }
+
+            pagination.addAfterRefreshListener(this::onPaginationAfterRefresh);
         }
 
         updateCompositionStylesTopPanelVisible();
+    }
+
+    protected void onPaginationAfterRefresh(PaginationComponent.AfterRefreshEvent event) {
+        scrollToStart();
+    }
+
+    public void setupPaginationDataSourceProvider() {
+        if (pagination == null) {
+            return;
+        }
+
+        DataUnit items = getItems();
+
+        PaginationDataSourceProvider provider;
+        if (items instanceof ContainerDataUnit) {
+            provider = applicationContext.getBean(PaginationDataUnitProvider.class, items);
+        } else if (items instanceof EmptyDataUnit
+                && items instanceof EntityDataUnit) {
+            provider = new PaginationEmptyProvider(((EntityDataUnit) items).getEntityMetaClass());
+        } else {
+            throw new IllegalStateException("Unsupported data unit type: " + items);
+        }
+
+        pagination.setDataSourceProvider(provider);
     }
 
     protected HorizontalLayout createTopPanel() {

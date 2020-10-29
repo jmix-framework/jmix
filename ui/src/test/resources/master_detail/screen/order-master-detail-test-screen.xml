@@ -67,7 +67,7 @@
                         <column id="date"/>
                         <column id="customer"/>
                     </columns>
-                    <pagination/>
+                    <simplePagination/>
                     <buttonsPanel id="buttonsPanel"
                                   alwaysVisible="true">
                         <button id="createBtn" action="table.create"/>

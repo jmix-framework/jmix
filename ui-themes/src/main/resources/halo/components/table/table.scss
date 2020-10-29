@@ -274,6 +274,10 @@ $c-table-drag-indicator-color: $v-focus-color;
       display: none;
     }
 
+    .jmix-simplepagination {
+      padding-left: round($v-layout-spacing-horizontal/2);
+    }
+
     .v-ie11 &,
     .v-edge & {
       .c-table-top {

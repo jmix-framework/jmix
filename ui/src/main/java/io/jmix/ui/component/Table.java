@@ -49,7 +49,7 @@ public interface Table<E>
         extends
         ListComponent<E>, Component.Editable, HasButtonsPanel, HasTablePresentations, Component.HasCaption,
         HasContextHelp, Component.HasIcon, LookupComponent<E>, Component.Focusable, HasSubParts, HasHtmlCaption,
-        HasHtmlDescription, HasHtmlSanitizer, HasTablePagination {
+        HasHtmlDescription, HasHtmlSanitizer, HasPagination {
 
     enum ColumnAlignment {
         LEFT,

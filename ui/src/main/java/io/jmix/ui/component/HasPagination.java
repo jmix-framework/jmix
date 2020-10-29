@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package component.pagination.screen;
+package io.jmix.ui.component;
 
-import io.jmix.ui.component.Table;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import test_support.entity.sales.Customer;
+import javax.annotation.Nullable;
 
-@UiController
-@UiDescriptor("table-pagination-metaclass-test-screen.xml")
-public class TablePaginationMetaClassTestScreen extends Screen {
+/**
+ * Interface to be implemented by components that can display the {@link Pagination} component.
+ */
+public interface HasPagination {
 
-    @Autowired
-    public Table<Customer> customerTableMetaClass;
+    /**
+     * @return pagination component
+     */
+    @Nullable
+    PaginationComponent getPagination();
+
+    /**
+     * Sets pagination component.
+     */
+    void setPagination(@Nullable PaginationComponent pagination);
 }

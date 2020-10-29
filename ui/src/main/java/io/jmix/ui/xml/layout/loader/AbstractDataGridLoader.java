@@ -401,17 +401,15 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
     @SuppressWarnings("unchecked")
     protected void loadPagination(DataGrid component, Element element) {
-        Element paginationElement = element.element("pagination");
+        Element paginationElement = element.element("simplePagination");
         if (paginationElement != null) {
 
-            ComponentLoader<TablePagination> loader = getLayoutLoader()
-                    .getLoader(paginationElement, TablePagination.NAME);
+            ComponentLoader<SimplePagination> loader = getLayoutLoader()
+                    .getLoader(paginationElement, SimplePagination.NAME);
             loader.createComponent();
             loader.loadComponent();
 
-            TablePagination pagination = loader.getResultComponent();
-
-            pagination.setTablePaginationTarget(component);
+            SimplePagination pagination = loader.getResultComponent();
             component.setPagination(pagination);
         }
     }

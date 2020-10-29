@@ -28,8 +28,8 @@ import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.ButtonsPanel;
+import io.jmix.ui.component.SimplePagination;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.TablePagination;
 import io.jmix.ui.component.data.TableItems;
 import io.jmix.ui.component.data.aggregation.AggregationStrategy;
 import io.jmix.ui.component.data.table.ContainerTableItems;
@@ -300,17 +300,15 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
     @SuppressWarnings("unchecked")
     protected void loadPagination(Table table, Element element) {
-        Element paginationElement = element.element("pagination");
+        Element paginationElement = element.element("simplePagination");
         if (paginationElement != null) {
 
-            ComponentLoader<TablePagination> loader = getLayoutLoader()
-                    .getLoader(paginationElement, TablePagination.NAME);
+            ComponentLoader<SimplePagination> loader = getLayoutLoader()
+                    .getLoader(paginationElement, SimplePagination.NAME);
             loader.createComponent();
             loader.loadComponent();
 
-            TablePagination pagination = loader.getResultComponent();
-
-            pagination.setTablePaginationTarget(table);
+            SimplePagination pagination = loader.getResultComponent();
             table.setPagination(pagination);
         }
     }

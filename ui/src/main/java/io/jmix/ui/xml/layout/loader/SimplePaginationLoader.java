@@ -16,28 +16,20 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.TablePagination;
+import io.jmix.ui.component.SimplePagination;
 
-public class TablePaginationLoader extends PaginationLoader {
+public class SimplePaginationLoader extends AbstractPaginationLoader<SimplePagination> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(TablePagination.NAME);
+        resultComponent = factory.create(SimplePagination.NAME);
+        loadId(resultComponent, element);
     }
 
     @Override
     public void loadComponent() {
-        assignXmlDescriptor(resultComponent, element);
-        assignFrame(resultComponent);
+        super.loadComponent();
 
-        loadShowMaxResults(element)
-                .ifPresent(resultComponent::setShowMaxResults);
-        loadShowNullMaxResult(element)
-                .ifPresent(resultComponent::setShowNullMaxResult);
-        loadMaxResults(element)
-                .ifPresent(resultComponent::setMaxResultOptions);
-
-        loadAutoLoad(element)
-                .ifPresent(resultComponent::setAutoLoad);
+        loadBoolean(element, "autoLoad", resultComponent::setAutoLoad);
     }
 }

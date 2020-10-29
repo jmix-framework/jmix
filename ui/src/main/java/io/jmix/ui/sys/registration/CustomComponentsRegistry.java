@@ -93,7 +93,7 @@ public class CustomComponentsRegistry {
     protected List<ComponentRegistration> componentRegistrations;
 
     @Autowired
-    protected UiComponentsImpl webUiComponents;
+    protected UiComponentsImpl uiComponents;
     @Autowired
     protected CustomComponentsLoaderConfig loaderConfig;
     @Autowired
@@ -140,7 +140,7 @@ public class CustomComponentsRegistry {
         if (componentClass != null) {
             log.trace("Register component {} class {}", name, componentClass.getCanonicalName());
 
-            webUiComponents.register(name, componentClass);
+            uiComponents.register(name, componentClass);
         }
 
         if (componentLoaderClass != null) {

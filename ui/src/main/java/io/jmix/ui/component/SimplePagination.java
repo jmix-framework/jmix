@@ -16,24 +16,23 @@
 
 package io.jmix.ui.component;
 
-import javax.annotation.Nullable;
-
 /**
- * Pagination component for using inside of {@link Table} or {@link DataGrid}.
+ * Component that makes a data binding to load data by pages. It contains current items count label
+ * and navigation buttons (next, last etc).
  */
-public interface TablePagination extends Pagination {
-    String NAME = "tablePagination";
+public interface SimplePagination extends PaginationComponent {
+
+    String NAME = "simplePagination";
 
     /**
-     * @return target component e.g. {@link DataGrid} or {@link Table}
+     * @return whether items count should be loaded automatically
      */
-    @Nullable
-    ListComponent getTablePaginationTarget();
+    boolean isAutoLoad();
 
     /**
-     * Sets target component which data should be shown by pages.
+     * Sets whether items count should be loaded automatically.
      *
-     * @param target {@link DataGrid} or {@link Table} based component
+     * @param autoLoad pass true to enable auto load, or false otherwise
      */
-    void setTablePaginationTarget(ListComponent target);
+    void setAutoLoad(boolean autoLoad);
 }

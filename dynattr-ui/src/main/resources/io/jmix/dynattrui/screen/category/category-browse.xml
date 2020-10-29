@@ -67,7 +67,7 @@
                         <column id="entityType"/>
                         <column id="isDefault"/>
                     </columns>
-                    <pagination/>
+                    <simplePagination/>
                     <buttonsPanel id="buttonsPanel"
                                   alwaysVisible="true">
                         <button id="createBtn" action="categoriesTable.create"/>
@@ -88,7 +88,7 @@
                         <column id="required"/>
                         <column id="isCollection"/>
                     </columns>
-                    <pagination/>
+                    <simplePagination/>
                 </groupTable>
             </vbox>
         </split>

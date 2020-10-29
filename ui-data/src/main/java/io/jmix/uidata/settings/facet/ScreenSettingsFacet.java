@@ -143,12 +143,11 @@ public interface ScreenSettingsFacet extends Facet {
      * Note, it also will be invoked when lazy tab from {@link TabSheet} or {@link Accordion} is opened.
      * <p>
      * For instance:
-     * <pre>{@code
-     * @Install(to = "settingsFacet", subject = "applySettingsDelegate")
-     * private void onApplySetting(SettingsSet settings) {
-     *     settingsFacet.applySettings(settings);
-     * }
-     * }
+     * <pre>
+     *      &#64;Install(to = "settingsFacet", subject = "applySettingsDelegate")
+     *      private void onApplySetting(SettingsSet settings) {
+     *          settingsFacet.applySettings(settings);
+     *      }
      * </pre>
      *
      * @param delegate apply settings delegate
@@ -166,12 +165,11 @@ public interface ScreenSettingsFacet extends Facet {
      * {@link BeforeShowEvent}.
      * <p>
      * For instance:
-     * <pre>{@code
-     * @Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
-     * private void onApplyDataLoadingSetting(SettingsSet settings) {
-     *     settingsFacet.applyDataLoadingSettings(settings);
-     * }
-     * }
+     * <pre>
+     *      &#64;Install(to = "settingsFacet", subject = "applyDataLoadingSettingsDelegate")
+     *      private void onApplyDataLoadingSetting(SettingsSet settings) {
+     *          settingsFacet.applyDataLoadingSettings(settings);
+     *      }
      * </pre>
      *
      * @param delegate apply settings delegate
@@ -189,12 +187,11 @@ public interface ScreenSettingsFacet extends Facet {
      * {@link AfterDetachEvent}.
      * <p>
      * For instance:
-     * <pre>{@code
-     * @Install(to = "settingsFacet", subject = "saveSettingsDelegate")
-     * private void onSaveSetting(SettingsSet settings) {
-     *     settingsFacet.saveSettings(settings);
-     * }
-     * }
+     * <pre>
+     *      &#64;Install(to = "settingsFacet", subject = "saveSettingsDelegate")
+     *      private void onSaveSetting(SettingsSet settings) {
+     *          settingsFacet.saveSettings(settings);
+     *      }
      * </pre>
      *
      * @param delegate save settings delegate

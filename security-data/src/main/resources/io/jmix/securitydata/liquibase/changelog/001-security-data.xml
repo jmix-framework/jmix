@@ -78,7 +78,7 @@
             <column name="SCOPE_" type="varchar(255)"/>
 
             <column name="ROLE_ENTITY_ID" type="uuid">
-                <constraints foreignKeyName="FK_SEC_RESOURCE_POLICY_ENTITY_SEC_ROLE_ENTITY"
+                <constraints foreignKeyName="FK_SEC_RESOURCE_POLICY_ROLE"
                              references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
 
@@ -112,7 +112,7 @@
             <column name="SCRIPT_" type="varchar(5000)"/>
 
             <column name="ROLE_ENTITY_ID" type="uuid">
-                <constraints foreignKeyName="FK_SEC_ROW_LEVEL_POLICY_ENTITY_SEC_ROLE_ENTITY"
+                <constraints foreignKeyName="FK_SEC_ROW_LEVEL_POLICY_ROLE"
                              references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
 

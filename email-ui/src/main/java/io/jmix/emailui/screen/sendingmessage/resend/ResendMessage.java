@@ -149,7 +149,7 @@ public class ResendMessage extends Screen {
             try (InputStream inputStream = fileStorage.openStream(attachment.getContentFile())) {
                 return IOUtils.toByteArray(inputStream);
             } catch (IOException e) {
-                throw new RuntimeException("Can't read message body from the file", e);
+                throw new RuntimeException("Can't read attachment body from the file", e);
             }
         }
         return attachment.getContent();

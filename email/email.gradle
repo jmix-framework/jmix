@@ -26,9 +26,8 @@ dependencies {
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
     api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
-    api 'io.jmix.security:jmix-security'
 
-    api 'com.sun.mail:javax.mail'
+    api 'com.sun.mail:jakarta.mail'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'

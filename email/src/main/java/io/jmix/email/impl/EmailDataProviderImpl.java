@@ -100,7 +100,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
             resList.forEach(msg -> {
                 if (shouldMarkNotSent(msg)) {
-                    msg.setStatus(SendingStatus.NOTSENT);
+                    msg.setStatus(SendingStatus.NOT_SENT);
                 } else {
                     msg.setStatus(SendingStatus.SENDING);
                     emailsToSend.add(msg);
@@ -184,7 +184,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                 return "Error marking message to '{}' as sent";
             case QUEUE:
                 return "Error returning message to '{}' to the queue";
-            case NOTSENT:
+            case NOT_SENT:
                 return "Error marking message to '{}' as not sent";
         }
         return "Error updating status of message for '{}'";

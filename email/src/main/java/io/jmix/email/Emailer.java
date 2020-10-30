@@ -61,7 +61,7 @@ public interface Emailer {
      *                      {@link EmailerProperties#getDefaultSendingAttemptsCount()} is used
      * @param deadline      Emailer tries to send message till deadline.
      *                      If deadline has come and message has not been sent, status of this message is changed to
-     *                      {@link SendingStatus#NOTSENT}
+     *                      {@link SendingStatus#NOT_SENT}
      * @return created {@link SendingMessage}
      */
     SendingMessage sendEmailAsync(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline);

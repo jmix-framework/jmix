@@ -24,7 +24,7 @@ public enum SendingStatus implements EnumClass<Integer> {
     QUEUE(0),
     SENDING(100),
     SENT(200),
-    NOTSENT(300);
+    NOT_SENT(300);
 
     private Integer id;
 

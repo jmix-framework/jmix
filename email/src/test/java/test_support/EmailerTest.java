@@ -19,15 +19,12 @@ package test_support;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +43,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,26 +80,13 @@ public class EmailerTest {
     @Autowired
     private FetchPlanRepository fetchPlanRepository;
 
-    @Autowired
-    private InMemoryUserRepository userRepository;
-
-    private CoreUser adminUser;
-
     @BeforeEach
     public void setUp() throws Exception {
-        adminUser = new CoreUser("admin", "{noop}admin123", "Admin");
-        userRepository.addUser(adminUser);
-
         EmailerConfigPropertiesAccess.setDelayCallCount(emailerProperties, 0);
 
         // send pending emails which might be in the queue
         emailer.processQueuedEmails();
         testMailSender.clearBuffer();
-    }
-
-    @AfterEach
-    public void cleanUp() {
-        userRepository.removeUser(adminUser);
     }
 
     @Test
@@ -404,7 +390,7 @@ public class EmailerTest {
         // marks as not-sent in the next tick
         emailer.processQueuedEmails();
         sendingMsg = reload(sendingMsg);
-        assertEquals(SendingStatus.NOTSENT, sendingMsg.getStatus());
+        assertEquals(SendingStatus.NOT_SENT, sendingMsg.getStatus());
         assertEquals(2, sendingMsg.getAttemptsCount().intValue());
     }
 

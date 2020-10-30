@@ -204,7 +204,7 @@ public class EmailerImpl implements Emailer {
             emailDataProvider.updateStatus(sendingMessage, SendingStatus.SENT);
         } catch (Exception e) {
             log.warn("Unable to send email to '{}'", sendingMessage.getAddress(), e);
-            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOTSENT;
+            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOT_SENT;
             emailDataProvider.updateStatus(sendingMessage, newStatus);
         }
     }
@@ -232,7 +232,7 @@ public class EmailerImpl implements Emailer {
             failedAddresses.add(sendingMessage.getAddress());
             errorMessages.add(e.getMessage());
             if (persistedMessage != null) {
-                emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOTSENT);
+                emailDataProvider.updateStatus(persistedMessage, SendingStatus.NOT_SENT);
             }
         }
 
@@ -316,7 +316,7 @@ public class EmailerImpl implements Emailer {
         } catch (Exception e) {
             log.error("Exception while sending email to '{}': ", msg.getAddress(), e);
 
-            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOTSENT;
+            SendingStatus newStatus = isNeedToRetry(e) ? SendingStatus.QUEUE : SendingStatus.NOT_SENT;
             emailDataProvider.updateStatus(msg, newStatus);
         }
     }

@@ -19,7 +19,9 @@ package test_support;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
+import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
@@ -28,7 +30,6 @@ import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.email.EmailConfiguration;
 import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
-import io.jmix.security.SecurityConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.*;
@@ -41,16 +42,17 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, FileSystemFileStorageConfiguration.class,
-        SecurityConfiguration.class, EmailConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, FileSystemFileStorageConfiguration.class, EmailConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
-public class EmailTestConfiguration {
+@EnableWebSecurity
+public class EmailTestConfiguration extends CoreSecurityConfiguration {
 
     @Bean
     @Primary
@@ -98,8 +100,10 @@ public class EmailTestConfiguration {
         return new GroovyScriptEvaluator();
     }
 
-    @Bean
+    @Override
     public UserRepository userRepository() {
-        return new InMemoryUserRepository();
+        InMemoryUserRepository repository = new InMemoryUserRepository();
+        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
+        return repository;
     }
 }

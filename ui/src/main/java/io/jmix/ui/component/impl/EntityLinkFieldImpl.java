@@ -52,11 +52,10 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
 
     protected static final String EMPTY_VALUE_STYLENAME = "empty-value";
 
-    protected EntityLinkClickHandler clickHandler;
+    protected Consumer<EntityLinkField> clickHandler;
 
     protected String screen;
     protected OpenMode screenOpenMode = OpenMode.THIS_TAB;
-    protected ScreenCloseListener screenCloseListener;
     protected Map<String, Object> screenParams;
 
     protected MetaClass metaClass;
@@ -119,7 +118,7 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
     protected void initComponent() {
         component.addClickListener(event -> {
             if (clickHandler != null) {
-                clickHandler.onClick(EntityLinkFieldImpl.this);
+                clickHandler.accept(EntityLinkFieldImpl.this);
             } else {
                 openEntityEditor();
             }
@@ -220,12 +219,12 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
 
     @Nullable
     @Override
-    public EntityLinkClickHandler getCustomClickHandler() {
+    public Consumer<EntityLinkField> getCustomClickHandler() {
         return clickHandler;
     }
 
     @Override
-    public void setCustomClickHandler(@Nullable EntityLinkClickHandler clickHandler) {
+    public void setCustomClickHandler(@Nullable Consumer<EntityLinkField> clickHandler) {
         this.clickHandler = clickHandler;
     }
 
@@ -248,34 +247,6 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
     @Override
     public void setScreenParams(@Nullable Map<String, Object> screenParams) {
         this.screenParams = screenParams;
-    }
-
-    @Nullable
-    @Override
-    public ScreenCloseListener getScreenCloseListener() {
-        return screenCloseListener;
-    }
-
-    @Override
-    public void setScreenCloseListener(@Nullable ScreenCloseListener closeListener) {
-        this.screenCloseListener = closeListener;
-
-        if (closeListenerSubscription != null) {
-            closeListenerSubscription.remove();
-        }
-
-        if (screenCloseListener != null) {
-            closeListenerSubscription = addEditorCloseListener(event -> {
-                /*
-                TODO: legacy-ui
-                if (event.getEditorScreen() instanceof AbstractEditor) {
-                    screenCloseListener.windowClosed((Window) event.getEditorScreen(), event.getActionId());
-                } else {
-                    screenCloseListener.windowClosed(null, event.getActionId());
-                }*/
-                screenCloseListener.windowClosed(null, event.getActionId());
-            });
-        }
     }
 
     @Override
@@ -312,7 +283,6 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
         }
 
         DataManager dataManager = applicationContext.getBean(DataManager.class);
-        //noinspection unchecked
         entity = dataManager.load(Id.of(entity))
                 .fetchPlan(applicationContext.getBean(FetchPlanRepository.class).getFetchPlan(entity.getClass(), FetchPlan.INSTANCE_NAME))
                 .one();
@@ -370,21 +340,9 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
         MetaProperty metaProperty = getMetaPropertyForEditedValue();
         if (metaProperty != null && metaProperty.getRange().isClass()) {
             if (getValueSource() != null) {
-                boolean ownerDsModified = false;
-                boolean nonModifiedInTable = false;
-
-                // DatasourceImplementation ownerDs = null; TODO: legacy-ui
                 CollectionContainer ownerCollectionCont = null;
 
-                /*
-                TODO: legacy-ui
-                if (getCollectionDatasourceFromOwner() != null) {
-
-                    ownerDs = ((DatasourceImplementation) getCollectionDatasourceFromOwner());
-                    nonModifiedInTable = !ownerDs.getItemsToUpdate().contains(
-                            ((EntityValueSource) getValueSource()).getItem());
-                    ownerDsModified = ownerDs.isModified();
-                } else*/ if (getCollectionContainerFromOwner() != null) {
+                if (getCollectionContainerFromOwner() != null) {
                     ownerCollectionCont = ((ContainerDataUnit) owner.getItems()).getContainer();
                     ownerCollectionCont.mute();
                 }
@@ -392,16 +350,7 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
                 //noinspection unchecked
                 setValueSilently((V) item);
 
-                // restore modified for owner datasource
-                // remove from items to update if it was not modified before setValue
-                /*
-                TODO: legacy-ui
-                if (ownerDs != null) {
-                    if (nonModifiedInTable) {
-                        ownerDs.getItemsToUpdate().remove(getDatasource().getItem());
-                    }
-                    ownerDs.setModified(ownerDsModified);
-                } else*/ if (ownerCollectionCont != null) {
+                if (ownerCollectionCont != null) {
                     ownerCollectionCont.unmute();
                 }
             } else {
@@ -410,19 +359,14 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
             }
             // if we edit property with non Entity type and set ListComponent owner
         } else if (owner != null) {
-            /*
-             TODO: legacy-ui
-            if (getCollectionDatasourceFromOwner() != null) {
-                //noinspection unchecked
-                getCollectionDatasourceFromOwner().updateItem(item);
-            } else*/ if (getCollectionContainerFromOwner() != null) {
+            if (getCollectionContainerFromOwner() != null) {
                 //do not listen changes in collection
                 getCollectionContainerFromOwner().mute();
 
                 //noinspection unchecked
                 getCollectionContainerFromOwner().replaceItem(item);
-                // TODO: legacy-ui
-                // setValueSilently(item.getValueEx(getMetaPropertyPath()));
+                MetaPropertyPath metaPropertyPath = ((ContainerValueSource) getValueSource()).getMetaPropertyPath();
+                setValueSilently(EntityValues.getValueEx(item, metaPropertyPath));
 
                 //listen changes
                 getCollectionContainerFromOwner().unmute();
@@ -449,15 +393,6 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
         return null;
     }
 
-    /*
-    TODO: legacy-ui
-    protected CollectionDatasource getCollectionDatasourceFromOwner() {
-        if (owner != null && owner.getItems() != null) {
-            return owner.getDatasource();
-        }
-        return null;
-    }*/
-
     @Nullable
     protected MetaProperty getMetaPropertyForEditedValue() {
         ValueSource<V> valueSource = getValueSource();
@@ -469,31 +404,13 @@ public class EntityLinkFieldImpl<V> extends AbstractField<JmixButtonField<V>, V,
     }
 
     /**
-     * Sets value to the component without triggering change listeners for ContainerValueSource and without changing
-     * a modify state of Datasource.
+     * Sets value to the component without triggering change listeners for ContainerValueSource.
      *
      * @param item value
      */
-    protected void setValueSilently(V item) {
-        boolean modified = false;
-        /*
-        TODO: legacy-ui
-        if (getDatasource() != null) {
-            modified = getDatasource().isModified();
-        } else {
-            ((ContainerValueSource) getValueSource()).getContainer().mute();
-        }*/
+    protected void setValueSilently(@Nullable V item) {
         ((ContainerValueSource) getValueSource()).getContainer().mute();
-
         setValue(item);
-
-        /*
-        TODO: legacy-ui
-        if (getDatasource() != null) {
-            ((DatasourceImplementation) getDatasource()).setModified(modified);
-        } else {
-            ((ContainerValueSource) getValueSource()).getContainer().unmute();
-        }*/
         ((ContainerValueSource) getValueSource()).getContainer().unmute();
     }
 

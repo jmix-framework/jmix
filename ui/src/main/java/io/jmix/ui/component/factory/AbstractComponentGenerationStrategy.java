@@ -45,6 +45,7 @@ import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static io.jmix.ui.component.DateField.Resolution;
 
@@ -417,7 +418,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         field.setValueSource(context.getValueSource());
     }
 
-    protected static class InvokeEntityLinkClickHandler implements EntityLinkField.EntityLinkClickHandler {
+    protected static class InvokeEntityLinkClickHandler implements Consumer<EntityLinkField> {
         protected final String invokeMethodName;
 
         public InvokeEntityLinkClickHandler(String invokeMethodName) {
@@ -425,7 +426,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         }
 
         @Override
-        public void onClick(EntityLinkField field) {
+        public void accept(EntityLinkField field) {
             Window frame = ComponentsHelper.getWindow(field);
             if (frame == null) {
                 throw new IllegalStateException("Please specify Frame for EntityLinkField");

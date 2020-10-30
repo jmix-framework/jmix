@@ -20,7 +20,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.OpenMode;
-import io.jmix.ui.screen.Screen;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -31,8 +30,17 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
 
     String NAME = "entityLinkField";
 
+    /**
+     * @return an editor screen id
+     */
     @Nullable
     String getScreen();
+
+    /**
+     * Sets an editor screen id.
+     *
+     * @param screen an editor screen id
+     */
     void setScreen(@Nullable String screen);
 
     /**
@@ -49,25 +57,8 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
 
     @Nullable
     Map<String, Object> getScreenParams();
+
     void setScreenParams(@Nullable Map<String, Object> params);
-
-    /**
-     * @return ScreenCloseListener or null if not set
-     * @deprecated Use {@link Subscription} instead to unsubscribe.
-     */
-    @Deprecated
-    @Nullable
-    ScreenCloseListener getScreenCloseListener();
-
-    /**
-     * Sets listener to handle close window event. <b> Note, if screen extends {@link Screen} the window parameter will
-     * be null. </b>
-     *
-     * @param closeListener a listener to set
-     * @deprecated Use {@link #addEditorCloseListener(Consumer)} instead.
-     */
-    @Deprecated
-    void setScreenCloseListener(@Nullable ScreenCloseListener closeListener);
 
     /**
      * Adds editor close listener.
@@ -77,31 +68,44 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
      */
     Subscription addEditorCloseListener(Consumer<EditorCloseEvent> editorCloseListener);
 
+    /**
+     * @return click handler
+     */
     @Nullable
-    EntityLinkClickHandler getCustomClickHandler();
-    void setCustomClickHandler(@Nullable EntityLinkClickHandler clickHandler);
-
-    @Nullable
-    MetaClass getMetaClass();
-    void setMetaClass(@Nullable MetaClass metaClass);
-
-    @Nullable
-    ListComponent getOwner();
-    void setOwner(ListComponent owner);
-
-    interface EntityLinkClickHandler {
-        void onClick(EntityLinkField field);
-    }
+    Consumer<EntityLinkField> getCustomClickHandler();
 
     /**
-     * Listener to handle close window event.
+     * Sets a custom click handler to the field.
      *
-     * @deprecated Use {@link #addEditorCloseListener(Consumer)}.
+     * @param clickHandler click handler
      */
-    @Deprecated
-    interface ScreenCloseListener {
-        void windowClosed(@Nullable Window window, String actionId);
-    }
+    void setCustomClickHandler(@Nullable Consumer<EntityLinkField> clickHandler);
+
+    /**
+     * @return a field meta class
+     */
+    @Nullable
+    MetaClass getMetaClass();
+
+    /**
+     * Sets field meta class.
+     *
+     * @param metaClass a field meta class
+     */
+    void setMetaClass(@Nullable MetaClass metaClass);
+
+    /**
+     * @return owner list component
+     */
+    @Nullable
+    ListComponent getOwner();
+
+    /**
+     * Sets an owner list component {@link ListComponent} to the field.
+     *
+     * @param owner owner list component
+     */
+    void setOwner(ListComponent owner);
 
     /**
      * Describes editor close event.
@@ -112,7 +116,6 @@ public interface EntityLinkField<V> extends Field<V>, Component.Focusable {
 
         public EditorCloseEvent(EntityLinkField<V> source, @Nullable EditorScreen screen, @Nullable String actionId) {
             super(source);
-            
             this.screen = screen;
             this.actionId = actionId;
         }

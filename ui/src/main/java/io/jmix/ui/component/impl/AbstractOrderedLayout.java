@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
+import com.vaadin.shared.Registration;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.ComponentsHelper;
@@ -33,7 +34,7 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
         LayoutClickNotifier, ShortcutNotifier {
 
     protected List<Component> ownComponents = new ArrayList<>();
-    protected LayoutEvents.LayoutClickListener layoutClickListener;
+    protected Registration layoutClickRegistration;
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
     @Override
@@ -169,8 +170,8 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
 
     @Override
     public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
-        if (layoutClickListener == null) {
-            layoutClickListener = event -> {
+        if (layoutClickRegistration == null) {
+            LayoutEvents.LayoutClickListener layoutClickListener = event -> {
                 Component childComponent = findChildComponent(this, event.getChildComponent());
                 Component clickedComponent = findChildComponent(this, event.getClickedComponent());
                 MouseEventDetails mouseEventDetails = WrapperUtils.toMouseEventDetails(event);
@@ -181,12 +182,12 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
 
                 publish(LayoutClickEvent.class, layoutClickEvent);
             };
-            component.addLayoutClickListener(layoutClickListener);
+            layoutClickRegistration = component.addLayoutClickListener(layoutClickListener);
         }
 
         getEventHub().subscribe(LayoutClickEvent.class, listener);
 
-        return () -> removeLayoutClickListener(listener);
+        return () -> internalRemoveLayoutClickListener(listener);
     }
 
     @Nullable
@@ -199,13 +200,12 @@ public class AbstractOrderedLayout<T extends com.vaadin.ui.CssLayout> extends Ab
         return null;
     }
     
-    @Override
-    public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+    protected void internalRemoveLayoutClickListener(Consumer<LayoutClickEvent> listener) {
         unsubscribe(LayoutClickEvent.class, listener);
 
         if (!hasSubscriptions(LayoutClickEvent.class)) {
-            component.removeLayoutClickListener(layoutClickListener);
-            layoutClickListener = null;
+            layoutClickRegistration.remove();
+            layoutClickRegistration = null;
         }
     }
 

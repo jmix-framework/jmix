@@ -35,13 +35,6 @@ public interface LayoutClickNotifier {
     Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeLayoutClickListener(Consumer<LayoutClickEvent> listener);
-
-    /**
      * Event sent when a user clicks mouse inside the layout.
      */
     class LayoutClickEvent extends EventObject {

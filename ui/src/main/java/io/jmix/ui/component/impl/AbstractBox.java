@@ -17,6 +17,7 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.MarginInfo;
 import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.core.DevelopmentException;
@@ -35,7 +36,7 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
         extends AbstractComponent<T> implements BoxLayout {
 
     protected List<Component> ownComponents = new ArrayList<>();
-    protected LayoutEvents.LayoutClickListener layoutClickListener;
+    protected Registration layoutClickRegistration;
     protected Map<ShortcutAction, ShortcutListener> shortcuts;
 
     @Override
@@ -216,8 +217,8 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
 
     @Override
     public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
-        if (layoutClickListener == null) {
-            layoutClickListener = event -> {
+        if (layoutClickRegistration == null) {
+            LayoutEvents.LayoutClickListener layoutClickListener = event -> {
                 Component childComponent = findChildComponent(event.getChildComponent());
                 Component clickedComponent = findChildComponent(event.getClickedComponent());
                 MouseEventDetails mouseEventDetails = WrapperUtils.toMouseEventDetails(event);
@@ -227,10 +228,11 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
 
                 publish(LayoutClickEvent.class, layoutClickEvent);
             };
-            component.addLayoutClickListener(layoutClickListener);
+            layoutClickRegistration = component.addLayoutClickListener(layoutClickListener);
         }
 
-        return getEventHub().subscribe(LayoutClickEvent.class, listener);
+        getEventHub().subscribe(LayoutClickEvent.class, listener);
+        return () -> internalRemoveLayoutClickListener(listener);
     }
 
     @Nullable
@@ -243,13 +245,12 @@ public abstract class AbstractBox<T extends AbstractOrderedLayout>
         return null;
     }
 
-    @Override
-    public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+    protected void internalRemoveLayoutClickListener(Consumer<LayoutClickEvent> listener) {
         unsubscribe(LayoutClickEvent.class, listener);
 
         if (!hasSubscriptions(LayoutClickEvent.class)) {
-            component.removeLayoutClickListener(layoutClickListener);
-            layoutClickListener = null;
+            layoutClickRegistration.remove();
+            layoutClickRegistration = null;
         }
     }
 

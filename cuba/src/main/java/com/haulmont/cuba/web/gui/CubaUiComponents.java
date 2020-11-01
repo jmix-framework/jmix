@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.ButtonsPanel;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.PopupButton;
 import com.haulmont.cuba.gui.components.PopupView;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
@@ -111,6 +112,7 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(OptionsGroup.NAME, WebOptionsGroup.class);
         classes.put(EntityLinkField.NAME, WebEntityLinkField.class);
         classes.put(RelatedEntities.NAME, WebRelatedEntities.class);
+        classes.put(PopupButton.NAME, WebPopupButton.class);
 
         classes.put(OptionsList.NAME, WebOptionsList.class);
         classes.put(PickerField.NAME, WebPickerField.class);

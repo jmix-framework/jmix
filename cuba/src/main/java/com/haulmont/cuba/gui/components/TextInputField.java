@@ -17,6 +17,9 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.common.event.Subscription;
+
+import java.util.function.Consumer;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -26,4 +29,30 @@ import com.haulmont.cuba.gui.data.Datasource;
  */
 @Deprecated
 public interface TextInputField<V> extends Field<V>, io.jmix.ui.component.TextInputField<V> {
+
+    /**
+     * Use {@link io.jmix.ui.component.TextInputField.TextChangeNotifier} instead
+     */
+    @Deprecated
+    interface TextChangeNotifier extends io.jmix.ui.component.TextInputField.TextChangeNotifier {
+        /**
+         * @param listener a listener to remove
+         * @deprecated Use {@link Subscription} instead
+         */
+        @Deprecated
+        void removeTextChangeListener(Consumer<TextChangeEvent> listener);
+    }
+
+    /**
+     * Use {@link io.jmix.ui.component.TextInputField.EnterPressNotifier} instead
+     */
+    @Deprecated
+    interface EnterPressNotifier extends io.jmix.ui.component.TextInputField.EnterPressNotifier {
+        /**
+         * @param listener a listener to remove
+         * @deprecated Use {@link Subscription} instead
+         */
+        @Deprecated
+        void removeEnterPressListener(Consumer<EnterPressEvent> listener);
+    }
 }

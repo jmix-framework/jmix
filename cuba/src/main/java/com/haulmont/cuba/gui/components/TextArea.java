@@ -31,7 +31,8 @@ import java.time.OffsetTime;
  * @deprecated Use {@link io.jmix.ui.component.TextArea} instead
  */
 @Deprecated
-public interface TextArea<V> extends TextInputField<V>, io.jmix.ui.component.TextArea<V> {
+public interface TextArea<V> extends TextInputField<V>, io.jmix.ui.component.TextArea<V>,
+        TextInputField.TextChangeNotifier {
 
     TypeToken<TextArea<String>> TYPE_DEFAULT = new TypeToken<TextArea<String>>(){};
     TypeToken<TextArea<String>> TYPE_STRING = new TypeToken<TextArea<String>>(){};

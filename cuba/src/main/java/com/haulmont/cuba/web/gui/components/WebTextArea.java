@@ -47,4 +47,9 @@ public class WebTextArea<V> extends TextAreaImpl<V> implements TextArea<V> {
         // See com.vaadin.v7.client.ui.VTextField.setColumns for formula
         component.setWidth(columns + "em");
     }
+
+    @Override
+    public void removeTextChangeListener(Consumer<TextChangeEvent> listener) {
+        unsubscribe(TextChangeEvent.class, listener);
+    }
 }

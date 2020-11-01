@@ -32,4 +32,9 @@ public class WebMaskedField<V> extends MaskedFieldImpl<V> implements MaskedField
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
     }
+
+    @Override
+    public void removeEnterPressListener(Consumer<EnterPressEvent> listener) {
+        internalRemoveEnterPressListener(listener);
+    }
 }

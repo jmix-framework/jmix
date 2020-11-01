@@ -34,4 +34,14 @@ public class WebTextField<V>
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
     }
+
+    @Override
+    public void removeTextChangeListener(Consumer<TextChangeEvent> listener) {
+        unsubscribe(TextChangeEvent.class, listener);
+    }
+
+    @Override
+    public void removeEnterPressListener(Consumer<EnterPressEvent> listener) {
+        internalRemoveEnterPressListener(listener);
+    }
 }

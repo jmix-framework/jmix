@@ -32,7 +32,8 @@ import java.util.function.Function;
  * @deprecated Use {@link io.jmix.ui.component.TextField} instead
  */
 @Deprecated
-public interface TextField<V> extends TextInputField<V>, io.jmix.ui.component.TextField<V> {
+public interface TextField<V> extends TextInputField<V>, io.jmix.ui.component.TextField<V>,
+        TextInputField.TextChangeNotifier, TextInputField.EnterPressNotifier {
 
     TypeToken<TextField<String>> TYPE_DEFAULT = new TypeToken<TextField<String>>(){};
     TypeToken<TextField<String>> TYPE_STRING = new TypeToken<TextField<String>>(){};

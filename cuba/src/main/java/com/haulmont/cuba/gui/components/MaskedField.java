@@ -29,7 +29,8 @@ import java.util.UUID;
  * @deprecated Use {@link io.jmix.ui.component.MaskedField} instead
  */
 @Deprecated
-public interface MaskedField<V> extends TextInputField<V>, io.jmix.ui.component.MaskedField<V> {
+public interface MaskedField<V> extends TextInputField<V>, io.jmix.ui.component.MaskedField<V>,
+        TextInputField.EnterPressNotifier {
 
     TypeToken<MaskedField<String>> TYPE_DEFAULT = new TypeToken<MaskedField<String>>(){};
     TypeToken<MaskedField<String>> TYPE_STRING = new TypeToken<MaskedField<String>>(){};

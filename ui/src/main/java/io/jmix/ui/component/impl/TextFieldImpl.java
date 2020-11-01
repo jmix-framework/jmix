@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.ValueChangeMode;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
@@ -57,7 +58,7 @@ public class TextFieldImpl<V> extends AbstractField<JmixTextField, String, V>
 
     protected boolean trimming = true;
 
-    protected ShortcutListener enterShortcutListener;
+    protected Registration enterShortcutRegistration;
     protected String conversionErrorMessage;
 
     protected DataAwareComponentsTools dataAwareComponentsTools;
@@ -343,11 +344,6 @@ public class TextFieldImpl<V> extends AbstractField<JmixTextField, String, V>
     }
 
     @Override
-    public void removeTextChangeListener(Consumer<TextChangeEvent> listener) {
-        unsubscribe(TextChangeEvent.class, listener);
-    }
-
-    @Override
     public int getTextChangeTimeout() {
         return component.getValueChangeTimeout();
     }
@@ -364,28 +360,26 @@ public class TextFieldImpl<V> extends AbstractField<JmixTextField, String, V>
 
     @Override
     public Subscription addEnterPressListener(Consumer<EnterPressEvent> listener) {
-        if (enterShortcutListener == null) {
-            enterShortcutListener = new ShortcutListenerDelegate("", KeyCode.ENTER, null)
+        if (enterShortcutRegistration == null) {
+            ShortcutListener enterShortcutListener = new ShortcutListenerDelegate("", KeyCode.ENTER, null)
                     .withHandler((sender, target) -> {
                         EnterPressEvent event = new EnterPressEvent(TextFieldImpl.this);
                         publish(EnterPressEvent.class, event);
                     });
-            component.addShortcutListener(enterShortcutListener);
+            enterShortcutRegistration = component.addShortcutListener(enterShortcutListener);
         }
 
         getEventHub().subscribe(EnterPressEvent.class, listener);
 
-        return () -> removeEnterPressListener(listener);
+        return () -> internalRemoveEnterPressListener(listener);
     }
 
-    @Override
-    public void removeEnterPressListener(Consumer<EnterPressEvent> listener) {
+    protected void internalRemoveEnterPressListener(Consumer<EnterPressEvent> listener) {
         unsubscribe(EnterPressEvent.class, listener);
 
-        if (enterShortcutListener != null
-                && !hasSubscriptions(EnterPressEvent.class)) {
-            component.removeShortcutListener(enterShortcutListener);
-            enterShortcutListener = null;
+        if (!hasSubscriptions(EnterPressEvent.class)) {
+            enterShortcutRegistration.remove();
+            enterShortcutRegistration = null;
         }
     }
 

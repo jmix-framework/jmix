@@ -186,11 +186,6 @@ public abstract class AbstractTextArea<T extends com.vaadin.ui.TextArea, V>
     }
 
     @Override
-    public void removeTextChangeListener(Consumer<TextChangeEvent> listener) {
-        unsubscribe(TextChangeEvent.class, listener);
-    }
-
-    @Override
     public int getMaxLength() {
         return component.getMaxLength();
     }

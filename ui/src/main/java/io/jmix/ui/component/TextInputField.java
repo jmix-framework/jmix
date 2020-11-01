@@ -83,13 +83,6 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
         Subscription addTextChangeListener(Consumer<TextChangeEvent> listener);
 
         /**
-         * @param listener a listener to remove
-         * @deprecated Use {@link Subscription} instead
-         */
-        @Deprecated
-        void removeTextChangeListener(Consumer<TextChangeEvent> listener);
-
-        /**
          * Gets the timeout used to fire {@link TextChangeEvent}s and {@link ValueChangeEvent}s when the
          * {@link #getTextChangeEventMode()} is {@link TextChangeEventMode#LAZY} or
          * {@link TextChangeEventMode#TIMEOUT}.
@@ -202,14 +195,13 @@ public interface TextInputField<V> extends Field<V>, Buffered, Component.Focusab
     }
 
     interface EnterPressNotifier {
-        Subscription addEnterPressListener(Consumer<EnterPressEvent> listener);
-
         /**
-         * @param listener a listener to remove
-         * @deprecated Use {@link Subscription} instead
+         * Adds a listener that is invoked when the user presses Enter.
+         *
+         * @param listener a listener to add
+         * @return a {@link Subscription}
          */
-        @Deprecated
-        void removeEnterPressListener(Consumer<EnterPressEvent> listener);
+        Subscription addEnterPressListener(Consumer<EnterPressEvent> listener);
     }
 
     /**

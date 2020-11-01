@@ -41,19 +41,29 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
         BOTTOM
     }
 
+    /**
+     * @return a split panel orientation
+     */
     int getOrientation();
+
+    /**
+     * Sets a split panel orientation.
+     *
+     * @param orientation a split panel orientation
+     * @see #ORIENTATION_VERTICAL
+     * @see #ORIENTATION_HORIZONTAL
+     */
     void setOrientation(int orientation);
 
+    /**
+     * Sets a position of split from the left side by default.
+     *
+     * @param pos the new size of the first region.
+     */
     void setSplitPosition(int pos);
 
     /**
-     * @deprecated Use {@link #setSplitPosition(int, SizeUnit)}
-     */
-    @Deprecated
-    void setSplitPosition(int pos, int unit);
-
-    /**
-     * Set position of split from the left side by default.
+     * Sets a position of split from the left side by default.
      *
      * @param pos  the new size of the first region.
      * @param unit the unit (from {@link SizeUnit}) in which the size is given.
@@ -61,16 +71,7 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
     void setSplitPosition(int pos, SizeUnit unit);
 
     /**
-     * Set position of split from the left side by default.
-     * If reversePosition is true position will be set from right.
-     *
-     * @deprecated Use {@link #setSplitPosition(int, SizeUnit, boolean)}
-     */
-    @Deprecated
-    void setSplitPosition(int pos, int unit, boolean reversePosition);
-
-    /**
-     * Set position of split from the left side by default.
+     * Sets a position of split from the left side by default.
      * If reversePosition is true position will be set from right.
      *
      * @param pos             the new size of the first region.
@@ -86,13 +87,6 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
     float getSplitPosition();
 
     /**
-     * @return unit of the splitter position.
-     * See {@link Component#UNITS_PIXELS} and {@link Component#UNITS_PERCENTAGE}
-     */
-    @Deprecated
-    int getSplitPositionUnit();
-
-    /**
      * Returns the unit of position of the splitter.
      *
      * @return unit of position of the splitter
@@ -103,15 +97,6 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      * Return from which side position is set.
      */
     boolean isSplitPositionReversed();
-
-    /**
-     * Set minimum available position of split.
-     * Minimum position of split will be set from the right if position is reversed.
-     *
-     * @deprecated Use {@link #setMinSplitPosition(int, SizeUnit)}
-     */
-    @Deprecated
-    void setMinSplitPosition(int pos, int unit);
 
     /**
      * Sets the minimum split position to the given position and unit. If the
@@ -135,15 +120,6 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
      * @return unit of the minimum position of the splitter
      */
     SizeUnit getMinSplitPositionSizeUnit();
-
-    /**
-     * Set maximum available position of split.
-     * Maximum position of split will be set from the right if position is reversed.
-     *
-     * @deprecated Use {@link #setMaxSplitPosition(int, SizeUnit)}
-     */
-    @Deprecated
-    void setMaxSplitPosition(int pos, int unit);
 
     /**
      * Sets the maximum split position to the given position and unit. If the
@@ -205,6 +181,13 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
     DockMode getDockMode();
 
     /**
+     * Adds a listener for {@link SplitPositionChangeEvent}s fired by a SplitPanel.
+     *
+     * @param listener a listener to add
+     */
+    Subscription addSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener);
+
+    /**
      * Event that indicates a change in SplitPanel's splitter position.
      */
     class SplitPositionChangeEvent extends EventObject implements HasUserOriginated {
@@ -242,17 +225,4 @@ public interface SplitPanel extends ComponentContainer, Component.BelongToFrame,
             return userOriginated;
         }
     }
-
-    /**
-     * Adds a listener for {@link SplitPositionChangeEvent}s fired by a SplitPanel.
-     *
-     * @param listener a listener to add
-     */
-    Subscription addSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener);
-
-    /**
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener);
 }

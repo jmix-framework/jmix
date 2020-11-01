@@ -15,15 +15,19 @@
  */
 package io.jmix.ui.component.impl;
 
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.AbstractSplitPanel;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.AttachNotifier;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.widget.JmixDockableSplitPanel;
 import io.jmix.ui.widget.JmixHorizontalSplitPanel;
 import io.jmix.ui.widget.JmixVerticalSplitPanel;
 import io.jmix.ui.widget.client.split.SplitPanelDockMode;
-import com.vaadin.server.Sizeable.Unit;
-import com.vaadin.ui.AbstractSplitPanel;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -189,18 +193,8 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     }
 
     @Override
-    public void setSplitPosition(int pos, int unit) {
-        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
-    }
-
-    @Override
     public void setSplitPosition(int pos, SizeUnit unit) {
         component.setSplitPosition(pos, WrapperUtils.toVaadinUnit(unit));
-    }
-
-    @Override
-    public void setSplitPosition(int pos, int unit, boolean reversePosition) {
-        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit), reversePosition);
     }
 
     @Override
@@ -214,11 +208,6 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     }
 
     @Override
-    public int getSplitPositionUnit() {
-        return ComponentsHelper.convertFromSizeUnit(getSplitPositionSizeUnit());
-    }
-
-    @Override
     public SizeUnit getSplitPositionSizeUnit() {
         return WrapperUtils.toSizeUnit(component.getSplitPositionUnit());
     }
@@ -226,11 +215,6 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     @Override
     public boolean isSplitPositionReversed() {
         return component.isSplitPositionReversed();
-    }
-
-    @Override
-    public void setMinSplitPosition(int pos, int unit) {
-        setMinSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
     }
 
     @Override
@@ -246,11 +230,6 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     @Override
     public SizeUnit getMinSplitPositionSizeUnit() {
         return WrapperUtils.toSizeUnit(component.getMinSplitPositionUnit());
-    }
-
-    @Override
-    public void setMaxSplitPosition(int pos, int unit) {
-        setMaxSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
     }
 
     @Override
@@ -314,11 +293,6 @@ public class SplitPanelImpl extends AbstractComponent<AbstractSplitPanel> implem
     @Override
     public Subscription addSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener) {
         return getEventHub().subscribe(SplitPositionChangeEvent.class, listener);
-    }
-
-    @Override
-    public void removeSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener) {
-        unsubscribe(SplitPositionChangeEvent.class, listener);
     }
 
     @Override

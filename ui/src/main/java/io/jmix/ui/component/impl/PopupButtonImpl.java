@@ -100,11 +100,10 @@ public class PopupButtonImpl extends AbstractComponent<JmixPopupButton> implemen
                     publish(PopupVisibilityEvent.class, new PopupVisibilityEvent(this))
             );
         }
-        return () -> removePopupVisibilityListener(listener);
+        return () -> internalRemovePopupVisibilityListener(listener);
     }
 
-    @Override
-    public void removePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener) {
+    protected void internalRemovePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener) {
         unsubscribe(PopupVisibilityEvent.class, listener);
 
         if (!hasSubscriptions(PopupVisibilityEvent.class)) {
@@ -145,11 +144,6 @@ public class PopupButtonImpl extends AbstractComponent<JmixPopupButton> implemen
     @Override
     public float getMenuWidth() {
         return vPopupComponent.getWidth();
-    }
-
-    @Override
-    public int getMenuWidthUnits() {
-        return ComponentsHelper.convertFromSizeUnit(getMenuWidthSizeUnit());
     }
 
     @Override

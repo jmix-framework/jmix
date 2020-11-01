@@ -33,6 +33,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @return true if popup is opened
      */
     boolean isPopupVisible();
+
     /**
      * Open or close popup panel.
      *
@@ -46,17 +47,11 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @param width new menu width
      */
     void setMenuWidth(@Nullable String width);
+
     /**
      * @return menu width
      */
     float getMenuWidth();
-    /**
-     * @return one of width units: {@link #UNITS_PIXELS}, {@link #UNITS_PERCENTAGE}
-     *
-     * @deprecated Use {@link #getMenuWidthSizeUnit()}
-     */
-    @Deprecated
-    int getMenuWidthUnits();
 
     /**
      * Gets the menu width property units.
@@ -69,6 +64,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @return whether to close menu automatically after action triggering or not
      */
     boolean isAutoClose();
+
     /**
      * Set menu automatic close after option click.
      *
@@ -80,6 +76,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * Set show icons for action buttons
      */
     void setShowActionIcons(boolean showActionIcons);
+
     /**
      * Return show icons for action buttons
      */
@@ -89,6 +86,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @return if sequential click on popup will toggle popup visibility
      */
     boolean isTogglePopupVisibilityOnClick();
+
     /**
      * Sets sequential click on popup will toggle popup visibility.
      *
@@ -100,6 +98,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @return opening direction for the popup
      */
     PopupOpenDirection getPopupOpenDirection();
+
     /**
      * Sets opening direction for the popup.
      *
@@ -111,6 +110,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @return true if a click outside the popup closing the popup, otherwise - false
      */
     boolean isClosePopupOnOutsideClick();
+
     /**
      * If set to true, clicking on outside the popup closes it. Note that this doesn't affect clicking on the button itself.
      *
@@ -124,6 +124,7 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
      * @param popupContent popup component.
      */
     void setPopupContent(@Nullable Component popupContent);
+
     /**
      * @return popup content component
      */
@@ -131,13 +132,6 @@ public interface PopupButton extends ActionsHolder, Component.HasCaption, Compon
     Component getPopupContent();
 
     Subscription addPopupVisibilityListener(Consumer<PopupVisibilityEvent> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removePopupVisibilityListener(Consumer<PopupVisibilityEvent> listener);
 
     /**
      * Event sent when the visibility of the popup changes.

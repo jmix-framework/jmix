@@ -223,12 +223,12 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
 
     @Nullable
     @Override
-    public SearchExecutor getSearchExecutor() {
+    public SearchExecutor<V> getSearchExecutor() {
         return searchExecutor;
     }
 
     @Override
-    public void setSearchExecutor(@Nullable SearchExecutor searchExecutor) {
+    public void setSearchExecutor(@Nullable SearchExecutor<V> searchExecutor) {
         this.searchExecutor = searchExecutor;
     }
 

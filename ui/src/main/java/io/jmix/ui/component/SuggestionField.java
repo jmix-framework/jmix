@@ -115,15 +115,14 @@ public interface SuggestionField<V> extends Field<V>,
      * @return {@link SearchExecutor} which performs search
      */
     @Nullable
-    SearchExecutor getSearchExecutor();
+    SearchExecutor<V> getSearchExecutor();
 
     /**
      * Sets {@link SearchExecutor} which performs search.
      *
      * @param searchExecutor SearchExecutor instance
      */
-    // Use raw type until #391 will be fixed
-    void setSearchExecutor(@Nullable SearchExecutor searchExecutor);
+    void setSearchExecutor(@Nullable SearchExecutor<V> searchExecutor);
 
     /**
      * @return {@link EnterActionHandler} which handles ENTER key pressing

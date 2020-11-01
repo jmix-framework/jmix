@@ -20,15 +20,48 @@ import com.haulmont.cuba.gui.components.SplitPanel;
 import com.haulmont.cuba.settings.binder.CubaSplitPanelSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacySplitPanelSettingsConverter;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.SplitPanelImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebSplitPanel extends SplitPanelImpl implements SplitPanel, InitializingBean {
 
     protected LegacySettingsDelegate settingsDelegate;
+
+    @Override
+    public void setSplitPosition(int pos, int unit) {
+        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+    }
+
+    @Override
+    public void setSplitPosition(int pos, int unit, boolean reversePosition) {
+        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit), reversePosition);
+    }
+
+    @Override
+    public int getSplitPositionUnit() {
+        return ComponentsHelper.convertFromSizeUnit(getSplitPositionSizeUnit());
+    }
+
+    @Override
+    public void setMinSplitPosition(int pos, int unit) {
+        setMinSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+    }
+
+    @Override
+    public void setMaxSplitPosition(int pos, int unit) {
+        setMaxSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+    }
+
+    @Override
+    public void removeSplitPositionChangeListener(Consumer<SplitPositionChangeEvent> listener) {
+        unsubscribe(SplitPositionChangeEvent.class, listener);
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

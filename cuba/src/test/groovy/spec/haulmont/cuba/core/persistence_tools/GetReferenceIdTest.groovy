@@ -27,7 +27,6 @@ import io.jmix.core.Metadata
 import io.jmix.data.PersistenceTools
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
-import spock.lang.Ignore
 
 class GetReferenceIdTest extends CoreTestSpecification {
     @Autowired
@@ -88,9 +87,7 @@ class GetReferenceIdTest extends CoreTestSpecification {
         refId.value == customer1.id
     }
 
-    @Ignore
-    //todo fix in Haulmont/jmix-data#16
-    def "get existing not loaded reference id"() {
+    def "get existing lazy loaded reference id"() {
         def order
         def refId = null
 
@@ -99,6 +96,30 @@ class GetReferenceIdTest extends CoreTestSpecification {
         def tx = persistence.createTransaction()
         try {
             def view = fetchPlans.builder(Order).addFetchPlan(FetchPlan.LOCAL).partial().build()
+
+            order = persistence.getEntityManager().find(Order, order1.id, view)
+            refId = persistenceTools.getReferenceId(order, 'customer')
+            tx.commit()
+        } finally {
+            tx.end()
+        }
+
+        then:
+
+        refId.loaded
+        refId.value != null
+
+    }
+
+    def "get existing not loaded reference id"() {
+        def order
+        def refId = null
+
+        when:
+
+        def tx = persistence.createTransaction()
+        try {
+            def view = fetchPlans.builder(Order).add("number").partial().build()
 
             order = persistence.getEntityManager().find(Order, order1.id, view)
             refId = persistenceTools.getReferenceId(order, 'customer')

@@ -19,7 +19,15 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.options.DatasourceOptions;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.data.Options;
+import io.jmix.ui.component.data.options.EnumOptions;
+import io.jmix.ui.component.data.options.ListOptions;
+import io.jmix.ui.component.data.options.MapOptions;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -56,5 +64,49 @@ public interface OptionsField<V, I> extends Field<V>, io.jmix.ui.component.Optio
         } else {
             setOptions(new DatasourceOptions<>(datasource));
         }
+    }
+
+    /**
+     * @return options list
+     * @deprecated Use {@link #getOptions()} instead.
+     */
+    @Deprecated
+    @Nullable
+    default List getOptionsList() {
+        Options options = getOptions();
+        if (options instanceof ListOptions) {
+            return (List) ((ListOptions) options).getItemsCollection();
+        }
+        return null;
+    }
+
+    /**
+     * @return options map
+     * @deprecated Use {@link #getOptions()} instead.
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    @Nullable
+    default Map<String, ?> getOptionsMap() {
+        Options options = getOptions();
+        if (options instanceof MapOptions) {
+            return ((MapOptions) options).getItemsCollection();
+        }
+        return null;
+    }
+
+    /**
+     * @return enumclass
+     * @deprecated Use {@link #getOptions()} instead.
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    @Nullable
+    default Class<? extends EnumClass> getOptionsEnum() {
+        Options options = getOptions();
+        if (options instanceof EnumOptions) {
+            return ((EnumOptions) options).getEnumClass();
+        }
+        return null;
     }
 }

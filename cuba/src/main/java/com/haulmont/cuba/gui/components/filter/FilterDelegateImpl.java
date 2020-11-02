@@ -38,6 +38,7 @@ import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.actions.ItemTrackingAction;
 import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
@@ -210,7 +211,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected BoxLayout maxResultsLayout;
     protected Field<Integer> maxResultsField;
     protected TextField<Integer> maxResultsTextField;
-    protected ComboBox<Integer> maxResultsLookupField;
+    protected LookupField<Integer> maxResultsLookupField;
     protected BoxLayout controlsLayout;
     protected ComponentContainer appliedFiltersLayout;
     protected PopupButton settingsBtn;
@@ -1630,7 +1631,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         if (maxResultsAddedToLayout) {
             if (!textMaxResults) {
-                List<Integer> optionsList = ((ComboBox) maxResultsField).getOptionsList();
+                List<Integer> optionsList = ((LookupField) maxResultsField).getOptionsList();
                 if (CollectionUtils.isNotEmpty(optionsList)) {
                     boolean removed = optionsList.removeIf(option-> option > maxFetchUI);
                     if (removed || optionsList.isEmpty()) {
@@ -1638,7 +1639,7 @@ public class FilterDelegateImpl implements FilterDelegate {
                             optionsList.add(maxFetchUI);
                         }
                         Collections.sort(optionsList);
-                        ((ComboBox) maxResultsField).setOptionsList(optionsList);
+                        ((LookupField) maxResultsField).setOptionsList(optionsList);
                     }
 
                     if (!optionsList.contains(maxResults)) {

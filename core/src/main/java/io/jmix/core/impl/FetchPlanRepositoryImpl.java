@@ -272,14 +272,10 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
         for (MetaProperty property : metaClass.getProperties()) {
-            if (belongsToLocal(property)) {
+            if (!property.getRange().isClass() && metadataTools.isPersistent(property)) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
-    }
-
-    protected boolean belongsToLocal(MetaProperty property) {
-        return !property.getRange().isClass() && metadataTools.isPersistent(property);
     }
 
     protected void addAttributesToInstanceNameFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {

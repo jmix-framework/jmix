@@ -16,21 +16,9 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.component.Resource;
-
 /**
  * @deprecated Use {@link io.jmix.ui.component.BrowserFrame} instead
  */
 @Deprecated
-public interface BrowserFrame extends io.jmix.ui.component.BrowserFrame {
-
-    /**
-     * Creates resource implementation by its type.
-     *
-     * @param type resource class to be created
-     * @param <R>  {@link Resource} inheritor
-     * @return new resource instance with given type
-     */
-    @Deprecated
-    <R extends Resource> R createResource(Class<R> type);
+public interface BrowserFrame extends ResourceView, io.jmix.ui.component.BrowserFrame {
 }

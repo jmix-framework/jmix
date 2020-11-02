@@ -20,11 +20,18 @@ import com.haulmont.cuba.gui.components.BrowserFrame;
 import io.jmix.ui.component.Resource;
 import io.jmix.ui.component.impl.BrowserFrameImpl;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebBrowserFrame extends BrowserFrameImpl implements BrowserFrame {
 
     @Override
     public <R extends Resource> R createResource(Class<R> type) {
         return applicationContext.getBean(type);
+    }
+
+    @Override
+    public void removeSourceChangeListener(Consumer<SourceChangeEvent> listener) {
+        unsubscribe(SourceChangeEvent.class, listener);
     }
 }

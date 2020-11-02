@@ -19,11 +19,11 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.Image;
-import io.jmix.ui.component.Resource;
-import io.jmix.ui.component.impl.ImageImpl;
-import io.jmix.ui.component.impl.FileStorageResourceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Resource;
+import io.jmix.ui.component.impl.FileStorageResourceImpl;
+import io.jmix.ui.component.impl.ImageImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
@@ -69,5 +69,10 @@ public class WebImage extends ImageImpl<FileDescriptor> implements Image {
     @Override
     public <R extends Resource> R createResource(Class<R> type) {
         return applicationContext.getBean(type);
+    }
+
+    @Override
+    public void removeSourceChangeListener(Consumer<SourceChangeEvent> listener) {
+        unsubscribe(SourceChangeEvent.class, listener);
     }
 }

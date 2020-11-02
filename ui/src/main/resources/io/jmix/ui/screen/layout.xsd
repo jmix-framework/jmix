@@ -1124,10 +1124,6 @@
         <xs:attribute name="css" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="hasSettings">
-        <xs:attribute name="settingsEnabled" type="xs:boolean"/>
-    </xs:attributeGroup>
-
     <xs:attributeGroup name="hasResponsive">
         <xs:attribute name="responsive" type="xs:boolean"/>
     </xs:attributeGroup>
@@ -1268,7 +1264,6 @@
         <xs:attribute name="rowHeaderMode" type="rowHeaderMode"/>
 
         <xs:attributeGroup ref="hasEditable"/>
-        <xs:attributeGroup ref="hasSettings"/>
         <xs:attributeGroup ref="hasTabIndex"/>
 
         <xs:attribute name="multiselect" type="xs:boolean"/>
@@ -1953,7 +1948,6 @@
                 <xs:attributeGroup ref="hasBuffered"/>
                 <xs:attributeGroup ref="hasDatatype"/>
                 <xs:attributeGroup ref="hasConversionErrorMessage"/>
-                <xs:attributeGroup ref="hasSettings"/>
 
                 <xs:attribute name="stylename" type="textAreaStylename"/>
                 <xs:attribute name="maxLength" type="xs:int"/>
@@ -2835,7 +2829,6 @@
                 <xs:attribute name="aggregatable" type="xs:boolean"/>
                 <xs:attribute name="aggregationPosition" type="aggregationPosition"/>
 
-                <xs:attributeGroup ref="hasSettings"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
             </xs:extension>
@@ -2889,7 +2882,6 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasDatasource"/>
-                <xs:attributeGroup ref="hasSettings"/>
 
                 <xs:attribute name="margin" type="xs:string"/>
 
@@ -3444,7 +3436,6 @@
 
                 <xs:attributeGroup ref="hasSpacing"/>
                 <xs:attributeGroup ref="hasOuterMargin"/>
-                <xs:attributeGroup ref="hasSettings"/>
                 <xs:attributeGroup ref="hasExpand"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
 

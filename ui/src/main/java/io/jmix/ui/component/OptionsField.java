@@ -44,6 +44,7 @@ public interface OptionsField<V, I> extends Field<V>, HasOptionCaptionProvider<I
      * @see ListOptions
      */
     void setOptions(@Nullable Options<I> options);
+
     /**
      * @return options object
      */
@@ -90,49 +91,5 @@ public interface OptionsField<V, I> extends Field<V>, HasOptionCaptionProvider<I
         }
 
         setOptions(new EnumOptions(optionsEnum));
-    }
-
-    /**
-     * @return options list
-     * @deprecated Use {@link #getOptions()} instead.
-     */
-    @Deprecated
-    @Nullable
-    default List getOptionsList() {
-        Options options = getOptions();
-        if (options instanceof ListOptions) {
-            return (List) ((ListOptions) options).getItemsCollection();
-        }
-        return null;
-    }
-
-    /**
-     * @return options map
-     * @deprecated Use {@link #getOptions()} instead.
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    @Nullable
-    default Map<String, ?> getOptionsMap() {
-        Options options = getOptions();
-        if (options instanceof MapOptions) {
-            return ((MapOptions) options).getItemsCollection();
-        }
-        return null;
-    }
-
-    /**
-     * @return enumclass
-     * @deprecated Use {@link #getOptions()} instead.
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    @Nullable
-    default Class<? extends EnumClass> getOptionsEnum() {
-        Options options = getOptions();
-        if (options instanceof EnumOptions) {
-            return ((EnumOptions) options).getEnumClass();
-        }
-        return null;
     }
 }

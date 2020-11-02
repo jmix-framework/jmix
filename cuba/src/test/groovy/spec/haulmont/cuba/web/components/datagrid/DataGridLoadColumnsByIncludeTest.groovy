@@ -20,7 +20,6 @@ import io.jmix.ui.component.DataGrid
 import io.jmix.ui.screen.OpenMode
 import spec.haulmont.cuba.web.UiScreenSpec
 import spec.haulmont.cuba.web.components.datagrid.screens.DataGridLoadColumnsByIncludeScreen
-import spock.lang.Ignore
 
 @SuppressWarnings(["GroovyAccessibility", "GroovyAssignabilityCheck"])
 class DataGridLoadColumnsByIncludeTest extends UiScreenSpec {
@@ -139,6 +138,6 @@ class DataGridLoadColumnsByIncludeTest extends UiScreenSpec {
         def columnList = dataGrid.getColumns()
 
         then:
-        columnList.size() == 3
+        columnList.size() == 11
     }
 }

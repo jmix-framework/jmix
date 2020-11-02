@@ -19,12 +19,11 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.global.ViewBuilder;
 import io.jmix.core.DevelopmentException;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.impl.FetchPlanLoader;
 import io.jmix.core.impl.FetchPlanRepositoryImpl;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 
 import javax.annotation.Nullable;
 import java.util.Set;
@@ -69,8 +68,4 @@ public class CubaFetchPlanRepository extends FetchPlanRepositoryImpl {
         return fetchPlan != null ? fetchPlans.builder(fetchPlan).name(fetchPlan.getName()).build() : null;
     }
 
-    @Override
-    protected boolean belongsToLocal(MetaProperty property) {
-        return super.belongsToLocal(property) && !metadataTools.isSystem(property);
-    }
 }

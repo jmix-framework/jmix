@@ -111,7 +111,7 @@ public class ViewBuilderTest {
         assertNotNull(view.getProperty("owner"));
         FetchPlan ownerView = view.getProperty("owner").getFetchPlan();
         assertNotNull(ownerView);
-        assertFalse(containsSystemProperties(ownerView));
+        assertTrue(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
         assertFalse(ownerView.containsProperty("address"));
     }
@@ -149,11 +149,11 @@ public class ViewBuilderTest {
     public void testLocal() {
         FetchPlan petView = ViewBuilder.of(Pet.class).addView(FetchPlan.LOCAL).build();
 
-        assertFalse(containsSystemProperties(petView));
+        assertTrue(containsSystemProperties(petView));
         assertTrue(petView.containsProperty("name"));
 
         FetchPlan ownerView = ViewBuilder.of(Owner.class).addView(FetchPlan.LOCAL).build();
-        assertFalse(containsSystemProperties(ownerView));
+        assertTrue(containsSystemProperties(ownerView));
         assertTrue(ownerView.containsProperty("name"));
         assertFalse(ownerView.containsProperty("address"));
     }
@@ -162,7 +162,7 @@ public class ViewBuilderTest {
     public void testBase() {
         FetchPlan view = ViewBuilder.of(Pet.class).addView(FetchPlan.BASE).build();
 
-        assertFalse(containsSystemProperties(view));
+        assertTrue(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
     }
 
@@ -173,7 +173,7 @@ public class ViewBuilderTest {
                 .add("owner")
                 .build();
 
-        assertFalse(containsSystemProperties(view));
+        assertTrue(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
 
         assertNotNull(view.getProperty("owner"));
@@ -189,7 +189,7 @@ public class ViewBuilderTest {
                 .add("owner.address.city")
                 .build();
 
-        assertFalse(containsSystemProperties(view));
+        assertTrue(containsSystemProperties(view));
         assertTrue(view.containsProperty("name"));
 
         assertNotNull(view.getProperty("owner"));

@@ -161,8 +161,11 @@
         <property name="address" fetchPlan="_local"/>
     </fetchPlan>
     <fetchPlan entity="test$Customer"
-          name="customer-without-systems"
-          extends="_local">
+               name="customer-without-systems"
+               extends="_minimal">
+        <property name="name"/>
+        <property name="email"/>
+        <property name="status"/>
         <property name="address" fetchPlan="_local"/>
     </fetchPlan>
 </fetchPlans>

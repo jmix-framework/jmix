@@ -98,9 +98,4 @@ public abstract class AbstractResourceView<T extends AbstractEmbedded> extends A
     public Subscription addSourceChangeListener(Consumer<SourceChangeEvent> listener) {
         return getEventHub().subscribe(SourceChangeEvent.class, listener);
     }
-
-    @Override
-    public void removeSourceChangeListener(Consumer<SourceChangeEvent> listener) {
-        unsubscribe(SourceChangeEvent.class, listener);
-    }
 }

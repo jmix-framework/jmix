@@ -75,15 +75,6 @@ public interface ResourceView extends Component, Component.HasCaption, HasContex
     Subscription addSourceChangeListener(Consumer<SourceChangeEvent> listener);
 
     /**
-     * Removes a listener that will be notified when a source is changed.
-     *
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeSourceChangeListener(Consumer<SourceChangeEvent> listener);
-
-    /**
      * SourceChangeEvent is fired when a source is changed.
      */
     class SourceChangeEvent extends EventObject {

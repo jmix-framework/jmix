@@ -18,8 +18,11 @@ package com.haulmont.cuba.gui.app.core.bulk;
 
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.CssLayout;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.Label;
+import com.haulmont.cuba.gui.components.ScrollBoxLayout;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;

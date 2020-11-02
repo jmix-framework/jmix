@@ -16,16 +16,13 @@
 
 package com.haulmont.cuba.web.gui.components;
 
-import com.haulmont.cuba.gui.components.ButtonsPanel;
-import io.jmix.ui.component.impl.ButtonsPanelImpl;
+import com.haulmont.cuba.gui.components.LayoutClickNotifier;
+import io.jmix.ui.component.impl.FragmentImpl;
 
 import java.util.function.Consumer;
 
-/**
- * @deprecated Use {@link ButtonsPanelImpl} instead
- */
 @Deprecated
-public class WebButtonsPanel extends ButtonsPanelImpl implements ButtonsPanel {
+public class WebFragment extends FragmentImpl implements LayoutClickNotifier {
     @Override
     public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
         internalRemoveLayoutClickListener(listener);

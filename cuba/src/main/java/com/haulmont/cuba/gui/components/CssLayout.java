@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.gui.components;
-
-import com.haulmont.cuba.gui.components.ButtonsPanel;
-import io.jmix.ui.component.impl.ButtonsPanelImpl;
-
-import java.util.function.Consumer;
+package com.haulmont.cuba.gui.components;
 
 /**
- * @deprecated Use {@link ButtonsPanelImpl} instead
+ * @deprecated Use {@link io.jmix.ui.component.CssLayout} instead
  */
 @Deprecated
-public class WebButtonsPanel extends ButtonsPanelImpl implements ButtonsPanel {
-    @Override
-    public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
-        internalRemoveLayoutClickListener(listener);
-    }
+public interface CssLayout extends io.jmix.ui.component.CssLayout, LayoutClickNotifier {
 }

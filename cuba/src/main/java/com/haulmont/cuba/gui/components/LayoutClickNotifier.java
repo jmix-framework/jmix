@@ -16,30 +16,20 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.HasButtonsPanel;
+import io.jmix.core.common.event.Subscription;
 
-import java.util.Collection;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 /**
- * @deprecated Use a {@link io.jmix.ui.component.ButtonsPanel} instead
+ * @deprecated Use {@link io.jmix.ui.component.LayoutClickNotifier} instead
  */
 @Deprecated
-public interface ButtonsPanel extends FlowBoxLayout, io.jmix.ui.component.ButtonsPanel {
-
-    String NAME = io.jmix.ui.component.ButtonsPanel.NAME;
+public interface LayoutClickNotifier extends io.jmix.ui.component.LayoutClickNotifier {
 
     /**
-     * @deprecated use {@link HasButtonsPanel} instead
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
-    interface Provider extends Supplier<Collection<Component>> {
-        @Override
-        default Collection<Component> get() {
-            return getButtons();
-        }
-
-        Collection<Component> getButtons();
-    }
+    void removeLayoutClickListener(Consumer<LayoutClickEvent> listener);
 }

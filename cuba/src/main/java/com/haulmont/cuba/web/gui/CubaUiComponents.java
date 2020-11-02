@@ -20,10 +20,16 @@ import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.ButtonsPanel;
+import com.haulmont.cuba.gui.components.CssLayout;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.FlowBoxLayout;
+import com.haulmont.cuba.gui.components.GridLayout;
+import com.haulmont.cuba.gui.components.HBoxLayout;
 import com.haulmont.cuba.gui.components.PopupButton;
 import com.haulmont.cuba.gui.components.PopupView;
+import com.haulmont.cuba.gui.components.ScrollBoxLayout;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.web.gui.components.*;
@@ -62,7 +68,6 @@ import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;
 import io.jmix.ui.component.TwinColumn;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.impl.GridLayoutImpl;
 import io.jmix.ui.sys.UiComponentsImpl;
 
 import java.lang.reflect.ParameterizedType;
@@ -113,6 +118,12 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(EntityLinkField.NAME, WebEntityLinkField.class);
         classes.put(RelatedEntities.NAME, WebRelatedEntities.class);
         classes.put(PopupButton.NAME, WebPopupButton.class);
+        classes.put(ScrollBoxLayout.NAME, WebScrollBoxLayout.class);
+        classes.put(CssLayout.NAME, WebCssLayout.class);
+        classes.put(FlowBoxLayout.NAME, WebFlowBoxLayout.class);
+        classes.put(VBoxLayout.NAME, WebVBoxLayout.class);
+        classes.put(HBoxLayout.NAME, WebHBoxLayout.class);
+        classes.put(Fragment.NAME, WebFragment.class);
 
         classes.put(OptionsList.NAME, WebOptionsList.class);
         classes.put(PickerField.NAME, WebPickerField.class);
@@ -121,7 +132,7 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
 
         classes.put(Filter.NAME, WebFilter.class);
-        classes.put("grid", GridLayoutImpl.class);
+        classes.put(GridLayout.NAME, WebGridLayout.class);
 
         classes.put(SplitPanel.NAME, WebSplitPanel.class);
         classes.put(GroupBoxLayout.NAME, WebGroupBox.class);

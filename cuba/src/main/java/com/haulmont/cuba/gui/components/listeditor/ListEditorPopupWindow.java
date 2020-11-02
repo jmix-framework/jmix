@@ -22,8 +22,10 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Field;
+import com.haulmont.cuba.gui.components.HBoxLayout;
 import com.haulmont.cuba.gui.components.Label;
 import com.haulmont.cuba.gui.components.ListEditor;
+import com.haulmont.cuba.gui.components.ScrollBoxLayout;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
@@ -361,7 +363,7 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
     }
 
     protected void addValueToLayout(final Object value, String str) {
-        BoxLayout itemLayout = uiComponents.create(HBoxLayout.class);
+        HBoxLayout itemLayout = uiComponents.create(HBoxLayout.class);
         itemLayout.setId("itemLayout");
         itemLayout.setSpacing(true);
 

@@ -20,6 +20,7 @@ import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.components.PopupButton;
+import com.haulmont.cuba.gui.components.GridLayout;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
 import io.jmix.core.JmixOrder;
@@ -146,7 +147,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(FieldGroup.NAME, FieldGroupLoader.class);
         loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
         loaders.put(Filter.NAME, FilterLoader.class);
-        loaders.put("grid", GridLayoutLoader.class);
+        loaders.put(GridLayout.NAME, GridLayoutLoader.class);
         loaders.put(FileUploadField.NAME, CubaFileUploadFieldLoader.class);
         loaders.put(FileMultiUploadField.NAME, FileMultiUploadFieldLoader.class);
         loaders.put(GroupBoxLayout.NAME, CubaGroupBoxLayoutLoader.class);

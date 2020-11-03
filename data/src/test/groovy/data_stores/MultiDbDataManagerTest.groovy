@@ -18,6 +18,7 @@ import test_support.DataSpec
 import test_support.TestInMemoryDataStore
 import test_support.entity.cars.Colour
 import test_support.entity.multidb.Db1Customer
+import test_support.entity.multidb.Db1Order
 import test_support.entity.multidb.Mem1Customer
 
 import javax.persistence.EntityManager
@@ -137,5 +138,27 @@ class MultiDbDataManagerTest extends DataSpec {
 
         then:
         loaded == null
+    }
+
+    void testCrossDataStoreReference() {
+        when:
+        Mem1Customer customer = metadata.create(Mem1Customer.class)
+        customer.setName("John Doe")
+
+        Mem1Customer committedCustomer = dataManager.save(customer)
+
+        Db1Order order = metadata.create(Db1Order.class)
+        order.setOrderDate(new Date())
+        order.setMem1Customer(committedCustomer)
+
+        Db1Order committedOrder = dataManager.save(order)
+
+        Db1Order loadedOrder = dataManager.load(Db1Order.class)
+                .id(committedOrder.id)
+                .fetchPlan({ builder -> builder.add("mem1Customer") })
+                .optional().orElse(null)
+
+        then:
+        loadedOrder.mem1Customer != null
     }
 }

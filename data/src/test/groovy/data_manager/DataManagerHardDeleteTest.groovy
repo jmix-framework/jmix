@@ -40,7 +40,6 @@ class DataManagerHardDeleteTest extends DataSpec {
     @PersistenceContext
     EntityManager entityManager
 
-    @Disabled
     def "hard delete of soft-deleted entity"() {
 
         def customer = dm.create(Customer)

@@ -503,6 +503,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         List persisted = new ArrayList<>();
 
         boolean softDeletionBefore;
+        EntityManager em;
         SavedEntitiesHolder savedEntitiesHolder = null;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
 
@@ -512,7 +513,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             try {
                 checkCRUDConstraints(context);
 
-                EntityManager em = storeAwareLocator.getEntityManager(storeName);
+                em = storeAwareLocator.getEntityManager(storeName);
                 softDeletionBefore = PersistenceHints.isSoftDeletion(em);
                 em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
@@ -647,8 +648,12 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             }
             commitTransaction(txStatus);
 
-            CubaUtil.setSoftDeletion(softDeletionBefore);
-            CubaUtil.setOriginalSoftDeletion(softDeletionBefore);
+            if (em.isOpen()) {
+                em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
+            } else {
+                CubaUtil.setSoftDeletion(softDeletionBefore);
+                CubaUtil.setOriginalSoftDeletion(softDeletionBefore);
+            }
         } catch (IllegalStateException e) {
             handleCascadePersistException(e);
         }

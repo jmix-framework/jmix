@@ -770,8 +770,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
-        //TODO An attempt to save an entity with reference to some not persisted entity.
     void createNewEntityWithDeletedReference() throws Exception {
         dataManager.remove(Id.of(UUID.fromString(model3UuidString), Model.class));
         Map<String, String> replacements = new HashMap<>();

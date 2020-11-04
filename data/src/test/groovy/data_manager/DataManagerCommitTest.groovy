@@ -155,4 +155,27 @@ class DataManagerCommitTest extends DataSpec {
         foo1.parts.size() == 1
         foo1.parts[0] == part
     }
+
+    def "save entity with removed reference"() {
+        when:
+
+        def customer = dataManager.create(Customer)
+        dataManager.remove(dataManager.save(customer))
+        def committedCustomer = dataManager.load(Customer).id(customer.id)
+                .softDeletion(false)
+                .optional().orElse(null)
+
+        def order = dataManager.create(Order)
+        order.number = '1'
+        order.customer = committedCustomer
+
+        SaveContext commitContext = new SaveContext().saving(order)
+        commitContext.setSoftDeletion(false)
+        EntitySet committedEntities = dataManager.save(commitContext)
+
+        def committedOrder = committedEntities.get(Order, order.id)
+
+        then:
+        committedOrder.customer == customer
+    }
 }

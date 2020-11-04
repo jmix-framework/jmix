@@ -38,6 +38,7 @@ import io.jmix.data.event.EntityChangedEvent;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
+import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -501,6 +502,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         Set saved = new HashSet<>();
         List persisted = new ArrayList<>();
 
+        boolean softDeletionBefore;
         SavedEntitiesHolder savedEntitiesHolder = null;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
 
@@ -508,11 +510,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
             TransactionStatus txStatus = beginSaveTransaction(context.isJoinTransaction());
             try {
-                EntityManager em = storeAwareLocator.getEntityManager(storeName);
-
                 checkCRUDConstraints(context);
 
-                boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
+                EntityManager em = storeAwareLocator.getEntityManager(storeName);
+                softDeletionBefore = PersistenceHints.isSoftDeletion(em);
                 em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
                 // persist new
@@ -611,8 +612,6 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     //                }
                 }
 
-                em.setProperty(PersistenceHints.SOFT_DELETION, softDeletionBefore);
-
                 if (!context.isDiscardSaved()) {
                     referencesCollector = entityAttributesEraser.collectErasingReferences(saved, e -> {
                         InMemoryCrudEntityContext childEntityContext = new InMemoryCrudEntityContext(metadata.getClass(e.getClass()));
@@ -648,6 +647,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             }
             commitTransaction(txStatus);
 
+            CubaUtil.setSoftDeletion(softDeletionBefore);
+            CubaUtil.setOriginalSoftDeletion(softDeletionBefore);
         } catch (IllegalStateException e) {
             handleCascadePersistException(e);
         }

@@ -20,6 +20,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.Id
 import io.jmix.core.SaveContext
 import io.jmix.data.PersistenceHints
+import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.support.TransactionTemplate
 import test_support.DataSpec
@@ -39,6 +40,7 @@ class DataManagerHardDeleteTest extends DataSpec {
     @PersistenceContext
     EntityManager entityManager
 
+    @Disabled
     def "hard delete of soft-deleted entity"() {
 
         def customer = dm.create(Customer)

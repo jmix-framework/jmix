@@ -214,8 +214,14 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
     }
 
     @Override
-    public void expand(Component component) {
-        expand(component, "", "");
+    public void expand(Component childComponent) {
+        getComponentContent().setExpandRatio(childComponent.unwrapComposition(com.vaadin.ui.Component.class), 1);
+
+        if (getExpandDirection() == ExpandDirection.VERTICAL) {
+            childComponent.setHeightFull();
+        } else {
+            childComponent.setWidthFull();
+        }
     }
 
     @Override
@@ -223,12 +229,6 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
         for (com.vaadin.ui.Component child : getComponentContent()) {
             getComponentContent().setExpandRatio(child, 0.0f);
         }
-    }
-
-    @Override
-    public void expand(Component component, String height, String width) {
-        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(component);
-        ComponentsHelper.expand(getComponentContent(), expandedComponent, height, width);
     }
 
     @Override

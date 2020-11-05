@@ -20,19 +20,35 @@ package io.jmix.ui.component;
  */
 public interface ExpandingLayout extends ComponentContainer {
 
+    /**
+     * Specifies the component that will be given maximum available space.
+     *
+     * @param component the component
+     */
     void expand(Component component);
 
     /**
-     * @deprecated Use {@link SupportsExpandRatio#setExpandRatio(Component, float)} instead.
+     * Resets the expanded component and provides equal space for all nested components.
      */
-    @Deprecated
-    void expand(Component component, String height, String width);
     void resetExpanded();
 
+    /**
+     * Returns true if the component occupies the maximum available space.
+     *
+     * @param component component to check
+     * @return true if the component occupies the maximum available space
+     */
     boolean isExpanded(Component component);
 
+    /**
+     * @return expand direction
+     * @see ExpandDirection
+     */
     ExpandDirection getExpandDirection();
 
+    /**
+     * Expand direction
+     */
     enum ExpandDirection {
         VERTICAL,
         HORIZONTAL

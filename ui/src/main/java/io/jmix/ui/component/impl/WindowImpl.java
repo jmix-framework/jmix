@@ -871,14 +871,18 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
     }
 
     @Override
-    public void expand(Component component, String height, String width) {
-        com.vaadin.ui.Component expandedComponent = component.unwrapComposition(com.vaadin.ui.Component.class);
-        ComponentsHelper.expand((AbstractOrderedLayout) getContainer(), expandedComponent, height, width);
-    }
-
-    @Override
-    public void expand(Component component) {
-        expand(component, "", "");
+    public void expand(Component childComponent) {
+        if (getContainer() instanceof AbstractOrderedLayout) {
+            AbstractOrderedLayout container = (AbstractOrderedLayout) getContainer();
+            container.setExpandRatio(childComponent.unwrapComposition(com.vaadin.ui.Component.class), 1);
+            if (getExpandDirection() == ExpandDirection.VERTICAL) {
+                childComponent.setHeightFull();
+            } else {
+                childComponent.setWidthFull();
+            }
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override

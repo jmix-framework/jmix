@@ -693,28 +693,6 @@ public abstract class ComponentsHelper {
         return action;
     }
 
-    /**
-     * Checks whether the given layout is vertical.
-     *
-     * @param layout a layout to check
-     * @return whether the layout is vertical
-     */
-    public static boolean isVerticalLayout(AbstractOrderedLayout layout) {
-        return (layout instanceof VerticalLayout)
-                || (layout instanceof JmixVerticalActionsLayout);
-    }
-
-    /**
-     * Checks whether the given layout is horizontal.
-     *
-     * @param layout a layout to check
-     * @return whether the layout is horizontal
-     */
-    public static boolean isHorizontalLayout(AbstractOrderedLayout layout) {
-        return (layout instanceof HorizontalLayout)
-                || (layout instanceof JmixHorizontalActionsLayout);
-    }
-
     @SuppressWarnings("unchecked")
     public static <T extends com.vaadin.ui.Component> Collection<T> getComponents(com.vaadin.ui.HasComponents container, Class<T> aClass) {
         List<T> res = new ArrayList<>();
@@ -766,21 +744,6 @@ public abstract class ComponentsHelper {
         return comp instanceof io.jmix.ui.component.Component
                 ? ((io.jmix.ui.component.Component) comp).unwrapComposition(com.vaadin.ui.Component.class)
                 : (com.vaadin.ui.Component) comp;
-    }
-
-    public static void expand(AbstractOrderedLayout layout,
-                              com.vaadin.ui.Component component, String height, String width) {
-        if (!isHorizontalLayout(layout)
-                && (StringUtils.isEmpty(height) || AUTO_SIZE.equals(height) || height.endsWith("%"))) {
-            component.setHeight(100, Sizeable.Unit.PERCENTAGE);
-        }
-
-        if (!isVerticalLayout(layout)
-                && (StringUtils.isEmpty(width) || AUTO_SIZE.equals(width) || width.endsWith("%"))) {
-            component.setWidth(100, Sizeable.Unit.PERCENTAGE);
-        }
-
-        layout.setExpandRatio(component, 1);
     }
 
     /**

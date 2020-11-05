@@ -21,10 +21,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.CubaProperties;
-import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.client.sys.PersistenceManagerClient;
+import com.haulmont.cuba.core.entity.annotation.Lookup;
+import com.haulmont.cuba.core.entity.annotation.LookupType;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.FilterDataContext;
@@ -39,8 +42,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.IgnoreUserTimeZone;
-import com.haulmont.cuba.core.entity.annotation.Lookup;
-import com.haulmont.cuba.core.entity.annotation.LookupType;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -56,7 +57,6 @@ import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataComponents;
-import com.haulmont.cuba.client.sys.PersistenceManagerClient;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.BooleanUtils;
@@ -834,17 +834,11 @@ public class Param {
 
         field.addValueChangeListener(e -> {
             String strValue = e.getValue();
-            if (strValue == null) {
-                _setValue(null, valueProperty);
-            } else if (StringUtils.isNotBlank(strValue)) {
-                try {
-                    _setValue(UUID.fromString(strValue), valueProperty);
-                } catch (IllegalArgumentException ie) {
-                    applicationContext.getBean(WindowManagerProvider.class).get()
-                            .showNotification(messages.getMainMessage("filter.param.uuid.Err"), Frame.NotificationType.TRAY);
-                }
-            } else {
-                throw new IllegalStateException("Invalid value: " + strValue);
+            try {
+                _setValue(datatype.parse(strValue), valueProperty);
+            } catch (ParseException ie) {
+                applicationContext.getBean(WindowManagerProvider.class).get()
+                        .showNotification(messages.getMainMessage("filter.param.uuid.Err"), Frame.NotificationType.TRAY);
             }
         });
 

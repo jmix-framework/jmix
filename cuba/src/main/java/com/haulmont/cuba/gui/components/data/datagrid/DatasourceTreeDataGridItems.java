@@ -68,4 +68,9 @@ public class DatasourceTreeDataGridItems<E extends Entity, K>
         K parentId = getHierarchicalDatasource().getParent((K) EntityValues.getId(item));
         return getHierarchicalDatasource().getItem(parentId);
     }
+
+    @Override
+    public String getHierarchyPropertyName() {
+        return getHierarchicalDatasource().getHierarchyPropertyName();
+    }
 }

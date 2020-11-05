@@ -28,6 +28,7 @@ import com.haulmont.cuba.gui.components.ResizableTextArea;
 import com.haulmont.cuba.gui.components.SplitPanel;
 import com.haulmont.cuba.gui.components.TextArea;
 import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.components.mainwindow.AppWorkArea;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.xml.layout.loaders.*;
 import io.jmix.core.JmixOrder;
@@ -157,6 +158,8 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(PopupButton.NAME, CubaPopupButtonLoader.class);
         loaders.put(Embedded.NAME, EmbeddedLoader.class);
 
+        /* Main window components */
+        loaders.put(AppWorkArea.NAME, AppWorkAreaLoader.class);
         loaders.put(FoldersPane.NAME, FoldersPaneLoader.class);
     }
 

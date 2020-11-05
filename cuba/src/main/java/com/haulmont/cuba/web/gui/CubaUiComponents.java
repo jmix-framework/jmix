@@ -40,8 +40,10 @@ import com.haulmont.cuba.gui.components.TextArea;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.components.*;
+import com.haulmont.cuba.gui.components.mainwindow.AppWorkArea;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.web.gui.components.*;
+import com.haulmont.cuba.web.gui.components.mainwindow.WebAppWorkArea;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebFoldersPane;
 import io.jmix.ui.component.Calendar;
 import io.jmix.ui.component.CheckBox;
@@ -145,11 +147,14 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(TabSheet.NAME, WebTabSheet.class);
         classes.put(Accordion.NAME, WebAccordion.class);
 
-        classes.put(FoldersPane.NAME, WebFoldersPane.class);
         classes.put(PopupView.NAME, WebPopupView.class);
         classes.put(BulkEditor.NAME, WebBulkEditor.class);
         classes.put(ListEditor.NAME, WebListEditor.class);
         classes.put(Embedded.NAME, WebEmbedded.class);
+
+        /* Main window components */
+        classes.put(AppWorkArea.NAME, WebAppWorkArea.class);
+        classes.put(FoldersPane.NAME, WebFoldersPane.class);
     }
 
     @SuppressWarnings("unchecked")

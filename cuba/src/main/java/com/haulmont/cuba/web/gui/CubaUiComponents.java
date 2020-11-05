@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.components.CssLayout;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.components.FlowBoxLayout;
+import com.haulmont.cuba.gui.components.Form;
 import com.haulmont.cuba.gui.components.Fragment;
 import com.haulmont.cuba.gui.components.GridLayout;
 import com.haulmont.cuba.gui.components.HBoxLayout;
@@ -134,6 +135,7 @@ public class CubaUiComponents extends UiComponentsImpl implements UiComponents {
         classes.put(SearchField.NAME, WebSearchField.class);
         classes.put(SearchPickerField.NAME, WebSearchPickerField.class);
         classes.put(FieldGroup.NAME, WebFieldGroup.class);
+        classes.put(Form.NAME, WebForm.class);
 
         classes.put(Filter.NAME, WebFilter.class);
         classes.put(GridLayout.NAME, WebGridLayout.class);

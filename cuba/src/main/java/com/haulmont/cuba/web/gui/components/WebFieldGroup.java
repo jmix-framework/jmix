@@ -52,6 +52,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
+@Deprecated
 public class WebFieldGroup extends AbstractComponent<JmixFormLayout> implements FieldGroup, UiPermissionAware {
 
     protected JmixFieldGroup wrapper;

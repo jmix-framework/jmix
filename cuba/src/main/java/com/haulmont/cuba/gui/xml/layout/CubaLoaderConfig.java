@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.Form;
 import com.haulmont.cuba.gui.components.GridLayout;
 import com.haulmont.cuba.gui.components.Image;
 import com.haulmont.cuba.gui.components.MaskedField;
@@ -145,6 +146,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(TextArea.NAME, CubaResizableTextAreaLoader.class);
         loaders.put(TextField.NAME, CubaTextFieldLoader.class);
         loaders.put(FieldGroup.NAME, FieldGroupLoader.class);
+        loaders.put(Form.NAME, FormLoader.class);
         loaders.put(BulkEditor.NAME, BulkEditorLoader.class);
         loaders.put(Filter.NAME, FilterLoader.class);
         loaders.put(GridLayout.NAME, GridLayoutLoader.class);

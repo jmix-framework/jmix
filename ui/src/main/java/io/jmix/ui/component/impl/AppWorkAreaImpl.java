@@ -25,6 +25,7 @@ import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.Messages;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Screens;
 import io.jmix.ui.Screens.OpenedScreens;
@@ -175,13 +176,8 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     @Override
-    public void addStateChangeListener(Consumer<StateChangeEvent> listener) {
-        getEventHub().subscribe(StateChangeEvent.class, listener);
-    }
-
-    @Override
-    public void removeStateChangeListener(Consumer<StateChangeEvent> listener) {
-        unsubscribe(StateChangeEvent.class, listener);
+    public Subscription addStateChangeListener(Consumer<StateChangeEvent> listener) {
+        return getEventHub().subscribe(StateChangeEvent.class, listener);
     }
 
     @Override
@@ -317,11 +313,6 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         return singleContainer;
     }
 
-    /**
-     * Used by {@link Screens}.
-     *
-     * @param state new state
-     */
     @Override
     public void switchTo(State state) {
         if (this.state != state) {

@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.Screens;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
@@ -29,56 +32,79 @@ public interface AppWorkArea extends Component.BelongToFrame {
 
     String NAME = "workArea";
 
-    enum Mode {
-        /**
-         * If the main window is in TABBED mode, it creates the Tabsheet inside
-         * and opens screens with {@link OpenMode#NEW_TAB} as tabs.
-         */
-        TABBED,
-
-        /**
-         * In SINGLE mode each new screen opened with {@link OpenMode#NEW_TAB}
-         * opening type will replace the current screen.
-         */
-        SINGLE
-    }
-
-    enum State {
-        INITIAL_LAYOUT,
-        WINDOW_CONTAINER
-    }
-
+    /**
+     * @return a mode
+     */
     Mode getMode();
-    void setMode(Mode mode);
-
-    State getState();
-
-    void switchTo(State state);
-
-    @Nullable
-    VBoxLayout getInitialLayout();
-    void setInitialLayout(VBoxLayout initialLayout);
-
-    void addStateChangeListener(Consumer<StateChangeEvent> listener);
-    void removeStateChangeListener(Consumer<StateChangeEvent> listener);
-
-    Stream<Screen> getOpenedWorkAreaScreensStream();
-    Stream<Screen> getActiveWorkAreaScreensStream();
-
-    Collection<Screen> getCurrentBreadcrumbs();
 
     /**
-     * @deprecated Use {@link Consumer} with {@link StateChangeEvent} type instead.
+     * Sets a mode. The default value is {@link Mode#TABBED}.
+     * <p>
+     * Unable to change a mode in {@link State#WINDOW_CONTAINER} state.
+     *
+     * @param mode a mode
      */
-    @Deprecated
-    interface StateChangeListener extends Consumer<StateChangeEvent> {
-        void stateChanged(State newState);
+    void setMode(Mode mode);
 
-        @Override
-        default void accept(StateChangeEvent event) {
-            stateChanged(event.getState());
-        }
-    }
+    /**
+     * @return a state
+     */
+    State getState();
+
+    /**
+     * INTERNAL. Managed by the screen control mechanism {@link Screens}.
+     * <p>
+     * Sets a new state. The default value is {@link State#INITIAL_LAYOUT}.
+     *
+     * @param state new state
+     */
+    @Internal
+    void switchTo(State state);
+
+    /**
+     * @return an initial layout
+     */
+    @Nullable
+    VBoxLayout getInitialLayout();
+
+    /**
+     * Sets the initial layout.
+     * <p>
+     * Unable to change initial layout in {@link State#WINDOW_CONTAINER} state.
+     *
+     * @param initialLayout an initial layout
+     * @see VBoxLayout
+     */
+    void setInitialLayout(VBoxLayout initialLayout);
+
+    /**
+     * Adds a listener that will be notified when a work area state is changed.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
+    Subscription addStateChangeListener(Consumer<StateChangeEvent> listener);
+
+    /**
+     * Returns all opened screens that are inside the work area.
+     *
+     * @return opened screens stream
+     **/
+    Stream<Screen> getOpenedWorkAreaScreensStream();
+
+    /**
+     * Returns all active screens that are inside the work area.
+     *
+     * @return active screens stream
+     **/
+    Stream<Screen> getActiveWorkAreaScreensStream();
+
+    /**
+     * Returns all screens that are inside the current breadcrumbs.
+     *
+     * @return screens that are inside the current breadcrumbs
+     **/
+    Collection<Screen> getCurrentBreadcrumbs();
 
     /**
      * Event that is fired when work area changed its state.
@@ -100,5 +126,37 @@ public interface AppWorkArea extends Component.BelongToFrame {
         public State getState() {
             return state;
         }
+    }
+
+    /**
+     * Work area mode
+     */
+    enum Mode {
+        /**
+         * If the main screen is in TABBED mode, it creates the {@link TabSheet} inside
+         * and opens screens with {@link OpenMode#NEW_TAB} as tabs.
+         */
+        TABBED,
+
+        /**
+         * In SINGLE mode each new screen opened with {@link OpenMode#NEW_TAB}
+         * opening type will replace the current screen.
+         */
+        SINGLE
+    }
+
+    /**
+     * Work area state
+     */
+    enum State {
+        /**
+         * If the work area is in the INITIAL_LAYOUT state, the work area does not contain other screens.
+         */
+        INITIAL_LAYOUT,
+
+        /**
+         * If the work area is in the WINDOW_CONTAINER state, the work area contains at least one screen.
+         */
+        WINDOW_CONTAINER
     }
 }

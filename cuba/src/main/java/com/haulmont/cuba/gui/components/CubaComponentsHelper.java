@@ -16,14 +16,27 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.vaadin.server.Sizeable;
+import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.VerticalLayout;
 import io.jmix.ui.component.ButtonsPanel;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasButtonsPanel;
+import io.jmix.ui.component.HasComponents;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.component.*;
 import io.jmix.ui.widget.JmixFormLayout;
+import io.jmix.ui.widget.JmixHorizontalActionsLayout;
+import io.jmix.ui.widget.JmixVerticalActionsLayout;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
+import static io.jmix.ui.component.Component.AUTO_SIZE;
 
 @Deprecated
 public final class CubaComponentsHelper {
@@ -99,5 +112,42 @@ public final class CubaComponentsHelper {
             }
         }
         return null;
+    }
+
+    public static void expand(AbstractOrderedLayout layout,
+                              com.vaadin.ui.Component component, String height, String width) {
+        if (!isHorizontalLayout(layout)
+                && (StringUtils.isEmpty(height) || AUTO_SIZE.equals(height) || height.endsWith("%"))) {
+            component.setHeight(100, Sizeable.Unit.PERCENTAGE);
+        }
+
+        if (!isVerticalLayout(layout)
+                && (StringUtils.isEmpty(width) || AUTO_SIZE.equals(width) || width.endsWith("%"))) {
+            component.setWidth(100, Sizeable.Unit.PERCENTAGE);
+        }
+
+        layout.setExpandRatio(component, 1);
+    }
+
+    /**
+     * Checks whether the given layout is horizontal.
+     *
+     * @param layout a layout to check
+     * @return whether the layout is horizontal
+     */
+    public static boolean isHorizontalLayout(AbstractOrderedLayout layout) {
+        return (layout instanceof HorizontalLayout)
+                || (layout instanceof JmixHorizontalActionsLayout);
+    }
+
+    /**
+     * Checks whether the given layout is vertical.
+     *
+     * @param layout a layout to check
+     * @return whether the layout is vertical
+     */
+    public static boolean isVerticalLayout(AbstractOrderedLayout layout) {
+        return (layout instanceof VerticalLayout)
+                || (layout instanceof JmixVerticalActionsLayout);
     }
 }

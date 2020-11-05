@@ -16,13 +16,23 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.HBoxLayout;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.HBoxLayoutImpl;
 
 import java.util.function.Consumer;
 
 @Deprecated
 public class WebHBoxLayout extends HBoxLayoutImpl implements HBoxLayout {
+
+    @Override
+    public void expand(Component childComponent, String height, String width) {
+        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(childComponent);
+        CubaComponentsHelper.expand(component, expandedComponent, height, width);
+    }
+
     @Override
     public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
         internalRemoveLayoutClickListener(listener);

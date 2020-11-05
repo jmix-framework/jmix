@@ -30,6 +30,8 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
@@ -54,8 +56,8 @@ import java.util.stream.Stream;
  */
 @Deprecated
 public class AbstractWindow extends Screen
-        implements Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker,
-        CubaLegacySettings {
+        implements com.haulmont.cuba.gui.components.Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor,
+        SecuredActionsHolder, ChangeTracker, CubaLegacySettings {
 
     public static final String UNKNOWN_CLOSE_ACTION_ID = "unknown";
 
@@ -81,7 +83,7 @@ public class AbstractWindow extends Screen
     }
 
     @Override
-    protected void setWindow(io.jmix.ui.component.Window window) {
+    protected void setWindow(Window window) {
         super.setWindow(window);
 
         this.frame = window;
@@ -377,7 +379,9 @@ public class AbstractWindow extends Screen
 
     @Override
     public void expand(Component component, String height, String width) {
-        frame.expand(component, height, width);
+        if (frame instanceof ExpandingLayout) {
+            ((ExpandingLayout) frame).expand(component, height, width);
+        }
     }
 
     @Override
@@ -703,7 +707,7 @@ public class AbstractWindow extends Screen
 
     @Override
     public com.haulmont.cuba.gui.WindowContext getContext() {
-        return ((Window) frame).getContext();
+        return (com.haulmont.cuba.gui.WindowContext) (frame).getContext();
     }
 
     @Override

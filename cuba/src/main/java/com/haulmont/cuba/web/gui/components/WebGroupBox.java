@@ -16,10 +16,13 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.GroupBoxLayout;
 import com.haulmont.cuba.settings.binder.CubaGroupBoxSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyGroupBoxSettingsConverter;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.GroupBoxImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
@@ -28,6 +31,12 @@ import org.dom4j.Element;
 public class WebGroupBox extends GroupBoxImpl implements GroupBoxLayout {
 
     protected LegacySettingsDelegate settingsDelegate;
+
+    @Override
+    public void expand(Component component, String height, String width) {
+        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(component);
+        CubaComponentsHelper.expand(getComponentContent(), expandedComponent, height, width);
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

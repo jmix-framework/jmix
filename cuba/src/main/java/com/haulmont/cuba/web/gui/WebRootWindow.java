@@ -14,27 +14,26 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.web.gui.components;
+package com.haulmont.cuba.web.gui;
 
+import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
-import com.haulmont.cuba.gui.components.VBoxLayout;
+import com.haulmont.cuba.gui.components.Window;
+import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.impl.VBoxLayoutImpl;
-
-import java.util.function.Consumer;
+import io.jmix.ui.component.impl.RootWindowImpl;
 
 @Deprecated
-public class WebVBoxLayout extends VBoxLayoutImpl implements VBoxLayout {
+public class WebRootWindow extends RootWindowImpl implements Window {
 
     @Override
-    public void expand(Component childComponent, String height, String width) {
-        com.vaadin.ui.Component expandedComponent = ComponentsHelper.getComposition(childComponent);
-        CubaComponentsHelper.expand(component, expandedComponent, height, width);
+    public WindowContext getContext() {
+        return (WindowContext) super.getContext();
     }
 
     @Override
-    public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
-        internalRemoveLayoutClickListener(listener);
+    public void expand(Component childComponent, String height, String width) {
+        com.vaadin.ui.Component expandedComponent = childComponent.unwrapComposition(com.vaadin.ui.Component.class);
+        CubaComponentsHelper.expand((AbstractOrderedLayout) getContainer(), expandedComponent, height, width);
     }
 }

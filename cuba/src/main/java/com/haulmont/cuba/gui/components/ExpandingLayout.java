@@ -16,9 +16,18 @@
 
 package com.haulmont.cuba.gui.components;
 
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.SupportsExpandRatio;
+
 /**
- * Use {@link io.jmix.ui.component.BoxLayout} instead
+ * @deprecated Use {@link io.jmix.ui.component.ExpandingLayout} instead
  */
 @Deprecated
-public interface BoxLayout extends io.jmix.ui.component.BoxLayout, LayoutClickNotifier, ExpandingLayout {
+public interface ExpandingLayout extends io.jmix.ui.component.ExpandingLayout {
+
+    /**
+     * @deprecated Use {@link SupportsExpandRatio#setExpandRatio(Component, float)} instead.
+     */
+    @Deprecated
+    void expand(Component component, String height, String width);
 }

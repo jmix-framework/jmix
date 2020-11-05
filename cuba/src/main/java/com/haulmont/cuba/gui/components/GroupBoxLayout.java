@@ -22,5 +22,5 @@ import io.jmix.ui.screen.Screen;
  * @deprecated for new screens that based on {@link Screen} use {@link io.jmix.ui.component.GroupBoxLayout} instead.
  */
 @Deprecated
-public interface GroupBoxLayout extends io.jmix.ui.component.GroupBoxLayout, HasSettings {
+public interface GroupBoxLayout extends io.jmix.ui.component.GroupBoxLayout, HasSettings, ExpandingLayout {
 }

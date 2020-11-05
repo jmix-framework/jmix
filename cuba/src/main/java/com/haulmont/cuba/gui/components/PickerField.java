@@ -36,6 +36,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
@@ -648,7 +649,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
                 return;
             }
 
-            Window window = (Window) ComponentsHelper.getWindow(pickerField);
+            Window window = ComponentsHelper.getWindow(pickerField);
             if (window == null) {
                 throw new IllegalStateException("Please specify Frame for EntityLinkField");
             }

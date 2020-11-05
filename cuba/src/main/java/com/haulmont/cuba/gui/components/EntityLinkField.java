@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 

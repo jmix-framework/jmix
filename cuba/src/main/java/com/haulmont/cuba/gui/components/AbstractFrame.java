@@ -27,6 +27,7 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Fragment;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +48,8 @@ import java.util.stream.Stream;
  * @deprecated Use {@link ScreenFragment} APIs instead.
  */
 @Deprecated
-public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrapper, LegacyFrame {
+public class AbstractFrame extends ScreenFragment implements com.haulmont.cuba.gui.components.Frame, Frame.Wrapper,
+        LegacyFrame {
 
     protected Frame frame;
 
@@ -296,7 +298,9 @@ public class AbstractFrame extends ScreenFragment implements Frame, Frame.Wrappe
 
     @Override
     public void expand(Component component, String height, String width) {
-        frame.expand(component, height, width);
+        if (frame instanceof ExpandingLayout) {
+            ((ExpandingLayout) frame).expand(component, height, width);
+        }
     }
 
     @Override

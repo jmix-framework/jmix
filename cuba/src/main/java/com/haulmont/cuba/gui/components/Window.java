@@ -24,7 +24,7 @@ import io.jmix.ui.util.OperationResult;
 import javax.annotation.Nullable;
 
 @Deprecated
-public interface Window extends io.jmix.ui.component.Window {
+public interface Window extends io.jmix.ui.component.Window, Frame {
 
     @Override
     WindowContext getContext();

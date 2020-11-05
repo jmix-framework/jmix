@@ -22,6 +22,7 @@ import io.jmix.ui.Screens;
 import io.jmix.ui.component.AppWorkArea;
 import io.jmix.ui.component.Image;
 import io.jmix.ui.component.ThemeResource;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.screen.Screen;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
  * Legacy base class for a controller of application Main window.
  */
 public class AbstractMainWindow extends AbstractTopLevelWindow
-        implements Window.HasWorkArea, Window.HasUserIndicator, Window.HasFoldersPane {
+        implements Window.HasWorkArea, Window.HasUserIndicator, com.haulmont.cuba.gui.components.Window.HasFoldersPane {
 
     protected static final String APP_LOGO_IMAGE = "application.logoImage";
 

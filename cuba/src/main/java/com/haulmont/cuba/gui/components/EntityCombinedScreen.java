@@ -17,6 +17,7 @@ import io.jmix.core.pessimisticlocking.LockInfo;
 import io.jmix.core.pessimisticlocking.LockNotSupported;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Frame;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

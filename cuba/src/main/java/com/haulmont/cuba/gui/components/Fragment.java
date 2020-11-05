@@ -17,8 +17,8 @@
 package com.haulmont.cuba.gui.components;
 
 /**
- * Use {@link io.jmix.ui.component.BoxLayout} instead
+ * @deprecated Use {@link io.jmix.ui.component.Fragment} instead
  */
 @Deprecated
-public interface BoxLayout extends io.jmix.ui.component.BoxLayout, LayoutClickNotifier, ExpandingLayout {
+public interface Fragment extends io.jmix.ui.component.Fragment, Frame {
 }

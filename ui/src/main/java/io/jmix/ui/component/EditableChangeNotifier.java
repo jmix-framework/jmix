@@ -22,14 +22,21 @@ import java.util.EventObject;
 import java.util.function.Consumer;
 
 /**
- * Component that fires EditableChangeEvent events.
+ * Component that fires {@link EditableChangeEvent} events.
  */
 public interface EditableChangeNotifier {
 
+    /**
+     * Adds a listener that is invoked when the {@code editable} property changes.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
     Subscription addEditableChangeListener(Consumer<EditableChangeEvent> listener);
-    @Deprecated
-    void removeEditableChangeListener(Consumer<EditableChangeEvent> listener);
 
+    /**
+     * Event sent when the {@code editable} property is changed.
+     */
     class EditableChangeEvent extends EventObject {
         public EditableChangeEvent(Component.Editable source) {
             super(source);

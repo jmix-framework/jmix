@@ -107,11 +107,6 @@ public class FormImpl extends AbstractComponent<JmixFormLayout> implements Form,
     }
 
     @Override
-    public void removeEditableChangeListener(Consumer<EditableChangeEvent> listener) {
-        unsubscribe(EditableChangeEvent.class, listener);
-    }
-
-    @Override
     public void add(Component childComponent) {
         add(childComponent, 0);
     }

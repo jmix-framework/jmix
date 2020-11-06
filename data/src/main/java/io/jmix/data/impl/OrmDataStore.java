@@ -1105,9 +1105,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         if (fetchPlan == null)
             return;
 
-        metadataTools.traverseAttributesByFetchPlan(fetchPlan, rootEntity, loadedOnly, (entity, property) -> {
-            if (property.getRange().isClass() && !metadataTools.isEmbedded(property)
-                    && metadataTools.isPersistent(property)) {
+        metadataTools.traverseAttributesByFetchPlan(fetchPlan, rootEntity, loadedOnly, new EntityAttributeVisitor() {
+            @Override
+            public void visit(Object entity, MetaProperty property) {
+
                 Object value = getValue(entity, property.getName());
                 if (value != null) {
                     if (property.getRange().getCardinality().isMany()) {
@@ -1120,6 +1121,13 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                         em.detach(value);
                     }
                 }
+            }
+
+            @Override
+            public boolean skip(MetaProperty property) {
+                return !property.getRange().isClass()
+                        || metadataTools.isEmbedded(property)
+                        || !metadataTools.isPersistent(property);
             }
         });
     }

@@ -12,9 +12,11 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
-@JmixEntity(name = "test_Mem1LongIdEntity")
+@JmixEntity
+@Entity(name = "test_Mem1LongIdEntity")
 @Store(name = "mem1")
 public class Mem1LongIdEntity {
     @Id

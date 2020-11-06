@@ -5,9 +5,7 @@
 
 package data_stores
 
-import io.jmix.core.DataManager
-import io.jmix.core.EntitySet
-import io.jmix.core.Metadata
+import io.jmix.core.*
 import io.jmix.core.impl.DataStoreFactory
 import io.jmix.data.StoreAwareLocator
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,6 +17,7 @@ import test_support.TestInMemoryDataStore
 import test_support.entity.cars.Colour
 import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Db1Order
+import test_support.entity.multidb.MainReport
 import test_support.entity.multidb.Mem1Customer
 
 import javax.persistence.EntityManager
@@ -40,6 +39,8 @@ class MultiDbDataManagerTest extends DataSpec {
     JdbcTemplate jdbcTemplate
     @Autowired
     DataStoreFactory dataStoreFactory
+    @Autowired
+    FetchPlans fetchPlans
 
     Colour colour
 
@@ -142,7 +143,7 @@ class MultiDbDataManagerTest extends DataSpec {
 
     void testCrossDataStoreReference() {
         when:
-        Mem1Customer customer = metadata.create(Mem1Customer.class)
+        Mem1Customer customer = metadata.create(Mem1Customer)
         customer.setName("John Doe")
 
         Mem1Customer committedCustomer = dataManager.save(customer)
@@ -153,12 +154,39 @@ class MultiDbDataManagerTest extends DataSpec {
 
         Db1Order committedOrder = dataManager.save(order)
 
-        Db1Order loadedOrder = dataManager.load(Db1Order.class)
+        Db1Order loadedOrder = dataManager.load(Db1Order)
                 .id(committedOrder.id)
                 .fetchPlan({ builder -> builder.add("mem1Customer") })
                 .optional().orElse(null)
 
-        then:
+        then: "entity from another store loaded correctly"
         loadedOrder.mem1Customer != null
+    }
+
+    void testNestedCrossDatastoreEntitiesSaving() {
+        when:
+        Db1Order order = metadata.create(Db1Order)
+        Db1Customer customer = metadata.create(Db1Customer)
+        order.setCustomer(customer)
+        customer.setName("prev")
+        dataManager.save(order, customer)
+
+        MainReport report = metadata.create(MainReport)
+        report = dataManager.save(report)
+        report.setDb1Order(order)
+        customer.setName("next")
+
+        def results = dataManager.save(new SaveContext().saving(report, fetchPlans.builder(MainReport)
+                .add("db1Order", { b1 ->
+                    b1.add("customer", { b2 ->
+                        b2.add("name")
+                    })
+                })
+                .build()
+        ))
+
+        then: "Nested another store entities saved sucessfully"
+
+        results.get(report).getDb1Order().getCustomer().name == "next"
     }
 }

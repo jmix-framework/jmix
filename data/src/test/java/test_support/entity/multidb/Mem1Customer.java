@@ -11,10 +11,12 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.core.metamodel.annotation.Store;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "test_Mem1Customer")
+@JmixEntity
+@Entity(name = "test_Mem1Customer")
 @Store(name = "mem1")
 public class Mem1Customer {
     @Id

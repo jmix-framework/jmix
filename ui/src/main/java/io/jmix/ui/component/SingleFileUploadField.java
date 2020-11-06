@@ -27,30 +27,6 @@ import java.util.function.Supplier;
 public interface SingleFileUploadField extends UploadField, Component.Focusable, Buffered {
 
     /**
-     * Describes file upload succeeded event when the uploads are successfully finished.
-     */
-    class FileUploadSucceedEvent extends FileUploadEvent {
-        public FileUploadSucceedEvent(UploadField source, String fileName, long contentLength) {
-            super(source, fileName, contentLength);
-        }
-    }
-
-    /**
-     * Adds file upload succeed listener. It is invoked when the uploads are successfully finished.
-     *
-     * @param listener a listener to add
-     * @return subscription
-     */
-    Subscription addFileUploadSucceedListener(Consumer<FileUploadSucceedEvent> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeFileUploadSucceedListener(Consumer<FileUploadSucceedEvent> listener);
-
-    /**
      * @return content of uploaded file.
      */
     @Nullable
@@ -142,38 +118,12 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     String getClearButtonDescription();
 
     /**
-     * Describes before value clear event. Event is invoked before value clearing when user use clear button.
+     * Adds file upload succeed listener. It is invoked when the uploads are successfully finished.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
      */
-    class BeforeValueClearEvent extends EventObject {
-        private SingleFileUploadField target;
-        private boolean clearPrevented = false;
-
-        public BeforeValueClearEvent(SingleFileUploadField target) {
-            super(target);
-            this.target = target;
-        }
-
-        public boolean isClearPrevented() {
-            return clearPrevented;
-        }
-
-        public void preventClearAction() {
-            this.clearPrevented = true;
-        }
-
-        /**
-         * @deprecated Use {@link #getSource()} instead.
-         */
-        @Deprecated
-        public SingleFileUploadField getTarget() {
-            return target;
-        }
-
-        @Override
-        public SingleFileUploadField getSource() {
-            return (SingleFileUploadField) super.getSource();
-        }
-    }
+    Subscription addFileUploadSucceedListener(Consumer<FileUploadSucceedEvent> listener);
 
     /**
      * Sets a callback interface which is invoked by the {@link SingleFileUploadField} before value
@@ -182,62 +132,20 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
      * Listener can prevent value clearing using {@link BeforeValueClearEvent#preventClearAction()}.
      *
      * @param listener a listener to add
+     * @return a registration object for removing an event listener
      * @see #setShowClearButton(boolean)
      */
     Subscription addBeforeValueClearListener(Consumer<BeforeValueClearEvent> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeBeforeValueClearListener(Consumer<BeforeValueClearEvent> listener);
-
-    /**
-     * Describes after value clear event.
-     */
-    class AfterValueClearEvent extends EventObject {
-        private SingleFileUploadField target;
-        private boolean valueCleared;
-
-        public AfterValueClearEvent(SingleFileUploadField target, boolean valueCleared) {
-            super(target);
-            this.target = target;
-            this.valueCleared = valueCleared;
-        }
-
-        /**
-         * @deprecated Use {@link #getSource()} instead.
-         */
-        public SingleFileUploadField getTarget() {
-            return target;
-        }
-
-        public boolean isValueCleared() {
-            return valueCleared;
-        }
-
-        @Override
-        public SingleFileUploadField getSource() {
-            return (SingleFileUploadField) super.getSource();
-        }
-    }
 
     /**
      * Adds a callback interface which is invoked by the {@link SingleFileUploadField} after value
      * has been cleared using clear button.
      *
      * @param listener a listener to add
+     * @return a registration object for removing an event listener
      * @see #setShowClearButton(boolean)
      */
     Subscription addAfterValueClearListener(Consumer<AfterValueClearEvent> listener);
-
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeAfterValueClearListener(Consumer<AfterValueClearEvent> listener);
 
     /**
      * Set content provider which contains file data.
@@ -255,15 +163,65 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     Supplier<InputStream> getContentProvider();
 
     /**
-     * @deprecated Use {@link Supplier} of {@link InputStream} instead.
+     * Describes file upload succeeded event when the uploads are successfully finished.
      */
-    @Deprecated
-    interface FileContentProvider extends Supplier<InputStream> {
-        @Override
-        default InputStream get() {
-            return provide();
+    class FileUploadSucceedEvent extends FileUploadEvent {
+        public FileUploadSucceedEvent(UploadField source, String fileName, long contentLength) {
+            super(source, fileName, contentLength);
+        }
+    }
+
+    /**
+     * Describes before value clear event. Event is invoked before value clearing when user use clear button.
+     */
+    class BeforeValueClearEvent extends EventObject {
+        private boolean clearPrevented = false;
+
+        public BeforeValueClearEvent(SingleFileUploadField target) {
+            super(target);
         }
 
-        InputStream provide();
+        @Override
+        public SingleFileUploadField getSource() {
+            return (SingleFileUploadField) super.getSource();
+        }
+
+        /**
+         * @return true if clearing the file value is prevented
+         */
+        public boolean isClearPrevented() {
+            return clearPrevented;
+        }
+
+        /**
+         * Prevents the file value from being cleared.
+         */
+        public void preventClearAction() {
+            this.clearPrevented = true;
+        }
+    }
+
+    /**
+     * Describes after value clear event.
+     */
+    class AfterValueClearEvent extends EventObject {
+        private final boolean valueCleared;
+
+        public AfterValueClearEvent(SingleFileUploadField target, boolean valueCleared) {
+            super(target);
+            this.valueCleared = valueCleared;
+        }
+
+        @Override
+        public SingleFileUploadField getSource() {
+            return (SingleFileUploadField) super.getSource();
+        }
+
+        /**
+         * @return true if the file value has been cleared
+         */
+        public boolean isValueCleared() {
+            return valueCleared;
+        }
     }
 }

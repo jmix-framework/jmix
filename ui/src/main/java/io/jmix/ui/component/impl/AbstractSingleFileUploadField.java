@@ -176,11 +176,6 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
         return getEventHub().subscribe(SingleFileUploadField.FileUploadSucceedEvent.class, listener);
     }
 
-    @Override
-    public void removeFileUploadSucceedListener(Consumer<SingleFileUploadField.FileUploadSucceedEvent> listener) {
-        unsubscribe(SingleFileUploadField.FileUploadSucceedEvent.class, listener);
-    }
-
     @Nullable
     @Override
     public String getAccept() {
@@ -444,18 +439,8 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
     }
 
     @Override
-    public void removeBeforeValueClearListener(Consumer<BeforeValueClearEvent> listener) {
-        unsubscribe(BeforeValueClearEvent.class, listener);
-    }
-
-    @Override
     public Subscription addAfterValueClearListener(Consumer<AfterValueClearEvent> listener) {
         return getEventHub().subscribe(AfterValueClearEvent.class, listener);
-    }
-
-    @Override
-    public void removeAfterValueClearListener(Consumer<AfterValueClearEvent> listener) {
-        unsubscribe(AfterValueClearEvent.class, listener);
     }
 
     @Override

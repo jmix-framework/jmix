@@ -207,11 +207,6 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
     }
 
     @Override
-    public void removeQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener) {
-        unsubscribe(QueueUploadCompleteEvent.class, listener);
-    }
-
-    @Override
     public void setIcon(@Nullable String icon) {
         this.icon = icon;
 

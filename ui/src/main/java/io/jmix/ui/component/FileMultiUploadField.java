@@ -16,7 +16,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.component.compatibility.FileMultiUploadFieldQueueUploadCompleteListener;
 
 import java.util.EventObject;
 import java.util.Map;
@@ -43,48 +42,15 @@ public interface FileMultiUploadField extends UploadField {
     void clearUploads();
 
     /**
-     * @see QueueUploadCompleteEvent
-     * @deprecated Use {@link #addQueueUploadCompleteListener(Consumer)} instead.
-     */
-    @Deprecated
-    @FunctionalInterface
-    interface QueueUploadCompleteListener {
-        void queueUploadComplete();
-    }
-
-    /**
-     * @deprecated Use {@link #addQueueUploadCompleteListener(Consumer)} instead
-     */
-    @Deprecated
-    default void addQueueUploadCompleteListener(QueueUploadCompleteListener listener) {
-        addQueueUploadCompleteListener(new FileMultiUploadFieldQueueUploadCompleteListener(listener));
-    }
-
-    /**
-     * @deprecated Use {@link #removeFileUploadErrorListener(Consumer)} instead
-     */
-    @Deprecated
-    default void removeQueueUploadCompleteListener(QueueUploadCompleteListener listener) {
-        removeQueueUploadCompleteListener(new FileMultiUploadFieldQueueUploadCompleteListener(listener));
-    }
-
-    /**
      * Adds queue upload complete listener. It is invoked when all selected files are uploaded to the temporary storage.
      *
      * @param listener a listener to add
-     * @return subscription
+     * @return a registration object for removing an event listener
      */
     Subscription addQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener);
-
-    /**
-     *  Describes queue upload complete event.
+     * Describes queue upload complete event.
      */
     class QueueUploadCompleteEvent extends EventObject {
 

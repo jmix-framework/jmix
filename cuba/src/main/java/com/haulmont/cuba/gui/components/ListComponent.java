@@ -19,6 +19,10 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.Table;
+
+import javax.annotation.Nullable;
+import java.util.function.Function;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -35,4 +39,27 @@ public interface ListComponent<E extends Entity> extends io.jmix.ui.component.Li
      */
     @Deprecated
     CollectionDatasource getDatasource();
+
+    /**
+     * Provides icons for particular rows in the table.
+     *
+     * @param <E> entity class
+     * @deprecated Use {@link Function} instead
+     */
+    @Deprecated
+    interface IconProvider<E> extends Function<E, String> {
+        @Override
+        default String apply(E entity) {
+            return getItemIcon(entity);
+        }
+
+        /**
+         * Called by {@link Table} to get an icon to be shown for a row.
+         *
+         * @param entity an entity instance represented by the current row
+         * @return icon name or null to show no icon
+         */
+        @Nullable
+        String getItemIcon(E entity);
+    }
 }

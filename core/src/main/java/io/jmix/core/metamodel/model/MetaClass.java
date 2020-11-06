@@ -85,5 +85,6 @@ public interface MetaClass extends MetadataObject {
      */
     Collection<MetaProperty> getProperties();
 
+    @Nullable
     Store getStore();
 }

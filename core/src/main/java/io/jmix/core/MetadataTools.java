@@ -31,10 +31,7 @@ import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.metamodel.model.*;
 import io.jmix.core.security.CurrentAuthentication;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -211,11 +208,11 @@ public class MetadataTools {
      */
     @Nullable
     public String getStoreName(MetaClass metaClass) {
-        String storeName = (String) metaClass.getAnnotations().get(STORE_ANN_NAME);
-        if (storeName == null) {
+        Store store = metaClass.getStore();
+        if (store == null) {
             return isPersistent(metaClass) ? Stores.MAIN : null;
         } else
-            return storeName;
+            return store.getName();
     }
 
     /**

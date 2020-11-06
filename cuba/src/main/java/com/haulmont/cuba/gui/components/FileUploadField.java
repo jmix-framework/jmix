@@ -18,10 +18,14 @@ package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.FileStorageUploadField;
 import io.jmix.ui.upload.TemporaryStorage;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -49,4 +53,38 @@ public interface FileUploadField extends FileStorageUploadField<FileDescriptor>,
      */
     @Deprecated
     byte[] getBytes();
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeFileUploadSucceedListener(Consumer<FileUploadSucceedEvent> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeBeforeValueClearListener(Consumer<BeforeValueClearEvent> listener);
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeAfterValueClearListener(Consumer<AfterValueClearEvent> listener);
+
+    /**
+     * @deprecated Use {@link Supplier} of {@link InputStream} instead.
+     */
+    @Deprecated
+    interface FileContentProvider extends Supplier<InputStream> {
+        @Override
+        default InputStream get() {
+            return provide();
+        }
+
+        InputStream provide();
+    }
 }

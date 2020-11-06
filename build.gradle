@@ -23,6 +23,7 @@ group = 'io.jmix.templates.studio'
 
 task contentJar(type: Jar) {
     from("content")
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: bomVersion])
     manifest {
         attributes('Studio-Version-Range': '0-1') // perhaps we should keep it either here OR in pom (see below)
     }

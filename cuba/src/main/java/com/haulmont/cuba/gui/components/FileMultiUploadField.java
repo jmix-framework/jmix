@@ -16,6 +16,11 @@
  */
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.components.compatibility.FileMultiUploadFieldQueueUploadCompleteListener;
+import io.jmix.core.common.event.Subscription;
+
+import java.util.function.Consumer;
+
 /**
  * Component for uploading files from client to server that supports multiple file selection.
  *
@@ -23,5 +28,39 @@ package com.haulmont.cuba.gui.components;
  */
 @Deprecated
 public interface FileMultiUploadField extends io.jmix.ui.component.FileMultiUploadField {
+
     String NAME = "multiUpload";
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener);
+
+    /**
+     * @deprecated Use {@link #addQueueUploadCompleteListener(Consumer)} instead
+     */
+    @Deprecated
+    default void addQueueUploadCompleteListener(QueueUploadCompleteListener listener) {
+        addQueueUploadCompleteListener(new FileMultiUploadFieldQueueUploadCompleteListener(listener));
+    }
+
+    /**
+     * @deprecated Use {@link #removeFileUploadErrorListener(Consumer)} instead
+     */
+    @Deprecated
+    default void removeQueueUploadCompleteListener(QueueUploadCompleteListener listener) {
+        removeQueueUploadCompleteListener(new FileMultiUploadFieldQueueUploadCompleteListener(listener));
+    }
+
+    /**
+     * @see QueueUploadCompleteEvent
+     * @deprecated Use {@link #addQueueUploadCompleteListener(Consumer)} instead.
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface QueueUploadCompleteListener {
+        void queueUploadComplete();
+    }
 }

@@ -19,7 +19,14 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import io.jmix.ui.component.impl.FileMultiUploadFieldImpl;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebFileMultiUploadField extends FileMultiUploadFieldImpl
         implements FileMultiUploadField {
+
+    @Override
+    public void removeQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener) {
+        unsubscribe(QueueUploadCompleteEvent.class, listener);
+    }
 }

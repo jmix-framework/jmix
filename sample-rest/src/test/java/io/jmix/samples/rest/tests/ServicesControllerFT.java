@@ -27,7 +27,6 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
     private String carUuidString;
     private String secondCarUuidString;
     private String colourUuidString;
-    private String repairUuidString;
 
     @Test
     public void serviceWithNoParamsPOST() throws Exception {
@@ -722,14 +721,12 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         );
 
         UUID repairId = dirtyData.createRepairUuid();
-        repairUuidString = repairId.toString();
         executePrepared("insert into ref_repair(id, car_id, repair_date, version) values (?, ?, ?, ?)",
                 repairId,
                 carUuid,
                 java.sql.Date.valueOf("2012-01-13"),
                 1L
         );
-
 
         dirtyData.createRepairUuid();
     }

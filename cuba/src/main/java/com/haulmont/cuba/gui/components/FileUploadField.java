@@ -33,12 +33,12 @@ import java.util.function.Supplier;
  * @deprecated Use {@link io.jmix.ui.component.FileStorageUploadField} instead
  */
 @Deprecated
-public interface FileUploadField extends FileStorageUploadField<FileDescriptor>, Field<FileDescriptor> {
+public interface FileUploadField extends UploadField, FileStorageUploadField<FileDescriptor>, Field<FileDescriptor> {
 
     String NAME = "upload";
 
     /**
-     * Return FileDescriptor instance of uploaded file. Can be null.
+     * Returns FileDescriptor instance of uploaded file. Can be null.
      *
      * @return FileDescriptor instance or null
      */
@@ -46,7 +46,7 @@ public interface FileUploadField extends FileStorageUploadField<FileDescriptor>,
     FileDescriptor getFileDescriptor();
 
     /**
-     * Get content bytes for uploaded file.
+     * Gets content bytes for uploaded file.
      *
      * @return Bytes for uploaded file.
      * @deprecated Please use {@link FileStorageUploadField#getFileId()} method and {@link TemporaryStorage}.

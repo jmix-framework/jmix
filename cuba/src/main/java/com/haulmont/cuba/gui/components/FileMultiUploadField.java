@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * @deprecated Use {@link io.jmix.ui.component.FileMultiUploadField} instead
  */
 @Deprecated
-public interface FileMultiUploadField extends io.jmix.ui.component.FileMultiUploadField {
+public interface FileMultiUploadField extends UploadField, io.jmix.ui.component.FileMultiUploadField {
 
     String NAME = "multiUpload";
 
@@ -47,7 +47,7 @@ public interface FileMultiUploadField extends io.jmix.ui.component.FileMultiUplo
     }
 
     /**
-     * @deprecated Use {@link #removeFileUploadErrorListener(Consumer)} instead
+     * @deprecated Use {@link Subscription} instead
      */
     @Deprecated
     default void removeQueueUploadCompleteListener(QueueUploadCompleteListener listener) {

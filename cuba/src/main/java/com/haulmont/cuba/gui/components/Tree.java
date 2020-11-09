@@ -23,6 +23,8 @@ import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.data.TreeItems;
 
+import java.util.function.Function;
+
 /**
  * Component compatible with {@link Datasource}.
  *
@@ -35,7 +37,8 @@ public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.com
         LookupComponent<E> {
 
     static <T extends Entity> TypeToken<Tree<T>> of(Class<T> itemClass) {
-        return new TypeToken<Tree<T>>() {};
+        return new TypeToken<Tree<T>>() {
+        };
     }
 
     /**
@@ -53,7 +56,7 @@ public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.com
     }
 
     /**
-     * @return hirearchical datasource
+     * @return hierarchical datasource
      * @deprecated Use {@link #getItems()} instead
      */
     @Deprecated
@@ -62,5 +65,41 @@ public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.com
         return treeItems != null
                 ? ((DatasourceTreeItems) treeItems).getDatasource()
                 : null;
+    }
+
+    /**
+     * Sets whether multiple selection mode is enabled.
+     *
+     * @param multiselect {@code true} for multiselect, {@code false} otherwise
+     * @deprecated Use {@link #setSelectionMode(SelectionMode)} instead
+     */
+    @Deprecated
+    void setMultiSelect(boolean multiselect);
+
+    /**
+     * @deprecated refresh datasource instead
+     */
+    @Deprecated
+    void refresh();
+
+    /**
+     * Provides style names for tree items.
+     */
+    @Deprecated
+    interface StyleProvider<E> extends Function<E, String> {
+        @Override
+        default String apply(E entity) {
+            return getStyleName(entity);
+        }
+
+        /**
+         * Called by {@link io.jmix.ui.component.Tree} to get a style for item. <br>
+         * All unhandled exceptions from StyleProvider in Web components by default are logged with ERROR level
+         * and not shown to users.
+         *
+         * @param entity an entity instance represented by the current item
+         * @return style name or null to apply the default
+         */
+        String getStyleName(E entity);
     }
 }

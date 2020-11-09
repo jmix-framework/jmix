@@ -18,7 +18,9 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.Tree;
+import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.component.impl.TreeImpl;
 
 import java.util.function.Consumer;
@@ -32,5 +34,22 @@ public class WebTree<E extends Entity>
     @Override
     public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
         unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    public void setMultiSelect(boolean multiselect) {
+        setSelectionMode(multiselect
+                ? SelectionMode.MULTI
+                : SelectionMode.SINGLE);
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void refresh() {
+        TreeItems<E> treeItems = getItems();
+
+        if (treeItems instanceof DatasourceTreeItems) {
+            ((DatasourceTreeItems) treeItems).getDatasource().refresh();
+        }
     }
 }

@@ -1320,7 +1320,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendPost(url, oauthToken, json, null)) {
             assertEquals(HttpStatus.SC_CREATED, statusCode(response));
             ReadContext ctx = parseResponse(response);
-            customerId = Long.valueOf(ctx.read("$.id"));
+            customerId = Long.valueOf(ctx.read("$.id").toString());
             assertNotNull(customerId);
         }
 

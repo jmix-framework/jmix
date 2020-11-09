@@ -16,28 +16,19 @@
 
 package io.jmix.samples.rest;
 
-import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.Authenticator;
-import io.jmix.data.DataConfiguration;
-import io.jmix.rest.RestConfiguration;
-import io.jmix.security.SecurityConfiguration;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.event.EventListener;
 
 import javax.sql.DataSource;
 
 @SpringBootApplication
-@Import({CoreConfiguration.class,
-        SecurityConfiguration.class,
-        DataConfiguration.class,
-        RestConfiguration.class})
 public class SampleRestApplication {
 
     @Autowired
@@ -70,18 +61,4 @@ public class SampleRestApplication {
         return dataSource;
     }
 
-//    @Bean
-//    public SessionRegistry sessionRegistry() {
-//        return new SessionRegistryImpl();
-//    }
-//
-//    @Bean
-//    public SessionAuthenticationStrategy sessionAuthenticationStrategy(){
-//        return new JmixSessionAuthenticationStrategy();
-//    }
-//
-//    @Bean
-//    public RememberMeServices rememberMeServices(){
-//        return new SpringSessionRememberMeServices();
-//    }
 }

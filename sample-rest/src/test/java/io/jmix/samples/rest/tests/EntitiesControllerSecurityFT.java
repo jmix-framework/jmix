@@ -18,12 +18,18 @@ package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.core.security.PermissionType;
+import io.jmix.core.Id;
+import io.jmix.core.security.impl.CoreUser;
+import io.jmix.samples.rest.entity.driver.Car;
+import io.jmix.samples.rest.entity.driver.Colour;
+import io.jmix.samples.rest.entity.driver.Model;
+import io.jmix.samples.rest.security.*;
+import io.jmix.samples.rest.service.app.RestTestService;
+import io.jmix.security.role.assignment.RoleAssignment;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.sql.DriverManager;
@@ -31,6 +37,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,49 +47,37 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
-@Disabled
-public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
-
-    //todo encryption
-//    private static EncryptionModule encryption = new BCryptEncryptionModule();
+class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
 
     /**
      * Entitites ids
      */
     private String carUuidString;
     private String colourUuidString;
-    private String driverUuidString;
+    private Colour colour;
+    private Car car;
+    private Model model;
     /**
      * User ids
      */
-    private UUID colorReadUserId;
-    private UUID colorUpdateUserId;
-    private UUID colorCreateUserId;
-    private UUID colorDeleteUserId;
-    private UUID carReadUserId;
+    private CoreUser colorRead;
+    private CoreUser colorUpdate;
+    private CoreUser colorCreate;
+    private CoreUser colorDelete;
+    private CoreUser carRead;
     /**
      * Logins
      */
-    private String colorReadUserLogin = "colorReadUser";
-    private String colorUpdateUserLogin = "colorUpdateUser";
-    private String colorCreateUserLogin = "colorCreateUser";
-    private String colorDeleteUserLogin = "colorDeleteUser";
-    private String carReadUserLogin = "carReadUser";
-    private String colorReadUserPassword = "colorReadUser";
-    private String colorUpdateUserPassword = "colorUpdateUser";
-    private String colorCreateUserPassword = "colorCreateUser";
-    private String colorDeleteUserPassword = "colorDeleteUser";
-    private String carReadUserPassword = "carReadUser";
-
-    /**
-     * Roles
-     */
-    private UUID colorReadRoleId;
-    private UUID colorUpdateRoleId;
-    private UUID colorCreateRoleId;
-    private UUID colorDeleteRoleId;
-    private UUID carReadRoleId;
-    private UUID noColorReadRoleId;
+    private final String colorReadUserLogin = "colorReadUser";
+    private final String colorUpdateUserLogin = "colorUpdateUser";
+    private final String colorCreateUserLogin = "colorCreateUser";
+    private final String colorDeleteUserLogin = "colorDeleteUser";
+    private final String carReadUserLogin = "carReadUser";
+    private final String colorReadUserPassword = "colorReadUser";
+    private final String colorUpdateUserPassword = "colorUpdateUser";
+    private final String colorCreateUserPassword = "colorCreateUser";
+    private final String colorDeleteUserPassword = "colorDeleteUser";
+    private final String carReadUserPassword = "carReadUser";
 
     /**
      * User OAuth tokens
@@ -98,25 +93,27 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        prepareDb();
+        super.setUp();
 
-//        colorReadUserToken = getAuthToken(colorReadUserLogin, colorReadUserPassword);
-//        colorUpdateUserToken = getAuthToken(colorUpdateUserLogin, colorUpdateUserPassword);
-//        colorCreateUserToken = getAuthToken(colorCreateUserLogin, colorCreateUserPassword);
-//        colorDeleteUserToken = getAuthToken(colorDeleteUserLogin, colorDeleteUserPassword);
-//        carReadUserToken = getAuthToken(carReadUserLogin, carReadUserPassword);
+        colorReadUserToken = getAuthToken(baseUrl, colorReadUserLogin, colorReadUserPassword);
+        colorUpdateUserToken = getAuthToken(baseUrl, colorUpdateUserLogin, colorUpdateUserPassword);
+        colorCreateUserToken = getAuthToken(baseUrl, colorCreateUserLogin, colorCreateUserPassword);
+        colorDeleteUserToken = getAuthToken(baseUrl, colorDeleteUserLogin, colorDeleteUserPassword);
+        carReadUserToken = getAuthToken(baseUrl, carReadUserLogin, carReadUserPassword);
     }
 
     @AfterEach
     public void tearDown() throws SQLException {
         dirtyData.cleanup(conn);
-
+        dataManager.remove(Id.of(car));
+        dataManager.remove(Id.of(model));
+        dataManager.remove(Id.of(colour));
         if (conn != null)
             conn.close();
     }
 
     @Test
-    public void findPermitted() throws Exception {
+    void findPermitted() throws Exception {
         //trying to get entity with permitted read access
         String url = baseUrl + "/entities/ref$Colour/" + colourUuidString;
         try (CloseableHttpResponse response = sendGet(url, colorReadUserToken, null)) {
@@ -127,7 +124,7 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void findForbidden() throws Exception {
+    void findForbidden() throws Exception {
         //trying to get entity with forbidden read access
         String url = baseUrl + "/entities/ref_Car/" + carUuidString;
         try (CloseableHttpResponse response = sendGet(url, colorReadUserToken, null)) {
@@ -138,7 +135,7 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void findAttributes() throws Exception {
+    void findAttributes() throws Exception {
         //checks that forbidden attributes aren't included to the result JSON
         String url = baseUrl + "/entities/ref_Car/" + carUuidString + "?view=carEdit";
         try (CloseableHttpResponse response = sendGet(url, carReadUserToken, null)) {
@@ -155,7 +152,7 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     }
 
     @Test
-    public void unavailableAttributesMustBeHiddenInQueryResult() throws Exception {
+    void unavailableAttributesMustBeHiddenInQueryResult() throws Exception {
         String url = baseUrl + "/queries/ref_Car/carByVin?vin=VWV000";
 
         try (CloseableHttpResponse response = sendGet(url, carReadUserToken, null)) {
@@ -169,23 +166,21 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         }
     }
 
-//    @Test
-//    public void unavailableAttributesMustBeHiddenInServiceResult() throws Exception {
-//        Map<String, String> params = new LinkedHashMap<>();
-//        params.put("carId", carUuidString);
-//        params.put("viewName", "carEdit");
-//        try (CloseableHttpResponse response = sendGet(baseUrl+"/services/" + PortalTestService.NAME + "/findCar", carReadUserToken, params)) {
-//            assertEquals(HttpStatus.SC_OK, statusCode(response));
-//            assertEquals("application/json;charset=UTF-8", responseContentType(response));
-//            ReadContext ctx = parseResponse(response);
-//            assertEquals(carUuidString, ctx.read("$.id"));
-//            assertEquals("ref_Car", ctx.read("$._entityName"));
-//            assertNotNull(ctx.read("$.model"));
-//
-//            thrown.expect(PathNotFoundException.class);
-//            ctx.read("$.colour");
-//        }
-//    }
+    @Test
+    public void unavailableAttributesMustBeHiddenInServiceResult() throws Exception {
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("carId", carUuidString);
+        params.put("viewName", "carEdit");
+        try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/findCar", carReadUserToken, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals("application/json;charset=UTF-8", responseContentType(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(carUuidString, ctx.read("$.id"));
+            assertEquals("ref_Car", ctx.read("$._entityName"));
+            assertNotNull(ctx.read("$.model"));
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.colour"));
+        }
+    }
 
     @Test
     public void createForbidden() throws Exception {
@@ -266,446 +261,54 @@ public class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         conn = DriverManager.getConnection(DB_URL, "sa", "");
         createDbData();
         createDbUsers();
-        createDbRoles();
         createDbUserRoles();
-        createDbPermissions();
     }
 
-    private void createDbPermissions() throws SQLException {
-        createEntityOpPermissions();
-        createEntityAttrPermissions();
+    private void createDbUserRoles() {
 
-        //add cuba.restApi.enabled for each role
-        //todo security
-//        List<UUID> roleIds = Arrays.asList(colorReadRoleId, colorUpdateRoleId, colorCreateRoleId, colorDeleteRoleId,
-//                carReadRoleId, noColorReadRoleId);
-//        for (UUID roleId : roleIds) {
-//            executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-//                            "values(?, ?, ?, ?, ?)",
-//                    dirtyData.createPermissionUuid(),
-//                    roleId,
-//                    PermissionType.SPECIFIC.getId(),
-//                    "cuba.restApi.enabled",
-//                    Access.ALLOW.getId()
-//            );
-//        }
+        roleAssignmentProvider.addAssignment(new RoleAssignment(colorRead.getUsername(), ColorReadRole.NAME));
+        roleAssignmentProvider.addAssignment(new RoleAssignment(colorUpdate.getUsername(), ColorUpdateRole.NAME));
+        roleAssignmentProvider.addAssignment(new RoleAssignment(colorCreate.getUsername(), ColorCreateRole.NAME));
+        roleAssignmentProvider.addAssignment(new RoleAssignment(colorDelete.getUsername(), ColorDeleteRole.NAME));
+        roleAssignmentProvider.addAssignment(new RoleAssignment(carRead.getUsername(), CarReadRole.NAME));
+
     }
 
-    private void createEntityOpPermissions() throws SQLException {
-        Integer PERMIT = 1;
-        Integer FORBID = 0;
+    private void createDbData() {
+        colour = dataManager.create(Colour.class);
+        colour.setName("Red");
+        colour.setDescription("Description");
+        colour = dataManager.save(colour);
+        colourUuidString = colour.getId().toString();
 
-        UUID canReadColorPrmsId = dirtyData.createPermissionUuid();
-        //colourReadRole allows to read colours
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canReadColorPrmsId,
-                colorReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref$Colour:read",
-                PERMIT
-        );
+        model = dataManager.create(Model.class);
+        model.setName("Audi");
+        model = dataManager.save(model);
+        modelUuidString = model.getId().toString();
 
-        UUID cantReadCarPrmsID = dirtyData.createPermissionUuid();
-        //colorReadRole prohibits to read cars
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                cantReadCarPrmsID,
-                colorReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref_Car:read",
-                FORBID
-        );
-
-        UUID canUpdateColorPrmsId = dirtyData.createPermissionUuid();
-        //colorUpdateRole allows to update colours
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canUpdateColorPrmsId,
-                colorUpdateRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref$Colour:update",
-                PERMIT
-        );
-
-        UUID canCreateColorPrmsId = dirtyData.createPermissionUuid();
-        //colorCreateRole allows to create colours
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canCreateColorPrmsId,
-                colorCreateRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref$Colour:create",
-                PERMIT
-        );
-
-        UUID canDeleteColorPrmsId = dirtyData.createPermissionUuid();
-        //colorDeleteRole allows to delete colours
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canDeleteColorPrmsId,
-                colorDeleteRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref$Colour:delete",
-                PERMIT
-        );
-
-        UUID cantUpdateCarPrmsId = dirtyData.createPermissionUuid();
-        //colorUpdateRole prohibits to update cars
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                cantUpdateCarPrmsId,
-                colorUpdateRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref_Car:update",
-                FORBID
-        );
-
-        UUID cantReadColorPrmsId = dirtyData.createPermissionUuid();
-        //noColorReadRole prohibits to view colors
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                cantReadColorPrmsId,
-                noColorReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "ref$Colour:read",
-                FORBID
-        );
+        car = dataManager.create(Car.class);
+        car.setVin("VWV000");
+        car.setColour(colour);
+        car.setModel(model);
+        car = dataManager.save(car);
+        carUuidString = car.getId().toString();
     }
 
-    private void createEntityAttrPermissions() throws SQLException {
-        Integer MODIFY = 2;
-        Integer VIEW = 1;
-        Integer DENY = 0;
-
-        UUID canReadCarModelPrmsId = dirtyData.createPermissionUuid();
-        //carReadRole allows to view car's model
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canReadCarModelPrmsId,
-                carReadRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref_Car:model",
-                VIEW
-        );
-
-        UUID canReadCarColorPrmsId = dirtyData.createPermissionUuid();
-        //carReadRole cannot read or modify car's color
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canReadCarColorPrmsId,
-                carReadRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref_Car:colour",
-                DENY
-        );
-
-        UUID canModifyCarVinPrmsId = dirtyData.createPermissionUuid();
-        //carReadRole allows to modify car's vin
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                canModifyCarVinPrmsId,
-                carReadRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref_Car:vin",
-                MODIFY
-        );
-
-        UUID denyCarDriverAllocsPrmsId = dirtyData.createPermissionUuid();
-        //carReadRole cannot read or modify car's driver allocations
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                denyCarDriverAllocsPrmsId,
-                carReadRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref_Car:driverAllocations",
-                DENY
-        );
-
-
-        UUID denyColourDescriptionUpdatePrmsId = dirtyData.createPermissionUuid();
-        //carUpdateRole cannot update colour property
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                denyColourDescriptionUpdatePrmsId,
-                colorUpdateRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref$Colour:description",
-                DENY
-        );
-
-        //colorUpdateRole can update colour.name property
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                colorUpdateRoleId,
-                PermissionType.ENTITY_ATTR.getId(),
-                "ref$Colour:name",
-                2
-        );
-    }
-
-    private void createDbUserRoles() throws SQLException {
-        UUID id = UUID.randomUUID();
-        //colorReadUser has colorReadRole role (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                colorReadUserId,
-                colorReadRoleId
-        );
-
-        id = UUID.randomUUID();
-        //colorUpdateUser has colorUpdateRole (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                colorUpdateUserId,
-                colorUpdateRoleId
-        );
-
-        id = UUID.randomUUID();
-        //colorCreateUser has colorCreateRole (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                colorCreateUserId,
-                colorCreateRoleId
-        );
-
-        id = UUID.randomUUID();
-        //colorDeleteUser has colorDeleteRole (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                colorDeleteUserId,
-                colorDeleteRoleId
-        );
-
-        id = UUID.randomUUID();
-        //carReadUser has carReadRole (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                carReadUserId,
-                carReadRoleId
-        );
-
-        id = UUID.randomUUID();
-        //carReadUser has noColorReadRole (read-only)
-        executePrepared("insert into sec_user_role(id, user_id, role_id) values(?, ?, ?)",
-                id,
-                carReadUserId,
-                noColorReadRoleId
-        );
-    }
-
-    private void createDbRoles() throws SQLException {
-        //read-only role. can read colours, can't read cars
-        colorReadRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                colorReadRoleId,
-                "colorReadRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                colorReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-
-        //read_only role. can update colours, can't update cars
-        colorUpdateRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                colorUpdateRoleId,
-                "colorUpdateRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                colorUpdateRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-
-        //read-only role. can create colours
-        colorCreateRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                colorCreateRoleId,
-                "colorCreateRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                colorCreateRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-
-        //read-only role. can delete colours
-        colorDeleteRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                colorDeleteRoleId,
-                "colorDeleteRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                colorDeleteRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-
-        //read-only role for attributes access tests
-        carReadRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                carReadRoleId,
-                "carReadRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                carReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-
-        //read-only role, prohibiting viewing the colors
-        noColorReadRoleId = dirtyData.createRoleUuid();
-        executePrepared("insert into sec_role(id, name, security_scope) " +
-                        "values(?, ?, ?)",
-                noColorReadRoleId,
-                "noColorReadRole",
-                "REST"
-        );
-
-        executePrepared("insert into sec_permission(id, role_id, permission_type, target, value_) " +
-                        "values(?, ?, ?, ?, ?)",
-                dirtyData.createPermissionUuid(),
-                noColorReadRoleId,
-                PermissionType.ENTITY_OP.getId(),
-                "*:read",
-                1);
-    }
-
-    private void createDbData() throws SQLException {
-        UUID colourUuid = dirtyData.createColourUuid();
-        colourUuidString = colourUuid.toString();
-        executePrepared("insert into ref_colour(id, version, name, description) values(?, ?, ?, ?)",
-                colourUuid,
-                1L,
-                "Red",
-                "Description"
-        );
-
-        UUID modelUuid = dirtyData.createModelUuid();
-        modelUuidString = modelUuid.toString();
-        executePrepared("insert into ref_model(id, version, name) values(?, ?, ?)",
-                modelUuid,
-                1L,
-                "Audi"
-        );
-
-        UUID carUuid = dirtyData.createCarUuid();
-        carUuidString = carUuid.toString();
-        executePrepared("insert into ref_car(id, version, vin, colour_id, model_id) values(?, ?, ?, ?, ?)",
-                carUuid,
-                1l,
-                "VWV000",
-                colourUuid,
-                modelUuid
-        );
-
-        UUID driverUuid = dirtyData.createDriverUuid();
-        driverUuidString = driverUuid.toString();
-        executePrepared("insert into ref_driver(id, version, name, DTYPE) values(?, ?, ?, 'ref$ExtDriver')",
-                driverUuid,
-                1l,
-                "Driver"
-        );
-    }
-
-    private void createDbUsers() throws SQLException {
+    private void createDbUsers() {
         //can read colours, cant read cars
-        colorReadUserId = dirtyData.createUserUuid();
-        //todo encryption
-//        String pwd = encryption.getPasswordHash(colorReadUserId, colorReadUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                colorReadUserId,
-//                1l,
-//                colorReadUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
-//                "colorreaduser"
-//        );
+        colorRead = new CoreUser(colorReadUserLogin, "{noop}" + colorReadUserPassword);
+        userRepository.addUser(colorRead);
 
-        //can update colours
-        colorUpdateUserId = dirtyData.createUserUuid();
-        //todo encryption
-//        pwd = encryption.getPasswordHash(colorUpdateUserId, colorUpdateUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                colorUpdateUserId,
-//                1l,
-//                colorUpdateUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
-//                "colorupdateuser"
-//        );
+        colorUpdate = new CoreUser(colorUpdateUserLogin, "{noop}" + colorUpdateUserPassword);
+        userRepository.addUser(colorUpdate);
 
-        //can create colours
-        colorCreateUserId = dirtyData.createUserUuid();
-        //todo encryption
-//        pwd = encryption.getPasswordHash(colorCreateUserId, colorCreateUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                colorCreateUserId,
-//                1l,
-//                colorCreateUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
-//                "colorcreateuser"
-//        );
+        colorCreate = new CoreUser(colorCreateUserLogin, "{noop}" + colorCreateUserPassword);
+        userRepository.addUser(colorCreate);
 
-        //can delete colours
-        colorDeleteUserId = dirtyData.createUserUuid();
-        //todo encryption
-//        pwd = encryption.getPasswordHash(colorDeleteUserId, colorDeleteUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                colorDeleteUserId,
-//                1l,
-//                colorDeleteUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
-//                "colordeleteuser"
-//        );
+        colorDelete = new CoreUser(colorDeleteUserLogin, "{noop}" + colorDeleteUserPassword);
+        userRepository.addUser(colorDelete);
 
-        //can read cars, used for attributes access testing
-        carReadUserId = dirtyData.createUserUuid();
-        //todo encryption
-//        pwd = encryption.getPasswordHash(carReadUserId, carReadUserPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                carReadUserId,
-//                1l,
-//                carReadUserLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupUuid, //"Company" group
-//                "carreaduser"
-//        );
-    }
-
-    private void executePrepared(String sql, Object... params) throws SQLException {
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (int i = 0; i < params.length; i++) {
-                stmt.setObject(i + 1, params[i]);
-            }
-            stmt.executeUpdate();
-        }
+        carRead = new CoreUser(carReadUserLogin, "{noop}" + carReadUserPassword);
+        userRepository.addUser(carRead);
     }
 }

@@ -17,7 +17,6 @@
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'org.springframework.boot'
-apply plugin: 'war'
 apply plugin: 'io.jmix'
 
 group = 'io.jmix.rest'
@@ -27,8 +26,14 @@ dependencies {
 
     implementation 'io.jmix.core:jmix-core-starter'
     implementation 'io.jmix.data:jmix-data-starter'
+    implementation 'io.jmix.ui:jmix-ui-starter'
+    implementation 'io.jmix.ui:jmix-ui-data-starter'
+    implementation 'io.jmix.ui:jmix-ui-themes-compiled'
+    implementation 'io.jmix.ui:jmix-ui-widgets-compiled'
     implementation 'io.jmix.security:jmix-security-starter'
+    implementation 'io.jmix.security:jmix-security-ui-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
+
     implementation project(':rest-starter')
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -41,10 +46,6 @@ dependencies {
 
     implementation 'javax.inject:javax.inject'
     implementation 'org.apache.commons:commons-dbcp2'
-
-    runtimeOnly 'org.hsqldb:hsqldb'
-
-    testImplementation 'org.jmockit:jmockit:1.39'
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
@@ -70,4 +71,8 @@ dependencies {
     testImplementation('org.apache.httpcomponents:httpcore') {
         exclude(group: 'org.codehaus.groovy', module: 'groovy-all')
     }
+}
+
+test {
+    useJUnitPlatform()
 }

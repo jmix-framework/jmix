@@ -123,6 +123,7 @@ public class EntitiesControllerManager {
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
         serializationOptions.add(EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+        serializationOptions.add(EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
         if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
 
         restControllerUtils.applyAttributesSecurity(entity);
@@ -316,6 +317,7 @@ public class EntitiesControllerManager {
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
         serializationOptions.add(EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+        serializationOptions.add(EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
         if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
 
         String json = entitySerialization.toJson(entities, view, serializationOptions.toArray(new EntitySerializationOption[0]));

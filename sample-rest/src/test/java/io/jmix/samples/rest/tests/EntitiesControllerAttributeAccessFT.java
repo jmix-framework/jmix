@@ -10,7 +10,6 @@ import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.security.impl.CoreUser;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.role.assignment.RoleAssignment;
-import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  */
 @TestPropertySource(properties = {
-        "cuba.rest.requiresSecurityToken = true"
+        "jmix.core.entitySerializationSecurityTokenRequired = true"
 })
 @Disabled
 public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerFT {
@@ -44,16 +43,11 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
      */
     private String driver1UuidString, driver2UuidString, car1UuidString, car2UuidString;
 
-
-    /**
-     * User ids
-     */
-    private UUID driverReadUserId;
     /**
      * Logins
      */
-    private String driverReadUserLogin = "driverReadUser";
-    private String driverReadUserPassword = "driverReadUser";
+    private final String driverReadUserLogin = "driverReadUser";
+    private final String driverReadUserPassword = "driverReadUser";
 
     /**
      * User OAuth tokens
@@ -180,46 +174,39 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
 
     @Test
     public void updateDriverNameNotPermittedWithEnabledAttributeSecurity() throws Exception {
-//        Connectors.jmx(SampleJmxService.class)
-//                .setEntityAttributePermissionChecking(true);
-        try {
-            String securityToken;
-            String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
-            try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
-                assertEquals(HttpStatus.SC_OK, statusCode(response));
-                ReadContext ctx = parseResponse(response);
-                assertEquals(driver1UuidString, ctx.read("$.id"));
+        String securityToken;
+        String url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
+        try (CloseableHttpResponse response = sendGet(url, driverReadUserToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(driver1UuidString, ctx.read("$.id"));
 
-                securityToken = ctx.read("$.__securityToken");
-                assertNotNull(securityToken);
-            }
+            securityToken = ctx.read("$.__securityToken");
+            assertNotNull(securityToken);
+        }
 
-            url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
-            Map<String, String> replacements = new HashMap<>();
-            replacements.put("$DRIVER_ID$", driver1UuidString);
-            replacements.put("$SECURITY_TOKEN$", securityToken);
+        url = baseUrl + "/entities/ref$Driver/" + driver1UuidString;
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("$DRIVER_ID$", driver1UuidString);
+        replacements.put("$SECURITY_TOKEN$", securityToken);
 
-            Map<String, String> params = new HashMap<>();
-            params.put("responseView", "driverWithStatusAndName");
+        Map<String, String> params = new HashMap<>();
+        params.put("responseView", "driverWithStatusAndName");
 
-            String json = getFileContent("attributeAccess_updateDriverNameForbidden.json", replacements);
-            try (CloseableHttpResponse response = sendPut(url, driverReadUserToken, json, params)) {
-                assertEquals(HttpStatus.SC_OK, statusCode(response));
-                ReadContext ctx = parseResponse(response);
+        String json = getFileContent("attributeAccess_updateDriverNameForbidden.json", replacements);
+        try (CloseableHttpResponse response = sendPut(url, driverReadUserToken, json, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
 
-                assertThrows(PathNotFoundException.class, () -> ctx.read("$.name"));
-            }
+            assertThrows(PathNotFoundException.class, () -> ctx.read("$.name"));
+        }
 
-            try (PreparedStatement stmt = conn.prepareStatement("select NAME from REF_DRIVER where ID = ?")) {
-                stmt.setObject(1, UUID.fromString(driver1UuidString));
-                ResultSet rs = stmt.executeQuery();
-                assertTrue(rs.next());
-                String name = rs.getString("NAME");
-                assertEquals("Driver#1", name);
-            }
-        } finally {
-//            Connectors.jmx(SampleJmxService.class)
-//                    .setEntityAttributePermissionChecking(false);
+        try (PreparedStatement stmt = conn.prepareStatement("select NAME from REF_DRIVER where ID = ?")) {
+            stmt.setObject(1, UUID.fromString(driver1UuidString));
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            String name = rs.getString("NAME");
+            assertEquals("Driver#1", name);
         }
     }
 
@@ -513,29 +500,8 @@ public class EntitiesControllerAttributeAccessFT extends AbstractRestControllerF
                 "Company"
         );
 
-//        //can read cars, used for attributes access testing
-//        driverReadUserId = dirtyData.createUserUuid();
-//        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?)",
-//                driverReadUserId,
-//                1l,
-//                driverReadUserLogin,
-//                companyGroupId, //"Company" group
-//                driverReadUserLogin.toLowerCase()
-//        );
-//        executePrepared("insert into sample_rest_sec_user_role(id, version, user_id, role_name) " +
-//                        "values(?, ?, ?, ?)",
-//                UUID.randomUUID(),
-//                1l,
-//                driverReadUserId,
-//                "rest-full-access"
-//        );
-
         CoreUser driverRead = new CoreUser(driverReadUserLogin, "{noop}" + driverReadUserPassword, driverReadUserLogin.toLowerCase());
         userRepository.addUser(driverRead);
-        RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
-        roleAssignmentEntity.setRoleCode("system-full-access");
-        roleAssignmentEntity.setUsername(driverRead.getUsername());
         roleAssignmentProvider.addAssignment(new RoleAssignment(driverRead.getUsername(), FullAccessRole.NAME));
     }
 

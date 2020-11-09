@@ -18,6 +18,8 @@ package io.jmix.rest.api.common;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
+import io.jmix.core.context.EntityAttributeContext;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.rest.api.config.RestJsonTransformations;
@@ -26,6 +28,7 @@ import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+
 
 /**
  *
@@ -104,16 +107,18 @@ public class RestControllerUtils {
 
         @Override
         public void visit(Object entity, MetaProperty property) {
-            //todo:rest
-//            MetaClass metaClass = metadata.getClass(entity.getClass());
-//            ReadEntityQueryContext = accessManager.applyRegisteredConstraints(new CRUDEntityContext());
-//            if (!security.isEntityAttrReadPermitted(metaClass, property.getName())) {
-//                if (!metadataTools.isSystem(property) && !property.isReadOnly()) {
-//                    // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
-//                    // which is the case when in-memory constraints exist
-//                    EntityValues.setValue(entity, property.getName(), null);
-//                }
-//            }
+            MetaClass metaClass = metadata.getClass(entity.getClass());
+            EntityAttributeContext entityContext = new EntityAttributeContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
+            if (entityContext.isAttributeViewPermitted(property.getName())) {
+                return;
+            }
+            if (metadataTools.isSystem(property) || property.isReadOnly()) {
+                return;
+            }
+            // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
+            // which is the case when in-memory constraints exist
+            EntityValues.setValue(entity, property.getName(), null);
         }
     }
 }

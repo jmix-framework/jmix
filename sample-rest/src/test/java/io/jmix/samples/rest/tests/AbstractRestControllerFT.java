@@ -19,7 +19,6 @@ import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider;
 import io.jmix.security.role.assignment.RoleAssignment;
-import io.jmix.securitydata.entity.RoleAssignmentEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,9 +73,6 @@ public abstract class AbstractRestControllerFT {
         admin = new CoreUser("admin", "{noop}admin123");
         userRepository.addUser(admin);
 
-        RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
-        roleAssignmentEntity.setRoleCode("system-full-access");
-        roleAssignmentEntity.setUsername(admin.getUsername());
         roleAssignmentProvider.addAssignment(new RoleAssignment(admin.getUsername(), FullAccessRole.NAME));
 
         baseUrl = "http://localhost:" + port + "/rest";

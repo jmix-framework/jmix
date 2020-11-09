@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securitydata.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.core.context.ImportEntityContext;
+import io.jmix.core.context.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.security.constraint.PolicyStore;
+import io.jmix.security.constraint.SecureOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("sec_ImportEntityConstraint")
+@Component("sec_EntityAttributeConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ImportEntityConstraint implements EntityOperationConstraint<ImportEntityContext> {
-
+public class EntityAttributeConstraint implements EntityOperationConstraint<EntityAttributeContext> {
     protected SecureOperations secureOperations;
     protected PolicyStore policyStore;
 
@@ -43,15 +44,18 @@ public class ImportEntityConstraint implements EntityOperationConstraint<ImportE
     }
 
     @Override
-    public Class<ImportEntityContext> getContextType() {
-        return ImportEntityContext.class;
+    public Class<EntityAttributeContext> getContextType() {
+        return EntityAttributeContext.class;
     }
 
     @Override
-    public void applyTo(ImportEntityContext context) {
+    public void applyTo(EntityAttributeContext context) {
         for (MetaProperty metaProperty : context.getEntityClass().getProperties()) {
-            if (!secureOperations.isEntityAttrUpdatePermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
-                context.addDeniedAttribute(metaProperty.getName());
+            if (secureOperations.isEntityAttrUpdatePermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
+                context.addModifiableAttribute(metaProperty.getName());
+            }
+            if (secureOperations.isEntityAttrReadPermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
+                context.addViewableAttribute(metaProperty.getName());
             }
         }
     }

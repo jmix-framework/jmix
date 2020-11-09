@@ -17,6 +17,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.TreeItems;
 import org.springframework.core.ParameterizedTypeReference;
 
@@ -27,6 +28,11 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * A component is intended to display hierarchical structures represented by entities referencing themselves.
+ *
+ * @param <E> an entity type
+ */
 public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
         Component.HasCaption, Component.HasIcon, LookupComponent<E>,
         Component.Focusable, HasContextHelp, HasItemCaptionProvider<E>,
@@ -35,56 +41,79 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
     String NAME = "tree";
 
     static <T> ParameterizedTypeReference<Tree<T>> of(Class<T> itemClass) {
-        return new ParameterizedTypeReference<Tree<T>>() {};
+        return new ParameterizedTypeReference<Tree<T>>() {
+        };
     }
 
+    /**
+     * Expands all tree nodes.
+     */
     void expandTree();
 
-//    TODO: remove deprecated API (subbotin, gorelov)
-//    /**
-//     * @param itemId the id of item to expand
-//     * @deprecated Use {@link #expand(JmixEntity)} instead
-//     */
-//    @Deprecated
-//    void expand(Object itemId);
-
+    /**
+     * Expands all tree nodes that are higher in level that a given item.
+     *
+     * @param item an item
+     */
     void expand(E item);
 
+    /**
+     * Collapses tree nodes.
+     */
     void collapseTree();
 
-    //    TODO: remove deprecated API (subbotin, gorelov)
-//    /**
-//     * @param itemId the id of item to collapse
-//     * @deprecated Use {@link #collapse(JmixEntity)} instead
-//     */
-//    @Deprecated
-//    void collapse(Object itemId);
-
+    /**
+     * Collapses all tree nodes that are lower in level than a given item.
+     *
+     * @param item an item
+     */
     void collapse(E item);
 
     /**
-     * Expand tree including specified level
+     * Expands tree including specified level
      *
      * @param level level of Tree nodes to expand, if passed level = 1 then root items will be expanded
      * @throws IllegalArgumentException if level &lt; 1
      */
     void expandUpTo(int level);
 
+    /**
+     * Returns whether an item with given itemId is expanded or collapsed.
+     *
+     * @param itemId item id to check
+     * @return true if the item with itemId is expanded, false if collapsed
+     */
     boolean isExpanded(Object itemId);
 
+    /**
+     * @return the name of the property which forms the hierarchy
+     */
     String getHierarchyProperty();
 
+    /**
+     * @return a {@link DataUnit} supported by the Tree
+     */
     @Override
     @Nullable
     TreeItems<E> getItems();
 
+    /**
+     * Sets a {@link DataUnit} supported by the Tree.
+     *
+     * @param treeItems {@link DataUnit} supported by the Tree
+     */
     void setItems(@Nullable TreeItems<E> treeItems);
 
     /**
-     * Assign action to be executed on double click inside a tree node.
+     * Sets the action to be executed when double-clicking inside a tree node.
+     *
+     * @param action a new action
      */
     void setItemClickAction(@Nullable Action action);
 
+    /**
+     * @return an item double-click action
+     */
     @Nullable
     Action getItemClickAction();
 
@@ -96,7 +125,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
     void setStyleProvider(@Nullable Function<? super E, String> styleProvider);
 
     /**
-     * Add a style provider for tree items.
+     * Adds a style provider for tree items.
      *
      * @param styleProvider a style provider to add
      */
@@ -110,59 +139,30 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
     void removeStyleProvider(Function<? super E, String> styleProvider);
 
     /**
-     * Allows to define different styles for tree items.
-     */
-    @Deprecated
-    interface StyleProvider<E> extends Function<E, String> {
-        @Override
-        default String apply(E entity) {
-            return getStyleName(entity);
-        }
-
-        /**
-         * Called by {@link Tree} to get a style for item. <br>
-         * All unhandled exceptions from StyleProvider in Web components by default are logged with ERROR level
-         * and not shown to users.
-         *
-         * @param entity an entity instance represented by the current item
-         * @return style name or null to apply the default
-         */
-        String getStyleName(E entity);
-    }
-
-    /**
-     * Set the icon provider for the tree.
+     * Sets the icon provider for the tree.
+     *
+     * @param iconProvider an icon provider to set
      */
     void setIconProvider(@Nullable Function<? super E, String> iconProvider);
 
     /**
-     * Repaint UI representation of the tree including style providers and icon providers without refreshing the tree data.
+     * Repaints UI representation of the tree including style providers and icon providers without refreshing
+     * the tree data.
      */
     void repaint();
 
     /**
-     * Set action to be executed on Enter key press.
+     * Sets the action to be executed on Enter key press.
+     *
+     * @param action a new action
      */
     void setEnterPressAction(@Nullable Action action);
 
     /**
-     * @return Enter key press action.
+     * @return an Enter key press action
      */
     @Nullable
     Action getEnterPressAction();
-
-    /**
-     * @param multiselect {@code true} for multiselect, {@code false} otherwise
-     * @deprecated Use {@link #setSelectionMode(SelectionMode)} instead
-     */
-    @Deprecated
-    void setMultiSelect(boolean multiselect);
-
-    /**
-     * @deprecated refresh datasource instead
-     */
-    @Deprecated
-    void refresh();
 
     /**
      * @return the currently used {@link SelectionMode}
@@ -189,8 +189,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
     void setContextMenuEnabled(boolean contextMenuEnabled);
 
     /**
-     * Sets the description generator that is used for generating tooltip
-     * descriptions for items.
+     * Sets the description generator that is used for generating tooltip descriptions for items.
      *
      * @param provider the description generator to use or {@code null} to remove a
      *                 previously set provider if any
@@ -198,8 +197,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
     void setDescriptionProvider(@Nullable Function<? super E, String> provider);
 
     /**
-     * Sets the description generator that is used for generating HTML tooltip
-     * descriptions for items.
+     * Sets the description generator that is used for generating HTML tooltip descriptions for items.
      *
      * @param provider    the description generator to use or {@code null} to remove a
      *                    previously set provider if any
@@ -214,24 +212,6 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      */
     @Nullable
     Function<E, String> getDescriptionProvider();
-
-    /**
-     * A callback interface for generating details for a particular item in Tree.
-     *
-     * @param <E> Tree data type
-     */
-    @FunctionalInterface
-    interface DetailsGenerator<E> {
-
-        /**
-         * Returns the component which will be used as details for the given item.
-         *
-         * @param entity an entity instance represented by the current item
-         * @return the details for the given item, or {@code null} to leave the details empty.
-         */
-        @Nullable
-        Component getDetails(E entity);
-    }
 
     /**
      * @return the current details generator for item details or {@code null} if not set
@@ -299,6 +279,31 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      * @param contentMode the content mode
      */
     void setContentMode(ContentMode contentMode);
+
+    /**
+     * Registers a new selection listener.
+     *
+     * @param listener the listener to register
+     */
+    Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
+
+    /**
+     * A callback interface for generating details for a particular item in Tree.
+     *
+     * @param <E> Tree data type
+     */
+    @FunctionalInterface
+    interface DetailsGenerator<E> {
+
+        /**
+         * Returns the component which will be used as details for the given item.
+         *
+         * @param entity an entity instance represented by the current item
+         * @return the details for the given item, or {@code null} to leave the details empty
+         */
+        @Nullable
+        Component getDetails(E entity);
+    }
 
     enum SelectionMode {
         /**
@@ -434,8 +439,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
         /**
          * A {@link Set} of all the items that became selected.
          *
-         * <em>Note:</em> this excludes all items that might have been previously
-         * selected.
+         * <em>Note:</em> this excludes all items that might have been previously selected.
          *
          * @return a set of the items that became selected
          */
@@ -448,8 +452,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
         /**
          * A {@link Set} of all the items that became deselected.
          *
-         * <em>Note:</em> this excludes all items that might have been previously
-         * deselected.
+         * <em>Note:</em> this excludes all items that might have been previously deselected.
          *
          * @return a set of the items that became deselected
          */
@@ -482,11 +485,4 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
             return userOriginated;
         }
     }
-
-    /**
-     * Registers a new selection listener
-     *
-     * @param listener the listener to register
-     */
-    Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
 }

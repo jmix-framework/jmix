@@ -600,22 +600,10 @@ public class TreeImpl<E>
         component.expandAll();
     }
 
-//    TODO: remove deprecated API (subbotin, gorelov)
-//    @Override
-//    public void collapse(Object itemId) {
-//        collapse(getItems().getItem(itemId));
-//    }
-
     @Override
     public void collapse(E item) {
         component.collapseItemWithChildren(item);
     }
-
-//    TODO: remove deprecated API (subbotin, gorelov)
-//    @Override
-//    public void expand(Object itemId) {
-//        expand(getItems().getItem(itemId));
-//    }
 
     @Override
     public void expand(E item) {
@@ -629,7 +617,8 @@ public class TreeImpl<E>
 
     @Override
     public boolean isExpanded(Object itemId) {
-        return component.isExpanded(getItems().getItem(itemId));
+        return getItems() != null
+                && component.isExpanded(getItems().getItem(itemId));
     }
 
     @Nullable
@@ -786,16 +775,6 @@ public class TreeImpl<E>
     @Override
     public Collection<E> getLookupSelectedItems() {
         return getSelected();
-    }
-
-    @Override
-    public void refresh() {
-        // TreeItems<E> treeItems = getItems();
-        /*
-        TODO: legacy-ui
-        if (treeItems instanceof DatasourceTreeItems) {
-            ((DatasourceTreeItems) treeItems).getDatasource().refresh();
-        }*/
     }
 
     @Override
@@ -1130,13 +1109,6 @@ public class TreeImpl<E>
     @Override
     public boolean isMultiSelect() {
         return SelectionMode.MULTI.equals(selectionMode);
-    }
-
-    @Override
-    public void setMultiSelect(boolean multiselect) {
-        setSelectionMode(multiselect
-                ? SelectionMode.MULTI
-                : SelectionMode.SINGLE);
     }
 
     @Nullable

@@ -25,18 +25,24 @@ import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
+import io.jmix.core.security.SecurityContextHelper
+import io.jmix.core.security.authentication.CoreAuthenticationToken
+import io.jmix.core.security.impl.CoreUser
 import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies
 import io.jmix.ui.sys.UiControllersConfiguration
-import io.jmix.ui.testassist.TestSupport
 import io.jmix.ui.testassist.UiTest
+import io.jmix.ui.testassist.UiTestAssistProperties
 import io.jmix.ui.testassist.ui.TestConnectorTracker
 import io.jmix.ui.testassist.ui.TestVaadinRequest
 import io.jmix.ui.testassist.ui.TestVaadinSession
 import io.jmix.ui.theme.ThemeConstants
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
@@ -78,9 +84,15 @@ class UiTestAssistSpecification extends Specification {
     @Autowired
     AppUI vaadinUi
 
+    @Autowired
+    UiTestAssistProperties uiTestAssistProperties
+
+    @Autowired(required = false)
+    AuthenticationManager authenticationManager
+
     @SuppressWarnings("GroovyAccessibility")
     void setup() {
-        TestSupport.setAuthenticationToSecurityContext()
+        setupSecurityContext()
 
         def injectFactory = applicationContext.getAutowireCapableBeanFactory()
 
@@ -123,6 +135,32 @@ class UiTestAssistSpecification extends Specification {
             vaadinUi.removeWindow(it)
         }
         UI.setCurrent(null)
+    }
+
+    void setupSecurityContext() {
+        Authentication authentication = authenticationManager == null
+                ? createCoreAuthentication()
+                : createSecurityAuthentication()
+
+        SecurityContextHelper.setAuthentication(authentication)
+    }
+
+    Authentication createCoreAuthentication() {
+        CoreUser user = new CoreUser(
+                uiTestAssistProperties.getUsername(),
+                uiTestAssistProperties.getPassword(),
+                uiTestAssistProperties.getUsername());
+
+        CoreAuthenticationToken authentication = new CoreAuthenticationToken(user, Collections.emptyList());
+        authentication.setLocale(Locale.US);
+        return authentication
+    }
+
+    Authentication createSecurityAuthentication() {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        uiTestAssistProperties.getUsername(), uiTestAssistProperties.getPassword()))
+        return authentication
     }
 
     protected void exportScreensPackages(List<String> packages) {

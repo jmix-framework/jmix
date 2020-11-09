@@ -81,7 +81,7 @@ public class EntitySerializationTokenManager {
         SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
         JsonObject tokenObject = new JsonObject();
         tokenObject.addProperty(ENTITY_NAME_KEY, metaClass.getName());
-        if (!metadataTools.hasCompositePrimaryKey(metaClass)) {
+        if (!metadataTools.hasCompositePrimaryKey(metaClass) && !EntitySystemAccess.isEmbeddable(entity)) {
             addSingleId(tokenObject, ENTITY_ID_KEY, EntityValues.getId(entity));
         }
         if (securityState.getErasedData() != null) {

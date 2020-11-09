@@ -23,6 +23,7 @@ import com.google.common.collect.Table;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
+import io.jmix.core.context.EntityAttributeContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -55,6 +56,9 @@ public class EntitySerializationImpl implements EntitySerialization {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected AccessManager accessManager;
 
     @Autowired
     protected EntityStates entityStates;
@@ -184,18 +188,23 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected boolean compactRepeatedEntities = false;
         protected boolean serializeInstanceName;
         protected boolean doNotSerializeReadOnlyProperties = false;
+        protected boolean doNotSerializeDeniedProperties = false;
         protected FetchPlan fetchPlan;
 
         public EntitySerializer(@Nullable FetchPlan fetchPlan, EntitySerializationOption... options) {
             this.fetchPlan = fetchPlan;
             if (options != null) {
-                for (EntitySerializationOption option : options) {
-                    if (option == EntitySerializationOption.COMPACT_REPEATED_ENTITIES)
-                        compactRepeatedEntities = true;
-                    if (option == EntitySerializationOption.SERIALIZE_INSTANCE_NAME)
-                        serializeInstanceName = true;
-                    if (option == EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES)
-                        doNotSerializeReadOnlyProperties = true;
+                if (ArrayUtils.contains(options, EntitySerializationOption.COMPACT_REPEATED_ENTITIES)) {
+                    compactRepeatedEntities = true;
+                }
+                if (ArrayUtils.contains(options, EntitySerializationOption.SERIALIZE_INSTANCE_NAME)) {
+                    serializeInstanceName = true;
+                }
+                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES)) {
+                    doNotSerializeReadOnlyProperties = true;
+                }
+                if (ArrayUtils.contains(options, EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY)) {
+                    doNotSerializeDeniedProperties = true;
                 }
             }
         }
@@ -263,15 +272,16 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity) {
-            return !"id" .equals(metaProperty.getName()) &&
-                    //todo dynamic attribute
-                    (
-//                    DynamicAttributesUtils.isDynamicAttribute(metaProperty) ||
-//                            (entity instanceof BaseGenericIdEntity) ||
-                            (!metadataTools.isPersistent(metaProperty) &&
-                                    (metaProperty.isReadOnly() && !doNotSerializeReadOnlyProperties || !metaProperty.isReadOnly())) ||
-                                    (metadataTools.isPersistent(metaProperty) && entityStates.isLoaded(entity, metaProperty.getName())));
+        protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity, EntityAttributeContext entityAttributeContext) {
+            boolean notId = !"id".equals(metaProperty.getName());
+            boolean isPersistent = metadataTools.isPersistent(metaProperty);
+            boolean isLoaded = entityStates.isLoaded(entity, metaProperty.getName());
+            boolean isReadOnly = metaProperty.isReadOnly();
+            boolean attributePermitted = entityAttributeContext.isAttributeViewPermitted(metaProperty.getName());
+            //todo dynamic attribute
+            // DynamicAttributesUtils.isDynamicAttribute(metaProperty)
+            // (entity instanceof BaseGenericIdEntity)
+            return (notId && !(isPersistent || isReadOnly && doNotSerializeReadOnlyProperties) || (isPersistent && isLoaded)) && attributePermitted;
         }
 
         protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
@@ -283,54 +293,57 @@ public class EntitySerializationImpl implements EntitySerialization {
 //                        .collect(Collectors.toList());
 //                properties.addAll(dynamicProperties);
 //            }
+            EntityAttributeContext entityContext = new EntityAttributeContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
             for (MetaProperty metaProperty : properties) {
-                if (propertyWritingAllowed(metaProperty, entity)) {
-                    FetchPlanProperty fetchPlanProperty = null;
-                    //todo dynamic attribute
+                if (!propertyWritingAllowed(metaProperty, entity, entityContext)) {
+                    continue;
+                }
+                FetchPlanProperty fetchPlanProperty = null;
+                //todo dynamic attribute
 //                    if (!DynamicAttributesUtils.isDynamicAttribute(metaProperty)) {
-                    if (fetchPlan != null) {
-                        fetchPlanProperty = fetchPlan.getProperty(metaProperty.getName());
-                        if (fetchPlanProperty == null) continue;
-                    }
+                if (fetchPlan != null) {
+                    fetchPlanProperty = fetchPlan.getProperty(metaProperty.getName());
+                    if (fetchPlanProperty == null) continue;
+                }
 
-                    if (!entityStates.isNew(entity)
-                            && !entityStates.isLoaded(entity, metaProperty.getName())) {
-                        continue;
-                    }
+                if (!entityStates.isNew(entity)
+                        && !entityStates.isLoaded(entity, metaProperty.getName())) {
+                    continue;
+                }
 //                    }
 
-                    Object fieldValue = EntityValues.getValue(entity, metaProperty.getName());
+                Object fieldValue = EntityValues.getValue(entity, metaProperty.getName());
 
-                    //always write nulls here. GSON will not serialize them to the result if
-                    //EntitySerializationOptions.SERIALIZE_NULLS was not set.
-                    if (fieldValue == null) {
-                        jsonObject.add(metaProperty.getName(), null);
-                        continue;
-                    }
+                //always write nulls here. GSON will not serialize them to the result if
+                //EntitySerializationOptions.SERIALIZE_NULLS was not set.
+                if (fieldValue == null) {
+                    jsonObject.add(metaProperty.getName(), null);
+                    continue;
+                }
 
-                    Range propertyRange = metaProperty.getRange();
-                    if (propertyRange.isDatatype()) {
-                        //todo dynamic attribute
+                Range propertyRange = metaProperty.getRange();
+                if (propertyRange.isDatatype()) {
+                    //todo dynamic attribute
 //                        if (isCollectionDynamicAttribute(metaProperty) && fieldValue instanceof Collection) {
 //                            jsonObject.add(metaProperty.getName(),
 //                                    serializeSimpleCollection((Collection) fieldValue, metaProperty));
 //                        } else {
-                        writeSimpleProperty(jsonObject, fieldValue, metaProperty);
+                    writeSimpleProperty(jsonObject, fieldValue, metaProperty);
 //                        }
-                    } else if (propertyRange.isEnum()) {
-                        jsonObject.addProperty(metaProperty.getName(), fieldValue.toString());
-                    } else if (propertyRange.isClass()) {
-                        if (fieldValue instanceof Entity) {
-                            JsonObject propertyJsonObject = serializeEntity((Entity) fieldValue,
-                                    fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
-                                    new HashSet<>(cyclicReferences));
-                            jsonObject.add(metaProperty.getName(), propertyJsonObject);
-                        } else if (fieldValue instanceof Collection) {
-                            JsonArray jsonArray = serializeCollection((Collection) fieldValue,
-                                    fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
-                                    new HashSet<>(cyclicReferences));
-                            jsonObject.add(metaProperty.getName(), jsonArray);
-                        }
+                } else if (propertyRange.isEnum()) {
+                    jsonObject.addProperty(metaProperty.getName(), fieldValue.toString());
+                } else if (propertyRange.isClass()) {
+                    if (fieldValue instanceof Entity) {
+                        JsonObject propertyJsonObject = serializeEntity((Entity) fieldValue,
+                                fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
+                                new HashSet<>(cyclicReferences));
+                        jsonObject.add(metaProperty.getName(), propertyJsonObject);
+                    } else if (fieldValue instanceof Collection) {
+                        JsonArray jsonArray = serializeCollection((Collection) fieldValue,
+                                fetchPlanProperty != null ? fetchPlanProperty.getFetchPlan() : null,
+                                new HashSet<>(cyclicReferences));
+                        jsonObject.add(metaProperty.getName(), jsonArray);
                     }
                 }
             }
@@ -423,7 +436,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                             throw new EntitySerializationException(e);
                         }
                     }
-                } else if (!"id" .equals(primaryKeyProperty.getName())) {
+                } else if (!"id".equals(primaryKeyProperty.getName())) {
                     //pk may be in another field, not "id"
                     JsonElement pkElement = jsonObject.get(primaryKeyProperty.getName());
                     if (pkElement != null && pkElement.isJsonPrimitive()) {
@@ -463,7 +476,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         }
 
         protected boolean propertyReadRequired(String propertyName) {
-            return !"id" .equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken" .equals(propertyName);
+            return !"id".equals(propertyName) && !ENTITY_NAME_PROP.equals(propertyName) && !"__securityToken".equals(propertyName);
         }
 
         protected void readFields(JsonObject jsonObject, Object entity) {

@@ -46,5 +46,10 @@ public enum EntitySerializationOption {
     /**
      * Specifies that JSON must be pretty printed
      */
-    PRETTY_PRINT
+    PRETTY_PRINT,
+
+    /**
+     * Specifies that not allowed properties should NOT be serialized.
+     */
+    DO_NOT_SERIALIZE_DENIED_PROPERTY
 }

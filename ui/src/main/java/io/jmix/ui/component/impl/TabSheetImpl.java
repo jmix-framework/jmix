@@ -251,15 +251,6 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
             getVaadinTab().setClosable(closable);
         }
 
-        @Override
-        public boolean isDetachable() {
-            return false;
-        }
-
-        @Override
-        public void setDetachable(boolean detachable) {
-        }
-
         @Nullable
         @Override
         public TabCloseHandler getCloseHandler() {
@@ -291,8 +282,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         public void setIcon(@Nullable String icon) {
             this.icon = icon;
             if (!StringUtils.isEmpty(icon)) {
-                Resource iconResource = iconResolver // todo replace
-                        .getIconResource(this.icon);
+                Resource iconResource = iconResolver.getIconResource(this.icon);
                 getVaadinTab().setIcon(iconResource);
             } else {
                 getVaadinTab().setIcon(null);
@@ -301,8 +291,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
 
         @Override
         public void setIconFromSet(@Nullable Icons.Icon icon) {
-            String iconPath = icons // todo replace
-                    .get(icon);
+            String iconPath = icons.get(icon);
             setIcon(iconPath);
         }
 
@@ -563,21 +552,17 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
                     ((ComponentLoader.ComponentContext) context).executePostInitTasks();
                 }
 
-                Window window = ComponentsHelper.getWindow(TabSheetImpl.this);
-                if (window != null) {
-                    /*
-                    TODO: legacy-ui
-                    if (window.getFrameOwner() instanceof LegacyFrame) {
-                        DsContext dsContext = ((LegacyFrame) window.getFrameOwner()).getDsContext();
-                        if (dsContext != null) {
-                            ((DsContextImplementation) dsContext).resumeSuspended();
-                        }
-                    }*/
-                } else {
-                    LoggerFactory.getLogger(TabSheetImpl.class).warn("Please specify Frame for TabSheet");
-                }
+                // Check that Frame is specified for TabSheet
+                checkFrameInitialization();
             });
             componentTabChangeListenerInitialized = true;
+        }
+    }
+
+    protected void checkFrameInitialization() {
+        Window window = ComponentsHelper.getWindow(TabSheetImpl.this);
+        if (window == null) {
+            LoggerFactory.getLogger(TabSheetImpl.class).warn("Please specify Frame for TabSheet");
         }
     }
 
@@ -586,11 +571,6 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         initComponentTabChangeListener();
 
         return getEventHub().subscribe(SelectedTabChangeEvent.class, listener);
-    }
-
-    @Override
-    public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
-        unsubscribe(SelectedTabChangeEvent.class, listener);
     }
 
     @Override

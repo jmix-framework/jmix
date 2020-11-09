@@ -99,11 +99,6 @@ public class TabSheetLoader extends ContainerLoader<TabSheet> {
             if (tab != null) {
                 loadIcon(tab, tabElement);
 
-                String detachable = tabElement.attributeValue("detachable");
-                if (StringUtils.isNotEmpty(detachable)) {
-                    tab.setDetachable(Boolean.parseBoolean(detachable));
-                }
-
                 String closable = tabElement.attributeValue("closable");
                 if (StringUtils.isNotEmpty(closable)) {
                     tab.setClosable(Boolean.parseBoolean(closable));

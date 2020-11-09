@@ -29,81 +29,67 @@ import java.util.function.Consumer;
  * TabSheet component interface.
  */
 public interface TabSheet extends ComponentContainer, Component.BelongToFrame, Component.HasIcon, Component.HasCaption,
-                                  Component.Focusable, HasContextHelp, HasHtmlCaption, HasHtmlDescription,
-                                  HasHtmlSanitizer {
+        Component.Focusable, HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "tabSheet";
 
     /**
-     * Add a new tab to the component.
+     * Adds a new tab to the component.
+     *
      * @param name      id of the new tab
      * @param component a component that will be the content of the new tab
-     * @return  the new tab
+     * @return the new tab
      */
     Tab addTab(String name, Component component);
 
     /**
-     * INTERNAL. Add a new lazy tab to the component.
+     * INTERNAL. Adds a new lazy tab to the component.
+     *
+     * @param name       id of the new tab
+     * @param descriptor the element descriptor
+     * @param loader     the component loader
+     * @return the new tab
      */
     @Internal
     Tab addLazyTab(String name, Element descriptor, ComponentLoader loader);
 
     /**
-     * Remove tab.
+     * Removes a tab.
+     *
      * @param name id of the tab to remove
      */
     void removeTab(String name);
 
     /**
-     * Remove all tabs.
+     * Removes all tabs.
      */
     void removeAllTabs();
 
     /**
-     * Get selected tab. May be null if the tabsheet does not contain tabs at all.
+     * Gets selected tab. May be null if the tabsheet does not contain tabs at all.
+     *
+     * @return a selected tab instance
      */
     @Nullable
     Tab getSelectedTab();
+
     /**
-     * Set selected tab.
+     * Sets selected tab.
+     *
      * @param tab tab instance
      */
     void setSelectedTab(Tab tab);
+
     /**
-     * Set selected tab.
+     * Sets selected tab.
+     *
      * @param name tab id
      */
     void setSelectedTab(String name);
 
     /**
-     * Get selected tab. May be null if the tabsheet does not contain tabs at all.
-     * @deprecated use {@link #getSelectedTab()}
-     */
-    @Deprecated
-    default Tab getTab() {
-        return getSelectedTab();
-    }
-    /**
-     * Set selected tab.
-     * @param tab tab instance
-     * @deprecated Use {@link #setSelectedTab(Tab)}
-     */
-    @Deprecated
-    default void setTab(Tab tab) {
-        setSelectedTab(tab);
-    }
-    /**
-     * Set selected tab.
-     * @param name tab id
-     * @deprecated Use {@link #setSelectedTab(String)}
-     */
-    @Deprecated
-    default void setTab(String name) {
-        setSelectedTab(name);
-    }
-
-    /**
-     * Get tab with the provided id.
+     * Gets tab with the provided id.
+     *
      * @param name tab id
      * @return tab instance
      */
@@ -111,14 +97,17 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
     Tab getTab(String name);
 
     /**
-     * Get a component that is a content of the tab.
+     * Gets a component that is a content of the tab.
+     *
      * @param name tab id
-     * @return  tab content
+     * @return tab content
      */
     Component getTabComponent(String name);
 
     /**
-     * Get all tabs.
+     * Gets all tabs.
+     *
+     * @return the collection of tab instances
      */
     Collection<Tab> getTabs();
 
@@ -126,6 +115,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      * @return true if the tab captions are rendered as HTML, false if rendered as plain text
      */
     boolean isTabCaptionsAsHtml();
+
     /**
      * Sets whether HTML is allowed in the tab captions.
      *
@@ -137,6 +127,7 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
      * @return true if the tabs are shown in the UI, false otherwise
      */
     boolean isTabsVisible();
+
     /**
      * Sets whether the tab selection part should be shown in the UI.
      *
@@ -145,82 +136,112 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
     void setTabsVisible(boolean tabsVisible);
 
     /**
+     * Adds a listener that will be notified when a selected tab is changed.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
+    Subscription addSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener);
+
+    /**
      * Tab interface.
      */
     interface Tab extends Component.HasIcon, Component.HasCaption {
         /**
-         * Get tab id.
+         * @return tab id.
          */
         String getName();
 
         /**
-         * INTERNAL. Set tab id.
+         * INTERNAL. Sets tab id.
          */
         @Internal
         void setName(String name);
 
         /**
-         * Whether the tab is enabled.
+         * Returns the availability status for the tab. A disabled tab is shown as such in the tab bar and cannot be
+         * selected.
+         *
+         * @return true if tab is enabled, false otherwise
          */
         boolean isEnabled();
+
+        /**
+         * Sets the availability status for the tab. A disabled tab is shown as such in the tab bar and cannot be
+         * selected.
+         *
+         * @param enabled true if tab is enabled, false otherwise
+         */
         void setEnabled(boolean enabled);
 
         /**
-         * Whether the tab is visible.
+         * Returns the visibility status for the tab. An invisible tab is not shown in the tab bar and cannot be
+         * selected.
+         *
+         * @return true if tab is visible, false otherwise
          */
         boolean isVisible();
+
+        /**
+         * Sets the visibility status for the tab. An invisible tab is not shown in the tab bar and cannot be selected,
+         * selection is changed automatically when there is an attempt to select an invisible tab.
+         *
+         * @param visible true if tab is visible, false otherwise
+         */
         void setVisible(boolean visible);
 
         /**
-         * Whether the tab has a button that allows a user to close the tab.
-         * False by default.
+         * Returns the closability status for the tab.
+         *
+         * @return true if the tab should be closable from the UI, false otherwise
          */
         boolean isClosable();
+
+        /**
+         * Sets the closability status for the tab. It controls if a close button is shown to the user or not.
+         * A closable tab can be closed by the user through the user interface.
+         *
+         * @param closable true if the tab should be closable from the UI, false otherwise
+         */
         void setClosable(boolean closable);
 
         /**
-         * Whether the tab can be detached to a new window in desktop client.
-         * False by default.
-         */
-        boolean isDetachable();
-        void setDetachable(boolean detachable);
-
-        /**
-         * Set a handler that can override the close behavior if {@link #isClosable()} is true.
+         * Sets a handler that can override the close behavior if {@link #isClosable()} is true.
          * Default action just removes the tab.
+         *
+         * @param tabCloseHandler tab close handler
          */
         void setCloseHandler(@Nullable TabCloseHandler tabCloseHandler);
+
+        /**
+         * @return a tab close handler
+         */
         @Nullable
         TabCloseHandler getCloseHandler();
 
         /**
-         * Set style for UI element that represents the tab header.
-         * @param styleName style
+         * Sets style for UI element that represents the tab header.
+         *
+         * @param styleName style name
          */
-        void setStyleName(String styleName);
+        void setStyleName(@Nullable String styleName);
+
+        /**
+         * Returns the style for UI element that represents the tab header.
+         *
+         * @return the style name or {@code null} if no style name has been set
+         */
+        @Nullable
         String getStyleName();
     }
 
     /**
-     * Handler that overrides the default behavior if {@link Tab#isClosable()} is true and a user clicks the close button.
+     * Handler that overrides the default behavior if {@link Tab#isClosable()} is true and a user clicks the close
+     * button.
      */
     interface TabCloseHandler {
         void onTabClose(Tab tab);
     }
-
-    /**
-     * Add a listener that will be notified when a selected tab is changed.
-     */
-    Subscription addSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener);
-
-    /**
-     * Remove previously added SelectedTabChangeListener.
-     *
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener);
 
     /**
      * SelectedTabChangeEvents are fired when a selected tab is changed.
@@ -244,6 +265,9 @@ public interface TabSheet extends ComponentContainer, Component.BelongToFrame, C
             return (TabSheet) super.getSource();
         }
 
+        /**
+         * @return a selected tab
+         */
         public Tab getSelectedTab() {
             return selectedTab;
         }

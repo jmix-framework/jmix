@@ -224,7 +224,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                     try {
                         instanceName = metadataTools.getInstanceName(entity);
                     } catch (Exception ignored) {
-                        // todo trace logging
+                        log.trace("Unable to get instance name for entity {}", entity, ignored);
                     }
                     jsonObject.addProperty(INSTANCE_NAME_PROP, instanceName);
                 }
@@ -277,7 +277,8 @@ public class EntitySerializationImpl implements EntitySerialization {
             boolean isPersistent = metadataTools.isPersistent(metaProperty);
             boolean isLoaded = entityStates.isLoaded(entity, metaProperty.getName());
             boolean isReadOnly = metaProperty.isReadOnly();
-            boolean attributePermitted = entityAttributeContext.isAttributeViewPermitted(metaProperty.getName());
+            boolean attributePermitted =
+                    entityAttributeContext.isAttributeViewPermitted(metaProperty.getName()) || !doNotSerializeDeniedProperties;
             //todo dynamic attribute
             // DynamicAttributesUtils.isDynamicAttribute(metaProperty)
             // (entity instanceof BaseGenericIdEntity)
@@ -293,8 +294,12 @@ public class EntitySerializationImpl implements EntitySerialization {
 //                        .collect(Collectors.toList());
 //                properties.addAll(dynamicProperties);
 //            }
+
+
             EntityAttributeContext entityContext = new EntityAttributeContext(metaClass);
+
             accessManager.applyRegisteredConstraints(entityContext);
+
             for (MetaProperty metaProperty : properties) {
                 if (!propertyWritingAllowed(metaProperty, entity, entityContext)) {
                     continue;
@@ -311,7 +316,6 @@ public class EntitySerializationImpl implements EntitySerialization {
                         && !entityStates.isLoaded(entity, metaProperty.getName())) {
                     continue;
                 }
-//                    }
 
                 Object fieldValue = EntityValues.getValue(entity, metaProperty.getName());
 

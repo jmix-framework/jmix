@@ -18,6 +18,7 @@ import io.jmix.core.pessimisticlocking.LockNotSupported;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.TabSheet;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

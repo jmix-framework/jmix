@@ -17,25 +17,54 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.HasSettings;
-import io.jmix.ui.component.ComponentContainer;
-import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.component.Window;
+import com.haulmont.cuba.gui.components.TabSheet;
+import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.settings.CubaLegacySettings;
 import com.haulmont.cuba.settings.Settings;
+import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.HasTablePresentations;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.TabSheetImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
-public class WebTabSheet extends TabSheetImpl {
+public class WebTabSheet extends TabSheetImpl implements TabSheet {
 
     @Override
-    protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent, Element descriptor, ComponentLoader loader) {
+    public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {
+        unsubscribe(SelectedTabChangeEvent.class, listener);
+    }
+
+    @Override
+    protected void checkFrameInitialization() {
+        Window window = ComponentsHelper.getWindow(WebTabSheet.this);
+        if (window != null) {
+            if (window.getFrameOwner() instanceof LegacyFrame) {
+                DsContext dsContext = ((LegacyFrame) window.getFrameOwner()).getDsContext();
+                if (dsContext != null) {
+                    ((DsContextImplementation) dsContext).resumeSuspended();
+                }
+            }
+        } else {
+            LoggerFactory.getLogger(WebTabSheet.class).warn("Please specify Frame for TabSheet");
+        }
+    }
+
+    @Override
+    protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent,
+                                                                Element descriptor,
+                                                                ComponentLoader loader) {
         return new CubaLazyTabChangeListener(tabContent, descriptor, loader);
     }
 

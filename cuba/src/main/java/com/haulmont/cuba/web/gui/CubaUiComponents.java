@@ -36,6 +36,7 @@ import com.haulmont.cuba.gui.components.PopupView;
 import com.haulmont.cuba.gui.components.ResizableTextArea;
 import com.haulmont.cuba.gui.components.ScrollBoxLayout;
 import com.haulmont.cuba.gui.components.SplitPanel;
+import com.haulmont.cuba.gui.components.TabSheet;
 import com.haulmont.cuba.gui.components.TextArea;
 import com.haulmont.cuba.gui.components.TextField;
 import com.haulmont.cuba.gui.components.VBoxLayout;

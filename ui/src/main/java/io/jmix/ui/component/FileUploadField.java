@@ -23,6 +23,9 @@ import javax.annotation.Nullable;
 public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
     String NAME = "fileUpload";
 
+    /**
+     * @return caption to be shown in the file download link next to upload button
+     */
     @Nullable
     String getFileName();
 

@@ -24,7 +24,121 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 public interface UploadField extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
-                                     Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+        Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+
+    /**
+     * Adds file upload start listener. It is invoked when start uploading the file.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
+    Subscription addFileUploadStartListener(Consumer<FileUploadStartEvent> listener);
+
+    /**
+     * Adds file upload finish listener. It is invoked when file is uploaded.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
+    Subscription addFileUploadFinishListener(Consumer<FileUploadFinishEvent> listener);
+
+    /**
+     * Adds file upload error listener. It is invoked when the uploads are finished, but unsuccessful.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
+     */
+    Subscription addFileUploadErrorListener(Consumer<FileUploadErrorEvent> listener);
+
+    /**
+     * Returns maximum allowed file size in bytes.
+     */
+    long getFileSizeLimit();
+
+    /**
+     * Sets maximum allowed file size in bytes.
+     * Default value is 0. In this case component uses system value.
+     */
+    void setFileSizeLimit(long fileSizeLimit);
+
+    /**
+     * Returns comma separated types of files.
+     *
+     * @return comma separated types of files
+     */
+    @Nullable
+    String getAccept();
+
+    /**
+     * Sets the mask for files to filter them in the file selection dialog.<br>
+     * <pre>{@code
+     *    uploadField.setAccept(".png,.jpeg");
+     * }</pre>
+     *
+     * @param accept comma separated types of files
+     */
+    void setAccept(@Nullable String accept);
+
+    /**
+     * Sets white list of file extensions. Each extension should start with dot symbol, e.g. ".png".
+     * <pre>{@code
+     *    uploadField.setPermittedExtensions(Sets.newHashSet(".png", ".jpg"));
+     * }</pre>
+     *
+     * @param permittedExtensions permitted extensions.
+     */
+    void setPermittedExtensions(@Nullable Set<String> permittedExtensions);
+
+    /**
+     * Returns white list of file extensions.
+     *
+     * @return set of file extensions.
+     */
+    @Nullable
+    Set<String> getPermittedExtensions();
+
+    /**
+     * @return current drop zone
+     */
+    @Nullable
+    DropZone getDropZone();
+
+    /**
+     * Sets drop zone reference to this upload component. Files can be dropped to component of the drop zone
+     * to be uploaded by this upload component.
+     *
+     * @param dropZone drop zone descriptor
+     */
+    void setDropZone(@Nullable DropZone dropZone);
+
+    /**
+     * Sets paste zone reference to this upload component. PasteZone handles paste shortcut when a text input field
+     * in the container is focused.
+     * <br>
+     * It is supported by Chromium-based browsers.
+     *
+     * @param pasteZone paste zone container
+     */
+    void setPasteZone(@Nullable ComponentContainer pasteZone);
+
+    /**
+     * @return current paste zone container
+     */
+    @Nullable
+    ComponentContainer getPasteZone();
+
+    /**
+     * @return current drop zone prompt
+     */
+    @Nullable
+    String getDropZonePrompt();
+
+    /**
+     * Sets drop zone prompt that will be shown on drag over window with file.
+     *
+     * @param dropZonePrompt drop zone prompt
+     */
+    void setDropZonePrompt(@Nullable String dropZonePrompt);
 
     /**
      * Base class for UploadField events.
@@ -88,138 +202,6 @@ public interface UploadField extends Component, Component.HasCaption, Component.
             return cause;
         }
     }
-
-    /**
-     * Adds file upload start listener. It is invoked when start uploading the file.
-     *
-     * @param listener a listener to add
-     * @return subscription
-     */
-    Subscription addFileUploadStartListener(Consumer<FileUploadStartEvent> listener);
-
-    /**
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeFileUploadStartListener(Consumer<FileUploadStartEvent> listener);
-
-    /**
-     * Adds file upload finish listener. It is invoked when file is uploaded.
-     *
-     * @param listener a listener to add
-     * @return subscription
-     */
-    Subscription addFileUploadFinishListener(Consumer<FileUploadFinishEvent> listener);
-
-    /**
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeFileUploadFinishListener(Consumer<FileUploadFinishEvent> listener);
-
-    /**
-     * Adds file upload error listener. It is invoked when the uploads are finished, but unsuccessful.
-     *
-     * @param listener a listener to add
-     * @return subscription
-     */
-    Subscription addFileUploadErrorListener(Consumer<FileUploadErrorEvent> listener);
-
-    /**
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeFileUploadErrorListener(Consumer<FileUploadErrorEvent> listener);
-
-    /**
-     * Returns maximum allowed file size in bytes.
-     */
-    long getFileSizeLimit();
-
-    /**
-     * Sets maximum allowed file size in bytes.
-     * Default value is 0. In this case component uses system value.
-     */
-    void setFileSizeLimit(long fileSizeLimit);
-
-    /**
-     * Returns comma separated types of files.
-     *
-     * @return comma separated types of files
-     */
-    @Nullable
-    String getAccept();
-
-    /**
-     * Sets the mask for files to filter them in the file selection dialog.<br>
-     * Example: <pre>{@code fileUpload.setAccept(".png,.jpeg")}</pre>
-     *
-     * @param accept comma separated types of files
-     */
-    void setAccept(@Nullable String accept);
-
-    /**
-     * Set white list of file extensions. Each extension should start with dot symbol, e.g. ".png".
-     * <pre>{@code
-     *    private FileUploadField uploadField;
-     *    ...
-     *    uploadField.setPermittedExtensions(Sets.newHashSet(".png", ".jpg"));
-     * }</pre>
-     *
-     * @param permittedExtensions permitted extensions.
-     */
-    void setPermittedExtensions(@Nullable Set<String> permittedExtensions);
-
-    /**
-     * Return white list of file extensions.
-     *
-     * @return set of file extensions.
-     */
-    @Nullable
-    Set<String> getPermittedExtensions();
-
-    /**
-     * @return current drop zone
-     */
-    @Nullable
-    DropZone getDropZone();
-
-    /**
-     * Set drop zone reference to this upload component. Files can be dropped to component of the drop zone
-     * to be uploaded by this upload component.
-     *
-     * @param dropZone drop zone descriptor
-     */
-    void setDropZone(@Nullable DropZone dropZone);
-
-    /**
-     * Set paste zone reference to this upload component. PasteZone handles paste shortcut when a text input field
-     * in the container is focused.
-     * <br>
-     * It is supported by Chromium-based browsers.
-     *
-     * @param pasteZone paste zone container
-     */
-    void setPasteZone(@Nullable ComponentContainer pasteZone);
-
-    /**
-     * @return current paste zone container
-     */
-    @Nullable
-    ComponentContainer getPasteZone();
-
-    /**
-     * @return current drop zone prompt
-     */
-    @Nullable
-    String getDropZonePrompt();
-
-    /**
-     * Set drop zone prompt that will be shown on drag over window with file.
-     *
-     * @param dropZonePrompt drop zone prompt
-     */
-    void setDropZonePrompt(@Nullable String dropZonePrompt);
 
     /**
      * Drop zone descriptor. BoxLayout or Window can be used as drop zone for an upload component.

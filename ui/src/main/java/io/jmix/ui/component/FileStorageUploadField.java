@@ -44,13 +44,16 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
     }
 
     /**
-     * Get id for uploaded file in {@link TemporaryStorage}.
+     * Gets id for uploaded file in {@link TemporaryStorage}.
      *
      * @return File Id.
      */
     @Nullable
     UUID getFileId();
 
+    /**
+     * @return caption to be shown in the file download link next to upload button
+     */
     @Nullable
     String getFileName();
 
@@ -63,7 +66,7 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
     T getReference();
 
     /**
-     * Set mode which determines when file will be put into FileStorage.
+     * Sets mode which determines when file will be put into FileStorage.
      */
     void setMode(FileStoragePutMode mode);
 
@@ -72,8 +75,16 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
      */
     FileStoragePutMode getMode();
 
+    /**
+     * Sets the name of FileStorage where the upload file will be placed.
+     *
+     * @param fileStorageName the name of file storage
+     */
     void setFileStorageName(@Nullable String fileStorageName);
 
+    /**
+     * @return the name of FileStorage where the upload file will be placed
+     */
     @Nullable
     String getFileStorageName();
 }

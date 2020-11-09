@@ -98,5 +98,4 @@ public class FileUploadFieldImpl extends AbstractSingleFileUploadField<byte[]>
 
         return null;
     }
-
 }

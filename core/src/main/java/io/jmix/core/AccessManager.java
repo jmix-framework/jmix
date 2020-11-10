@@ -68,7 +68,7 @@ public class AccessManager {
     public <T extends AccessContext> void applyConstraints(T context, Collection<AccessConstraint<?>> constraints) {
         //noinspection unchecked
         constraints.stream()
-                .filter(constraint -> Objects.equals(constraint.getContextType(), context.getClass()))
+                .filter(constraint -> constraint.getContextType().isAssignableFrom(context.getClass()))
                 .map(constraint -> (AccessConstraint<T>) constraint)
                 .forEach(constraint -> constraint.applyTo(context));
     }

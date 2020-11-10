@@ -18,6 +18,15 @@ package io.jmix.core.context;
 
 public abstract class SpecificOperationAccessContext implements AccessContext {
     protected boolean permitted = true;
+    protected final String name;
+
+    public SpecificOperationAccessContext(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public void setDenied() {
         permitted = false;

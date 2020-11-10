@@ -19,4 +19,9 @@ package io.jmix.ui.accesscontext;
 import io.jmix.core.context.SpecificOperationAccessContext;
 
 public class UiBulkEditContext extends SpecificOperationAccessContext {
+    public static final String NAME = "cuba.gui.bulkEdit";
+
+    public UiBulkEditContext() {
+        super(NAME);
+    }
 }

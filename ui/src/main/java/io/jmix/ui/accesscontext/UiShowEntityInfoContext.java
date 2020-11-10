@@ -19,4 +19,9 @@ package io.jmix.ui.accesscontext;
 import io.jmix.core.context.SpecificOperationAccessContext;
 
 public class UiShowEntityInfoContext extends SpecificOperationAccessContext {
+    public static final String NAME = "cuba.gui.showInfo";
+
+    public UiShowEntityInfoContext() {
+        super(NAME);
+    }
 }

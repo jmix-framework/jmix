@@ -29,6 +29,7 @@ import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.app.core.file.FileUploadDialog;
+import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.executors.BackgroundTaskWrapper;
 import com.haulmont.cuba.gui.export.ByteArrayDataProvider;
 import com.haulmont.cuba.gui.export.ExportFormat;
@@ -293,7 +294,7 @@ public class CubaFoldersPane extends VerticalLayout {
                 stopExistingFoldersPaneTimer(ui);
                 ui.addTimer(timer);
             } else if (frame != null) {
-                Window window = ComponentsHelper.getWindowImplementation(frame);
+                Window window = CubaComponentsHelper.getWindowImplementation(frame);
                 if (window == null) {
                     throw new IllegalStateException("Null window for CubaFoldersPane");
                 }

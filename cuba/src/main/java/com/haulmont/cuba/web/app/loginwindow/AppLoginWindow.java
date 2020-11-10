@@ -27,7 +27,6 @@ import io.jmix.core.security.ClientDetails;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ThemeResource;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;

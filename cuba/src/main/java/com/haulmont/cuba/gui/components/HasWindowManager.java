@@ -202,7 +202,8 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(Class<? extends Entity> entityClass, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(Class<? extends Entity> entityClass,
+                                      com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
                                       OpenType openType) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
         WindowInfo lookupScreen = windowConfig.getLookupScreen(entityClass);
@@ -219,7 +220,8 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(Class<? extends Entity> entityClass, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(Class<? extends Entity> entityClass,
+                                      com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
                                       OpenType openType, Map<String, Object> params) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
         WindowInfo lookupScreen = windowConfig.getLookupScreen(entityClass);
@@ -236,7 +238,8 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(String windowAlias, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(String windowAlias,
+                                      com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
                                       OpenType openType, Map<String, Object> params) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);
@@ -252,7 +255,8 @@ public interface HasWindowManager {
      * @return created window
      */
     @Deprecated
-    default AbstractLookup openLookup(String windowAlias, Window.Lookup.Handler handler,
+    default AbstractLookup openLookup(String windowAlias,
+                                      com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
                                       OpenType openType) {
         WindowConfig windowConfig = AppBeans.get(WindowConfig.class);
         WindowInfo windowInfo = windowConfig.getWindowInfo(windowAlias);

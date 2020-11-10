@@ -65,7 +65,7 @@ import java.util.Set;
  */
 @Deprecated
 public class AbstractEditor<T extends Entity> extends AbstractWindow
-        implements Window.Editor<T>, ReadOnlyAwareScreen {
+        implements com.haulmont.cuba.gui.components.Window.Editor<T>, ReadOnlyAwareScreen {
 
     @Autowired
     protected Metadata metadata;
@@ -142,6 +142,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         return (T) getDatasourceInternal().getItem();
     }
 
+    @Override
     @Nullable
     public Datasource getParentDs() {
         Datasource ds = getDatasourceInternal();
@@ -336,6 +337,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         }
     }
 
+    @Override
     public void setParentDs(Datasource parentDs) {
         Datasource ds = getDatasourceInternal();
         ((DatasourceImplementation) ds).setParent(parentDs);

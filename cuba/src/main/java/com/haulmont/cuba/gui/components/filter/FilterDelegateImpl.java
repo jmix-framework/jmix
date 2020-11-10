@@ -726,7 +726,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected Window getWindow() {
-        Window window = ComponentsHelper.getWindowImplementation(filter);
+        Window window = CubaComponentsHelper.getWindowImplementation(filter);
         if (window == null)
             throw new IllegalStateException(String.format("Cannot get window for filter %s", filter.getId()));
         return window;
@@ -1255,7 +1255,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     }
 
     protected FilterEntity getDefaultFilter(List<FilterEntity> filters) {
-        Window window = ComponentsHelper.getWindowImplementation(filter);
+        Window window = CubaComponentsHelper.getWindowImplementation(filter);
         if (window == null) {
             throw new IllegalStateException("There is no window set for filter");
         }

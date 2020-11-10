@@ -36,6 +36,7 @@ import com.haulmont.cuba.web.sys.CubaDialogs;
 import com.haulmont.cuba.web.sys.CubaFragments;
 import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
 import com.haulmont.cuba.web.sys.CubaScreens;
+import com.haulmont.cuba.web.sys.navigation.CubaUrlChangeHandler;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.*;
 import io.jmix.core.annotation.JmixModule;
@@ -58,6 +59,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.impl.UiTestIdsSupport;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.navigation.UrlChangeHandler;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
@@ -122,6 +124,13 @@ public class CubaConfiguration {
     @UIScope
     protected Dialogs getDialogs() {
         return new CubaDialogs();
+    }
+
+    @Bean("cuba_UrlChangeHandler")
+    @Primary
+    @UIScope
+    protected UrlChangeHandler getUrlChangeHandler() {
+        return new CubaUrlChangeHandler();
     }
 
     @Bean("cuba_Messages")

@@ -37,7 +37,8 @@ import java.util.function.Predicate;
  * @deprecated Use {@link io.jmix.ui.screen.StandardLookup} APIs instead.
  */
 @Deprecated
-public class AbstractLookup extends AbstractWindow implements Window.Lookup {
+public class AbstractLookup extends AbstractWindow
+        implements com.haulmont.cuba.gui.components.Window.Lookup {
 
     private Predicate<ValidationContext> lookupValidator;
     private Consumer<Collection> lookupHandler;

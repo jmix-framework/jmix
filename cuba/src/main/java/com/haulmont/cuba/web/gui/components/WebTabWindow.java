@@ -17,11 +17,13 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.WindowContext;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.Window;
 import com.vaadin.ui.AbstractOrderedLayout;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.impl.TabWindowImpl;
+import io.jmix.ui.screen.UiControllerUtils;
 
 @Deprecated
 public class WebTabWindow extends TabWindowImpl implements Window {
@@ -29,6 +31,11 @@ public class WebTabWindow extends TabWindowImpl implements Window {
     @Override
     public WindowContext getContext() {
         return (WindowContext) super.getContext();
+    }
+
+    @Override
+    public WindowManager getWindowManager() {
+        return (WindowManager) UiControllerUtils.getScreenContext(getFrameOwner()).getScreens();
     }
 
     @Override

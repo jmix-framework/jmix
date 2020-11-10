@@ -21,6 +21,7 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
+import com.haulmont.cuba.gui.components.compatibility.SelectHandlerAdapter;
 import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -37,7 +38,6 @@ import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.compatibility.SelectHandlerAdapter;
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
 import io.jmix.ui.screen.*;
 import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
@@ -54,7 +54,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"rawtypes", "unchecked", "DeprecatedIsStillUsed", "deprecation"})
+@SuppressWarnings({"rawtypes", "unchecked", "deprecation"})
 @Deprecated
 public final class CubaScreens extends ScreensImpl implements Screens, WindowManager {
 
@@ -84,7 +84,9 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     }
 
     @Override
-    public Window openWindow(WindowInfo windowInfo, OpenType openType, Map<String, Object> params) {
+    public com.haulmont.cuba.gui.components.Window openWindow(WindowInfo windowInfo,
+                                                              OpenType openType,
+                                                              Map<String, Object> params) {
         params = createParametersMap(windowInfo, params);
         MapScreenOptions options = new MapScreenOptions(params);
 
@@ -92,11 +94,14 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         applyOpenTypeParameters(screen.getWindow(), openType);
 
         show(screen);
-        return screen instanceof Window ? (Window) screen : new ScreenWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window
+                ? (com.haulmont.cuba.gui.components.Window) screen
+                : new ScreenWrapper(screen);
     }
 
     @Override
-    public Window openWindow(WindowInfo windowInfo, OpenType openType) {
+    public com.haulmont.cuba.gui.components.Window openWindow(WindowInfo windowInfo,
+                                                              OpenType openType) {
         Map<String, Object> params = createParametersMap(windowInfo, Collections.emptyMap());
         MapScreenOptions options = new MapScreenOptions(params);
 
@@ -104,12 +109,17 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         applyOpenTypeParameters(screen.getWindow(), openType);
 
         show(screen);
-        return screen instanceof Window ? (Window) screen : new ScreenWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window
+                ? (com.haulmont.cuba.gui.components.Window) screen
+                : new ScreenWrapper(screen);
     }
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Datasource parentDs) {
+    public com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo,
+                                                                     Entity item,
+                                                                     OpenType openType,
+                                                                     Datasource parentDs) {
         Map<String, Object> params = createParametersMap(windowInfo,
                 Collections.singletonMap(WindowParams.ITEM.name(), item)
         );
@@ -124,12 +134,16 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         }
         editorScreen.setEntityToEdit(item);
         show(screen);
-        return screen instanceof Window.Editor ? (Window.Editor) screen : new ScreenEditorWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window.Editor
+                ? (com.haulmont.cuba.gui.components.Window.Editor) screen
+                : new ScreenEditorWrapper(screen);
     }
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType) {
+    public com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo,
+                                                                     Entity item,
+                                                                     OpenType openType) {
         Map<String, Object> params = createParametersMap(windowInfo,
                 Collections.singletonMap(WindowParams.ITEM.name(), item)
         );
@@ -142,16 +156,23 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         EditorScreen editorScreen = (EditorScreen) screen;
         editorScreen.setEntityToEdit(item);
         show(screen);
-        return screen instanceof Window.Editor ? (Window.Editor) screen : new ScreenEditorWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window.Editor
+                ? (com.haulmont.cuba.gui.components.Window.Editor) screen
+                : new ScreenEditorWrapper(screen);
     }
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params) {
+    public com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo,
+                                                                     Entity item,
+                                                                     OpenType openType,
+                                                                     Map<String, Object> params) {
         Screen editor = createEditor(windowInfo, item, openType, params);
 
         editor.show();
 
-        return editor instanceof Window.Editor ? (Window.Editor) editor : new ScreenEditorWrapper(editor);
+        return editor instanceof com.haulmont.cuba.gui.components.Window.Editor
+                ? (com.haulmont.cuba.gui.components.Window.Editor) editor
+                : new ScreenEditorWrapper(editor);
     }
 
     @Override
@@ -175,9 +196,11 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
 
 
     @Override
-    public Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
-                                    @Nullable Map<String, Object> params,
-                                    Datasource parentDs) {
+    public com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo,
+                                                                     Entity item,
+                                                                     OpenType openType,
+                                                                     @Nullable Map<String, Object> params,
+                                                                     Datasource parentDs) {
         params = createParametersMap(windowInfo, params);
         params.put(WindowParams.ITEM.name(), item);
 
@@ -193,13 +216,17 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         editorScreen.setEntityToEdit(item);
         show(screen);
 
-        return screen instanceof Window.Editor ? (Window.Editor) screen : new ScreenEditorWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window.Editor
+                ? (com.haulmont.cuba.gui.components.Window.Editor) screen
+                : new ScreenEditorWrapper(screen);
     }
 
 
     @Override
-    public Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler, OpenType openType,
-                                    Map<String, Object> params) {
+    public com.haulmont.cuba.gui.components.Window.Lookup openLookup(WindowInfo windowInfo,
+                                                                     com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
+                                                                     OpenType openType,
+                                                                     Map<String, Object> params) {
         params = createParametersMap(windowInfo, params);
 
         MapScreenOptions options = new MapScreenOptions(params);
@@ -210,12 +237,16 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
 
         show(screen);
 
-        return screen instanceof Window.Lookup ? (Window.Lookup) screen : new ScreenLookupWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window.Lookup
+                ? (com.haulmont.cuba.gui.components.Window.Lookup) screen
+                : new ScreenLookupWrapper(screen);
     }
 
 
     @Override
-    public Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler, OpenType openType) {
+    public com.haulmont.cuba.gui.components.Window.Lookup openLookup(WindowInfo windowInfo,
+                                                                     com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
+                                                                     OpenType openType) {
         Map<String, Object> params = createParametersMap(windowInfo, Collections.emptyMap());
 
         MapScreenOptions options = new MapScreenOptions(params);
@@ -226,7 +257,9 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
 
         show(screen);
 
-        return screen instanceof Window.Lookup ? (Window.Lookup) screen : new ScreenLookupWrapper(screen);
+        return screen instanceof com.haulmont.cuba.gui.components.Window.Lookup
+                ? (com.haulmont.cuba.gui.components.Window.Lookup) screen
+                : new ScreenLookupWrapper(screen);
     }
 
     @Override
@@ -279,6 +312,11 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         }
 
         return screenFragment instanceof Frame ? (Frame) screenFragment : new ScreenFragmentWrapper(screenFragment);
+    }
+
+    @Override
+    public void close(Window window) {
+        remove(window.getFrameOwner());
     }
 
     @Override

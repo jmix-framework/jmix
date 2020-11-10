@@ -17,8 +17,11 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
+import com.vaadin.ui.Component;
+import io.jmix.ui.component.UploadField;
 import io.jmix.ui.component.impl.FileMultiUploadFieldImpl;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @Deprecated
@@ -28,5 +31,22 @@ public class WebFileMultiUploadField extends FileMultiUploadFieldImpl
     @Override
     public void removeQueueUploadCompleteListener(Consumer<QueueUploadCompleteEvent> listener) {
         unsubscribe(QueueUploadCompleteEvent.class, listener);
+    }
+
+    @Override
+    public void setDropZone(@Nullable UploadField.DropZone dropZone) {
+        this.dropZone = dropZone;
+
+        if (dropZone == null) {
+            component.setDropZone(null);
+        } else {
+            io.jmix.ui.component.Component target = dropZone.getTarget();
+            if (target instanceof com.haulmont.cuba.gui.components.Window.Wrapper) {
+                target = ((com.haulmont.cuba.gui.components.Window.Wrapper) target).getWrappedWindow();
+            }
+
+            Component vComponent = target.unwrapComposition(Component.class);
+            this.component.setDropZone(vComponent);
+        }
     }
 }

@@ -22,12 +22,14 @@ import io.jmix.core.MetadataTools;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.LookupScreen;
 
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_SELECT_ACTION_ID;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_SELECT_CLOSE_ACTION;
 
 /**
  * An action used in the lookup screens to select an item.
@@ -39,7 +41,7 @@ public class SelectAction extends AbstractAction {
     protected AbstractLookup window;
 
     public SelectAction(AbstractLookup window) {
-        super(Window.Lookup.LOOKUP_SELECT_ACTION_ID);
+        super(LOOKUP_SELECT_ACTION_ID);
         this.window = window;
         this.primary = true;
 
@@ -60,7 +62,7 @@ public class SelectAction extends AbstractAction {
             return;
 
         window.getFrameOwner()
-                .close(LookupScreen.LOOKUP_SELECT_CLOSE_ACTION)
+                .close(LOOKUP_SELECT_CLOSE_ACTION)
                 .then(this::handleSelection);
     }
 

@@ -33,7 +33,6 @@ import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;

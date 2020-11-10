@@ -18,9 +18,15 @@ package com.haulmont.cuba.gui;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.ui.*;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.WebBrowserTools;
+import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.SizeUnit;
+import io.jmix.ui.component.SizeWithUnit;
+import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
@@ -62,35 +68,43 @@ public interface WindowManager {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Deprecated
-    Window openWindow(WindowInfo windowInfo, OpenType openType, Map<String, Object> params);
+    com.haulmont.cuba.gui.components.Window openWindow(WindowInfo windowInfo,
+                                                       OpenType openType,
+                                                       Map<String, Object> params);
 
     @Deprecated
-    Window openWindow(WindowInfo windowInfo, OpenType openType);
+    com.haulmont.cuba.gui.components.Window openWindow(WindowInfo windowInfo,
+                                                       OpenType openType);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
-                             Datasource parentDs);
+    com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
+                                                              Datasource parentDs);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType);
+    com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
+    com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo, Entity item, OpenType openType,
+                                                              Map<String, Object> params);
 
     @Deprecated
-    Window.Editor openEditor(WindowInfo windowInfo, Entity item,
-                             OpenType openType, Map<String, Object> params,
-                             Datasource parentDs);
+    com.haulmont.cuba.gui.components.Window.Editor openEditor(WindowInfo windowInfo, Entity item,
+                                                              OpenType openType, Map<String, Object> params,
+                                                              Datasource parentDs);
 
     // used only for legacy screens
     Screen createEditor(WindowInfo windowInfo, Entity item, OpenType openType, Map<String, Object> params);
 
     @Deprecated
-    Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler,
-                             OpenType openType, Map<String, Object> params);
+    com.haulmont.cuba.gui.components.Window.Lookup openLookup(WindowInfo windowInfo,
+                                                              com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
+                                                              OpenType openType,
+                                                              Map<String, Object> params);
 
     @Deprecated
-    Window.Lookup openLookup(WindowInfo windowInfo, Window.Lookup.Handler handler, OpenType openType);
+    com.haulmont.cuba.gui.components.Window.Lookup openLookup(WindowInfo windowInfo,
+                                                              com.haulmont.cuba.gui.components.Window.Lookup.Handler handler,
+                                                              OpenType openType);
 
     @Deprecated
     Frame openFrame(Frame parentFrame, Component parent, WindowInfo windowInfo);
@@ -104,11 +118,13 @@ public interface WindowManager {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /*
-    TODO: legacy-ui
-    default void close(Window window) {
-        remove(window.getFrameOwner());
-    }*/
+    /**
+     * Closes a given window.
+     *
+     * @param window a window to close
+     */
+    @Deprecated
+    void close(Window window);
 
     /**
      * Opens default screen. Implemented only for the web module.

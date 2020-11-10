@@ -56,8 +56,8 @@ import java.util.stream.Stream;
  */
 @Deprecated
 public class AbstractWindow extends Screen
-        implements com.haulmont.cuba.gui.components.Window, Window.Wrapper, LegacyFrame, Component.HasXmlDescriptor,
-        SecuredActionsHolder, ChangeTracker, CubaLegacySettings {
+        implements com.haulmont.cuba.gui.components.Window, com.haulmont.cuba.gui.components.Window.Wrapper,
+        LegacyFrame, Component.HasXmlDescriptor, SecuredActionsHolder, ChangeTracker, CubaLegacySettings {
 
     public static final String UNKNOWN_CLOSE_ACTION_ID = "unknown";
 
@@ -953,7 +953,7 @@ public class AbstractWindow extends Screen
 
     @Override
     public void removeBeforeWindowCloseListener(Consumer<Window.BeforeCloseEvent> listener) {
-        ((Window) frame).removeBeforeWindowCloseListener(listener);
+        ((com.haulmont.cuba.gui.components.Window) frame).removeBeforeWindowCloseListener(listener);
     }
 
     @Override

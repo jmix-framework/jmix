@@ -14,7 +14,28 @@
  * limitations under the License.
  */
 
-package com.haulmont.cuba.gui.components;
+package com.haulmont.cuba.gui.components.compatibility;
 
-public class AbstractTopLevelWindow extends AbstractWindow implements Window.TopLevelWindow {
+import com.haulmont.cuba.gui.components.Window;
+
+import java.util.Collection;
+import java.util.function.Consumer;
+
+@Deprecated
+public class SelectHandlerAdapter<T> implements Consumer<Collection<T>> {
+
+    private final Window.Lookup.Handler handler;
+
+    public SelectHandlerAdapter(Window.Lookup.Handler handler) {
+        this.handler = handler;
+    }
+
+    @Override
+    public void accept(Collection<T> items) {
+        handler.handleLookup(items);
+    }
+
+    public Window.Lookup.Handler getHandler() {
+        return handler;
+    }
 }

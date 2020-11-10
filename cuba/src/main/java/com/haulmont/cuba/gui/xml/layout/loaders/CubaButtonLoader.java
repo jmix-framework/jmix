@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
+import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.xml.layout.loader.ButtonLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -66,5 +67,16 @@ public class CubaButtonLoader extends ButtonLoader {
                 getProperties(),
                 applicationContext.getBean(CubaProperties.class),
                 context);
+    }
+
+    @Override
+    protected void loadAction(ActionOwner component, Element element) {
+        String actionId = element.attributeValue("action");
+        if (!StringUtils.isEmpty(actionId)) {
+            ComponentContext componentContext = getComponentContext();
+            componentContext.addPostInitTask(
+                    new CubaActionOwnerAssignActionPostInitTask(component, actionId, componentContext.getFrame())
+            );
+        }
     }
 }

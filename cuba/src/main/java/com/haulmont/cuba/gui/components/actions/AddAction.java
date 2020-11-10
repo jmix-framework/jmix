@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.HasOpenType;
 import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
@@ -39,7 +40,6 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import org.springframework.context.annotation.Scope;
@@ -129,7 +129,7 @@ public class AddAction extends ListAction
 
     /**
      * The simplest constructor. The action has default name and opens the lookup screen in THIS tab.
-     * Lookup handler can be set by subsequent call to {@link #setHandler(io.jmix.ui.component.Window.Lookup.Handler)}.
+     * Lookup handler can be set by subsequent call to {@link #setHandler(Window.Lookup.Handler)}.
      * If it is not set, an instance of {@link DefaultHandler} will be used.
      *
      * @param target component containing this action
@@ -235,7 +235,7 @@ public class AddAction extends ListAction
         WindowManager wm = (WindowManager) ComponentsHelper.getScreenContext(target.getFrame()).getScreens();
         WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo(getWindowId());
 
-        Window lookupWindow = wm.openLookup(windowInfo, itemsHandler, getOpenType(), params);
+        Window.Lookup lookupWindow = wm.openLookup(windowInfo, itemsHandler, getOpenType(), params);
         if (target instanceof Component.Focusable) {
             lookupWindow.addCloseListener(actionId -> {
                 // move focus to owner

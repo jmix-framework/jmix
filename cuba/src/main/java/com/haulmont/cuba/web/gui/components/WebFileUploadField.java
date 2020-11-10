@@ -26,10 +26,12 @@ import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import com.vaadin.ui.Component;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.UploadField;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.FileStorageUploadFieldImpl;
 import io.jmix.ui.upload.TemporaryStorage;
@@ -197,5 +199,22 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
     @Override
     public void removeValidator(Consumer<FileDescriptor> validator) {
         removeValidator(validator::accept);
+    }
+
+    @Override
+    public void setDropZone(@Nullable UploadField.DropZone dropZone) {
+        this.dropZone = dropZone;
+
+        if (dropZone == null) {
+            component.setDropZone(null);
+        } else {
+            io.jmix.ui.component.Component target = dropZone.getTarget();
+            if (target instanceof com.haulmont.cuba.gui.components.Window.Wrapper) {
+                target = ((com.haulmont.cuba.gui.components.Window.Wrapper) target).getWrappedWindow();
+            }
+
+            Component vComponent = target.unwrapComposition(Component.class);
+            component.setDropZone(vComponent);
+        }
     }
 }

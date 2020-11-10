@@ -16,35 +16,27 @@
 
 package io.jmix.reportsui.gui.actions;
 
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Messages;
-import com.haulmont.cuba.gui.WindowManager;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
+import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.exception.ReportingException;
 import io.jmix.reportsui.gui.ReportGuiManager;
-import io.jmix.reportsui.gui.report.run.ReportRun;
-import io.jmix.ui.WindowConfig;
-import io.jmix.ui.WindowInfo;
+import io.jmix.reportsui.gui.report.run.InputParametersFrame;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.gui.OpenType;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.ScreenContext;
-import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractPrintFormAction extends AbstractAction implements Action.HasBeforeActionPerformedHandler {
 
@@ -53,6 +45,15 @@ public abstract class AbstractPrintFormAction extends AbstractAction implements 
 
     @Autowired
     protected DataManager dataManager;
+
+    @Autowired
+    protected Messages messages;
+
+    @Autowired
+    protected ScreenBuilders screenBuilder;
+
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
 
     protected BeforeActionPerformedHandler beforeActionPerformedHandler;
 
@@ -66,28 +67,31 @@ public abstract class AbstractPrintFormAction extends AbstractAction implements 
 
     protected void openRunReportScreen(Screen screen, Object selectedValue, MetaClass inputValueMetaClass,
                                        @Nullable String outputFileName) {
-        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BaseUser user = (BaseUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Report> reports = reportGuiManager.getAvailableReports(screen.getId(), user, inputValueMetaClass);
 
         ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);
 
         if (reports.size() > 1) {
-            Map<String, Object> params = ParamsMap.of(ReportRun.REPORTS_PARAMETER, reports);
+            if (CollectionUtils.isNotEmpty(reports)) {
+                Report report = reports.iterator().next();
+                Report reloadedReport = reloadReport(report);
+                ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
 
-            WindowManager wm = (WindowManager) screenContext.getScreens();
-            WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo("report$Report.run");
+                Screen reportPrintScreen = screenBuilder.screen(screen).withScreenId("report$Report.run")
+                        .withOpenMode(OpenMode.DIALOG)
+                        .withOptions(new MapScreenOptions(ParamsMap.of(
+                                InputParametersFrame.REPORT_PARAMETER, reports,
+                                InputParametersFrame.PARAMETERS_PARAMETER, parameter
+                        )))
+                        .build();
 
-            wm.openLookup(windowInfo, items -> {
-                if (CollectionUtils.isNotEmpty(items)) {
-                    Report report = (Report) items.iterator().next();
-                    Report reloadedReport = reloadReport(report);
-                    ReportInputParameter parameter = getParameterAlias(reloadedReport, inputValueMetaClass);
-                    if (selectedValue instanceof ParameterPrototype) {
-                        ((ParameterPrototype) selectedValue).setParamName(parameter.getAlias());
-                    }
-                    reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName);
-                }
-            }, OpenType.DIALOG, params);
+                reportPrintScreen.addAfterCloseListener(afterCloseEvent -> reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName));
+
+                reportPrintScreen.show();
+            }
+
+
         } else if (reports.size() == 1) {
             Report report = reports.get(0);
             Report reloadedReport = reloadReport(report);
@@ -97,13 +101,11 @@ public abstract class AbstractPrintFormAction extends AbstractAction implements 
             }
             reportGuiManager.runReport(reloadedReport, screen, parameter, selectedValue, null, outputFileName);
         } else {
-            Messages messages = AppBeans.get(Messages.NAME);
+            Notifications notifications = screenContext.getNotifications();
 
-            WindowManager wm = (WindowManager) screenContext.getScreens();
-
-            wm.showNotification(
-                    messages.getMessage(ReportGuiManager.class, "report.notFoundReports"),
-                    Frame.NotificationType.HUMANIZED);
+            notifications.create(Notifications.NotificationType.HUMANIZED)
+                    .withCaption(messages.getMessage(ReportGuiManager.class, "report.notFoundReports"))
+                    .show();
         }
     }
 
@@ -129,14 +131,9 @@ public abstract class AbstractPrintFormAction extends AbstractAction implements 
     }
 
     protected Report reloadReport(Report report) {
-        FetchPlan view = new FetchPlan(Report.class)
-                .addProperty("name")
-                .addProperty("localeNames")
-                .addProperty("description")
-                .addProperty("templates")
-                .addProperty("defaultTemplate")
-                .addProperty("code")
-                .addProperty("xml");
-        return dataManager.reload(report, view);
+        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(Report.class, "report.print");
+        return dataManager.load(Id.of(report))
+                .fetchPlan(fetchPlan)
+                .one();
     }
 }

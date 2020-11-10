@@ -14,34 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.gui.actions;
+package io.jmix.reportsui.gui.actions.list;
 
-import com.haulmont.cuba.gui.components.Table;
-import io.jmix.ui.screen.Screen;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.action.ActionType;
+import io.jmix.ui.meta.StudioAction;
 
+@StudioAction(category = "Reports list actions", description = "Prints the reports associated with current editor screen")
+@ActionType(TablePrintFormAction.ID)
 public class TablePrintFormAction extends ListPrintFormAction {
 
-    /**
-     * @deprecated Use {@link TablePrintFormAction#TablePrintFormAction(Table)} instead.
-     */
-    @Deprecated
-    public TablePrintFormAction(Screen screen, Table table) {
-        this("tableReport", screen, table);
-    }
-
-    /**
-     * @deprecated Use {@link TablePrintFormAction#TablePrintFormAction(String, Table)} instead.
-     */
-    @Deprecated
-    public TablePrintFormAction(String id, Screen screen, Table table) {
-        super(id, table);
-    }
+    public static final String ID = "tablePrintForm";
 
     public TablePrintFormAction(Table table) {
-        this("tableReport", table);
+        this(ID, table);
     }
 
     public TablePrintFormAction(String id, Table table) {
-        super(id, table);
+        super(id);
+
+        this.target = table;
     }
 }

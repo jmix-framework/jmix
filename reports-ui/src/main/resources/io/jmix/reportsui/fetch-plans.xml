@@ -40,6 +40,16 @@
         <property name="group" fetchPlan="_minimal"/>
     </fetchPlan>
 
+    <fetchPlan entity="report_Report" name="report.print">
+        <property name="name"/>
+        <property name="localeNames"/>
+        <property name="description"/>
+        <property name="templates"/>
+        <property name="defaultTemplate"/>
+        <property name="code"/>
+        <property name="xml"/>
+    </fetchPlan>
+
     <fetchPlan entity="report_Report" name="report.withTemplates" extends="_minimal">
         <property name="templates" fetchPlan="_minimal"/>
     </fetchPlan>

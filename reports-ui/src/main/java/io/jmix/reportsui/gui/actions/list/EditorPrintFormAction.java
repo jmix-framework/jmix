@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.reportsui.gui.actions;
+package io.jmix.reportsui.gui.actions.list;
 
-import com.haulmont.cuba.core.global.Metadata;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.JmixEntity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
 import io.jmix.reportsui.gui.ReportGuiManager;
+import io.jmix.reportsui.gui.actions.AbstractPrintFormAction;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
@@ -32,7 +33,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
+@StudioAction(category = "Reports list actions", description = "Prints the reports for a list of entity instances associated with a list component")
+@ActionType(EditorPrintFormAction.ID)
 public class EditorPrintFormAction extends AbstractPrintFormAction {
+
+    public static final String ID = "editorPrintForm";
 
     @Autowired
     protected Messages messages;
@@ -44,7 +49,7 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
     protected final String reportOutputName;
 
     public EditorPrintFormAction(EditorScreen editor, @Nullable String reportOutputName) {
-        this("editorReport", editor, reportOutputName);
+        this(ID, editor, reportOutputName);
     }
 
     public EditorPrintFormAction(String id, EditorScreen editor, @Nullable String reportOutputName) {
@@ -62,7 +67,7 @@ public class EditorPrintFormAction extends AbstractPrintFormAction {
             if (!beforeActionPerformedHandler.beforeActionPerformed())
                 return;
         }
-        JmixEntity entity = editor.getEditedEntity();
+        Object entity = editor.getEditedEntity();
         if (entity != null) {
             MetaClass metaClass = metadata.getClass(entity);
             openRunReportScreen((Screen) editor, entity, metaClass, reportOutputName);

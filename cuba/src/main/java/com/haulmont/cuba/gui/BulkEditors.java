@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.app.bulk.BulkEditorWindow;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.app.bulk.FieldSorter;
+import io.jmix.ui.bulk.BulkEditorBuilder;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.screen.FrameOwner;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * A bean that creates an instance of {@link io.jmix.ui.bulk.EditorBuilder}.
+ * A bean that creates an instance of {@link BulkEditorBuilder}.
  *
  * @deprecated Use {@link io.jmix.ui.bulk.BulkEditors} instead
  */
@@ -45,14 +46,14 @@ public class BulkEditors extends io.jmix.ui.bulk.BulkEditors {
     }
 
     @Deprecated
-    public static class EditorBuilder<E> extends io.jmix.ui.bulk.EditorBuilder<E> {
+    public static class EditorBuilder<E> extends BulkEditorBuilder<E> {
 
-        public EditorBuilder(io.jmix.ui.bulk.EditorBuilder<E> builder) {
+        public EditorBuilder(BulkEditorBuilder<E> builder) {
             super(builder);
         }
 
         public EditorBuilder(MetaClass metaClass, Collection<E> entities, FrameOwner origin,
-                             Function<io.jmix.ui.bulk.EditorBuilder<E>, BulkEditorWindow<E>> handler) {
+                             Function<BulkEditorBuilder<E>, BulkEditorWindow<E>> handler) {
             super(metaClass, entities, origin, handler);
         }
 

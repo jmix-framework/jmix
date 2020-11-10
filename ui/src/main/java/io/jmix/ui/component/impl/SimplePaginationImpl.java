@@ -23,7 +23,7 @@ import com.vaadin.ui.Label;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.SimplePagination;
 import io.jmix.ui.component.VisibilityChangeNotifier;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -113,7 +113,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void updateItemsPerPageAvailability() {
-        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataSourceProvider());
+        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder());
     }
 
     @Override
@@ -140,10 +140,10 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     @Override
-    public void setDataSourceProvider(PaginationDataSourceProvider dataSourceProvider) {
-        super.setDataSourceProvider(dataSourceProvider);
+    public void setDataBinder(PaginationDataBinder dataBinder) {
+        super.setDataBinder(dataBinder);
 
-        dataSourceProvider.setCollectionChangeListener(this::onRefreshItems);
+        dataBinder.setCollectionChangeListener(this::onRefreshItems);
 
         removeListeners();
 
@@ -152,11 +152,11 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
         initListeners();
 
-        if (dataSourceProviderHasItems()) {
+        if (dataBinderContainsItems()) {
             // if items has already loaded we should reload them
             // with maxResult from ComboBox or update shown items
             if (isItemsPerPageVisible()) {
-                dataSourceProvider.refresh();
+                dataBinder.refresh();
             } else {
                 onCollectionChanged();
             }
@@ -205,57 +205,57 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void onFirstClick(Button.ClickEvent event) {
-        int firstResult = dataSourceProvider.getFirstResult();
-        dataSourceProvider.setFirstResult(0);
+        int firstResult = dataBinder.getFirstResult();
+        dataBinder.setFirstResult(0);
 
         if (refreshData()) {
             fireAfterRefreshEvent();
         } else {
-            dataSourceProvider.setFirstResult(firstResult);
+            dataBinder.setFirstResult(firstResult);
         }
     }
 
     protected void onPrevClick(Button.ClickEvent event) {
-        int firstResult = dataSourceProvider.getFirstResult();
-        int newStart = dataSourceProvider.getFirstResult() - dataSourceProvider.getMaxResult();
-        dataSourceProvider.setFirstResult(Math.max(newStart, 0));
+        int firstResult = dataBinder.getFirstResult();
+        int newStart = dataBinder.getFirstResult() - dataBinder.getMaxResult();
+        dataBinder.setFirstResult(Math.max(newStart, 0));
 
         if (refreshData()) {
             fireAfterRefreshEvent();
         } else {
-            dataSourceProvider.setFirstResult(firstResult);
+            dataBinder.setFirstResult(firstResult);
         }
     }
 
     protected void onNextClick(Button.ClickEvent event) {
-        int firstResult = dataSourceProvider.getFirstResult();
-        dataSourceProvider.setFirstResult(dataSourceProvider.getFirstResult() + dataSourceProvider.getMaxResult());
+        int firstResult = dataBinder.getFirstResult();
+        dataBinder.setFirstResult(dataBinder.getFirstResult() + dataBinder.getMaxResult());
         if (refreshData()) {
             if (state == State.LAST && size == 0) {
-                dataSourceProvider.setFirstResult(firstResult);
+                dataBinder.setFirstResult(firstResult);
                 lastPage = true;
                 refreshData();
                 lastPage = false;
             }
             fireAfterRefreshEvent();
         } else {
-            dataSourceProvider.setFirstResult(firstResult);
+            dataBinder.setFirstResult(firstResult);
         }
     }
 
     protected void onLastClick(Button.ClickEvent event) {
         int count = getTotalCount();
-        int itemsToDisplay = count % dataSourceProvider.getMaxResult();
-        if (itemsToDisplay == 0) itemsToDisplay = dataSourceProvider.getMaxResult();
+        int itemsToDisplay = count % dataBinder.getMaxResult();
+        if (itemsToDisplay == 0) itemsToDisplay = dataBinder.getMaxResult();
 
-        int firstResult = dataSourceProvider.getFirstResult();
-        dataSourceProvider.setFirstResult(count - itemsToDisplay);
+        int firstResult = dataBinder.getFirstResult();
+        dataBinder.setFirstResult(count - itemsToDisplay);
 
         lastPage = true;
         if (refreshData()) {
             fireAfterRefreshEvent();
         } else {
-            dataSourceProvider.setFirstResult(firstResult);
+            dataBinder.setFirstResult(firstResult);
         }
         lastPage = false;
     }
@@ -265,7 +265,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void onItemsPerPageValueChange(HasValue.ValueChangeEvent<Integer> event) {
-        checkDataSourceProviderBound();
+        checkDataBound();
 
         BeforeRefreshEvent refreshEvent = fireBeforeRefreshEvent();
         if (refreshEvent.isRefreshPrevented()) {
@@ -275,12 +275,12 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
         Integer maxResult = event.getValue();
         if (maxResult == null) {
-            maxResult = getEntityMaxFetchSize(dataSourceProvider.getEntityMetaClass());
+            maxResult = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
         }
 
-        dataSourceProvider.setFirstResult(0);
-        dataSourceProvider.setMaxResults(maxResult);
-        dataSourceProvider.refresh();
+        dataBinder.setFirstResult(0);
+        dataBinder.setMaxResults(maxResult);
+        dataBinder.refresh();
 
         fireAfterRefreshEvent();
     }
@@ -293,7 +293,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
         refreshing = true;
         try {
-            dataSourceProvider.refresh();
+            dataBinder.refresh();
         } finally {
             refreshing = false;
         }
@@ -302,32 +302,32 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
     }
 
     protected void onCollectionChanged() {
-        if (dataSourceProvider == null) {
+        if (dataBinder == null) {
             return;
         }
 
-        size = dataSourceProvider.size();
+        size = dataBinder.size();
         start = 0;
 
         boolean refreshSizeButton = false;
         if (samePage) {
             state = lastState == null ? State.FIRST_COMPLETE : lastState;
-            start = dataSourceProvider.getFirstResult();
+            start = dataBinder.getFirstResult();
             samePage = false;
             refreshSizeButton = State.LAST.equals(state);
-        } else if ((size == 0 || size < dataSourceProvider.getMaxResult()) && dataSourceProvider.getFirstResult() == 0) {
+        } else if ((size == 0 || size < dataBinder.getMaxResult()) && dataBinder.getFirstResult() == 0) {
             state = State.FIRST_COMPLETE;
             lastState = state;
-        } else if (size == dataSourceProvider.getMaxResult() && dataSourceProvider.getFirstResult() == 0) {
+        } else if (size == dataBinder.getMaxResult() && dataBinder.getFirstResult() == 0) {
             state = State.FIRST_INCOMPLETE;
             lastState = state;
-        } else if (size == dataSourceProvider.getMaxResult() && dataSourceProvider.getFirstResult() > 0 && !lastPage) {
+        } else if (size == dataBinder.getMaxResult() && dataBinder.getFirstResult() > 0 && !lastPage) {
             state = State.MIDDLE;
-            start = dataSourceProvider.getFirstResult();
+            start = dataBinder.getFirstResult();
             lastState = state;
-        } else if (size <= dataSourceProvider.getMaxResult() && dataSourceProvider.getFirstResult() > 0) {
+        } else if (size <= dataBinder.getMaxResult() && dataBinder.getFirstResult() > 0) {
             state = State.LAST;
-            start = dataSourceProvider.getFirstResult();
+            start = dataBinder.getFirstResult();
             lastState = state;
         } else {
             state = State.FIRST_COMPLETE;
@@ -336,7 +336,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
         updateNavigationButtonsAvailability();
 
-        getLabel().setValue(messages.formatMessage("", getMessageKey(), getCountValue()));
+        getLabel().setValue(messages.formatMessage("", getLabelMessageKey(), getLabelCountValue()));
 
         // update visible total count
         if (getCountButton().isVisible() && !refreshing || refreshSizeButton) {
@@ -344,7 +344,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
         }
 
         if (isItemsPerPageVisible()) {
-            setSilentlyItemsPerPageValue(dataSourceProvider.getMaxResult());
+            setSilentlyItemsPerPageValue(dataBinder.getMaxResult());
         }
     }
 
@@ -358,7 +358,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
         }
     }
 
-    protected String getMessageKey() {
+    protected String getLabelMessageKey() {
         String msgKey;
         switch (state) {
             case FIRST_COMPLETE:
@@ -394,7 +394,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
         return msgKey;
     }
 
-    protected String getCountValue() {
+    protected String getLabelCountValue() {
         switch (state) {
             case FIRST_COMPLETE:
                 return String.valueOf(size);
@@ -471,7 +471,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
             @Override
             public Integer run(TaskLifeCycle<Long> taskLifeCycle) {
-                return dataSourceProvider.getCount();
+                return dataBinder.getCount();
             }
 
             @Override

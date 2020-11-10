@@ -23,11 +23,11 @@ import io.jmix.ui.model.CollectionChangeType;
 
 import java.util.function.Consumer;
 
-public class PaginationEmptyProvider implements PaginationDataSourceProvider {
+public class PaginationEmptyBinder implements PaginationDataBinder {
 
     protected MetaClass metaClass;
 
-    public PaginationEmptyProvider(MetaClass metaClass) {
+    public PaginationEmptyBinder(MetaClass metaClass) {
         Preconditions.checkNotNullArgument(metaClass);
 
         this.metaClass = metaClass;
@@ -76,10 +76,5 @@ public class PaginationEmptyProvider implements PaginationDataSourceProvider {
 
     @Override
     public void setCollectionChangeListener(Consumer<CollectionChangeType> listener) {
-    }
-
-    @Override
-    public BaseCollectionLoader getLoader() {
-        return null;
     }
 }

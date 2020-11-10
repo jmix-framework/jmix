@@ -29,9 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class AbstractPaginationDataSourceProvider implements PaginationDataSourceProvider {
+public abstract class AbstractPaginationDataBinder implements PaginationDataBinder {
 
-    private static final Logger log = LoggerFactory.getLogger(PaginationLoaderProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(PaginationLoaderBinder.class);
 
     protected DataManager dataManager;
     protected QueryTransformerFactory queryTransformerFactory;
@@ -138,10 +138,5 @@ public abstract class AbstractPaginationDataSourceProvider implements Pagination
     @Override
     public void setCollectionChangeListener(Consumer<CollectionChangeType> listener) {
         this.refreshListener = listener;
-    }
-
-    @Override
-    public BaseCollectionLoader getLoader() {
-        return loader;
     }
 }

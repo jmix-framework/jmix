@@ -18,7 +18,7 @@ package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -32,36 +32,46 @@ import java.util.function.Supplier;
 public interface PaginationComponent extends Component.BelongToFrame {
 
     /**
-     * @return supplier which is used to get the total number of items.
+     * @return delegate which is used to get the total count of items.
      */
     @Nullable
-    Supplier<Integer> getTotalCountSupplier();
+    Supplier<Integer> getTotalCountDelegate();
 
     /**
-     * Sets supplier which is used to get the total number of items.
+     * Sets delegate which is used to get the total count of items. For instance:
+     * <pre>
+     * &#64;Autowired
+     * private DataManager dataManager;
+     *
+     * &#64;Install(to = "pagination", subject = "totalCountDelegate")
+     * private Integer paginationTotalCountDelegate() {
+     *     return dataManager.loadValue("select count(e) from demo_User e", Integer.class).one();
+     * }
+     * </pre>
      */
-    void setTotalCountSupplier(@Nullable Supplier<Integer> totalCountSupplier);
+    void setTotalCountDelegate(@Nullable Supplier<Integer> totalCountDelegate);
 
     /**
-     * @return a data source provider that is used for pagination.
+     * @return a data binder
      */
     @Nullable
-    PaginationDataSourceProvider getDataSourceProvider();
+    PaginationDataBinder getDataBinder();
 
     /**
-     * Sets a data source provider that should be used for pagination.
+     * Sets a data binder. It is used for managing data loading and dividing data to pages.
      */
-    void setDataSourceProvider(PaginationDataSourceProvider dataSourceProvider);
+    void setDataBinder(PaginationDataBinder dataBinder);
 
     /**
-     * Adds before refresh listener. It is invoked when the user clicks navigation buttons (next, last etc).
+     * Adds before refresh listener. It is invoked when data should be refreshed after user actions:
+     * click on navigation buttons (next, last etc), change items per page value.
      *
      * @return a registration object for removing an event listener
      */
     Subscription addBeforeRefreshListener(Consumer<BeforeRefreshEvent> listener);
 
     /**
-     * Adds after refresh listener. It is invoked when {@link BeforeRefreshEvent} is not prevented.
+     * Adds after refresh listener. It is invoked when data is refreshed.
      *
      * @return a registration object for removing an event listener
      */
@@ -73,7 +83,9 @@ public interface PaginationComponent extends Component.BelongToFrame {
     boolean isItemsPerPageVisible();
 
     /**
-     * Sets visibility of items per page ComboBox. Default value is {@code false}.
+     * Sets visibility of items per page ComboBox. This ComboBox contains options to limit the number
+     * of items for one page. If custom options are not set component will use
+     * {@link UiProperties#getPaginationItemsPerPageOptions()}. The default value is {@code false}.
      */
     void setItemsPerPageVisible(boolean itemsPerPageVisible);
 
@@ -83,9 +95,9 @@ public interface PaginationComponent extends Component.BelongToFrame {
     boolean isNullItemsPerPageOptionVisible();
 
     /**
-     * Sets null option visible or hidden in the items per page ComboBox. If null option is selected
+     * Sets visibility of null option value in the items per page ComboBox. If null option is selected
      * component will try to load data with {@link UiProperties#getEntityMaxFetchSize(String)} limitation.
-     * Default value is {@code true}.
+     * The default value is {@code true}.
      */
     void setNullItemsPerPageOptionVisible(boolean nullOptionVisible);
 
@@ -115,7 +127,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
     void setItemsPerPageDefaultValue(@Nullable Integer defaultValue);
 
     /**
-     * Event that is fired before refreshing the data container when the user clicks next, previous, etc.
+     * The event that is fired before refreshing the data when the user clicks next, previous, etc.
      * <br>
      * You can prevent the data container refresh by invoking {@link BeforeRefreshEvent#preventRefresh()},
      * for example:
@@ -151,7 +163,7 @@ public interface PaginationComponent extends Component.BelongToFrame {
     }
 
     /**
-     * Event that is fired after data refresh, i.e. when {@link BeforeRefreshEvent} is not prevented.
+     * The event that is fired after data refresh.
      */
     class AfterRefreshEvent extends EventObject {
 

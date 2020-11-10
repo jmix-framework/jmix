@@ -19,9 +19,9 @@ package io.jmix.ui.xml.layout.loader;
 import com.google.common.base.Splitter;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.PaginationComponent;
-import io.jmix.ui.component.pagination.data.PaginationContainerProvider;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
-import io.jmix.ui.component.pagination.data.PaginationLoaderProvider;
+import io.jmix.ui.component.pagination.data.PaginationContainerBinder;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
+import io.jmix.ui.component.pagination.data.PaginationLoaderBinder;
 import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
@@ -84,9 +84,9 @@ public abstract class AbstractPaginationLoader<T extends PaginationComponent> ex
 
                 DataLoader loader = context1.getScreenData().getLoader(loaderId);
                 if (loader instanceof BaseCollectionLoader) {
-                    PaginationDataSourceProvider dataSourceProvider =
-                            applicationContext.getBean(PaginationLoaderProvider.class, loader);
-                    resultComponent.setDataSourceProvider(dataSourceProvider);
+                    PaginationDataBinder dataSourceProvider =
+                            applicationContext.getBean(PaginationLoaderBinder.class, loader);
+                    resultComponent.setDataBinder(dataSourceProvider);
                 } else {
                     throw new GuiDevelopmentException(String.format("PaginationDataSourceProvider does not support %s loader type",
                             loader.getClass().getCanonicalName()), context1);
@@ -104,9 +104,9 @@ public abstract class AbstractPaginationLoader<T extends PaginationComponent> ex
 
                 InstanceContainer container = context1.getScreenData().getContainer(containerId);
                 if (container instanceof CollectionContainer) {
-                    PaginationDataSourceProvider dataSourceProvider = applicationContext
-                            .getBean(PaginationContainerProvider.class, container);
-                    resultComponent.setDataSourceProvider(dataSourceProvider);
+                    PaginationDataBinder dataSourceProvider = applicationContext
+                            .getBean(PaginationContainerBinder.class, container);
+                    resultComponent.setDataBinder(dataSourceProvider);
                 } else {
                     throw new GuiDevelopmentException(String.format("PaginationDataSourceProvider does not support %s container type",
                             container.getClass().getCanonicalName()), context1);

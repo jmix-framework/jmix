@@ -26,9 +26,9 @@ import org.springframework.stereotype.Component;
 
 @Component("ui_PaginationDataUnitProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class PaginationDataUnitProvider extends AbstractPaginationDataSourceProvider {
+public class PaginationDataUnitBinder extends AbstractPaginationDataBinder {
 
-    public PaginationDataUnitProvider(ContainerDataUnit dataUnit) {
+    public PaginationDataUnitBinder(ContainerDataUnit dataUnit) {
         this.container = dataUnit.getContainer();
 
         if (container instanceof HasLoader) {

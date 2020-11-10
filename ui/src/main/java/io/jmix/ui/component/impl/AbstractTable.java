@@ -916,17 +916,17 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         DataUnit items = getItems();
 
-        PaginationDataSourceProvider provider;
+        PaginationDataBinder provider;
         if (items instanceof ContainerDataUnit) {
-            provider = applicationContext.getBean(PaginationDataUnitProvider.class, items);
+            provider = applicationContext.getBean(PaginationDataUnitBinder.class, items);
         } else if (items instanceof EmptyDataUnit
                 && items instanceof EntityDataUnit) {
-            provider = new PaginationEmptyProvider(((EntityDataUnit) items).getEntityMetaClass());
+            provider = new PaginationEmptyBinder(((EntityDataUnit) items).getEntityMetaClass());
         } else {
             throw new IllegalStateException("Unsupported data unit type: " + items);
         }
 
-        pagination.setDataSourceProvider(provider);
+        pagination.setDataBinder(provider);
     }
 
     // if buttons panel becomes hidden we need to set top panel height to 0

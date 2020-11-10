@@ -27,8 +27,8 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.PaginationComponent;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
-import io.jmix.ui.component.pagination.data.PaginationEmptyProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
+import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixAbstractPagination;
@@ -57,8 +57,8 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
     protected Messages messages;
     protected UiProperties uiProperties;
 
-    protected PaginationDataSourceProvider dataSourceProvider;
-    protected Supplier<Integer> totalCountSupplier;
+    protected PaginationDataBinder dataBinder;
+    protected Supplier<Integer> totalCountDelegate;
 
     protected List<Integer> itemsPerPageOptions;
     protected Integer itemsPerPageDefaultValue;
@@ -82,19 +82,19 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
 
     @Nullable
     @Override
-    public Supplier<Integer> getTotalCountSupplier() {
-        return totalCountSupplier;
+    public Supplier<Integer> getTotalCountDelegate() {
+        return totalCountDelegate;
     }
 
     @Override
-    public void setTotalCountSupplier(@Nullable Supplier<Integer> delegate) {
-        this.totalCountSupplier = delegate;
+    public void setTotalCountDelegate(@Nullable Supplier<Integer> delegate) {
+        this.totalCountDelegate = delegate;
     }
 
     @Nullable
     @Override
-    public PaginationDataSourceProvider getDataSourceProvider() {
-        return dataSourceProvider;
+    public PaginationDataBinder getDataBinder() {
+        return dataBinder;
     }
 
     @Override
@@ -166,14 +166,14 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
     }
 
     @Override
-    public void setDataSourceProvider(PaginationDataSourceProvider dataSourceProvider) {
-        Preconditions.checkNotNullArgument(dataSourceProvider);
+    public void setDataBinder(PaginationDataBinder dataBinder) {
+        Preconditions.checkNotNullArgument(dataBinder);
 
-        if (this.dataSourceProvider != null) {
-            this.dataSourceProvider.removeCollectionChangeListener();
+        if (this.dataBinder != null) {
+            this.dataBinder.removeCollectionChangeListener();
         }
 
-        this.dataSourceProvider = dataSourceProvider;
+        this.dataBinder = dataBinder;
     }
 
     protected void removeItemsPerPageValueChangeSubscription() {
@@ -210,83 +210,83 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
     }
 
     protected void initItemsPerPageOptions() {
-        checkDataSourceProviderBound();
+        checkDataBound();
 
         List<Integer> processedOptions;
         if (CollectionUtils.isNotEmpty(itemsPerPageOptions)) {
-            processedOptions = processOptions(itemsPerPageOptions, dataSourceProvider.getEntityMetaClass());
+            processedOptions = processOptions(itemsPerPageOptions, dataBinder.getEntityMetaClass());
         } else {
             processedOptions = processOptions(getItemsPerPageOptionsFromProperty(),
-                    dataSourceProvider.getEntityMetaClass());
+                    dataBinder.getEntityMetaClass());
         }
 
         getItemsPerPageComboBox().setItems(processedOptions);
     }
 
     /**
-     * Setup MaxResult value to provider and to items per page ComboBox if it's visible.
+     * Setup MaxResult value to data binder and to items per page ComboBox if it's visible.
      */
     protected void initMaxResultValue() {
-        checkDataSourceProviderBound();
+        checkDataBound();
 
         // do not init value when ItemsPerPage is disabled
-        if (isEmptyOrNullDataSourceProvider()) {
+        if (isEmptyOrNullDataBinder()) {
             return;
         }
 
         if (isItemsPerPageVisible()) {
-            Integer maxResult = getDefaultOptionValue(itemsPerPageOptions, dataSourceProvider.getEntityMetaClass());
-            dataSourceProvider.setMaxResults(maxResult);
+            Integer maxResult = getDefaultOptionValue(itemsPerPageOptions, dataBinder.getEntityMetaClass());
+            dataBinder.setMaxResults(maxResult);
             getItemsPerPageComboBox().setValue(maxResult);
         } else {
-            int maxResult = dataSourceProvider.getMaxResult();
-            int maxFetch = getEntityMaxFetchSize(dataSourceProvider.getEntityMetaClass());
-            dataSourceProvider.setMaxResults(Math.min(maxResult, maxFetch));
+            int maxResult = dataBinder.getMaxResult();
+            int maxFetch = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
+            dataBinder.setMaxResults(Math.min(maxResult, maxFetch));
         }
     }
 
     protected int getTotalCount() {
-        if (isEmptyOrNullDataSourceProvider()) {
+        if (isEmptyOrNullDataBinder()) {
             return 0;
         }
 
-        if (totalCountSupplier != null) {
-            return totalCountSupplier.get();
+        if (totalCountDelegate != null) {
+            return totalCountDelegate.get();
         }
 
-        return dataSourceProvider.getCount();
+        return dataBinder.getCount();
     }
 
     /**
      * @return current items count for page
      */
     protected int getItemsCountToDisplay() {
-        checkDataSourceProviderBound();
+        checkDataBound();
 
         if (isItemsPerPageVisible()) {
             Integer value = getItemsPerPageComboBox().getValue();
-            return value != null ? value : getEntityMaxFetchSize(dataSourceProvider.getEntityMetaClass());
+            return value != null ? value : getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
         } else {
-            int maxResult = dataSourceProvider.getMaxResult();
-            int maxFetch = getEntityMaxFetchSize(dataSourceProvider.getEntityMetaClass());
+            int maxResult = dataBinder.getMaxResult();
+            int maxFetch = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
             return Math.min(maxResult, maxFetch);
         }
     }
 
-    protected void checkDataSourceProviderBound() {
-        if (dataSourceProvider == null) {
-            throw new IllegalStateException("Pagination component is not bound with PaginationDataSourceProvider");
+    protected void checkDataBound() {
+        if (dataBinder == null) {
+            throw new IllegalStateException("Pagination component is not bound with PaginationDataBinder");
         }
     }
 
-    protected boolean isEmptyOrNullDataSourceProvider() {
-        return dataSourceProvider == null || dataSourceProvider instanceof PaginationEmptyProvider;
+    protected boolean isEmptyOrNullDataBinder() {
+        return dataBinder == null || dataBinder instanceof PaginationEmptyBinder;
     }
 
-    protected boolean dataSourceProviderHasItems() {
-        checkDataSourceProviderBound();
+    protected boolean dataBinderContainsItems() {
+        checkDataBound();
 
-        return dataSourceProvider.size() > 0;
+        return dataBinder.size() > 0;
     }
 
     protected Button getFirstButton() {

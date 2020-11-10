@@ -19,7 +19,7 @@ package io.jmix.ui.component.pagination;
 import com.vaadin.ui.Button;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.Pagination;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
@@ -38,7 +38,7 @@ public class Paging {
     public static final String NAME = "ui_PaginationPages";
 
     protected List<Page> pages;
-    protected PaginationDataSourceProvider dataSourceProvider;
+    protected PaginationDataBinder dataBinder;
 
     protected int maxVisiblePages = 5;
 
@@ -97,17 +97,17 @@ public class Paging {
     }
 
     /**
-     * @return load provider
+     * @return data binder
      */
-    public PaginationDataSourceProvider getDataSourceProvider() {
-        return dataSourceProvider;
+    public PaginationDataBinder getDataBinder() {
+        return dataBinder;
     }
 
     /**
-     * Sets pagination load provider.
+     * Sets pagination data binder.
      */
-    public void setDataSourceProvider(PaginationDataSourceProvider dataSourceProvider) {
-        this.dataSourceProvider = dataSourceProvider;
+    public void setDataBinder(PaginationDataBinder dataBinder) {
+        this.dataBinder = dataBinder;
     }
 
     /**
@@ -240,18 +240,18 @@ public class Paging {
         }
 
         int previousPage = getCurrentPageNumber();
-        int previousFirstResult = dataSourceProvider.getFirstResult();
+        int previousFirstResult = dataBinder.getFirstResult();
 
         setCurrentPageNumber(pageNumber);
 
-        dataSourceProvider.setFirstResult((pageNumber - 1) * itemsToDisplay);
+        dataBinder.setFirstResult((pageNumber - 1) * itemsToDisplay);
 
         if (isDataRefreshed()) {
             fireAfterRefreshEvent();
             firePageChangeEvent(previousPage, getCurrentPageNumber());
         } else {
             setCurrentPageNumber(previousPage);
-            dataSourceProvider.setFirstResult(previousFirstResult);
+            dataBinder.setFirstResult(previousFirstResult);
         }
     }
 
@@ -265,8 +265,8 @@ public class Paging {
 
         setCurrentPageNumber(pageNumber);
 
-        dataSourceProvider.setFirstResult((pageNumber - 1) * itemsToDisplay);
-        dataSourceProvider.refresh();
+        dataBinder.setFirstResult((pageNumber - 1) * itemsToDisplay);
+        dataBinder.refresh();
 
         fireAfterRefreshEvent();
 
@@ -420,14 +420,14 @@ public class Paging {
             int savedFirstResult = getFirstResult();
 
             setCurrentPageNumber(getNumber());
-            dataSourceProvider.setFirstResult(getFirstResult());
+            dataBinder.setFirstResult(getFirstResult());
 
             if (isDataRefreshed()) {
                 fireAfterRefreshEvent();
                 firePageChangeEvent(previousPageNumber, getCurrentPageNumber());
             } else {
                 setCurrentPageNumber(previousPageNumber);
-                dataSourceProvider.setFirstResult(savedFirstResult);
+                dataBinder.setFirstResult(savedFirstResult);
             }
         }
     }

@@ -70,9 +70,9 @@ import io.jmix.ui.component.datagrid.DataGridDataProvider;
 import io.jmix.ui.component.datagrid.DataGridItemsEventsDelegate;
 import io.jmix.ui.component.datagrid.SortableDataGridDataProvider;
 import io.jmix.ui.component.formatter.CollectionFormatter;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
-import io.jmix.ui.component.pagination.data.PaginationDataUnitProvider;
-import io.jmix.ui.component.pagination.data.PaginationEmptyProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
+import io.jmix.ui.component.pagination.data.PaginationDataUnitBinder;
+import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
 import io.jmix.ui.component.renderer.RendererWrapper;
 import io.jmix.ui.component.valueprovider.EntityValueProvider;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
@@ -2141,17 +2141,17 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
         DataUnit items = getItems();
 
-        PaginationDataSourceProvider provider;
+        PaginationDataBinder provider;
         if (items instanceof ContainerDataUnit) {
-            provider = applicationContext.getBean(PaginationDataUnitProvider.class, items);
+            provider = applicationContext.getBean(PaginationDataUnitBinder.class, items);
         } else if (items instanceof EmptyDataUnit
                 && items instanceof EntityDataUnit) {
-            provider = new PaginationEmptyProvider(((EntityDataUnit) items).getEntityMetaClass());
+            provider = new PaginationEmptyBinder(((EntityDataUnit) items).getEntityMetaClass());
         } else {
             throw new IllegalStateException("Unsupported data unit type: " + items);
         }
 
-        pagination.setDataSourceProvider(provider);
+        pagination.setDataBinder(provider);
     }
 
     protected HorizontalLayout createTopPanel() {

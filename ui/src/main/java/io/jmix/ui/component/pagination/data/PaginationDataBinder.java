@@ -17,17 +17,15 @@
 package io.jmix.ui.component.pagination.data;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.component.Pagination;
-import io.jmix.ui.model.BaseCollectionLoader;
+import io.jmix.ui.component.PaginationComponent;
 import io.jmix.ui.model.CollectionChangeType;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
- * Interface defining methods for managing data loading in {@link Pagination} component.
+ * Interface defining methods for managing data loading in {@link PaginationComponent} component.
  */
-public interface PaginationDataSourceProvider {
+public interface PaginationDataBinder {
 
     /**
      * @return first position to load
@@ -73,12 +71,6 @@ public interface PaginationDataSourceProvider {
      * Sets collection change listener.
      */
     void setCollectionChangeListener(Consumer<CollectionChangeType> listener);
-
-    /**
-     * @return loader is used in the provider
-     */
-    @Nullable
-    BaseCollectionLoader getLoader();
 
     /**
      * @return meta class of entity

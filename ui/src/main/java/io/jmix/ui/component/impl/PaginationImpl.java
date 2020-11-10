@@ -21,7 +21,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.pagination.data.PaginationDataSourceProvider;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
 import io.jmix.ui.component.pagination.Paging;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionChangeType;
@@ -84,10 +84,10 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     @Override
-    public void setDataSourceProvider(PaginationDataSourceProvider dataSourceProvider) {
-        super.setDataSourceProvider(dataSourceProvider);
+    public void setDataBinder(PaginationDataBinder dataBinder) {
+        super.setDataBinder(dataBinder);
 
-        dataSourceProvider.setCollectionChangeListener(this::onCollectionChange);
+        dataBinder.setCollectionChangeListener(this::onCollectionChange);
 
         removeListeners();
 
@@ -99,13 +99,13 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
         createPageButtons();
         pages.setCurrentPageNumber(FIRST_PAGE);
 
-        if (dataSourceProviderHasItems()) {
+        if (dataBinderContainsItems()) {
             pages.updatePageSelections();
 
             // if items has already loaded we should reload
             // them with maxResult from ComboBox
             if (isItemsPerPageVisible()) {
-                dataSourceProvider.refresh();
+                dataBinder.refresh();
             }
         }
 
@@ -161,7 +161,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected void onItemsPerPageValueChange(HasValue.ValueChangeEvent<Integer> event) {
-        checkDataSourceProviderBound();
+        checkDataBound();
 
         BeforeRefreshEvent refreshEvent = fireBeforeRefreshEvent();
         if (refreshEvent.isRefreshPrevented()) {
@@ -173,9 +173,9 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
         Integer maxResult = event.getValue();
         if (maxResult == null) {
-            maxResult = getEntityMaxFetchSize(dataSourceProvider.getEntityMetaClass());
+            maxResult = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
         }
-        dataSourceProvider.setMaxResults(maxResult);
+        dataBinder.setMaxResults(maxResult);
 
         // move to the first page, as page count could change
         pages.forceSelectPage(FIRST_PAGE);
@@ -203,12 +203,12 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             pages.setCurrentPageNumber(FIRST_PAGE);
         }
 
-        int firstResult = dataSourceProvider.getFirstResult();
-        int maxResult = dataSourceProvider.getMaxResult();
+        int firstResult = dataBinder.getFirstResult();
+        int maxResult = dataBinder.getMaxResult();
 
         if (pages.isFirstResultInRanges(firstResult)) {
             // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
-            if (pages.getItemsToDisplay() != dataSourceProvider.getMaxResult()) {
+            if (pages.getItemsToDisplay() != dataBinder.getMaxResult()) {
                 if (isItemsPerPageVisible()) {
                     setSilentlyItemsPerPageValue(maxResult);
                 }
@@ -217,7 +217,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
                 pages.setCurrentPageNumberByFirstResult(firstResult);
             } else {
-                // check if current page is corresponds to the dataSourceProvider's firstResult
+                // check if current page is corresponds to the dataBinder's firstResult
                 Paging.Page currentPage = pages.getCurrentPage();
                 if (currentPage != null
                         && currentPage.getFirstResult() != firstResult) {
@@ -232,7 +232,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             return;
         }
 
-        log.warn("Pagination component receives data that is out of page ranges. Component my work incorrectly.");
+        log.warn("Pagination component receives data that is out of page ranges. Component may work incorrectly.");
     }
 
     protected boolean refreshData() {
@@ -241,20 +241,20 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
             return false;
         }
 
-        dataSourceProvider.refresh();
+        dataBinder.refresh();
 
         return true;
     }
 
     protected void createPageButtons() {
-        checkDataSourceProviderBound();
+        checkDataBound();
         removePageButtons();
 
-        if (!dataSourceProviderHasItems()) {
+        if (!dataBinderContainsItems()) {
             return;
         }
 
-        pages.setDataSourceProvider(dataSourceProvider);
+        pages.setDataBinder(dataBinder);
         pages.createPages(getTotalCount(), getItemsCountToDisplay());
         pages.setOnAfterDataRefreshListener(this::fireAfterRefreshEvent);
         pages.setPageChangeListener(this::firePageChangeEvent);
@@ -314,6 +314,6 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected void updateItemsPerPageAvailability() {
-        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataSourceProvider());
+        getItemsPerPageComboBox().setEnabled(!isEmptyOrNullDataBinder());
     }
 }

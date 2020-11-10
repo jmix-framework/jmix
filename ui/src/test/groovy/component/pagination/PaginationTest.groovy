@@ -129,7 +129,7 @@ class PaginationTest extends ScreenSpecification {
               """
 
         // Pagination WITHOUT ItemsPerPage will use loader's maxResult
-        screen.pagination.dataSourceProvider.size() == 2
+        screen.pagination.dataBinder.size() == 2
 
         // Pagination WITH ItemsPerPage will try to use entityPageSize, but if options
         // don't contain this value, component will find the closest value in options.

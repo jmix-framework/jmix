@@ -17,7 +17,7 @@
 package io.jmix.ui.component;
 
 /**
- * Component that makes a data binding to load data by pages. It contains current items count label
+ * Component that makes a data binding to load data by pages. It contains label with current items count
  * and navigation buttons (next, last etc).
  */
 public interface SimplePagination extends PaginationComponent {
@@ -30,7 +30,9 @@ public interface SimplePagination extends PaginationComponent {
     boolean isAutoLoad();
 
     /**
-     * Sets whether items count should be loaded automatically.
+     * Sets whether items count should be loaded automatically. When the autoload is disabled the component
+     * doesn't know the total count of items and shows a button with {@code [?]}. When it's enabled the component
+     * makes a query to get the total count of items and shows it. The default value is {@code false}.
      *
      * @param autoLoad pass true to enable auto load, or false otherwise
      */

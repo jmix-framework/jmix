@@ -23,9 +23,9 @@ import org.springframework.stereotype.Component;
 
 @Component("ui_PaginationLoaderProvider")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class PaginationLoaderProvider extends AbstractPaginationDataSourceProvider {
+public class PaginationLoaderBinder extends AbstractPaginationDataBinder {
 
-    public PaginationLoaderProvider(BaseCollectionLoader loader) {
+    public PaginationLoaderBinder(BaseCollectionLoader loader) {
         this.loader = loader;
         this.container = loader.getContainer();
 

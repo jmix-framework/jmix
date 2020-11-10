@@ -35,12 +35,16 @@ public interface Pagination extends PaginationComponent {
     int getMaxVisiblePages();
 
     /**
-     * Sets maximum number of visible pages.
+     * Sets the maximum number of visible pages. The component can have a lot of pages, but users will see
+     * a number of pages at once that corresponds to the maximum number of visible pages. For instance,
+     * the component has 10 pages and the maximum number of visible pages is 3, so users will see only 3 pages
+     * at once. The default value is 5.
      */
     void setMaxVisiblePages(int maxVisiblePages);
 
     /**
-     * Adds page change listener. Is fired when page number is changed.
+     * Adds page change listener. It will be invoked when the user selects another page or clicks on navigation
+     * buttons (next, previous, etc).
      *
      * @param listener listener to add
      * @return a registration object for removing an event listener
@@ -48,7 +52,7 @@ public interface Pagination extends PaginationComponent {
     Subscription addPageChangeListener(Consumer<PageChangeEvent> listener);
 
     /**
-     * Event that is fired when user goes to another page.
+     * The event that is fired when the user selects another page or clicks on navigation buttons (next, previous, etc).
      */
     class PageChangeEvent extends EventObject {
 

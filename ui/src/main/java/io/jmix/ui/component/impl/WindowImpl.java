@@ -615,11 +615,6 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
         return getEventHub().subscribe(BeforeCloseEvent.class, listener);
     }
 
-    @Override
-    public void removeBeforeWindowCloseListener(Consumer<BeforeCloseEvent> listener) {
-        unsubscribe(BeforeCloseEvent.class, listener);
-    }
-
     public void fireBeforeClose(BeforeCloseEvent event) {
         publish(BeforeCloseEvent.class, event);
     }
@@ -636,14 +631,6 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    public WindowManager getWindowManager() {
-        return (WindowManager) UiControllerUtils.getScreenContext(getFrameOwner()).getScreens();
-    }*/
 
     @Override
     public void add(Component childComponent) {

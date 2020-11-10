@@ -110,8 +110,8 @@ import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
-import static io.jmix.ui.component.Window.Lookup.LOOKUP_ENTER_PRESSED_ACTION_ID;
-import static io.jmix.ui.component.Window.Lookup.LOOKUP_ITEM_CLICK_ACTION_ID;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_ENTER_PRESSED_ACTION_ID;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 
 public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, E>
         extends AbstractComponent<C>

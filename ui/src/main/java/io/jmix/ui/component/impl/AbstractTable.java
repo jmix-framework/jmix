@@ -110,6 +110,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_ENTER_PRESSED_ACTION_ID;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 
 @SuppressWarnings("deprecation")
 public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E>
@@ -1366,12 +1368,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         };
 
         setEnterPressAction(
-                new BaseAction(Window.Lookup.LOOKUP_ENTER_PRESSED_ACTION_ID)
+                new BaseAction(LOOKUP_ENTER_PRESSED_ACTION_ID)
                         .withHandler(actionHandler)
         );
 
         setItemClickAction(
-                new BaseAction(Window.Lookup.LOOKUP_ITEM_CLICK_ACTION_ID)
+                new BaseAction(LOOKUP_ITEM_CLICK_ACTION_ID)
                         .withHandler(actionHandler)
         );
 

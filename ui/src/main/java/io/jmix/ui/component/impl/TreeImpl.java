@@ -74,6 +74,7 @@ import java.util.stream.Stream;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.component.ComponentsHelper.findActionById;
+import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 
 public class TreeImpl<E>
         extends AbstractComponent<JmixTree<E>>
@@ -762,7 +763,7 @@ public class TreeImpl<E>
             selectHandler.accept(selected);
         };
 
-        setItemClickAction(new BaseAction(Window.Lookup.LOOKUP_ITEM_CLICK_ACTION_ID)
+        setItemClickAction(new BaseAction(LOOKUP_ITEM_CLICK_ACTION_ID)
                 .withHandler(actionHandler)
         );
 

@@ -31,6 +31,8 @@ import static io.jmix.ui.component.Window.SELECT_ACTION_ID;
 public interface LookupScreen<E> {
     String LOOKUP_SELECT_ACTION_ID = "lookupSelectAction";
     String LOOKUP_CANCEL_ACTION_ID = "lookupCancelAction";
+    String LOOKUP_ITEM_CLICK_ACTION_ID = "lookupItemClickAction";
+    String LOOKUP_ENTER_PRESSED_ACTION_ID = "lookupEnterPressed";
 
     /**
      * A {@link CloseAction} used when the screen is closed after the user selected an item in the lookup component.

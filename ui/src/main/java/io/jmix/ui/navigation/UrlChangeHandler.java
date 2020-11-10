@@ -366,14 +366,7 @@ public class UrlChangeHandler implements InitializingBean {
             return false;
         }
 
-        boolean windowIsDefault;
-        if (window instanceof Window.Wrapper) {
-            windowIsDefault = ((WindowImpl) ((Window.Wrapper) window).getWrappedWindow()).isDefaultScreenWindow();
-        } else {
-            windowIsDefault = ((WindowImpl) window).isDefaultScreenWindow();
-        }
-
-        return windowIsDefault;
+        return ((WindowImpl) window).isDefaultScreenWindow();
     }
 
     protected boolean closeWindowStack(Screens.WindowStack windowStack) {

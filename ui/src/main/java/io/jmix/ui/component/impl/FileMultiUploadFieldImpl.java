@@ -245,9 +245,6 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
             component.setDropZone(null);
         } else {
             io.jmix.ui.component.Component target = dropZone.getTarget();
-            if (target instanceof Window.Wrapper) {
-                target = ((Window.Wrapper) target).getWrappedWindow();
-            }
 
             Component vComponent = target.unwrapComposition(Component.class);
             this.component.setDropZone(vComponent);

@@ -26,17 +26,8 @@ import org.springframework.stereotype.Component;
 @Component("sec_SpecificConstraintImpl")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperationAccessContext> {
-
-    protected final Class<SpecificOperationAccessContext> contextClass;
-    protected final String resourceName;
-
     protected SecureOperations secureOperations;
     protected PolicyStore policyStore;
-
-    public SpecificConstraintImpl(Class<SpecificOperationAccessContext> contextClass, String resourceName) {
-        this.contextClass = contextClass;
-        this.resourceName = resourceName;
-    }
 
     @Autowired
     public void setSecureOperations(SecureOperations secureOperations) {
@@ -50,12 +41,12 @@ public class SpecificConstraintImpl implements SpecificConstraint<SpecificOperat
 
     @Override
     public Class<SpecificOperationAccessContext> getContextType() {
-        return contextClass;
+        return SpecificOperationAccessContext.class;
     }
 
     @Override
     public void applyTo(SpecificOperationAccessContext context) {
-        if (!secureOperations.isSpecificPermitted(resourceName, policyStore)) {
+        if (!secureOperations.isSpecificPermitted(context.getName(), policyStore)) {
             context.setDenied();
         }
     }

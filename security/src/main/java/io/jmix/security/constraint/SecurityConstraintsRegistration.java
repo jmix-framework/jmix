@@ -32,5 +32,6 @@ public class SecurityConstraintsRegistration {
     @PostConstruct
     public void registerConstraints() {
         accessConstraintsRegistry.register(beanFactory.getBean(ImportEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
     }
 }

@@ -39,12 +39,12 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
  *
  * @param <E> item type
  */
-public class EditorBuilder<E> {
+public class BulkEditorBuilder<E> {
 
     protected final MetaClass metaClass;
     protected final FrameOwner origin;
     protected final Collection<E> entities;
-    protected final Function<EditorBuilder<E>, BulkEditorWindow<E>> handler;
+    protected final Function<BulkEditorBuilder<E>, BulkEditorWindow<E>> handler;
 
     protected OpenMode openMode = OpenMode.DIALOG;
     protected ListComponent<E> listComponent;
@@ -57,7 +57,7 @@ public class EditorBuilder<E> {
     protected FieldSorter fieldSorter;
     protected ColumnsMode columnsMode;
 
-    public EditorBuilder(EditorBuilder<E> builder) {
+    public BulkEditorBuilder(BulkEditorBuilder<E> builder) {
         this.metaClass = builder.metaClass;
         this.origin = builder.origin;
         this.handler = builder.handler;
@@ -75,8 +75,8 @@ public class EditorBuilder<E> {
         this.columnsMode = builder.columnsMode;
     }
 
-    public EditorBuilder(MetaClass metaClass, Collection<E> entities, FrameOwner origin,
-                         Function<EditorBuilder<E>, BulkEditorWindow<E>> handler) {
+    public BulkEditorBuilder(MetaClass metaClass, Collection<E> entities, FrameOwner origin,
+                             Function<BulkEditorBuilder<E>, BulkEditorWindow<E>> handler) {
         this.metaClass = metaClass;
         this.entities = entities;
         this.origin = origin;
@@ -89,7 +89,7 @@ public class EditorBuilder<E> {
      * @param openMode the open mode to set
      * @return this builder
      */
-    public EditorBuilder<E> withOpenMode(OpenMode openMode) {
+    public BulkEditorBuilder<E> withOpenMode(OpenMode openMode) {
         checkNotNullArgument(openMode);
 
         this.openMode = openMode;
@@ -102,7 +102,7 @@ public class EditorBuilder<E> {
      * @param listComponent the list component to be used
      * @return this builder
      */
-    public EditorBuilder<E> withListComponent(ListComponent<E> listComponent) {
+    public BulkEditorBuilder<E> withListComponent(ListComponent<E> listComponent) {
         this.listComponent = listComponent;
         return this;
     }
@@ -114,7 +114,7 @@ public class EditorBuilder<E> {
      * @param exclude a regular expression
      * @return this builder
      */
-    public EditorBuilder<E> withExclude(String exclude) {
+    public BulkEditorBuilder<E> withExclude(String exclude) {
         this.exclude = exclude;
         return this;
     }
@@ -126,7 +126,7 @@ public class EditorBuilder<E> {
      * @param includeProperties the entity attributes to be included to bulk editor window
      * @return this builder
      */
-    public EditorBuilder<E> withIncludeProperties(List<String> includeProperties) {
+    public BulkEditorBuilder<E> withIncludeProperties(List<String> includeProperties) {
         this.includeProperties = includeProperties;
         return this;
     }
@@ -137,7 +137,7 @@ public class EditorBuilder<E> {
      * @param fieldValidators a map with validators for fields that will be used for editing certain properties
      * @return this builder
      */
-    public EditorBuilder<E> withFieldValidators(Map<String, Validator<?>> fieldValidators) {
+    public BulkEditorBuilder<E> withFieldValidators(Map<String, Validator<?>> fieldValidators) {
         this.fieldValidators = fieldValidators;
         return this;
     }
@@ -148,7 +148,7 @@ public class EditorBuilder<E> {
      * @param modelValidators a map with validators for the result of bulk editing
      * @return this builder
      */
-    public EditorBuilder<E> withModelValidators(List<Validator<?>> modelValidators) {
+    public BulkEditorBuilder<E> withModelValidators(List<Validator<?>> modelValidators) {
         this.modelValidators = modelValidators;
         return this;
     }
@@ -160,7 +160,7 @@ public class EditorBuilder<E> {
      * @param useConfirmDialog whether or not the confirmation dialog should be displayed
      * @return this builder
      */
-    public EditorBuilder<E> withUseConfirmDialog(Boolean useConfirmDialog) {
+    public BulkEditorBuilder<E> withUseConfirmDialog(Boolean useConfirmDialog) {
         this.useConfirmDialog = useConfirmDialog;
         return this;
     }
@@ -171,7 +171,7 @@ public class EditorBuilder<E> {
      * @param fieldSorter field sorter
      * @return this builder
      */
-    public EditorBuilder<E> withFieldSorter(FieldSorter fieldSorter) {
+    public BulkEditorBuilder<E> withFieldSorter(FieldSorter fieldSorter) {
         this.fieldSorter = fieldSorter;
         return this;
     }
@@ -184,7 +184,7 @@ public class EditorBuilder<E> {
      * @see ColumnsMode#ONE_COLUMN
      * @see ColumnsMode#TWO_COLUMNS
      */
-    public EditorBuilder<E> withColumnsMode(ColumnsMode columnsMode) {
+    public BulkEditorBuilder<E> withColumnsMode(ColumnsMode columnsMode) {
         this.columnsMode = columnsMode;
         return this;
     }

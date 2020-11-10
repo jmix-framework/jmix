@@ -45,23 +45,23 @@ import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
 
 
 /**
- * A bean that creates an instance of {@link EditorBuilder}.
+ * A bean that creates an instance of {@link BulkEditorBuilder}.
  */
 @Component("ui_BulkEditors")
 public class BulkEditors {
 
     private static final Logger log = LoggerFactory.getLogger(BulkEditors.class);
 
-    public <E> EditorBuilder<E> builder(MetaClass metaClass,
-                                        Collection<E> entities, FrameOwner origin) {
+    public <E> BulkEditorBuilder<E> builder(MetaClass metaClass,
+                                            Collection<E> entities, FrameOwner origin) {
         checkNotNullArgument(metaClass);
         checkNotNullArgument(entities);
         checkNotNullArgument(origin);
 
-        return new EditorBuilder<>(metaClass, entities, origin, this::buildEditor);
+        return new BulkEditorBuilder<>(metaClass, entities, origin, this::buildEditor);
     }
 
-    protected <E> BulkEditorWindow<E> buildEditor(EditorBuilder<E> builder) {
+    protected <E> BulkEditorWindow<E> buildEditor(BulkEditorBuilder<E> builder) {
         FrameOwner origin = builder.getOrigin();
         Screens screens = getScreenContext(origin).getScreens();
 
@@ -81,7 +81,7 @@ public class BulkEditors {
         return bulkEditorWindow;
     }
 
-    protected <E> BulkEditorContext<E> createBulkEditorContext(EditorBuilder<E> builder) {
+    protected <E> BulkEditorContext<E> createBulkEditorContext(BulkEditorBuilder<E> builder) {
         BulkEditorContext<E> context = new BulkEditorContext<>(builder.metaClass, builder.entities);
         context.setExclude(builder.getExclude());
         context.setIncludeProperties(builder.getIncludeProperties());
@@ -94,7 +94,7 @@ public class BulkEditors {
         return context;
     }
 
-    protected <E> Consumer<Screen.AfterCloseEvent> createAfterCloseHandler(EditorBuilder<E> builder) {
+    protected <E> Consumer<Screen.AfterCloseEvent> createAfterCloseHandler(BulkEditorBuilder<E> builder) {
         return afterCloseEvent -> {
             ListComponent<E> listComponent = builder.getListComponent();
             CloseAction closeAction = afterCloseEvent.getCloseAction();

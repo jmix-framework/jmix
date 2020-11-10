@@ -28,7 +28,7 @@ import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.app.bulk.FieldSorter;
-import io.jmix.ui.bulk.EditorBuilder;
+import io.jmix.ui.bulk.BulkEditorBuilder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Window;
@@ -289,7 +289,7 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
 
         Window window = ComponentsHelper.getWindowNN(target);
 
-        EditorBuilder<?> builder = bulkEditors.builder(metaClass,
+        BulkEditorBuilder<?> builder = bulkEditors.builder(metaClass,
                 target.getSelected(), window.getFrameOwner())
                 .withListComponent(target);
 

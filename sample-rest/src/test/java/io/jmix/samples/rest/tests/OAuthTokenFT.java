@@ -20,6 +20,9 @@ import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.security.impl.CoreUser;
 import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.samples.rest.SampleRestApplication;
+import io.jmix.samples.rest.security.FullAccessRole;
+import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider;
+import io.jmix.security.role.assignment.RoleAssignment;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,6 +32,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +44,7 @@ import java.util.Base64;
 import java.util.List;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,13 +59,18 @@ public class OAuthTokenFT {
 
     @Autowired
     protected InMemoryUserRepository userRepository;
+    @Autowired
+    protected InMemoryRoleAssignmentProvider roleAssignmentProvider;
 
     protected CoreUser admin;
 
     @BeforeEach
     public void setUp() {
         admin = new CoreUser("admin", "{noop}admin123", "Admin");
+
         userRepository.addUser(admin);
+        roleAssignmentProvider.addAssignment(new RoleAssignment(admin.getUsername(), FullAccessRole.NAME));
+
         baseUrl = "http://localhost:" + port + "/rest";
     }
 
@@ -118,7 +128,6 @@ public class OAuthTokenFT {
             assertEquals(SC_UNAUTHORIZED, statusCode);
             ReadContext ctx = parseResponse(response);
             assertEquals("Unauthorized", ctx.read("$.error"));
-//            assertEquals("Bad credentials", ctx.read("$.error_description"));
         }
     }
 
@@ -143,65 +152,66 @@ public class OAuthTokenFT {
             assertEquals(SC_UNAUTHORIZED, statusCode);
             ReadContext ctx = parseResponse(response);
             assertEquals("Unauthorized", ctx.read("$.error"));
-            //assertEquals("Bad credentials", ctx.read("$.error_description"));
         }
     }
 
-//    @Test
-//    public void revokeToken() throws Exception {
-//        String oauthToken = getAuthToken("admin", "admin");
-//        String resourceUrl = "/entities/ref_Car";
-//        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
-//            assertEquals(HttpStatus.SC_OK, statusCode(response));
-//        }
-//
-//        String revokeUrl = URI_BASE + "/oauth/revoke";
-//
-//        CloseableHttpClient httpClient = HttpClients.createDefault();
-//        String encoding = Base64.getEncoder().encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());
-//        HttpPost httpPost = new HttpPost(revokeUrl);
-//        httpPost.setHeader("Authorization", "Basic " + encoding);
-//
-//        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-//        urlParameters.add(new BasicNameValuePair("token", oauthToken));
-//
-//        httpPost.setEntity(new UrlEncodedFormEntity(urlParameters));
-//
-//        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-//            int statusCode = statusCode(response);
-//            assertEquals(SC_OK, statusCode);
-//        }
-//
-//        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
-//            assertEquals(SC_UNAUTHORIZED, statusCode(response));
-//        }
-//    }
+    @Test
+    @Disabled
+    public void revokeToken() throws Exception {
+        String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
+        String resourceUrl = baseUrl + "/entities/ref_Car";
+        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
+            assertEquals(SC_OK, statusCode(response));
+        }
 
-//    @Test
-//    public void revokeTokenWithoutAuthorization() throws Exception {
-//        String oauthToken = getAuthToken(getBaseUrl(), "admin", "admin123");
-//        String resourceUrl = "/entities/ref_Car";
-//        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
-//            assertEquals(HttpStatus.SC_OK, statusCode(response));
-//        }
-//
-//        String revokeUrl = URI_BASE + "/oauth/revoke";
-//
-//        CloseableHttpClient httpClient = HttpClients.createDefault();
-//        HttpPost httpPostRevoke = new HttpPost(revokeUrl);
-//
-//        List<NameValuePair> urlParameters = new ArrayList<>();
-//        urlParameters.add(new BasicNameValuePair("token", oauthToken));
-//
-//        httpPostRevoke.setEntity(new UrlEncodedFormEntity(urlParameters));
-//
-//        try (CloseableHttpResponse response = httpClient.execute(httpPostRevoke)) {
-//            int statusCode = statusCode(response);
-//            assertEquals(SC_UNAUTHORIZED, statusCode);
-//        }
-//
-//        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
-//            assertEquals(HttpStatus.SC_OK, statusCode(response));
-//        }
-//    }
+        String revokeUrl = baseUrl + "/oauth/revoke";
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        String encoding = Base64.getEncoder().encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());
+        HttpPost httpPost = new HttpPost(revokeUrl);
+        httpPost.setHeader("Authorization", "Basic " + encoding);
+
+        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new BasicNameValuePair("token", oauthToken));
+
+        httpPost.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+        try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+            int statusCode = statusCode(response);
+            assertEquals(SC_OK, statusCode);
+        }
+
+        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
+            assertEquals(SC_UNAUTHORIZED, statusCode(response));
+        }
+    }
+
+    @Test
+    @Disabled
+    public void revokeTokenWithoutAuthorization() throws Exception {
+        String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
+        String resourceUrl = baseUrl + "/entities/ref_Car";
+        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
+            assertEquals(SC_OK, statusCode(response));
+        }
+
+        String revokeUrl = baseUrl + "/oauth/revoke";
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPostRevoke = new HttpPost(revokeUrl);
+
+        List<NameValuePair> urlParameters = new ArrayList<>();
+        urlParameters.add(new BasicNameValuePair("token", oauthToken));
+
+        httpPostRevoke.setEntity(new UrlEncodedFormEntity(urlParameters));
+
+        try (CloseableHttpResponse response = httpClient.execute(httpPostRevoke)) {
+            int statusCode = statusCode(response);
+            assertEquals(SC_UNAUTHORIZED, statusCode);
+        }
+
+        try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
+            assertEquals(SC_OK, statusCode(response));
+        }
+    }
 }

@@ -16,7 +16,10 @@
 
 package io.jmix.rest;
 
+import io.jmix.core.AccessManager;
+import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
+import io.jmix.rest.security.JmixUserPasswordTokenGranter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -28,10 +31,17 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.CompositeTokenGranter;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenGranter;
+import org.springframework.security.oauth2.provider.refresh.RefreshTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Internal
 @Configuration
@@ -45,6 +55,12 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
 
     @Autowired
     protected AuthenticationManager authenticationManager;
+
+    @Autowired
+    protected AccessManager accessManager;
+
+    @Autowired
+    protected Messages messages;
 
     @Autowired
     @Qualifier("rest_tokenStore")
@@ -64,6 +80,23 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         defaultTokenServices.setTokenEnhancer(endpoints.getTokenEnhancer());
         defaultTokenServices.setClientDetailsService(endpoints.getClientDetailsService());
         return defaultTokenServices;
+    }
+
+    @Bean(name = "rest_tokenGranter")
+    public TokenGranter tokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
+        List<TokenGranter> tokenGranters = new ArrayList<TokenGranter>();
+
+        AuthorizationServerTokenServices tokenServices = endpoints.getTokenServices();
+        ClientDetailsService clientDetails = endpoints.getClientDetailsService();
+        OAuth2RequestFactory requestFactory = endpoints.getOAuth2RequestFactory();
+
+        tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetails, requestFactory));
+
+        if (authenticationManager != null) {
+            tokenGranters.add(new JmixUserPasswordTokenGranter(accessManager, messages,
+                    authenticationManager, tokenServices, clientDetails, requestFactory));
+        }
+        return new CompositeTokenGranter(tokenGranters);
     }
 
     @Bean("rest_clientDetailsService")
@@ -94,6 +127,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
                 .authenticationManager(authenticationManager)
                 .tokenStore(tokenStore)
                 .tokenEnhancer(tokenEnhancer())
-                .tokenServices(tokenServices(endpoints));
+                .tokenServices(tokenServices(endpoints))
+                .tokenGranter(tokenGranter(endpoints));
     }
 }

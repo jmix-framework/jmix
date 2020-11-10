@@ -43,8 +43,8 @@ import static org.apache.http.HttpStatus.SC_OK;
  */
 public class RestTestUtils {
 
-    protected static final String CLIENT_ID = "client";
-    protected static final String CLIENT_SECRET = "secret";
+    public static final String CLIENT_ID = "client";
+    public static final String CLIENT_SECRET = "secret";
 
     public static CloseableHttpResponse sendGet(String url, String token, @Nullable Map<String, String> params) throws Exception {
         URIBuilder uriBuilder = new URIBuilder(url);

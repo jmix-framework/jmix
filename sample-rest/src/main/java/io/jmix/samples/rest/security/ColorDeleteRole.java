@@ -19,6 +19,7 @@ package io.jmix.samples.rest.security;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.SpecificPolicy;
 
 import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityPolicyAction.DELETE;
@@ -31,6 +32,7 @@ public interface ColorDeleteRole {
 
     @EntityPolicy(entityName = "ref$Colour", actions = {DELETE, READ})
     @EntityAttributePolicy(entityName = "ref$Colour", attributes = "*", action = MODIFY)
+    @SpecificPolicy(resources = "jmix.restApi.enabled")
     void access();
 
 }

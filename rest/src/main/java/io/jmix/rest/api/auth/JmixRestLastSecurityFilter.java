@@ -94,7 +94,7 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
             if (authentication != null) {
                 String tokenValue = "";
                 //TODO: test anonymous user
-//                if (authentication instanceof JmixAnonymousAuthenticationToken) {
+//                if (authentication instanceof An) {
 //                    tokenValue = "anonymous";
 //                }
                 if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {

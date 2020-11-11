@@ -35,8 +35,6 @@ public class UserInfoControllerManager {
     protected CurrentAuthentication currentAuthentication;
 
     public UserInfo getUserInfo() {
-        // todo user substitution
-//        User user = userSessionSource.getUserSession().getCurrentOrSubstitutedUser();
         BaseUser user = currentAuthentication.getUser();
         UserInfo userInfo = new UserInfo(user);
         userInfo.setLocale(currentAuthentication.getLocale().toString());

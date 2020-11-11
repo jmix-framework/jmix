@@ -99,7 +99,6 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         String requestBody = getFileContent("serviceWithNullParameter.json", null);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testDateParam", oauthToken, requestBody, null)) {
             assertEquals(HttpStatus.SC_NO_CONTENT, statusCode(response));
-//            assertEquals("", responseToString(response));
         }
     }
 

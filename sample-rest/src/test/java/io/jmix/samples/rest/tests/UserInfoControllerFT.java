@@ -19,18 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  */
 public class UserInfoControllerFT extends AbstractRestControllerFT {
-
     @Test
-    @Disabled
     public void getUserInfo() throws Exception {
         String url = baseUrl + "/userInfo";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             ReadContext ctx = parseResponse(response);
             assertEquals("admin", ctx.read("$.login"));
-            //todo security
-            //assertEquals("60885987-1b61-4247-94c7-dff348347f93", ctx.read("$.id"));
             assertNotNull(ctx.read("locale"));
         }
     }
-
 }

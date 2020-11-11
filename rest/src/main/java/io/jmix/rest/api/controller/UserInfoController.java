@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RestController("rest_UserInfoController")
 @RequestMapping(value = "/rest/userInfo", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class UserInfoController {
-
     @Autowired
     protected UserInfoControllerManager userInfoControllerManager;
 

@@ -18,37 +18,14 @@ package io.jmix.rest.api.service.filter.data;
 
 import io.jmix.core.entity.BaseUser;
 
-/**
- */
 public class UserInfo {
-
-    public String id;
     public String login;
     public String name;
-    public String firstName;
-    public String middleName;
-    public String lastName;
-    public String position;
-    public String email;
-    public String timeZone;
-    public String language;
-    public String _instanceName;
     public String locale;
 
     public UserInfo(BaseUser user) {
-//        this.id = user.getKey();
-//        this.login = user.getLogin();
-//        this.name = user.getName();
-
-        //todo User
-//        this.firstName = user.getFirstName();
-//        this.middleName = user.getMiddleName();
-//        this.lastName = user.getLastName();
-//        this.position = user.getPosition();
-//        this.email = user.getEmail();
-//        this.timeZone = user.getTimeZone();
-//        this._instanceName = user.getInstanceName();
-//        this.language = user.getLanguage();
+        this.login = user.getUsername();
+        this.name = user.getDisplayName();
     }
 
     public String getLocale() {

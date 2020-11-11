@@ -167,6 +167,7 @@ $cuba-datagrid-aggregation-background-color: $cuba-aggregation-background-color-
 
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
+      float: right;
     }
 
     .v-ie11 &,

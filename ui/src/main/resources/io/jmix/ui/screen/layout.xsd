@@ -2584,22 +2584,43 @@
     <!-- Pagination -->
     <xs:complexType name="paginationComponent">
         <xs:complexContent>
-            <xs:extension base="basePaginationComponent">
+            <xs:extension base="basePaginationDataBinding">
                 <xs:attribute name="maxVisiblePages" type="xs:integer"/>
             </xs:extension>
         </xs:complexContent>
+        <xs:attributeGroup ref="basePaginationAttributesGroup"/>
     </xs:complexType>
 
     <!-- SimplePagination -->
     <xs:complexType name="simplePaginationComponent">
         <xs:complexContent>
-            <xs:extension base="basePaginationComponent">
+            <xs:extension base="basePaginationDataBinding">
                 <xs:attribute name="autoLoad" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
+        <xs:attributeGroup ref="basePaginationAttributesGroup"/>
     </xs:complexType>
 
-    <xs:complexType name="basePaginationComponent">
+    <!-- ListComponent's SimplePagination   -->
+    <xs:complexType name="listComponentSimplePaginationComponent">
+        <xs:attributeGroup ref="basePaginationAttributesGroup"/>
+    </xs:complexType>
+
+    <xs:attributeGroup name="basePaginationAttributesGroup">
+        <xs:attributeGroup ref="hasId"/>
+        <xs:attributeGroup ref="hasSize"/>
+        <xs:attributeGroup ref="hasStyle"/>
+        <xs:attributeGroup ref="hasVisibility"/>
+        <xs:attributeGroup ref="hasAlign"/>
+        <xs:attributeGroup ref="hasCss"/>
+
+        <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
+        <xs:attribute name="itemsPerPageOptions" type="resourceString"/>
+        <xs:attribute name="itemsPerPageVisible" type="xs:boolean"/>
+        <xs:attribute name="nullItemsPerPageOptionVisible" type="xs:boolean"/>
+    </xs:attributeGroup>
+
+    <xs:complexType name="basePaginationDataBinding">
         <xs:all>
             <xs:element name="loaderProvider">
                 <xs:complexType>
@@ -2612,18 +2633,6 @@
                 </xs:complexType>
             </xs:element>
         </xs:all>
-
-        <xs:attributeGroup ref="hasId"/>
-        <xs:attributeGroup ref="hasSize"/>
-        <xs:attributeGroup ref="hasStyle"/>
-        <xs:attributeGroup ref="hasVisibility"/>
-        <xs:attributeGroup ref="hasAlign"/>
-        <xs:attributeGroup ref="hasCss"/>
-
-        <xs:attribute name="itemsPerPageDefaultValue" type="xs:integer"/>
-        <xs:attribute name="itemsPerPageOptions" type="resourceString"/>
-        <xs:attribute name="itemsPerPageVisible" type="xs:boolean"/>
-        <xs:attribute name="nullItemsPerPageOptionVisible" type="xs:boolean"/>
     </xs:complexType>
 
     <!-- ButtonsPanel -->
@@ -2702,7 +2711,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="simplePagination" minOccurs="0" type="simplePaginationComponent"/>
+                    <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
                     <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
@@ -2722,7 +2731,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="simplePagination" minOccurs="0" type="simplePaginationComponent"/>
+                    <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
                     <xs:element name="rows" type="treeTableRowsType"/>
                 </xs:all>
@@ -2744,7 +2753,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="simplePagination" minOccurs="0" type="simplePaginationComponent"/>
+                    <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="groupTableColumnsType"/>
                     <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
@@ -2799,7 +2808,7 @@
                 <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
-                    <xs:element name="simplePagination" minOccurs="0" type="simplePaginationComponent"/>
+                    <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="dataGridColumnsList"/>
                 </xs:all>
 

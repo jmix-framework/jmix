@@ -276,6 +276,7 @@ $c-table-drag-indicator-color: $v-focus-color;
 
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
+      float: right;
     }
 
     .v-ie11 &,

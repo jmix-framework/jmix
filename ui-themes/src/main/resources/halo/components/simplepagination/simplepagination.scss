@@ -18,7 +18,6 @@ $jmix-pagination-wrapper-margin-right: round($v-layout-spacing-horizontal/2) !de
 @mixin halo-simplepagination($primary-stylename: jmix-simplepagination) {
 
  .#{$primary-stylename} {
-   float: right;
 
    & > *:not(:last-child) {
      margin-right: $jmix-pagination-wrapper-margin-right;

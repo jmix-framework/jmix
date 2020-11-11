@@ -61,6 +61,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
     protected Supplier<Integer> totalCountDelegate;
 
     protected List<Integer> itemsPerPageOptions;
+    protected List<Integer> processedOptions;
     protected Integer itemsPerPageDefaultValue;
 
     protected Registration itemsPerPageValueChangeRegistration;
@@ -212,7 +213,6 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
     protected void initItemsPerPageOptions() {
         checkDataBound();
 
-        List<Integer> processedOptions;
         if (CollectionUtils.isNotEmpty(itemsPerPageOptions)) {
             processedOptions = processOptions(itemsPerPageOptions, dataBinder.getEntityMetaClass());
         } else {
@@ -235,7 +235,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination> exten
         }
 
         if (isItemsPerPageVisible()) {
-            Integer maxResult = getDefaultOptionValue(itemsPerPageOptions, dataBinder.getEntityMetaClass());
+            Integer maxResult = getDefaultOptionValue(processedOptions, dataBinder.getEntityMetaClass());
             dataBinder.setMaxResults(maxResult);
             getItemsPerPageComboBox().setValue(maxResult);
         } else {

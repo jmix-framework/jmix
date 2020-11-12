@@ -60,7 +60,6 @@ public class JmixEntityManager implements EntityManager {
     private EntityStates entityStates;
     private EntityListenerManager entityListenerMgr;
     private EntityChangedEventManager entityChangedEventManager;
-    private EntityPersistingEventManager entityPersistingEventMgr;
     private TimeSource timeSource;
     private AuditInfoProvider auditInfoProvider;
     private AuditConversionService auditConverter;
@@ -78,7 +77,6 @@ public class JmixEntityManager implements EntityManager {
         entityStates = beanFactory.getBean(EntityStates.class);
         entityListenerMgr = beanFactory.getBean(EntityListenerManager.class);
         entityChangedEventManager = beanFactory.getBean(EntityChangedEventManager.class);
-        entityPersistingEventMgr = beanFactory.getBean(EntityPersistingEventManager.class);
         timeSource = beanFactory.getBean(TimeSource.class);
         auditInfoProvider = beanFactory.getBean(AuditInfoProvider.class);
         auditConverter = beanFactory.getBean(AuditConversionService.class);
@@ -86,9 +84,6 @@ public class JmixEntityManager implements EntityManager {
 
     @Override
     public void persist(Object entity) {
-        if (entity instanceof Entity) {
-            entityPersistingEventMgr.publishEvent((Entity) entity);
-        }
         internalPersist(entity);
     }
 
@@ -112,9 +107,6 @@ public class JmixEntityManager implements EntityManager {
             // if a new instance is passed to merge(), we suppose it is persistent but "not detached"
             Object destEntity = findOrCreate(object.getClass(), EntityValues.getId(object));
             deepCopyIgnoringNulls(object, destEntity, Sets.newIdentityHashSet());
-            if (entityStates.isNew(destEntity)) {
-                entityPersistingEventMgr.publishEvent(destEntity);
-            }
             return (T) destEntity;
         }
 

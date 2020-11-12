@@ -17,7 +17,6 @@
 package test_support.entity.sales;
 
 
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
@@ -27,7 +26,6 @@ import javax.persistence.*;
 @Table(name = "SALES_ORDER_LINE")
 @JmixEntity
 @Entity(name = "sales_OrderLine")
-@PublishEntityChangedEvents
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
 public class OrderLine extends BaseEntity {

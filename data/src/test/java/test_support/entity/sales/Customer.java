@@ -18,7 +18,6 @@ package test_support.entity.sales;
 
 
 import io.jmix.core.entity.annotation.Listeners;
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.datatype.impl.EnumUtils;
@@ -31,7 +30,6 @@ import javax.persistence.Table;
 @JmixEntity
 @Entity(name = "sales$Customer")
 @Table(name = "SALES_CUSTOMER")
-@PublishEntityChangedEvents
 @Listeners("test_TestCustomerListener")
 public class Customer extends BaseEntity {
     @Column(name = "NAME")

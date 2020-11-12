@@ -73,5 +73,8 @@ class DataSpec extends Specification {
         jdbc.update('delete from EXTTEST_EXT_DOC')
         jdbc.update('delete from EXTTEST_DOC')
         jdbc.update('delete from EXTTEST_CARD')
+
+        jdbc.update('delete from TEST_EVENTS_FOO')
+        jdbc.update('delete from TEST_EVENTS_BAR')
     }
 }

@@ -18,14 +18,15 @@ package io.jmix.data.impl;
 
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Metadata;
+import io.jmix.core.event.EntityLoadingEvent;
+import io.jmix.core.event.EntitySavingEvent;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.event.EntityPersistingEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-@Component("data_EntityPersistingEventManager")
-public class EntityPersistingEventManager {
+@Component("data_EntityEventManager")
+public class EntityEventManager {
 
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
@@ -36,10 +37,18 @@ public class EntityPersistingEventManager {
     @Autowired
     protected ExtendedEntities extendedEntities;
 
-    public void publishEvent(Object entity) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-        EntityPersistingEvent<?> event = new EntityPersistingEvent<>(this, entity, originalMetaClass);
+    public void publishEntitySavingEvent(Object entity, boolean isNew) {
+        EntitySavingEvent<?> event = new EntitySavingEvent<>(this, getOriginalMetaClass(entity), entity, isNew);
         applicationEventPublisher.publishEvent(event);
+    }
+
+    public void publishEntityLoadingEvent(Object entity) {
+        EntityLoadingEvent<?> event = new EntityLoadingEvent<>(this, getOriginalMetaClass(entity), entity);
+        applicationEventPublisher.publishEvent(event);
+    }
+
+    private MetaClass getOriginalMetaClass(Object entity) {
+        MetaClass metaClass = metadata.getClass(entity.getClass());
+        return extendedEntities.getOriginalOrThisMetaClass(metaClass);
     }
 }

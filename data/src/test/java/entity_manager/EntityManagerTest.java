@@ -19,7 +19,7 @@ package entity_manager;
 import io.jmix.core.*;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.PersistenceHints;
-import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.core.event.EntityChangedEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

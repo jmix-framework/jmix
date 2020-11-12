@@ -16,8 +16,8 @@
 
 package test_support;
 
-import io.jmix.data.event.EntityChangedEvent;
-import io.jmix.data.event.EntityPersistingEvent;
+import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.event.EntitySavingEvent;
 import io.jmix.data.listener.BeforeDetachEntityListener;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -59,7 +59,7 @@ public class TestCustomerListener implements BeforeDetachEntityListener<Customer
     }
 
     @EventListener
-    public void onCustomerCreate(EntityPersistingEvent<Customer> event) {
+    public void onCustomerCreate(EntitySavingEvent<Customer> event) {
         if (event.getEntity().getStatus() == null) {
             event.getEntity().setStatus(Status.OK);
         }

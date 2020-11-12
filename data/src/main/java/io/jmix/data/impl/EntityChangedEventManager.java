@@ -16,14 +16,16 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.*;
+import io.jmix.core.Entity;
+import io.jmix.core.ExtendedEntities;
+import io.jmix.core.Id;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import io.jmix.core.event.AttributeChanges;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.event.AttributeChanges;
-import io.jmix.data.event.EntityChangedEvent;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
@@ -40,7 +42,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
@@ -61,32 +62,6 @@ public class EntityChangedEventManager {
 
     @Autowired
     private ExtendedEntities extendedEntities;
-
-    private Map<Class, PublishingInfo> infoCache = new ConcurrentHashMap<>();
-
-    private static class PublishingInfo {
-        final boolean publish;
-        final boolean onCreated;
-        final boolean onUpdated;
-        final boolean onDeleted;
-        final MetaClass originalMetaClass;
-
-        public PublishingInfo() {
-            publish = false;
-            onCreated = false;
-            onUpdated = false;
-            onDeleted = false;
-            originalMetaClass = null;
-        }
-
-        public PublishingInfo(boolean onCreated, boolean onUpdated, boolean onDeleted, MetaClass originalMetaClass) {
-            this.publish = true;
-            this.onCreated = onCreated;
-            this.onUpdated = onUpdated;
-            this.onDeleted = onDeleted;
-            this.originalMetaClass = originalMetaClass;
-        }
-    }
 
     private static class AccumulatedInfoHolder extends ResourceHolderSupport {
 
@@ -149,50 +124,32 @@ public class EntityChangedEventManager {
         List<EntityChangedEventInfo> list = new ArrayList<>();
         for (Object entity : entities) {
 
-            PublishingInfo info = infoCache.computeIfAbsent(entity.getClass(), aClass -> {
-                MetaClass metaClass = metadata.getClass(entity.getClass());
-                MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
-                Map attrMap = (Map) metaClass.getAnnotations().get(PublishEntityChangedEvents.class.getName());
-                if (attrMap != null) {
-                    return new PublishingInfo(
-                            Boolean.TRUE.equals(attrMap.get("created")),
-                            Boolean.TRUE.equals(attrMap.get("updated")),
-                            Boolean.TRUE.equals(attrMap.get("deleted")),
-                            originalMetaClass);
-                }
-                return new PublishingInfo();
-            });
-
-
-            if (info.publish) {
-                EntityChangedEvent.Type type = null;
-                AttributeChanges attributeChanges = null;
-                if (info.onCreated && getEntityEntry(entity).isNew()) {
-                    type = EntityChangedEvent.Type.CREATED;
-                    attributeChanges = getEntityAttributeChanges(entity, false);
-                } else {
-                    if (info.onUpdated || info.onDeleted) {
-                        AttributeChangeListener changeListener =
-                                (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
-                        if (changeListener == null) {
-                            log.debug("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
-                            continue;
-                        }
-                        if (info.onDeleted && persistenceSupport.isDeleted(entity, changeListener)) {
-                            type = EntityChangedEvent.Type.DELETED;
-                            attributeChanges = getEntityAttributeChanges(entity, true);
-                        } else if (info.onUpdated && changeListener.hasChanges()) {
-                            type = EntityChangedEvent.Type.UPDATED;
-                            attributeChanges = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
-                        }
+            EntityChangedEvent.Type type = null;
+            AttributeChanges attributeChanges = null;
+            if (getEntityEntry(entity).isNew()) {
+                type = EntityChangedEvent.Type.CREATED;
+                attributeChanges = getEntityAttributeChanges(entity, false);
+            } else {
+                    AttributeChangeListener changeListener =
+                            (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
+                    if (changeListener == null) {
+                        log.debug("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
+                        continue;
                     }
-                }
-                if (type != null && attributeChanges != null) {
-                    @SuppressWarnings("unchecked")
-                    EntityChangedEventInfo eventData = new EntityChangedEventInfo(this, entity, type,
-                            attributeChanges, info.originalMetaClass);
-                    list.add(eventData);
-                }
+                    if (persistenceSupport.isDeleted(entity, changeListener)) {
+                        type = EntityChangedEvent.Type.DELETED;
+                        attributeChanges = getEntityAttributeChanges(entity, true);
+                    } else if (changeListener.hasChanges()) {
+                        type = EntityChangedEvent.Type.UPDATED;
+                        attributeChanges = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
+                    }
+            }
+            if (type != null && attributeChanges != null) {
+                MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity));
+
+                EntityChangedEventInfo eventData = new EntityChangedEventInfo(this, entity, type,
+                        attributeChanges, originalMetaClass);
+                list.add(eventData);
             }
         }
         log.trace("collected {}", list);
@@ -320,28 +277,30 @@ public class EntityChangedEventManager {
         Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
 
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
-            Object value = EntityValues.getValue(entity, property.getName());
-            if (deleted) {
-                if (value instanceof Entity) {
-                    if (EntitySystemAccess.isEmbeddable(entity)) {
-                        embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
+            if (!property.isReadOnly()) {
+                Object value = EntityValues.getValue(entity, property.getName());
+                if (deleted) {
+                    if (value instanceof Entity) {
+                        if (EntitySystemAccess.isEmbeddable(entity)) {
+                            embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
+                        } else {
+                            changes.add(new AttributeChanges.Change(property.getName(), Id.of(value)));
+                        }
+                    } else if (value instanceof Collection) {
+                        Collection<Object> coll = (Collection<Object>) value;
+                        Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                        for (Object item : coll) {
+                            idColl.add(Id.of(item));
+                        }
+                        changes.add(new AttributeChanges.Change(property.getName(), idColl));
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), Id.of(value)));
+                        changes.add(new AttributeChanges.Change(property.getName(), value));
                     }
-                } else if (value instanceof Collection) {
-                    Collection<Object> coll = (Collection<Object>) value;
-                    Collection<Id> idColl = value instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
-                    for (Object item : coll) {
-                        idColl.add(Id.of(item));
-                    }
-                    changes.add(new AttributeChanges.Change(property.getName(), idColl));
-                } else {
-                    changes.add(new AttributeChanges.Change(property.getName(), value));
-                }
 
-            } else {
-                if (value != null) {
-                    changes.add(new AttributeChanges.Change(property.getName(), null));
+                } else {
+                    if (value != null) {
+                        changes.add(new AttributeChanges.Change(property.getName(), null));
+                    }
                 }
             }
         }

@@ -18,7 +18,6 @@ package test_support.entity.sales;
 
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.OnDelete;
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import test_support.entity.BaseEntity;
@@ -32,7 +31,6 @@ import java.util.List;
 @JmixEntity
 @Entity(name = "sales_Order")
 @Table(name = "SALES_ORDER")
-@PublishEntityChangedEvents
 public class Order extends BaseEntity {
     private static final long serialVersionUID = -7505471093968920870L;
 

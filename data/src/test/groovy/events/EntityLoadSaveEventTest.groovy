@@ -16,18 +16,24 @@
 package events
 
 import io.jmix.core.DataManager
+import io.jmix.core.Id
 import io.jmix.core.Metadata
 import io.jmix.core.Stores
 import io.jmix.data.StoreAwareLocator
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
+import test_support.entity.events.Bar
 import test_support.entity.sales.Customer
 import test_support.entity.sales.Status
 
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
-class EntityPersistingEventTest extends DataSpec {
+/**
+ * @see test_support.TestLoadSaveEventListener
+ */
+class EntityLoadSaveEventTest extends DataSpec {
 
     @Autowired
     private Metadata metadata
@@ -48,7 +54,47 @@ class EntityPersistingEventTest extends DataSpec {
         }
     }
 
-    def "EntityPersistingEvent while merge entity"() {
+    def "EntityLoadingEvent listener populates transient field"() {
+        def bar = dataManager.create(Bar)
+        bar.name = 'abc'
+        bar.amount = 10
+        dataManager.save(bar)
+
+        when:
+        def bar1 = dataManager.load(Id.of(bar)).one()
+
+        then:
+        bar1.description == 'abc:10'
+    }
+
+    def "EntitySavingEvent listener populates persistent fields"() {
+        def bar = dataManager.create(Bar)
+        bar.description = 'abc:10'
+        dataManager.save(bar)
+
+        when:
+        def bar1 = dataManager.load(Id.of(bar)).one()
+
+        then:
+        bar1.name == 'abc'
+        bar1.amount == 10
+    }
+
+    def "EntitySavingEvent listener initializes fields"() {
+        def bar = dataManager.create(Bar)
+        dataManager.save(bar)
+
+        when:
+        def bar1 = dataManager.load(Id.of(bar)).one()
+
+        then:
+        bar1.name == 'new'
+        bar1.amount == 1
+    }
+
+    // this test won't pass because in Jmix EntitySavingEvent is sent only for operations through DataManager
+    @Ignore
+    def "EntitySavingEvent while merge entity"() {
         customer = metadata.create(Customer)
         customer.name = 'customer1'
 

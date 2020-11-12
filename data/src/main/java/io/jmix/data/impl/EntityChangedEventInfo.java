@@ -17,11 +17,11 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.event.AttributeChanges;
-import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.core.event.AttributeChanges;
+import io.jmix.core.event.EntityChangedEvent;
 
-import static io.jmix.data.event.EntityChangedEvent.Type.CREATED;
-import static io.jmix.data.event.EntityChangedEvent.Type.DELETED;
+import static io.jmix.core.event.EntityChangedEvent.Type.CREATED;
+import static io.jmix.core.event.EntityChangedEvent.Type.DELETED;
 
 public class EntityChangedEventInfo {
     private final Object source;

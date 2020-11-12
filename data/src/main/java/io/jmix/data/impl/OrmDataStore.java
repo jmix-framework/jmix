@@ -34,7 +34,7 @@ import io.jmix.data.accesscontext.CrudEntityContext;
 import io.jmix.data.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
-import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
@@ -114,6 +114,9 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
     @Autowired
     protected EntityChangedEventManager entityChangedEventManager;
+
+    @Autowired
+    protected EntityEventManager entityEventManager;
 
     @Autowired
     protected DbmsSpecifics dbmsSpecifics;
@@ -223,7 +226,10 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
             if (context.isJoinTransaction()) {
                 em.flush();
-                detachEntity(em, result, fetchPlan, false);
+                if (result != null) {
+                    detachEntity(em, result, fetchPlan, false);
+                    entityEventManager.publishEntityLoadingEvent(result);
+                }
             }
 
         } catch (RuntimeException e) {
@@ -320,6 +326,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                 em.flush();
                 for (E entity : resultList) {
                     detachEntity(em, entity, fetchPlan, false);
+                    entityEventManager.publishEntityLoadingEvent(entity);
                 }
             }
 
@@ -522,6 +529,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                     if (entityStates.isNew(entity)) {
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
+                        entityEventManager.publishEntitySavingEvent(entity, true);
+
                         em.persist(entity);
                         saved.add(entity);
                         persisted.add(entity);
@@ -544,6 +553,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
                 // merge the rest - instances can be detached or not
                 for (Object entity : context.getEntitiesToSave()) {
                     if (!entityStates.isNew(entity)) {
+                        entityEventManager.publishEntitySavingEvent(entity, false);
+
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
                         assertToken(accessConstraints, entity);
@@ -637,6 +648,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
                     for (Object entity : saved) {
                         detachEntity(em, entity, getFetchPlanFromContextOrNull(context, entity), true);
+                        entityEventManager.publishEntityLoadingEvent(entity);
                     }
 
                     entityChangedEventManager.publish(events);

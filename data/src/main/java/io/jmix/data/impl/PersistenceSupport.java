@@ -23,7 +23,7 @@ import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
@@ -155,7 +155,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         return runner;
     }
 
-    public void registerInstance(Object entity, javax.persistence.EntityManager entityManager) {
+    public void registerInstance(Object entity, EntityManager entityManager) {
         if (!TransactionSynchronizationManager.isActualTransactionActive())
             throw new RuntimeException("No transaction");
 
@@ -215,7 +215,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         return holder;
     }
 
-    public void processFlush(javax.persistence.EntityManager entityManager, boolean warnAboutImplicitFlush) {
+    public void processFlush(EntityManager entityManager, boolean warnAboutImplicitFlush) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
         traverseEntities(getInstanceContainerResourceHolder(storeName), new OnSaveEntityVisitor(storeName), warnAboutImplicitFlush);
@@ -298,7 +298,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public void detach(javax.persistence.EntityManager entityManager, Object entity) {
+    public void detach(EntityManager entityManager, Object entity) {
         UnitOfWork unitOfWork = entityManager.unwrap(UnitOfWork.class);
         String storeName = getStorageName(unitOfWork);
 

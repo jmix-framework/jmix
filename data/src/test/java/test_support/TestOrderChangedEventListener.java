@@ -18,14 +18,13 @@ package test_support;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.event.EntityChangedEvent;
+import io.jmix.core.event.EntityChangedEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import test_support.entity.sales.Order;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.UUID;
 
 @Component("test_TestOrderChangedEventListener")
 public class TestOrderChangedEventListener {

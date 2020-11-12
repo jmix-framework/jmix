@@ -41,17 +41,6 @@ public interface Component {
         BOTTOM_CENTER
     }
 
-    /**
-     * @deprecated Use {@link SizeUnit} instead.
-     */
-    @Deprecated
-    int UNITS_PIXELS = 0;
-    /**
-     * @deprecated @deprecated Use {@link SizeUnit} instead.
-     */
-    @Deprecated
-    int UNITS_PERCENTAGE = 8;
-
     String AUTO_SIZE = "-1px";
     int AUTO_SIZE_PX = -1;
 

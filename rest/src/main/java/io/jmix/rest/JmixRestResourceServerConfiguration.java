@@ -28,11 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
@@ -61,7 +66,7 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
     private CoreProperties coreProperties;
 
     @Autowired
-    private UserRepository userRepository;
+    protected UserRepository userRepository;
 
     @Autowired
     protected JmixModules jmixModules;
@@ -70,20 +75,20 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
     protected RestProperties restProperties;
 
     @Autowired
-    private SessionRegistry sessionRegistry;
+    protected SessionRegistry sessionRegistry;
 
     @Autowired
-    private SessionAuthenticationStrategy sessionAuthenticationStrategy;
+    protected SessionAuthenticationStrategy sessionAuthenticationStrategy;
 
     @Autowired
-    private SessionProperties sessionProperties;
+    protected SessionProperties sessionProperties;
+
+    @Autowired
+    protected ClientDetailsService clientDetailsService;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
-        resources
-//                .tokenServices(tokenServices)
-                .tokenStore(tokenStore);
-
+        resources.tokenStore(tokenStore);
     }
 
     @Override
@@ -105,8 +110,7 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .flatMap(Stream::of)
                 .toArray(String[]::new);
 
-        http
-                .requestMatchers()
+        http.requestMatchers()
                 .antMatchers(requestMatcherAntPatterns)
                 .and()
                 .csrf().disable()
@@ -123,5 +127,22 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .and()
                 .addFilterBefore(jmixRestExceptionLoggingFilter, WebAsyncManagerIntegrationFilter.class)
                 .addFilterAfter(jmixRestLastSecurityFilter, FilterSecurityInterceptor.class);
+
+        http.requestMatchers()
+                .antMatchers("/rest/oauth/revoke")
+                .and()
+                .httpBasic()
+                .authenticationEntryPoint(new OAuth2AuthenticationEntryPoint())
+                .and()
+                .authorizeRequests()
+                .antMatchers("/rest/oauth/revoke").authenticated()
+                .and()
+                .authenticationProvider(clientDetailsAuthenticationProvider());
+    }
+
+    protected AuthenticationProvider clientDetailsAuthenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(new ClientDetailsUserDetailsService(clientDetailsService));
+        return authenticationProvider;
     }
 }

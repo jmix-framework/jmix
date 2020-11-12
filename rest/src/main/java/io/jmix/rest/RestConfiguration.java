@@ -47,8 +47,8 @@ public class RestConfiguration implements WebMvcConfigurer {
     }
 
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.defaultContentType(MediaType.APPLICATION_JSON);
+    public void configureContentNegotiation(ContentNegotiationConfigurer customizer) {
+        customizer.defaultContentType(MediaType.APPLICATION_JSON);
     }
 
     @Override

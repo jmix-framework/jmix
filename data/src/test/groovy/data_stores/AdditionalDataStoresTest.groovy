@@ -74,6 +74,6 @@ class AdditionalDataStoresTest extends DataSpec {
         loadedCustomer == customer
 
         cleanup:
-        db1Jdbc.update('delete from CUSTOMER')
+        db1Jdbc.update('delete from CUSTOMER where ID = ?', customer.getId())
     }
 }

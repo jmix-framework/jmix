@@ -53,7 +53,7 @@ import java.util.function.Supplier;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
-@Component("jmix_UiControllerReflectionInspector")
+@Component("ui_UiControllerReflectionInspector")
 public class UiControllerReflectionInspector {
 
     protected final LoadingCache<Class<?>, ScreenIntrospectionData> screenIntrospectionCache =

@@ -33,7 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component("jmix_NotificationFacetProvider")
+@Component("ui_NotificationFacetProvider")
 public class NotificationFacetProvider implements FacetProvider<NotificationFacet> {
 
     @Autowired

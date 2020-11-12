@@ -42,7 +42,7 @@ import static io.jmix.ui.icon.Icons.ICON_NAME_REGEX;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-@Component("jmix_OptionDialogFacetProvider")
+@Component("ui_OptionDialogFacetProvider")
 public class OptionDialogFacetProvider
         implements FacetProvider<OptionDialogFacet> {
 

@@ -39,7 +39,7 @@ import java.util.*;
 /**
  * Provides inheritance of screen XML descriptors.
  */
-@Component("jmix_XmlInheritanceProcessor")
+@Component("ui_XmlInheritanceProcessor")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class XmlInheritanceProcessor {
 

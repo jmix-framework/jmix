@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.text.ParseException;
 
-@Component("jmix_ScreenDataXmlLoader")
+@Component("ui_ScreenDataXmlLoader")
 public class ScreenDataXmlLoader {
 
     @Autowired

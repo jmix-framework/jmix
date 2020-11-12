@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.Filter;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.ConditionsTree;
 import com.haulmont.cuba.gui.components.filter.FilterParser;
@@ -49,7 +50,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.FilterImplementation;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.filter.Op;
 import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.screen.FrameOwner;
@@ -181,7 +181,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
 
             if (!found) {
                 windowManager.showNotification(messages.getMainMessage("actions.Related.FilterNotFound"),
-                        Frame.NotificationType.WARNING);
+                        NotificationType.WARNING);
             }
             if (screen instanceof LegacyFrame) {
                 LegacyFrame legacyFrame = (LegacyFrame) screen;
@@ -189,7 +189,7 @@ public class RelatedEntitiesBean implements RelatedEntitiesAPI {
             }
         } else {
             windowManager.showNotification(messages.getMainMessage("actions.Related.NotSelected"),
-                    Frame.NotificationType.HUMANIZED);
+                    NotificationType.HUMANIZED);
         }
     }
 

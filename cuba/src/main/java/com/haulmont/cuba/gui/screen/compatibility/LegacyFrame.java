@@ -17,12 +17,12 @@
 package com.haulmont.cuba.gui.screen.compatibility;
 
 import com.haulmont.cuba.gui.components.ExpandingLayout;
+import com.haulmont.cuba.gui.components.Frame;
 import com.haulmont.cuba.gui.components.HasWindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
 import io.jmix.ui.component.HasMargin;
 import io.jmix.ui.component.HasSpacing;

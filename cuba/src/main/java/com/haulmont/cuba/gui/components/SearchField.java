@@ -17,8 +17,8 @@
 package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.data.Datasource;
-import io.jmix.ui.component.Frame;
 
 /**
  * Component compatible with {@link Datasource}.
@@ -53,7 +53,7 @@ public interface SearchField<V> extends LookupField<V> {
      * Sets notifications configuration object that determines what messages will be shown in case of too small
      * search string or absence of matches.
      * <p>
-     * {@link Frame.NotificationType#TRAY} is the default value.
+     * {@link NotificationType#TRAY} is the default value.
      *
      * @param searchNotifications {@link SearchNotifications} instance
      */
@@ -70,12 +70,12 @@ public interface SearchField<V> extends LookupField<V> {
      *
      * @param defaultNotificationType notification type
      */
-    void setDefaultNotificationType(Frame.NotificationType defaultNotificationType);
+    void setDefaultNotificationType(NotificationType defaultNotificationType);
 
     /**
      * @return notification type
      */
-    Frame.NotificationType getDefaultNotificationType();
+    NotificationType getDefaultNotificationType();
 
     /**
      * Sets whether search string case should be considered or it should be converted to upper or lower case.

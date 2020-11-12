@@ -33,7 +33,6 @@ import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.filter.Op;
@@ -113,7 +112,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
 
         String error = checkCondition();
         if (error != null) {
-            showNotification(messages.getMessage(error), Frame.NotificationType.TRAY);
+            showNotification(messages.getMessage(error), NotificationType.TRAY);
             return false;
         }
 

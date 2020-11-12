@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SearchPickerField;
 import com.vaadin.server.Resource;
@@ -24,7 +25,6 @@ import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.SecuredActionsHolder;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityOptions;
@@ -75,7 +75,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
 
     protected IconResolver iconResolver;
 
-    protected Frame.NotificationType defaultNotificationType = Frame.NotificationType.TRAY;
+    protected NotificationType defaultNotificationType = NotificationType.TRAY;
 
     protected SearchNotifications searchNotifications = createSearchNotifications();
 
@@ -225,12 +225,12 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     }
 
     @Override
-    public Frame.NotificationType getDefaultNotificationType() {
+    public NotificationType getDefaultNotificationType() {
         return defaultNotificationType;
     }
 
     @Override
-    public void setDefaultNotificationType(Frame.NotificationType defaultNotificationType) {
+    public void setDefaultNotificationType(NotificationType defaultNotificationType) {
         this.defaultNotificationType = defaultNotificationType;
     }
 

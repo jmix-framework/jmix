@@ -356,7 +356,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
         ParamType type = typeSelect.getValue();
         if (ParamType.ENTITY.equals(type) && entitySelect.getValue() == null) {
-            showNotification("Select entity", Frame.NotificationType.HUMANIZED);
+            showNotification("Select entity", NotificationType.HUMANIZED);
             return false;
         }
 

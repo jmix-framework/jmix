@@ -15,6 +15,8 @@
  */
 package com.haulmont.cuba.gui;
 
+import com.haulmont.cuba.gui.components.Frame.MessageType;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.Preconditions;
@@ -22,11 +24,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.WebBrowserTools;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.SizeUnit;
-import io.jmix.ui.component.SizeWithUnit;
-import io.jmix.ui.component.Window;
+import io.jmix.ui.component.*;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 
@@ -136,7 +134,7 @@ public interface WindowManager {
     }
 
     /**
-     * Show notification with {@link Frame.NotificationType#HUMANIZED}. <br>
+     * Show notification with {@link NotificationType#HUMANIZED}. <br>
      * Supports line breaks ({@code \n}).
      *
      * @param caption text
@@ -151,9 +149,10 @@ public interface WindowManager {
      * @param caption text
      * @param type    defines how to display the notification.
      *                Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link Notifications} instead
      */
     @Deprecated
-    void showNotification(String caption, Frame.NotificationType type);
+    void showNotification(String caption, NotificationType type);
 
     /**
      * Show notification with caption description. <br>
@@ -163,9 +162,10 @@ public interface WindowManager {
      * @param description text
      * @param type        defines how to display the notification.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link Notifications} instead
      */
     @Deprecated
-    void showNotification(String caption, String description, Frame.NotificationType type);
+    void showNotification(String caption, String description, NotificationType type);
 
     /**
      * Show message dialog with title and message. <br>
@@ -175,9 +175,10 @@ public interface WindowManager {
      * @param message     text
      * @param messageType defines how to display the dialog.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link io.jmix.ui.Dialogs#createMessageDialog()} instead
      */
     @Deprecated
-    void showMessageDialog(String title, String message, Frame.MessageType messageType);
+    void showMessageDialog(String title, String message, MessageType messageType);
 
     /**
      * Show options dialog with title and message. <br>
@@ -188,9 +189,10 @@ public interface WindowManager {
      * @param messageType defines how to display the dialog.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      * @param actions     available actions
+     * @deprecated Use {@link io.jmix.ui.Dialogs#createMessageDialog()} instead
      */
     @Deprecated
-    void showOptionDialog(String title, String message, Frame.MessageType messageType, Action[] actions);
+    void showOptionDialog(String title, String message, MessageType messageType, Action[] actions);
 
     /**
      * Shows exception dialog with default caption, message and displays stacktrace of given throwable.

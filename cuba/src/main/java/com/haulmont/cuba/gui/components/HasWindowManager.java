@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.components;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
+import com.haulmont.cuba.gui.components.Frame.MessageType;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.Entity;
@@ -27,7 +29,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenContext;
 
@@ -79,8 +80,8 @@ public interface HasWindowManager {
     /**
      * Open an edit screen for entity instance. <br> It is recommended to use {@link ScreenBuilders} bean instead.
      *
-     * @param item        entity to edit
-     * @param openType    how to open the screen
+     * @param item     entity to edit
+     * @param openType how to open the screen
      * @return created window
      */
     @Deprecated
@@ -93,9 +94,9 @@ public interface HasWindowManager {
     /**
      * Open an edit screen for entity instance. <br> It is recommended to use {@link ScreenBuilders} bean instead.
      *
-     * @param item        entity to edit
-     * @param openType    how to open the screen
-     * @param params      parameters to pass to {@code init()} method of the screen's controller
+     * @param item     entity to edit
+     * @param openType how to open the screen
+     * @param params   parameters to pass to {@code init()} method of the screen's controller
      * @return created window
      */
     @Deprecated
@@ -109,11 +110,11 @@ public interface HasWindowManager {
     /**
      * Open an edit screen for entity instance. <br> It is recommended to use {@link ScreenBuilders} bean instead.
      *
-     * @param item        entity to edit
-     * @param openType    how to open the screen
-     * @param params      parameters to pass to {@code init()} method of the screen's controller
-     * @param parentDs    if this parameter is not null, the editor will commit edited instance into this
-     *                    datasource instead of directly to database
+     * @param item     entity to edit
+     * @param openType how to open the screen
+     * @param params   parameters to pass to {@code init()} method of the screen's controller
+     * @param parentDs if this parameter is not null, the editor will commit edited instance into this
+     *                 datasource instead of directly to database
      * @return created window
      */
     @Deprecated
@@ -267,9 +268,9 @@ public interface HasWindowManager {
      * Load a frame registered in {@code screens.xml} and optionally show it inside a parent component of this
      * frame. <br> It is recommended to use {@link Fragments} bean instead.
      *
-     * @param parent        if specified, all parent's sub components will be removed and the frame will be added
-     * @param windowAlias   frame ID as defined in {@code screens.xml}
-     * @return              frame's controller instance
+     * @param parent      if specified, all parent's sub components will be removed and the frame will be added
+     * @param windowAlias frame ID as defined in {@code screens.xml}
+     * @return frame's controller instance
      */
     @Deprecated
     default Frame openFrame(@Nullable Component parent, String windowAlias) {
@@ -290,10 +291,10 @@ public interface HasWindowManager {
      * Load a frame registered in {@code screens.xml} and optionally show it inside a parent component of this
      * frame. <br> It is recommended to use {@link Fragments} bean instead.
      *
-     * @param parent        if specified, all parent's sub components will be removed and the frame will be added
-     * @param windowAlias   frame ID as defined in {@code screens.xml}
-     * @param params        parameters to be passed into the frame's controller {@code init} method
-     * @return              frame's controller instance
+     * @param parent      if specified, all parent's sub components will be removed and the frame will be added
+     * @param windowAlias frame ID as defined in {@code screens.xml}
+     * @param params      parameters to be passed into the frame's controller {@code init} method
+     * @return frame's controller instance
      */
     @Deprecated
     default Frame openFrame(@Nullable Component parent, String windowAlias, Map<String, Object> params) {
@@ -322,9 +323,10 @@ public interface HasWindowManager {
      * @param message     text
      * @param messageType defines how to display the dialog.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link Dialogs#createMessageDialog()} instead
      */
     @Deprecated
-    default void showMessageDialog(String title, String message, Frame.MessageType messageType) {
+    default void showMessageDialog(String title, String message, MessageType messageType) {
         getWindowManager().showMessageDialog(title, message, messageType);
     }
 
@@ -338,9 +340,10 @@ public interface HasWindowManager {
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      * @param actions     array of actions that represent options. For standard options consider use of
      *                    {@link DialogAction} instances.
+     * @deprecated Use {@link Dialogs#createMessageDialog()} instead
      */
     @Deprecated
-    default void showOptionDialog(String title, String message, Frame.MessageType messageType, Action[] actions) {
+    default void showOptionDialog(String title, String message, MessageType messageType, Action[] actions) {
         getWindowManager().showOptionDialog(title, message, messageType, actions);
     }
 
@@ -355,9 +358,10 @@ public interface HasWindowManager {
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
      * @param actions     list of actions that represent options. For standard options consider use of
      *                    {@link DialogAction} instances.
+     * @deprecated Use {@link Dialogs#createMessageDialog()} instead
      */
     @Deprecated
-    default void showOptionDialog(String title, String message, Frame.MessageType messageType, List<Action> actions) {
+    default void showOptionDialog(String title, String message, MessageType messageType, List<Action> actions) {
         getWindowManager().showOptionDialog(title, message, messageType, actions.toArray(new Action[0]));
     }
 
@@ -365,7 +369,7 @@ public interface HasWindowManager {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Show notification with {@link Frame.NotificationType#HUMANIZED}. <br>
+     * Show notification with {@link NotificationType#HUMANIZED}. <br>
      * Supports line breaks ({@code \n}). <br>
      * It is recommended to use {@link Notifications} bean instead.
      *
@@ -384,9 +388,10 @@ public interface HasWindowManager {
      * @param caption notification text
      * @param type    defines how to display the notification.
      *                Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link Notifications} instead
      */
     @Deprecated
-    default void showNotification(String caption, Frame.NotificationType type) {
+    default void showNotification(String caption, NotificationType type) {
         getWindowManager().showNotification(caption, type);
     }
 
@@ -399,9 +404,10 @@ public interface HasWindowManager {
      * @param description notification description
      * @param type        defines how to display the notification.
      *                    Don't forget to escape data from the database in case of {@code *_HTML} types!
+     * @deprecated Use {@link Notifications} instead
      */
     @Deprecated
-    default void showNotification(String caption, String description, Frame.NotificationType type) {
+    default void showNotification(String caption, String description, NotificationType type) {
         getWindowManager().showNotification(caption, description, type);
     }
 

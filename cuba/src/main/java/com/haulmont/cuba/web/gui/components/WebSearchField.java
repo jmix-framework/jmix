@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.SearchField;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -24,7 +25,6 @@ import com.haulmont.cuba.gui.data.options.DatasourceOptions;
 import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.QueryUtils;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.widget.JmixComboBox;
 import io.jmix.ui.widget.JmixSearchSelect;
@@ -42,7 +42,7 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
     protected Mode mode = Mode.CASE_SENSITIVE;
     protected boolean escapeValueForLike = false;
 
-    protected Frame.NotificationType defaultNotificationType = Frame.NotificationType.TRAY;
+    protected NotificationType defaultNotificationType = NotificationType.TRAY;
 
     protected SearchNotifications searchNotifications = createSearchNotifications();
 
@@ -168,12 +168,12 @@ public class WebSearchField<V extends Entity> extends WebLookupField<V> implemen
     }
 
     @Override
-    public Frame.NotificationType getDefaultNotificationType() {
+    public NotificationType getDefaultNotificationType() {
         return defaultNotificationType;
     }
 
     @Override
-    public void setDefaultNotificationType(Frame.NotificationType defaultNotificationType) {
+    public void setDefaultNotificationType(NotificationType defaultNotificationType) {
         this.defaultNotificationType = defaultNotificationType;
     }
 

@@ -20,6 +20,9 @@ import com.haulmont.cuba.gui.Screens;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
+import com.haulmont.cuba.gui.components.Frame.MessageMode;
+import com.haulmont.cuba.gui.components.Frame.MessageType;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import com.haulmont.cuba.gui.components.compatibility.SelectHandlerAdapter;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -34,7 +37,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Fragments;
-import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
@@ -332,41 +335,41 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     }
 
     @Override
-    public void showNotification(String caption, Frame.NotificationType type) {
+    public void showNotification(String caption, NotificationType type) {
         ui.getNotifications().create()
                 .withCaption(caption)
-                .withContentMode(Frame.NotificationType.isHTML(type) ? ContentMode.HTML : ContentMode.TEXT)
+                .withContentMode(NotificationType.isHTML(type) ? ContentMode.HTML : ContentMode.TEXT)
                 .withType(convertNotificationType(type))
                 .show();
     }
 
     @Override
-    public void showNotification(String caption, String description, Frame.NotificationType type) {
+    public void showNotification(String caption, String description, NotificationType type) {
         ui.getNotifications().create()
                 .withCaption(caption)
                 .withDescription(description)
-                .withContentMode(Frame.NotificationType.isHTML(type) ? ContentMode.HTML : ContentMode.TEXT)
+                .withContentMode(NotificationType.isHTML(type) ? ContentMode.HTML : ContentMode.TEXT)
                 .withType(convertNotificationType(type))
                 .show();
     }
 
-    protected NotificationType convertNotificationType(Frame.NotificationType type) {
+    protected Notifications.NotificationType convertNotificationType(NotificationType type) {
         switch (type) {
             case TRAY:
             case TRAY_HTML:
-                return NotificationType.TRAY;
+                return Notifications.NotificationType.TRAY;
 
             case ERROR:
             case ERROR_HTML:
-                return NotificationType.ERROR;
+                return Notifications.NotificationType.ERROR;
 
             case HUMANIZED:
             case HUMANIZED_HTML:
-                return NotificationType.HUMANIZED;
+                return Notifications.NotificationType.HUMANIZED;
 
             case WARNING:
             case WARNING_HTML:
-                return NotificationType.WARNING;
+                return Notifications.NotificationType.WARNING;
 
             default:
                 throw new UnsupportedOperationException("Unsupported notification type");
@@ -374,12 +377,12 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     }
 
     @Override
-    public void showMessageDialog(String title, String message, Frame.MessageType messageType) {
+    public void showMessageDialog(String title, String message, MessageType messageType) {
         Dialogs.MessageDialogBuilder builder = ui.getDialogs().createMessageDialog()
                 .withCaption(title)
                 .withMessage(message)
                 .withContentMode(
-                        Frame.MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
+                        MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
                 );
 
         if (messageType.getWidth() != null) {
@@ -402,12 +405,12 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     }
 
     @Override
-    public void showOptionDialog(String title, String message, Frame.MessageType messageType, Action[] actions) {
+    public void showOptionDialog(String title, String message, MessageType messageType, Action[] actions) {
         Dialogs.OptionDialogBuilder builder = ui.getDialogs().createOptionDialog()
                 .withCaption(title)
                 .withMessage(message)
                 .withContentMode(
-                        Frame.MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
+                        MessageMode.isHTML(messageType.getMessageMode()) ? ContentMode.HTML : ContentMode.TEXT
                 )
                 .withActions(actions);
 

@@ -18,7 +18,6 @@ import io.jmix.core.pessimisticlocking.LockNotSupported;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.TabSheet;
 
 import javax.annotation.Nullable;
@@ -207,7 +206,7 @@ public class EntityCombinedScreen extends AbstractLookup {
                             lockInfo.getUsername(),
                             getApplicationContext().getBean(DatatypeFormatter.class).formatDateTime(lockInfo.getSince())
                     ),
-                    Frame.NotificationType.HUMANIZED
+                    NotificationType.HUMANIZED
             );
             return false;
         }

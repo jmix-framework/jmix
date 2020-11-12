@@ -31,6 +31,7 @@ import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.FilterDataContext;
+import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.ListEditor;
 import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalComponent;
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
@@ -802,7 +803,7 @@ public class Param {
 
     protected void showParseExceptionNotification(String message) {
         WindowManager wm = applicationContext.getBean(WindowManagerProvider.class).get();
-        wm.showNotification(message, Frame.NotificationType.TRAY);
+        wm.showNotification(message, NotificationType.TRAY);
     }
 
     protected Component createBooleanField(ValueProperty valueProperty) {
@@ -838,7 +839,7 @@ public class Param {
                 _setValue(datatype.parse(strValue), valueProperty);
             } catch (ParseException ie) {
                 applicationContext.getBean(WindowManagerProvider.class).get()
-                        .showNotification(messages.getMainMessage("filter.param.uuid.Err"), Frame.NotificationType.TRAY);
+                        .showNotification(messages.getMainMessage("filter.param.uuid.Err"), NotificationType.TRAY);
             }
         });
 

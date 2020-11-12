@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.component;
 
-import com.vaadin.server.Sizeable;
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.*;
 import io.jmix.ui.action.Action;
@@ -23,17 +22,13 @@ import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.widget.JmixGroupBox;
-import io.jmix.ui.widget.JmixHorizontalActionsLayout;
 import io.jmix.ui.widget.JmixScrollBoxLayout;
-import io.jmix.ui.widget.JmixVerticalActionsLayout;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
-
-import static io.jmix.ui.component.Component.AUTO_SIZE;
 
 /**
  * Utility class working with GenericUI components.
@@ -397,14 +392,6 @@ public abstract class ComponentsHelper {
         return null;
     }
 
-    /**
-     * @deprecated Simply use {@link Frame#getFrameOwner()} call.
-     */
-    @Deprecated
-    public static FrameOwner getFrameController(Frame frame) {
-        return frame.getFrameOwner();
-    }
-
     public static String getFullFrameId(Frame frame) {
         if (frame instanceof Window) {
             return frame.getId();
@@ -489,16 +476,6 @@ public abstract class ComponentsHelper {
         return height + heightUnit.getSymbol();
     }
 
-    @Deprecated
-    public static boolean hasFullWidth(Component c) {
-        return (int) c.getWidth() == 100 && c.getWidthSizeUnit() == SizeUnit.PERCENTAGE;
-    }
-
-    @Deprecated
-    public static boolean hasFullHeight(Component c) {
-        return (int) c.getHeight() == 100 && c.getHeightSizeUnit() == SizeUnit.PERCENTAGE;
-    }
-
     /**
      * Place component with error message to validation errors container.
      *
@@ -529,30 +506,6 @@ public abstract class ComponentsHelper {
             }
         }
         return oldIndex;
-    }
-
-    @Deprecated
-    public static SizeUnit convertToSizeUnit(int unit) {
-        switch (unit) {
-            case Component.UNITS_PIXELS:
-                return SizeUnit.PIXELS;
-            case Component.UNITS_PERCENTAGE:
-                return SizeUnit.PERCENTAGE;
-            default:
-                throw new IllegalArgumentException("Unsupported unit: " + unit);
-        }
-    }
-
-    @Deprecated
-    public static int convertFromSizeUnit(SizeUnit unit) {
-        switch (unit) {
-            case PIXELS:
-                return Component.UNITS_PIXELS;
-            case PERCENTAGE:
-                return Component.UNITS_PERCENTAGE;
-            default:
-                throw new IllegalArgumentException("Unsupported unit: " + unit);
-        }
     }
 
     /**

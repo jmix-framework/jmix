@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui;
 import com.haulmont.cuba.gui.screen.OpenMode;
 
 /**
- * @deprecated User {@link io.jmix.ui.component.WindowContext} instead
+ * @deprecated Use {@link io.jmix.ui.component.WindowContext} instead
  */
 @Deprecated
 public interface WindowContext extends io.jmix.ui.component.WindowContext {

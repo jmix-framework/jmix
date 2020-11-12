@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.PopupButton;
-import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.PopupButtonImpl;
 
 import java.util.function.Consumer;
@@ -27,7 +27,7 @@ public class WebPopupButton extends PopupButtonImpl implements PopupButton {
 
     @Override
     public int getMenuWidthUnits() {
-        return ComponentsHelper.convertFromSizeUnit(getMenuWidthSizeUnit());
+        return CubaComponentsHelper.convertFromSizeUnit(getMenuWidthSizeUnit());
     }
 
     @Override

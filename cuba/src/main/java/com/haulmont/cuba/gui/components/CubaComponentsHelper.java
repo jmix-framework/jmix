@@ -20,13 +20,11 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.ButtonsPanel;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.HasButtonsPanel;
-import io.jmix.ui.component.HasComponents;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.widget.JmixFormLayout;
 import io.jmix.ui.widget.JmixHorizontalActionsLayout;
 import io.jmix.ui.widget.JmixVerticalActionsLayout;
@@ -172,5 +170,47 @@ public final class CubaComponentsHelper {
             frame = frame.getFrame();
         }
         return null;
+    }
+
+    /**
+     * @deprecated Simply use {@link Frame#getFrameOwner()} call.
+     */
+    @Deprecated
+    public static FrameOwner getFrameController(Frame frame) {
+        return frame.getFrameOwner();
+    }
+
+    @Deprecated
+    public static boolean hasFullWidth(Component c) {
+        return (int) c.getWidth() == 100 && c.getWidthSizeUnit() == SizeUnit.PERCENTAGE;
+    }
+
+    @Deprecated
+    public static boolean hasFullHeight(Component c) {
+        return (int) c.getHeight() == 100 && c.getHeightSizeUnit() == SizeUnit.PERCENTAGE;
+    }
+
+    @Deprecated
+    public static SizeUnit convertToSizeUnit(int unit) {
+        switch (unit) {
+            case Component.UNITS_PIXELS:
+                return SizeUnit.PIXELS;
+            case Component.UNITS_PERCENTAGE:
+                return SizeUnit.PERCENTAGE;
+            default:
+                throw new IllegalArgumentException("Unsupported unit: " + unit);
+        }
+    }
+
+    @Deprecated
+    public static int convertFromSizeUnit(SizeUnit unit) {
+        switch (unit) {
+            case PIXELS:
+                return Component.UNITS_PIXELS;
+            case PERCENTAGE:
+                return Component.UNITS_PERCENTAGE;
+            default:
+                throw new IllegalArgumentException("Unsupported unit: " + unit);
+        }
     }
 }

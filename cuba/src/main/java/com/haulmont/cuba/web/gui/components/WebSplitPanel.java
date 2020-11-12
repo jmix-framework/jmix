@@ -16,11 +16,11 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.SplitPanel;
 import com.haulmont.cuba.settings.binder.CubaSplitPanelSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacySplitPanelSettingsConverter;
-import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.SplitPanelImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
@@ -35,27 +35,27 @@ public class WebSplitPanel extends SplitPanelImpl implements SplitPanel, Initial
 
     @Override
     public void setSplitPosition(int pos, int unit) {
-        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+        setSplitPosition(pos, CubaComponentsHelper.convertToSizeUnit(unit));
     }
 
     @Override
     public void setSplitPosition(int pos, int unit, boolean reversePosition) {
-        setSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit), reversePosition);
+        setSplitPosition(pos, CubaComponentsHelper.convertToSizeUnit(unit), reversePosition);
     }
 
     @Override
     public int getSplitPositionUnit() {
-        return ComponentsHelper.convertFromSizeUnit(getSplitPositionSizeUnit());
+        return CubaComponentsHelper.convertFromSizeUnit(getSplitPositionSizeUnit());
     }
 
     @Override
     public void setMinSplitPosition(int pos, int unit) {
-        setMinSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+        setMinSplitPosition(pos, CubaComponentsHelper.convertToSizeUnit(unit));
     }
 
     @Override
     public void setMaxSplitPosition(int pos, int unit) {
-        setMaxSplitPosition(pos, ComponentsHelper.convertToSizeUnit(unit));
+        setMaxSplitPosition(pos, CubaComponentsHelper.convertToSizeUnit(unit));
     }
 
     @Override

@@ -54,7 +54,7 @@
                         <column id="cc"/>
                         <column id="bcc"/>
                         <column id="from"/>
-                        <column id="caption"/>
+                        <column id="subject"/>
                         <column id="status"/>
                         <column id="bodyContentType"/>
                         <column id="dateSent">
@@ -83,7 +83,7 @@
                         <column width="100%">
                             <field id="address" property="address"/>
                             <field id="from" property="from"/>
-                            <field id="caption" property="caption"/>
+                            <field id="subject" property="subject"/>
                             <field id="bodyContentType" property="bodyContentType"/>
                             <field id="status" property="status"/>
                             <field id="attachmentsName" property="attachmentsName"/>

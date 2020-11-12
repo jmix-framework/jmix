@@ -106,12 +106,12 @@ public class SendingMessageBrowser extends Screen {
     
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
-        fg.add(buildContextTextField(), 0, 3);
+        fg.add(buildContentTextField(), 0, 3);
 
         sendingMessageDc.addItemChangeListener(e -> selectedItemChanged(e.getItem()));
     }
 
-    protected Component buildContextTextField() {
+    protected Component buildContentTextField() {
         VBoxLayout contentArea = uiComponents.create(VBoxLayout.class);
         contentArea.setSpacing(true);
         contentArea.setCaption(messages.getMessage(SendingMessage.class, "SendingMessage.contentText"));

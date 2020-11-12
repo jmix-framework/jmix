@@ -77,7 +77,7 @@ public class EmailSenderImpl implements EmailSender {
         assignRecipient(Message.RecipientType.TO, sendingMessage.getAddress(), msg);
         assignRecipient(Message.RecipientType.CC, sendingMessage.getCc(), msg);
         assignRecipient(Message.RecipientType.BCC, sendingMessage.getBcc(), msg);
-        msg.setSubject(sendingMessage.getCaption(), StandardCharsets.UTF_8.name());
+        msg.setSubject(sendingMessage.getSubject(), StandardCharsets.UTF_8.name());
         msg.setSentDate(timeSource.currentTimestamp());
 
         assignFromAddress(sendingMessage, msg);

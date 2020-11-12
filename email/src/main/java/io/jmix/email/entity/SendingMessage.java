@@ -47,7 +47,7 @@ public class SendingMessage implements Serializable {
 
     private static final long serialVersionUID = -8156998515878702538L;
 
-    public static final int CAPTION_LENGTH = 500;
+    public static final int SUBJECT_LENGTH = 500;
     public static final int BODY_CONTENT_TYPE_LENGTH = 50;
     public static final String HEADERS_SEPARATOR = "\n";
 
@@ -96,8 +96,8 @@ public class SendingMessage implements Serializable {
     @Column(name = "ADDRESS_BCC")
     protected String bcc;
 
-    @Column(name = "CAPTION", length = CAPTION_LENGTH)
-    protected String caption;
+    @Column(name = "SUBJECT", length = SUBJECT_LENGTH)
+    protected String subject;
 
     /**
      * Email body is stored either in this field or in {@link #contentTextFile}.
@@ -267,12 +267,12 @@ public class SendingMessage implements Serializable {
         this.from = from;
     }
 
-    public void setCaption(String caption) {
-        this.caption = StringUtils.substring(caption, 0, SendingMessage.CAPTION_LENGTH);
+    public void setSubject(String subject) {
+        this.subject = StringUtils.substring(subject, 0, SendingMessage.SUBJECT_LENGTH);
     }
 
-    public String getCaption() {
-        return caption;
+    public String getSubject() {
+        return subject;
     }
 
     public List<SendingAttachment> getAttachments() {

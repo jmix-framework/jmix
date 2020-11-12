@@ -25,7 +25,7 @@
             <column name="ADDRESS_FROM" type="varchar(100)"/>
             <column name="ADDRESS_CC" type="clob"/>
             <column name="ADDRESS_BCC" type="clob"/>
-            <column name="CAPTION" type="varchar(500)"/>
+            <column name="SUBJECT" type="varchar(500)"/>
             <column name="CONTENT_TEXT" type="clob"/>
             <column name="CONTENT_TEXT_FILE" type="clob"/>
             <column name="STATUS" type="int"/>

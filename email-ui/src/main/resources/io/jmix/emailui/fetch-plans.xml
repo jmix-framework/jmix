@@ -27,7 +27,7 @@
         <property name="attachmentsName"/>
         <property name="attemptsCount"/>
         <property name="attemptsMade"/>
-        <property name="caption"/>
+        <property name="subject"/>
         <property name="dateSent"/>
         <property name="deadline"/>
         <property name="from"/>

@@ -35,14 +35,14 @@ public interface Emailer {
      * Send email synchronously.
      *
      * @param address         comma or semicolon separated list of addresses
-     * @param caption         email subject
+     * @param subject         email subject
      * @param body            email body
      * @param bodyContentType email body like "text/plain; charset=UTF-8" or "text/html; charset=UTF-8", etc
      * @param attachment      email attachments
      * @throws EmailException
      *          in case of any errors
      */
-    void sendEmail(String address, String caption, String body, String bodyContentType, EmailAttachment... attachment)
+    void sendEmail(String address, String subject, String body, String bodyContentType, EmailAttachment... attachment)
             throws EmailException;
 
     /**

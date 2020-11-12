@@ -84,7 +84,7 @@ public class ResendMessage extends Screen {
         if (message != null) {
             EmailInfo emailInfo = EmailInfoBuilder.create()
                     .setAddresses(emailTextField.getValue())
-                    .setCaption(message.getCaption())
+                    .setSubject(message.getSubject())
                     .setBody(emailBody(message))
                     .setFrom(message.getFrom())
                     .setBodyContentType(message.getBodyContentType())

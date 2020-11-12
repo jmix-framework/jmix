@@ -28,7 +28,7 @@ import java.util.*;
  * <pre>
  * EmailInfo emailInfo = EmailInfoBuilder.create()
  *               .setAddresses(addresses)
- *               .setCaption("Email subject")
+ *               .setSubject("Email subject")
  *               .setBody("Some email body")
  *               .build();</pre>
  */
@@ -36,7 +36,7 @@ public class EmailInfoBuilder {
     private String addresses;
     private String cc;
     private String bcc;
-    private String caption;
+    private String subject;
     private String from;
     private String templatePath;
     private Map<String, Serializable> templateParameters;
@@ -49,7 +49,7 @@ public class EmailInfoBuilder {
      * <pre>{@code
      *     EmailInfo emailInfo = EmailInfo.create()
      *          .setAddresses("john.doe@company.com,jane.roe@company.com")
-     *          .setCaption("Company news")
+     *          .setSubject("Company news")
      *          .setBody("Some content")
      *          .build();
      * }</pre>
@@ -65,19 +65,19 @@ public class EmailInfoBuilder {
      * }</pre>
      *
      * @param addresses       comma or semicolon separated list of addresses
-     * @param caption         email subject
+     * @param subject         email subject
      * @param body            email body
      */
-    public static EmailInfoBuilder create(String addresses, String caption, String body) {
-        return new EmailInfoBuilder(addresses, caption, body);
+    public static EmailInfoBuilder create(String addresses, String subject, String body) {
+        return new EmailInfoBuilder(addresses, subject, body);
     }
 
     /**
      * INTERNAL
      */
-    EmailInfoBuilder(String addresses, String caption, String body) {
+    EmailInfoBuilder(String addresses, String subject, String body) {
         this.addresses = addresses;
-        this.caption = caption;
+        this.subject = subject;
         this.body = body;
     }
 
@@ -118,15 +118,15 @@ public class EmailInfoBuilder {
         return this;
     }
 
-    public String getCaption() {
-        return caption;
+    public String getSubject() {
+        return subject;
     }
 
     /**
-     * @param caption email subject
+     * @param subject email subject
      */
-    public EmailInfoBuilder setCaption(String caption) {
-        this.caption = caption;
+    public EmailInfoBuilder setSubject(String subject) {
+        this.subject = subject;
         return this;
     }
 
@@ -243,7 +243,7 @@ public class EmailInfoBuilder {
     }
 
     public EmailInfo build() {
-        return new EmailInfo(addresses, cc, bcc, caption, from, templatePath, templateParameters,
+        return new EmailInfo(addresses, cc, bcc, subject, from, templatePath, templateParameters,
                 body, bodyContentType, headers, attachments);
     }
 }

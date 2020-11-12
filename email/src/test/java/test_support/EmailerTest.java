@@ -113,7 +113,7 @@ public class EmailerTest {
 
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("testemail@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .build();
         emailer.sendEmail(myInfo);
@@ -138,7 +138,7 @@ public class EmailerTest {
 
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("testemail@example.com,testemail2@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .setCc("testemail3@example.com,testemail4@example.com")
                 .setBcc("testemail5@example.com,testemail6@example.com")
@@ -204,7 +204,7 @@ public class EmailerTest {
         String body = "Test Email Body";
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("recipient@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(myInfo);
@@ -230,7 +230,7 @@ public class EmailerTest {
         String body = "Test Email Body";
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("recipient@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(myInfo);
@@ -266,7 +266,7 @@ public class EmailerTest {
         String body = "<html><body><b>Hi</b></body></html>";
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("recipient@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         emailer.sendEmail(myInfo);
@@ -285,7 +285,7 @@ public class EmailerTest {
         EmailerConfigPropertiesAccess.setFromAddress(emailerProperties, "implicit@example.com");
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .build();
         emailer.sendEmail(myInfo);
@@ -295,7 +295,7 @@ public class EmailerTest {
         EmailerConfigPropertiesAccess.setFromAddress(emailerProperties, "implicit2@example.com");
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .build();
         emailer.sendEmailAsync(myInfo);
@@ -312,7 +312,7 @@ public class EmailerTest {
         // synchronous
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .setFrom("explicit@example.com")
                 .build();
@@ -323,7 +323,7 @@ public class EmailerTest {
         // asynchronous
         myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test Email")
+                .setSubject("Test Email")
                 .setBody("Test Body")
                 .setFrom("explicit2@example.com")
                 .build();
@@ -359,7 +359,7 @@ public class EmailerTest {
         String body = "Test Email Body";
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("recipient@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
@@ -411,7 +411,7 @@ public class EmailerTest {
         String body = "Test Email Body";
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("recipient@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(myInfo, 2, getDeadlineWhichDoesntMatter());
@@ -459,7 +459,7 @@ public class EmailerTest {
         String recipients = "misha@example.com,kolya@example.com;tanya@example.com;"; // 3 recipients
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses(recipients)
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(myInfo);
@@ -513,7 +513,7 @@ public class EmailerTest {
 
         EmailInfo info = EmailInfoBuilder.create()
                 .setAddresses("bob@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setTemplatePath(templateFileName)
                 .setTemplateParameters(params)
                 .build();
@@ -543,7 +543,7 @@ public class EmailerTest {
 
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody("Test")
                 .setAttachments(textAttach)
                 .build();
@@ -588,7 +588,7 @@ public class EmailerTest {
 
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody("Test")
                 .setAttachments(imageAttach)
                 .build();
@@ -632,7 +632,7 @@ public class EmailerTest {
 
         EmailInfo myInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody("Test")
                 .setAttachments(pdfAttach)
                 .build();
@@ -672,7 +672,7 @@ public class EmailerTest {
         String body = "Hi! This is test email. Bye.";
         EmailInfo emailInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .build();
         SendingMessage message = emailer.sendEmailAsync(emailInfo);
@@ -693,7 +693,7 @@ public class EmailerTest {
         String body = "Hi! This is test email. Bye.";
         EmailInfo emailInfo = EmailInfoBuilder.create()
                 .setAddresses("test@example.com")
-                .setCaption("Test")
+                .setSubject("Test")
                 .setBody(body)
                 .setAttachments(fileAttachment)
                 .build();

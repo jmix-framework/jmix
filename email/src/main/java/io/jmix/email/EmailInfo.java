@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Contains email details: list of recipients, from address, caption, body and attachments.
+ * Contains email details: list of recipients, from address, subject, body and attachments.
  * See {@link EmailInfoBuilder} for more information.
  *
  * @see Emailer
@@ -40,7 +40,7 @@ public class EmailInfo implements Serializable {
     private String addresses;
     private String cc;
     private String bcc;
-    private String caption;
+    private String subject;
     private String from;
     private String templatePath;
     private Map<String, Serializable> templateParameters;
@@ -56,7 +56,7 @@ public class EmailInfo implements Serializable {
     EmailInfo(String addresses,
               String cc,
               String bcc,
-              String caption,
+              String subject,
               String from,
               String templatePath,
               Map<String, Serializable> templateParameters,
@@ -67,7 +67,7 @@ public class EmailInfo implements Serializable {
         this.addresses = addresses;
         this.cc = cc;
         this.bcc = bcc;
-        this.caption = caption;
+        this.subject = subject;
         this.from = from;
         this.templatePath = templatePath;
         this.templateParameters = templateParameters;
@@ -86,12 +86,12 @@ public class EmailInfo implements Serializable {
         this.addresses = addresses;
     }
 
-    public String getCaption() {
-        return caption;
+    public String getSubject() {
+        return subject;
     }
 
-    public void setCaption(String caption) {
-        this.caption = caption;
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
     public String getTemplatePath() {

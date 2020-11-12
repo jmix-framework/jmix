@@ -78,9 +78,9 @@ public class EmailerImpl implements Emailer {
     protected ApplicationContext applicationContext;
 
     @Override
-    public void sendEmail(String address, String caption, String body, String bodyContentType,
+    public void sendEmail(String address, String subject, String body, String bodyContentType,
                           EmailAttachment... attachment) throws EmailException {
-        EmailInfo emailInfo = EmailInfoBuilder.create(address, caption, body)
+        EmailInfo emailInfo = EmailInfoBuilder.create(address, subject, body)
                 .setBodyContentType(bodyContentType)
                 .setAttachments(attachment)
                 .build();
@@ -150,7 +150,7 @@ public class EmailerImpl implements Emailer {
         sendingMessage.setBcc(info.getBcc());
         sendingMessage.setFrom(info.getFrom());
         sendingMessage.setContentText(info.getBody());
-        sendingMessage.setCaption(info.getCaption());
+        sendingMessage.setSubject(info.getSubject());
         sendingMessage.setAttemptsCount(attemptsCount);
         sendingMessage.setDeadline(deadline);
         sendingMessage.setAttemptsMade(0);
@@ -196,7 +196,7 @@ public class EmailerImpl implements Emailer {
     protected void sendSendingMessage(SendingMessage sendingMessage) {
         Objects.requireNonNull(sendingMessage, "sendingMessage is null");
         Objects.requireNonNull(sendingMessage.getAddress(), "sendingMessage.address is null");
-        Objects.requireNonNull(sendingMessage.getCaption(), "sendingMessage.caption is null");
+        Objects.requireNonNull(sendingMessage.getSubject(), "sendingMessage.subject is null");
         Objects.requireNonNull(sendingMessage.getContentText(), "sendingMessage.contentText is null");
         Objects.requireNonNull(sendingMessage.getFrom(), "sendingMessage.from is null");
         try {
@@ -211,7 +211,7 @@ public class EmailerImpl implements Emailer {
 
     protected void persistAndSendEmail(EmailInfo emailInfo) throws EmailException {
         Objects.requireNonNull(emailInfo.getAddresses(), "addresses are null");
-        Objects.requireNonNull(emailInfo.getCaption(), "caption is null");
+        Objects.requireNonNull(emailInfo.getSubject(), "subject is null");
         Objects.requireNonNull(emailInfo.getBody(), "body is null");
         Objects.requireNonNull(emailInfo.getFrom(), "from is null");
 
@@ -254,7 +254,7 @@ public class EmailerImpl implements Emailer {
             emailDataProvider.persistMessage(clonedMessage, SendingStatus.SENDING);
             return clonedMessage;
         } catch (Exception e) {
-            log.error("Failed to persist message '{}'", sendingMessage.getCaption(), e);
+            log.error("Failed to persist message '{}'", sendingMessage.getSubject(), e);
             return null;
         }
     }
@@ -326,7 +326,7 @@ public class EmailerImpl implements Emailer {
         String text = sendingMessage.getContentText();
         bodyContentType = text.trim().startsWith("<html>") ? "text/html; charset=UTF-8" : "text/plain; charset=UTF-8";
         log.debug("Content body type is not set for email '{}' with addresses: {}. Will be used '{}'.",
-                sendingMessage.getCaption(), sendingMessage.getAddress(), bodyContentType);
+                sendingMessage.getSubject(), sendingMessage.getAddress(), bodyContentType);
         return bodyContentType;
     }
 

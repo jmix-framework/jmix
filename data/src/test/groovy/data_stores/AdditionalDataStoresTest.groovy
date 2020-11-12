@@ -65,7 +65,7 @@ class AdditionalDataStoresTest extends DataSpec {
         dataManager.save(customer)
 
         then:
-        db1Jdbc.queryForList('select * from CUSTOMER').size() == 1
+        db1Jdbc.queryForList('select * from CUSTOMER where ID = ?', customer.getId()).size() == 1
 
         when:
         def loadedCustomer = dataManager.load(Id.of(customer)).one()

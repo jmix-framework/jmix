@@ -17,7 +17,7 @@
 package com.haulmont.cuba.core.model.entitychangedevent;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import com.haulmont.cuba.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;

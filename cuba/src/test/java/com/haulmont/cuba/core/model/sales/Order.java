@@ -23,7 +23,7 @@ import com.haulmont.cuba.core.model.common.User;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDelete;
-import io.jmix.core.entity.annotation.PublishEntityChangedEvents;
+import com.haulmont.cuba.core.entity.annotation.PublishEntityChangedEvents;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 

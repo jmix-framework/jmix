@@ -28,7 +28,7 @@ import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.*
 import io.jmix.data.PersistenceHints
-import io.jmix.data.event.EntityChangedEvent
+import io.jmix.core.event.EntityChangedEvent
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 

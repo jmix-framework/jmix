@@ -32,13 +32,13 @@ import java.util.stream.Collectors;
  */
 public class AttributeChanges {
 
-    protected final io.jmix.data.event.AttributeChanges changes;
+    protected final io.jmix.core.event.AttributeChanges changes;
 
     /**
      * INTERNAL.
      */
     @Internal
-    public AttributeChanges(io.jmix.data.event.AttributeChanges changes) {
+    public AttributeChanges(io.jmix.core.event.AttributeChanges changes) {
         this.changes = changes;
     }
 

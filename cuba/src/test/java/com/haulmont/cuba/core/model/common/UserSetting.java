@@ -99,4 +99,12 @@ public class UserSetting extends BaseUuidEntity implements Creatable {
     public void setValue(String value) {
         this.value = value;
     }
+
+    public ClientType getClientType() {
+        return ClientType.fromId(clientType);
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType == null ? null : clientType.getId();
+    }
 }

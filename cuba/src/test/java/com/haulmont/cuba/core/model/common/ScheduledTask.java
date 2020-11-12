@@ -336,6 +336,14 @@ public class ScheduledTask extends BaseUuidEntity implements Creatable, Updatabl
         this.lastStartServer = lastStartServer;
     }
 
+    public ScheduledTaskDefinedBy getDefinedBy() {
+        return ScheduledTaskDefinedBy.fromId(definedBy);
+    }
+
+    public void setDefinedBy(ScheduledTaskDefinedBy definedBy) {
+        this.definedBy = ScheduledTaskDefinedBy.getId(definedBy);
+    }
+
     public String getClassName() {
         return className;
     }
@@ -376,6 +384,13 @@ public class ScheduledTask extends BaseUuidEntity implements Creatable, Updatabl
         this.cron = cron;
     }
 
+    public SchedulingType getSchedulingType() {
+        return SchedulingType.fromId(schedulingType);
+    }
+
+    public void setSchedulingType(SchedulingType schedulingType) {
+        this.schedulingType = SchedulingType.getId(schedulingType);
+    }
 
     public long getCurrentStartTimestamp() {
         return currentStartTimestamp;

@@ -27,7 +27,6 @@ import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.Screens;
 import io.jmix.ui.Screens.OpenedScreens;
 import io.jmix.ui.Screens.WindowStack;
 import io.jmix.ui.UiComponents;

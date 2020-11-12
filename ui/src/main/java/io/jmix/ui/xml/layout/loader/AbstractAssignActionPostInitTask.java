@@ -21,7 +21,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.sys.ValuePathHelper;
 import io.jmix.ui.xml.layout.ComponentLoader;
 

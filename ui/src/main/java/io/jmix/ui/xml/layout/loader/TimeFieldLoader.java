@@ -15,7 +15,6 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.Field;
 import io.jmix.ui.component.TimeField;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

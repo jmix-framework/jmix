@@ -18,7 +18,6 @@ package io.jmix.ui.event;
 
 import io.jmix.ui.App;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.security.core.context.SecurityContext;
 
 /**
  * Event that is fired after {@link App} initialization. Single instance of App is bound to single HTTP session.

@@ -28,7 +28,6 @@ import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.FileMultiUploadField;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.upload.TemporaryStorage;
 import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.lang3.StringUtils;

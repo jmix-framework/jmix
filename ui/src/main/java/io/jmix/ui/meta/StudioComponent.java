@@ -19,8 +19,6 @@ package io.jmix.ui.meta;
 import io.jmix.ui.component.Component;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Indicates that the annotated UI component interface should be available in Studio Screen Designer. Provides metadata

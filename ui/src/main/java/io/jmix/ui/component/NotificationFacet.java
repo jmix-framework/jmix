@@ -22,7 +22,6 @@ import io.jmix.ui.meta.*;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.PositiveOrZero;
-import java.util.EventObject;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 

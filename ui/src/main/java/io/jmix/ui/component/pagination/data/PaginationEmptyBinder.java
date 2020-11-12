@@ -18,7 +18,6 @@ package io.jmix.ui.component.pagination.data;
 
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.model.BaseCollectionLoader;
 import io.jmix.ui.model.CollectionChangeType;
 
 import java.util.function.Consumer;

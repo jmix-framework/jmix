@@ -52,7 +52,6 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.component.columnmanager.ColumnManager;
 import io.jmix.ui.component.data.*;

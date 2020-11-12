@@ -40,7 +40,6 @@ import org.springframework.util.ReflectionUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Inject;
 import javax.inject.Named;

@@ -31,7 +31,7 @@ $cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
   }
 
   .#{$primary-stylename}.icon-only .v-popup-indicator {
-    padding-left: 0;
+    display: none;
   }
 
   .v-disabled.c-cm-button.v-selected {

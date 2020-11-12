@@ -49,7 +49,7 @@ public class EmailSendTask implements Runnable {
     @Override
     public void run() {
         try {
-            authenticator.begin(emailerProperties.getUserLogin());
+            authenticator.begin(emailerProperties.getAsyncSendingUsername());
             try {
                 emailer.sendSendingMessage(sendingMessage);
             } finally {

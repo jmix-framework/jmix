@@ -34,7 +34,7 @@ public class EmailerProperties {
     String adminAddress;
     boolean sendAllToAdmin;
     boolean isFileStorageUsed;
-    String userLogin;
+    String asyncSendingUsername;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
                              @DefaultValue("2") int delayCallCount,
@@ -44,7 +44,7 @@ public class EmailerProperties {
                              @DefaultValue("admin@localhost") String adminAddress,
                              @DefaultValue("false") boolean sendAllToAdmin,
                              @DefaultValue("false") boolean isFileStorageUsed,
-                             @DefaultValue("admin") String userLogin) {
+                             @DefaultValue("admin") String asyncSendingUsername) {
         this.fromAddress = fromAddress;
         this.delayCallCount = delayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
@@ -53,7 +53,7 @@ public class EmailerProperties {
         this.adminAddress = adminAddress;
         this.sendAllToAdmin = sendAllToAdmin;
         this.isFileStorageUsed = isFileStorageUsed;
-        this.userLogin = userLogin;
+        this.asyncSendingUsername = asyncSendingUsername;
     }
 
     /**
@@ -132,9 +132,9 @@ public class EmailerProperties {
 
     /**
      * 
-     * @return User login used by asynchronous sending mechanism to be able to store information in the database.
+     * @return Username used by asynchronous sending mechanism to be able to store information in the database.
      */
-    public String getUserLogin() {
-        return userLogin;
+    public String getAsyncSendingUsername() {
+        return asyncSendingUsername;
     }
 }

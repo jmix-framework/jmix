@@ -282,7 +282,7 @@ public class EmailerImpl implements Emailer {
 
         String resultMessage;
         try {
-            authenticator.begin(emailerProperties.getUserLogin());
+            authenticator.begin(emailerProperties.getAsyncSendingUsername());
             try {
                 resultMessage = sendQueuedEmails();
             } finally {

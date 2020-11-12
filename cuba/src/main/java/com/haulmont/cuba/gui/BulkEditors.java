@@ -130,7 +130,7 @@ public class BulkEditors extends io.jmix.ui.bulk.BulkEditors {
         /**
          * Returns launch mode set by {@link #withLaunchMode(Screens.LaunchMode)}.
          *
-         * @deprecated User {@link #getOpenMode()} instead
+         * @deprecated Use {@link #getOpenMode()} instead
          */
         @Deprecated
         public Screens.LaunchMode getLaunchMode() {

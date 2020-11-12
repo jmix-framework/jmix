@@ -24,7 +24,7 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.screen.FrameOwner;
 
 /**
- * @deprecated User {@link io.jmix.ui.ScreenBuilders} instead
+ * @deprecated Use {@link io.jmix.ui.ScreenBuilders} instead
  */
 @Deprecated
 public class ScreenBuilders extends io.jmix.ui.ScreenBuilders {

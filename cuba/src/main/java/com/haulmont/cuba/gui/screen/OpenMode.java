@@ -23,7 +23,7 @@ import com.haulmont.cuba.gui.Screens;
 /**
  * Standard launch modes of {@link io.jmix.ui.screen.Screen}s.
  *
- * @deprecated User {@link io.jmix.ui.screen.OpenMode} instead
+ * @deprecated Use {@link io.jmix.ui.screen.OpenMode} instead
  */
 @Deprecated
 public enum OpenMode implements Screens.LaunchMode {

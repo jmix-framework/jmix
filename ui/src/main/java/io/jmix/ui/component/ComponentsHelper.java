@@ -17,7 +17,12 @@ package io.jmix.ui.component;
 
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.*;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.component.data.ValueSource;
+import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ValuePathHelper;
@@ -873,5 +878,25 @@ public abstract class ComponentsHelper {
         int closeCode = closeCombination.getKey().getCode();
 
         button.setClickShortcut(closeCode, closeModifiers);
+    }
+
+    @Nullable
+    public static MetaPropertyPath getMetaPropertyPath(HasValueSource<?> component) {
+        ValueSource<?> valueSource = component.getValueSource();
+        if (valueSource instanceof EntityValueSource) {
+            return ((EntityValueSource<?, ?>) valueSource).getMetaPropertyPath();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static MetaProperty getMetaProperty(HasValueSource<?> component) {
+        MetaPropertyPath metaPropertyPath = getMetaPropertyPath(component);
+        if (metaPropertyPath != null) {
+            return metaPropertyPath.getMetaProperty();
+        }
+
+        return null;
     }
 }

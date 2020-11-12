@@ -15,11 +15,7 @@
  */
 package io.jmix.ui.component;
 
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.data.ValueSource;
-import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.validation.Validator;
 
 import javax.annotation.Nullable;
@@ -36,10 +32,12 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
      * @return whether the field must contain a non-null value
      */
     boolean isRequired();
+
     void setRequired(boolean required);
 
     @Nullable
     String getRequiredMessage();
+
     /**
      * A message that will be displayed to user if the field is required but has null value
      */
@@ -63,33 +61,4 @@ public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
      * @return unmodifiable collection with Field validators
      */
     Collection<Validator<V>> getValidators();
-
-    /**
-     * @return datasource property
-     * @deprecated Use {@link #getValueSource()} instead
-     */
-    @Deprecated
-    @Nullable
-    default MetaProperty getMetaProperty() {
-        ValueSource<V> valueSource = getValueSource();
-        if (valueSource instanceof ContainerValueSource) {
-            return ((ContainerValueSource) valueSource).getMetaPropertyPath().getMetaProperty();
-        }
-        return null;
-    }
-
-    /**
-     * @return datasource property path
-     *
-     * @deprecated Use {@link #getValueSource()} instead
-     */
-    @Deprecated
-    @Nullable
-    default MetaPropertyPath getMetaPropertyPath() {
-        ValueSource<V> valueSource = getValueSource();
-        if (valueSource instanceof ContainerValueSource) {
-            return ((ContainerValueSource) valueSource).getMetaPropertyPath();
-        }
-        return null;
-    }
 }

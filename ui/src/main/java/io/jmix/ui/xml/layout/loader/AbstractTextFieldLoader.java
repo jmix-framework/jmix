@@ -17,6 +17,8 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.entity.annotation.CaseConversion;
 import io.jmix.core.entity.annotation.ConversionType;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.HasConversionErrorMessage;
 import io.jmix.ui.component.TextInputField;
 import org.apache.commons.collections4.MapUtils;
@@ -56,8 +58,9 @@ public abstract class AbstractTextFieldLoader<T extends TextInputField> extends 
             return;
         }
 
-        if (resultComponent.getMetaPropertyPath() != null) {
-            Map<String, Object> annotations = resultComponent.getMetaPropertyPath().getMetaProperty().getAnnotations();
+        MetaProperty metaProperty = ComponentsHelper.getMetaProperty(resultComponent);
+        if (metaProperty != null) {
+            Map<String, Object> annotations = metaProperty.getAnnotations();
 
             //noinspection unchecked
             Map<String, Object> conversion = (Map<String, Object>) annotations.get(CaseConversion.class.getName());

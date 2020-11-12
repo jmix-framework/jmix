@@ -17,7 +17,6 @@
 package com.haulmont.cuba.gui.components;
 
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.component.Component;
 import io.jmix.ui.component.SizeUnit;
 import io.jmix.ui.screen.Screen;
 

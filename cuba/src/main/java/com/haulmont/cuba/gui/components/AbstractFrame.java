@@ -26,6 +26,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.icon.Icons;

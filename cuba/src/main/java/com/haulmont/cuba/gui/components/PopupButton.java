@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public interface PopupButton extends io.jmix.ui.component.PopupButton {
 
     /**
-     * @return one of width units: {@link #UNITS_PIXELS}, {@link #UNITS_PERCENTAGE}
+     * @return one of width units: {@link Component#UNITS_PIXELS}, {@link Component#UNITS_PERCENTAGE}
      *
      * @deprecated Use {@link #getMenuWidthSizeUnit()}
      */

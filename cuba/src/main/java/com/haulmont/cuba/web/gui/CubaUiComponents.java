@@ -47,6 +47,7 @@ import com.haulmont.cuba.web.gui.components.*;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebAppWorkArea;
 import com.haulmont.cuba.web.gui.components.mainwindow.WebFoldersPane;
 import io.jmix.ui.component.Calendar;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.CheckBoxGroup;
 import io.jmix.ui.component.ColorPicker;

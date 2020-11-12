@@ -50,6 +50,7 @@ import io.jmix.ui.app.bulk.FieldSorter;
 import io.jmix.ui.bulk.BulkEditorDataService;
 import io.jmix.ui.bulk.BulkEditorDataService.LoadDescriptor;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.validator.AbstractBeanValidator;
 import io.jmix.ui.deviceinfo.DeviceInfo;
 import io.jmix.ui.deviceinfo.DeviceInfoProvider;

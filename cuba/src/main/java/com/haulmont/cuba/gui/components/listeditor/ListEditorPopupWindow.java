@@ -40,6 +40,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.options.EnumOptions;
 import io.jmix.ui.component.data.options.MapOptions;

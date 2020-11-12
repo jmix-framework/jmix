@@ -21,6 +21,7 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Window;
@@ -193,9 +194,9 @@ public final class CubaComponentsHelper {
     @Deprecated
     public static SizeUnit convertToSizeUnit(int unit) {
         switch (unit) {
-            case Component.UNITS_PIXELS:
+            case com.haulmont.cuba.gui.components.Component.UNITS_PIXELS:
                 return SizeUnit.PIXELS;
-            case Component.UNITS_PERCENTAGE:
+            case com.haulmont.cuba.gui.components.Component.UNITS_PERCENTAGE:
                 return SizeUnit.PERCENTAGE;
             default:
                 throw new IllegalArgumentException("Unsupported unit: " + unit);
@@ -206,9 +207,9 @@ public final class CubaComponentsHelper {
     public static int convertFromSizeUnit(SizeUnit unit) {
         switch (unit) {
             case PIXELS:
-                return Component.UNITS_PIXELS;
+                return com.haulmont.cuba.gui.components.Component.UNITS_PIXELS;
             case PERCENTAGE:
-                return Component.UNITS_PERCENTAGE;
+                return com.haulmont.cuba.gui.components.Component.UNITS_PERCENTAGE;
             default:
                 throw new IllegalArgumentException("Unsupported unit: " + unit);
         }

@@ -32,7 +32,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -156,7 +155,6 @@ public class OAuthTokenFT {
     }
 
     @Test
-    @Disabled
     public void revokeToken() throws Exception {
         String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
         String resourceUrl = baseUrl + "/entities/ref_Car";
@@ -187,7 +185,6 @@ public class OAuthTokenFT {
     }
 
     @Test
-    @Disabled
     public void revokeTokenWithoutAuthorization() throws Exception {
         String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
         String resourceUrl = baseUrl + "/entities/ref_Car";

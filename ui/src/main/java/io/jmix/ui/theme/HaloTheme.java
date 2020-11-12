@@ -466,4 +466,9 @@ public class HaloTheme {
      * Remove the horizontal divider lines between the DataGrid rows. Can be combined with any other DataGrid/TreeDataGrid style.
      */
     public static final String DATAGRID_NO_HORIZONTAL_LINES = "no-horizontal-lines";
+
+    /**
+     * Highlights the button component with special visual style.
+     */
+    public static final String PRIMARY_ACTION = "c-primary-action";
 }

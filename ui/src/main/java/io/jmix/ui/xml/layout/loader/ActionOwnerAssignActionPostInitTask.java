@@ -34,6 +34,6 @@ public class ActionOwnerAssignActionPostInitTask extends AbstractAssignActionPos
     @Override
     protected void addAction(Action action) {
         ActionOwner actionOwner = (ActionOwner) component;
-        actionOwner.setAction(action);
+        actionOwner.setAction(action, false);
     }
 }

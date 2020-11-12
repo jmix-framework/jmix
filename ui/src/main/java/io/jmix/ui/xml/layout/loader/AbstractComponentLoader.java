@@ -324,28 +324,20 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         }
     }
 
-    protected boolean loadVisible(Component component, Element element) {
+    protected void loadVisible(Component component, Element element) {
         String visible = element.attributeValue("visible");
         if (StringUtils.isNotEmpty(visible)) {
             boolean visibleValue = Boolean.parseBoolean(visible);
             component.setVisible(visibleValue);
-
-            return visibleValue;
         }
-
-        return true;
     }
 
-    protected boolean loadEnable(Component component, Element element) {
+    protected void loadEnable(Component component, Element element) {
         String enable = element.attributeValue("enable");
         if (StringUtils.isNotEmpty(enable)) {
             boolean enabled = Boolean.parseBoolean(enable);
             component.setEnabled(enabled);
-
-            return enabled;
         }
-
-        return true;
     }
 
     protected String loadResourceString(String caption) {

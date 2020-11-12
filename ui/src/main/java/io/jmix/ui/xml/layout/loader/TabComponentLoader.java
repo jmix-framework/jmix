@@ -22,14 +22,12 @@ import org.dom4j.Element;
 public class TabComponentLoader extends VBoxLayoutLoader {
 
     @Override
-    protected boolean loadEnable(Component component, Element element) {
+    protected void loadEnable(Component component, Element element) {
         // tab component always enabled
-        return true;
     }
 
     @Override
-    protected boolean loadVisible(Component component, Element element) {
+    protected void loadVisible(Component component, Element element) {
         // tab component always visible
-        return true;
     }
 }

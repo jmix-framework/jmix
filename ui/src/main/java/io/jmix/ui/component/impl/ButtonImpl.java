@@ -17,6 +17,7 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.server.Resource;
 import com.vaadin.shared.MouseEventDetails;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.action.AbstractAction;
@@ -32,12 +33,21 @@ import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
+
 public class ButtonImpl extends AbstractComponent<JmixButton> implements Button {
 
     protected Action action;
     protected Consumer<PropertyChangeEvent> actionPropertyChangeListener;
 
     protected KeyCombination shortcut;
+
+    @Internal
+    protected Boolean enabled;
+    @Internal
+    protected Boolean visible;
+    @Internal
+    protected Boolean primary;
 
     public ButtonImpl() {
         component = createComponent();
@@ -98,7 +108,7 @@ public class ButtonImpl extends AbstractComponent<JmixButton> implements Button 
     }
 
     @Override
-    public void setAction(@Nullable Action action) {
+    public void setAction(@Nullable Action action, boolean overrideOwnerProperties) {
         if (action != this.action) {
             if (this.action != null) {
                 this.action.removeOwner(this);
@@ -118,27 +128,35 @@ public class ButtonImpl extends AbstractComponent<JmixButton> implements Button 
 
             if (action != null) {
                 String caption = action.getCaption();
-                if (caption != null && component.getCaption() == null) {
+                if (caption != null
+                        && (component.getCaption() == null || overrideOwnerProperties)) {
                     component.setCaption(caption);
                 }
 
                 String description = action.getDescription();
                 KeyCombination shortcutCombination = action.getShortcutCombination();
-                if (shortcutCombination != null) {
+                if (shortcutCombination != null
+                        && (getShortcutCombination() == null || overrideOwnerProperties)) {
                     setShortcutCombination(shortcutCombination);
 
                     if (description == null) {
                         description = shortcutCombination.format();
                     }
                 }
-                if (description != null && component.getDescription() == null) {
+                if (description != null
+                        && (component.getDescription() == null || overrideOwnerProperties)) {
                     component.setDescription(description);
                 }
 
-                component.setEnabled(action.isEnabled());
-                component.setVisible(action.isVisible());
+                if (enabled == null || overrideOwnerProperties) {
+                    component.setEnabled(action.isEnabled());
+                }
+                if (visible == null || overrideOwnerProperties) {
+                    component.setVisible(action.isVisible());
+                }
 
-                if (action.getIcon() != null && getIcon() == null) {
+                if (action.getIcon() != null
+                        && (getIcon() == null || overrideOwnerProperties)) {
                     setIcon(action.getIcon());
                 }
 
@@ -170,11 +188,13 @@ public class ButtonImpl extends AbstractComponent<JmixButton> implements Button 
                 }
             }
 
-            boolean primaryAction = action instanceof AbstractAction && ((AbstractAction) action).isPrimary();
-            if (primaryAction) {
-                addStyleName("c-primary-action");
-            } else {
-                removeStyleName("c-primary-action");
+            if (primary == null || overrideOwnerProperties) {
+                boolean primaryAction = action instanceof AbstractAction && ((AbstractAction) action).isPrimary();
+                if (primaryAction) {
+                    addStyleName(PRIMARY_ACTION);
+                } else {
+                    removeStyleName(PRIMARY_ACTION);
+                }
             }
         }
     }
@@ -254,5 +274,35 @@ public class ButtonImpl extends AbstractComponent<JmixButton> implements Button 
     @Override
     public Subscription addClickListener(Consumer<ClickEvent> listener) {
         return getEventHub().subscribe(ClickEvent.class, listener);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        this.enabled = enabled;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        this.visible = visible;
+    }
+
+    @Override
+    public void addStyleName(String styleName) {
+        super.addStyleName(styleName);
+
+        if (PRIMARY_ACTION.equals(styleName)) {
+            primary = true;
+        }
+    }
+
+    @Override
+    public void removeStyleName(String styleName) {
+        super.removeStyleName(styleName);
+
+        if (PRIMARY_ACTION.equals(styleName)) {
+            primary = false;
+        }
     }
 }

@@ -62,6 +62,7 @@ import java.util.function.Function;
 
 import static io.jmix.ui.component.ComponentsHelper.setClickShortcut;
 import static io.jmix.ui.component.impl.WrapperUtils.*;
+import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
 
 @UIScope
 @Component("ui_Dialogs")
@@ -347,7 +348,7 @@ public class DialogsImpl implements Dialogs {
 
                 if (action instanceof AbstractAction
                         && ((AbstractAction) action).isPrimary()) {
-                    button.addStyleName("c-primary-action");
+                    button.addStyleName(PRIMARY_ACTION);
                     button.focus();
 
                     hasPrimaryAction = true;

@@ -24,8 +24,50 @@ import javax.annotation.Nullable;
  * Component supporting an action.
  */
 public interface ActionOwner {
+
+    /**
+     * @return an action or {@code null}
+     */
     @Nullable
     Action getAction();
 
-    void setAction(@Nullable Action action);
+    /**
+     * Sets the action to the owner. Action properties override owner properties.
+     * <p>
+     * List of properties that the action and the owner have and which can be overridden:
+     * <ul>
+     *     <li>{@code caption}</li>
+     *     <li>{@code description}</li>
+     *     <li>{@code shortcut}</li>
+     *     <li>{@code enabled}</li>
+     *     <li>{@code visible}</li>
+     *     <li>{@code primary}</li>
+     *     <li>{@code icon}</li>
+     * </ul>
+     *
+     * @param action an action
+     */
+    default void setAction(@Nullable Action action) {
+        setAction(action, true);
+    }
+
+    /**
+     * Sets the action to the owner. If {@code overrideOwnerProperties} is {@code true} then the action properties will
+     * override owner properties, otherwise the owner properties will be overridden if they are {@code null}.
+     * <p>
+     * List of properties that the action and the owner have and which can be overridden:
+     * <ul>
+     *     <li>{@code caption}</li>
+     *     <li>{@code description}</li>
+     *     <li>{@code shortcut}</li>
+     *     <li>{@code enabled}</li>
+     *     <li>{@code visible}</li>
+     *     <li>{@code primary}</li>
+     *     <li>{@code icon}</li>
+     * </ul>
+     *
+     * @param action                  an action
+     * @param overrideOwnerProperties whether action properties override owner properties
+     */
+    void setAction(@Nullable Action action, boolean overrideOwnerProperties);
 }

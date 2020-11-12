@@ -19,6 +19,8 @@ import io.jmix.ui.component.Button;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
+
 public class ButtonLoader extends AbstractComponentLoader<Button> {
 
     @Override
@@ -82,9 +84,12 @@ public class ButtonLoader extends AbstractComponentLoader<Button> {
     }
 
     private void loadPrimary(Button resultComponent, Element element) {
-        String primary = element.attributeValue("primary");
-        if (Boolean.parseBoolean(primary)) {
-            resultComponent.addStyleName("c-primary-action");
-        }
+        loadBoolean(element, "primary", primary -> {
+            if (primary) {
+                resultComponent.addStyleName(PRIMARY_ACTION);
+            } else {
+                resultComponent.removeStyleName(PRIMARY_ACTION);
+            }
+        });
     }
 }

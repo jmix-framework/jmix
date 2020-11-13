@@ -126,10 +126,10 @@ public class QueriesControllerManager {
             ctx.setFetchPlan(restControllerUtils.getView(metaClass, viewName));
         }
         List<?> entities = dataManager.loadList(ctx);
-        entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
         serializationOptions.add(EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+        serializationOptions.add(EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
         if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
 
         String json = entitySerializationAPI.toJson(entities, ctx.getFetchPlan(), serializationOptions.toArray(new EntitySerializationOption[0]));

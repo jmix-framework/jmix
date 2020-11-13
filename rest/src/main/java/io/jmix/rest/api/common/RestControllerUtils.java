@@ -18,7 +18,6 @@ package io.jmix.rest.api.common;
 
 import com.google.common.base.Strings;
 import io.jmix.core.*;
-import io.jmix.core.context.EntityAttributeContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -85,7 +84,6 @@ public class RestControllerUtils {
      * @param entity the entity. After the method is executed forbidden attributes will be cleaned.
      */
     public void applyAttributesSecurity(Object entity) {
-        metadataTools.traverseAttributes(entity, new FillingInaccessibleAttributesVisitor());
     }
 
     public String transformEntityNameIfRequired(String entityName, String modelVersion, JsonTransformationDirection direction) {
@@ -97,28 +95,5 @@ public class RestControllerUtils {
         return Strings.isNullOrEmpty(modelVersion) ? json :
                 restJsonTransformations.getTransformer(entityName, modelVersion, direction).transformJson(json);
     }
-
-    private class FillingInaccessibleAttributesVisitor implements EntityAttributeVisitor {
-
-        @Override
-        public boolean skip(MetaProperty property) {
-            return !metadataTools.isPersistent(property);
-        }
-
-        @Override
-        public void visit(Object entity, MetaProperty property) {
-            MetaClass metaClass = metadata.getClass(entity.getClass());
-            EntityAttributeContext entityContext = new EntityAttributeContext(metaClass);
-            accessManager.applyRegisteredConstraints(entityContext);
-            if (entityContext.isAttributeViewPermitted(property.getName())) {
-                return;
-            }
-            if (metadataTools.isSystem(property) || property.isReadOnly()) {
-                return;
-            }
-            // Using reflective access to field because the attribute can be unfetched if loading not partial entities,
-            // which is the case when in-memory constraints exist
-            EntityValues.setValue(entity, property.getName(), null);
-        }
-    }
 }
+

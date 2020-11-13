@@ -51,6 +51,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static io.jmix.core.EntitySerializationOption.*;
+
 /**
  * Class that executes business logic required by the {@link io.jmix.rest.api.controller.EntitiesController}. It
  * performs CRUD operations with entities
@@ -124,11 +126,9 @@ public class EntitiesControllerManager {
         checkEntityIsNotNull(entityName, entityId, entity);
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
-        serializationOptions.add(EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
-        serializationOptions.add(EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        serializationOptions.add(SERIALIZE_INSTANCE_NAME);
+        serializationOptions.add(DO_NOT_SERIALIZE_DENIED_PROPERTY);
         if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
-
-        restControllerUtils.applyAttributesSecurity(entity);
 
         String json = entitySerialization.toJson(entity, ctx.getFetchPlan(), serializationOptions.toArray(new EntitySerializationOption[0]));
         json = restControllerUtils.transformJsonIfRequired(entityName, modelVersion, JsonTransformationDirection.TO_VERSION, json);
@@ -315,11 +315,10 @@ public class EntitiesControllerManager {
         ctx.setHint("load_dyn_attr", BooleanUtils.isTrue(dynamicAttributes));
 
         List<Object> entities = dataManager.loadList(ctx);
-        entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
 
         List<EntitySerializationOption> serializationOptions = new ArrayList<>();
-        serializationOptions.add(EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
-        serializationOptions.add(EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
+        serializationOptions.add(SERIALIZE_INSTANCE_NAME);
+        serializationOptions.add(DO_NOT_SERIALIZE_DENIED_PROPERTY);
         if (BooleanUtils.isTrue(returnNulls)) serializationOptions.add(EntitySerializationOption.SERIALIZE_NULLS);
 
         String json = entitySerialization.toJson(entities, view, serializationOptions.toArray(new EntitySerializationOption[0]));
@@ -426,7 +425,6 @@ public class EntitiesControllerManager {
             loadContext.setId(EntityValues.getId(entity));
             entity = dataManager.load(loadContext);
         }
-        restControllerUtils.applyAttributesSecurity(entity);
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
         return new ResponseInfo(uriComponents.toUri(), bodyJson);
     }
@@ -453,13 +451,11 @@ public class EntitiesControllerManager {
                     loadContext.setId(EntityValues.getId(mainEntity));
                     mainEntity = dataManager.load(loadContext);
                 }
-                restControllerUtils.applyAttributesSecurity(mainEntity);
                 mainCollectionEntity.add(mainEntity);
             }
         } else {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 Object mainEntity = createEntityFromJson(metaClass, jsonElement.toString());
-                restControllerUtils.applyAttributesSecurity(mainEntity);
                 mainCollectionEntity.add(mainEntity);
             }
         }
@@ -507,7 +503,6 @@ public class EntitiesControllerManager {
             loadContext.setId(EntityValues.getId(entity));
             entity = dataManager.load(loadContext);
         }
-        restControllerUtils.applyAttributesSecurity(entity);
         String bodyJson = createEntityJson(entity, metaClass, responseView, modelVersion);
         return new ResponseInfo(null, bodyJson);
     }
@@ -531,14 +526,12 @@ public class EntitiesControllerManager {
                     loadContext.setId(EntityValues.getId(entity));
                     entity = dataManager.load(loadContext);
                 }
-                restControllerUtils.applyAttributesSecurity(entity);
                 entities.add(entity);
             }
         } else {
             for (JsonElement jsonElement : entitiesJsonArray) {
                 String entityId = jsonElement.getAsJsonObject().get("id").getAsString();
                 Object entity = getUpdatedEntity(entityName, modelVersion, transformedEntityName, metaClass, jsonElement.toString(), entityId);
-                restControllerUtils.applyAttributesSecurity(entity);
                 entities.add(entity);
             }
         }
@@ -713,9 +706,9 @@ public class EntitiesControllerManager {
         String json;
         if (restProperties.isResponseViewEnabled()) {
             FetchPlan view = findOrCreateResponseView(metaClass, responseView);
-            json = entitySerialization.toJson(entity, view, EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+            json = entitySerialization.toJson(entity, view, SERIALIZE_INSTANCE_NAME);
         } else {
-            json = entitySerialization.toJson(entity, null, EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES);
+            json = entitySerialization.toJson(entity, null, DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES);
         }
         return restControllerUtils.transformJsonIfRequired(metaClass.getName(), version, JsonTransformationDirection.TO_VERSION, json);
     }
@@ -724,9 +717,11 @@ public class EntitiesControllerManager {
         String json;
         if (restProperties.isResponseViewEnabled()) {
             FetchPlan view = findOrCreateResponseView(metaClass, responseView);
-            json = entitySerialization.toJson(entities, view, EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+            json = entitySerialization.toJson(entities, view, SERIALIZE_INSTANCE_NAME,
+                    DO_NOT_SERIALIZE_DENIED_PROPERTY);
         } else {
-            json = entitySerialization.toJson(entities, null, EntitySerializationOption.DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES);
+            json = entitySerialization.toJson(entities, null,
+                    DO_NOT_SERIALIZE_RO_NON_PERSISTENT_PROPERTIES, DO_NOT_SERIALIZE_DENIED_PROPERTY);
         }
         json = restControllerUtils.transformJsonIfRequired(metaClass.getName(), version, JsonTransformationDirection.TO_VERSION, json);
         return json;

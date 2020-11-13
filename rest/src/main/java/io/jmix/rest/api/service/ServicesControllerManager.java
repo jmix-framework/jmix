@@ -157,10 +157,10 @@ public class ServicesControllerManager {
 
         Class<?> methodReturnType = serviceMethod.getReturnType();
         if (Entity.class.isAssignableFrom(methodReturnType)) {
-            restControllerUtils.applyAttributesSecurity(methodResult);
             String entityJson = entitySerializationAPI.toJson(methodResult,
                     null,
-                    EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+                    EntitySerializationOption.SERIALIZE_INSTANCE_NAME,
+                    EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
             entityJson = restControllerUtils.transformJsonIfRequired(metadata.getClass(methodResult).getName(),
                     modelVersion, JsonTransformationDirection.TO_VERSION, entityJson);
             return new ServiceCallResult(entityJson, true);
@@ -169,10 +169,10 @@ public class ServicesControllerManager {
             if ((returnTypeArgument instanceof Class && Entity.class.isAssignableFrom((Class) returnTypeArgument))
                     || isEntitiesCollection((Collection) methodResult)) {
                 Collection<?> entities = (Collection<?>) methodResult;
-                entities.forEach(entity -> restControllerUtils.applyAttributesSecurity(entity));
                 String entitiesJson = entitySerializationAPI.toJson(entities,
                         null,
-                        EntitySerializationOption.SERIALIZE_INSTANCE_NAME);
+                        EntitySerializationOption.SERIALIZE_INSTANCE_NAME,
+                        EntitySerializationOption.DO_NOT_SERIALIZE_DENIED_PROPERTY);
                 if (returnTypeArgument != null) {
                     MetaClass metaClass = metadata.getClass((Class) returnTypeArgument);
                     if (metaClass != null) {

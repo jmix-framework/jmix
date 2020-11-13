@@ -28,7 +28,7 @@ import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;

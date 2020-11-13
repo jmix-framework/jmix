@@ -18,6 +18,7 @@ package io.jmix.rest.api.controller;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.impl.serialization.EntityTokenException;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -111,6 +112,14 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(RowLevelSecurityException.class)
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleRowLevelSecurityException(RowLevelSecurityException e) {
+        log.error("RowLevelSecurityException in service", e);
+        ErrorInfo errorInfo = new ErrorInfo("Forbidden", e.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(EntityTokenException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorInfo> handleEntityTokenException(EntityTokenException e) {
         log.error("RowLevelSecurityException in service", e);
         ErrorInfo errorInfo = new ErrorInfo("Forbidden", e.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);

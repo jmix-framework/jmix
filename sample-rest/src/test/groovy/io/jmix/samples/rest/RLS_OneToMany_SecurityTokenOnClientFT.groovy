@@ -12,7 +12,6 @@ import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
 import io.jmix.security.role.assignment.RoleAssignment
 import org.apache.http.HttpStatus
 import org.junit.Ignore
-import org.junit.jupiter.api.Disabled
 import org.springframework.test.context.TestPropertySource
 
 import static io.jmix.samples.rest.DataUtils.*
@@ -22,8 +21,7 @@ import static io.jmix.samples.rest.RestSpecsUtils.getAuthToken
 import static org.hamcrest.CoreMatchers.notNullValue
 
 @TestPropertySource(properties =
-        ["jmix.core.entitySerializationSecurityTokenRequired = true"])
-@Ignore
+        ["jmix.core.entitySerializationTokenRequired = true"])
 class RLS_OneToMany_SecurityTokenOnClientFT extends RestSpec {
     private UUID carId
     private UUID case1Id, case2Id,

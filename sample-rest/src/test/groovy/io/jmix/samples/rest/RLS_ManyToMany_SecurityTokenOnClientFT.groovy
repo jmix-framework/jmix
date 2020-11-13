@@ -28,8 +28,7 @@ import static io.jmix.samples.rest.RestSpecsUtils.getAuthToken
 import static org.hamcrest.CoreMatchers.notNullValue
 
 @TestPropertySource(properties =
-        ["jmix.core.entitySerializationSecurityTokenRequired = true"])
-@Ignore
+        ["jmix.core.entitySerializationTokenRequired = true"])
 class RLS_ManyToMany_SecurityTokenOnClientFT extends RestSpec {
 
     private UUID plantId

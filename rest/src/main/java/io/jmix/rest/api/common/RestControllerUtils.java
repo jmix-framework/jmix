@@ -39,12 +39,6 @@ public class RestControllerUtils {
     protected Metadata metadata;
 
     @Autowired
-    protected AccessManager accessManager;
-
-    @Autowired
-    protected MetadataTools metadataTools;
-
-    @Autowired
     protected RestJsonTransformations restJsonTransformations;
 
     @Autowired
@@ -75,15 +69,6 @@ public class RestControllerUtils {
                     String.format("View %s for entity %s not found", viewName, metaClass.getName()),
                     HttpStatus.BAD_REQUEST);
         }
-    }
-
-    /**
-     * By default entity is loaded from the middleware with the attributes that are not allowed for reading according
-     * to roles permissions. This methods removes attributes not allowed for the user.
-     *
-     * @param entity the entity. After the method is executed forbidden attributes will be cleaned.
-     */
-    public void applyAttributesSecurity(Object entity) {
     }
 
     public String transformEntityNameIfRequired(String entityName, String modelVersion, JsonTransformationDirection direction) {

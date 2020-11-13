@@ -1,12 +1,10 @@
 package io.jmix.samples.rest
 
-import org.junit.Ignore
 
 import static io.jmix.samples.rest.DataUtils.createGroup
 import static io.jmix.samples.rest.DataUtils.createUser
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 
-@Ignore
 class EntitiesControllerFT extends RestSpec {
 
     void prepareDb() {

@@ -35,9 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  */
 @TestPropertySource(properties = {
-        "jmix.core.entitySerializationSecurityTokenRequired = true"
+        "jmix.core.entitySerializationTokenRequired = true"
 })
-@Disabled
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     private UUID carId, newCarId;
@@ -136,7 +135,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         }
 
         //the second element of insuranceCases collection must not be deleted
-        try (PreparedStatement stmt = conn.prepareStatement("select count(*) from REF_INSURANCE_CASE where car_id = ? and delete_ts is null")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select count(*) from REF_INSURANCE_CASE where CAR_ID = ? and DELETE_TS is null")) {
             stmt.setObject(1, carId);
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
@@ -144,7 +143,8 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
             assertEquals(2, count);
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, DELETED_BY, CAR_ID from REF_INSURANCE_CASE order by DESCRIPTION")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select DESCRIPTION, DELETED_BY, CAR_ID from REF_INSURANCE_CASE where CAR_ID = ? order by DESCRIPTION")) {
+            stmt.setObject(1, carId);
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
             String description = rs.getString("DESCRIPTION");

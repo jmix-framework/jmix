@@ -19,7 +19,7 @@ package io.jmix.data.accesscontext;
 import io.jmix.core.Metadata;
 import io.jmix.core.QueryParser;
 import io.jmix.core.QueryTransformerFactory;
-import io.jmix.core.context.AccessContext;
+import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
@@ -41,7 +41,10 @@ public class LoadValuesAccessContext implements AccessContext {
     }
 
     public Collection<MetaClass> getEntityClasses() {
-        return null;
+        return queryParser.getQueryPaths().stream()
+                .filter(QueryParser.QueryPath::isSelectedPath)
+                .map(path -> metadata.getClass(path.getEntityName()))
+                .collect(Collectors.toList());
     }
 
     public Collection<MetaPropertyPath> getSelectedPropertyPaths() {

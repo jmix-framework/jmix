@@ -5,7 +5,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
 import io.jmix.core.common.util.StringHelper;
-import io.jmix.core.context.AccessContext;
+import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.impl.JmixQuery;
 import org.slf4j.Logger;

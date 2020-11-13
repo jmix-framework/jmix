@@ -40,7 +40,6 @@ import io.jmix.ui.download.Downloader;
 import io.jmix.ui.download.FileDataProvider;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.upload.TemporaryStorage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -69,8 +68,6 @@ public class SendingMessageBrowser extends Screen {
     protected Form fg;
     @Autowired
     protected UiComponents uiComponents;
-    @Autowired
-    protected ThemeConstants themeConstants;
     @Autowired
     protected Table<SendingMessage> sendingMessageTable;
     @Autowired
@@ -119,7 +116,7 @@ public class SendingMessageBrowser extends Screen {
         contentTextArea = uiComponents.create(TextArea.NAME);
         contentTextArea.setWidth("100%");
         contentTextArea.setEditable(false);
-        contentTextArea.setHeight(themeConstants.get("jmix.ui.email.SendingMessageBrowser.contentTextArea.height"));
+        contentTextArea.setHeight("350px");
         contentTextArea.setEditable(false);
 
         showContentButton = uiComponents.create(Button.class);

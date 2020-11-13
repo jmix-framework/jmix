@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeValue;

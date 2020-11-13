@@ -16,7 +16,7 @@
 
 package io.jmix.core.constraint;
 
-import io.jmix.core.context.AccessContext;
+import io.jmix.core.accesscontext.AccessContext;
 
 public interface InMemoryConstraint<T extends AccessContext> extends AccessConstraint<T> {
 }

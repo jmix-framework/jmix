@@ -15,9 +15,7 @@
  */
 package io.jmix.core.impl.serialization;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -98,30 +96,34 @@ public class EntitySerializationTokenManager {
     /**
      * Decrypt security token and read filtered data
      */
-    public void restoreSecurityToken(Object entity, String securityToken) {
+    public void restoreSecurityToken(Object entity, @Nullable String securityToken) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
+        SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
 
-        try {
-            byte[] decrypted = createCipher(Cipher.DECRYPT_MODE).doFinal(
-                    Base64.getDecoder().decode(securityToken));
+        if (securityToken != null) {
+            try {
+                byte[] decrypted = createCipher(Cipher.DECRYPT_MODE).doFinal(
+                        Base64.getDecoder().decode(securityToken));
 
-            JsonObject tokenObject = JsonParser.parseString(new String(decrypted, StandardCharsets.UTF_8)).getAsJsonObject();
+                JsonObject tokenObject = JsonParser.parseString(new String(decrypted, StandardCharsets.UTF_8)).getAsJsonObject();
 
-            validateToken(tokenObject, entity, metaClass);
+                validateToken(tokenObject, entity, metaClass);
 
-            Multimap<String, Object> erasedData = ArrayListMultimap.create();
-            for (String key : tokenObject.keySet()) {
-                if (!SYSTEM_ATTRIBUTE_KEYS.contains(key)) {
-                    String propertyName = String.valueOf(key);
-                    MetaProperty metaProperty = metaClass.getProperty(propertyName);
-                    for (JsonElement id : tokenObject.getAsJsonArray(propertyName)) {
-                        erasedData.put(propertyName, parseId(id, metaProperty.getRange().asClass()));
+                for (String key : tokenObject.keySet()) {
+                    if (!SYSTEM_ATTRIBUTE_KEYS.contains(key)) {
+                        String propertyName = String.valueOf(key);
+                        MetaProperty metaProperty = metaClass.getProperty(propertyName);
+                        for (JsonElement id : tokenObject.getAsJsonArray(propertyName)) {
+                            securityState.addErasedId(propertyName, parseId(id, metaProperty.getRange().asClass()));
+                        }
                     }
                 }
+                securityState.setRestoreState(SecurityState.RestoreState.RESTORED_FROM_TOKEN);
+            } catch (IllegalBlockSizeException | BadPaddingException e) {
+                throw new RuntimeException("An error occurred while reading security token", e);
             }
-
-        } catch (IllegalBlockSizeException | BadPaddingException e) {
-            throw new RuntimeException("An error occurred while reading security token", e);
+        } else {
+            securityState.setRestoreState(SecurityState.RestoreState.RESTORED_FROM_NULL_TOKEN);
         }
     }
 
@@ -129,21 +131,21 @@ public class EntitySerializationTokenManager {
         if (!metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.isEmbeddable(metaClass)) {
 
             if (!tokenObject.has(ENTITY_ID_KEY) || !tokenObject.has(ENTITY_NAME_KEY)) {
-                throw new TokenException("Invalid format for security token");
+                throw new EntityTokenException("Invalid format for security token");
             }
 
             String entityName = tokenObject.get(ENTITY_NAME_KEY).getAsString();
             if (!Objects.equals(entityName, metaClass.getName())) {
-                throw new TokenException("Invalid format for security token: incorrect entity type");
+                throw new EntityTokenException("Invalid format for security token: incorrect entity type");
             }
 
             if (!tokenObject.has(ENTITY_ID_KEY)) {
-                throw new TokenException("Invalid format for security token: incorrect entity id");
+                throw new EntityTokenException("Invalid format for security token: incorrect entity id");
             }
 
             JsonElement jsonEntityId = tokenObject.get(ENTITY_ID_KEY);
             if (EntityValues.getId(entity) != null && !Objects.equals(EntityValues.getId(entity), parseId(jsonEntityId, metaClass))) {
-                throw new TokenException("Invalid format for security token: incorrect entity id");
+                throw new EntityTokenException("Invalid format for security token: incorrect entity id");
             }
         }
     }
@@ -152,13 +154,13 @@ public class EntitySerializationTokenManager {
         try {
             Cipher cipher = Cipher.getInstance("AES");
             String encryptionKey = rightPad(
-                    StringUtils.substring(coreProperties.getEntitySerializationSecurityTokenEncryptionKey(), 0, 16), 16);
+                    StringUtils.substring(coreProperties.getEntitySerializationTokenEncryptionKey(), 0, 16), 16);
 
             SecretKeySpec sKeySpec = new SecretKeySpec(encryptionKey.getBytes(StandardCharsets.UTF_8), "AES");
             cipher.init(mode, sKeySpec);
             return cipher;
         } catch (Exception e) {
-            throw new TokenException("An error occurred while initiating encryption/decryption", e);
+            throw new EntityTokenException("An error occurred while initiating encryption/decryption", e);
         }
     }
 
@@ -176,11 +178,11 @@ public class EntitySerializationTokenManager {
             } else if (String.class.equals(type)) {
                 return value.getAsString();
             } else {
-                throw new TokenException(
+                throw new EntityTokenException(
                         String.format("Unsupported primary key type: %s for %s", type.getSimpleName(), metaClass.getName()));
             }
         } else {
-            throw new TokenException(
+            throw new EntityTokenException(
                     String.format("Primary key not found for %s", metaClass.getName()));
         }
     }
@@ -193,7 +195,7 @@ public class EntitySerializationTokenManager {
         } else if (value instanceof String) {
             jsonObject.addProperty(property, (String) value);
         } else if (value != null) {
-            throw new TokenException(
+            throw new EntityTokenException(
                     String.format("Unsupported primary key type %s", value.getClass().getSimpleName()));
         }
     }
@@ -209,7 +211,7 @@ public class EntitySerializationTokenManager {
             } else if (value instanceof String) {
                 jsonArray.add((String) value);
             } else if (value != null) {
-                throw new TokenException(
+                throw new EntityTokenException(
                         String.format("Unsupported primary key type %s", value.getClass().getSimpleName()));
             }
         }
@@ -219,11 +221,11 @@ public class EntitySerializationTokenManager {
 
     @EventListener(ApplicationContextInitializedEvent.class)
     protected void applicationInitialized() {
-        if (coreProperties.isEntitySerializationSecurityTokenRequired() &&
-                "KEY" .equals(coreProperties.getEntitySerializationSecurityTokenEncryptionKey())) {
+        if (coreProperties.isEntitySerializationTokenRequired() &&
+                "KEY".equals(coreProperties.getEntitySerializationTokenEncryptionKey())) {
             logger.info(
                     "=================================================================\n" +
-                            "'jmix.core.entitySerializationSecurityTokenEncryptionKey' -\n" +
+                            "'jmix.core.entitySerializationTokenEncryptionKey' -\n" +
                             "property is set to default value.\n" +
                             "Use a unique value in production environments.\n" +
                             "=================================================================");

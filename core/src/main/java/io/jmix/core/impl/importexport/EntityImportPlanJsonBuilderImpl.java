@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
-import io.jmix.core.context.ExportImportEntityContext;
+import io.jmix.core.accesscontext.ExportImportEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;

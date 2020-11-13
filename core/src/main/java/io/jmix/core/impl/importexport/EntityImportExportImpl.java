@@ -17,9 +17,12 @@
 package io.jmix.core.impl.importexport;
 
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.entity.EntityPreconditions;
+import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
+import io.jmix.core.impl.serialization.EntityTokenException;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -47,6 +50,7 @@ import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
 import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
+import static java.lang.String.format;
 
 @Component("core_EntityImportExport")
 public class EntityImportExportImpl implements EntityImportExport {
@@ -86,6 +90,9 @@ public class EntityImportExportImpl implements EntityImportExport {
 
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
+
+    @Autowired
+    protected AccessManager accessManager;
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -293,7 +300,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         //we must specify a fetchPlan here because otherwise we may get UnfetchedAttributeException during merge
         saveContext.saving(dstEntity, fetchPlan);
 
-        if (!createOp && coreProperties.isEntitySerializationSecurityTokenRequired()) {
+        if (!createOp) {
             assertToken(srcEntity, fetchPlan);
         }
 
@@ -493,18 +500,9 @@ public class EntityImportExportImpl implements EntityImportExport {
             dstEmbeddedEntity = metadata.create(embeddedAttrMetaClass);
         }
 
-//        if (dstEntity instanceof BaseGenericIdEntity && !createOp) {
-//            String storeName = metadataTools.getStoreName(metadata.getClass(dstEntity));
-//            DataStore dataStore = storeFactory.get(storeName);
-//            //row-level security works only for entities from RdbmsStore
-//            if (RdbmsStore.class.equals(AopUtils.getTargetClass(dataStore))) {
-//                if (useSecurityToken()) {
-//                    persistenceSecurity.assertTokenForREST(srcEmbeddedEntity, regularView);
-//                    persistenceSecurity.restoreSecurityState(srcEmbeddedEntity);
-//                    srcSecurityState = BaseEntityInternalAccess.getSecurityState(srcEmbeddedEntity);
-//                }
-//            }
-//        }
+        if (!createOp) {
+            assertToken(srcEntity, fetchPlan);
+        }
 
         for (EntityImportPlanProperty vp : importPlanProperty.getPlan().getProperties()) {
             MetaProperty mp = embeddedAttrMetaClass.getProperty(vp.getName());
@@ -670,8 +668,27 @@ public class EntityImportExportImpl implements EntityImportExport {
         return result;
     }
 
-    protected void assertToken(Object srcEntity, FetchPlan fetchPlan) {
+    protected void assertToken(Object entity, FetchPlan fetchPlan) {
+        if (coreProperties.isEntitySerializationTokenRequired()) {
+            SecurityState securityState = EntitySystemAccess.getSecurityState(entity);
+            if (securityState.getRestoreState() == SecurityState.RestoreState.RESTORED_FROM_NULL_TOKEN) {
 
+                MetaClass metaClass = metadata.getClass(entity.getClass());
+                for (MetaProperty metaProperty : metaClass.getProperties()) {
+                    if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)
+                            && fetchPlan.containsProperty(metaProperty.getName())) {
+
+                        InMemoryCrudEntityContext inMemoryContext =
+                                new InMemoryCrudEntityContext(metaProperty.getRange().asClass());
+                        accessManager.applyRegisteredConstraints(inMemoryContext);
+
+                        if (inMemoryContext.readPredicate() != null) {
+                            throw new EntityTokenException(format("Could not read export/import token from entity %s.", entity));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     protected static class ReferenceInfo {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.core.context;
+package io.jmix.core.accesscontext;
 
 public abstract class SpecificOperationAccessContext implements AccessContext {
     protected boolean permitted = true;

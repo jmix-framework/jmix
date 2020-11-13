@@ -23,7 +23,7 @@ import com.google.common.collect.Table;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
-import io.jmix.core.context.ExportImportEntityContext;
+import io.jmix.core.accesscontext.ExportImportEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -245,7 +245,7 @@ public class EntitySerializationImpl implements EntitySerialization {
                 writeFields(entity, jsonObject, fetchPlan, cyclicReferences);
             }
 
-            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
+            if (coreProperties.isEntitySerializationTokenRequired()) {
                 String securityToken = tokenManager.generateSecurityToken(entity);
                 if (securityToken != null) {
                     jsonObject.addProperty("__securityToken", securityToken);
@@ -464,11 +464,13 @@ public class EntitySerializationImpl implements EntitySerialization {
                 EntityValues.setId(entity, pkValue);
             }
 
-            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
+            if (coreProperties.isEntitySerializationTokenRequired()) {
                 JsonPrimitive securityTokenPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
+                String securityToken = null;
                 if (securityTokenPrimitive != null) {
-                    tokenManager.restoreSecurityToken(entity, securityTokenPrimitive.getAsString());
+                    securityToken = securityTokenPrimitive.getAsString();
                 }
+                tokenManager.restoreSecurityToken(entity, securityToken);
             }
 
             Table<Object, MetaClass, Object> processedEntities = context.get().getProcessedEntities();
@@ -506,7 +508,6 @@ public class EntitySerializationImpl implements EntitySerialization {
 
                     if (propertyValue.isJsonNull()) {
                         EntityValues.setValue(entity, propertyName, null);
-//                        entity.setValue(propertyName, null);
                         continue;
                     }
 
@@ -599,11 +600,13 @@ public class EntitySerializationImpl implements EntitySerialization {
             clearFields(entity);
             readFields(jsonObject, entity);
 
-            if (coreProperties.isEntitySerializationSecurityTokenRequired()) {
-                String securityToken = tokenManager.generateSecurityToken(entity);
-                if (securityToken != null) {
-                    jsonObject.addProperty("__securityToken", securityToken);
+            if (coreProperties.isEntitySerializationTokenRequired()) {
+                JsonPrimitive securityTokenPrimitive = jsonObject.getAsJsonPrimitive("__securityToken");
+                String securityToken = null;
+                if (securityTokenPrimitive != null) {
+                    securityToken = securityTokenPrimitive.getAsString();
                 }
+                tokenManager.restoreSecurityToken(entity, securityToken);
             }
 
             return entity;

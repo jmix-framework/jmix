@@ -17,12 +17,12 @@ package io.jmix.core.entity;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import io.jmix.core.common.util.Preconditions;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Stores information about:
@@ -31,10 +31,16 @@ import java.util.List;
  * </ul>
  */
 public class SecurityState implements Serializable {
+    public enum RestoreState {
+        RESTORED_FROM_TOKEN,
+        RESTORED_FROM_NULL_TOKEN,
+        NO_RESTORED
+    }
 
     private static final long serialVersionUID = 6613320540189701505L;
 
-    protected transient Multimap<String, Object> erasedData;
+    protected Multimap<String, Object> erasedData;
+    protected RestoreState restoreState = RestoreState.NO_RESTORED;
 
     @Nullable
     public Multimap<String, Object> getErasedData() {
@@ -61,5 +67,14 @@ public class SecurityState implements Serializable {
             erasedData = HashMultimap.create();
         }
         erasedData.put(attrName, erasedId);
+    }
+
+    public RestoreState getRestoreState() {
+        return restoreState;
+    }
+
+    public void setRestoreState(RestoreState restoreState) {
+        Preconditions.checkNotNullArgument(restoreState);
+        this.restoreState = restoreState;
     }
 }

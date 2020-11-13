@@ -45,8 +45,8 @@ public class CoreProperties {
     boolean idGenerationForEntitiesInAdditionalDataStoresEnabled;
     int dom4jMaxPoolSize;
     int dom4jMaxBorrowWaitMillis;
-    boolean entitySerializationSecurityTokenRequired;
-    String entitySerializationSecurityTokenEncryptionKey;
+    boolean entitySerializationTokenRequired;
+    String entitySerializationTokenEncryptionKey;
 
     public CoreProperties(
             String webContextName,
@@ -65,9 +65,9 @@ public class CoreProperties {
             @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey,
             String defaultFileStorage,
             @DefaultValue("false")
-            boolean entitySerializationSecurityTokenRequired,
+            boolean entitySerializationTokenRequired,
             @DefaultValue("KEY")
-            String entitySerializationSecurityTokenEncryptionKey) {
+            String entitySerializationTokenEncryptionKey) {
         this.webContextName = webContextName;
         this.webHostName = webHostName;
         this.webPort = webPort;
@@ -93,8 +93,8 @@ public class CoreProperties {
         this.dom4jMaxPoolSize = dom4jMaxPoolSize;
         this.dom4jMaxBorrowWaitMillis = dom4jMaxBorrowWaitMillis;
 
-        this.entitySerializationSecurityTokenRequired = entitySerializationSecurityTokenRequired;
-        this.entitySerializationSecurityTokenEncryptionKey = entitySerializationSecurityTokenEncryptionKey;
+        this.entitySerializationTokenRequired = entitySerializationTokenRequired;
+        this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
     }
 
     /**
@@ -184,11 +184,11 @@ public class CoreProperties {
     /**
      * @return true if entity serialization uses security token data for deserialization entities with row level security
      */
-    public boolean isEntitySerializationSecurityTokenRequired() {
-        return entitySerializationSecurityTokenRequired;
+    public boolean isEntitySerializationTokenRequired() {
+        return entitySerializationTokenRequired;
     }
 
-    public String getEntitySerializationSecurityTokenEncryptionKey() {
-        return entitySerializationSecurityTokenEncryptionKey;
+    public String getEntitySerializationTokenEncryptionKey() {
+        return entitySerializationTokenEncryptionKey;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.serialization;
+package io.jmix.core.accesscontext;
 
-public class TokenException extends RuntimeException {
-    public TokenException(String message) {
-        super(message);
-    }
 
-    public TokenException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public interface AccessContext {
 }

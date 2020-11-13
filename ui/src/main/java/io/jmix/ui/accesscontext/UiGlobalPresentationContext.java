@@ -16,7 +16,7 @@
 
 package io.jmix.ui.accesscontext;
 
-import io.jmix.core.context.SpecificOperationAccessContext;
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 public class UiGlobalPresentationContext extends SpecificOperationAccessContext {
     public static final String NAME = "cuba.gui.presentations.global";

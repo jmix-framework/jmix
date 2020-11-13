@@ -16,7 +16,7 @@
 
 package io.jmix.ui.accesscontext;
 
-import io.jmix.core.context.AccessContext;
+import io.jmix.core.accesscontext.AccessContext;
 
 public class UiShowScreenContext implements AccessContext {
     protected final String screenId;

@@ -16,7 +16,7 @@
 
 package io.jmix.ui.accesscontext;
 
-import io.jmix.core.context.AccessContext;
+import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.ui.menu.MenuItem;
 
 public class UiMenuContext implements AccessContext {

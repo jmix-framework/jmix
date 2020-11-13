@@ -16,19 +16,12 @@
 
 package com.haulmont.cuba.web.sys;
 
-import com.haulmont.cuba.gui.WindowParams;
-import com.haulmont.cuba.gui.data.DsContext;
-import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
-import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import com.haulmont.cuba.settings.Settings;
+import com.haulmont.cuba.settings.SettingsImpl;
 import io.jmix.ui.Screens;
-import io.jmix.ui.component.WindowContext;
-import io.jmix.ui.event.screen.AfterShowScreenEvent;
-import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.event.screen.CloseWindowsInternalEvent;
 import io.jmix.ui.screen.Screen;
 import com.haulmont.cuba.settings.CubaLegacySettings;
-import com.haulmont.cuba.settings.Settings;
-import com.haulmont.cuba.settings.SettingsImpl;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -36,32 +29,6 @@ import org.springframework.stereotype.Component;
 public class CubaScreensEventListener {
 
     public static final String NAME = "cuba_CubaScreensEventListener";
-
-    @EventListener
-    public void onAfterShowScreen(AfterShowScreenEvent event) {
-        Screen screen = event.getSource();
-        if (screen instanceof CubaLegacySettings) {
-            ((CubaLegacySettings) screen).applySettings(getSettingsImpl(screen.getId()));
-        }
-
-        if (screen instanceof LegacyFrame) {
-            WindowContext windowContext = screen.getWindow().getContext();
-            if (!WindowParams.DISABLE_RESUME_SUSPENDED.getBool(windowContext)) {
-                DsContext dsContext = ((LegacyFrame) screen).getDsContext();
-                if (dsContext != null) {
-                    ((DsContextImplementation) dsContext).resumeSuspended();
-                }
-            }
-        }
-    }
-
-    @EventListener
-    public void onBeforeShowWindow(BeforeShowScreenEvent event) {
-        Screen screen = event.getSource();
-        if (screen instanceof CubaLegacySettings) {
-            ((CubaLegacySettings) screen).applyDataLoadingSettings(getSettingsImpl(screen.getId()));
-        }
-    }
 
     @EventListener
     public void onAppCloseWindowsInternal(CloseWindowsInternalEvent event) {

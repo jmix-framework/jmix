@@ -29,10 +29,14 @@ import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
+import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.screen.compatibility.*;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
+import com.haulmont.cuba.settings.CubaLegacySettings;
+import com.haulmont.cuba.settings.Settings;
+import com.haulmont.cuba.settings.SettingsImpl;
 import io.jmix.core.Entity;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.Dialogs;
@@ -446,11 +450,6 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
         ui.getWebBrowserTools().showWebPage(url, params);
     }
 
-    @Override
-    protected void internalBeforeShow(Screen screen) {
-        ((CubaScreenDataImpl) UiControllerUtils.getScreenData(screen)).getLoadBeforeShowStrategy().loadData(screen);
-    }
-
     @Deprecated
     protected void applyOpenTypeParameters(Window window, OpenType openType) {
         if (window instanceof DialogWindow) {
@@ -538,5 +537,44 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
                 ((DatasourceImplementation) ds).initialized();
             }
         }
+    }
+
+    @Override
+    protected void fireScreenAfterShowEvent(FrameOwner frameOwner, Class<Screen.AfterShowEvent> eventType, Screen.AfterShowEvent event) {
+        Screen screen = (Screen) frameOwner;
+
+        if (screen instanceof CubaLegacySettings) {
+            ((CubaLegacySettings) screen).applySettings(getSettingsImpl(screen.getId()));
+        }
+
+        if (screen instanceof LegacyFrame) {
+            WindowContext windowContext = screen.getWindow().getContext();
+            if (!WindowParams.DISABLE_RESUME_SUSPENDED.getBool(windowContext)) {
+                DsContext dsContext = ((LegacyFrame) screen).getDsContext();
+                if (dsContext != null) {
+                    ((DsContextImplementation) dsContext).resumeSuspended();
+                }
+            }
+        }
+
+        super.fireScreenAfterShowEvent(screen, eventType, event);
+    }
+
+    @Override
+    protected void fireScreenBeforeShowEvent(FrameOwner frameOwner, Class<Screen.BeforeShowEvent> eventType, Screen.BeforeShowEvent event) {
+        Screen screen = (Screen) frameOwner;
+
+        if (screen instanceof CubaLegacySettings) {
+            ((CubaLegacySettings) screen).applyDataLoadingSettings(getSettingsImpl(screen.getId()));
+        }
+
+        super.fireScreenBeforeShowEvent(screen, eventType, event);
+
+        ((CubaScreenDataImpl) UiControllerUtils.getScreenData(screen))
+                .getLoadBeforeShowStrategy().loadData(screen);
+    }
+
+    protected Settings getSettingsImpl(String id) {
+        return new SettingsImpl(id);
     }
 }

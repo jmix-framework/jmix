@@ -168,8 +168,6 @@ dependencies {
 
         api 'javax.cache:cache-api:1.1.1'
 
-        api 'com.sun.mail:javax.mail:1.6.2'
-
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }
 }

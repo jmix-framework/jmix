@@ -24,7 +24,7 @@ import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
-import io.jmix.data.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.uidata.UserSettingServiceImpl;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;

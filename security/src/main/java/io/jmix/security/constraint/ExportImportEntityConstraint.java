@@ -17,7 +17,7 @@
 package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.core.context.ImportEntityContext;
+import io.jmix.core.context.ExportImportEntityContext;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 
 @Component("sec_ImportEntityConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class ImportEntityConstraint implements EntityOperationConstraint<ImportEntityContext> {
+public class ExportImportEntityConstraint implements EntityOperationConstraint<ExportImportEntityContext> {
 
     protected SecureOperations secureOperations;
     protected PolicyStore policyStore;
@@ -43,15 +43,18 @@ public class ImportEntityConstraint implements EntityOperationConstraint<ImportE
     }
 
     @Override
-    public Class<ImportEntityContext> getContextType() {
-        return ImportEntityContext.class;
+    public Class<ExportImportEntityContext> getContextType() {
+        return ExportImportEntityContext.class;
     }
 
     @Override
-    public void applyTo(ImportEntityContext context) {
+    public void applyTo(ExportImportEntityContext context) {
         for (MetaProperty metaProperty : context.getEntityClass().getProperties()) {
             if (!secureOperations.isEntityAttrUpdatePermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
-                context.addDeniedAttribute(metaProperty.getName());
+                context.notImportedAttribute(metaProperty.getName());
+            }
+            if (!secureOperations.isEntityAttrReadPermitted(new MetaPropertyPath(context.getEntityClass(), metaProperty), policyStore)) {
+                context.notExportedAttribute(metaProperty.getName());
             }
         }
     }

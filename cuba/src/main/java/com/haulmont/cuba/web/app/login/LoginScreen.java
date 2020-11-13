@@ -19,10 +19,10 @@ package com.haulmont.cuba.web.app.login;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.web.security.AuthInfo;
-import com.vaadin.server.VaadinServletRequest;
-import com.vaadin.server.VaadinServletResponse;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.ClientDetails;
+import io.jmix.securityui.authentication.AuthDetails;
+import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
@@ -30,16 +30,11 @@ import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
 
 import javax.inject.Inject;
 import java.util.Locale;
-
-import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
 /**
  * Base class for Login screen.
@@ -56,8 +51,6 @@ public class LoginScreen extends Screen {
     protected CoreProperties coreProperties;
     @Inject
     protected CubaProperties cubaProperties;
-    @Inject
-    protected UiProperties uiProperties;
 
     @Inject
     protected Messages messages;
@@ -65,16 +58,12 @@ public class LoginScreen extends Screen {
     protected Notifications notifications;
     @Inject
     protected Screens screens;
-    @Inject
-    private ScreenBuilders screenBuilders;
 
     @Inject
     protected JmixApp app;
 
     @Inject
-    protected AuthenticationManager authenticationManager;
-    @Inject
-    private CompositeSessionAuthenticationStrategy authenticationStrategy;
+    protected LoginScreenAuthenticationSupport authenticatorSupport;
 
     @Inject
     protected Image logoImage;
@@ -204,22 +193,12 @@ public class LoginScreen extends Screen {
             Locale selectedLocale = localesSelect.getValue();
             app.setLocale(selectedLocale);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-            ClientDetails clientDetails = ClientDetails.builder()
-                    .locale(localesSelect.getValue())
-                    .build();
-            authenticationToken.setDetails(clientDetails);
+            Authentication authentication = authenticatorSupport.authenticate(
+                    AuthDetails.of(username, password)
+                            .withLocale(selectedLocale)
+                            .withRememberMe(rememberMeCheckBox.isChecked()), this);
 
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
             onSuccessfulAuthentication(authentication);
-
-            String mainScreenId = uiProperties.getMainScreenId();
-            screenBuilders.screen(this)
-                    .withScreenId(mainScreenId)
-                    .withOpenMode(OpenMode.ROOT)
-                    .build()
-                    .show();
-
         } catch (BadCredentialsException e) {
             notifications.create(Notifications.NotificationType.ERROR)
                     .withCaption(messages.getMessage(getClass(), "loginFailed"))
@@ -241,11 +220,5 @@ public class LoginScreen extends Screen {
             ClientDetails clientDetails = (ClientDetails) authentication.getDetails();
             app.addCookie(App.COOKIE_LOCALE, clientDetails.getLocale().toLanguageTag());
         }
-
-        VaadinServletRequest request = VaadinServletRequest.getCurrent();
-        VaadinServletResponse response = VaadinServletResponse.getCurrent();
-        request.setAttribute(DEFAULT_PARAMETER, rememberMeCheckBox.isChecked());
-
-        authenticationStrategy.onAuthentication(authentication, request, response);
     }
 }

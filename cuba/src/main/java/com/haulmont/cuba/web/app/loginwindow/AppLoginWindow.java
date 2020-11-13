@@ -20,27 +20,21 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.web.app.login.LoginScreen;
 import com.haulmont.cuba.web.security.AuthInfo;
-import com.vaadin.server.VaadinServletRequest;
-import com.vaadin.server.VaadinServletResponse;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.ui.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ThemeResource;
-import io.jmix.ui.screen.OpenMode;
+import io.jmix.securityui.authentication.AuthDetails;
+import io.jmix.securityui.authentication.LoginScreenAuthenticationSupport;
 import io.jmix.ui.security.UiLoginProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
 
 import javax.inject.Inject;
 import java.util.Locale;
 import java.util.Map;
-
-import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
 /**
  * Legacy base class for a controller of application Login window.
@@ -61,15 +55,10 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
     protected UiProperties uiProperties;
 
     @Inject
-    protected AuthenticationManager authenticationManager;
-    @Inject
-    private CompositeSessionAuthenticationStrategy authenticationStrategy;
+    protected LoginScreenAuthenticationSupport authenticationSupport;
 
     @Inject
     protected JmixApp app;
-
-    @Inject
-    private ScreenBuilders screenBuilders;
 
     @Inject
     protected Image logoImage;
@@ -209,23 +198,13 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             Locale selectedLocale = localesSelect.getValue();
             app.setLocale(selectedLocale);
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(login, password);
-            ClientDetails clientDetails = ClientDetails.builder()
-                    .locale(localesSelect.getValue())
-                    .build();
-            authenticationToken.setDetails(clientDetails);
+            Authentication authentication = authenticationSupport.authenticate(
+                    AuthDetails.of(login, password)
+                            .withLocale(selectedLocale)
+                            .withRememberMe(rememberMeCheckBox.isChecked()), this);
 
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
             onSuccessfulAuthentication(authentication);
-
-            String mainScreenId = uiProperties.getMainScreenId();
-            screenBuilders.screen(this)
-                    .withScreenId(mainScreenId)
-                    .withOpenMode(OpenMode.ROOT)
-                    .build()
-                    .show();
-
-        }  catch (BadCredentialsException e) {
+        } catch (BadCredentialsException e) {
             showNotification(messages.getMainMessage("loginFailed"), e.getMessage(), NotificationType.ERROR);
         }
     }
@@ -235,11 +214,5 @@ public class AppLoginWindow extends AbstractWindow implements Window.TopLevelWin
             ClientDetails clientDetails = (ClientDetails) authentication.getDetails();
             app.addCookie(App.COOKIE_LOCALE, clientDetails.getLocale().toLanguageTag());
         }
-
-        VaadinServletRequest request = VaadinServletRequest.getCurrent();
-        VaadinServletResponse response = VaadinServletResponse.getCurrent();
-        request.setAttribute(DEFAULT_PARAMETER, rememberMeCheckBox.isChecked());
-
-        authenticationStrategy.onAuthentication(authentication, request, response);
     }
 }

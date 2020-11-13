@@ -36,8 +36,6 @@ import io.jmix.ui.component.impl.DialogWindowImpl.GuiDialogWindow;
 import io.jmix.ui.component.impl.TabWindowImpl;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.component.impl.WindowImplementation;
-import io.jmix.ui.event.screen.AfterShowScreenEvent;
-import io.jmix.ui.event.screen.BeforeShowScreenEvent;
 import io.jmix.ui.event.screen.ScreenClosedEvent;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
@@ -229,14 +227,14 @@ public class ScreensImpl implements Screens {
 
         Timer.Sample initSample = Timer.start(meterRegistry);
 
-        fireEvent(controller, InitEvent.class, new InitEvent(controller, options));
+        fireScreenInitEvent(controller, InitEvent.class, new InitEvent(controller, options));
 
         initSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.INIT, windowInfo.getId()));
 
         componentLoaderContext.executeInitTasks();
         componentLoaderContext.executePostInitTasks();
 
-        fireEvent(controller, AfterInitEvent.class, new AfterInitEvent(controller, options));
+        fireScreenAfterInitEvent(controller, AfterInitEvent.class, new AfterInitEvent(controller, options));
 
         return controller;
     }
@@ -362,11 +360,7 @@ public class ScreensImpl implements Screens {
 
         Timer.Sample beforeShowSample = Timer.start(meterRegistry);
 
-        applicationContext.publishEvent(new BeforeShowScreenEvent(screen));
-
-        fireEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
-
-        internalBeforeShow(screen);
+        fireScreenBeforeShowEvent(screen, BeforeShowEvent.class, new BeforeShowEvent(screen));
 
         beforeShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.BEFORE_SHOW, screen.getId()));
 
@@ -395,13 +389,11 @@ public class ScreensImpl implements Screens {
 
         userActionsLog.trace("Screen {} {} opened", screen.getId(), screen.getClass());
 
-        applicationContext.publishEvent(new AfterShowScreenEvent(screen));
-
         changeUrl(screen);
 
         Timer.Sample afterShowSample = Timer.start(meterRegistry);
 
-        fireEvent(screen, AfterShowEvent.class, new AfterShowEvent(screen));
+        fireScreenAfterShowEvent(screen, AfterShowEvent.class, new AfterShowEvent(screen));
 
         afterShowSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.AFTER_SHOW, screen.getId()));
 
@@ -464,9 +456,6 @@ public class ScreensImpl implements Screens {
         }
 
         return show(screen);
-    }
-
-    protected void internalBeforeShow(Screen screen) {
     }
 
     protected void changeUrl(Screen screen) {
@@ -547,7 +536,7 @@ public class ScreensImpl implements Screens {
                 throw new UnsupportedOperationException("Unsupported OpenMode");
         }
 
-        fireEvent(screen, AfterDetachEvent.class, new AfterDetachEvent(screen));
+        fireScreenAfterDetachEvent(screen, AfterDetachEvent.class, new AfterDetachEvent(screen));
 
         applicationContext.publishEvent(new ScreenClosedEvent(screen));
 
@@ -1338,6 +1327,29 @@ public class ScreensImpl implements Screens {
                 }
             }
         }
+    }
+
+    protected void fireScreenInitEvent(FrameOwner screen, Class<InitEvent> eventType, InitEvent event) {
+        fireEvent(screen, eventType, event);
+    }
+
+    protected void fireScreenAfterInitEvent(FrameOwner screen, Class<AfterInitEvent> eventType, AfterInitEvent event) {
+        fireEvent(screen, eventType, event);
+    }
+
+    protected void fireScreenBeforeShowEvent(FrameOwner screen,
+                                             Class<BeforeShowEvent> eventType, BeforeShowEvent event) {
+        fireEvent(screen, eventType, event);
+    }
+
+    protected void fireScreenAfterShowEvent(FrameOwner screen,
+                                            Class<AfterShowEvent> eventType, AfterShowEvent event) {
+        fireEvent(screen, eventType, event);
+    }
+
+    protected void fireScreenAfterDetachEvent(FrameOwner screen,
+                                              Class<AfterDetachEvent> eventType, AfterDetachEvent event) {
+        fireEvent(screen, eventType, event);
     }
 
     /**

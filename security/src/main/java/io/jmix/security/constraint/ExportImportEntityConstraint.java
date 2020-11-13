@@ -17,7 +17,7 @@
 package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.core.context.ExportImportEntityContext;
+import io.jmix.core.accesscontext.ExportImportEntityContext;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.springframework.beans.factory.annotation.Autowired;

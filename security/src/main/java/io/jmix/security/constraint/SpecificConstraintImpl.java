@@ -17,7 +17,7 @@
 package io.jmix.security.constraint;
 
 import io.jmix.core.constraint.SpecificConstraint;
-import io.jmix.core.context.SpecificOperationAccessContext;
+import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;

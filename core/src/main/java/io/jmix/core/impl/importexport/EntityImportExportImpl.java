@@ -87,6 +87,9 @@ public class EntityImportExportImpl implements EntityImportExport {
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
 
+    @Autowired
+    protected CoreProperties coreProperties;
+
     @Override
     public byte[] exportEntitiesToZIP(Collection<Object> entities, FetchPlan fetchPlan) {
         return exportEntitiesToZIP(reloadEntities(entities, fetchPlan));
@@ -289,6 +292,10 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         //we must specify a fetchPlan here because otherwise we may get UnfetchedAttributeException during merge
         saveContext.saving(dstEntity, fetchPlan);
+
+        if (!createOp && coreProperties.isEntitySerializationSecurityTokenRequired()) {
+            assertToken(srcEntity, fetchPlan);
+        }
 
         for (EntityImportPlanProperty importPlanProperty : importPlan.getProperties()) {
             String propertyName = importPlanProperty.getName();
@@ -661,6 +668,10 @@ public class EntityImportExportImpl implements EntityImportExport {
             }
         }
         return result;
+    }
+
+    protected void assertToken(Object srcEntity, FetchPlan fetchPlan) {
+
     }
 
     protected static class ReferenceInfo {

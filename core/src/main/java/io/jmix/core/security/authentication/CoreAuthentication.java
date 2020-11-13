@@ -25,6 +25,8 @@ public interface CoreAuthentication extends Authentication {
 
     Locale getLocale();
 
+    void setLocale(Locale locale);
+
     //todo remove and use #getPrincipal ?
     BaseUser getUser();
 

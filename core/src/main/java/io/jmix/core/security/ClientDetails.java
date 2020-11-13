@@ -30,6 +30,7 @@ public class ClientDetails implements Serializable {
     private TimeZone timeZone;
     private String address;
     private String info;
+    private String clientType;
 
     private ClientDetails() {
     }
@@ -52,6 +53,10 @@ public class ClientDetails implements Serializable {
 
     public Locale getLocale() {
         return locale;
+    }
+
+    public String getClientType() {
+        return clientType;
     }
 
     public static class Builder {
@@ -79,6 +84,11 @@ public class ClientDetails implements Serializable {
 
         public Builder info(String info) {
             obj.info = info;
+            return this;
+        }
+
+        public Builder clientType(String clientType) {
+            obj.clientType = clientType;
             return this;
         }
 

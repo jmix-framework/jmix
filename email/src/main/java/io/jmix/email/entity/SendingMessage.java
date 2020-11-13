@@ -135,6 +135,14 @@ public class SendingMessage implements Serializable {
     @Column(name = "BODY_CONTENT_TYPE", length = BODY_CONTENT_TYPE_LENGTH)
     protected String bodyContentType;
 
+    @PrePersist
+    protected void initLastAttemptTime() {
+        if (getStatus() != null && getStatus() == SendingStatus.QUEUE && getAttemptsMade() == 0) {
+            setUpdateTs(null);
+            setUpdatedBy(null);
+        }
+    }
+
     public UUID getId() {
         return id;
     }

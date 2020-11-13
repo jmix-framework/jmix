@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class EmailerProperties {
 
     String fromAddress;
-    int delayCallCount;
+    int scheduledSendingDelayCallCount;
     int messageQueueCapacity;
     int defaultSendingAttemptsCount;
     int sendingTimeoutSec;
@@ -37,7 +37,7 @@ public class EmailerProperties {
     String asyncSendingUsername;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
-                             @DefaultValue("2") int delayCallCount,
+                             @DefaultValue("2") int scheduledSendingDelayCallCount,
                              @DefaultValue("100") int messageQueueCapacity,
                              @DefaultValue("10") int defaultSendingAttemptsCount,
                              @DefaultValue("240") int sendingTimeoutSec,
@@ -46,7 +46,7 @@ public class EmailerProperties {
                              @DefaultValue("false") boolean isFileStorageUsed,
                              @DefaultValue("admin") String asyncSendingUsername) {
         this.fromAddress = fromAddress;
-        this.delayCallCount = delayCallCount;
+        this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
         this.messageQueueCapacity = messageQueueCapacity;
         this.defaultSendingAttemptsCount = defaultSendingAttemptsCount;
         this.sendingTimeoutSec = sendingTimeoutSec;
@@ -70,8 +70,8 @@ public class EmailerProperties {
      *
      * @return Number of scheduler ticks to skip after server startup
      */
-    public int getDelayCallCount() {
-        return delayCallCount;
+    public int getScheduledSendingDelayCallCount() {
+        return scheduledSendingDelayCallCount;
     }
 
     /**

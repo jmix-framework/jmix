@@ -274,7 +274,7 @@ public class EmailerImpl implements Emailer {
 
     @Override
     public String processQueuedEmails() {
-        int callsToSkip = emailerProperties.getDelayCallCount();
+        int callsToSkip = emailerProperties.getScheduledSendingDelayCallCount();
         int count = callCount.getAndAdd(1);
         if (count < callsToSkip) {
             return null;

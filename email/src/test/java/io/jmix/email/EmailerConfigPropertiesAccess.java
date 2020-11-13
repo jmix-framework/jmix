@@ -17,8 +17,8 @@
 package io.jmix.email;
 
 public class EmailerConfigPropertiesAccess {
-    public static void setDelayCallCount(EmailerProperties properties, int delayCallCount) {
-        properties.delayCallCount = delayCallCount;
+    public static void setScheduledSendingDelayCallCount(EmailerProperties properties, int scheduledSendingDelayCallCount) {
+        properties.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
     }
     public static void setFileStorageUsed(EmailerProperties properties, boolean fileStorageUsed) {
         properties.isFileStorageUsed = fileStorageUsed;

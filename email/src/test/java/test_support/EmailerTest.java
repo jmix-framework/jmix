@@ -82,7 +82,7 @@ public class EmailerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        EmailerConfigPropertiesAccess.setDelayCallCount(emailerProperties, 0);
+        EmailerConfigPropertiesAccess.setScheduledSendingDelayCallCount(emailerProperties, 0);
 
         // send pending emails which might be in the queue
         emailer.processQueuedEmails();

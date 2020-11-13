@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
-import io.jmix.core.context.ImportEntityContext;
+import io.jmix.core.context.ExportImportEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
@@ -64,7 +64,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
     protected EntityImportPlan buildFromJsonObject(JsonObject jsonObject, MetaClass metaClass) {
         EntityImportPlanBuilder importPlanBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
-        ImportEntityContext importContext = new ImportEntityContext(metaClass);
+        ExportImportEntityContext importContext = new ExportImportEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(importContext);
 
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
@@ -76,7 +76,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
             Range propertyRange = metaProperty.getRange();
             Class<?> propertyType = metaProperty.getJavaType();
             if (propertyRange.isDatatype() || propertyRange.isEnum()) {
-                if (importContext.isImportPermitted(propertyName)) {
+                if (importContext.canImported(propertyName)) {
                     importPlanBuilder.addLocalProperty(propertyName);
                 }
             } else if (propertyRange.isClass()) {
@@ -87,7 +87,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                         if (!propertyJsonObject.isJsonObject()) {
                             throw new RuntimeException("JsonObject was expected for property " + propertyName);
                         }
-                        if (importContext.isImportPermitted(propertyName)) {
+                        if (importContext.canImported(propertyName)) {
                             EntityImportPlan propertyImportPlan = buildFromJsonObject(propertyJsonObject.getAsJsonObject(), propertyMetaClass);
                             importPlanBuilder.addEmbeddedProperty(propertyName, propertyImportPlan);
                         }
@@ -95,7 +95,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                         MetaClass propertyMetaClass = metadata.getClass(propertyType);
                         if (metaProperty.getType() == MetaProperty.Type.COMPOSITION) {
                             JsonElement propertyJsonObject = entry.getValue();
-                            if (importContext.isImportPermitted(propertyName)) {
+                            if (importContext.canImported(propertyName)) {
                                 if (propertyJsonObject.isJsonNull()) {
                                     //in case of null we must add such import behavior to update the reference with null value later
                                     if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
@@ -116,7 +116,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                                 }
                             }
                         } else {
-                            if (importContext.isImportPermitted(propertyName))
+                            if (importContext.canImported(propertyName))
                                 if (metaProperty.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
                                     importPlanBuilder.addManyToOneProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING);
                                 } else {
@@ -128,7 +128,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                     MetaClass propertyMetaClass = metaProperty.getRange().asClass();
                     switch (metaProperty.getRange().getCardinality()) {
                         case MANY_TO_MANY: {
-                            if (importContext.isImportPermitted(propertyName))
+                            if (importContext.canImported(propertyName))
                                 importPlanBuilder.addManyToManyProperty(propertyName, ReferenceImportBehaviour.ERROR_ON_MISSING,
                                         CollectionImportPolicy.REMOVE_ABSENT_ITEMS);
                             break;
@@ -140,7 +140,7 @@ public class EntityImportPlanJsonBuilderImpl implements EntityImportPlanJsonBuil
                                     throw new RuntimeException("JsonArray was expected for property " + propertyName);
                                 }
                                 EntityImportPlan propertyImportPlan = buildFromJsonArray(compositionJsonArray.getAsJsonArray(), propertyMetaClass);
-                                if (importContext.isImportPermitted(propertyName))
+                                if (importContext.canImported(propertyName))
                                     importPlanBuilder.addOneToManyProperty(propertyName, propertyImportPlan, CollectionImportPolicy.REMOVE_ABSENT_ITEMS);
                             }
                             break;

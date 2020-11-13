@@ -23,7 +23,7 @@ import com.google.common.collect.Table;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import io.jmix.core.*;
-import io.jmix.core.context.EntityAttributeContext;
+import io.jmix.core.context.ExportImportEntityContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -272,17 +272,21 @@ public class EntitySerializationImpl implements EntitySerialization {
             }
         }
 
-        protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity, EntityAttributeContext entityAttributeContext) {
-            boolean notId = !"id".equals(metaProperty.getName());
-            boolean isPersistent = metadataTools.isPersistent(metaProperty);
-            boolean isLoaded = entityStates.isLoaded(entity, metaProperty.getName());
-            boolean isReadOnly = metaProperty.isReadOnly();
-            boolean attributePermitted =
-                    entityAttributeContext.isAttributeViewPermitted(metaProperty.getName()) || !doNotSerializeDeniedProperties;
-            //todo dynamic attribute
-            // DynamicAttributesUtils.isDynamicAttribute(metaProperty)
-            // (entity instanceof BaseGenericIdEntity)
-            return (notId && !(isPersistent || isReadOnly && doNotSerializeReadOnlyProperties) || (isPersistent && isLoaded)) && attributePermitted;
+        protected boolean propertyWritingAllowed(MetaProperty metaProperty, Entity entity, ExportImportEntityContext exportImportContext) {
+            MetaClass metaClass = metadata.getClass(entity.getClass());
+
+            String primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
+            String propertyName = metaProperty.getName();
+
+            if (!Objects.equals(primaryKeyName, propertyName)) {
+                if (metadataTools.isPersistent(metaProperty)) {
+                    return entityStates.isLoaded(entity, propertyName) && exportImportContext.canExported(propertyName);
+                } else {
+                    return (!metaProperty.isReadOnly() || !doNotSerializeReadOnlyProperties) && exportImportContext.canExported(propertyName);
+                }
+            }
+
+            return true;
         }
 
         protected void writeFields(Entity entity, JsonObject jsonObject, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
@@ -296,12 +300,13 @@ public class EntitySerializationImpl implements EntitySerialization {
 //            }
 
 
-            EntityAttributeContext entityContext = new EntityAttributeContext(metaClass);
-
-            accessManager.applyRegisteredConstraints(entityContext);
+            ExportImportEntityContext exportImportEntityContext = new ExportImportEntityContext(metaClass);
+            if (doNotSerializeDeniedProperties) {
+                accessManager.applyRegisteredConstraints(exportImportEntityContext);
+            }
 
             for (MetaProperty metaProperty : properties) {
-                if (!propertyWritingAllowed(metaProperty, entity, entityContext)) {
+                if (!propertyWritingAllowed(metaProperty, entity, exportImportEntityContext)) {
                     continue;
                 }
                 FetchPlanProperty fetchPlanProperty = null;

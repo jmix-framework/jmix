@@ -21,11 +21,12 @@ import io.jmix.core.metamodel.model.MetaClass;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ImportEntityContext implements AccessContext {
+public class ExportImportEntityContext implements AccessContext {
     protected final MetaClass entityClass;
-    protected Set<String> deniedAttributes;
+    protected Set<String> notImported;
+    protected Set<String> notExported;
 
-    public ImportEntityContext(MetaClass entityClass) {
+    public ExportImportEntityContext(MetaClass entityClass) {
         this.entityClass = entityClass;
     }
 
@@ -33,14 +34,25 @@ public class ImportEntityContext implements AccessContext {
         return entityClass;
     }
 
-    public boolean isImportPermitted(String attribute) {
-        return deniedAttributes == null || !deniedAttributes.contains(attribute);
+    public boolean canImported(String attribute) {
+        return notImported == null || !notImported.contains(attribute);
     }
 
-    public void addDeniedAttribute(String name) {
-        if (deniedAttributes == null) {
-            deniedAttributes = new HashSet<>();
+    public boolean canExported(String attribute) {
+        return notExported == null || !notExported.contains(attribute);
+    }
+
+    public void notImportedAttribute(String name) {
+        if (notImported == null) {
+            notImported = new HashSet<>();
         }
-        deniedAttributes.add(name);
+        notImported.add(name);
+    }
+
+    public void notExportedAttribute(String name) {
+        if (notExported == null) {
+            notExported = new HashSet<>();
+        }
+        notExported.add(name);
     }
 }

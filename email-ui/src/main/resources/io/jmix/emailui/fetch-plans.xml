@@ -32,6 +32,7 @@
         <property name="deadline"/>
         <property name="from"/>
         <property name="status"/>
+        <property name="createTs"/>
         <property name="updateTs"/>
         <property name="bodyContentType"/>
         <property name="contentText"/>

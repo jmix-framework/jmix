@@ -57,6 +57,9 @@
                         <column id="subject"/>
                         <column id="status"/>
                         <column id="bodyContentType"/>
+                        <column id="createTs">
+                            <dateFormatter format="msg://dateTimeWithSeconds"/>
+                        </column>
                         <column id="dateSent">
                             <dateFormatter format="msg://dateTimeWithSeconds"/>
                         </column>
@@ -87,6 +90,7 @@
                             <field id="bodyContentType" property="bodyContentType"/>
                             <field id="status" property="status"/>
                             <field id="attachmentsName" property="attachmentsName"/>
+                            <field id="createTs" property="createTs"/>
                             <field id="dateSent" property="dateSent"/>
                             <field id="updateTs" property="updateTs"/>
                             <field id="deadline" property="deadline"/>

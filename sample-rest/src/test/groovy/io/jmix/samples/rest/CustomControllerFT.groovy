@@ -8,7 +8,7 @@ import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 @TestPropertySource(properties =
         "jmix.rest.authenticatedUrlPatterns=/myapi/sample/protectedMethod"
 )
-class CustomControllerFT extends DataSpec {
+class CustomControllerFT extends RestSpec {
 
     @LocalServerPort
     private int port

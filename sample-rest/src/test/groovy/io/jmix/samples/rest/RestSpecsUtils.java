@@ -16,7 +16,7 @@ import static io.restassured.RestAssured.given;
 public class RestSpecsUtils {
 
     static {
-        RestAssured.basePath = "/rest/v2";
+        RestAssured.basePath = "/rest";
     }
 
     public static void setReportsBasePath() {
@@ -24,7 +24,11 @@ public class RestSpecsUtils {
     }
 
     public static void clearBasePath() {
-        RestAssured.basePath = "/app/rest/v2";
+        RestAssured.basePath = "/rest";
+    }
+
+    public static void setBasePort(int port) {
+        RestAssured.port = port;
     }
 
     public static RequestSpecification createRequest(String authToken) {

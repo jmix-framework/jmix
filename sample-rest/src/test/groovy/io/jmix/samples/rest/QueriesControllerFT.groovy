@@ -6,7 +6,7 @@ import io.jmix.samples.rest.entity.driver.DriverStatus
 import static io.jmix.samples.rest.DataUtils.createDriver
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 
-class QueriesControllerFT extends DataSpec {
+class QueriesControllerFT extends RestSpec {
 
     private UUID driver1Id
     private UUID driver2Id

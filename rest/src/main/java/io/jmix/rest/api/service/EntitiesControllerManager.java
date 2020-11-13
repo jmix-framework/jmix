@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.*;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportException;
@@ -58,6 +59,7 @@ import java.util.*;
 public class EntitiesControllerManager {
 
     @Autowired
+    @Secure
     protected DataManager dataManager;
 
     @Autowired

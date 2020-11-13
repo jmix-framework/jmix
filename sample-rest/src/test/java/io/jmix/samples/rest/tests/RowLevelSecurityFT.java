@@ -6,12 +6,17 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.security.impl.CoreUser;
+import io.jmix.samples.rest.security.FullAccessRole;
+import io.jmix.samples.rest.security.InMemoryRowLevelRole;
+import io.jmix.security.role.assignment.RoleAssignment;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,16 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  */
+@TestPropertySource(properties = {
+        "jmix.core.entitySerializationSecurityTokenRequired = true"
+})
 @Disabled
 public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
-    //todo encryption
-//    private static EncryptionModule encryption = new BCryptEncryptionModule();
-
-    private UUID groupId;
-    private UUID insuranceCaseConstraintId;
-    private UUID modelConstraintId;
-    //private UUID userId;
     private UUID carId, newCarId;
     private UUID insuranceCase1Id;
     private UUID insuranceCase2Id;
@@ -46,34 +47,22 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     private UUID model1Id;
     private UUID model2Id;
 
-    private String userPassword = "admin123";
-    private String userLogin = "admin";
+    private String userPassword = "rowLevelUser123";
+    private String userLogin = "rowLevelUser";
     private String userToken;
 
     @BeforeEach
     public void setUp() throws Exception {
-//        Connectors.jmx(SampleJmxService.class)
-//                .setRestRequiresSecurityToken(true);
-//        Connectors.jmx(WebConfigStorageJmxService.class)
-//                .setAppProperty("cuba.rest.requiresSecurityToken", "true");
+        super.setUp();
 
-        baseUrl = "http://localhost:" + port + "/rest/v2";
-
-        Class.forName("org.hsqldb.jdbc.JDBCDriver");
-        conn = DriverManager.getConnection(DB_URL, "sa", "");
-        userToken = getAuthToken(baseUrl, userLogin, userPassword);
         prepareDb();
+        createUsers();
+
+        userToken = getAuthToken(baseUrl, userLogin, userPassword);
     }
 
     @AfterEach
     public void tearDown() throws SQLException {
-//        Connectors.jmx(SampleJmxService.class)
-//                .setRestRequiresSecurityToken(false);
-//        Connectors.jmx(WebConfigStorageJmxService.class)
-//                .setAppProperty("cuba.rest.requiresSecurityToken", "false");
-//        if (newCarId != null) {
-//            executePrepared("delete from sec_entity_log where entity_id = ?", newCarId);
-//        }
         dirtyData.cleanup(conn);
         if (conn != null)
             conn.close();
@@ -260,61 +249,16 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     }
 
+    protected void createUsers() {
+        CoreUser coreUser = new CoreUser(userLogin, "{noop}" + userPassword);
+        userRepository.addUser(coreUser);
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryRowLevelRole.NAME));
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME));
+    }
+
     public void prepareDb() throws Exception {
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
         conn = DriverManager.getConnection(DB_URL, "sa", "");
-
-        groupId = dirtyData.createGroupUuid();
-        executePrepared("insert into sec_group(id, version, name) " +
-                        "values(?, ?, ?)",
-                groupId,
-                1l,
-                "Group"
-        );
-
-//        insuranceCaseConstraintId = dirtyData.createConstraintUuid();
-//        executePrepared("insert into sec_constraint(id, version, check_type, entity_name, groovy_script, group_id) " +
-//                        "values(?, ?, ?, ?, ?, ?)",
-//                insuranceCaseConstraintId,
-//                1l,
-//                ConstraintCheckType.MEMORY.getId(),
-//                "ref$InsuranceCase",
-//                "{E}.description.startsWith('A')",
-//                groupId
-//        );
-//
-//        modelConstraintId = dirtyData.createConstraintUuid();
-//        executePrepared("insert into sec_constraint(id, version, check_type, entity_name, groovy_script, group_id) " +
-//                        "values(?, ?, ?, ?, ?, ?)",
-//                modelConstraintId,
-//                1l,
-//                ConstraintCheckType.MEMORY.getId(),
-//                "ref$Model",
-//                "{E}.name.startsWith('A')",
-//                groupId
-//        );
-
-//        userId = dirtyData.createUserUuid();
-//        String pwd = encryption.getPasswordHash(userId, userPassword);
-//        executePrepared("insert into sec_user(id, version, login, password, password_encryption, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?, ?, ?)",
-//                userId,
-//                1l,
-//                userLogin,
-//                pwd,
-//                encryption.getHashMethod(),
-//                groupId,
-//                userLogin.toLowerCase()
-//        );
-
-        //user must have a rest-full-access role
-//        executePrepared("insert into sec_user_role(id, version, user_id, role_name) " +
-//                        "values(?, ?, ?, ?)",
-//                UUID.randomUUID(),
-//                1l,
-//                userId,
-//                "rest-full-access"
-//        );
 
         carId = dirtyData.createCarUuid();
         executePrepared("insert into ref_car(id, version, vin) " +
@@ -343,12 +287,11 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         );
 
         plantId = dirtyData.createPlantUuid();
-        executePrepared("insert into ref_plant(id, version, name, dtype) " +
-                        "values(?, ?, ?, ?)",
+        executePrepared("insert into ref_plant(id, version, name) " +
+                        "values(?, ?, ?)",
                 plantId,
                 1l,
-                "Plant1",
-                "ref$CustomExtPlant"
+                "Plant1"
         );
 
         model1Id = dirtyData.createModelUuid();
@@ -390,5 +333,4 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
             stmt.executeUpdate();
         }
     }
-
 }

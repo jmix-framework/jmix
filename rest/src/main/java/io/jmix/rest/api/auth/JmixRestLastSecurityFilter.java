@@ -17,6 +17,8 @@
 package io.jmix.rest.api.auth;
 
 import com.google.common.base.Strings;
+import io.jmix.core.security.authentication.CoreAuthentication;
+import io.jmix.rest.api.common.RestAuthUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.AfterRestInvocationEvent;
 import io.jmix.rest.api.event.BeforeRestInvocationEvent;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,6 +36,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * The last filter in the security filters chain. It does the following:
@@ -48,10 +52,14 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
 
     protected ApplicationEventPublisher applicationEventPublisher;
     protected RestTokenMasker restTokenMasker;
+    protected RestAuthUtils restAuthUtils;
 
-    public JmixRestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher, RestTokenMasker restTokenMasker) {
+    public JmixRestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher,
+                                      RestTokenMasker restTokenMasker,
+                                      RestAuthUtils restAuthUtils) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.restTokenMasker = restTokenMasker;
+        this.restAuthUtils = restAuthUtils;
     }
 
     @Override
@@ -113,17 +121,16 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
      * Method parses the request locale and sets it to the authentication
      */
     protected void parseRequestLocale(ServletRequest request) {
-        // todo UserInvocationContext
-        //Locale locale = restAuthUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
-//        if (locale != null) {
-//            SecurityContext securityContext = AppContext.getSecurityContext();
-//            if (securityContext != null) {
-//                UUID sessionId = securityContext.getSessionId();
-//                if (sessionId != null) {
-//                    UserInvocationContext.setRequestScopeInfo(sessionId, locale, null, null, null);
-//                }
-//            }
-//        }
+        Locale locale = restAuthUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
+        if (locale != null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication instanceof OAuth2Authentication) {
+                Authentication userAuthentication = ((OAuth2Authentication) authentication).getUserAuthentication();
+                if (userAuthentication instanceof CoreAuthentication) {
+                    ((CoreAuthentication) userAuthentication).setLocale(locale);
+                }
+            }
+        }
     }
 
     protected String getRequestURL(HttpServletRequest request) {

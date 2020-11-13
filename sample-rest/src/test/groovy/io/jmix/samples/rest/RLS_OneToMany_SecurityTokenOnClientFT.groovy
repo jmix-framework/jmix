@@ -5,12 +5,15 @@
 
 package io.jmix.samples.rest
 
-import com.haulmont.masquerade.Connectors
-import groovy.sql.Sql
-import io.jmix.samples.rest.api.DataSet
+
+import io.jmix.core.security.impl.CoreUser
+import io.jmix.samples.rest.security.FullAccessRole
+import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
+import io.jmix.security.role.assignment.RoleAssignment
 import org.apache.http.HttpStatus
 import org.junit.Ignore
-import spock.lang.Specification
+import org.junit.jupiter.api.Disabled
+import org.springframework.test.context.TestPropertySource
 
 import static io.jmix.samples.rest.DataUtils.*
 import static io.jmix.samples.rest.DbUtils.getSql
@@ -18,13 +21,10 @@ import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 import static io.jmix.samples.rest.RestSpecsUtils.getAuthToken
 import static org.hamcrest.CoreMatchers.notNullValue
 
-//todo security
+@TestPropertySource(properties =
+        ["jmix.core.entitySerializationSecurityTokenRequired = true"])
 @Ignore
-class RLS_OneToMany_SecurityTokenOnClientFT extends Specification {
-
-    private Sql sql
-    private DataSet dirtyData = new DataSet()
-
+class RLS_OneToMany_SecurityTokenOnClientFT extends RestSpec {
     private UUID carId
     private UUID case1Id, case2Id,
                  case3Id, case4Id,
@@ -33,24 +33,14 @@ class RLS_OneToMany_SecurityTokenOnClientFT extends Specification {
     private String userPassword = "password"
     private String userLogin = "user1"
     private String userToken
+    private CoreUser user
 
     void setup() {
-        Connectors.jmx(SampleJmxService.class)
-                .setRestRequiresSecurityToken(true)
-        Connectors.jmx(WebConfigStorageJmxService.class)
-                .setAppProperty("cuba.rest.requiresSecurityToken", "true")
-        sql = getSql() as Sql
+        user = new CoreUser(userLogin, "{noop}" + userPassword)
+        userRepository.addUser(user)
 
-        def groupId = createGroup(dirtyData, sql, 'Group')
-
-        createConstraint(dirtyData, sql,
-                ConstraintCheckType.MEMORY, 'ref$InsuranceCase',
-                "!{E}.description.startsWith('InsuranceCase#2_') && !{E}.description.startsWith('InsuranceCase#5_')",
-                groupId)
-
-        UUID userId = createUser(dirtyData, sql,
-                userLogin, userPassword, groupId)
-        createUserRole(dirtyData, sql, userId, 'rest-full-access')
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryOneToManyRowLevelRole.NAME))
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME))
 
         carId = createCar(dirtyData, sql, '001')
 
@@ -61,18 +51,12 @@ class RLS_OneToMany_SecurityTokenOnClientFT extends Specification {
 
         case4Id = dirtyData.createInsuranceCaseUuid()
 
-        userToken = getAuthToken(userLogin, userPassword)
+        userToken = getAuthToken(baseUrl, userLogin, userPassword)
     }
 
     void cleanup() {
-        Connectors.jmx(SampleJmxService.class)
-                .setRestRequiresSecurityToken(false)
-        Connectors.jmx(WebConfigStorageJmxService.class)
-                .setAppProperty("cuba.rest.requiresSecurityToken", "false")
-        dirtyData.cleanup(sql.connection)
-        if (sql != null) {
-            sql.close()
-        }
+        userRepository.removeUser(user)
+        roleAssignmentProvider.removeAssignments(user.name)
     }
 
     def """Store entity with same composition as in the database, hidden elements should not be deleted"""() {

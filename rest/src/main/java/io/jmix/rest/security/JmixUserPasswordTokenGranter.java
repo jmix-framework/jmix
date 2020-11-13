@@ -16,52 +16,72 @@
 
 package io.jmix.rest.security;
 
-import io.jmix.core.AccessManager;
-import io.jmix.core.Messages;
-import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.rest.context.RestEnabledContext;
-import io.jmix.rest.exception.RestApiAccessDeniedException;
-import org.springframework.security.authentication.AuthenticationManager;
+import io.jmix.rest.api.common.RestAuthUtils;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.common.exceptions.InvalidGrantException;
 import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.password.ResourceOwnerPasswordTokenGranter;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Locale;
 
 public class JmixUserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
-    protected final AccessManager accessManager;
-    protected final Messages messages;
+    protected final AuthenticationManager authenticationManager;
+    protected final RestAuthUtils restAuthUtils;
 
     public JmixUserPasswordTokenGranter(
-            AccessManager accessManager,
-            Messages messages,
+            RestAuthUtils restAuthUtils,
             AuthenticationManager authenticationManager,
             AuthorizationServerTokenServices tokenServices,
             ClientDetailsService clientDetailsService,
             OAuth2RequestFactory requestFactory) {
         super(authenticationManager, tokenServices, clientDetailsService, requestFactory);
-        this.accessManager = accessManager;
-        this.messages = messages;
+        this.authenticationManager = authenticationManager;
+        this.restAuthUtils = restAuthUtils;
     }
 
     @Override
     protected OAuth2Authentication getOAuth2Authentication(ClientDetails client, TokenRequest tokenRequest) {
-        OAuth2Authentication auth2Authentication = super.getOAuth2Authentication(client, tokenRequest);
+        String username = tokenRequest.getRequestParameters().get("username");
+        String password = tokenRequest.getRequestParameters().get("password");
 
-        RestEnabledContext restEnabledContext = new RestEnabledContext();
-
-        //TODO: extract into authentication success event (after set client type)
-        Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
+        Authentication userAuth = new UsernamePasswordAuthenticationToken(username, password);
+        ((AbstractAuthenticationToken) userAuth).setDetails(buildClientDetails());
         try {
-            SecurityContextHelper.setAuthentication(auth2Authentication);
-            accessManager.applyRegisteredConstraints(restEnabledContext);
-        } finally {
-            SecurityContextHelper.setAuthentication(currentAuthentication);
+            userAuth = authenticationManager.authenticate(userAuth);
+        } catch (AccountStatusException ase) {
+            //covers expired, locked, disabled cases (mentioned in section 5.2, draft 31)
+            throw new InvalidGrantException(ase.getMessage());
+        } catch (BadCredentialsException e) {
+            // If the username/password are wrong the spec says we should send 400/invalid grant
+            throw new InvalidGrantException(e.getMessage());
+        } catch (UsernameNotFoundException e) {
+            // If the user is not found, report a generic error message
+            throw new InvalidGrantException(e.getMessage());
+        }
+        if (userAuth == null || !userAuth.isAuthenticated()) {
+            throw new InvalidGrantException("Could not authenticate user: " + username);
         }
 
-        if (!restEnabledContext.isPermitted()) {
-            throw new RestApiAccessDeniedException(messages.getMessage("io.jmix.rest/restApiAccessDenied"));
-        }
+        OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
+        return new OAuth2Authentication(storedOAuth2Request, userAuth);
+    }
 
-        return auth2Authentication;
+    protected io.jmix.core.security.ClientDetails buildClientDetails() {
+        return io.jmix.core.security.ClientDetails.builder()
+                .clientType("REST")
+                .locale(requestLocale())
+                .build();
+    }
+
+    protected Locale requestLocale() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        return restAuthUtils.extractLocaleFromRequestHeader(request);
     }
 }

@@ -5,24 +5,19 @@
 
 package io.jmix.samples.rest
 
-import groovy.sql.Sql
-import io.jmix.samples.rest.api.DataSet
+
+import io.jmix.core.security.impl.CoreUser
+import io.jmix.samples.rest.security.FullAccessRole
+import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
+import io.jmix.security.role.assignment.RoleAssignment
 import org.apache.http.HttpStatus
-import org.junit.Ignore
-import spock.lang.Specification
 
 import static io.jmix.samples.rest.DataUtils.*
 import static io.jmix.samples.rest.DbUtils.getSql
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 import static io.jmix.samples.rest.RestSpecsUtils.getAuthToken
 
-//todo security
-@Ignore
-class RLS_ManyToManyFT extends Specification {
-
-    private Sql sql
-    private DataSet dirtyData = new DataSet()
-
+class RLS_ManyToManyFT extends RestSpec {
     private UUID plantId
     private UUID model1Id, model2Id,
                  model3Id, model4Id,
@@ -31,21 +26,14 @@ class RLS_ManyToManyFT extends Specification {
     private String userPassword = "password"
     private String userLogin = "user1"
     private String userToken
+    private CoreUser user
 
     void setup() {
-        sql = getSql() as Sql
+        user = new CoreUser(userLogin, "{noop}" + userPassword)
+        userRepository.addUser(user)
 
-        def groupId = createGroup(dirtyData, sql, 'Group')
-
-//        createConstraint(dirtyData, sql,
-//                ConstraintCheckType.MEMORY, 'ref$Model',
-//                "!{E}.name.startsWith('Model#2_') && !{E}.name.startsWith('Model#5_')",
-//                groupId)
-
-        UUID userId = createUser(dirtyData, sql,
-                userLogin, userPassword, groupId)
-
-        createUserRole(dirtyData, sql, userId, 'rest-full-access')
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryManyToManyRowLevelRole.NAME))
+        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME))
 
         plantId = createPlant(dirtyData, sql, '001')
 
@@ -60,14 +48,12 @@ class RLS_ManyToManyFT extends Specification {
         createPlantModelLink(sql, plantId, model3Id)
         createPlantModelLink(sql, plantId, model5Id)
 
-        userToken = getAuthToken(userLogin, userPassword)
+        userToken = getAuthToken(baseUrl, userLogin, userPassword)
     }
 
     void cleanup() {
-        dirtyData.cleanup(sql.connection)
-        if (sql != null) {
-            sql.close()
-        }
+        userRepository.removeUser(user)
+        roleAssignmentProvider.removeAssignments(user.name)
     }
 
     def """Store entity with same collection as in the database, hidden elements should not be deleted"""() {

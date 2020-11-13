@@ -34,7 +34,7 @@ import static io.jmix.samples.rest.DbUtils.getSql
 import static io.jmix.samples.rest.RestSpecsUtils.getAuthToken
 
 @SpringBootTest(classes = SampleRestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class DataSpec extends Specification {
+class RestSpec extends Specification {
 
     @LocalServerPort
     private int port
@@ -60,11 +60,15 @@ class DataSpec extends Specification {
     void setup() {
         admin = new CoreUser(userLogin, "{noop}$userPassword", "Admin")
         userRepository.addUser(admin)
+
         RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class)
         roleAssignmentEntity.setRoleCode("system-full-access")
         roleAssignmentEntity.setUsername(admin.getUsername())
         roleAssignmentProvider.addAssignment(new RoleAssignment(admin.getUsername(), FullAccessRole.NAME))
+
         baseUrl = "http://localhost:" + port + "/rest"
+        RestSpecsUtils.setBasePort(port)
+
         userToken = getAuthToken(baseUrl, userLogin, userPassword)
 
         sql = getSql() as Sql

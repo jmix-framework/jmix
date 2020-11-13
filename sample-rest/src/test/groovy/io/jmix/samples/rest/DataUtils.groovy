@@ -170,7 +170,6 @@ class DataUtils {
                 id: plantId,
                 version: 1,
                 name: name,
-                dtype: 'ref$CustomExtPlant'
         )
         return plantId
     }

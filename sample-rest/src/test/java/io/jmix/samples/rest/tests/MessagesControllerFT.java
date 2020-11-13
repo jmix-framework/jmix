@@ -41,8 +41,6 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo locale
-    @Disabled
     @Test
     public void testLocalizationForEntityUsingRuLanguage() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
@@ -68,8 +66,6 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo locale
-    @Disabled
     @Test
     public void testLocalizationUsingLocaleFromLogin() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
@@ -118,7 +114,6 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals("Role Type", ctx.read("$['io.jmix.samples.rest.entity.sec.RoleType']"));
             assertEquals("Standard", ctx.read("$['io.jmix.samples.rest.entity.sec.RoleType.STANDARD']"));
-//            assertEquals("Create", ctx.read("$['io.jmix.core.security.ConstraintOperationType.CREATE']"));
         }
     }
 }

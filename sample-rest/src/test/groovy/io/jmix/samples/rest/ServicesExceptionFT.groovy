@@ -3,7 +3,7 @@ package io.jmix.samples.rest
 
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 
-class ServicesExceptionFT extends DataSpec {
+class ServicesExceptionFT extends RestSpec {
 
     def "GET-request for the call service with a custom exception"() {
         when:

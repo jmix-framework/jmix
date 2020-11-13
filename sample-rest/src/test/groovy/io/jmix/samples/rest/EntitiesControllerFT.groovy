@@ -1,10 +1,13 @@
 package io.jmix.samples.rest
 
+import org.junit.Ignore
+
 import static io.jmix.samples.rest.DataUtils.createGroup
 import static io.jmix.samples.rest.DataUtils.createUser
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
 
-class EntitiesControllerFT extends DataSpec {
+@Ignore
+class EntitiesControllerFT extends RestSpec {
 
     void prepareDb() {
         UUID groupId = createGroup(dirtyData, sql, "Company")

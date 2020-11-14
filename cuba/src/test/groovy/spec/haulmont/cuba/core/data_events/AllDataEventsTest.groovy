@@ -86,8 +86,8 @@ class AllDataEventsTest extends CoreTestSpecification {
         listener.allEvents[i++].message == 'AfterInsertEntityListener'
         listener.allEvents[i++].message == 'JPA PostPersist'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, CREATED'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
 
         cleanup:
 
@@ -119,8 +119,8 @@ class AllDataEventsTest extends CoreTestSpecification {
         listener.allEvents[i++].message == 'AfterUpdateEntityListener'
         listener.allEvents[i++].message == 'JPA PostUpdate'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, UPDATED'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
 
         cleanup:
 
@@ -151,8 +151,8 @@ class AllDataEventsTest extends CoreTestSpecification {
         listener.allEvents[i++].message == 'AfterDeleteEntityListener'
         listener.allEvents[i++].message == 'JPA PostUpdate'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, DELETED'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
 
         cleanup:
 
@@ -226,10 +226,10 @@ class AllDataEventsTest extends CoreTestSpecification {
         then:
 
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
+        listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
-        listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
 
         cleanup:
 
@@ -285,8 +285,8 @@ class AllDataEventsTest extends CoreTestSpecification {
         then:
 
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
 
         cleanup:
 

@@ -33,9 +33,9 @@ class AppContextLifecycleEventsTest extends CoreTestSpecification {
     def "test"() {
         expect:
 
-        listenerBean.events[0] instanceof ContextRefreshedEvent
-        listenerBean.events[1] instanceof AppContextInitializedEvent
-        listenerBean.events[2] instanceof AppContextStartedEvent
+        listenerBean.events[0] instanceof AppContextInitializedEvent
+        listenerBean.events[1] instanceof AppContextStartedEvent
+        listenerBean.events[2] instanceof ContextRefreshedEvent
 
         AppContext.isStarted()
         AppContext.isReady()

@@ -21,13 +21,19 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Configuration
 @ComponentScan
@@ -53,11 +59,16 @@ public class RestConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/rest/**")
-                .allowedOrigins(restProperties.getAllowedOrigins())
+        String[] allowedOrigins = restProperties.getAllowedOrigins();
+
+        CorsRegistration corsRegistration = registry.addMapping("/rest/**")
+                .allowedOrigins(allowedOrigins)
                 .allowedHeaders("*")
                 .allowedMethods("*")
-                .allowCredentials(true)
                 .exposedHeaders("X-Total-Count", "Content-Disposition");
+
+        if (!Arrays.asList(allowedOrigins).contains(CorsConfiguration.ALL)) {
+            corsRegistration.allowCredentials(true);
+        }
     }
 }

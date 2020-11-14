@@ -67,7 +67,7 @@ javaPlatform {
 }
 
 dependencies {
-    api platform("org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE")
+    api platform("org.springframework.boot:spring-boot-dependencies:2.4.0")
 
     def baseVersion = '0.2.0'
 

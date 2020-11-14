@@ -39,7 +39,7 @@
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="PASSWORD" value="{noop}admin"/>
-            <column name="ENABLED" value="true"/>
+            <column name="ENABLED" valueBoolean="true"/>
         </insert>
 
     </changeSet>

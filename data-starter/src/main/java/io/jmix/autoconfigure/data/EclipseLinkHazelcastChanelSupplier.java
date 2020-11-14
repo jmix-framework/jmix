@@ -17,7 +17,7 @@
 package io.jmix.autoconfigure.data;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
+import com.hazelcast.topic.ITopic;
 import io.jmix.data.impl.eclipselink.EclipseLinkChannelSupplier;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;

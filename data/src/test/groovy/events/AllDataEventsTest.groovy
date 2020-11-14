@@ -75,8 +75,8 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, CREATED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
     }
 
     def "update sequence"() {
@@ -106,8 +106,8 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, UPDATED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
     }
 
     def "delete sequence"() {
@@ -135,8 +135,8 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, DELETED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
     }
 
     def "create/update/delete in one transaction sequence"() {
@@ -210,10 +210,10 @@ class AllDataEventsTest extends DataSpec {
         then:
 
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
+        listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, DELETED'
-        listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
 
         cleanup:
 
@@ -273,8 +273,8 @@ class AllDataEventsTest extends DataSpec {
         then:
 
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
-        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
+        listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
 
         cleanup:
 

@@ -17,12 +17,16 @@
 package io.jmix.data.persistence;
 
 import io.jmix.core.Stores;
+import io.jmix.core.common.util.StringHelper;
 import io.jmix.data.SequenceSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Factory for obtaining implementations of DBMS-specific objects, particularly {@link DbmsFeatures},
@@ -37,12 +41,16 @@ public class DbmsSpecifics {
     @Autowired
     protected ApplicationContext applicationContext;
 
+    protected Map<String, DbmsFeatures> dbmsFeaturesByStore = new ConcurrentHashMap<>(4);
+    protected Map<String, SequenceSupport> sequenceSupportByStore = new ConcurrentHashMap<>(4);
+    protected Map<String, DbTypeConverter> dbTypeConverterByStore = new ConcurrentHashMap<>(4);
+
     public DbmsFeatures getDbmsFeatures() {
         return get(DbmsFeatures.class, Stores.MAIN);
     }
 
     public DbmsFeatures getDbmsFeatures(String storeName) {
-        return get(DbmsFeatures.class, storeName);
+        return dbmsFeaturesByStore.computeIfAbsent(storeName, s -> get(DbmsFeatures.class, s));
     }
 
     public SequenceSupport getSequenceSupport() {
@@ -50,7 +58,7 @@ public class DbmsSpecifics {
     }
 
     public SequenceSupport getSequenceSupport(String storeName) {
-        return get(SequenceSupport.class, storeName);
+        return sequenceSupportByStore.computeIfAbsent(storeName, s -> get(SequenceSupport.class, s));
     }
 
     public DbTypeConverter getDbTypeConverter() {
@@ -58,7 +66,7 @@ public class DbmsSpecifics {
     }
 
     public DbTypeConverter getDbTypeConverter(String storeName) {
-        return get(DbTypeConverter.class, storeName);
+        return dbTypeConverterByStore.computeIfAbsent(storeName, s -> get(DbTypeConverter.class, s));
     }
 
     public <T> T get(Class<T> intf) {
@@ -73,10 +81,10 @@ public class DbmsSpecifics {
     public <T> T get(Class<T> intf, String dbmsType, String dbmsVersion) {
         T bean;
         try {
-            String name = dbmsType + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
+            String name = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
             bean = (T) applicationContext.getBean(name);
         } catch (NoSuchBeanDefinitionException e) {
-            String name = dbmsType + intf.getSimpleName();
+            String name = StringHelper.underscoreToCamelCase(dbmsType) + intf.getSimpleName();
             bean = (T) applicationContext.getBean(name);
         }
         return bean;

@@ -51,8 +51,9 @@ class LiquibaseChangeLogProcessorTest extends Specification {
 
         and:
         def databaseChangeLog = new XmlSlurper().parse(masterFile)
-        databaseChangeLog.include[0].@file == '/test_support_modules/addon/liquibase/changelog.xml'
-        databaseChangeLog.include[1].@file == '/test_support_modules/app/liquibase/changelog.xml'
+        databaseChangeLog.include[0].@file == '/io/jmix/data/liquibase/changelog.xml'
+        databaseChangeLog.include[1].@file == '/test_support_modules/addon/liquibase/changelog.xml'
+        databaseChangeLog.include[2].@file == '/test_support_modules/app/liquibase/changelog.xml'
     }
 
     def "master file creation for additional data store"() {

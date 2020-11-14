@@ -17,47 +17,49 @@
 
 package io.jmix.data.impl.dbms;
 
+
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.data.SequenceSupport;
 import org.springframework.stereotype.Component;
 
-@Component("postgresSequenceSupport")
-public class PostgresSequenceSupport implements SequenceSupport {
+@Component("sqlServerSequenceSupport")
+public class SqlServerSequenceSupport implements SequenceSupport {
 
     @Override
     public String sequenceExistsSql(String sequenceName) {
-        return "select relname from pg_class where relkind = 'S' and relname = '"
-                + sequenceName.toLowerCase() + "'";
+        Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
+        return "select NAME from SYS.SEQUENCES where NAME = '" + sequenceName.toUpperCase() + "'";
     }
 
     @Override
     public String createSequenceSql(String sequenceName, long startValue, long increment) {
         Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
-        return "create sequence " + sequenceName.toLowerCase()
-                + " increment by " + increment + " start with " + startValue + " minvalue 0";
+        return "create sequence " + sequenceName.toUpperCase()
+                + " as bigint increment by " + increment + " start with " + startValue + " minvalue 0";
     }
 
     @Override
     public String modifySequenceSql(String sequenceName, long startWith) {
         Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
-        return "select setval('" + sequenceName.toLowerCase() + "', " + startWith + ")";
+        return "alter sequence " + sequenceName.toUpperCase()
+                + " restart with " + startWith;
     }
 
     @Override
     public String deleteSequenceSql(String sequenceName) {
         Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
-        return "drop sequence " + sequenceName.toLowerCase();
+        return "drop sequence " + sequenceName.toUpperCase();
     }
 
     @Override
     public String getNextValueSql(String sequenceName) {
         Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
-        return "select nextval('" + sequenceName.toLowerCase() + "')";
+        return "select next value for " + sequenceName.toUpperCase();
     }
 
     @Override
     public String getCurrentValueSql(String sequenceName) {
         Preconditions.checkNotNullArgument(sequenceName, "sequenceName is null");
-        return "select last_value from " + sequenceName.toLowerCase();
+        return "select cast(CURRENT_VALUE as bigint) from SYS.SEQUENCES where NAME = '" + sequenceName.toUpperCase() + "'";
     }
 }

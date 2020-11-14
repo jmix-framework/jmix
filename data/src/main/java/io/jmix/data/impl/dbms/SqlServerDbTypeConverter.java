@@ -25,8 +25,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Component("postgresDbTypeConverter")
-public class PostgresDbTypeConverter implements DbTypeConverter {
+@Component("sqlServerDbTypeConverter")
+public class SqlServerDbTypeConverter implements DbTypeConverter {
 
     @Override
     public Object getJavaObject(ResultSet resultSet, int columnIndex) {
@@ -42,10 +42,11 @@ public class PostgresDbTypeConverter implements DbTypeConverter {
             String typeName = metaData.getColumnTypeName(columnIndex);
 
             switch (sqlType) {
-                case Types.OTHER:
-                    if (resultSet.getObject(columnIndex) instanceof UUID) {
-                        value = resultSet.getObject(columnIndex);
-                    } else if ("uuid".equals(typeName)) {
+                case Types.CHAR:
+                case Types.VARCHAR:
+                case Types.LONGVARCHAR:
+                case Types.CLOB:
+                    if ("uniqueidentifier".equals(typeName)) {
                         String stringValue = resultSet.getString(columnIndex);
                         value = stringValue != null ? UuidProvider.fromString(stringValue) : null;
                     } else {
@@ -66,21 +67,29 @@ public class PostgresDbTypeConverter implements DbTypeConverter {
 
     @Override
     public Object getSqlObject(Object value) {
-        try {
-            if (value instanceof Date)
-                return new Timestamp(((Date) value).getTime());
-            if (value instanceof UUID)
-                return new PostgresUUID((UUID) value);
-            return value;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error converting application value", e);
-        }
+        if (value instanceof Date)
+            return new Timestamp(((Date) value).getTime());
+        if (value instanceof UUID)
+            return value.toString();
+        if (value instanceof Boolean)
+            return ((Boolean) value) ? 1 : 0;
+        return value;
     }
 
     @Override
     public int getSqlType(Class<?> javaClass) {
         if (javaClass == Date.class)
             return Types.TIMESTAMP;
+        else if (javaClass == UUID.class)
+            return Types.VARCHAR;
+        else if (javaClass == Boolean.class)
+            return Types.BIT;
+        else if (javaClass == String.class)
+            return Types.VARCHAR;
+        else if (javaClass == Integer.class)
+            return Types.INTEGER;
+        else if (javaClass == Long.class)
+            return Types.BIGINT;
         return Types.OTHER;
     }
 }

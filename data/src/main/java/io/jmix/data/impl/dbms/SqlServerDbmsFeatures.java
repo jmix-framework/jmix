@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("mssqlDbmsFeatures")
-public class MssqlDbmsFeatures implements DbmsFeatures {
+@Component("sqlServerDbmsFeatures")
+public class SqlServerDbmsFeatures implements DbmsFeatures {
 
     @Override
     public Map<String, String> getJpaParameters() {

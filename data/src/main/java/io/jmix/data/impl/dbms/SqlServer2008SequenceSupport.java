@@ -24,8 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.text.SimpleDateFormat;
 
-@Component("mssqlSequenceSupport")
-public class MssqlSequenceSupport implements SequenceSupport {
+@Component("sqlServer2008SequenceSupport")
+public class SqlServer2008SequenceSupport implements SequenceSupport {
 
     @Autowired
     protected TimeSource timeSource;

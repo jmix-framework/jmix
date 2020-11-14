@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("postgresDbmsFeatures")
-public class PostgresDbmsFeatures implements DbmsFeatures {
+@Component("postgresqlDbmsFeatures")
+public class PostgresqlDbmsFeatures implements DbmsFeatures {
 
     @Override
     public Map<String, String> getJpaParameters() {

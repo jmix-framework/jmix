@@ -38,7 +38,7 @@ public class DataAutoConfigurationTest {
     //https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.3-Release-Notes#applicationcontextrunner-disables-bean-overriding-by-default
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DataSourceAutoConfiguration.class, DataAutoConfiguration.class, CacheAutoConfiguration.class))
-            .withPropertyValues("jmix.data.dbmsType=hsql", "spring.datasource.url=jdbc:hsqldb:mem:testdb", "spring.datasource.username=sa")
+            .withPropertyValues("spring.datasource.url=jdbc:hsqldb:mem:testdb", "spring.datasource.username=sa")
             .withAllowBeanDefinitionOverriding(true);
 
     @Test

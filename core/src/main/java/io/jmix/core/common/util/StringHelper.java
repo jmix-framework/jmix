@@ -52,4 +52,44 @@ public final class StringHelper {
 
         return sb.toString();
     }
+
+    /**
+     * Converts a string with underscores to camel case. For example:
+     * <pre>
+     *     foo_bar      -> fooBar
+     *     FOO_BAR      -> fooBar
+     *     foo_bar_baz  -> fooBarBaz
+     *     foo__bar     -> fooBar
+     *     _foo_bar     -> _fooBar
+     *     foo          -> foo
+     * </pre>
+     */
+    public static String underscoreToCamelCase(String str) {
+        if (str == null || str.isEmpty())
+            return str;
+
+        StringBuilder sb = new StringBuilder();
+        String s = str;
+        while (s.charAt(0) == '_') {
+            sb.append('_');
+            s = s.substring(1);
+        }
+
+        String[] parts = s.split("_");
+
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            if (part.length() > 0) {
+                if (i == 0) {
+                    sb.append(part.toLowerCase());
+                } else {
+                    sb.append(Character.toUpperCase(part.charAt(0)));
+                    if (part.length() > 1) {
+                        sb.append(part.substring(1).toLowerCase());
+                    }
+                }
+            }
+        }
+        return sb.toString();
+    }
 }

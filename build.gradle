@@ -91,6 +91,11 @@ dependencies {
         api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(baseVersion)}"
         api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(baseVersion)}"
 
+        api "io.jmix.email:jmix-email:${snapshotOr(baseVersion)}"
+        api "io.jmix.email:jmix-email-ui:${snapshotOr(baseVersion)}"
+        api "io.jmix.email:jmix-email-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(baseVersion)}"
+
         api "io.jmix.fsfilestorage:jmix-fsfilestorage:${snapshotOr(baseVersion)}"
         api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:${snapshotOr(baseVersion)}"
 

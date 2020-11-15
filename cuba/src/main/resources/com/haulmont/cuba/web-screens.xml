@@ -37,4 +37,39 @@
             template="/com/haulmont/cuba/gui/app/core/bulk/bulk-edit.xml"/>
     <screen id="saveSetInFolder"
             template="/com/haulmont/cuba/web/app/folders/save-set-window.xml"/>
+
+    <screen id="filterEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/filter-edit.xml"/>
+
+    <screen id="addCondition"
+            template="/com/haulmont/cuba/gui/components/filter/addcondition/add-condition.xml"/>
+
+    <screen id="saveFilter"
+            template="/com/haulmont/cuba/gui/components/filter/save-filter.xml"/>
+
+    <screen id="customConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/custom-condition-frame.xml"/>
+
+    <screen id="dynamicAttributesConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/dynamic-attributes-condition-frame.xml"/>
+
+    <screen id="propertyConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/property-condition-frame.xml"/>
+
+    <screen id="customConditionEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/custom-condition-edit.xml"/>
+
+    <screen id="dynamicAttributesConditionEditor"
+            template="/com/haulmont/cuba/gui/components/filter/edit/dynamic-attributes-condition-edit.xml"/>
+
+    <screen id="groupConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/group-condition-frame.xml"/>
+
+    <screen id="ftsConditionFrame"
+            template="/com/haulmont/cuba/gui/components/filter/edit/fts-condition-frame.xml"/>
+
+    <screen id="filterSelect"
+            template="/com/haulmont/cuba/gui/components/filter/filterselect/filter-select.xml"/>
+
+
 </screen-config>

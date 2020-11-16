@@ -64,6 +64,7 @@ dependencies {
     testImplementation 'com.jayway.jsonpath:json-path'
     testImplementation 'com.haulmont.masquerade:masquerade-connector:1.0.7'
     testImplementation 'com.haulmont.masquerade:masquerade-web:1.0.7'
+    testImplementation 'org.mockito:mockito-core:3.6.0'
 
     testImplementation 'org.apache.commons:commons-dbcp2'
 

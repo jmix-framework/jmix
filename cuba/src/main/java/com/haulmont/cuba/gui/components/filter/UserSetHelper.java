@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.ReferenceToEntitySupport;
 import io.jmix.core.common.util.Dom4j;
-import io.jmix.ui.filter.ConditionType;
+import com.haulmont.cuba.core.global.filter.ConditionType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Document;

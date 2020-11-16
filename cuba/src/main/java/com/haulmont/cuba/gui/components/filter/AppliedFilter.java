@@ -27,7 +27,7 @@ import com.haulmont.cuba.security.entity.FilterEntity;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.datastruct.Node;
-import io.jmix.ui.filter.Op;
+import com.haulmont.cuba.core.global.filter.Op;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 

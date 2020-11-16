@@ -50,7 +50,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.FilterImplementation;
-import io.jmix.ui.filter.Op;
+import com.haulmont.cuba.core.global.filter.Op;
 import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.MapScreenOptions;

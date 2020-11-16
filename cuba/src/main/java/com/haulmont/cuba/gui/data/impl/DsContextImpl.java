@@ -30,7 +30,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
-import io.jmix.ui.filter.ParameterInfo;
+import com.haulmont.cuba.core.global.filter.ParameterInfo;
 import io.jmix.ui.screen.FrameOwner;
 
 import java.util.*;

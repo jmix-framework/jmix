@@ -36,7 +36,7 @@ import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.core.security.PermissionType;
 import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.filter.QueryFilter;
+import com.haulmont.cuba.core.global.filter.QueryFilter;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;

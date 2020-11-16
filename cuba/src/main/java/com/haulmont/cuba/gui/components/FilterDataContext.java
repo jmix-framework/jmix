@@ -21,8 +21,8 @@ import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.filter.ParameterInfo;
-import io.jmix.ui.filter.ParametersHelper;
+import com.haulmont.cuba.core.global.filter.ParameterInfo;
+import com.haulmont.cuba.core.global.filter.ParametersHelper;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataLoader;
 

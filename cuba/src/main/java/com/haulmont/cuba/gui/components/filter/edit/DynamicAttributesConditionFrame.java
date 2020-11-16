@@ -35,14 +35,14 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.filter.Op;
-import io.jmix.ui.filter.OpManager;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.OpManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static io.jmix.ui.filter.Op.*;
+import static com.haulmont.cuba.core.global.filter.Op.*;
 
 public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttributesCondition> {
 

@@ -27,7 +27,7 @@ import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.ui.component.FilterImplementation;
-import io.jmix.ui.filter.ConditionType;
+import com.haulmont.cuba.core.global.filter.ConditionType;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.apache.commons.lang3.StringUtils;

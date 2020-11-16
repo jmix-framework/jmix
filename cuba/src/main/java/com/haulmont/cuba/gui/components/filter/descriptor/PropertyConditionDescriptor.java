@@ -31,8 +31,8 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.filter.Op;
-import io.jmix.ui.filter.OpManager;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.OpManager;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;

@@ -27,7 +27,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.filter.QueryFilter;
+import com.haulmont.cuba.core.global.filter.QueryFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 

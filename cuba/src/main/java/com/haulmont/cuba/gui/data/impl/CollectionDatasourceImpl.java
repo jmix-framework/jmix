@@ -27,10 +27,10 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.AggregationInfo;
-import io.jmix.ui.filter.Condition;
-import io.jmix.ui.filter.DenyingClause;
-import io.jmix.ui.filter.LogicalCondition;
-import io.jmix.ui.filter.LogicalOp;
+import com.haulmont.cuba.core.global.filter.Condition;
+import com.haulmont.cuba.core.global.filter.DenyingClause;
+import com.haulmont.cuba.core.global.filter.LogicalCondition;
+import com.haulmont.cuba.core.global.filter.LogicalOp;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import org.apache.commons.collections4.map.LinkedMap;
 

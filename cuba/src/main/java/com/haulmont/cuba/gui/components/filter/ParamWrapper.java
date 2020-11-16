@@ -33,8 +33,8 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.SizeUnit;
-import io.jmix.ui.filter.Op;
-import io.jmix.ui.filter.ParametersHelper;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.ParametersHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;

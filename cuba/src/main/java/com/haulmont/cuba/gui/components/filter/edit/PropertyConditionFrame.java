@@ -17,7 +17,7 @@
 
 package com.haulmont.cuba.gui.components.filter.edit;
 
-import io.jmix.ui.filter.Op;
+import com.haulmont.cuba.core.global.filter.Op;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;

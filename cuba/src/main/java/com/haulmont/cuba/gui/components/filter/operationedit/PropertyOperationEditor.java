@@ -25,8 +25,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.PopupButton;
-import io.jmix.ui.filter.Op;
-import io.jmix.ui.filter.OpManager;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.OpManager;
 import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 
 import java.util.List;

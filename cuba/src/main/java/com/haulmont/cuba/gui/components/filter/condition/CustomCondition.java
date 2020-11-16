@@ -25,7 +25,7 @@ import com.haulmont.cuba.gui.components.filter.operationedit.CustomOperationEdit
 import io.jmix.core.MessageTools;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.ui.filter.ConditionType;
+import com.haulmont.cuba.core.global.filter.ConditionType;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 

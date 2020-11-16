@@ -39,8 +39,8 @@
                                      caption="BigDecimal param"
                                      defaultValue="1234567890"/>
                 <enumParameter id="enumParam"
-                               caption="Op Enum param"
-                               enumClass="io.jmix.ui.filter.Op"/>
+                               caption="Enum param"
+                               enumClass="io.jmix.data.EntityChangeType"/>
                 <entityParameter id="entityParam"
                                  caption="Order Entity param"
                                  entityClass="test_support.entity.sales.Order"/>

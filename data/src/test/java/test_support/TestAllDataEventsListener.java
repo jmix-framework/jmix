@@ -94,7 +94,7 @@ public class TestAllDataEventsListener implements
 
     @EventListener
     void saving(EntitySavingEvent<Foo> event) {
-        allEvents.add(new EventInfo("EntitySavingEvent: isNew=" + event.isNew(), event));
+        allEvents.add(new EventInfo("EntitySavingEvent: isNew=" + event.isNewEntity(), event));
     }
 
     @EventListener

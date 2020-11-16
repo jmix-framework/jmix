@@ -36,7 +36,7 @@ public class TestLoadSaveEventListener {
     void saving(EntitySavingEvent<Bar> event) {
         Bar bar = event.getEntity();
 
-        if (event.isNew()) {
+        if (event.isNewEntity()) {
             if (bar.getName() == null) {
                 bar.setName("new");
             }

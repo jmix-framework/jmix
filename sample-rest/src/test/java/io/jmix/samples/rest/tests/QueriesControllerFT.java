@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class QueriesControllerFT extends AbstractRestControllerFT {
 
     private List<UUID> coloursUuids = new ArrayList<>();
+    private UUID adminId;
 
     @Override
     public void prepareDb() throws Exception {
@@ -70,16 +71,16 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
                 johnLogin.toLowerCase()
         );
 
-//        String anonymousLogin = "anonymous";
-//        UUID anonymousId = dirtyData.createUserUuid();
-//        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
-//                        "values(?, ?, ?, ?, ?)",
-//                anonymousId,
-//                1l,
-//                anonymousLogin,
-//                companyGroupId, //"Company" group
-//                anonymousLogin.toLowerCase()
-//        );
+        String adminLogin = "admin";
+        adminId = dirtyData.createUserUuid();
+        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
+                        "values(?, ?, ?, ?, ?)",
+                adminId,
+                1l,
+                adminLogin,
+                companyGroupId, //"Company" group
+                adminLogin.toLowerCase()
+        );
 
         UUID modelId = dirtyData.createModelUuid();
         executePrepared("insert into ref_model(id, name, version, dtype) values (?, ?, 1, 'ref$ExtModel')",
@@ -114,8 +115,6 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo security
-    @Disabled
     @Test
     public void executeQueryWithSessionParameter() throws Exception {
         String url = baseUrl + "/queries/sec$User/currentUser";
@@ -126,6 +125,7 @@ public class QueriesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$").size());
             assertEquals("admin", ctx.read("$.[0].login"));
+            assertEquals(adminId.toString(), ctx.read("$.[0].id"));
         }
     }
 

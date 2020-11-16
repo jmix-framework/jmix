@@ -13,7 +13,7 @@
         </params>
     </query>
     <query name="currentUser" entity="sec$User" view="_local" cacheable="true" anonymousAllowed="true">
-        <jpql><![CDATA[select u from sec$User u where u.id = :session$userId]]></jpql>
+        <jpql><![CDATA[select u from sec$User u where u.login = :session$username]]></jpql>
     </query>
     <query name="allColours" entity="ref$Colour" view="_local">
         <jpql><![CDATA[select u from ref$Colour u order by u.name]]></jpql>

@@ -42,7 +42,7 @@ public class EntityPersistingEventManager {
 
     @EventListener
     public void handleEvent(EntitySavingEvent<?> entitySavingEvent) {
-        if (entitySavingEvent.isNew()) {
+        if (entitySavingEvent.isNewEntity()) {
             EntityPersistingEvent<Object> event = new EntityPersistingEvent<>(
                     this,
                     entitySavingEvent.getEntity(),

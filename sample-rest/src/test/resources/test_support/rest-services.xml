@@ -5,10 +5,6 @@
   -->
 
 <services xmlns="http://schemas.haulmont.com/cuba/rest-services-v2.xsd">
-    <!--    <service name="cuba_DynamicAttributesCacheService">-->
-    <!--        <method name="loadCache"/>-->
-    <!--    </service>-->
-
     <service name="jmix_RestTestService">
         <method name="sum" anonymousAllowed="true">
             <param name="number1"/>
@@ -109,5 +105,9 @@
         <method name="getNotPersistentStringIdEntity"/>
 
         <method name="methodReturnsListOfMap"/>
+    </service>
+
+    <service name="jmix_OtherRestTestService">
+        <method name="testMethod"/>
     </service>
 </services>

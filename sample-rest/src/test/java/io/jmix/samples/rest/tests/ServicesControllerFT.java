@@ -601,8 +601,6 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo dynamic attribute
-    @Disabled
     @Test
     public void getServiceInfos() throws Exception {
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services", oauthToken, null)) {
@@ -610,9 +608,9 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             ReadContext readContext = parseResponse(response);
             assertEquals(2, readContext.<Collection>read("$").size());
             Object firstServiceName = readContext.read("$.[0].name");
-            assertTrue("cuba_DynamicAttributesCacheService".equals(firstServiceName) || "jmix_RestTestService".equals(firstServiceName));
+            assertTrue("jmix_OtherRestTestService".equals(firstServiceName) || "jmix_RestTestService".equals(firstServiceName));
             Object secondServiceName = readContext.read("$.[1].name");
-            assertTrue("cuba_DynamicAttributesCacheService".equals(secondServiceName) || "jmix_RestTestService".equals(secondServiceName));
+            assertTrue("jmix_OtherRestTestService".equals(secondServiceName) || "jmix_RestTestService".equals(secondServiceName));
         }
     }
 
@@ -632,7 +630,6 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         }
     }
 
-    @Disabled
     @Test
     public void serviceThatReturnsNotPersistedEntityGET() throws Exception {
         Map<String, String> params = new LinkedHashMap<>();
@@ -640,9 +637,9 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             assertEquals("application/json;charset=UTF-8", responseContentType(response));
             ReadContext readContext = parseResponse(response);
-            assertEquals("stencil 1", readContext.read("$.title"));
-            assertEquals("bpm$Stencil", readContext.read("$._entityName"));
-            assertEquals("stencil 1", readContext.read("$._instanceName"));
+            assertEquals("model 1", readContext.read("$.title"));
+            assertEquals("rest_ModelEntity", readContext.read("$._entityName"));
+            assertEquals("model 1", readContext.read("$._instanceName"));
             assertNotNull(readContext.read("$.id"));
         }
     }

@@ -5,6 +5,7 @@
 
 package io.jmix.samples.rest.service.app;
 
+import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
 import org.springframework.validation.annotation.Validated;
@@ -73,7 +74,7 @@ public interface RestTestService {
     @NotNull
     String validatedMethodResult(@Pattern(regexp = "\\d+") String code);
 
-//    Stencil notPersistedEntity();
+    ModelEntity notPersistedEntity();
 
     List<String> methodWithPrimitiveListArguments(List<String> stringList, int[] intArray, int intArgument);
 

@@ -11,16 +11,14 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.validation.CustomValidationException;
+import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
 import io.jmix.samples.rest.exception.CustomHttpClientErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Nonnull;
-import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -183,12 +181,12 @@ public class RestTestServiceBean implements RestTestService {
         return null;
     }
 
-//    @Override
-//    public Stencil notPersistedEntity() {
-//        Stencil stencil = metadata.create(Stencil.class);
-//        stencil.setTitle("stencil 1");
-//        return stencil;
-//    }
+    @Override
+    public ModelEntity notPersistedEntity() {
+        ModelEntity model = metadata.create(ModelEntity.class);
+        model.setTitle("model 1");
+        return model;
+    }
 
     @Override
     public List<String> methodWithPrimitiveListArguments(List<String> stringList, int[] intArray, int intArgument) {

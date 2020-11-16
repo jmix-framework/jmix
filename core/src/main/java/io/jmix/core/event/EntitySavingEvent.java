@@ -28,14 +28,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 public class EntitySavingEvent<E> extends AbstractEntityEvent {
 
     private final E entity;
-    private final boolean isNew;
+    private final boolean isNewEntity;
 
     @Internal
-    public EntitySavingEvent(Object source, MetaClass metaClass, E entity, boolean isNew) {
+    public EntitySavingEvent(Object source, MetaClass metaClass, E entity, boolean isNewEntity) {
         super(source, metaClass);
         Preconditions.checkNotNullArgument(entity, "entity is null");
         this.entity = entity;
-        this.isNew = isNew;
+        this.isNewEntity = isNewEntity;
     }
 
     /**
@@ -48,15 +48,15 @@ public class EntitySavingEvent<E> extends AbstractEntityEvent {
     /**
      * True if the entity is new, i.e. it is being created in the data store.
      */
-    public boolean isNew() {
-        return isNew;
+    public boolean isNewEntity() {
+        return isNewEntity;
     }
 
     @Override
     public String toString() {
         return "EntitySavingEvent{" +
                 "entity=" + entity +
-                ", isNew=" + isNew +
+                ", new=" + isNewEntity +
                 '}';
     }
 }

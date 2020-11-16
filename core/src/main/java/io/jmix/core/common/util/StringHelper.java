@@ -56,12 +56,12 @@ public final class StringHelper {
     /**
      * Converts a string with underscores to camel case. For example:
      * <pre>
-     *     foo_bar      -> fooBar
-     *     FOO_BAR      -> fooBar
-     *     foo_bar_baz  -> fooBarBaz
-     *     foo__bar     -> fooBar
-     *     _foo_bar     -> _fooBar
-     *     foo          -> foo
+     *     foo_bar      - fooBar
+     *     FOO_BAR      - fooBar
+     *     foo_bar_baz  - fooBarBaz
+     *     foo__bar     - fooBar
+     *     _foo_bar     - _fooBar
+     *     foo          - foo
      * </pre>
      */
     public static String underscoreToCamelCase(String str) {

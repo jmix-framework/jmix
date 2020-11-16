@@ -58,7 +58,7 @@
             </column>
             <column name="ENTITY_CLASS" type="varchar(1000)"/>
             <column name="DATA_TYPE" type="varchar(200)"/>
-            <column name="DEFAULT_STRING" type="varchar(4000)"/>
+            <column name="DEFAULT_STRING" type="clob"/>
             <column name="DEFAULT_INT" type="int"/>
             <column name="DEFAULT_DOUBLE" type="numeric(36,6)"/>
             <column name="DEFAULT_DECIMAL" type="numeric(36,10)"/>
@@ -75,16 +75,16 @@
             <column name="SCREEN" type="varchar(255)"/>
             <column name="REQUIRED" type="boolean"/>
             <column name="LOOKUP" type="boolean"/>
-            <column name="TARGET_SCREENS" type="varchar(4000)"/>
+            <column name="TARGET_SCREENS" type="clob"/>
             <column name="WIDTH" type="varchar(20)"/>
             <column name="ROWS_COUNT" type="int"/>
             <column name="IS_COLLECTION" type="boolean"/>
-            <column name="JOIN_CLAUSE" type="varchar(4000)"/>
-            <column name="WHERE_CLAUSE" type="varchar(4000)"/>
+            <column name="JOIN_CLAUSE" type="clob"/>
+            <column name="WHERE_CLAUSE" type="clob"/>
             <column name="FILTER_XML" type="clob"/>
             <column name="LOCALE_NAMES" type="varchar(1000)"/>
-            <column name="LOCALE_DESCRIPTIONS" type="varchar(4000)"/>
-            <column name="ENUMERATION_LOCALES" type="varchar(4000)"/>
+            <column name="LOCALE_DESCRIPTIONS" type="clob"/>
+            <column name="ENUMERATION_LOCALES" type="clob"/>
             <column name="ATTRIBUTE_CONFIGURATION_JSON" type="clob"/>
         </createTable>
 

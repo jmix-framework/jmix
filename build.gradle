@@ -115,6 +115,9 @@ dependencies {
         api "io.jmix.sessions:jmix-sessions:${snapshotOr(baseVersion)}"
         api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(baseVersion)}"
 
+        api "io.jmix.translations:jmix-translations-fr:${snapshotOr(baseVersion)}"
+        api "io.jmix.translations:jmix-translations-ru:${snapshotOr(baseVersion)}"
+
         api "io.jmix.ui:jmix-ui:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-data:${snapshotOr(baseVersion)}"
         api "io.jmix.ui:jmix-ui-export:${snapshotOr(baseVersion)}"

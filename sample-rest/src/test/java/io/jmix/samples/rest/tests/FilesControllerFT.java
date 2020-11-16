@@ -20,53 +20,33 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.UUID;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.parseResponse;
 import static io.jmix.samples.rest.tools.RestTestUtils.statusCode;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
-@Disabled
 public class FilesControllerFT extends AbstractRestControllerFT {
-
-    protected static final String URI_BASE = "http://localhost:8080/app/rest/v2";
 
     protected static final String AUTHORIZATION = "Authorization";
 
-    protected static final String NON_UUID_VALUE = "nonUuidValue";
+    protected static final String INVALID_FILE_REFERENCE = "invalid_file_reference";
 
-    protected static final String EXT_TXT = "txt";
     protected static final String FILE_TO_UPLOAD_TXT = "fileToUpload.txt";
     protected static final String TEST_FILE_PDF = "test-file.pdf";
 
-    protected InputStreamEntity entity;
-
-    @BeforeEach
-    public void initEntity() throws URISyntaxException, FileNotFoundException {
-        URL fileUrl = FilesControllerFT.class.getResource("data/" + FILE_TO_UPLOAD_TXT);
-        entity = new InputStreamEntity(new FileInputStream(new File(fileUrl.toURI())));
-    }
-
     @Test
     public void uploadFile() throws Exception {
-        URIBuilder uriBuilder = new URIBuilder(URI_BASE + "/files");
+        URIBuilder uriBuilder = new URIBuilder(baseUrl + "/files");
         uriBuilder.addParameter("name", FILE_TO_UPLOAD_TXT);
+
+        InputStreamEntity entity = new InputStreamEntity(getFileStream(FILE_TO_UPLOAD_TXT));
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = getHttpPost(uriBuilder, entity);
@@ -76,23 +56,21 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
             ReadContext ctx = parseResponse(response);
 
-            String fileDescriptorId = ctx.read("$.id");
+            String fileURI = ctx.read("$.fileReference");
 
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
             assertEquals(0, (int) ctx.read("$.size"));
-            assertNotNull(fileDescriptorId);
+            assertNotNull(fileURI);
 
-            checkLocation(response, fileDescriptorId);
-            checkRecordInDb(fileDescriptorId, FILE_TO_UPLOAD_TXT, "txt", 0);
+            checkLocation(response, fileURI);
         }
     }
 
     @Test
     public void uploadFileWithoutName() throws Exception {
-        URIBuilder uriBuilder = new URIBuilder(URI_BASE + "/files");
+        URIBuilder uriBuilder = new URIBuilder(baseUrl + "/files");
 
-        URL fileUrl = FilesControllerFT.class.getResource("data/" + FILE_TO_UPLOAD_TXT);
-        InputStreamEntity entity = new InputStreamEntity(new FileInputStream(new File(fileUrl.toURI())));
+        InputStreamEntity entity = new InputStreamEntity(getFileStream(FILE_TO_UPLOAD_TXT));
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = getHttpPost(uriBuilder, entity);
@@ -100,27 +78,25 @@ public class FilesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             ReadContext ctx = parseResponse(response);
 
-            String fileDescriptorId = ctx.read("$.id");
+            String fileURI = ctx.read("$.fileReference");
 
-            assertNotNull(fileDescriptorId);
-            assertEquals(fileDescriptorId, ctx.read("$.name"));
+            assertNotNull(fileURI);
             assertEquals(0, (int) ctx.read("$.size"));
 
-            checkLocation(response, fileDescriptorId);
-            checkRecordInDb(fileDescriptorId, fileDescriptorId, "", 0);
+            checkLocation(response, fileURI);
         }
     }
 
     @Test
+    @Disabled
     public void uploadFileWithId() throws Exception {
         String id = UUID.randomUUID().toString();
 
-        URIBuilder uriBuilder = new URIBuilder(URI_BASE + "/files");
+        URIBuilder uriBuilder = new URIBuilder(baseUrl + "/files");
         uriBuilder.addParameter("name", FILE_TO_UPLOAD_TXT);
         uriBuilder.addParameter("id", id);
 
-        URL fileUrl = FilesControllerFT.class.getResource("data/" + FILE_TO_UPLOAD_TXT);
-        InputStreamEntity entity = new InputStreamEntity(new FileInputStream(new File(fileUrl.toURI())));
+        InputStreamEntity entity = new InputStreamEntity(getFileStream(FILE_TO_UPLOAD_TXT));
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = getHttpPost(uriBuilder, entity);
@@ -129,14 +105,13 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusLine().getStatusCode());
 
             ReadContext ctx = parseResponse(response);
-            String fileDescriptorId = ctx.read("$.id");
+            String fileURI = ctx.read("$.fileReference");
 
-            assertEquals(id, fileDescriptorId);
+            assertEquals(id, fileURI);
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
             assertEquals(0, (int) ctx.read("$.size"));
 
             checkLocation(response, id);
-            checkRecordInDb(fileDescriptorId, FILE_TO_UPLOAD_TXT, EXT_TXT, 0);
         }
     }
 
@@ -151,10 +126,8 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals("application/pdf", response.getFirstHeader("Content-Type").getValue());
             assertEquals("no-cache", response.getFirstHeader("Cache-Control").getValue());
             assertEquals("inline; filename=\"test-file.pdf\"", response.getFirstHeader("Content-Disposition").getValue());
-//            assertEquals("123", response.getFirstHeader("Content-Length").getValue());
             byte[] fileContent = EntityUtils.toByteArray(response.getEntity());
             assertTrue(fileContent.length > 0);
-//            assertEquals("Test data", fileContent);
         }
     }
 
@@ -162,7 +135,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
     public void downloadMissingFile() throws Exception {
         String fileId = UUID.randomUUID().toString();
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = getHttpGet(fileId);
+        HttpGet httpGet = getHttpGet(String.format("2020/11/16/%s.txt*fileToUpload.txt", fileId));
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusLine().getStatusCode());
             ReadContext ctx = parseResponse(response);
@@ -173,37 +146,35 @@ public class FilesControllerFT extends AbstractRestControllerFT {
     @Test
     public void downloadFileWithInvalidId() throws Exception {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = getHttpGet(NON_UUID_VALUE);
+        HttpGet httpGet = getHttpGet(INVALID_FILE_REFERENCE);
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             assertEquals(HttpStatus.SC_BAD_REQUEST, statusCode(response));
             ReadContext ctx = parseResponse(response);
-            assertEquals("Invalid entity ID", ctx.read("$.error"));
-            assertEquals(String.format("Cannot convert %s into valid entity ID", NON_UUID_VALUE), ctx.read("$.details"));
+            assertEquals("Invalid file reference", ctx.read("$.error"));
+            assertEquals(String.format("Cannot convert '%s' into valid file reference", INVALID_FILE_REFERENCE), ctx.read("$.details"));
         }
     }
 
     protected String _uploadFile() throws URISyntaxException, IOException {
-        URIBuilder uriBuilder = new URIBuilder(URI_BASE + "/files");
+        URIBuilder uriBuilder = new URIBuilder(baseUrl + "/files");
         uriBuilder.addParameter("name", TEST_FILE_PDF);
 
-        URL fileUrl = FilesControllerFT.class.getResource("data/" + FILE_TO_UPLOAD_TXT);
-        InputStreamEntity entity = new InputStreamEntity(new FileInputStream(new File(fileUrl.toURI())));
+        InputStreamEntity entity = new InputStreamEntity(getFileStream(TEST_FILE_PDF));
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = getHttpPost(uriBuilder, entity);
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             ReadContext ctx = parseResponse(response);
-            return ctx.read("$.id");
+            return ctx.read("$.fileReference");
         }
     }
 
     @Test
     public void uploadFileMultipart() throws Exception {
-        URIBuilder uriBuilder = new URIBuilder(URI_BASE + "/files");
+        URIBuilder uriBuilder = new URIBuilder(baseUrl + "/files");
 
-        URL fileUrl = FilesControllerFT.class.getResource("data/" + FILE_TO_UPLOAD_TXT);
-        FileBody fileBody = new FileBody(new File(fileUrl.toURI()));
+        FileBody fileBody = new FileBody(getFile(FILE_TO_UPLOAD_TXT));
 
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -212,39 +183,24 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = getHttpPost(uriBuilder, entity);
-//        httpPost.setHeader("Content-Type", "multipart/form-data");
+
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusLine().getStatusCode());
             ReadContext ctx = parseResponse(response);
 
-            String fileDescriptorId = ctx.read("$.id");
+            String fileDescriptorId = ctx.read("$.fileReference");
 
             assertNotNull(fileDescriptorId);
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
             assertTrue(ctx.read("$.size", Integer.class) > 0);
 
             checkLocation(response, fileDescriptorId);
-            checkRecordInDb(fileDescriptorId, FILE_TO_UPLOAD_TXT, EXT_TXT, 9);
         }
     }
 
     protected void checkLocation(CloseableHttpResponse response, String fileDescriptorId) {
         Header location = response.getFirstHeader("Location");
-        assertEquals(URI_BASE + "/files/" + fileDescriptorId, location.getValue());
-    }
-
-
-    protected void checkRecordInDb(String id, String name, String ext, long fileSize) throws SQLException {
-        try (PreparedStatement stmt = conn.prepareStatement("select NAME, EXT, FILE_SIZE from SYS_FILE where ID = ?")) {
-            stmt.setObject(1, UUID.fromString(id));
-            ResultSet rs = stmt.executeQuery();
-
-            assertTrue(rs.next());
-            assertEquals(name, rs.getString("NAME"));
-            assertEquals(ext, rs.getString("EXT"));
-            assertEquals(fileSize, rs.getLong("FILE_SIZE"));
-            assertFalse(rs.next());
-        }
+        assertEquals(baseUrl + "/files/" + fileDescriptorId, location.getValue());
     }
 
     protected HttpPost getHttpPost(URIBuilder uriBuilder, HttpEntity entity) throws URISyntaxException {
@@ -255,8 +211,29 @@ public class FilesControllerFT extends AbstractRestControllerFT {
     }
 
     protected HttpGet getHttpGet(String fileId) {
-        HttpGet httpGet = new HttpGet(URI_BASE + "/files/" + fileId);
+        HttpGet httpGet = new HttpGet(baseUrl + "/files/" + fileId);
         httpGet.setHeader(AUTHORIZATION, "Bearer " + oauthToken);
         return httpGet;
+    }
+
+    protected InputStream getFileStream(String fileName) {
+        try {
+            return new FileInputStream(getFile(fileName));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to load file " + fileName, e);
+        }
+    }
+
+    protected File getFile(String fileName) {
+        try {
+            URL url = Thread.currentThread().getContextClassLoader().getResource("test_support/data/files/" + fileName);
+            if (url != null) {
+                return new File(url.toURI());
+            } else {
+                throw new RuntimeException("Unable to load file " + fileName);
+            }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Unable to load file " + fileName, e);
+        }
     }
 }

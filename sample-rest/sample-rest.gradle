@@ -33,6 +33,7 @@ dependencies {
     implementation 'io.jmix.security:jmix-security-starter'
     implementation 'io.jmix.security:jmix-security-ui-starter'
     implementation 'io.jmix.security:jmix-security-data-starter'
+    implementation 'io.jmix.fsfilestorage:jmix-fsfilestorage-starter'
 
     implementation project(':rest-starter')
 

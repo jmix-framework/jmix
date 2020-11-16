@@ -100,7 +100,6 @@ public class FileDownloadController {
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
             response.setHeader("Content-Type", getContentType(fileReference));
-            response.setHeader("Content-Type", "image/jpeg");
 
             String filename = fileStorage.getFileInfo(fileReference);
             String contentDisposition = BooleanUtils.isTrue(attachment) ? "attachment" : "inline";
@@ -139,13 +138,13 @@ public class FileDownloadController {
     }
 
     protected void checkCanReadFileDescriptor() {
-        CrudEntityContext entityContext = new CrudEntityContext(metadata.getClass(FileDescriptor.class));
-        accessManager.applyRegisteredConstraints(entityContext);
-
-        if (!entityContext.isReadPermitted()) {
-            throw new RestAPIException("Reading forbidden",
-                    "Reading of the sys$FileDescriptor is forbidden",
-                    HttpStatus.FORBIDDEN);
-        }
+//        CrudEntityContext entityContext = new CrudEntityContext(metadata.getClass(FileDescriptor.class));
+//        accessManager.applyRegisteredConstraints(entityContext);
+//
+//        if (!entityContext.isReadPermitted()) {
+//            throw new RestAPIException("Reading forbidden",
+//                    "Reading of the sys$FileDescriptor is forbidden",
+//                    HttpStatus.FORBIDDEN);
+//        }
     }
 }

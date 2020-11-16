@@ -102,6 +102,8 @@ dependencies {
         api "io.jmix.rest:jmix-rest:${snapshotOr(baseVersion)}"
         api "io.jmix.rest:jmix-rest-starter:${snapshotOr(baseVersion)}"
 
+        api "io.jmix.datatools:jmix-datatools:${snapshotOr(baseVersion)}"
+        api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(baseVersion)}"
         api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(baseVersion)}"
         api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(baseVersion)}"
 

@@ -40,7 +40,6 @@
         <xs:attribute name="cacheable" type="xs:boolean"/>
         <xs:attribute name="offset" type="xs:integer"/>
         <xs:attribute name="limit" type="xs:integer"/>
-        <xs:attribute name="anonymousAllowed" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="paramsType">

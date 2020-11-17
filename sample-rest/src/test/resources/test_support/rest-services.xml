@@ -14,7 +14,6 @@
         <method name="methodWithCustomException"/>
 
         <method name="methodWithException"/>
-
         <method name="emptyMethod"/>
 
         <method name="overloadedMethod">

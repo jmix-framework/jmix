@@ -18,7 +18,7 @@ package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
+import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider;

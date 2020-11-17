@@ -36,11 +36,9 @@ import java.util.Map;
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestPropertySource(properties = {
-        "jmix.rest.anonymousEnabled = false",
-        "jmix.rest.anonymousUrlPatterns=/rest/services/" + RestTestService.NAME + "/sum"
-})
-public class AnonymousDisabledAccessFT extends AbstractRestControllerFT {
+@TestPropertySource(properties = {"jmix.rest.anonymousUrlPatterns=/rest/services/" + RestTestService.NAME + "/sum," +
+        "rest/queries/sec$User/currentUser"})
+public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{
         put("number1", "2");
@@ -51,7 +49,6 @@ public class AnonymousDisabledAccessFT extends AbstractRestControllerFT {
     public void executeServiceMethodWithAnonymousAllowed() throws Exception {
         String url = baseUrl + "/services/" + RestTestService.NAME + "/sum";
         try (CloseableHttpResponse response = sendGet(url, serviceParams)) {
-            //assertEquals("text/plain;charset=UTF-8", responseContentType(response));
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             assertEquals("5", responseToString(response));
         }
@@ -73,9 +70,8 @@ public class AnonymousDisabledAccessFT extends AbstractRestControllerFT {
         }
     }
 
-    //todo security
-    @Disabled
     @Test
+    @Disabled
     public void executeQueryWithAnonymousAllowed() throws Exception {
         String url = baseUrl + "/queries/sec$User/currentUser";
         try (CloseableHttpResponse response = sendGet(url, null)) {

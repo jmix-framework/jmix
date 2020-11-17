@@ -7,7 +7,7 @@ package io.jmix.samples.rest
 
 import com.haulmont.masquerade.restapi.ServiceGenerator
 import io.jmix.core.security.impl.CoreUser
-import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.samples.rest.service.NotFoundUrlService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

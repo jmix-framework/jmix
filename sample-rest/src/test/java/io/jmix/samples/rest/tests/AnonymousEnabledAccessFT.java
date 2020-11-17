@@ -40,9 +40,7 @@ import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestPropertySource(properties = {
-        "jmix.rest.anonymousEnabled = true",
-        "jmix.rest.anonymousUrlPatterns= /rest/services/jmix_RestTestService/sum"}
-)
+        "jmix.rest.anonymousUrlPatterns=/rest/services/jmix_RestTestService/sum"})
 public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{
@@ -60,8 +58,6 @@ public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
         }
     }
 
-    // todo security
-    @Disabled
     @Test
     public void executeQueryWithAnonymousEnabled() throws Exception {
         String url = baseUrl + "/queries/sec$User/currentUser";
@@ -75,8 +71,6 @@ public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
     }
 
 
-    // todo security
-    @Disabled
     @Test
     public void loadEntitiesWithPermissionAnonymous() throws Exception {
         String url = baseUrl + "/entities/sec$User";
@@ -88,9 +82,6 @@ public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
         }
     }
 
-
-    //todo security
-    @Disabled
     @Test
     public void loadEntitiesWithoutPermissionAnonymous() throws Exception {
         String url = baseUrl + "/entities/sec$Group";

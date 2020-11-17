@@ -18,7 +18,7 @@ package io.jmix.samples.rest;
 
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.impl.InMemoryUserRepository;
+import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.transformer.RepairJsonTransformerFromVersion;
 import io.jmix.samples.rest.transformer.RepairJsonTransformerToVersion;

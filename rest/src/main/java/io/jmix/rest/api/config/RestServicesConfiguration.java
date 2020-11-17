@@ -20,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.jmix.core.Resources;
 import io.jmix.core.common.util.Dom4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringTokenizer;
 import org.dom4j.Element;
@@ -38,7 +37,10 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -75,33 +77,6 @@ public class RestServicesConfiguration {
 
     @Autowired
     protected BeanFactory beanFactory;
-
-    /**
-     * @deprecated the method will be removed in one of next releases. Use {@link #getRestMethodInfo(String, String,
-     * List)} instead
-     */
-    @Nullable
-    @Deprecated
-    public Method getServiceMethod(String serviceName, String methodName, List<String> methodParamNames) {
-        lock.readLock().lock();
-        try {
-            checkInitialized();
-            RestServiceInfo restServiceInfo = serviceInfosMap.get(serviceName);
-            if (restServiceInfo == null) {
-                return null;
-            }
-            Optional<RestMethodInfo> methodInfoOptional = restServiceInfo.getMethods().stream()
-                    .filter(restMethodInfo -> methodName.equals(restMethodInfo.getName())
-                            && paramsMatches(restMethodInfo.getParams(), methodParamNames))
-                    .findFirst();
-            if (methodInfoOptional.isPresent()) {
-                return methodInfoOptional.get().getMethod();
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
-        return null;
-    }
 
     @Nullable
     public RestMethodInfo getRestMethodInfo(String serviceName, String methodName, List<String> methodParamNames) {
@@ -150,17 +125,13 @@ public class RestServicesConfiguration {
         for (String location : tokenizer.getTokenArray()) {
             Resource resource = resources.getResource(location);
             if (resource.exists()) {
-                InputStream stream = null;
-                try {
-                    stream = resource.getInputStream();
+                try (InputStream stream = resource.getInputStream()) {
                     loadConfig(Dom4j.readDocument(stream).getRootElement());
                 } catch (IOException e) {
                     throw new RuntimeException("Error on parsing rest services config", e);
-                } finally {
-                    IOUtils.closeQuietly(stream);
                 }
             } else {
-                log.warn("Resource " + location + " not found, ignore it");
+                log.warn("Resource {} not found, ignore it", location);
             }
         }
     }
@@ -176,7 +147,7 @@ public class RestServicesConfiguration {
 
             for (Element methodElem : serviceElem.elements("method")) {
                 String methodName = methodElem.attributeValue("name");
-                boolean anonymousAllowed = "true".equals(methodElem.attributeValue("anonymousAllowed"));
+                boolean anonymousAllowed = Boolean.parseBoolean(methodElem.attributeValue("anonymousAllowed"));
                 List<RestMethodParamInfo> params = new ArrayList<>();
                 for (Element paramEl : methodElem.elements("param")) {
                     params.add(new RestMethodParamInfo(paramEl.attributeValue("name"), paramEl.attributeValue("type")));
@@ -193,7 +164,7 @@ public class RestServicesConfiguration {
 
     @Nullable
     protected Method _findMethod(String serviceName, String methodName, List<RestMethodParamInfo> paramInfos) {
-        List<Class> paramTypes = new ArrayList<>();
+        List<Class<?>> paramTypes = new ArrayList<>();
         for (RestMethodParamInfo paramInfo : paramInfos) {
             if (StringUtils.isNotEmpty(paramInfo.getType())) {
                 try {

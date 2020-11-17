@@ -9,7 +9,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
+import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.JmixRestTestConfiguration;

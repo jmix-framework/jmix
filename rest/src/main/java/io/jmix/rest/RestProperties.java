@@ -66,7 +66,6 @@ public class RestProperties {
             @DefaultValue("20971520") int maxUploadSize,
             @DefaultValue("true") boolean standardAuthenticationEnabled,
             List<String> standardAuthenticationUsers,
-            @DefaultValue("false") boolean anonymousEnabled,
             @DefaultValue("true") boolean tokenMaskingEnabled,
             @DefaultValue("false") boolean optimisticLockingEnabled,
             @DefaultValue("false") boolean checkPasswordOnClient,
@@ -88,7 +87,6 @@ public class RestProperties {
         this.maxUploadSize = maxUploadSize;
         this.standardAuthenticationEnabled = standardAuthenticationEnabled;
         this.standardAuthenticationUsers = standardAuthenticationUsers;
-        this.anonymousEnabled = anonymousEnabled;
         this.tokenMaskingEnabled = tokenMaskingEnabled;
         this.optimisticLockingEnabled = optimisticLockingEnabled;
         this.checkPasswordOnClient = checkPasswordOnClient;
@@ -122,13 +120,6 @@ public class RestProperties {
      */
     public List<String> getStandardAuthenticationUsers() {
         return standardAuthenticationUsers;
-    }
-
-    /**
-     * @return anonymous access to REST API is allowed
-     */
-    public boolean isAnonymousEnabled() {
-        return anonymousEnabled;
     }
 
     /**

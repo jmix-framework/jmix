@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.auth;
+package io.jmix.rest.security.filter;
 
 import com.google.common.base.Strings;
 import io.jmix.core.security.authentication.CoreAuthentication;
@@ -25,6 +25,7 @@ import io.jmix.rest.api.event.BeforeRestInvocationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -46,17 +47,17 @@ import java.util.Locale;
  *     <li>parses the request locale and sets it to the authentication</li>
  * </ul>
  */
-public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
+public class RestLastSecurityFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixRestLastSecurityFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(RestLastSecurityFilter.class);
 
     protected ApplicationEventPublisher applicationEventPublisher;
     protected RestTokenMasker restTokenMasker;
     protected RestAuthUtils restAuthUtils;
 
-    public JmixRestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher,
-                                      RestTokenMasker restTokenMasker,
-                                      RestAuthUtils restAuthUtils) {
+    public RestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher,
+                                  RestTokenMasker restTokenMasker,
+                                  RestAuthUtils restAuthUtils) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.restTokenMasker = restTokenMasker;
         this.restAuthUtils = restAuthUtils;
@@ -101,11 +102,9 @@ public class JmixRestLastSecurityFilter extends OncePerRequestFilter {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null) {
                 String tokenValue = "";
-                //TODO: test anonymous user
-//                if (authentication instanceof An) {
-//                    tokenValue = "anonymous";
-//                }
-                if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
+                if (authentication instanceof AnonymousAuthenticationToken) {
+                    tokenValue = "anonymous";
+                } else if (authentication.getDetails() instanceof OAuth2AuthenticationDetails) {
                     tokenValue = ((OAuth2AuthenticationDetails) authentication.getDetails()).getTokenValue();
                 }
                 log.debug("REST API request [{}] {} {} {}",

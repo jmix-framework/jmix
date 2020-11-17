@@ -16,11 +16,9 @@
 
 package io.jmix.rest;
 
-import io.jmix.core.AccessManager;
-import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.rest.api.common.RestAuthUtils;
-import io.jmix.rest.security.JmixUserPasswordTokenGranter;
+import io.jmix.rest.security.UserPasswordTokenGranter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +45,7 @@ import java.util.List;
 @Internal
 @Configuration
 @EnableAuthorizationServer
-public class JmixRestAuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+public class RestAuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
     private static final String REST_API = "rest-api";
 
@@ -91,7 +89,7 @@ public class JmixRestAuthorizationServerConfiguration extends AuthorizationServe
         tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetails, requestFactory));
 
         if (authenticationManager != null) {
-            tokenGranters.add(new JmixUserPasswordTokenGranter(restAuthUtils,
+            tokenGranters.add(new UserPasswordTokenGranter(restAuthUtils,
                     authenticationManager, tokenServices, clientDetails, requestFactory));
         }
         return new CompositeTokenGranter(tokenGranters);

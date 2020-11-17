@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.sys;
+package io.jmix.rest.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.rest.api.exception.ErrorInfo;
@@ -30,9 +30,9 @@ import java.io.IOException;
 /**
  * Servlet filter that is used for logging exceptions thrown in other filters
  */
-public class JmixRestExceptionLoggingFilter extends OncePerRequestFilter {
+public class RestExceptionLoggingFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JmixRestExceptionLoggingFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(RestExceptionLoggingFilter.class);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {

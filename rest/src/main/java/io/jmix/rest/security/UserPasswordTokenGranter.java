@@ -30,11 +30,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
-public class JmixUserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
+public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
     protected final AuthenticationManager authenticationManager;
     protected final RestAuthUtils restAuthUtils;
 
-    public JmixUserPasswordTokenGranter(
+    public UserPasswordTokenGranter(
             RestAuthUtils restAuthUtils,
             AuthenticationManager authenticationManager,
             AuthorizationServerTokenServices tokenServices,

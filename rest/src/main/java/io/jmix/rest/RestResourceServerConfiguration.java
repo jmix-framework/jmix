@@ -21,10 +21,10 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.rest.api.auth.JmixRestLastSecurityFilter;
+import io.jmix.rest.security.filter.RestLastSecurityFilter;
 import io.jmix.rest.api.common.RestAuthUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
-import io.jmix.rest.api.sys.JmixRestExceptionLoggingFilter;
+import io.jmix.rest.security.filter.RestExceptionLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,7 +51,7 @@ import java.util.stream.Stream;
 @Internal
 @Configuration
 @EnableResourceServer
-public class JmixRestResourceServerConfiguration extends ResourceServerConfigurerAdapter {
+public class RestResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
     @Autowired
     @Qualifier("rest_tokenStore")
@@ -107,9 +107,9 @@ public class JmixRestResourceServerConfiguration extends ResourceServerConfigure
                 .flatMap(s -> Arrays.stream(s.split(",")))
                 .toArray(String[]::new);
 
-        JmixRestLastSecurityFilter jmixRestLastSecurityFilter = new JmixRestLastSecurityFilter(
+        RestLastSecurityFilter jmixRestLastSecurityFilter = new RestLastSecurityFilter(
                 applicationEventPublisher, restTokenMasker, restAuthUtils);
-        JmixRestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new JmixRestExceptionLoggingFilter();
+        RestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new RestExceptionLoggingFilter();
 
         String[] requestMatcherAntPatterns = Stream.of(anonymousUrlPatterns, authenticatedUrlPatterns)
                 .flatMap(Stream::of)

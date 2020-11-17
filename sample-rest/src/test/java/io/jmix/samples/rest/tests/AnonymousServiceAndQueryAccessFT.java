@@ -91,6 +91,14 @@ public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
         }
     }
 
+    @Test
+    @Disabled
+    public void loadEntitiesWithPermissionAnonymous() throws Exception {
+        String url = baseUrl + "/entities/sec$User";
+        try (CloseableHttpResponse response = sendGet(url, null)) {
+            assertEquals(HttpStatus.SC_UNAUTHORIZED, statusCode(response));
+        }
+    }
 
     public static CloseableHttpResponse sendGet(String url, @Nullable Map<String, String> params) throws Exception {
         URIBuilder uriBuilder = new URIBuilder(url);

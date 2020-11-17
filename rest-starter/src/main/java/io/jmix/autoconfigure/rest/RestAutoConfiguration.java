@@ -33,9 +33,6 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 @Import({CoreConfiguration.class, DataConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
 
-//    @Autowired
-//    protected AuthenticationKeyGenerator keyGenerator;
-
     @Bean(name = "rest_tokenStore")
     @ConditionalOnMissingBean(TokenStore.class)
     protected TokenStore tokenStore() {

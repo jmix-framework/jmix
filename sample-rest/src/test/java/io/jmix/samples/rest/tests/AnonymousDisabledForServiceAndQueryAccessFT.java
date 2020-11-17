@@ -16,7 +16,6 @@
 
 package io.jmix.samples.rest.tests;
 
-import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.service.app.RestTestService;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -24,24 +23,19 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
 
 import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static io.jmix.samples.rest.tools.RestTestUtils.*;
+import static io.jmix.samples.rest.tools.RestTestUtils.statusCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestPropertySource(properties = {
-        "jmix.rest.anonymousUrlPatterns=/rest/services/jmix_RestTestService/sum"})
-public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
+public class AnonymousDisabledForServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{
         put("number1", "2");
@@ -52,9 +46,7 @@ public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
     public void executeServiceMethodWithAnonymousEnabled() throws Exception {
         String url = baseUrl + "/services/" + RestTestService.NAME + "/sum";
         try (CloseableHttpResponse response = sendGet(url, serviceParams)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("text/plain;charset=UTF-8", responseContentType(response));
-            assertEquals("5", responseToString(response));
+            assertEquals(HttpStatus.SC_UNAUTHORIZED, statusCode(response));
         }
     }
 
@@ -62,23 +54,15 @@ public class AnonymousEnabledAccessFT extends AbstractRestControllerFT {
     public void executeQueryWithAnonymousEnabled() throws Exception {
         String url = baseUrl + "/queries/sec$User/currentUser";
         try (CloseableHttpResponse response = sendGet(url, null)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("application/json;charset=utf-8", responseContentType(response).toLowerCase());
-            ReadContext ctx = parseResponse(response);
-            assertEquals(1, ctx.<Collection>read("$").size());
-            assertEquals("anonymous", ctx.read("$.[0].login"));
+            assertEquals(HttpStatus.SC_UNAUTHORIZED, statusCode(response));
         }
     }
-
 
     @Test
     public void loadEntitiesWithPermissionAnonymous() throws Exception {
         String url = baseUrl + "/entities/sec$User";
         try (CloseableHttpResponse response = sendGet(url, null)) {
-            assertEquals(HttpStatus.SC_OK, statusCode(response));
-            ReadContext ctx = parseResponse(response);
-
-            assertEquals(2, (int) ctx.read("$.length()", Integer.class));
+            assertEquals(HttpStatus.SC_UNAUTHORIZED, statusCode(response));
         }
     }
 

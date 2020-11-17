@@ -46,6 +46,14 @@ class JmixPlugin implements Plugin<Project> {
                 project.dependencies.add(WIDGETS_CONFIGURATION_NAME, platform)
             }
 
+            if (project.plugins.hasPlugin("org.springframework.boot")) {
+                project.with {
+                    springBoot {
+                        buildInfo()
+                    }
+                }
+            }
+
             if (project.jmix.entitiesEnhancing.enabled) {
                 project.configurations.create('enhancing')
                 project.dependencies.add('enhancing', 'org.eclipse.persistence:org.eclipse.persistence.jpa:2.7.7-2-jmix')

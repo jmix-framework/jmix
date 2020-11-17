@@ -18,7 +18,7 @@ package security_beans;
 
 import io.jmix.autoconfigure.core.CoreAutoConfiguration;
 import io.jmix.autoconfigure.security.SecurityAutoConfiguration;
-import io.jmix.core.security.impl.InMemoryUserRepository;
+import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.security.StandardSecurityConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;

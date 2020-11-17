@@ -21,7 +21,7 @@ import io.jmix.core.annotation.Secure
 import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.core.security.impl.CoreUser
-import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
 import io.jmix.security.role.assignment.RoleAssignment
 import org.springframework.beans.factory.annotation.Autowired

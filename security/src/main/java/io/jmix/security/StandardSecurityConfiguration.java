@@ -20,7 +20,7 @@ import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
-import io.jmix.core.security.JmixSessionAuthenticationStrategy;
+import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.core.session.SessionProperties;

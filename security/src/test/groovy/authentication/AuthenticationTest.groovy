@@ -19,7 +19,7 @@ package authentication
 import io.jmix.core.DataManager
 import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.core.security.impl.CoreUser
-import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.data.PersistenceTools
 import io.jmix.security.authentication.SecuredAuthentication
 import org.springframework.beans.factory.annotation.Autowired

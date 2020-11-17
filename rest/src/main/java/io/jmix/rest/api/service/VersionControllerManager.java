@@ -19,7 +19,8 @@ package io.jmix.rest.api.service;
 
 import io.jmix.rest.api.controller.VersionController;
 import io.jmix.rest.api.exception.RestAPIException;
-//import io.jmix.core.entity.BuildInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +31,12 @@ import org.springframework.stereotype.Component;
 public class VersionControllerManager {
 
     private String apiVersion;
+    private final BuildProperties buildProperties;
 
-//    @Autowired
-//    protected BuildInfo buildInfo;
+    public VersionControllerManager(@Autowired(required = false) BuildProperties buildProperties) {
+        this.buildProperties = buildProperties;
+        determineApiVersion();
+    }
 
     public String getApiVersion() {
         if (apiVersion != null && apiVersion.length() > 0) {
@@ -42,21 +46,20 @@ public class VersionControllerManager {
         }
     }
 
-//    @PostConstruct
-//    private void determineApiVersion() {
-//        BuildInfo.Content content = buildInfo.getContent();
-//
-//        if (content.getAppName().equals("restapi") && content.getArtifactGroup().equals("io.jmix.rest")) {
-//            // Standalone REST API
-//            apiVersion = content.getVersion();
-//        } else {
-//            // REST API as part of a Cuba application
-//            for (String component : content.getAppComponents()) {
+    private void determineApiVersion() {
+
+        if (buildProperties.getName().equals("restapi") && buildProperties.getArtifact().equals("io.jmix.rest")) {
+            // Standalone REST API
+            apiVersion = buildProperties.getVersion();
+        } else {
+            // REST API as part of a Cuba application
+            //TODO app components
+//            for (String component : buildProperties.getAppComponents()) {
 //                if (component.trim().startsWith("io.jmix.rest:")) {
 //                    apiVersion = component.split(":")[1];
 //                    break;
 //                }
 //            }
-//        }
-//    }
+        }
+    }
 }

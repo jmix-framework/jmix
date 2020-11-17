@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-//todo version
+//todo component in BuildInfo
 @Disabled
 public class VersionControllerFT extends AbstractRestControllerFT {
 

@@ -21,7 +21,7 @@ import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.impl.CoreUser
-import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.soft_delete.SoftDeleteEntity

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.security.impl;
 
+import io.jmix.core.security.SystemAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;

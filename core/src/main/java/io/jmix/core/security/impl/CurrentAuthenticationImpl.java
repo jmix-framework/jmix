@@ -16,6 +16,7 @@
 
 package io.jmix.core.security.impl;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.AuthenticationResolver;
 import io.jmix.core.security.CurrentAuthentication;
@@ -31,6 +32,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @Component("core_CurrentAuthentication")
+@Internal
 public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired(required = false)

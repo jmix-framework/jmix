@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security.impl;
+package io.jmix.core.security;
 
 import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.CoreUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

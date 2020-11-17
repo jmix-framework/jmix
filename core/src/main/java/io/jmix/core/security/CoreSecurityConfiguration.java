@@ -18,7 +18,6 @@ package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
-import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

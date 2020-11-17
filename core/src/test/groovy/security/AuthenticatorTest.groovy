@@ -21,7 +21,7 @@ import io.jmix.core.entity.BaseUser
 import io.jmix.core.security.SystemAuthenticationToken
 import io.jmix.core.security.impl.AuthenticatorImpl
 import io.jmix.core.security.impl.CoreUser
-import io.jmix.core.security.impl.InMemoryUserRepository
+import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder

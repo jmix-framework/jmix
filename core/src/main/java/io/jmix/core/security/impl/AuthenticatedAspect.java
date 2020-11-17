@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security;
+package io.jmix.core.security.impl;
 
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.security.Authenticator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component("core_AuthenticatedAspect")
+@Internal
 public class AuthenticatedAspect {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatedAspect.class);

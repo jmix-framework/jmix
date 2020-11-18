@@ -16,17 +16,13 @@
 
 package io.jmix.emailui.screen.sendingmessage;
 
-import io.jmix.core.CoreProperties;
-import io.jmix.core.DataManager;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.Messages;
+import io.jmix.core.*;
 import io.jmix.email.EmailDataProvider;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
 import io.jmix.emailui.screen.sendingmessage.attachments.SendingMessageAttachments;
 import io.jmix.emailui.screen.sendingmessage.resend.ResendMessage;
-import io.jmix.fsfilestorage.FileSystemFileStorage;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
@@ -76,8 +72,12 @@ public class SendingMessageBrowser extends Screen {
     protected DataManager dataManager;
     @Autowired
     protected Downloader downloader;
+
+    protected FileStorage fileStorage;
+
     @Autowired
-    protected FileSystemFileStorage fileStorage;
+    protected FileStorageLocator fileStorageLocator;
+
     @Autowired
     protected Messages messages;
     @Autowired
@@ -96,11 +96,6 @@ public class SendingMessageBrowser extends Screen {
     @Autowired
     protected Notifications notifications;
 
-    @Autowired
-    public void setFileStorage(FileStorageLocator fileStorageLocator) {
-        fileStorage = fileStorageLocator.getDefault();
-    }
-    
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
         fg.add(buildContentTextField(), 0, 3);
@@ -210,22 +205,26 @@ public class SendingMessageBrowser extends Screen {
 
     protected URI getReference(SendingAttachment attachment) {
         UUID uuid = temporaryStorage.saveFile(attachment.getContent());
-        URI reference = fileStorage.createReference(attachment.getName());
+        URI reference = (URI) fileStorage.createReference(attachment.getName());
         temporaryStorage.putFileIntoStorage(uuid, reference);
         return reference;
     }
 
     protected void exportFile(SendingAttachment attachment) {
-        URI fd;
+        URI uri;
+
+        if (fileStorage == null) {
+            fileStorage = fileStorageLocator.getDefault();
+        }
 
         if (emailerProperties.isFileStorageUsed()
                 && attachment.getContentFile() != null
                 && fileStorage.fileExists(attachment.getContentFile())) {
-            fd = attachment.getContentFile();
+            uri = attachment.getContentFile();
         } else {
-            fd = getReference(attachment);
+            uri = getReference(attachment);
         }
 
-        downloader.download(new FileDataProvider<>(fd, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
+        downloader.download(new FileDataProvider<>(uri, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
     }
 }

@@ -17,12 +17,12 @@
 package io.jmix.emailui.screen.sendingmessage.resend;
 
 
+import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.Messages;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import io.jmix.fsfilestorage.FileSystemFileStorage;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.TextField;
@@ -48,8 +48,10 @@ public class ResendMessage extends Screen {
     @Autowired
     protected Emailer emailer;
 
-    protected FileSystemFileStorage fileStorage;
-    
+    protected FileStorage fileStorage;
+
+    @Autowired
+    protected FileStorageLocator fileStorageLocator;
     @Autowired
     protected Notifications notifications;
     @Autowired
@@ -60,11 +62,6 @@ public class ResendMessage extends Screen {
     protected TextField<String> ccTextField;
     @Autowired
     protected TextField<String> bccTextField;
-
-    @Autowired
-    public void setFileStorage(FileStorageLocator fileStorageLocator) {
-        fileStorage = fileStorageLocator.getDefault();
-    }
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
@@ -108,6 +105,9 @@ public class ResendMessage extends Screen {
 
     protected String emailBody(SendingMessage message) {
         if (message.getContentTextFile() != null) {
+            if (fileStorage == null) {
+                fileStorage = fileStorageLocator.getDefault();
+            }
             try (InputStream inputStream = fileStorage.openStream(message.getContentTextFile())) {
                 return IOUtils.toString(inputStream, Charset.defaultCharset());
             } catch (IOException e) {

@@ -25,7 +25,6 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
-    api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
 
     api 'com.sun.mail:jakarta.mail'
 

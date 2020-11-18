@@ -29,7 +29,6 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.email.EmailConfiguration;
-import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.*;
@@ -49,7 +48,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, FileSystemFileStorageConfiguration.class, EmailConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, EmailConfiguration.class})
 @PropertySource("classpath:/test_support/test-app.properties")
 @EnableWebSecurity
 public class EmailTestConfiguration extends CoreSecurityConfiguration {
@@ -105,5 +104,11 @@ public class EmailTestConfiguration extends CoreSecurityConfiguration {
         InMemoryUserRepository repository = new InMemoryUserRepository();
         repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
         return repository;
+    }
+
+    @Bean
+    @Primary
+    public TestFileStorage testFileStorage() {
+        return new TestFileStorage();
     }
 }

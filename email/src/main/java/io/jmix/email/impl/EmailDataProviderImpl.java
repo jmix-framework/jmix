@@ -66,12 +66,10 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     protected TransactionTemplate transaction;
 
-    protected FileStorage<URI, String> fileStorage;
+    protected FileStorage fileStorage;
 
     @Autowired
-    public void setFileStorage(FileStorageLocator fileStorageLocator) {
-        fileStorage = fileStorageLocator.getDefault();
-    }
+    protected FileStorageLocator fileStorageLocator;
 
     @Autowired
     protected void setTransactionManager(PlatformTransactionManager transactionManager) {
@@ -142,7 +140,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         if (msg.getContentTextFile() != null) {
             byte[] bodyContent;
             try {
-                bodyContent = IOUtils.toByteArray(fileStorage.openStream(msg.getContentTextFile()));
+                bodyContent = IOUtils.toByteArray(getFileStorage().openStream(msg.getContentTextFile()));
             } catch (IOException e) {
                 throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, "Unable to load file from file storage", e);
             }
@@ -223,14 +221,14 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     protected void loadBodyAndAttachments(SendingMessage message) {
         try {
             if (message.getContentTextFile() != null) {
-                byte[] bodyContent = IOUtils.toByteArray(fileStorage.openStream(message.getContentTextFile()));
+                byte[] bodyContent = IOUtils.toByteArray(getFileStorage().openStream(message.getContentTextFile()));
                 String body = bodyTextFromByteArray(bodyContent);
                 message.setContentText(body);
             }
 
             for (SendingAttachment attachment : message.getAttachments()) {
                 if (attachment.getContentFile() != null) {
-                    byte[] content = IOUtils.toByteArray(fileStorage.openStream(attachment.getContentFile()));
+                    byte[] content = IOUtils.toByteArray(getFileStorage().openStream(attachment.getContentFile()));
                     attachment.setContent(content);
                 }
             }
@@ -265,8 +263,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     }
 
     protected URI createContentFile(@Nullable MessagePersistingContext context, byte[] bodyBytes, String fileName) {
-        URI contentTextFile = fileStorage.createReference(fileName);
-        fileStorage.saveStream(contentTextFile, new ByteArrayInputStream(bodyBytes));
+        URI contentTextFile = (URI) getFileStorage().createReference(fileName);
+        getFileStorage().saveStream(contentTextFile, new ByteArrayInputStream(bodyBytes));
         if (context != null) {
             context.files.add(contentTextFile);
         }
@@ -304,10 +302,17 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     protected void removeOrphanFiles(MessagePersistingContext context) {
         context.files.forEach(file -> {
             try {
-                fileStorage.removeFile(file);
+                getFileStorage().removeFile(file);
             } catch (Exception e) {
                 log.error("Failed to remove file {}", file);
             }
         });
+    }
+
+    protected FileStorage getFileStorage() {
+        if (fileStorage == null) {
+            fileStorage = fileStorageLocator.getDefault();
+        }
+        return fileStorage;
     }
 }

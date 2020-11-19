@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
@@ -28,7 +29,6 @@ import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.exception.RestAPIException;
@@ -255,6 +255,8 @@ public class EntitiesControllerManager {
         String view = !Strings.isNullOrEmpty(searchEntitiesRequest.getView()) ?
                 searchEntitiesRequest.getView() :
                 searchEntitiesRequest.getViewName();
+
+        view = !StringUtils.isEmpty(searchEntitiesRequest.getFetchPlan()) ? searchEntitiesRequest.getFetchPlan() : view;
 
         return searchEntities(entityName,
                 searchEntitiesRequest.getFilter().toString(),
@@ -738,8 +740,8 @@ public class EntitiesControllerManager {
         FetchPlan view = fetchPlanRepository.findFetchPlan(metaClass, responseView);
 
         if (view == null) {
-            throw new RestAPIException("View not found",
-                    String.format("View '%s' not found for entity '%s'", responseView, metaClass.getName()),
+            throw new RestAPIException("Fetch plan not found",
+                    String.format("Fetch plan '%s' not found for entity '%s'", responseView, metaClass.getName()),
                     HttpStatus.NOT_FOUND);
         }
         return view;
@@ -749,6 +751,7 @@ public class EntitiesControllerManager {
     protected class SearchEntitiesRequestDTO {
         protected JsonObject filter;
         protected String view;
+        protected String fetchPlan;
         @Deprecated
         //the viewName property has been left for a backward compatibility. It will removed in future releases
         protected String viewName;
@@ -769,6 +772,10 @@ public class EntitiesControllerManager {
 
         public String getView() {
             return view;
+        }
+
+        public String getFetchPlan() {
+            return fetchPlan;
         }
 
         @Deprecated
@@ -806,6 +813,10 @@ public class EntitiesControllerManager {
 
         public void setFilter(JsonObject filter) {
             this.filter = filter;
+        }
+
+        public void setFetchPlan(String fetchPlan) {
+            this.fetchPlan = fetchPlan;
         }
 
         public void setView(String view) {

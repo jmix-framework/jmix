@@ -19,12 +19,13 @@ package io.jmix.rest.api.controller;
 import io.jmix.rest.api.config.RestQueriesConfiguration;
 import io.jmix.rest.api.service.QueriesControllerManager;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +42,18 @@ public class QueriesController {
 
     @GetMapping("/{entityName}/{queryName}")
     public ResponseEntity<String> executeQueryGet(@PathVariable String entityName,
-                               @PathVariable String queryName,
-                               @RequestParam(required = false) Integer limit,
-                               @RequestParam(required = false) Integer offset,
-                               @RequestParam(required = false) String view,
-                               @RequestParam(required = false) Boolean returnNulls,
-                               @RequestParam(required = false) Boolean dynamicAttributes,
-                               @RequestParam(required = false) Boolean returnCount,
-                               @RequestParam(required = false) String modelVersion,
-                               @RequestParam Map<String, String> params) {
-        String resultJson = queriesControllerManager.executeQueryGet(entityName, queryName, limit, offset, view, returnNulls,
+                                                  @PathVariable String queryName,
+                                                  @RequestParam(required = false) Integer limit,
+                                                  @RequestParam(required = false) Integer offset,
+                                                  @RequestParam(required = false) String view,
+                                                  @RequestParam(required = false) String fetchPlan,
+                                                  @RequestParam(required = false) Boolean returnNulls,
+                                                  @RequestParam(required = false) Boolean dynamicAttributes,
+                                                  @RequestParam(required = false) Boolean returnCount,
+                                                  @RequestParam(required = false) String modelVersion,
+                                                  @RequestParam Map<String, String> params) {
+        String resultJson = queriesControllerManager.executeQueryGet(entityName, queryName, limit, offset,
+                StringUtils.defaultString(fetchPlan, view), returnNulls,
                 dynamicAttributes, modelVersion, params);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
@@ -62,18 +65,19 @@ public class QueriesController {
 
     @PostMapping("/{entityName}/{queryName}")
     public ResponseEntity<String> executeQueryPost(@PathVariable String entityName,
-                               @PathVariable String queryName,
-                               @RequestParam(required = false) Integer limit,
-                               @RequestParam(required = false) Integer offset,
-                               @RequestParam(required = false) String view,
-                               @RequestParam(required = false) Boolean returnNulls,
-                               @RequestParam(required = false) Boolean dynamicAttributes,
-                               @RequestParam(required = false) Boolean returnCount,
-                               @RequestParam(required = false) String modelVersion,
-                               @RequestBody String paramsJson) {
+                                                   @PathVariable String queryName,
+                                                   @RequestParam(required = false) Integer limit,
+                                                   @RequestParam(required = false) Integer offset,
+                                                   @RequestParam(required = false) String view,
+                                                   @RequestParam(required = false) String fetchPlan,
+                                                   @RequestParam(required = false) Boolean returnNulls,
+                                                   @RequestParam(required = false) Boolean dynamicAttributes,
+                                                   @RequestParam(required = false) Boolean returnCount,
+                                                   @RequestParam(required = false) String modelVersion,
+                                                   @RequestBody String paramsJson) {
 
-        String resultJson = queriesControllerManager.executeQueryPost(entityName, queryName, limit, offset, view, returnNulls,
-                dynamicAttributes, modelVersion, paramsJson);
+        String resultJson = queriesControllerManager.executeQueryPost(entityName, queryName, limit, offset,
+                StringUtils.defaultString(fetchPlan, view), returnNulls, dynamicAttributes, modelVersion, paramsJson);
         ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(HttpStatus.OK);
         if (BooleanUtils.isTrue(returnCount)) {
             String count = queriesControllerManager.getCountPost(entityName, queryName, modelVersion, paramsJson);

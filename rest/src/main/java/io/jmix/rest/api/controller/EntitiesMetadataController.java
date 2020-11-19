@@ -16,15 +16,15 @@
 
 package io.jmix.rest.api.controller;
 
-import io.jmix.rest.api.service.filter.data.MetaClassInfo;
 import io.jmix.rest.api.service.EntitiesMetadataControllerManager;
+import io.jmix.rest.api.service.filter.data.MetaClassInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Collection;
 
 /**
@@ -50,11 +50,22 @@ public class EntitiesMetadataController {
     @GetMapping("/entities/{entityName}/views/{viewName}")
     public String getView(@PathVariable String entityName,
                           @PathVariable String viewName) {
-        return controllerManager.getView(entityName, viewName);
+        return controllerManager.getFetchPlan(entityName, viewName);
+    }
+
+    @GetMapping("/entities/{entityName}/fetchPlans/{fetchPlanName}")
+    public String getFetchPlan(@PathVariable String entityName,
+                               @PathVariable String fetchPlanName) {
+        return controllerManager.getFetchPlan(entityName, fetchPlanName);
     }
 
     @GetMapping("/entities/{entityName}/views")
     public String getAllViewsForMetaClass(@PathVariable String entityName) {
-        return controllerManager.getAllViewsForMetaClass(entityName);
+        return controllerManager.getAllFetchPlansForMetaClass(entityName);
+    }
+
+    @GetMapping("/entities/{entityName}/fetchPlans")
+    public String getAllFetchPlansForMetaClass(@PathVariable String entityName) {
+        return controllerManager.getAllFetchPlansForMetaClass(entityName);
     }
 }

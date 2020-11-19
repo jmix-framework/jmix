@@ -25,10 +25,10 @@ import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.MetaClassInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,18 +80,18 @@ public class EntitiesMetadataControllerManager {
                 .collect(Collectors.toList());
     }
 
-    public String getView(String entityName, String viewName) {
+    public String getFetchPlan(String entityName, String viewName) {
         MetaClass metaClass = restControllersUtils.getMetaClass(entityName);
         FetchPlan view = viewRepository.findFetchPlan(metaClass, viewName);
         if (view == null) {
-            throw new RestAPIException("View not found",
+            throw new RestAPIException("Fetch plan not found",
                     String.format("View %s for metaClass %s not found", viewName, entityName),
                     HttpStatus.NOT_FOUND);
         }
         return viewSerializationAPI.toJson(view);
     }
 
-    public String getAllViewsForMetaClass(String entityName) {
+    public String getAllFetchPlansForMetaClass(String entityName) {
         MetaClass metaClass = restControllersUtils.getMetaClass(entityName);
         StringBuilder sb = new StringBuilder();
         sb.append("[");

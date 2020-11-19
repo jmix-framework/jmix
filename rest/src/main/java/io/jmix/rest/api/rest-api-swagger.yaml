@@ -12,7 +12,7 @@ info:
     * Entities CRUD operations
     * Execution of predefined JPQL queries
     * Execution of services methods
-    * Getting metadata (entities, views, enumerations, datatypes)
+    * Getting metadata (entities, fetch plans, views, enumerations, datatypes)
     * Getting localized messages
     * Getting current user permissions (access to entities, attributes, specific permissions)
     * Getting current user information (name, language, time zone, etc.)
@@ -116,6 +116,12 @@ parameters:
     name: view
     in: query
     description: Name of the view which is used for loading the entity
+    type: string
+    default: ""
+  entityFetchPlanParam:
+    name: fetchPlan
+    in: query
+    description: Name of the fetch plan which is used for loading the entity
     type: string
     default: ""
   returnNullsParam:
@@ -226,6 +232,10 @@ definitions:
       viewName:
         type: string
         description: View name
+        example: user.edit
+      fetchPlanName:
+        type: string
+        description: Fetch plan name
         example: user.edit
       params:
         type: object
@@ -402,7 +412,7 @@ definitions:
         type: number
         example: 105396
 
-  viewInfo:
+  fetchPlanInfo:
     type: object
     properties:
       name:
@@ -571,6 +581,7 @@ paths:
       description: |
         Gets a list of entities
       parameters:
+        - $ref: '#/parameters/entityFetchPlanParam'
         - $ref: '#/parameters/entityViewParam'
         - name: limit
           in: query
@@ -660,6 +671,7 @@ paths:
       description: |
         Gets a single entity by identifier
       parameters:
+        - $ref: '#/parameters/entityFetchPlanParam'
         - $ref: '#/parameters/entityViewParam'
         - $ref: '#/parameters/returnNullsParam'
         - $ref: '#/parameters/dynamicAttributesParam'
@@ -802,6 +814,7 @@ paths:
           in: query
           description: JSON with filter definition
           type: string
+        - $ref: '#/parameters/entityFetchPlanParam'
         - $ref: '#/parameters/entityViewParam'
         - name: limit
           in: query
@@ -849,7 +862,7 @@ paths:
       description: |
 
         Finds entities by filter conditions. Works like the corresponding GET method, but filter definition and all request parameters are
-        passed in the request body as JSON object. All possible parameters ("view", "sort", "returnNulls", etc.) are the same as in the
+        passed in the request body as JSON object. All possible parameters ("fetchPlan", "sort", "returnNulls", etc.) are the same as in the
         GET version of the `/search` operation.
 
         Request body example:
@@ -880,7 +893,7 @@ paths:
                   }
               ]
             },
-            "view": "someViewName",
+            "fetchPlan": "someFetchPlanName",
             "returnCount": true
         }
         ```
@@ -947,6 +960,12 @@ paths:
         in: query
         description: |
           Name of the view which is used for loading the entity. Specify this parameter if you want to extract entities with the view
+          other than it is defined in the REST queries configuration file.
+        type: string
+      - name: fetchPlan
+        in: query
+        description: |
+          Name of the fetch plan which is used for loading the entity. Specify this parameter if you want to extract entities with the fetch plan
           other than it is defined in the REST queries configuration file.
         type: string
       - $ref: '#/parameters/returnNullsParam'
@@ -1227,6 +1246,27 @@ paths:
           schema:
             $ref: '#/definitions/error'
 
+  /metadata/entities/{entityName}/fetchPlans:
+    get:
+      tags:
+        - Metadata
+      summary: Get all fetch plans for the entity
+      description: Gets all fetch plans for the entity
+      parameters:
+        - $ref: '#/parameters/entityNameParam'
+      responses:
+        200:
+          description: Success
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/fetchPlanInfo'
+        404:
+          description: |
+            MetaClass not found
+          schema:
+            $ref: '#/definitions/error'
+
   /metadata/entities/{entityName}/views:
     get:
       tags:
@@ -1241,10 +1281,35 @@ paths:
           schema:
             type: array
             items:
-              $ref: '#/definitions/viewInfo'
+              $ref: '#/definitions/fetchPlanInfo'
         404:
           description: |
             MetaClass not found
+          schema:
+            $ref: '#/definitions/error'
+
+  /metadata/entities/{entityName}/fetchPlans/{fetchPlanName}:
+    get:
+      tags:
+        - Metadata
+      summary: Get the fetch plan
+      description: Gets the fetch plan
+      parameters:
+        - $ref: '#/parameters/entityNameParam'
+        - name: fetchPlanName
+          in: path
+          type: string
+          required: true
+          description: Fetch plan name
+          default: ""
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/fetchPlanInfo'
+        404:
+          description: |
+            MetaClass not found or fetch plan with the given name not found
           schema:
             $ref: '#/definitions/error'
 
@@ -1266,7 +1331,7 @@ paths:
         200:
           description: Success
           schema:
-            $ref: '#/definitions/viewInfo'
+            $ref: '#/definitions/fetchPlanInfo'
         404:
           description: |
             MetaClass not found or view with the given name not found

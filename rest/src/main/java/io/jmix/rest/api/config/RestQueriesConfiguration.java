@@ -162,7 +162,7 @@ public class RestQueriesConfiguration {
                 continue;
             }
             String entityName = queryElem.attributeValue("entity");
-            String viewName = queryElem.attributeValue("view");
+            String fetchPlanName = queryElem.attributeValue("fetchPlan");
             String cacheable = queryElem.attributeValue("cacheable");
             String anonymousAllowed = queryElem.attributeValue("anonymousAllowed");
             String jpql = queryElem.elementText("jpql");
@@ -177,8 +177,8 @@ public class RestQueriesConfiguration {
                 log.error("entityName attribute is not defined");
                 continue;
             }
-            if (Strings.isNullOrEmpty(viewName)) {
-                log.error("viewName attribute is not defined");
+            if (Strings.isNullOrEmpty(fetchPlanName)) {
+                log.error("fetchPlanName attribute is not defined");
                 continue;
             }
             if (Strings.isNullOrEmpty(jpql)) {
@@ -189,7 +189,8 @@ public class RestQueriesConfiguration {
             QueryInfo queryInfo = new QueryInfo();
             queryInfo.setName(queryName);
             queryInfo.setEntityName(entityName);
-            queryInfo.setViewName(viewName);
+            queryInfo.setViewName(fetchPlanName);
+            queryInfo.setFetchPlanName(fetchPlanName);
             queryInfo.setJpql(jpql);
             queryInfo.setCacheable("true".equals(cacheable));
             queryInfo.setAnonymousAllowed("true".equals(anonymousAllowed));
@@ -232,6 +233,7 @@ public class RestQueriesConfiguration {
         protected String jpql;
         protected String entityName;
         protected String viewName;
+        protected String fetchPlanName;
         protected Integer limit;
         protected Integer offset;
         protected boolean cacheable;
@@ -244,6 +246,14 @@ public class RestQueriesConfiguration {
 
         public void setLimit(Integer limit) {
             this.limit = limit;
+        }
+
+        public String getFetchPlanName() {
+            return fetchPlanName;
+        }
+
+        public void setFetchPlanName(String fetchPlanName) {
+            this.fetchPlanName = fetchPlanName;
         }
 
         public Integer getOffset() {

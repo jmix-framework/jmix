@@ -17,10 +17,11 @@
 package io.jmix.rest.api.common;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
-import io.jmix.core.entity.EntityValues;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanNotFoundException;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.rest.api.config.RestJsonTransformations;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.transform.JsonTransformationDirection;
@@ -59,14 +60,14 @@ public class RestControllerUtils {
     }
 
     /**
-     * Finds a view for a given metaClass. Throws a RestAPIException if view not found
+     * Finds a view for a given metaClass. Throws a RestAPIException if Fetch plan not found
      */
     public FetchPlan getView(MetaClass metaClass, String viewName) {
         try {
             return viewRepository.getFetchPlan(metaClass, viewName);
         } catch (FetchPlanNotFoundException e) {
-            throw new RestAPIException("View not found",
-                    String.format("View %s for entity %s not found", viewName, metaClass.getName()),
+            throw new RestAPIException("Fetch plan not found",
+                    String.format("Fetch plan %s for entity %s not found", viewName, metaClass.getName()),
                     HttpStatus.BAD_REQUEST);
         }
     }

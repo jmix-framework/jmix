@@ -115,16 +115,16 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                             FetchPlan processedFetchPlan = findProcessedFetchPlan(processedFetchPlans, nestedFetchPlan.getEntityClass(), nestedFetchPlanName);
                             if (processedFetchPlan == null) {
                                 processedFetchPlans.add(nestedFetchPlan);
-                                propertyObject.add("view", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                                propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                             } else {
                                 //if we already processed this fetchPlan, just add its name as a string
-                                propertyObject.addProperty("view", nestedFetchPlanName);
+                                propertyObject.addProperty("fetchPlan", nestedFetchPlanName);
                             }
                         } else {
-                            propertyObject.add("view", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                            propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                         }
                     } else {
-                        propertyObject.add("view", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                        propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                     }
 
                     if (includeFetchMode && fetchPlanProperty.getFetchMode() != null && fetchPlanProperty.getFetchMode() != FetchMode.AUTO) {

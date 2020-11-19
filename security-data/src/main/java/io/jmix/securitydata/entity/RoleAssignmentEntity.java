@@ -76,7 +76,7 @@ public class RoleAssignmentEntity implements Serializable {
 
     @NotNull
     @Column(name = "ROLE_CODE", nullable = false)
-    private  String roleCode;
+    private String roleCode;
 
     public UUID getId() {
         return id;

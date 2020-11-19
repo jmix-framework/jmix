@@ -155,4 +155,50 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="4-postgresql" author="security-data" dbms="postgresql">
+        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
+    </changeSet>
+
+    <changeSet id="4-mysql" author="security-data" dbms="mysql">
+        <addColumn tableName="SEC_ROLE_ENTITY">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger SEC_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_ROLE_ENTITY
+            for each row
+            begin
+	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+		            set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+	            end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER SEC_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME"/>
+            <dropColumn tableName="SEC_ROLE_ENTITY" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="4-another-db" author="security-data" dbms="!postgresql, !mysql">
+        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
+
 </databaseChangeLog>

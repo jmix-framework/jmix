@@ -216,9 +216,12 @@ $he-tabsheet-caption-font-size-scale: 0.95 !default;
       }
     }
 
-    &:first-child .v-caption,
-    &[aria-hidden="true"] + td .v-caption {
+    &:first-child .v-caption {
       margin-left: 0;
+    }
+
+    &[aria-hidden="true"] + td .v-caption {
+      margin-left: round($unit-size/2);
     }
 
     .v-caption-closable {
@@ -361,9 +364,12 @@ $he-tabsheet-caption-font-size-scale: 0.95 !default;
       margin-top: 0;
     }
 
-    td:first-child .v-caption,
-    [aria-hidden="true"] + td .v-caption {
+    td:first-child .v-caption {
       margin-left: 0;
+    }
+
+    [aria-hidden="true"] + td .v-caption {
+      margin-left: var(--tabsheet-framed-tab-margin-left);
     }
   }
 

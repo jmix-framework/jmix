@@ -27,6 +27,8 @@ import io.jmix.ui.component.impl.GroupBoxImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 
+import java.util.function.Consumer;
+
 @Deprecated
 public class WebGroupBox extends GroupBoxImpl implements GroupBoxLayout {
 
@@ -72,5 +74,10 @@ public class WebGroupBox extends GroupBoxImpl implements GroupBoxLayout {
 
     protected ComponentSettingsBinder getSettingsBinder() {
         return (ComponentSettingsBinder) applicationContext.getBean(CubaGroupBoxSettingsBinder.NAME);
+    }
+
+    @Override
+    public void removeExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener) {
+        unsubscribe(ExpandedStateChangeEvent.class, listener);
     }
 }

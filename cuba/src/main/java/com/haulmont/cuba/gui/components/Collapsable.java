@@ -16,11 +16,20 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.screen.Screen;
+import io.jmix.core.common.event.Subscription;
+
+import java.util.function.Consumer;
 
 /**
- * @deprecated for new screens that based on {@link Screen} use {@link io.jmix.ui.component.GroupBoxLayout} instead.
+ * @deprecated Use {@link io.jmix.ui.component.Collapsable} instead
  */
 @Deprecated
-public interface GroupBoxLayout extends io.jmix.ui.component.GroupBoxLayout, HasSettings, ExpandingLayout, Collapsable {
+public interface Collapsable extends io.jmix.ui.component.Collapsable {
+
+    /**
+     * @param listener a listener to remove
+     * @deprecated Use {@link Subscription} instead
+     */
+    @Deprecated
+    void removeExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener);
 }

@@ -199,6 +199,29 @@ public interface Table<E>
 
     boolean getColumnReorderingAllowed();
 
+    /**
+     * Registers a new column reorder listener.
+     *
+     * @param listener the listener to register
+     */
+    Subscription addColumnReorderListener(Consumer<ColumnReorderEvent<E>> listener);
+
+    /**
+     * An event that is fired when a columns are reordered by the user.
+     */
+    class ColumnReorderEvent<E> extends EventObject {
+
+        public ColumnReorderEvent(Table<E> source) {
+            super(source);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Table<E> getSource() {
+            return (Table<E>) super.getSource();
+        }
+    }
+
     void setColumnControlVisible(boolean columnCollapsingAllowed);
 
     boolean getColumnControlVisible();

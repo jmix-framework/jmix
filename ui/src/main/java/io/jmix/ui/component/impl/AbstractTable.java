@@ -822,6 +822,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         return component.isColumnReorderingAllowed();
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public Subscription addColumnReorderListener(Consumer<ColumnReorderEvent<E>> listener) {
+        return getEventHub().subscribe(ColumnReorderEvent.class, (Consumer) listener);
+    }
+
     @Override
     public void setColumnReorderingAllowed(boolean columnReorderingAllowed) {
         component.setColumnReorderingAllowed(columnReorderingAllowed);
@@ -1043,6 +1049,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         component.setSpecificVariablesHandler(this::handleSpecificVariables);
         component.setIconProvider(this::getItemIcon);
         component.setBeforePaintListener(this::beforeComponentPaint);
+        component.addColumnReorderListener(this::onColumnReorder);
 
         component.setSortAscendingLabel(messages.getMessage("tableSort.ascending"));
         component.setSortResetLabel(messages.getMessage("tableSort.reset"));
@@ -1135,6 +1142,20 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         setClientCaching();
         initEmptyState();
+    }
+
+    protected void onColumnReorder(com.vaadin.v7.ui.Table.ColumnReorderEvent e) {
+        List<Column<E>> orderInternal = getColumnsOrderInternal();
+        columnsOrder = new ArrayList<>(orderInternal);
+
+        Table.ColumnReorderEvent<E> event = new Table.ColumnReorderEvent<>(this);
+        publish(Table.ColumnReorderEvent.class, event);
+    }
+
+    protected List<Column<E>> getColumnsOrderInternal() {
+        return Arrays.stream(component.getVisibleColumns())
+                .map(id -> columns.get(id))
+                .collect(Collectors.toList());
     }
 
     protected void onAfterUnregisterComponent(Component component) {

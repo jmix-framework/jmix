@@ -33,30 +33,19 @@ public interface Collapsable extends Component {
 
     Subscription addExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener);
 
-    /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener);
-
     class ExpandedStateChangeEvent extends EventObject implements HasUserOriginated {
-        private final Collapsable component;
         private final boolean expanded;
         private final boolean userOriginated;
 
         public ExpandedStateChangeEvent(Collapsable component, boolean expanded, boolean userOriginated) {
             super(component);
-            this.component = component;
             this.expanded = expanded;
             this.userOriginated = userOriginated;
         }
 
-        /**
-         * @deprecated Use {@link #getSource()} instead.
-         */
-        public Collapsable getComponent() {
-            return component;
+        @Override
+        public Collapsable getSource() {
+            return (Collapsable) super.getSource();
         }
 
         /**
@@ -69,11 +58,6 @@ public interface Collapsable extends Component {
         @Override
         public boolean isUserOriginated() {
             return userOriginated;
-        }
-
-        @Override
-        public Collapsable getSource() {
-            return (Collapsable) super.getSource();
         }
     }
 }

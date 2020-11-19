@@ -266,11 +266,6 @@ public class GroupBoxImpl extends AbstractComponent<JmixGroupBox> implements Gro
         return getEventHub().subscribe(ExpandedStateChangeEvent.class, listener);
     }
 
-    @Override
-    public void removeExpandedStateChangeListener(Consumer<ExpandedStateChangeEvent> listener) {
-        unsubscribe(ExpandedStateChangeEvent.class, listener);
-    }
-
     protected void fireExpandStateChange(boolean expanded, boolean invokedByUser) {
         ExpandedStateChangeEvent event = new ExpandedStateChangeEvent(this, expanded, invokedByUser);
         publish(ExpandedStateChangeEvent.class, event);

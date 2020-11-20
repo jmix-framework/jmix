@@ -24,6 +24,8 @@ import io.jmix.ui.AppUI;
 import io.jmix.ui.component.impl.FrameImplementation;
 import io.jmix.ui.sys.TestIdManager;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -38,8 +40,15 @@ public class CompositeComponent<T extends Component>
     protected T root;
     protected Frame frame;
 
+    protected ApplicationContext applicationContext;
+
     // private, lazily initialized
     private EventHub eventHub = null;
+
+    @Autowired
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 
     protected EventHub getEventHub() {
         if (eventHub == null) {
@@ -125,7 +134,7 @@ public class CompositeComponent<T extends Component>
      * @throws IllegalStateException if the root component is already set
      */
     protected void setComposition(T composition) {
-        Preconditions.checkState(root == null, "Composition root is already initialized");
+        Preconditions.checkState(root == null, "Composition root has already been initialized");
         this.root = composition;
     }
 

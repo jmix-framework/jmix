@@ -155,7 +155,10 @@ public class DataAwareComponentsTools {
     }
 
     public void setupDateFormat(DateField component, EntityValueSource valueSource) {
-        MetaProperty metaProperty = valueSource.getMetaPropertyPath().getMetaProperty();
+        setupDateFormat(component, valueSource.getMetaPropertyPath().getMetaProperty());
+    }
+
+    public void setupDateFormat(DateField component, MetaProperty metaProperty) {
         Class javaType = metaProperty.getRange().asDatatype().getJavaClass();
 
         TemporalType temporalType = getTemporalType(metaProperty, javaType);

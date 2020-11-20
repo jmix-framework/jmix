@@ -4191,19 +4191,24 @@
     </xs:complexType>
 
     <xs:complexType name="propertyFilterComponent">
-        <xs:extension base="baseComponent">
-            <xs:sequence>
-                <xs:group ref="layoutOrComponent"/>
-            </xs:sequence>
-            <xs:attribute name="dataLoader" type="xs:string" use="required"/>
-            <xs:attribute name="property" type="xs:string" use="required"/>
-            <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
-            <xs:attribute name="operationCaptionVisible" type="xs:boolean"/>
-            <xs:attribute name="captionPosition" type="propertyFilterCaptionPosition"/>
-            <xs:attribute name="captionWidth" type="xs:string"/>
-            <xs:attribute name="autoApply" type="xs:boolean"/>
-            <xs:attribute name="parameterName" type="xs:string"/>
-        </xs:extension>
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:group ref="layoutOrComponent"/>
+                </xs:sequence>
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="property" type="xs:string" use="required"/>
+                <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
+                <xs:attribute name="operationEditable" type="xs:boolean"/>
+                <xs:attribute name="operationCaptionVisible" type="xs:boolean"/>
+                <xs:attribute name="captionPosition" type="propertyFilterCaptionPosition"/>
+                <xs:attribute name="captionWidth" type="xs:string"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="parameterName" type="xs:string"/>
+
+                <xs:attributeGroup ref="hasEditable"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:simpleType name="propertyFilterCaptionPosition">
@@ -4215,18 +4220,18 @@
 
     <xs:simpleType name="propertyFilterOperation">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="equal"/>
-            <xs:enumeration value="not_equal"/>
-            <xs:enumeration value="greater"/>
-            <xs:enumeration value="greater_or_equal"/>
-            <xs:enumeration value="less"/>
-            <xs:enumeration value="less_or_equal"/>
-            <xs:enumeration value="contains"/>
-            <xs:enumeration value="not_contains"/>
-            <xs:enumeration value="starts_with"/>
-            <xs:enumeration value="ends_with"/>
-            <xs:enumeration value="is_null"/>
-            <xs:enumeration value="is_not_null"/>
+            <xs:enumeration value="EQUAL"/>
+            <xs:enumeration value="NOT_EQUAL"/>
+            <xs:enumeration value="GREATER"/>
+            <xs:enumeration value="GREATER_OR_EQUAL"/>
+            <xs:enumeration value="LESS"/>
+            <xs:enumeration value="LESS_OR_EQUAL"/>
+            <xs:enumeration value="CONTAINS"/>
+            <xs:enumeration value="NOT_CONTAINS"/>
+            <xs:enumeration value="STARTS_WITH"/>
+            <xs:enumeration value="ENDS_WITH"/>
+            <xs:enumeration value="IS_SET"/>
+            <xs:enumeration value="IS_NOT_SET"/>
         </xs:restriction>
     </xs:simpleType>
 

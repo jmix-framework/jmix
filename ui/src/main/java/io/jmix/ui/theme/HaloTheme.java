@@ -137,6 +137,11 @@ public class HaloTheme {
     public static final String BUTTON_BORDERLESS_COLORED = "borderless-colored";
 
     /**
+     * Hide the popup indicator in the popup button.
+     */
+    public static final String POPUP_BUTTON_NO_POPUP_INDICATOR = "jmix-no-popup-indicator";
+
+    /**
      * Removes the border and background from the text field. Can be combined with any other TextField style.
      */
     public static final String TEXTFIELD_BORDERLESS = "borderless";

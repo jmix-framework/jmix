@@ -30,7 +30,8 @@ $cuba-popupbutton-indicator-font-weight: $v-font-weight !default;
     font-weight: $v-font-weight;
   }
 
-  .#{$primary-stylename}.icon-only.icon .v-popup-indicator {
+  .#{$primary-stylename}.icon-only.icon .v-popup-indicator,
+  .#{$primary-stylename}.jmix-no-popup-indicator .v-popup-indicator {
     display: none;
   }
 

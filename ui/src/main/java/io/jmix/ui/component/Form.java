@@ -25,7 +25,7 @@ import java.util.Collection;
  */
 public interface Form extends Component, Component.BelongToFrame, Component.HasCaption, Component.HasIcon,
         ComponentContainer, Component.Editable, EditableChangeNotifier, HasContextHelp, ChildEditableController,
-        HasValueSourceProvider, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+        HasValueSourceProvider, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition {
 
     String NAME = "form";
 
@@ -99,16 +99,25 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
     Component getComponent(int column, int row);
 
     /**
-     * @return position of component captions
+     * @return caption position of form child components
      */
+    @Override
     CaptionPosition getCaptionPosition();
 
     /**
-     * Sets position of component captions.
+     * Sets caption position of form child components.
      *
-     * @param captionAlignment component captions position
+     * <ul>
+     *     <li>{@link CaptionPosition#LEFT} - component captions will be placed
+     *     in a separate column on the left side of the components</li>
+     *     <li>{@link CaptionPosition#TOP} - component captions will be placed
+     *     above the components</li>
+     * </ul>
+     *
+     * @param position component caption position
      */
-    void setCaptionPosition(CaptionPosition captionAlignment);
+    @Override
+    void setCaptionPosition(CaptionPosition position);
 
     /**
      * @return columns fixed caption width
@@ -196,21 +205,6 @@ public interface Form extends Component, Component.BelongToFrame, Component.HasC
      * @param flex   the flex ration for the column
      */
     void setColumnFlex(int column, float flex);
-
-    /**
-     * Caption position of form child components.
-     */
-    enum CaptionPosition {
-        /**
-         * Component captions will be placed in a separate column on the left side of the components.
-         */
-        LEFT,
-
-        /**
-         * Component captions will be placed above the components.
-         */
-        TOP
-    }
 
     /**
      * Caption alignment of form child components.

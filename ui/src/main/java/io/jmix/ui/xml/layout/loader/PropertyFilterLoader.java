@@ -15,20 +15,16 @@
  */
 package io.jmix.ui.xml.layout.loader;
 
-import com.google.common.base.Strings;
-import io.jmix.core.DevelopmentException;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
+import io.jmix.ui.component.PropertyFilter.Operation;
+import io.jmix.ui.component.SupportsCaptionPosition.CaptionPosition;
+import io.jmix.ui.component.UiComponentsGenerator;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
@@ -37,183 +33,115 @@ import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
+import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
+
 public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter> {
-
-    public static final String OPERATION_BASE_MESSAGE_KEY = "io.jmix.core.querycondition/propertyfilter.";
-
-    private UiProperties uiProperties;
 
     @Override
     public void createComponent() {
         resultComponent = factory.create(PropertyFilter.NAME);
         loadId(resultComponent, element);
-        uiProperties = applicationContext.getBean(UiProperties.class);
     }
 
     @Override
     public void loadComponent() {
         assignFrame(resultComponent);
+
+        loadVisible(resultComponent, element);
         loadWidth(resultComponent, element);
-        loadProperty();
-        loadParameterName();
-        loadOperation();
+        loadHeight(resultComponent, element);
 
-        loadCaptionPosition();
-        loadCaptionWidth();
-        loadOperationCaptionVisible();
+        loadEnable(resultComponent, element);
 
-        if (Strings.isNullOrEmpty(resultComponent.getId()) &&
-                Strings.isNullOrEmpty(resultComponent.getParameterName())) {
-            throw new DevelopmentException("Either id or parameterName should be defined for propertyFilter");
-        }
+        loadStyleName(resultComponent, element);
 
-        loadDataLoader();
-        loadCaption();
-        loadValueComponent();
-        loadAutoApply();
+        loadDescription(resultComponent, element);
+        loadIcon(resultComponent, element);
+        loadCss(resultComponent, element);
+
+        loadString(element, "property", resultComponent::setProperty);
+        loadEnum(element, Operation.class, "operation", resultComponent::setOperation);
+        loadBoolean(element, "operationEditable", resultComponent::setOperationEditable);
+
+        resultComponent.setParameterName(loadString(element, "parameterName")
+                .orElse(generateParameterName(resultComponent.getProperty())));
+
+        loadEnum(element, CaptionPosition.class, "captionPosition", resultComponent::setCaptionPosition);
+        loadString(element, "captionWidth", resultComponent::setCaptionWidth);
+
+        loadDataLoader(resultComponent, element);
+        loadValueComponent(resultComponent, element);
+
+        loadCaption(resultComponent, element);
+
+        resultComponent.setAutoApply(loadBoolean(element, "autoApply")
+                .orElse(getUiProperties().isPropertyFilterAutoApply()));
     }
 
-    @Override
-    protected void loadId(Component component, Element element) {
-        super.loadId(component, element);
-    }
-
-    protected void loadDataLoader() {
+    protected void loadDataLoader(PropertyFilter<?> resultComponent, Element element) {
         String dataLoaderId = element.attributeValue("dataLoader");
         if (StringUtils.isNotBlank(dataLoaderId)) {
             FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
             ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
             DataLoader dataLoader = screenData.getLoader(dataLoaderId);
 
-            Condition rootCondition = dataLoader.getCondition();
-            if (rootCondition == null) {
-                rootCondition = new LogicalCondition(LogicalCondition.Type.AND);
-                dataLoader.setCondition(rootCondition);
-            }
-
-            if (rootCondition instanceof LogicalCondition) {
-                ((LogicalCondition) rootCondition).add(resultComponent.getPropertyCondition());
-            }
-
             resultComponent.setDataLoader(dataLoader);
         }
-
-        getComponentContext().addPostInitTask((context1, window) -> {
-            resultComponent.createLayout();
-        });
     }
 
-    protected void loadProperty() {
-        String property = element.attributeValue("property");
-        resultComponent.setProperty(property);
-    }
+    @Override
+    protected void loadCaption(Component.HasCaption component, Element element) {
+        super.loadCaption(component, element);
 
-    protected void loadParameterName() {
-        String parameterName = element.attributeValue("parameterName");
-        if (Strings.isNullOrEmpty(parameterName)) {
-            parameterName = PropertyConditionUtils.generateParameterName(resultComponent.getPropertyCondition());
-        }
-        resultComponent.setParameterName(parameterName);
-    }
-
-    protected void loadOperation() {
-        String operation = element.attributeValue("operation");
-        resultComponent.setOperation(operation);
-    }
-
-    protected void loadOperationCaptionVisible() {
-        String operationCaptionVisible = element.attributeValue("operationCaptionVisible");
-        if (!Strings.isNullOrEmpty(operationCaptionVisible)) {
-            resultComponent.setOperationCaptionVisible(Boolean.parseBoolean(operationCaptionVisible));
-        }
-    }
-
-    private void loadCaptionPosition() {
-        String captionPosition = element.attributeValue("captionPosition");
-        if (!Strings.isNullOrEmpty(captionPosition)) {
-            resultComponent.setCaptionPosition(PropertyFilter.CaptionPosition.valueOf(captionPosition));
-        }
-    }
-
-    private void loadCaptionWidth() {
-        String captionWidth = element.attributeValue("captionWidth");
-        resultComponent.setCaptionWidth(captionWidth);
-    }
-
-    private void loadCaption() {
-        loadCaption(resultComponent, element);
-        if (resultComponent.getCaption() == null) {
+        if (component.getCaption() == null) {
             String caption = getDefaultCaption();
-            resultComponent.setCaption(caption);
+            component.setCaption(caption);
         }
     }
 
-    private void loadAutoApply() {
-        String autoApply = element.attributeValue("autoApply");
-        if (!Strings.isNullOrEmpty(autoApply)) {
-            resultComponent.setAutoApply("true".equals(autoApply));
-        } else {
-            resultComponent.setAutoApply(uiProperties.isPropertyFilterAutoApply());
-        }
-    }
-
-    /**
-     * Default caption consist of the related entity property caption and the operation caption (if the operation
-     * caption is configured to be visible), e.g. "Last name contains".
-     */
-    public String getDefaultCaption() {
+    protected String getDefaultCaption() {
         MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
-        MetaPropertyPath mpp = metaClass.getPropertyPath(resultComponent.getProperty());
-        if (mpp == null) {
-            return resultComponent.getProperty();
-        } else {
-            MetaProperty[] metaProperties = mpp.getMetaProperties();
-            StringBuilder sb = new StringBuilder();
-
-            MetaPropertyPath parentMpp = null;
-            MetaClass tempMetaClass;
-
-            for (int i = 0; i < metaProperties.length; i++) {
-                if (i == 0) {
-                    parentMpp = new MetaPropertyPath(metaClass, metaProperties[i]);
-                    tempMetaClass = metaClass;
-                } else {
-                    parentMpp = new MetaPropertyPath(parentMpp, metaProperties[i]);
-                    tempMetaClass = getMetadataTools().getPropertyEnclosingMetaClass(parentMpp);
-                }
-
-                sb.append(getMessageTools().getPropertyCaption(tempMetaClass, metaProperties[i].getName()));
-                if (i < metaProperties.length - 1) {
-                    sb.append(".");
-                }
-            }
-            if (resultComponent.isOperationCaptionVisible()) {
-                sb.append(" ").append(getOperationCaption(resultComponent.getOperation()));
-            }
-            return sb.toString();
-        }
+        return getPropertyFilterSupport().getPropertyFilterCaption(
+                metaClass, resultComponent.getProperty(), resultComponent.getOperation(),
+                isOperationCaptionVisible() && !resultComponent.isOperationEditable());
     }
 
-    public MetadataTools getMetadataTools() {
-        return applicationContext.getBean(MetadataTools.class);
+    protected boolean isOperationCaptionVisible() {
+        return loadBoolean(element, "operationCaptionVisible").orElse(true);
     }
 
-    private String getOperationCaption(String operation) {
-        return getMessages().getMessage(OPERATION_BASE_MESSAGE_KEY + operation);
-    }
+    protected void loadValueComponent(PropertyFilter<?> resultComponent, Element element) {
+        Component valueComponent;
 
-    private void loadValueComponent() {
         if (!element.elements().isEmpty()) {
-            Element valueComponentElement = this.element.elements().get(0);
-            ComponentLoader valueComponentLoader = getLayoutLoader().createComponent(valueComponentElement);
+            Element valueComponentElement = element.elements().get(0);
+
+            ComponentLoader<?> valueComponentLoader = getLayoutLoader().createComponent(valueComponentElement);
             valueComponentLoader.loadComponent();
-            Component valueComponent = valueComponentLoader.getResultComponent();
-            if (!(valueComponent instanceof HasValue)) {
-                throw new GuiDevelopmentException("Value component of the PropertyFilter must implement HasValue",
-                        getComponentContext().getCurrentFrameId());
-            }
-            resultComponent.setValueComponent((HasValue) valueComponent);
+            valueComponent = valueComponentLoader.getResultComponent();
+        } else {
+            MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
+            valueComponent = getPropertyFilterSupport()
+                    .generateValueField(metaClass, resultComponent.getProperty(), resultComponent.getOperation());
         }
+
+        if (!(valueComponent instanceof HasValue)) {
+            throw new GuiDevelopmentException("Value component of the PropertyFilter must implement HasValue",
+                    getComponentContext().getCurrentFrameId());
+        }
+
+        resultComponent.setValueComponent((HasValue) valueComponent);
     }
 
+    protected UiComponentsGenerator getUiComponentsGenerator() {
+        return (UiComponentsGenerator) applicationContext.getBean(UiComponentsGenerator.NAME);
+    }
+
+    protected PropertyFilterSupport getPropertyFilterSupport() {
+        return applicationContext.getBean(PropertyFilterSupport.class);
+    }
+
+    protected UiProperties getUiProperties() {
+        return applicationContext.getBean(UiProperties.class);
+    }
 }

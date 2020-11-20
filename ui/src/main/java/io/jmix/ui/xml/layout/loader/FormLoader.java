@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.SupportsCaptionPosition.CaptionPosition;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -296,7 +297,7 @@ public class FormLoader extends AbstractComponentLoader<Form> {
     protected void loadCaptionPosition(Form resultComponent, Element element) {
         String captionAlignment = element.attributeValue("captionPosition");
         if (!Strings.isNullOrEmpty(captionAlignment)) {
-            resultComponent.setCaptionPosition(Form.CaptionPosition.valueOf(captionAlignment));
+            resultComponent.setCaptionPosition(CaptionPosition.valueOf(captionAlignment));
         }
     }
 

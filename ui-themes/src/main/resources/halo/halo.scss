@@ -87,6 +87,7 @@
 @import "components/responsivegridlayout/responsivegridlayout";
 @import "components/pagination/pagination";
 @import "components/simplepagination/simplepagination";
+@import "components/propertyfilter/propertyfilter";
 
 // Application specific
 @import "app/log-control";
@@ -176,6 +177,7 @@
   @include halo-responsivegridlayout;
   @include halo-pagination;
   @include halo-simplepagination;
+  @include halo-property-filter;
 
   @include halo-cuba-groupbox;
   @include halo-cuba-tokenlist;

@@ -17,26 +17,26 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.PropertyFilter.Operation;
 
 public class PropertyFilterComponentGenerationContext extends ComponentGenerationContext {
 
-    private PropertyCondition propertyCondition;
+    protected final Operation operation;
 
     /**
      * Creates an instance of PropertyFilterComponentGenerationContext.
      *
-     * @param metaClass         the entity for which the component is created
-     * @param propertyCondition a property condition related to the PropertyFilter component that is being
-     *                          created
+     * @param metaClass the entity for which the component is created
+     * @param property  the entity attribute for which the component is created
+     * @param operation the property filter operation for which the component is created
      */
-    public PropertyFilterComponentGenerationContext(MetaClass metaClass, PropertyCondition propertyCondition) {
-        super(metaClass, propertyCondition.getProperty());
-        this.propertyCondition = propertyCondition;
+    public PropertyFilterComponentGenerationContext(MetaClass metaClass, String property, Operation operation) {
+        super(metaClass, property);
+        this.operation = operation;
     }
 
-    public PropertyCondition getPropertyCondition() {
-        return propertyCondition;
+    public Operation getOperation() {
+        return operation;
     }
 }

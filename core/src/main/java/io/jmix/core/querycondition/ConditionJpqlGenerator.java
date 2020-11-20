@@ -125,6 +125,8 @@ public class ConditionJpqlGenerator {
     private String getJpqlOperation(PropertyCondition condition) {
         if (PropertyCondition.Operation.IS_NULL.equals(condition.getOperation())) {
             return Boolean.TRUE.equals(condition.getParameterValue()) ? "is null" : "is not null";
+        } else if (PropertyCondition.Operation.IS_NOT_NULL.equals(condition.getOperation())) {
+            return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
         } else {
             switch (condition.getOperation()) {
                 case PropertyCondition.Operation.EQUAL:

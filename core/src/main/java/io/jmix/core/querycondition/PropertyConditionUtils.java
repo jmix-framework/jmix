@@ -32,12 +32,12 @@ public class PropertyConditionUtils {
     }
 
     /**
-     * @param propertyCondition property condition
+     * @param property an entity property
      * @return a parameter name
      */
-    public static String generateParameterName(PropertyCondition propertyCondition) {
-        String property = !Strings.isNullOrEmpty(propertyCondition.getProperty()) ? propertyCondition.getProperty() : "";
-        return property + RandomStringUtils.randomAlphabetic(8);
+    public static String generateParameterName(String property) {
+        return (Strings.nullToEmpty(property)
+                + RandomStringUtils.randomAlphabetic(8)).replace(".", "_");
     }
 
 }

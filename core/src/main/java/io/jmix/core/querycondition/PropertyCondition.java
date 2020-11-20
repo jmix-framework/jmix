@@ -53,7 +53,7 @@ public class PropertyCondition implements Condition {
         pc.property = property;
         pc.operation = operation;
         pc.parameterValue = parameterValue;
-        pc.parameterName = PropertyConditionUtils.generateParameterName(pc);
+        pc.parameterName = PropertyConditionUtils.generateParameterName(property);
         return pc;
     }
 
@@ -167,7 +167,7 @@ public class PropertyCondition implements Condition {
     }
 
     @Override
-    public Condition copy() {
+    public PropertyCondition copy() {
         PropertyCondition pc = new PropertyCondition();
         pc.setProperty(this.property);
         pc.setOperation(this.operation);

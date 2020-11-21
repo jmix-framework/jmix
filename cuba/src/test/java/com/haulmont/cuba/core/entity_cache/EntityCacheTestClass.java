@@ -485,7 +485,7 @@ public class EntityCacheTestClass {
             newUserRole.setUser(u);
             persistence.getEntityManager().persist(newUserRole);
 
-            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see OrmCacheSupport.evictMasterEntity()
+            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see JpaCacheSupport.evictMasterEntity()
         }
 
         User u = loadUserWithRoles();
@@ -515,7 +515,7 @@ public class EntityCacheTestClass {
             UserRole ur = persistence.getEntityManager().find(UserRole.class, this.userRole.getId());
             persistence.getEntityManager().remove(ur);
 
-            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see OrmCacheSupport.evictMasterEntity()
+            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see JpaCacheSupport.evictMasterEntity()
         }
 
         User u = loadUserWithRoles();
@@ -544,7 +544,7 @@ public class EntityCacheTestClass {
             persistence.getEntityManager().persist(user1);
             ur.setUser(user1);
 
-            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see OrmCacheSupport.evictMasterEntity()
+            tx.commit(); // User should be evicted from cache to update collection of UserRoles - see JpaCacheSupport.evictMasterEntity()
         }
 
         appender.clearMessages();

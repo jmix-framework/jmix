@@ -25,9 +25,10 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 /**
- * Interface for persistence lifecycle listeners notified by {@link PersistenceSupport} before commit.
+ * Beans implementing this interface are notified by {@link JpaDataStore} and {@link PersistenceSupport} on their
+ * specific events.
  */
-public interface OrmLifecycleListener {
+public interface JpaDataStoreListener {
 
     /**
      * Invoked before entity commit.

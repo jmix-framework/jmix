@@ -84,7 +84,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     protected QueryCacheManager queryCacheManager;
 
     @Autowired
-    protected OrmCacheSupport ormCacheSupport;
+    protected JpaCacheSupport jpaCacheSupport;
 
     @Autowired
     protected EntityChangedEventManager entityChangedEventManager;
@@ -93,7 +93,7 @@ public class PersistenceSupport implements ApplicationContextAware {
     protected EntityStates entityStates;
 
     @Autowired(required = false)
-    protected List<OrmLifecycleListener> lifecycleListeners = new ArrayList<>();
+    protected List<JpaDataStoreListener> lifecycleListeners = new ArrayList<>();
 
     @Autowired
     protected ObjectProvider<DeletePolicyProcessor> deletePolicyProcessorProvider;
@@ -331,7 +331,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         if (lifecycleListeners == null) {
             return;
         }
-        for (OrmLifecycleListener listener : lifecycleListeners) {
+        for (JpaDataStoreListener listener : lifecycleListeners) {
             listener.onFlush(storeName);
         }
     }
@@ -340,7 +340,7 @@ public class PersistenceSupport implements ApplicationContextAware {
         if (lifecycleListeners == null) {
             return;
         }
-        for (OrmLifecycleListener listener : lifecycleListeners) {
+        for (JpaDataStoreListener listener : lifecycleListeners) {
             listener.onEntityChange(entity, type, changes);
         }
     }
@@ -589,7 +589,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 // todo fts
 //                enqueueForFts(entity, FtsChangeType.INSERT);
 
-                ormCacheSupport.evictMasterEntity(entity, null);
+                jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
             }
 
@@ -609,7 +609,7 @@ public class PersistenceSupport implements ApplicationContextAware {
                 // todo fts
 //                enqueueForFts(entity, FtsChangeType.DELETE);
 
-                ormCacheSupport.evictMasterEntity(entity, null);
+                jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
 
             } else if (changeListener.hasChanges()) {
@@ -637,7 +637,7 @@ public class PersistenceSupport implements ApplicationContextAware {
 //                    enqueueForFts(entity, FtsChangeType.UPDATE);
                 }
 
-                ormCacheSupport.evictMasterEntity(entity, changes);
+                jpaCacheSupport.evictMasterEntity(entity, changes);
                 return true;
             }
 

@@ -68,16 +68,16 @@ import static io.jmix.core.entity.EntityValues.getValue;
 
 /**
  * INTERNAL.
- * Implementation of the {@link DataStore} interface working with a relational database through ORM.
+ * Implementation of the {@link DataStore} interface working with a relational database using JPA.
  */
-@Component("data_OrmDataStore")
+@Component("data_JpaDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class OrmDataStore implements DataStore, DataSortingOptions {
+public class JpaDataStore implements DataStore, DataSortingOptions {
 
-    public static final String LOAD_TX_PREFIX = "OrmDataStore-load-";
-    public static final String SAVE_TX_PREFIX = "OrmDataStore-save-";
+    public static final String LOAD_TX_PREFIX = "JpaDataStore-load-";
+    public static final String SAVE_TX_PREFIX = "JpaDataStore-save-";
 
-    private static final Logger log = LoggerFactory.getLogger(OrmDataStore.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaDataStore.class);
 
     @Autowired
     protected DataProperties properties;
@@ -128,7 +128,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     protected ApplicationContext applicationContext;
 
     @Autowired(required = false)
-    protected List<OrmLifecycleListener> ormLifecycleListeners;
+    protected List<JpaDataStoreListener> dataStoreListeners;
 
     @Autowired
     protected EntityReferencesNormalizer entityReferencesNormalizer;
@@ -161,7 +161,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
     @Nullable
     @Override
-    public <E> E load(LoadContext<E> context) {
+    public Object load(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
             log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}", storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
         }
@@ -177,7 +177,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             return null;
         }
 
-        E result = null;
+        Object result = null;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
         boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
 
@@ -199,8 +199,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
             query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
 
-            //noinspection unchecked
-            List<E> resultList = executeQuery(query, singleResult);
+            List<Object> resultList = executeQuery(query, singleResult);
             if (!resultList.isEmpty()) {
                 result = resultList.get(0);
             }
@@ -248,8 +247,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <E> List<E> loadList(LoadContext<E> context) {
+    public List<Object> loadList(LoadContext<?> context) {
         if (log.isDebugEnabled())
             log.debug("loadList: store=" + storeName + ", metaClass=" + context.getEntityMetaClass() + ", fetchPlan=" + context.getFetchPlan()
                     + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
@@ -271,7 +269,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
         queryResultsManager.savePreviousQueryResults(context);
 
-        List<E> resultList;
+        List<Object> resultList;
         EntityAttributesEraser.ReferencesCollector referencesCollector = null;
         boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
 
@@ -294,7 +292,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
             accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
 
-            List<E> entities;
+            List<Object> entities;
 
             Integer maxIdsBatchSize = dbmsSpecifics.getDbmsFeatures(storeName).getMaxIdsBatchSize();
             if (!context.getIds().isEmpty() && entityHasEmbeddedId(metaClass)) {
@@ -324,7 +322,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
             if (context.isJoinTransaction()) {
                 em.flush();
-                for (E entity : resultList) {
+                for (Object entity : resultList) {
                     detachEntity(em, entity, fetchPlan, false);
                     entityEventManager.publishEntityLoadingEvent(entity);
                 }
@@ -345,7 +343,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return resultList;
     }
 
-    protected <E> MetaClass getEffectiveMetaClassFromContext(LoadContext<E> context) {
+    protected MetaClass getEffectiveMetaClassFromContext(LoadContext<?> context) {
         return extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
     }
 
@@ -354,16 +352,16 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return pkProperty == null || pkProperty.getRange().isClass();
     }
 
-    protected <E> List<E> loadListBySingleIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan fetchPlan) {
+    protected List<Object> loadListBySingleIds(LoadContext<?> context, @Nullable Predicate<Object> filteringPredicate, EntityManager em, FetchPlan fetchPlan) {
         LoadContext<?> contextCopy = context.copy();
         contextCopy.setIds(Collections.emptyList());
 
-        List<E> entities = new ArrayList<>(context.getIds().size());
+        List<Object> entities = new ArrayList<>(context.getIds().size());
         for (Object id : context.getIds()) {
             contextCopy.setId(id);
             Query query = createQuery(em, contextCopy, true, false);
             query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-            List<E> list = executeQuery(query, true);
+            List<Object> list = executeQuery(query, true);
             entities.addAll(list);
         }
 
@@ -376,18 +374,18 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected <E> List<E> loadListByBatchesOfIds(LoadContext<E> context, @Nullable Predicate<E> filteringPredicate, EntityManager em, FetchPlan fetchPlan, int batchSize) {
+    protected List<Object> loadListByBatchesOfIds(LoadContext<?> context, @Nullable Predicate<Object> filteringPredicate, EntityManager em, FetchPlan fetchPlan, int batchSize) {
+        @SuppressWarnings("unchecked")
         List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
 
-        List<E> entities = new ArrayList<>(context.getIds().size());
-        for (List partition : partitions) {
-            LoadContext<E> contextCopy = (LoadContext<E>) context.copy();
+        List<Object> entities = new ArrayList<>(context.getIds().size());
+        for (List<Object> partition : partitions) {
+            LoadContext<?> contextCopy = context.copy();
             contextCopy.setIds(partition);
 
             Query query = createQuery(em, contextCopy, false, false);
             query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-            List<E> list = executeQuery(query, false);
+            List<Object> list = executeQuery(query, false);
             entities.addAll(list);
         }
 
@@ -400,11 +398,11 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    protected <E> List<E> checkAndReorderLoadedEntities(List<?> ids, List<E> entities, MetaClass metaClass) {
-        List<E> result = new ArrayList<>(ids.size());
-        Map<Object, E> idToEntityMap = entities.stream().collect(Collectors.toMap(e -> getId(e), Function.identity()));
+    protected List<Object> checkAndReorderLoadedEntities(List<?> ids, List<Object> entities, MetaClass metaClass) {
+        List<Object> result = new ArrayList<>(ids.size());
+        Map<Object, Object> idToEntityMap = entities.stream().collect(Collectors.toMap(e -> getId(e), Function.identity()));
         for (Object id : ids) {
-            E entity = idToEntityMap.get(id);
+            Object entity = idToEntityMap.get(id);
             if (entity == null) {
                 throw new EntityAccessException(metaClass, id);
             }
@@ -904,16 +902,15 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected <E> List<E> getResultList(LoadContext<E> context, Query query, @Nullable Predicate<E> filteringPredicate,
+    protected List<Object> getResultList(LoadContext<?> context, Query query, @Nullable Predicate<Object> filteringPredicate,
                                         boolean ensureDistinct) {
-        List<E> list = executeQuery(query, false);
+        List<Object> list = executeQuery(query, false);
         int initialSize = list.size();
         if (initialSize == 0) {
             return list;
         }
 
-        List<E> filteredList = list;
+        List<Object> filteredList = list;
         if (filteringPredicate != null) {
             filteredList = list.stream()
                     .filter(filteringPredicate)
@@ -926,7 +923,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         }
 
         int requestedFirst = context.getQuery().getFirstResult();
-        LinkedHashSet<E> set = new LinkedHashSet<>(filteredList);
+        LinkedHashSet<Object> set = new LinkedHashSet<>(filteredList);
         if (set.size() == filteredList.size() && requestedFirst == 0 && list.size() == filteredList.size()) {
             // If this is the first chunk and it has no duplicates and security constraints are not applied, just return it
             return filteredList;
@@ -936,10 +933,9 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return getResultListIteratively(context, query, filteringPredicate, set, initialSize);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <E> List<E> getResultListIteratively(LoadContext<E> context, Query query,
-                                                   @Nullable Predicate<E> filteredPredicate,
-                                                   Collection<E> filteredList,
+    protected List<Object> getResultListIteratively(LoadContext<?> context, Query query,
+                                                   @Nullable Predicate<Object> filteredPredicate,
+                                                   Collection<Object> filteredList,
                                                    int initialSize) {
         int requestedFirst = context.getQuery().getFirstResult();
         int requestedMax = context.getQuery().getMaxResults();
@@ -965,7 +961,7 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
             query.setFirstResult(firstResult);
             query.setMaxResults(maxResults);
             //noinspection unchecked
-            List<E> list = query.getResultList();
+            List<Object> list = query.getResultList();
             if (list.size() == 0) {
                 break;
             }
@@ -983,9 +979,9 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
 
         // Copy by iteration because subList() returns non-serializable class
         int max = Math.min(requestedFirst + requestedMax, filteredList.size());
-        List<E> result = new ArrayList<>(max - requestedFirst);
+        List<Object> result = new ArrayList<>(max - requestedFirst);
         int j = 0;
-        for (E item : filteredList) {
+        for (Object item : filteredList) {
             if (j >= max)
                 break;
             if (j >= requestedFirst)
@@ -995,19 +991,19 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    protected <E> List<E> executeQuery(Query query, boolean singleResult) {
-        List<E> list;
+    protected List<Object> executeQuery(Query query, boolean singleResult) {
+        List<Object> list;
         try {
             if (singleResult) {
                 try {
-                    E result = (E) query.getSingleResult();
+                    Object result = query.getSingleResult();
                     list = new ArrayList<>(1);
                     list.add(result);
                 } catch (NoResultException e) {
                     list = Collections.emptyList();
                 }
             } else {
+                //noinspection unchecked
                 list = query.getResultList();
             }
         } catch (PersistenceException e) {
@@ -1145,8 +1141,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     protected void fireLoadListeners(Collection entities, LoadContext<?> context, FetchPlan effectiveFetchPlan) {
-        if (ormLifecycleListeners != null) {
-            for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
+        if (dataStoreListeners != null) {
+            for (JpaDataStoreListener lifecycleListener : dataStoreListeners) {
                 //noinspection unchecked
                 lifecycleListener.onLoad(entities, context, effectiveFetchPlan);
             }
@@ -1154,8 +1150,8 @@ public class OrmDataStore implements DataStore, DataSortingOptions {
     }
 
     protected void fireSaveListeners(Collection<Object> entities, SaveContext saveContext) {
-        if (ormLifecycleListeners != null) {
-            for (OrmLifecycleListener lifecycleListener : ormLifecycleListeners) {
+        if (dataStoreListeners != null) {
+            for (JpaDataStoreListener lifecycleListener : dataStoreListeners) {
                 lifecycleListener.onSave(entities, saveContext);
             }
         }

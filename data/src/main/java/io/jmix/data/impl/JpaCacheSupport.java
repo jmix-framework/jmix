@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManagerFactory;
 
 @Component("data_OrmCacheSupport")
-public class OrmCacheSupport {
+public class JpaCacheSupport {
 
     @Autowired
     protected Metadata metadata;

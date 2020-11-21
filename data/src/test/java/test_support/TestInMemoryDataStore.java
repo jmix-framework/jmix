@@ -51,21 +51,21 @@ public class TestInMemoryDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E> E load(LoadContext<E> context) {
+    public Object load(LoadContext<?> context) {
         Map<Object, Object> instances = entities.get(context.getEntityMetaClass().getName());
         if (instances == null)
             return null;
         else
-            return (E) instances.get(context.getId());
+            return instances.get(context.getId());
     }
 
     @Override
-    public <E> List<E> loadList(LoadContext<E> context) {
+    public List<Object> loadList(LoadContext<?> context) {
         Map<Object, Object> instances = entities.get(context.getEntityMetaClass().getName());
         if (instances == null)
             return Collections.emptyList();
         else
-            return new ArrayList(instances.values());
+            return new ArrayList<>(instances.values());
     }
 
     @Override

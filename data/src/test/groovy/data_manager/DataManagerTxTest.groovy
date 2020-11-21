@@ -18,7 +18,7 @@ package data_manager
 
 import io.jmix.core.DataManager
 import io.jmix.core.SaveContext
-import io.jmix.data.impl.OrmDataStore
+import io.jmix.data.impl.JpaDataStore
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.DefaultTransactionDefinition
 import org.springframework.transaction.support.TransactionSynchronizationManager
@@ -65,7 +65,7 @@ class DataManagerTxTest extends DataSpec {
 
     def "can start new transaction on save"() {
         listener.changedEventConsumer = { event ->
-            assert TransactionSynchronizationManager.getCurrentTransactionName().startsWith(OrmDataStore.SAVE_TX_PREFIX)
+            assert TransactionSynchronizationManager.getCurrentTransactionName().startsWith(JpaDataStore.SAVE_TX_PREFIX)
         }
 
         when:
@@ -118,7 +118,7 @@ class DataManagerTxTest extends DataSpec {
         dataManager.save(customer)
 
         listener.beforeDetachConsumer = { entity ->
-            assert TransactionSynchronizationManager.getCurrentTransactionName().startsWith(OrmDataStore.LOAD_TX_PREFIX)
+            assert TransactionSynchronizationManager.getCurrentTransactionName().startsWith(JpaDataStore.LOAD_TX_PREFIX)
         }
 
         when:

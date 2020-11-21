@@ -22,7 +22,7 @@ import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.impl.OrmLifecycleListener;
+import io.jmix.data.impl.JpaDataStoreListener;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.internal.expressions.ExpressionIterator;
@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component("data_LazyLoadingHelper")
-public class LazyLoadingHelper implements OrmLifecycleListener {
+public class LazyLoadingHelper implements JpaDataStoreListener {
 
     private static final Logger log = LoggerFactory.getLogger(LazyLoadingHelper.class);
 

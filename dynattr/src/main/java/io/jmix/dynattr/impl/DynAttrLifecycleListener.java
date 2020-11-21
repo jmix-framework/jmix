@@ -19,7 +19,7 @@ package io.jmix.dynattr.impl;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
-import io.jmix.data.impl.OrmLifecycleListener;
+import io.jmix.data.impl.JpaDataStoreListener;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Map;
 
 @Component("dynattr_DynAttrLifecycleListener")
-public class DynAttrLifecycleListener implements OrmLifecycleListener {
+public class DynAttrLifecycleListener implements JpaDataStoreListener {
 
     @Autowired
     protected DynAttrManager dynAttrManager;

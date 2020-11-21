@@ -33,9 +33,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * INTERNAL.
- * Empty implementation of the {@link DataStore} interface. {@code DataManager} routes here entities that do not
- * belong to any data store.
+ * Empty implementation of the {@link DataStore} interface.
+ * {@code DataManager} routes here non-JPA entities that are not explicitly associated with any data store.
  */
 @Internal
 @Component("core_NoopDataStore")
@@ -56,12 +55,12 @@ public class NoopDataStore implements DataStore {
 
     @Nullable
     @Override
-    public <E> E load(LoadContext<E> context) {
+    public Object load(LoadContext<?> context) {
         return null;
     }
 
     @Override
-    public <E> List<E> loadList(LoadContext<E> context) {
+    public List<Object> loadList(LoadContext<?> context) {
         return Collections.emptyList();
     }
 

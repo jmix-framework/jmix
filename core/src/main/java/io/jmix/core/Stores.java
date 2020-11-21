@@ -19,7 +19,7 @@ package io.jmix.core;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.impl.NoopStoreDescriptor;
-import io.jmix.core.impl.OrmStoreDescriptor;
+import io.jmix.core.impl.JpaStoreDescriptor;
 import io.jmix.core.impl.UndefinedStoreDescriptor;
 import io.jmix.core.metamodel.model.Store;
 import io.jmix.core.metamodel.model.StoreDescriptor;
@@ -46,7 +46,7 @@ public class Stores {
     protected Environment environment;
 
     @Autowired
-    protected OrmStoreDescriptor ormStoreDescriptor;
+    protected JpaStoreDescriptor jpaStoreDescriptor;
 
     @Autowired
     protected NoopStoreDescriptor noopStoreDescriptor;
@@ -69,14 +69,14 @@ public class Stores {
         stores.put(UNDEFINED, applicationContext.getBean(Store.class, UNDEFINED, undefinedStoreDescriptor));
 
         StoreDescriptor mainDescriptor = getStoreDescriptor(MAIN);
-        stores.put(MAIN, applicationContext.getBean(Store.class, MAIN, mainDescriptor != null ? mainDescriptor : ormStoreDescriptor));
+        stores.put(MAIN, applicationContext.getBean(Store.class, MAIN, mainDescriptor != null ? mainDescriptor : jpaStoreDescriptor));
 
         StoreDescriptor noopDescriptor = getStoreDescriptor(NOOP);
         stores.put(NOOP, applicationContext.getBean(Store.class, NOOP, noopDescriptor != null ? noopDescriptor : noopStoreDescriptor));
 
         for (String storeName : getAdditional()) {
             StoreDescriptor storeDescriptor = getStoreDescriptor(storeName);
-            stores.put(storeName, applicationContext.getBean(Store.class, storeName, storeDescriptor != null ? storeDescriptor : ormStoreDescriptor));
+            stores.put(storeName, applicationContext.getBean(Store.class, storeName, storeDescriptor != null ? storeDescriptor : jpaStoreDescriptor));
         }
     }
 

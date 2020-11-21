@@ -22,10 +22,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Central interface to provide CRUD functionality. Can be used on both middle and client tiers.
+ * Central interface to provide CRUD functionality for entities.
  * <p>
- * In case of {@code RdbmsStore}, works with non-managed (new or detached) entities, always starts and commits new
- * transactions.
+ * Delegates to {@link DataStore} implementations, handles references between entities from different stores.
  */
 public interface DataManager {
 
@@ -35,7 +34,7 @@ public interface DataManager {
      * object passed in {@link LoadContext}.</p>
      *
      * @param context {@link LoadContext} object, defining what and how to load
-     * @return the loaded detached object, or null if not found
+     * @return the loaded object, or null if not found
      */
     @Nullable
     <E> E load(LoadContext<E> context);
@@ -46,7 +45,7 @@ public interface DataManager {
      * object passed in {@link LoadContext}.</p>
      *
      * @param context {@link LoadContext} object, defining what and how to load
-     * @return a list of detached instances, or empty list if nothing found
+     * @return a list of entity instances, or empty list if nothing found
      */
     <E> List<E> loadList(LoadContext<E> context);
 
@@ -59,31 +58,31 @@ public interface DataManager {
     long getCount(LoadContext<?> context);
 
     /**
-     * Commits a collection of new or detached entity instances to the data store.
+     * Saves a collection of entity instances to their data stores.
      *
-     * @param context {@link SaveContext} object, containing committing entities and other information
-     * @return set of committed instances
+     * @param context {@link SaveContext} object, containing entities and other information
+     * @return set of saved instances
      */
     EntitySet save(SaveContext context);
 
     /**
-     * Commits new or detached entity instances to the data store.
+     * Saves entities to their data stores.
      *
-     * @param entities entities to commit
-     * @return set of committed instances
+     * @param entities entities to save
+     * @return set of saved instances
      */
     EntitySet save(Object... entities);
 
     /**
-     * Commits the entity to the data store.
+     * Saves the entity to its data store.
      *
      * @param entity entity instance
-     * @return committed instance
+     * @return saved instance
      */
     <E> E save(E entity);
 
     /**
-     * Removes the entities from the data store.
+     * Removes the entities from their data stores.
      *
      * @param entity entity instance
      */
@@ -182,7 +181,7 @@ public interface DataManager {
     <T> T create(Class<T> entityClass);
 
     /**
-     * Returns an entity instance which can be used as a reference to an object which exists in the database.
+     * Returns an entity instance which can be used as a reference to an object which exists in the data store.
      * <p>
      * For example, if you are creating a User, you have to set a Group the user belongs to. If you know the group id,
      * you could load it from the database and set to the user. This method saves you from unneeded database round trip:
@@ -201,7 +200,7 @@ public interface DataManager {
     <T> T getReference(Class<T> entityClass, Object id);
 
     /**
-     * Returns an entity instance which can be used as a reference to an object which exists in the database.
+     * Returns an entity instance which can be used as a reference to an object which exists in the data store.
      *
      * @param entityId id of an existing object
      * @see #getReference(Class, Object)

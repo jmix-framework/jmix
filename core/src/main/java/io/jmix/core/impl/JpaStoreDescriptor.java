@@ -19,12 +19,12 @@ package io.jmix.core.impl;
 import io.jmix.core.metamodel.model.StoreDescriptor;
 import org.springframework.stereotype.Component;
 
-@Component("core_OrmStoreDescriptor")
-public class OrmStoreDescriptor implements StoreDescriptor {
+@Component("core_JpaStoreDescriptor")
+public class JpaStoreDescriptor implements StoreDescriptor {
 
     @Override
     public String getBeanName() {
-        return "data_OrmDataStore";
+        return "data_JpaDataStore";
     }
 
     @Override

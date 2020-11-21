@@ -73,7 +73,10 @@ public class DataManagerImpl implements DataManager {
     public <E> E load(LoadContext<E> context) {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
-        E entity = storage.load(context);
+
+        @SuppressWarnings("unchecked")
+        E entity = (E) storage.load(context);
+
         if (entity != null)
             readCrossDataStoreReferences(Collections.singletonList(entity), context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entity;
@@ -83,7 +86,10 @@ public class DataManagerImpl implements DataManager {
     public <E> List<E> loadList(LoadContext<E> context) {
         MetaClass metaClass = getEffectiveMetaClassFromContext(context);
         DataStore storage = dataStoreFactory.get(getStoreName(metaClass));
-        List<E> entities = storage.loadList(context);
+
+        @SuppressWarnings("unchecked")
+        List<E> entities = (List<E>) storage.loadList(context);
+
         readCrossDataStoreReferences(entities, context.getFetchPlan(), metaClass, context.isJoinTransaction());
         return entities;
     }

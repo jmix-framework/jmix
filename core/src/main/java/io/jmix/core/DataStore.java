@@ -23,15 +23,21 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Interface defining methods for storing and loading entities in a persistent storage.
+ * Interface defining methods for CRUD operations on entities.
  * <p>
- * Implementations of this interface are used by {@link DataManager}, do not invoke them
- * from your application code.
+ * Implementations of this interface must be prototype beans. They are used by {@link DataManager}, do not access
+ * data stores directly from your application code.
  */
 public interface DataStore {
 
+    /**
+     * This data store instance name with which it is registered in {@link Stores}.
+     */
     String getName();
 
+    /**
+     * Sets this data store instance name with which it is registered in {@link Stores}.
+     */
     void setName(String name);
 
     /**
@@ -40,14 +46,14 @@ public interface DataStore {
      * @return the loaded object, or null if not found
      */
     @Nullable
-    <E> E load(LoadContext<E> context);
+    Object load(LoadContext<?> context);
 
     /**
      * Loads collection of entity instances.
      *
      * @return a list of instances, or empty list if nothing found
      */
-    <E> List<E> loadList(LoadContext<E> context);
+    List<Object> loadList(LoadContext<?> context);
 
     /**
      * Returns the number of entity instances for the given query passed in the {@link LoadContext}.
@@ -57,9 +63,9 @@ public interface DataStore {
     long getCount(LoadContext<?> context);
 
     /**
-     * Commits a collection of new or detached entity instances to the storage.
+     * Saves a collection of entity instances.
      *
-     * @return set of committed instances
+     * @return set of saved instances
      */
     Set<?> save(SaveContext context);
 

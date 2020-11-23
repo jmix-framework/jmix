@@ -20,11 +20,16 @@ import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MetaModelUtil {
     public static final String ENTITY_TYPE = "io.jmix.core.Entity";
@@ -45,6 +50,7 @@ public class MetaModelUtil {
     public static final String EMBEDDABLE_ANNOTATION_TYPE = "javax.persistence.Embeddable";
     public static final String CONVERTER_ANNOTATION_TYPE = "javax.persistence.Converter";
     public static final String STORE_ANNOTATION_TYPE = "io.jmix.core.metamodel.annotation.Store";
+    public static final String REPLACE_ENTITY_ANNOTATION_TYPE = "io.jmix.core.entity.annotation.ReplaceEntity";
 
     public static final String GET_ENTITY_ENTRY_METHOD_NAME = "__getEntityEntry";
     public static final String COPY_ENTITY_ENTRY_METHOD_NAME = "__copyEntityEntry";
@@ -239,4 +245,22 @@ public class MetaModelUtil {
         return annotation == null ? null : ((StringMemberValue) annotation.getMemberValue("name")).getValue();
     }
 
+    @Nullable
+    public static String findReplacedEntity(CtClass ctClass) {
+        AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+        Annotation annotation = annotationsAttribute.getAnnotation(REPLACE_ENTITY_ANNOTATION_TYPE);
+        return annotation == null ? null : ((ClassMemberValue) annotation.getMemberValue("value")).getValue();
+    }
+
+    public static boolean isCollection(CtField field) throws NotFoundException {
+        HashSet<String> classNames = new HashSet<>();
+        CtClass current = field.getType();
+        while (current != null) {
+            classNames.add(current.getName());
+            classNames.addAll(Arrays.stream(current.getInterfaces()).map(CtClass::getName).collect(Collectors.toList()));
+            current = current.getSuperclass();
+        }
+
+        return classNames.contains(Collection.class.getCanonicalName());
+    }
 }

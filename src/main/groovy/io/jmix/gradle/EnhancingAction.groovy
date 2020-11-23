@@ -16,19 +16,19 @@
 
 package io.jmix.gradle
 
-import groovy.xml.MarkupBuilder
+
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.NotFoundException
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.tasks.SourceSet
 
+import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
 import static io.jmix.gradle.MetaModelUtil.*
 
 class EnhancingAction implements Action<Task> {
-    static final String CONVERTERS_LIST_PROPERTY = "io.jmix.enhancing.converters-list"
 
     static final String MAIN_SET_NAME = "main"
     static final String TEST_SET_NAME = "test"
@@ -48,7 +48,7 @@ class EnhancingAction implements Action<Task> {
         project.logger.lifecycle "Enhancing entities in $project for source set '$sourceSetName'"
 
         ClassesInfo classesInfo = new ClassesInfo()
-        def sourceSet = project.sourceSets.findByName(sourceSetName)
+        SourceSet sourceSet = project.sourceSets.findByName(sourceSetName)
 
         if (sourceSetName == TEST_SET_NAME) {
             generateEntityClassesList(project, project.sourceSets.findByName(MAIN_SET_NAME), classesInfo)
@@ -62,18 +62,15 @@ class EnhancingAction implements Action<Task> {
             classesInfo.modulePaths.remove(0);
         }
 
-        project.logger.lifecycle("Found JPA entities: ${classesInfo.mappedClasses()}, other model objects: $classesInfo.nonMappedClasses")
+        project.logger.lifecycle("Found JPA entities: ${classesInfo.getJpaEntities()}, other model objects: $classesInfo.nonMappedClasses")
 
         project.jmix.entitiesEnhancing.jpaConverters.each {
             classesInfo.converters.add(it)
         }
 
         collectEntitiesFromClasspath(project, sourceSet, classesInfo)
-
-        constructPersistenceXml(project, sourceSet, classesInfo)
-
-        runEclipseLinkEnhancing(project, sourceSet, classesInfo)
-
+        constructDescriptors(project, sourceSet, classesInfo)
+        persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
         runJmixEnhancing(project, sourceSet, classesInfo)
     }
 
@@ -109,16 +106,6 @@ class EnhancingAction implements Action<Task> {
                 }
             }
         }
-    }
-
-    protected boolean findEclipseLink(Set<ResolvedDependency> deps) {
-        for (def dep : deps) {
-            if (dep.moduleGroup == 'org.eclipse.persistence' && dep.moduleName == 'org.eclipse.persistence.jpa')
-                return true
-            if (findEclipseLink(dep.children))
-                return true
-        }
-        return false
     }
 
     protected void collectEntitiesFromClasspath(Project project, sourceSet, ClassesInfo classesInfo) {
@@ -172,58 +159,36 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void constructPersistenceXml(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected void constructDescriptors(Project project, sourceSet, ClassesInfo classesInfo) {
         for (String storeName : classesInfo.allStores()) {
             for (String modulePath : classesInfo.modulePaths) {
-                String persistenceFilePath = "${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence/META-INF/persistence.xml"
 
-                File file = new File(project.buildDir, "tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath")
+                String storePrefix = storeName == MAIN_STORE_NAME ? "" : (storeName + '-')
+                String enhancingWorkDir = "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/${storePrefix}persistence"
 
-                def mappingFileName = "$modulePath/$storeName-orm.xml";
+                String persistenceFileName = "$enhancingWorkDir/META-INF/persistence.xml"
 
-                file.parentFile.mkdirs()
-                file.withWriter { writer ->
-                    def xml = new MarkupBuilder(writer)
-                    xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                    xml.persistence(version: '2.2', xmlns: 'http://xmlns.jcp.org/xml/ns/persistence',
-                            'xmlns:xsi': "http://www.w3.org/2001/XMLSchema-instance",
-                            'xsi:schemaLocation': "http://xmlns.jcp.org/xml/ns/persistence" +
-                                    " http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd") {
-                        'persistence-unit'(name: storeName) {
-                            'provider'('io.jmix.data.impl.JmixPersistenceProvider')
-                            'mapping-file'(mappingFileName)
+                String ormRelativeFileName = "$modulePath/${storePrefix}orm.xml";
+                String ormFileName = "$enhancingWorkDir/$ormRelativeFileName"
 
-                            classesInfo.mappedStoreClasses(storeName).each { String name ->
-                                'class'(name)
-                            }
-                            'exclude-unlisted-classes'()
-                            'properties'() {
-                                'property'(name: 'eclipselink.weaving', value: 'static')
-                                'property'(name: CONVERTERS_LIST_PROPERTY, value: classesInfo.converters.join(';'))
-                            }
-                        }
-                    }
-                }
+                //create persistence.xml in tmp work directory to be processed by orm-provider weaving (e.g. EclipseLink accepts '*/META-INF/persistence.xml' file path only)
+                DescriptorGenerationUtils.constructPersistenceXml(
+                        persistenceFileName,
+                        storeName,
+                        ormRelativeFileName,
+                        classesInfo.getJpaEntitiesAndConverters(storeName),
+                        classesInfo.getConverters())
 
-                File ormFile = new File("$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$mappingFileName");
-                ormFile.getParentFile().mkdirs()
+                DescriptorGenerationUtils.constructOrmXml(
+                        ormFileName,
+                        classesInfo.getJpaEntitiesAndConverters(storeName),
+                        createClassPool(project, sourceSet))
 
-                ormFile.withWriter { writer ->
-                    def xml = new MarkupBuilder(writer)
-                    xml.mkp.xmlDeclaration(version: "1.0", encoding: "UTF-8")
-                    xml.'entity-mappings'(
-                            xmlns: 'http://xmlns.jcp.org/xml/ns/persistence/orm',
-                            'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                            'xsi:schemaLocation': 'http://xmlns.jcp.org/xml/ns/persistence/orm http://xmlns.jcp.org/xml/ns/persistence/orm_2_2.xsd',
-                            version: '2.2'
-                    )
-                }
-
-
+                //store all generated persistence/orm xml files in temporary resources dir, because output resources dir is not prepared yet
                 project.copy {
-                    from "$project.buildDir/tmp/entitiesEnhancing/$sourceSetName/$persistenceFilePath"
+                    from persistenceFileName, ormFileName
                     into "$project.buildDir/tmp/entitiesEnhancing/resources/$sourceSetName/$modulePath"
-                    rename "persistence.xml", "${storeName == "main" ? "" : (storeName + '-')}persistence.xml"
+                    rename "persistence.xml", "${storePrefix}persistence.xml"
                 }
             }
         }
@@ -236,60 +201,21 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void runEclipseLinkEnhancing(Project project, sourceSet, ClassesInfo classesInfo) {
-        for (storeName in classesInfo.allStores()) {
-            def conf = project.configurations.findByName(sourceSet.getCompileClasspathConfigurationName())
-            if (!findEclipseLink(conf.resolvedConfiguration.firstLevelModuleDependencies)) {
-                project.logger.info("EclipseLink not found in classpath, EclipseLink enhancer will not run")
-                return
-            }
-
-            project.logger.lifecycle "Running EclipseLink enhancer in $project for $sourceSet"
-
-            project.javaexec {
-                main = 'org.eclipse.persistence.tools.weaving.jpa.StaticWeave'
-                classpath(
-                        project.configurations.enhancing.asFileTree.asPath,
-                        sourceSet.compileClasspath,
-                        sourceSet.java.outputDir
-                )
-                args "-loglevel"
-                args "INFO"
-                args "-persistenceinfo"
-                args "${project.buildDir}/tmp/entitiesEnhancing/$sourceSetName/${storeName == MAIN_STORE_NAME ? "" : (storeName + '-')}persistence"
-                args sourceSet.java.outputDir.absolutePath
-                args sourceSet.java.outputDir.absolutePath
-                debug = project.hasProperty("debugEnhancing") ? Boolean.valueOf(project.getProperty("debugEnhancing")) : false
-            }
-        }
-    }
-
     protected void runJmixEnhancing(Project project, sourceSet, ClassesInfo classesInfo) {
-        if (!classesInfo.allEntities().isEmpty()) {
+        if (!classesInfo.getAllEntities().isEmpty()) {
             project.logger.lifecycle "Running Jmix enhancer in $project for $sourceSet"
 
             String javaOutputDir = sourceSet.java.outputDir.absolutePath
 
             for (EnhancingStep step : enhancingSteps()) {
 
-                ClassPool classPool = new ClassPool(null)
-                classPool.appendSystemPath()
-
-                for (File file in sourceSet.compileClasspath) {
-                    classPool.insertClassPath(file.getAbsolutePath())
-                }
-
-                classPool.insertClassPath(javaOutputDir)
-
-                project.configurations.enhancing.files.each { File dep ->
-                    classPool.insertClassPath(dep.absolutePath)
-                }
+                ClassPool classPool = createClassPool(project, sourceSet)
 
                 step.classPool = classPool
                 step.outputDir = javaOutputDir
                 step.logger = project.logger
 
-                for (className in classesInfo.allEntities()) {
+                for (className in classesInfo.getAllEntities()) {
                     def classFileName = className.replace('.', '/') + '.class'
                     def classFile = new File(javaOutputDir, classFileName)
 
@@ -302,6 +228,27 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
+    static ClassPool createClassPool(Project project, sourceSet) {
+        ClassPool classPool = new ClassPool(null)
+        classPool.appendSystemPath()
+
+        for (File file in sourceSet.compileClasspath) {
+            classPool.insertClassPath(file.getAbsolutePath())
+        }
+
+        classPool.insertClassPath(sourceSet.java.outputDir.absolutePath)
+
+        project.configurations.enhancing.files.each { File dep ->
+            classPool.insertClassPath(dep.absolutePath)
+        }
+
+        return classPool
+    }
+
+    protected static PersistenceProviderEnhancing persistenceProviderEnhancing() {
+        return new EclipselinkEnhancing()
+    }
+
     protected static List<EnhancingStep> enhancingSteps() {
         Arrays.asList(
                 new JmixEntityEnhancingStep(),
@@ -310,7 +257,9 @@ class EnhancingAction implements Action<Task> {
                 new TransientAnnotationEnhancingStep())
     }
 
-
+    /**
+     * Stores information about entities and converters
+     */
     private class ClassesInfo {
         Map<String, Set<String>> classesByStores = [:].withDefault { _ -> new HashSet<String>() }
         Set<String> converters = [] as Set<String>
@@ -318,21 +267,27 @@ class EnhancingAction implements Action<Task> {
 
         List<String> modulePaths = []
 
-        Collection<String> mappedClasses() {
+        Collection<String> getJpaEntities() {
             return classesByStores.values().flatten()
         }
 
-        Collection<String> allEntities() {
-            return mappedClasses() + nonMappedClasses.values().flatten()
+        /**
+         * @return JPA and DTO entities
+         */
+        Collection<String> getAllEntities() {
+            return getJpaEntities() + nonMappedClasses.values().flatten()
         }
 
-        Collection<String> mappedStoreClasses(String store) {
-            return classesByStores[store] + converters
+        Set<String> getJpaEntitiesAndConverters(String store) {
+            return (classesByStores[store] + converters).toSet()
         }
 
-        Collection<String> allStores() {
+        /**
+         * @return list of store names
+         */
+        Set<String> allStores() {
             return classesByStores.size() > 0 ? classesByStores.keySet() :
-                    converters.size() > 0 ? ['main'] : []
+                    converters.size() > 0 ? ['main'] : new HashSet<String>()
         }
     }
 

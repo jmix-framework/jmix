@@ -15,18 +15,16 @@
  */
 package io.jmix.samples.ui.entity;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.security.GrantedAuthorityContainer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,8 +36,7 @@ import java.util.UUID;
 @JmixEntity
 @Entity(name = "sample_User")
 @Table(name = "SAMPLE_USER")
-//@Listeners("jmix_UserEntityListener")
-public class SampleUser implements BaseUser {
+public class SampleUser implements UserDetails, GrantedAuthorityContainer {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
@@ -76,6 +73,9 @@ public class SampleUser implements BaseUser {
     @Column(name = "ENABLED")
     protected Boolean enabled = true;
 
+    @Transient
+    protected Collection<? extends GrantedAuthority> authorities;
+
     public UUID getId() {
         return id;
     }
@@ -86,7 +86,12 @@ public class SampleUser implements BaseUser {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return authorities != null ? authorities : Collections.emptyList();
+    }
+
+    @Override
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     public String getPassword() {
@@ -193,10 +198,5 @@ public class SampleUser implements BaseUser {
         return StringUtils.trimToEmpty(fmt.format(new Object[]{
                 StringUtils.trimToEmpty(username)
         }));
-    }
-
-    @Override
-    public String getDisplayName() {
-        return username;
     }
 }

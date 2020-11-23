@@ -19,12 +19,11 @@ package io.jmix.ui.component.mainwindow.impl;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.component.mainwindow.UserIndicator;
 import io.jmix.ui.widget.JmixComboBox;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -38,9 +37,9 @@ public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements U
 //    protected final Function<? super BaseUser, String> DEFAULT_USER_NAME_FORMATTER = this::getDefaultUserCaption;
 
     protected Label userNameLabel;
-    protected JmixComboBox<BaseUser> userComboBox;
+    protected JmixComboBox<UserDetails> userComboBox;
 
-    protected Function<? super BaseUser, String> userNameFormatter;
+    protected Function<? super UserDetails, String> userNameFormatter;
 
     protected MetadataTools metadataTools;
 
@@ -232,14 +231,14 @@ public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements U
     }
 
     @Override
-    public void setUserNameFormatter(Function<? super BaseUser, String> userNameFormatter) {
+    public void setUserNameFormatter(Function<? super UserDetails, String> userNameFormatter) {
         this.userNameFormatter = userNameFormatter;
 //        refreshUserSubstitutions();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Function<BaseUser, String> getUserNameFormatter() {
-        return (Function<BaseUser, String>) userNameFormatter;
+    public Function<UserDetails, String> getUserNameFormatter() {
+        return (Function<UserDetails, String>) userNameFormatter;
     }
 }

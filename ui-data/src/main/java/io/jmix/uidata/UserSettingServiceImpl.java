@@ -19,15 +19,14 @@ package io.jmix.uidata;
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.PermissionType;
-import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
@@ -35,6 +34,7 @@ import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,12 +44,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Internal
 public class UserSettingServiceImpl implements UserSettingService {
@@ -121,7 +116,7 @@ public class UserSettingServiceImpl implements UserSettingService {
     }
 
     @Override
-    public void copySettings(BaseUser fromUser, BaseUser toUser) {
+    public void copySettings(UserDetails fromUser, UserDetails toUser) {
         Preconditions.checkNotNullArgument(fromUser);
         Preconditions.checkNotNullArgument(toUser);
 
@@ -211,7 +206,7 @@ public class UserSettingServiceImpl implements UserSettingService {
         return (UiSetting) result.get(0);
     }
 
-    protected Map<UUID, UiTablePresentation> copyPresentations(BaseUser fromUser, BaseUser toUser) {
+    protected Map<UUID, UiTablePresentation> copyPresentations(UserDetails fromUser, UserDetails toUser) {
         Map<UUID, UiTablePresentation> resultMap = transaction.execute(status -> {
             // delete existing
             Query delete = entityManager.createQuery("delete from ui_TablePresentation p where p.userLogin = ?1");

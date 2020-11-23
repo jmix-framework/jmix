@@ -19,7 +19,6 @@ package io.jmix.uidata;
 import io.jmix.core.*;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.component.Component;
@@ -31,6 +30,7 @@ import io.jmix.uidata.entity.UiTablePresentation;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -322,7 +322,7 @@ public class TablePresentationsImpl implements TablePresentations {
                     UiTablePresentation.class, "app"));
 
 //             todo user substitution
-            BaseUser user = authentication.getUser();
+            UserDetails user = authentication.getUser();
 
             ctx.setQueryString("select p from ui_TablePresentation p " +
                     "where p.componentId = :component and (p.userLogin is null or p.userLogin = :userLogin)")

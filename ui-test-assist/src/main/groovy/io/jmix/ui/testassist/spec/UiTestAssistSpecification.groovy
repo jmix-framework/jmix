@@ -16,7 +16,6 @@
 
 package io.jmix.ui.testassist.spec
 
-
 import com.vaadin.server.VaadinSession
 import com.vaadin.server.WebBrowser
 import com.vaadin.ui.UI
@@ -25,9 +24,9 @@ import io.jmix.core.FetchPlanRepository
 import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
+import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.authentication.CoreAuthenticationToken
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies
@@ -149,10 +148,12 @@ class UiTestAssistSpecification extends Specification {
         CoreUser user = new CoreUser(
                 uiTestAssistProperties.getUsername(),
                 uiTestAssistProperties.getPassword(),
-                uiTestAssistProperties.getUsername());
+                uiTestAssistProperties.getUsername())
 
-        CoreAuthenticationToken authentication = new CoreAuthenticationToken(user, Collections.emptyList());
-        authentication.setLocale(Locale.US);
+        UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList())
+        authentication.setDetails(ClientDetails.builder().locale(Locale.US).build())
+
         return authentication
     }
 

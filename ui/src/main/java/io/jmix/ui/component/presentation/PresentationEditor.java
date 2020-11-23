@@ -19,15 +19,14 @@ import com.vaadin.ui.*;
 import io.jmix.core.AccessManager;
 import io.jmix.core.EntityStates;
 import io.jmix.core.Messages;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
-import io.jmix.ui.accesscontext.UiGlobalPresentationContext;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
@@ -47,6 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -207,7 +207,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         presentation.setDefault(defaultField.getValue());
 
         // todo user substitution
-        BaseUser user = currentAuthentication.getUser();
+        UserDetails user = currentAuthentication.getUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
         presentation.setUserLogin(userOnly ? user.getUsername() : null);

@@ -18,7 +18,6 @@ package io.jmix.ui.executor.impl;
 
 import io.jmix.core.TimeSource;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.ui.event.BackgroundTaskTimeoutEvent;
 import io.jmix.ui.executor.*;
 import io.jmix.ui.screen.FrameOwner;
@@ -26,6 +25,7 @@ import io.jmix.ui.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 
@@ -48,10 +48,10 @@ public class TaskHandlerImpl<T, V> implements BackgroundTaskHandler<V> {
     private long startTimeStamp;
 
     private Subscription afterDetachSubscription;
-    private final BaseUser user;
+    private final UserDetails user;
 
     public TaskHandlerImpl(UIAccessor uiAccessor, TaskExecutor<T, V> taskExecutor, WatchDog watchDog, ApplicationEventPublisher applicationEventPublisher,
-                           BaseUser user, TimeSource timeSource) {
+                           UserDetails user, TimeSource timeSource) {
         this.uiAccessor = uiAccessor;
         this.taskExecutor = taskExecutor;
         this.watchDog = watchDog;

@@ -18,10 +18,10 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.security.model.ResourcePolicy;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
 public interface UiPolicyStore {
-    Collection<ResourcePolicy> getScreenResourcePolicies(String windowId);
+    Stream<ResourcePolicy> getScreenResourcePolicies(String windowId);
 
-    Collection<ResourcePolicy> getMenuResourcePolicies(String menuId);
+    Stream<ResourcePolicy> getMenuResourcePolicies(String menuId);
 }

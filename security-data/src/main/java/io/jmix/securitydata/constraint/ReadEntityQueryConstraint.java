@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import io.jmix.core.constraint.RowLevelConstraint;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -51,13 +50,13 @@ public class ReadEntityQueryConstraint implements RowLevelConstraint<ReadEntityQ
 
     @Override
     public void applyTo(ReadEntityQueryContext context) {
-        for (RowLevelPolicy policy : policyStore.getRowLevelPolicies(context.getEntityClass())) {
+        policyStore.getRowLevelPolicies(context.getEntityClass()).forEach(policy -> {
             if (policy.getAction() == RowLevelPolicyAction.READ) {
                 if (!Strings.isNullOrEmpty(policy.getWhereClause()) || !Strings.isNullOrEmpty(policy.getJoinClause())) {
                     context.addJoinAndWhere(policy.getJoinClause(), policy.getWhereClause());
                 }
             }
-        }
+        });
         if (predefinedQueryParameters != null) {
             context.setQueryParamsProvider(param -> predefinedQueryParameters.getParameterValue(param));
         }

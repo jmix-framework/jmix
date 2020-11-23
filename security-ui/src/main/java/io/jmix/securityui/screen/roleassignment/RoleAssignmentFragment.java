@@ -18,7 +18,6 @@ package io.jmix.securityui.screen.roleassignment;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.security.model.Role;
 import io.jmix.security.role.RoleRepository;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
@@ -32,6 +31,7 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -61,7 +61,7 @@ public class RoleAssignmentFragment extends ScreenFragment {
     @Autowired
     private EntityStates entityStates;
 
-    private InstanceContainer<? extends BaseUser> userDc;
+    private InstanceContainer<? extends UserDetails> userDc;
 
     @Subscribe
     public void onInit(InitEvent event) {
@@ -77,20 +77,20 @@ public class RoleAssignmentFragment extends ScreenFragment {
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     public void onAfterShow(Screen.AfterShowEvent event) {
-        BaseUser user = userDc.getItem();
+        UserDetails user = userDc.getItem();
         if (!entityStates.isNew(user)) {
             roleAssignmentEntitiesDl.setParameter("username", user.getUsername());
             roleAssignmentEntitiesDl.load();
         }
     }
 
-    public void setUserDc(InstanceContainer<? extends BaseUser> userDc) {
+    public void setUserDc(InstanceContainer<? extends UserDetails> userDc) {
         this.userDc = userDc;
     }
 
     @Install(to = "roleAssignmentsTable.add", subject = "transformation")
     private Collection<RoleAssignmentEntity> roleAssignmentsTableAddTransformation(Collection<RoleModel> roleModels) {
-        BaseUser user = userDc.getItem();
+        UserDetails user = userDc.getItem();
         Collection<String> assignedRoleCodes = getAssignedRoleCodes();
         return roleModels.stream()
                 .filter(roleModel -> !assignedRoleCodes.contains(roleModel.getCode()))
@@ -113,7 +113,7 @@ public class RoleAssignmentFragment extends ScreenFragment {
     public void onPreCommit(DataContext.PreCommitEvent event) {
         //we don't know the username when a new user is created, so in this case we set username for role assignment
         //when the user is saved
-        BaseUser user = userDc.getItem();
+        UserDetails user = userDc.getItem();
         if (entityStates.isNew(user)) {
             event.getModifiedInstances().stream()
                     .filter(entity -> entity instanceof RoleAssignmentEntity)

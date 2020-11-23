@@ -52,11 +52,11 @@ public class SecureOperationsImpl implements SecureOperations {
     protected boolean isEntityOperationPermitted(MetaClass metaClass, EntityPolicyAction entityPolicyAction,
                                                  PolicyStore policyStore) {
 
-        boolean result = policyStore.getEntityResourcePolicies(metaClass).stream()
+        boolean result = policyStore.getEntityResourcePolicies(metaClass)
                 .anyMatch(policy -> isEntityOperationPermitted(policy, entityPolicyAction));
 
         if (!result) {
-            result = policyStore.getEntityResourcePoliciesByWildcard("*").stream()
+            result = policyStore.getEntityResourcePoliciesByWildcard("*")
                     .anyMatch(policy -> isEntityOperationPermitted(policy, entityPolicyAction));
         }
 
@@ -98,16 +98,16 @@ public class SecureOperationsImpl implements SecureOperations {
                                             EntityAttributePolicyAction[] policyActions,
                                             PolicyStore policyStore) {
 
-        boolean result = policyStore.getEntityAttributesResourcePolicies(metaClass, name).stream()
+        boolean result = policyStore.getEntityAttributesResourcePolicies(metaClass, name)
                 .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
 
         if (!result) {
-            result = policyStore.getEntityAttributesResourcePolicies(metaClass, "*").stream()
+            result = policyStore.getEntityAttributesResourcePolicies(metaClass, "*")
                     .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
         }
 
         if (!result) {
-            result = policyStore.getEntityAttributesResourcePoliciesByWildcard("*", "*").stream()
+            result = policyStore.getEntityAttributesResourcePoliciesByWildcard("*", "*")
                     .anyMatch(policy -> isEntityAttrPermitted(policy, policyActions));
         }
 
@@ -126,11 +126,11 @@ public class SecureOperationsImpl implements SecureOperations {
 
     @Override
     public boolean isSpecificPermitted(String resourceName, PolicyStore policyStore) {
-        boolean result = policyStore.getSpecificResourcePolicies(resourceName).stream()
+        boolean result = policyStore.getSpecificResourcePolicies(resourceName)
                 .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
 
         if (!result) {
-            result = policyStore.getSpecificResourcePolicies("*").stream()
+            result = policyStore.getSpecificResourcePolicies("*")
                     .anyMatch(policy -> Objects.equals(policy.getEffect(), ResourcePolicyEffect.ALLOW));
         }
 

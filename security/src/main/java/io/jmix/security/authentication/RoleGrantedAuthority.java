@@ -17,28 +17,27 @@
 package io.jmix.security.authentication;
 
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.entity.BaseUser;
-import io.jmix.core.security.authentication.CoreAuthenticationToken;
 import io.jmix.security.model.ResourcePolicy;
+import io.jmix.security.model.Role;
 import io.jmix.security.model.RowLevelPolicy;
-import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-public class SecuredAuthenticationToken extends CoreAuthenticationToken implements SecuredAuthentication {
+public class RoleGrantedAuthority implements SecuredGrantedAuthority {
+    private static final long serialVersionUID = 2024837359721996022L;
 
-    protected Collection<ResourcePolicy> resourcePolicies;
-    protected Collection<RowLevelPolicy> rowLevelPolicies;
+    protected final String code;
+    protected final Collection<ResourcePolicy> resourcePolicies;
+    protected final Collection<RowLevelPolicy> rowLevelPolicies;
+    protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new HashMap<>();
+    protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes = new HashMap<>();
 
-    protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes;
-    protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes;
-
-    public SecuredAuthenticationToken(BaseUser user, Collection<? extends GrantedAuthority> authorities) {
-        super(user, authorities);
+    public RoleGrantedAuthority(Role role) {
+        this.code = role.getCode();
+        this.resourcePolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getResourcePolicies()));
+        this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getRowLevelPolicies()));
     }
 
     @Override
@@ -46,14 +45,14 @@ public class SecuredAuthenticationToken extends CoreAuthenticationToken implemen
         return resourcePolicies;
     }
 
-    public void setResourcePolicies(Collection<ResourcePolicy> resourcePolicies) {
-        this.resourcePolicies = resourcePolicies;
-        this.resourceIndexes = null;
+    @Override
+    public Collection<RowLevelPolicy> getRowLevelPolicies() {
+        return rowLevelPolicies;
     }
 
     @Override
-    public <I extends ResourcePolicyIndex> Collection<ResourcePolicy> getResourcePoliciesByIndex(
-            Class<I> indexClass, Function<I, Collection<ResourcePolicy>> extractor) {
+    public <I extends ResourcePolicyIndex> Stream<ResourcePolicy> getResourcePoliciesByIndex(Class<I> indexClass,
+                                                                                             Function<I, Stream<ResourcePolicy>> extractor) {
         if (resourceIndexes == null) {
             resourceIndexes = new HashMap<>();
         }
@@ -69,23 +68,12 @@ public class SecuredAuthenticationToken extends CoreAuthenticationToken implemen
         });
 
         //noinspection unchecked
-        Collection<ResourcePolicy> result = extractor.apply((I) index);
-        return result == null ? Collections.emptyList() : result;
+        Stream<ResourcePolicy> result = extractor.apply((I) index);
+        return result == null ? Stream.empty() : result;
     }
 
     @Override
-    public Collection<RowLevelPolicy> getRowLevelPolicies() {
-        return rowLevelPolicies;
-    }
-
-    public void setRowLevelPolicies(Collection<RowLevelPolicy> rowLevelPolicies) {
-        this.rowLevelPolicies = rowLevelPolicies;
-        this.rowLevelIndexes = null;
-    }
-
-    @Override
-    public <I extends RowLevelPolicyIndex> Collection<RowLevelPolicy> getRowLevelPoliciesByIndex(
-            Class<I> indexClass, Function<I, Collection<RowLevelPolicy>> extractor) {
+    public <I extends RowLevelPolicyIndex> Stream<RowLevelPolicy> getRowLevelPoliciesByIndex(Class<I> indexClass, Function<I, Stream<RowLevelPolicy>> extractor) {
         if (rowLevelIndexes == null) {
             rowLevelIndexes = new HashMap<>();
         }
@@ -101,7 +89,12 @@ public class SecuredAuthenticationToken extends CoreAuthenticationToken implemen
         });
 
         //noinspection unchecked
-        Collection<RowLevelPolicy> result = extractor.apply((I) index);
-        return result == null ? Collections.emptyList() : result;
+        Stream<RowLevelPolicy> result = extractor.apply((I) index);
+        return result == null ? Stream.empty() : result;
+    }
+
+    @Override
+    public String getAuthority() {
+        return code;
     }
 }

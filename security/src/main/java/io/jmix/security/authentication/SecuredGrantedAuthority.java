@@ -16,28 +16,29 @@
 
 package io.jmix.security.authentication;
 
-import io.jmix.core.security.authentication.CoreAuthentication;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.RowLevelPolicy;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
- * An authentication that stores security policies.
+ * An granted authority that stores security policies.
  *
  * @see ResourcePolicy
  * @see RowLevelPolicy
  */
-public interface SecuredAuthentication extends CoreAuthentication {
+public interface SecuredGrantedAuthority extends GrantedAuthority {
 
     Collection<ResourcePolicy> getResourcePolicies();
 
     Collection<RowLevelPolicy> getRowLevelPolicies();
 
-    <I extends ResourcePolicyIndex> Collection<ResourcePolicy> getResourcePoliciesByIndex(
-            Class<I> indexClass, Function<I, Collection<ResourcePolicy>> extractor);
+    <I extends ResourcePolicyIndex> Stream<ResourcePolicy> getResourcePoliciesByIndex(
+            Class<I> indexClass, Function<I, Stream<ResourcePolicy>> extractor);
 
-    <I extends RowLevelPolicyIndex> Collection<RowLevelPolicy> getRowLevelPoliciesByIndex(
-            Class<I> indexClass, Function<I, Collection<RowLevelPolicy>> extractor);
+    <I extends RowLevelPolicyIndex> Stream<RowLevelPolicy> getRowLevelPoliciesByIndex(
+            Class<I> indexClass, Function<I, Stream<RowLevelPolicy>> extractor);
 }

@@ -4,8 +4,10 @@ import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.security.authentication.RoleGrantedAuthority
+import io.jmix.security.role.RoleRepository
 import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
 import io.jmix.security.role.assignment.RoleAssignment
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import test_support.SecurityDataSpecification
+import test_support.role.TestDataManagerReadQueryRole
 import test_support.role.TestLazyLoadingRole
 import test_support.entity.ManyToManyFirstEntity
 import test_support.entity.ManyToManySecondEntity
@@ -33,7 +36,7 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    InMemoryRoleAssignmentProvider roleAssignmentProvider
+    RoleRepository roleRepository
 
     @Autowired
     Metadata metadata
@@ -53,9 +56,9 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     public static final String PASSWORD = "123"
 
     def setup() {
-        user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
+        user1 = new CoreUser("user1", "{noop}$PASSWORD",
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(TestLazyLoadingRole.NAME))))
         userRepository.addUser(user1)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user1.username, TestLazyLoadingRole.NAME))
 
         prepareManyToOne()
         prepareManyToMany()
@@ -67,8 +70,6 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
         SecurityContextHelper.setAuthentication(systemAuthentication)
 
         userRepository.removeUser(user1)
-
-        roleAssignmentProvider.removeAssignments(user1.username)
 
         new JdbcTemplate(dataSource).execute('delete from TEST_MANY_TO_MANY_FIRST_ENTITY_MANY_TO_MANY_SECOND_ENTITY_LINK;' +
                 ' delete from TEST_MANY_TO_MANY_FIRST_ENTITY;' +

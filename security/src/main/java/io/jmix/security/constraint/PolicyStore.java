@@ -20,19 +20,19 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.RowLevelPolicy;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
 public interface PolicyStore {
 
-    Collection<RowLevelPolicy> getRowLevelPolicies(MetaClass entityClass);
+    Stream<RowLevelPolicy> getRowLevelPolicies(MetaClass entityClass);
 
-    Collection<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass);
+    Stream<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass);
 
-    Collection<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard);
+    Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard);
 
-    Collection<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute);
+    Stream<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute);
 
-    Collection<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard);
+    Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard);
 
-    Collection<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
+    Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName);
 }

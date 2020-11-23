@@ -16,11 +16,10 @@
 
 package io.jmix.security.role.assignment;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.security.model.Role;
 
 /**
- * Class stores a link between {@link BaseUser} and {@link Role}
+ * Class stores a link between {@link org.springframework.security.core.userdetails.UserDetails} and {@link Role}
  */
 public class RoleAssignment {
 

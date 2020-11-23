@@ -16,10 +16,9 @@
 
 package io.jmix.securitydata.constraint;
 
-import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.security.constraint.PolicyStore;
-import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ public class InMemoryCrudEntityConstraint implements InMemoryConstraint<InMemory
 
     @Override
     public void applyTo(InMemoryCrudEntityContext context) {
-        for (RowLevelPolicy policy : policyStore.getRowLevelPolicies(context.getEntityClass())) {
+        policyStore.getRowLevelPolicies(context.getEntityClass()).forEach(policy -> {
             if (policy.getType() == RowLevelPolicyType.PREDICATE) {
                 if (policy.getAction() == RowLevelPolicyAction.CREATE) {
                     context.addCreatePredicate(policy.getPredicate());
@@ -57,6 +56,6 @@ public class InMemoryCrudEntityConstraint implements InMemoryConstraint<InMemory
                     context.addDeletePredicate(policy.getPredicate());
                 }
             }
-        }
+        });
     }
 }

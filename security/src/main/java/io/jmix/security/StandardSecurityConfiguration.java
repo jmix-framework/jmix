@@ -17,28 +17,25 @@
 package io.jmix.security;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.MessageTools;
 import io.jmix.core.rememberme.JmixRememberMeServices;
 import io.jmix.core.rememberme.RememberMeProperties;
-import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.security.authentication.SecuredAuthenticationProvider;
 import io.jmix.security.constraint.SecurityConstraintsRegistration;
-import io.jmix.security.role.RoleRepository;
-import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
@@ -49,6 +46,8 @@ import org.springframework.security.web.authentication.session.ConcurrentSession
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,16 +66,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     private RememberMeProperties rememberMeProperties;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private RoleAssignmentRepository roleAssignmentRepository;
-
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
 
     @Autowired
     private PersistentTokenRepository rememberMeTokenRepository;
@@ -84,18 +74,14 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Autowired
     private SessionRegistry sessionRegistry;
 
-    @Autowired
-    private MessageTools messageTools;
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository));
 
-        SecuredAuthenticationProvider securedAuthenticationProvider = new SecuredAuthenticationProvider(roleRepository,
-                roleAssignmentRepository, messageTools);
-        securedAuthenticationProvider.setUserDetailsService(userRepository);
-        securedAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
-        auth.authenticationProvider(securedAuthenticationProvider);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userRepository);
+        daoAuthenticationProvider.setPasswordEncoder(getPasswordEncoder());
+        auth.authenticationProvider(daoAuthenticationProvider);
     }
 
     @Override
@@ -110,6 +96,10 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .anonymous(anonymousConfigurer -> {
                     anonymousConfigurer.key(coreProperties.getAnonymousAuthenticationTokenKey());
                     anonymousConfigurer.principal(userRepository.getAnonymousUser());
+                    Collection<? extends GrantedAuthority> anonymousAuthorities = userRepository.getAnonymousUser().getAuthorities();
+                    if (!anonymousAuthorities.isEmpty()) {
+                        anonymousConfigurer.authorities(new ArrayList<>(userRepository.getAnonymousUser().getAuthorities()));
+                    }
                 })
                 .rememberMe().rememberMeServices(rememberMeServices())
                 .and()
@@ -123,7 +113,7 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Bean("sec_rememberMeServices")
     protected RememberMeServices rememberMeServices() {
         JmixRememberMeServices rememberMeServices =
-                new JmixRememberMeServices(rememberMeProperties.getKey(), userDetailsService, rememberMeTokenRepository);
+                new JmixRememberMeServices(rememberMeProperties.getKey(), userRepository, rememberMeTokenRepository);
         rememberMeServices.setTokenValiditySeconds(rememberMeProperties.getTokenValiditySeconds());
         rememberMeServices.setParameter(DEFAULT_PARAMETER);
         return rememberMeServices;

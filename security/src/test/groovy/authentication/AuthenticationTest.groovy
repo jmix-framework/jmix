@@ -17,11 +17,10 @@
 package authentication
 
 import io.jmix.core.DataManager
-import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.core.security.impl.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SystemAuthenticationToken
+import io.jmix.core.security.CoreUser
 import io.jmix.data.PersistenceTools
-import io.jmix.security.authentication.SecuredAuthentication
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -69,11 +68,9 @@ class AuthenticationTest extends SecuritySpecification {
 
         then:
 
-        authentication instanceof SecuredAuthentication
-        SecuredAuthentication securedAuthentication = authentication as SecuredAuthentication
-        securedAuthentication.user instanceof CoreUser
-        securedAuthentication.user == user1
-
+        authentication instanceof UsernamePasswordAuthenticationToken
+        authentication.principal instanceof CoreUser
+        authentication.principal == user1
     }
 
     def "authenticate with SystemAuthenticationToken"() {

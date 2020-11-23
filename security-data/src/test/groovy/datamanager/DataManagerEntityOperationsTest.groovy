@@ -20,8 +20,10 @@ import io.jmix.core.*
 import io.jmix.core.annotation.Secure
 import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.security.authentication.RoleGrantedAuthority
+import io.jmix.security.role.RoleRepository
 import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
 import io.jmix.security.role.assignment.RoleAssignment
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +52,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    InMemoryRoleAssignmentProvider roleAssignmentProvider
+    RoleRepository roleRepository
 
     @Autowired
     Metadata metadata
@@ -72,9 +74,9 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
         userRepository.addUser(user1)
 
-        user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2")
+        user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2",
+        Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME))))
         userRepository.addUser(user2)
-        roleAssignmentProvider.addAssignment(new RoleAssignment(user2.username, TestDataManagerEntityOperationsRole.NAME))
 
         order = metadata.create(TestOrder)
         order.number = '1'
@@ -88,10 +90,6 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
 
         userRepository.removeUser(user1)
         userRepository.removeUser(user2)
-
-        roleAssignmentProvider.removeAssignments(user1.username)
-        roleAssignmentProvider.removeAssignments(user2.username)
-
 
         new JdbcTemplate(dataSource).execute('delete from TEST_ORDER')
     }

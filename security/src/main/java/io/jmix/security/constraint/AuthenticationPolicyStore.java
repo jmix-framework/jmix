@@ -21,16 +21,19 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.RowLevelPolicyIndex;
-import io.jmix.security.authentication.SecuredAuthentication;
+import io.jmix.security.authentication.SecuredGrantedAuthority;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.model.RowLevelPolicy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("sec_AuthenticationPolicyStore")
 public class AuthenticationPolicyStore implements PolicyStore {
@@ -41,15 +44,15 @@ public class AuthenticationPolicyStore implements PolicyStore {
     protected ExtendedEntities extendedEntities;
 
     @Override
-    public Collection<RowLevelPolicy> getRowLevelPolicies(MetaClass metaClass) {
+    public Stream<RowLevelPolicy> getRowLevelPolicies(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
-        return extractFromAuthentication(auth -> {
-            Collection<RowLevelPolicy> result = new ArrayList<>(auth.getRowLevelPoliciesByIndex(RowLevelPolicyByEntityIndex.class,
-                    index -> index.getPolicies(metaClass.getName())));
+        return extractFromAuthentication(authority -> {
+            Stream<RowLevelPolicy> result = authority.getRowLevelPoliciesByIndex(RowLevelPolicyByEntityIndex.class,
+                    index -> index.getPolicies(metaClass.getName()));
 
             for (MetaClass parent : originalMetaClass.getAncestors()) {
-                result.addAll(auth.getRowLevelPoliciesByIndex(RowLevelPolicyByEntityIndex.class,
+                result = Stream.concat(result, authority.getRowLevelPoliciesByIndex(RowLevelPolicyByEntityIndex.class,
                         index -> index.getPolicies(parent.getName())));
             }
 
@@ -58,44 +61,53 @@ public class AuthenticationPolicyStore implements PolicyStore {
     }
 
     @Override
-    public Collection<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass) {
+    public Stream<ResourcePolicy> getEntityResourcePolicies(MetaClass metaClass) {
         MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
 
-        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
+        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
                 index -> index.getPolicies(originalMetaClass.getName())));
     }
 
     @Override
-    public Collection<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
-        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
+    public Stream<ResourcePolicy> getEntityResourcePoliciesByWildcard(String wildcard) {
+        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByEntityIndex.class,
                 index -> index.getPolicies(wildcard)));
     }
 
     @Override
-    public Collection<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
-        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
+    public Stream<ResourcePolicy> getEntityAttributesResourcePolicies(MetaClass metaClass, String attribute) {
+        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
                 index -> index.getPolicies(metaClass.getName(), attribute)));
     }
 
     @Override
-    public Collection<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard) {
-        return extractFromAuthentication(auth -> auth.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
+    public Stream<ResourcePolicy> getEntityAttributesResourcePoliciesByWildcard(String entityWildcard, String attributeWildcard) {
+        return extractFromAuthentication(authority -> authority.getResourcePoliciesByIndex(EntityResourcePolicyByAttributesIndex.class,
                 index -> index.getPolicies(entityWildcard, attributeWildcard)));
     }
 
     @Override
-    public Collection<ResourcePolicy> getSpecificResourcePolicies(String resourceName) {
-        return extractFromAuthentication(auth ->
-                auth.getResourcePoliciesByIndex(SpecificResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
+    public Stream<ResourcePolicy> getSpecificResourcePolicies(String resourceName) {
+        return extractFromAuthentication(authority ->
+                authority.getResourcePoliciesByIndex(SpecificResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
     }
 
-    protected <T> Collection<T> extractFromAuthentication(
-            Function<SecuredAuthentication, Collection<T>> extractor) {
-        if (currentAuthentication.getAuthentication() instanceof SecuredAuthentication) {
-            Collection<T> result = extractor.apply((SecuredAuthentication) currentAuthentication.getAuthentication());
-            return result == null ? Collections.emptyList() : result;
+    protected <T> Stream<T> extractFromAuthentication(Function<SecuredGrantedAuthority, Stream<T>> extractor) {
+        Stream<T> stream = Stream.empty();
+
+        Authentication authentication = currentAuthentication.getAuthentication();
+        if (authentication != null) {
+            for (GrantedAuthority authority : authentication.getAuthorities()) {
+                if (authority instanceof SecuredGrantedAuthority) {
+                    Stream<T> extractedStream = extractor.apply((SecuredGrantedAuthority) authority);
+                    if (extractedStream != null) {
+                        stream = Stream.concat(stream, extractedStream);
+                    }
+                }
+            }
         }
-        return Collections.emptyList();
+
+        return stream;
     }
 
     public static class RowLevelPolicyByEntityIndex implements RowLevelPolicyIndex {
@@ -107,8 +119,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     .collect(Collectors.groupingBy(RowLevelPolicy::getEntityName));
         }
 
-        public Collection<RowLevelPolicy> getPolicies(String entityName) {
-            return policyByEntity.get(entityName);
+        public Stream<RowLevelPolicy> getPolicies(String entityName) {
+            return policyByEntity.getOrDefault(entityName, Collections.emptyList()).stream();
         }
     }
 
@@ -122,8 +134,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
-        public Collection<ResourcePolicy> getPolicies(String entityName) {
-            return policyByEntity.get(entityName);
+        public Stream<ResourcePolicy> getPolicies(String entityName) {
+            return policyByEntity.getOrDefault(entityName, Collections.emptyList()).stream();
         }
     }
 
@@ -137,8 +149,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
-        public Collection<ResourcePolicy> getPolicies(String entityName, String attribute) {
-            return policyByAttributes.get(entityName + "." + attribute);
+        public Stream<ResourcePolicy> getPolicies(String entityName, String attribute) {
+            return policyByAttributes.getOrDefault(entityName + "." + attribute, Collections.emptyList()).stream();
         }
     }
 
@@ -152,8 +164,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
                     .collect(Collectors.groupingBy(ResourcePolicy::getResource));
         }
 
-        public Collection<ResourcePolicy> getPolicies(String name) {
-            return policyByName.get(name);
+        public Stream<ResourcePolicy> getPolicies(String name) {
+            return policyByName.getOrDefault(name, Collections.emptyList()).stream();
         }
     }
 }

@@ -18,14 +18,23 @@ package io.jmix.securitydata.user;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.security.GrantedAuthorityContainer;
 import io.jmix.core.security.UserRepository;
+import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.RoleRepository;
+import io.jmix.security.role.assignment.RoleAssignment;
+import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.annotation.PostConstruct;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Abstract {@link UserRepository} that loads User entity from the database. A {@link UserRepository} generated in the
@@ -33,13 +42,15 @@ import java.util.List;
  *
  * @param <T>
  */
-public abstract class AbstractDatabaseUserRepository<T extends BaseUser> implements UserRepository {
+public abstract class AbstractDatabaseUserRepository<T extends UserDetails> implements UserRepository {
 
     protected T systemUser;
     protected T anonymousUser;
 
     protected DataManager dataManager;
     protected Metadata metadata;
+    protected RoleRepository roleRepository;
+    protected RoleAssignmentRepository roleAssignmentRepository;
 
     @Autowired
     public void setDataManager(DataManager dataManager) {
@@ -49,6 +60,16 @@ public abstract class AbstractDatabaseUserRepository<T extends BaseUser> impleme
     @Autowired
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setRoleAssignmentRepository(RoleAssignmentRepository roleAssignmentRepository) {
+        this.roleAssignmentRepository = roleAssignmentRepository;
+    }
+
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
     }
 
     @PostConstruct
@@ -69,9 +90,12 @@ public abstract class AbstractDatabaseUserRepository<T extends BaseUser> impleme
     }
 
     protected T createAnonymousUser() {
-        T systemUser = metadata.create(getUserClass());
-        EntityValues.setValue(systemUser, "username", "system");
-        return systemUser;
+        T anonymousUser = metadata.create(getUserClass());
+        EntityValues.setValue(anonymousUser, "username", "anonymous");
+        if (anonymousUser instanceof GrantedAuthorityContainer) {
+            ((GrantedAuthorityContainer) anonymousUser).setAuthorities(createAuthorities("anonymous"));
+        }
+        return anonymousUser;
     }
 
     @Override
@@ -101,9 +125,24 @@ public abstract class AbstractDatabaseUserRepository<T extends BaseUser> impleme
                 .parameter("username", username)
                 .list();
         if (!users.isEmpty()) {
-            return users.get(0);
+            T user = users.get(0);
+            if (user instanceof GrantedAuthorityContainer) {
+                ((GrantedAuthorityContainer) user).setAuthorities(createAuthorities(username));
+            }
+            return user;
         } else {
             throw new UsernameNotFoundException("User not found");
         }
+    }
+
+    protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
+        List<String> roles = roleAssignmentRepository.getAssignmentsByUsername(username).stream()
+                .map(RoleAssignment::getRoleCode)
+                .collect(Collectors.toList());
+        return roles.stream()
+                .map(role -> roleRepository.getRoleByCode(role))
+                .filter(Objects::nonNull)
+                .map(RoleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 }

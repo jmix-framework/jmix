@@ -21,13 +21,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseUser;
+import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.rest.RestProperties;
 import io.jmix.rest.api.common.RestControllerUtils;
 import io.jmix.rest.api.common.RestParseUtils;
@@ -37,6 +37,7 @@ import io.jmix.rest.api.transform.JsonTransformationDirection;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
@@ -53,6 +54,7 @@ public class QueriesControllerManager {
     protected RestQueriesConfiguration restQueriesConfiguration;
 
     @Autowired
+    @Secure
     protected DataManager dataManager;
 
     @Autowired
@@ -173,10 +175,10 @@ public class QueriesControllerManager {
     }
 
     protected LoadContext<?> createQueryLoadContext(String entityName,
-                                                             String queryName,
-                                                             @Nullable Integer limit,
-                                                             @Nullable Integer offset,
-                                                             Map<String, String> params) throws ClassNotFoundException, ParseException {
+                                                    String queryName,
+                                                    @Nullable Integer limit,
+                                                    @Nullable Integer offset,
+                                                    Map<String, String> params) throws ClassNotFoundException, ParseException {
         MetaClass metaClass = restControllerUtils.getMetaClass(entityName);
         checkCanReadEntity(metaClass);
 
@@ -219,7 +221,7 @@ public class QueriesControllerManager {
         }
 
         if (queryInfo.getJpql().contains(":session$userId")) {
-            BaseUser user = currentAuthentication.getUser();
+            UserDetails user = currentAuthentication.getUser();
             if (user instanceof Entity) {
                 //noinspection ConstantConditions
                 query.setParameter("session$userId", EntityValues.getId(user));

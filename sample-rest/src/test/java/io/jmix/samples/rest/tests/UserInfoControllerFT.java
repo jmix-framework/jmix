@@ -24,7 +24,7 @@ public class UserInfoControllerFT extends AbstractRestControllerFT {
         String url = baseUrl + "/userInfo";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             ReadContext ctx = parseResponse(response);
-            assertEquals("admin", ctx.read("$.login"));
+            assertEquals("admin", ctx.read("$.username"));
             assertNotNull(ctx.read("locale"));
         }
     }

@@ -5,7 +5,6 @@
 
 package io.jmix.samples.rest.service;
 
-import com.haulmont.masquerade.restapi.AccessToken;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

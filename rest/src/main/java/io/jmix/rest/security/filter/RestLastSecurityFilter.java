@@ -17,7 +17,7 @@
 package io.jmix.rest.security.filter;
 
 import com.google.common.base.Strings;
-import io.jmix.core.security.authentication.CoreAuthentication;
+import io.jmix.core.security.ClientDetails;
 import io.jmix.rest.api.common.RestAuthUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.AfterRestInvocationEvent;
@@ -25,6 +25,7 @@ import io.jmix.rest.api.event.BeforeRestInvocationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -125,8 +126,13 @@ public class RestLastSecurityFilter extends OncePerRequestFilter {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication instanceof OAuth2Authentication) {
                 Authentication userAuthentication = ((OAuth2Authentication) authentication).getUserAuthentication();
-                if (userAuthentication instanceof CoreAuthentication) {
-                    ((CoreAuthentication) userAuthentication).setLocale(locale);
+                if (userAuthentication.getDetails() instanceof ClientDetails
+                        && userAuthentication instanceof AbstractAuthenticationToken) {
+                    ClientDetails clientDetails = (ClientDetails) userAuthentication.getDetails();
+                    ((AbstractAuthenticationToken) userAuthentication).setDetails(ClientDetails.builder()
+                            .of(clientDetails)
+                            .locale(locale)
+                            .build());
                 }
             }
         }

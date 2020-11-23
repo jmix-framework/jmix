@@ -17,27 +17,36 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
+import io.jmix.core.security.CoreUser;
+import io.jmix.samples.rest.JmixRestTestAnonymousConfiguration;
+import io.jmix.samples.rest.security.AnonymousAccessRole;
 import io.jmix.samples.rest.service.app.RestTestService;
+import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestPropertySource(properties = {"jmix.rest.anonymousUrlPatterns=/rest/services/" + RestTestService.NAME + "/sum," +
-        "rest/queries/sec$User/currentUser"})
+        "/rest/queries/sec$User/currentUser"})
+@ContextConfiguration(classes = {
+        JmixRestTestAnonymousConfiguration.class})
 public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
 
     protected Map<String, String> serviceParams = new HashMap<String, String>() {{
@@ -71,7 +80,6 @@ public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     public void executeQueryWithAnonymousAllowed() throws Exception {
         String url = baseUrl + "/queries/sec$User/currentUser";
         try (CloseableHttpResponse response = sendGet(url, null)) {
@@ -92,7 +100,6 @@ public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     public void loadEntitiesWithPermissionAnonymous() throws Exception {
         String url = baseUrl + "/entities/sec$User";
         try (CloseableHttpResponse response = sendGet(url, null)) {
@@ -109,5 +116,47 @@ public class AnonymousServiceAndQueryAccessFT extends AbstractRestControllerFT {
         HttpGet httpGet = new HttpGet(uriBuilder.build());
         httpGet.setHeader("Accept-Language", "en");
         return httpClient.execute(httpGet);
+    }
+
+    @Override
+    public void prepareDb() throws Exception {
+        UUID companyGroupId = dirtyData.createGroupUuid();
+        executePrepared("insert into sample_rest_sec_group(id, version, name) " +
+                        "values(?, ?, ?)",
+                companyGroupId,
+                1l,
+                "Company"
+        );
+
+        String adminLogin = "admin";
+        UUID adminId = dirtyData.createUserUuid();
+        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
+                        "values(?, ?, ?, ?, ?)",
+                adminId,
+                1l,
+                adminLogin,
+                companyGroupId, //"Company" group
+                adminLogin.toLowerCase()
+        );
+
+        String anonymousLogin = "anonymous";
+        UUID anonymousId = dirtyData.createUserUuid();
+        executePrepared("insert into sample_rest_sec_user(id, version, login, group_id, login_lc) " +
+                        "values(?, ?, ?, ?, ?)",
+                anonymousId,
+                1l,
+                anonymousLogin,
+                companyGroupId, //"Company" group
+                anonymousLogin.toLowerCase()
+        );
+    }
+
+    private void executePrepared(String sql, Object... params) throws SQLException {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) {
+                stmt.setObject(i + 1, params[i]);
+            }
+            stmt.executeUpdate();
+        }
     }
 }

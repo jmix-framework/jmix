@@ -5,9 +5,7 @@
 
 package io.jmix.samples.rest.jmx;
 
-import com.haulmont.masquerade.jmx.JmxName;
 
-@JmxName("app-core.refapp:type=UserSessionsSupport")
 public interface UserSessionsSupportJmxService {
     String killSessions(String[] logins);
 }

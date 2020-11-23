@@ -5,9 +5,7 @@
 
 package io.jmix.samples.rest.jmx;
 
-import com.haulmont.masquerade.jmx.JmxName;
 
-@JmxName("app-core.refapp:type=UserSessionLogSupport")
 public interface UserSessionLogService {
     void changeUserSessionLogEnabled(boolean enabled);
 

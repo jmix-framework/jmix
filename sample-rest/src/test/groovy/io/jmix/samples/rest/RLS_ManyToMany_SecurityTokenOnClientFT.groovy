@@ -5,20 +5,13 @@
 
 package io.jmix.samples.rest
 
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
-
-//import com.haulmont.cuba.security.entity.ConstraintCheckType
-
-import io.jmix.security.role.assignment.RoleAssignment
-
-//import com.haulmont.rest.demo.http.rest.jmx.SampleJmxService
-//import com.haulmont.rest.demo.http.rest.jmx.WebConfigStorageJmxService
-
+import io.jmix.security.authentication.RoleGrantedAuthority
+import io.jmix.security.role.RoleRepository
 import org.apache.http.HttpStatus
-import org.junit.Ignore
-import org.junit.jupiter.api.Disabled
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.TestPropertySource
 
 import static io.jmix.samples.rest.DataUtils.*
@@ -41,12 +34,14 @@ class RLS_ManyToMany_SecurityTokenOnClientFT extends RestSpec {
     private String userToken
     private CoreUser user
 
-    void setup() {
-        user = new CoreUser(userLogin, "{noop}" + userPassword)
-        userRepository.addUser(user)
+    @Autowired
+    private RoleRepository roleRepository
 
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryManyToManyRowLevelRole.NAME))
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME))
+    void setup() {
+        user = new CoreUser(userLogin, "{noop}" + userPassword,
+                Arrays.asList(new RoleGrantedAuthority(roleRepository.getRoleByCode(InMemoryManyToManyRowLevelRole.NAME)),
+                        new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))))
+        userRepository.addUser(user)
 
         plantId = createPlant(dirtyData, sql, '001')
 
@@ -66,7 +61,6 @@ class RLS_ManyToMany_SecurityTokenOnClientFT extends RestSpec {
 
     void cleanup() {
         userRepository.removeUser(user)
-        roleAssignmentProvider.removeAssignments(user.name)
     }
 
     def """Store entity with same collection as in the database, hidden elements should not be deleted"""() {

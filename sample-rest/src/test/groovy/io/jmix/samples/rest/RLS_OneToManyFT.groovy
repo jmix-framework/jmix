@@ -5,11 +5,13 @@
 
 package io.jmix.samples.rest
 
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
-import io.jmix.security.role.assignment.RoleAssignment
+import io.jmix.security.authentication.RoleGrantedAuthority
+import io.jmix.security.role.RoleRepository
 import org.apache.http.HttpStatus
+import org.springframework.beans.factory.annotation.Autowired
 
 import static io.jmix.samples.rest.DataUtils.createCar
 import static io.jmix.samples.rest.DataUtils.createInsuranceCase
@@ -28,13 +30,14 @@ class RLS_OneToManyFT extends RestSpec {
     private String userToken
     private CoreUser user
 
+    @Autowired
+    private RoleRepository roleRepository
+
     void setup() {
-        user = new CoreUser(userLogin, "{noop}" + userPassword)
+        user = new CoreUser(userLogin, "{noop}" + userPassword,
+                Arrays.asList(new RoleGrantedAuthority(roleRepository.getRoleByCode(InMemoryOneToManyRowLevelRole.NAME)),
+                        new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))))
         userRepository.addUser(user)
-
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryOneToManyRowLevelRole.NAME))
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME))
-
         carId = createCar(dirtyData, sql, '001')
 
         case1Id = createInsuranceCase(dirtyData, sql, 'InsuranceCase#1_', carId)
@@ -49,7 +52,6 @@ class RLS_OneToManyFT extends RestSpec {
 
     void cleanup() {
         userRepository.removeUser(user)
-        roleAssignmentProvider.removeAssignments(user.name)
     }
 
     def """Store entity with same composition as in the database, hidden elements should not be deleted"""() {

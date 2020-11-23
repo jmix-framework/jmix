@@ -41,38 +41,32 @@ dependencies {
 
     runtimeOnly 'org.hsqldb:hsqldb'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-
     implementation 'javax.inject:javax.inject'
     implementation 'org.apache.commons:commons-dbcp2'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
 
     testImplementation 'org.springframework:spring-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework:spring-webflux'
 
     testImplementation 'com.squareup.retrofit2:converter-scalars:2.8.1'
-
-    testRuntimeOnly 'org.hsqldb:hsqldb'
 
     testImplementation 'io.rest-assured:rest-assured'
 
     testImplementation 'com.jayway.jsonpath:json-path'
-    testImplementation 'com.haulmont.masquerade:masquerade-connector:1.0.7'
-    testImplementation 'com.haulmont.masquerade:masquerade-web:1.0.7'
     testImplementation 'org.mockito:mockito-core:3.6.0'
 
     testImplementation 'org.apache.commons:commons-dbcp2'
 
-    testImplementation 'org.apache.httpcomponents:httpclient'
-    // New http client needed for running selenium tests
-    testImplementation('org.apache.httpcomponents:httpcore') {
-        exclude(group: 'org.codehaus.groovy', module: 'groovy-all')
-    }
+    testImplementation 'org.apache.httpcomponents.client5:httpclient5:5.0.3'
+    testImplementation 'org.apache.httpcomponents.core5:httpcore5-reactive:5.0.2'
+
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
 
 test {

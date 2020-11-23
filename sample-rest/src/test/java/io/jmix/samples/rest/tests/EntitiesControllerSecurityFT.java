@@ -19,13 +19,13 @@ package io.jmix.samples.rest.tests;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.Id;
-import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.CoreUser;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.Colour;
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.samples.rest.security.*;
 import io.jmix.samples.rest.service.app.RestTestService;
-import io.jmix.security.role.assignment.RoleAssignment;
+import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -36,10 +36,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -94,6 +91,8 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
+
+        createUsers();
 
         colorReadUserToken = getAuthToken(baseUrl, colorReadUserLogin, colorReadUserPassword);
         colorUpdateUserToken = getAuthToken(baseUrl, colorUpdateUserLogin, colorUpdateUserPassword);
@@ -260,18 +259,6 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
         conn = DriverManager.getConnection(DB_URL, "sa", "");
         createDbData();
-        createDbUsers();
-        createDbUserRoles();
-    }
-
-    private void createDbUserRoles() {
-
-        roleAssignmentProvider.addAssignment(new RoleAssignment(colorRead.getUsername(), ColorReadRole.NAME));
-        roleAssignmentProvider.addAssignment(new RoleAssignment(colorUpdate.getUsername(), ColorUpdateRole.NAME));
-        roleAssignmentProvider.addAssignment(new RoleAssignment(colorCreate.getUsername(), ColorCreateRole.NAME));
-        roleAssignmentProvider.addAssignment(new RoleAssignment(colorDelete.getUsername(), ColorDeleteRole.NAME));
-        roleAssignmentProvider.addAssignment(new RoleAssignment(carRead.getUsername(), CarReadRole.NAME));
-
     }
 
     private void createDbData() {
@@ -294,21 +281,30 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         carUuidString = car.getId().toString();
     }
 
-    private void createDbUsers() {
-        //can read colours, cant read cars
-        colorRead = new CoreUser(colorReadUserLogin, "{noop}" + colorReadUserPassword);
+    private void createUsers() {
+        //noinspection ConstantConditions
+        colorRead = new CoreUser(colorReadUserLogin, "{noop}" + colorReadUserPassword,
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorReadRole.NAME))));
         userRepository.addUser(colorRead);
 
-        colorUpdate = new CoreUser(colorUpdateUserLogin, "{noop}" + colorUpdateUserPassword);
+        //noinspection ConstantConditions
+        colorUpdate = new CoreUser(colorUpdateUserLogin, "{noop}" + colorUpdateUserPassword,
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorUpdateRole.NAME))));
         userRepository.addUser(colorUpdate);
 
-        colorCreate = new CoreUser(colorCreateUserLogin, "{noop}" + colorCreateUserPassword);
+        //noinspection ConstantConditions
+        colorCreate = new CoreUser(colorCreateUserLogin, "{noop}" + colorCreateUserPassword,
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorCreateRole.NAME))));
         userRepository.addUser(colorCreate);
 
-        colorDelete = new CoreUser(colorDeleteUserLogin, "{noop}" + colorDeleteUserPassword);
+        //noinspection ConstantConditions
+        colorDelete = new CoreUser(colorDeleteUserLogin, "{noop}" + colorDeleteUserPassword,
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorDeleteRole.NAME))));
         userRepository.addUser(colorDelete);
 
-        carRead = new CoreUser(carReadUserLogin, "{noop}" + carReadUserPassword);
+        //noinspection ConstantConditions
+        carRead = new CoreUser(carReadUserLogin, "{noop}" + carReadUserPassword,
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(CarReadRole.NAME))));
         userRepository.addUser(carRead);
     }
 }

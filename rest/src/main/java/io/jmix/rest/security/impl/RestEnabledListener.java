@@ -20,7 +20,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.authentication.CoreAuthentication;
 import io.jmix.rest.context.RestEnabledContext;
 import io.jmix.rest.exception.RestApiAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,7 @@ public class RestEnabledListener {
     void checkRestEnabled(AuthenticationSuccessEvent event) {
         Authentication authentication = event.getAuthentication();
 
-        if (authentication instanceof CoreAuthentication &&
-                authentication.getDetails() instanceof ClientDetails) {
+        if (authentication.getDetails() instanceof ClientDetails) {
             ClientDetails clientDetails = (ClientDetails) authentication.getDetails();
 
             if ("REST".equals(clientDetails.getClientType())) {

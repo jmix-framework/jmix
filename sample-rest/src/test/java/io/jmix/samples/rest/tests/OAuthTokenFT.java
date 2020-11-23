@@ -17,12 +17,12 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.CoreUser;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
-import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider;
-import io.jmix.security.role.assignment.RoleAssignment;
+import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.RoleRepository;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,6 +40,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
@@ -58,17 +59,19 @@ public class OAuthTokenFT {
 
     @Autowired
     protected InMemoryUserRepository userRepository;
+
     @Autowired
-    protected InMemoryRoleAssignmentProvider roleAssignmentProvider;
+    protected RoleRepository roleRepository;
 
     protected CoreUser admin;
 
     @BeforeEach
     public void setUp() {
-        admin = new CoreUser("admin", "{noop}admin123", "Admin");
+        //noinspection ConstantConditions
+        admin = new CoreUser("admin", "{noop}admin123", "Admin",
+                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))));
 
         userRepository.addUser(admin);
-        roleAssignmentProvider.addAssignment(new RoleAssignment(admin.getUsername(), FullAccessRole.NAME));
 
         baseUrl = "http://localhost:" + port + "/rest";
     }

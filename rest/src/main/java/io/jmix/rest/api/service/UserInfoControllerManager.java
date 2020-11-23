@@ -16,10 +16,10 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.rest.api.controller.UserInfoController;
 import io.jmix.rest.api.service.filter.data.UserInfo;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ public class UserInfoControllerManager {
     protected CurrentAuthentication currentAuthentication;
 
     public UserInfo getUserInfo() {
-        BaseUser user = currentAuthentication.getUser();
+        UserDetails user = currentAuthentication.getUser();
         UserInfo userInfo = new UserInfo(user);
         userInfo.setLocale(currentAuthentication.getLocale().toString());
         return userInfo;

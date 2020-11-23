@@ -16,16 +16,14 @@
 
 package io.jmix.rest.api.service.filter.data;
 
-import io.jmix.core.entity.BaseUser;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserInfo {
-    public String login;
-    public String name;
+    public String username;
     public String locale;
 
-    public UserInfo(BaseUser user) {
-        this.login = user.getUsername();
-        this.name = user.getDisplayName();
+    public UserInfo(UserDetails user) {
+        this.username = user.getUsername();
     }
 
     public String getLocale() {

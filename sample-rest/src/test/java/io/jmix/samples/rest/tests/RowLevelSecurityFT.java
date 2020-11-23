@@ -6,15 +6,15 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.CoreUser;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.samples.rest.security.InMemoryRowLevelRole;
+import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.assignment.RoleAssignment;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -250,10 +251,11 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     }
 
     protected void createUsers() {
-        CoreUser coreUser = new CoreUser(userLogin, "{noop}" + userPassword);
+        //noinspection ConstantConditions
+        CoreUser coreUser = new CoreUser(userLogin, "{noop}" + userPassword, userLogin,
+                Arrays.asList(new RoleGrantedAuthority(roleRepository.getRoleByCode(InMemoryRowLevelRole.NAME)),
+                        new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))));
         userRepository.addUser(coreUser);
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, InMemoryRowLevelRole.NAME));
-        roleAssignmentProvider.addAssignment(new RoleAssignment(userLogin, FullAccessRole.NAME));
     }
 
     public void prepareDb() throws Exception {

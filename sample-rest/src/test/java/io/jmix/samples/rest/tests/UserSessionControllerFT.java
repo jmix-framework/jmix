@@ -15,8 +15,6 @@ import static io.jmix.samples.rest.tools.RestTestUtils.sendPutWithHeaders;
 import static io.jmix.samples.rest.tools.RestTestUtils.statusCode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//todo MG remove test
-@Disabled
 public class UserSessionControllerFT extends AbstractRestControllerFT {
 
     @Test

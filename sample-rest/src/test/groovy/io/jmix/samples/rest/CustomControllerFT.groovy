@@ -1,6 +1,6 @@
 package io.jmix.samples.rest
 
-import org.springframework.boot.web.server.LocalServerPort
+
 import org.springframework.test.context.TestPropertySource
 
 import static io.jmix.samples.rest.RestSpecsUtils.createRequest
@@ -9,9 +9,6 @@ import static io.jmix.samples.rest.RestSpecsUtils.createRequest
         "jmix.rest.authenticatedUrlPatterns=/myapi/sample/protectedMethod"
 )
 class CustomControllerFT extends RestSpec {
-
-    @LocalServerPort
-    private int port
 
     def "Unprotected custom controller access"() {
         when:

@@ -1,12 +1,13 @@
 package ${project_rootPackage}.entity;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.security.GrantedAuthorityContainer;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Table(name = "${project_idPrefix.toUpperCase()}_USER", indexes = {
         @Index(name = "IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements BaseUser {
+public class User implements UserDetails, GrantedAuthorityContainer {
 
     @Id
     @Column(name = "ID")
@@ -49,6 +50,9 @@ public class User implements BaseUser {
 
     @Column(name = "ENABLED")
     protected Boolean enabled = true;
+
+    @Transient
+    protected Collection<? extends GrantedAuthority> authorities;
 
     public UUID getId() {
         return id;
@@ -117,7 +121,12 @@ public class User implements BaseUser {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return authorities != null ? authorities : Collections.emptyList();
+    }
+
+    @Override
+    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+        this.authorities = authorities;
     }
 
     @Override

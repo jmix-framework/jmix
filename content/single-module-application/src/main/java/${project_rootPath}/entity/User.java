@@ -151,7 +151,6 @@ public class User implements UserDetails, GrantedAuthorityContainer {
 
     @InstanceName
     @DependsOnProperties({"firstName", "lastName", "username"})
-    @Override
     public String getDisplayName() {
         return String.format("%s %s [%s]", (firstName != null ? firstName : ""),
                 (lastName != null ? lastName : ""), username);

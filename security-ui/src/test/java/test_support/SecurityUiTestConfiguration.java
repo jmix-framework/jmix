@@ -21,11 +21,10 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
-import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.UserRepository;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.ui.sys.UiControllersConfiguration;
@@ -76,11 +75,10 @@ public class SecurityUiTestConfiguration {
     @Bean
     @Primary
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                PersistenceConfigProcessor processor,
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 DbmsSpecifics dbmsSpecifics,
                                                                 JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

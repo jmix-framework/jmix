@@ -16,7 +16,7 @@
 
 package io.jmix.data;
 
-import io.jmix.core.entity.BaseUser;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 
@@ -27,5 +27,5 @@ import javax.annotation.Nullable;
 public interface AuditInfoProvider {
 
     @Nullable
-    BaseUser getCurrentUser();
+    UserDetails getCurrentUser();
 }

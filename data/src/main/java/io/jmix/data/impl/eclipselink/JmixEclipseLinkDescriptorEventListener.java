@@ -20,7 +20,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.AuditInfoProvider;
@@ -40,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -183,7 +183,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
         Object entity = event.getObject();
 
         Date currentDate = timeSource.currentTimestamp();
-        BaseUser currentUser = auditInfoProvider.getCurrentUser();
+        UserDetails currentUser = auditInfoProvider.getCurrentUser();
 
         if (EntityValues.isAuditSupported(entity)) {
             setCreateInfo(entity, currentDate, currentUser);
@@ -203,7 +203,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
         }
     }
 
-    protected void setCreateInfo(Object entity, Date currentDate, @Nullable BaseUser currentUser) {
+    protected void setCreateInfo(Object entity, Date currentDate, @Nullable Object currentUser) {
         Class<?> createdDateClass = EntitySystemAccess.getCreatedDateClass(entity);
         if (createdDateClass != null) {
             if (auditConversionService.canConvert(currentDate.getClass(), createdDateClass)) {
@@ -227,7 +227,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
         }
     }
 
-    protected void setUpdateInfo(Object entity, Date currentDate, @Nullable BaseUser user, boolean dateOnly) {
+    protected void setUpdateInfo(Object entity, Date currentDate, @Nullable Object user, boolean dateOnly) {
         Class<?> lastModifiedDateClass = EntitySystemAccess.getLastModifiedDateClass(entity);
         if (lastModifiedDateClass != null) {
             if (auditConversionService.canConvert(currentDate.getClass(), lastModifiedDateClass)) {

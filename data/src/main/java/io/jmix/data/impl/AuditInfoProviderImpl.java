@@ -16,10 +16,10 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.data.AuditInfoProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component("data_AuditInfoProvider")
@@ -29,7 +29,7 @@ public class AuditInfoProviderImpl implements AuditInfoProvider {
     private CurrentAuthentication currentAuthentication;
 
     @Override
-    public BaseUser getCurrentUser() {
+    public UserDetails getCurrentUser() {
         return currentAuthentication.getAuthentication() != null ?
                 currentAuthentication.getUser() :
                 null;

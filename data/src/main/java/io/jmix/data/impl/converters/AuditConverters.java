@@ -16,8 +16,8 @@
 
 package io.jmix.data.impl.converters;
 
-import io.jmix.core.entity.BaseUser;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
 
@@ -39,10 +39,10 @@ public class AuditConverters {
         }
     }
 
-    public enum UserToStringConverter implements Converter<BaseUser, String> {
+    public enum UserToStringConverter implements Converter<UserDetails, String> {
         INSTANCE;
 
-        public String convert(BaseUser source) {
+        public String convert(UserDetails source) {
             return source.getUsername();
         }
     }

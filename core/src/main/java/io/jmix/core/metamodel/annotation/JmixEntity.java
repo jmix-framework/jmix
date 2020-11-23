@@ -21,7 +21,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated class must be represented in the metadata.
+ * Indicates that the annotated class is an entity and must be represented in the metadata.
  */
 @Target({java.lang.annotation.ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

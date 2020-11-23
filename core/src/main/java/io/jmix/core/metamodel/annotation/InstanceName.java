@@ -23,6 +23,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Specifies an entity attribute or method to provide an instance name - a human-readable text that represents an entity instance.
+ *
+ * <p>This annotation should be present on a single field or a method of the object.</p>
  */
 @Target({java.lang.annotation.ElementType.METHOD, java.lang.annotation.ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

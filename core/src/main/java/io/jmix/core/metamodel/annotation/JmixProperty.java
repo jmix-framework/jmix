@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation is used to define a non-persistent attribute, or to specify additional properties of a persistent
- * attribute.
+ * Specifies an entity attribute if {@link JmixEntity#annotatedPropertiesOnly()} is set to true. Also, can specify
+ * additional parameters of the attribute.
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

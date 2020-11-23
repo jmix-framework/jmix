@@ -17,6 +17,7 @@
 package entity_equals_hashcode
 
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.entity.EntityValues
 import io.jmix.core.impl.StandardSerialization
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -25,6 +26,7 @@ import spock.lang.Specification
 import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.generated_id.GFoo
+import test_support.app.entity.no_id.NoIdFoo
 import test_support.app.entity.nullable_and_generated_id.NGFoo
 import test_support.app.entity.nullable_id.NFoo
 import test_support.base.TestBaseConfiguration
@@ -157,6 +159,30 @@ class EntityEqualsAndHashCodeTest extends Specification {
         foo1.hashCode() == foo11.hashCode()
     }
 
+    // no id
+
+    def "no id - reserialized object is equal and has the same hashCode"() {
+        NoIdFoo foo1 = new NoIdFoo(name: 'foo1')
+        NoIdFoo foo11 = reserialize(foo1)
+
+        expect:
+        foo1 == foo11
+        foo1.hashCode() == foo11.hashCode()
+
+        EntityValues.getId(foo1) != null
+        EntityValues.getId(foo1) == EntityValues.getId(foo11)
+    }
+
+    def "no id - different object is not equal and has different hashCode"() {
+        NoIdFoo foo1 = new NoIdFoo(name: 'foo1')
+        NoIdFoo foo2 = new NoIdFoo(name: 'foo2')
+
+        expect:
+        foo1 != foo2
+        foo1.hashCode() != foo2.hashCode()
+
+        EntityValues.getId(foo1) != EntityValues.getId(foo2)
+    }
 
     @SuppressWarnings("unchecked")
     def <T> T reserialize(Serializable object) {

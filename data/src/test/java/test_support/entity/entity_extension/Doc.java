@@ -41,6 +41,9 @@ public class Doc extends Card {
     @Composition
     protected List<Plant> plants;
 
+    @OneToOne(mappedBy = "doc")
+    protected Waybill waybill;
+
     public String getNumber() {
         return number;
     }
@@ -63,5 +66,13 @@ public class Doc extends Card {
 
     public void setPlants(List<Plant> plants) {
         this.plants = plants;
+    }
+
+    public Waybill getWaybill() {
+        return waybill;
+    }
+
+    public void setWaybill(Waybill waybill) {
+        this.waybill = waybill;
     }
 }

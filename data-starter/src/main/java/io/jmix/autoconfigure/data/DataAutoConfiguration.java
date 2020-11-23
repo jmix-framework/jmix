@@ -22,7 +22,6 @@ import io.jmix.core.Stores;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.impl.entitycache.StandardQueryCache;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
@@ -48,11 +47,10 @@ public class DataAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean(name = "entityManagerFactory")
     protected LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                          PersistenceConfigProcessor processor,
                                                                           JpaVendorAdapter jpaVendorAdapter,
                                                                           DbmsSpecifics dbmsSpecifics,
                                                                           JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

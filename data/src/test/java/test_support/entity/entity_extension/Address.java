@@ -29,7 +29,7 @@ public class Address {
     @Column(name = "STREET")
     private String street;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PLACE_ID")
     private Place place;
 

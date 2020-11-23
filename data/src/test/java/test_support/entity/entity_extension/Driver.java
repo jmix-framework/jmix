@@ -51,7 +51,7 @@ public class Driver {
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PLATFORM_ENTITY_ID")
+    @JoinColumn(name = "PLATFORM_ENTITY_ID", unique = true)
     protected SamplePlatformEntity platformEntity;
 
     @OneToMany(mappedBy = "driver")

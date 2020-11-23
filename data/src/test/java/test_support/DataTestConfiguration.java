@@ -25,7 +25,6 @@ import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,11 +72,10 @@ public class DataTestConfiguration {
     @Bean
     @Primary
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                PersistenceConfigProcessor processor,
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 DbmsSpecifics dbmsSpecifics,
                                                                 JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean
@@ -107,11 +105,10 @@ public class DataTestConfiguration {
     }
 
     @Bean
-    LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(PersistenceConfigProcessor processor,
-                                                                   JpaVendorAdapter jpaVendorAdapter,
+    LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(JpaVendorAdapter jpaVendorAdapter,
                                                                    DbmsSpecifics dbmsSpecifics,
                                                                    JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

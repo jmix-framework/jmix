@@ -27,12 +27,11 @@ import com.haulmont.cuba.web.testsupport.TestUiSecureOperations;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
-import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.InMemoryUserRepository;
+import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.dynattr.DynAttrConfiguration;
@@ -88,11 +87,10 @@ public class WebTestConfiguration {
     @Bean
     LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource,
-            PersistenceConfigProcessor processor,
             JpaVendorAdapter jpaVendorAdapter,
             DbmsSpecifics dbmsSpecifics,
             JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

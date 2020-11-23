@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.datatoolsui;
+@NonNullApi
+package io.jmix.datatools;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.datatools.DatatoolsConfiguration;
-import io.jmix.datatoolsui.DatatoolsUiConfiguration;
-import io.jmix.ui.UiConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-@Configuration
-@Import({CoreConfiguration.class, UiConfiguration.class, DatatoolsConfiguration.class, DatatoolsUiConfiguration.class})
-public class DatatoolsUiAutoConfiguration {
-}
+import org.springframework.lang.NonNullApi;

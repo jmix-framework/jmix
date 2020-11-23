@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.datatoolsui;
+package io.jmix.datatoolsui.screen.entityinspector;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.datatools.DatatoolsConfiguration;
-import io.jmix.datatoolsui.DatatoolsUiConfiguration;
-import io.jmix.ui.UiConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 
-@Configuration
-@Import({CoreConfiguration.class, UiConfiguration.class, DatatoolsConfiguration.class, DatatoolsUiConfiguration.class})
-public class DatatoolsUiAutoConfiguration {
+public enum ShowMode implements EnumClass<Integer> {
+
+    NON_REMOVED(1),
+    REMOVED(2),
+    ALL(3);
+
+    private final int id;
+
+    ShowMode(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
 }

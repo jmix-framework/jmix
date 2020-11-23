@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.datatoolsui;
+package io.jmix.datatools;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.datatools.DatatoolsConfiguration;
-import io.jmix.datatoolsui.DatatoolsUiConfiguration;
-import io.jmix.ui.UiConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import java.util.Collection;
+import io.jmix.core.Entity;
 
-@Configuration
-@Import({CoreConfiguration.class, UiConfiguration.class, DatatoolsConfiguration.class, DatatoolsUiConfiguration.class})
-public class DatatoolsUiAutoConfiguration {
+/**
+ * Allows to restore entities have been soft-deleted previously
+ */
+public interface EntityRestore {
+
+    /**
+     * Restore provided entities
+     * @param entities entities to restore
+     * @return Amount of restored entities (initially selected + dependent)
+     */
+    int restoreEntities(Collection<Entity> entities);
 }

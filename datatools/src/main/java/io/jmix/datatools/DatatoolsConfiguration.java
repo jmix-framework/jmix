@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.datatoolsui;
+package io.jmix.datatools;
 
 import io.jmix.core.CoreConfiguration;
-import io.jmix.datatools.DatatoolsConfiguration;
-import io.jmix.datatoolsui.DatatoolsUiConfiguration;
-import io.jmix.ui.UiConfiguration;
+import io.jmix.core.annotation.JmixModule;
+import io.jmix.data.DataConfiguration;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@Import({CoreConfiguration.class, UiConfiguration.class, DatatoolsConfiguration.class, DatatoolsUiConfiguration.class})
-public class DatatoolsUiAutoConfiguration {
+@ComponentScan
+@ConfigurationPropertiesScan
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@EnableTransactionManagement
+public class DatatoolsConfiguration {
 }

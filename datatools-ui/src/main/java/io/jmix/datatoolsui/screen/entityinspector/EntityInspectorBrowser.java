@@ -24,15 +24,16 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
+import io.jmix.datatools.EntityRestore;
 import io.jmix.datatoolsui.action.ExportAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
-import io.jmix.ui.Actions;
-import io.jmix.ui.Notifications;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
+import io.jmix.ui.*;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.action.ItemTrackingAction;
+import io.jmix.ui.action.ListAction;
 import io.jmix.ui.action.list.CreateAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RefreshAction;
@@ -52,9 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static io.jmix.ui.download.DownloadFormat.JSON;
@@ -67,6 +66,10 @@ import static io.jmix.ui.download.DownloadFormat.ZIP;
 public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     public static final int MAX_TEXT_LENGTH = 50;
+
+    private static final String BASE_SELECT_QUERY = "select e from %s e";
+    private static final String DELETED_ONLY_SELECT_QUERY = "select e from %s e where e.%s is not null";
+    private static final String RESTORE_ACTION_ID = "restore";
 
     protected static final Logger log = LoggerFactory.getLogger(EntityInspectorBrowser.class);
 
@@ -103,9 +106,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected ComboBox<MetaClass> entitiesLookup;
 
     @Autowired
-    protected CheckBox removedRecords;
-
-    @Autowired
     protected CheckBox textSelection;
 
     @Autowired
@@ -116,6 +116,15 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     @Autowired
     protected EntityImportPlans entityImportPlans;
+
+    @Autowired
+    private Dialogs dialogs;
+
+    @Autowired
+    private EntityRestore entityRestore;
+
+    @Autowired
+    private ComboBox<ShowMode> showMode;
 
     //TODO filter implementation component (Filter in Table/DataGrid #221)
     protected Component filter;
@@ -136,6 +145,11 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     @Subscribe
+    public void onInit(InitEvent event) {
+        showMode.setValue(ShowMode.NON_REMOVED);
+    }
+
+    @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
         getScreenData().setDataContext(dataComponents.createDataContext());
         if (entityName != null) {
@@ -146,7 +160,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         } else {
             entitiesLookup.setOptionsMap(getEntitiesLookupFieldOptions());
             entitiesLookup.addValueChangeListener(e -> showEntities());
-            removedRecords.addValueChangeListener(e -> showEntities());
+            showMode.addValueChangeListener(e -> showEntities());
         }
         textSelection.addValueChangeListener(e -> changeTableTextSelectionEnabled());
     }
@@ -212,18 +226,30 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         entitiesTable.addSelectionListener(event -> {
             Table.SelectionEvent selectionEvent = (Table.SelectionEvent) event;
             boolean removeEnabled = true;
+            boolean restoreEnabled = true;
             if (!selectionEvent.getSelected().isEmpty()) {
                 for (Object o : selectionEvent.getSelected()) {
                     if (o instanceof Entity) {
                         if (EntityValues.isSoftDeleted(o)) {
                             removeEnabled = false;
+                        } else {
+                            restoreEnabled = false;
+                        }
+
+                        if(!removeEnabled && !restoreEnabled) {
+                            break;
                         }
                     }
                 }
             }
             Action removeAction = entitiesTable.getAction(RemoveAction.ID);
             if (removeAction != null) {
-                removeAction.setEnabled(removeEnabled && removeAction.isEnabled());
+                removeAction.setEnabled(removeEnabled);
+            }
+
+            Action restoreAction = entitiesTable.getAction(RESTORE_ACTION_ID);
+            if(restoreAction != null) {
+                restoreAction.setEnabled(restoreEnabled);
             }
         });
     }
@@ -238,8 +264,33 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         entitiesDl = dataComponents.createCollectionLoader();
         entitiesDl.setFetchPlan(fetchPlan);
         entitiesDl.setContainer(entitiesDc);
-        entitiesDl.setSoftDeletion(!removedRecords.isChecked());
-        entitiesDl.setQuery(String.format("select e from %s e", meta.getName()));
+
+        switch (Objects.requireNonNull(showMode.getValue())) {
+            case ALL:
+                entitiesDl.setSoftDeletion(false);
+                entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                break;
+            case NON_REMOVED:
+                entitiesDl.setSoftDeletion(true);
+                entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
+                break;
+            case REMOVED:
+                if(metadataTools.isSoftDeletable(meta.getJavaClass())) {
+                    entitiesDl.setSoftDeletion(false);
+                    entitiesDl.setQuery(
+                            String.format(
+                                    DELETED_ONLY_SELECT_QUERY,
+                                    meta.getName(),
+                                    metadataTools.findDeletedDateProperty(meta.getJavaClass())
+                            )
+                    );
+                } else {
+                    entitiesDl.setLoadDelegate(loadContext -> Collections.emptyList());
+                }
+                break;
+            default:
+        }
+
         entitiesDl.load();
         return entitiesDc;
     }
@@ -333,6 +384,11 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             entitiesDl.load();
         });
 
+        Button restoreButton = uiComponents.create(Button.class);
+        Action restoreAction = createRestoreAction(table);
+        table.addAction(restoreAction);
+        restoreButton.setAction(restoreAction);
+
         buttonsPanel.add(createButton);
         buttonsPanel.add(editButton);
         buttonsPanel.add(removeButton);
@@ -340,6 +396,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         buttonsPanel.add(refreshButton);
         buttonsPanel.add(exportPopupButton);
         buttonsPanel.add(importUpload);
+        buttonsPanel.add(restoreButton);
     }
 
     private RefreshAction createRefreshAction(Table table) {
@@ -371,6 +428,17 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         editAction.setScreenClass(EntityInspectorEditor.class);
         editAction.setShortcut(uiProperties.getTableInsertShortcut());
         return editAction;
+    }
+
+    private Action createRestoreAction(Table table) {
+        ListAction action = new ItemTrackingAction(RESTORE_ACTION_ID)
+                .withCaption(messages.getMessage(EntityInspectorBrowser.class, "restore"))
+                .withPrimary(true)
+                .withHandler(event ->
+                        showRestoreDialog()
+                );
+        action.setTarget(table);
+        return action;
     }
 
     protected EntityImportPlan createEntityImportPlan(MetaClass metaClass) {
@@ -406,5 +474,39 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         UiEntityContext entityContext = new UiEntityContext(metaClass);
         accessManager.applyRegisteredConstraints(entityContext);
         return entityContext.isViewPermitted();
+    }
+
+    protected void showRestoreDialog() {
+        Set<Entity> entityList = entitiesTable.getSelected();
+        Object entity = entitiesDc.getItemOrNull();
+        if (entity != null && entityList.size() > 0) {
+            if (EntityValues.isSoftDeletionSupported(entity)) {
+                dialogs.createOptionDialog()
+                        .withCaption(messages.getMessage("dialogs.Confirmation"))
+                        .withMessage(messages.getMessage(EntityInspectorBrowser.class, "restore.dialog.confirmation"))
+                        .withActions(
+                                new DialogAction(DialogAction.Type.OK).withHandler(event -> {
+                                    int restored = entityRestore.restoreEntities(entityList);
+                                    entitiesDl.load();
+                                    entitiesTable.focus();
+                                    notifications.create(Notifications.NotificationType.TRAY)
+                                            .withDescription(
+                                                    messages.formatMessage(
+                                                            EntityInspectorBrowser.class,
+                                                            "restore.restored",
+                                                            restored
+                                                    )
+                                            )
+                                            .show();
+                                }),
+                                new DialogAction(DialogAction.Type.CANCEL).withHandler(event -> {
+                                    entitiesTable.focus();
+                                }))
+                        .show();
+            }
+        } else {
+            notifications.create(Notifications.NotificationType.HUMANIZED)
+                    .withDescription(messages.getMessage(EntityInspectorBrowser.class, "restore.dialog.empty")).show();
+        }
     }
 }

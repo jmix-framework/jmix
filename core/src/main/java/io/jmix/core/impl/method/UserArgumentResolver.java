@@ -16,28 +16,27 @@
 
 package io.jmix.core.impl.method;
 
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.CurrentAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
- * Allows resolving the current authorized {@link BaseUser} as method argument.
+ * Allows resolving the current authorized {@link UserDetails} as method argument.
  */
 @Component("core_UserArgumentResolver")
-public class UserArgumentResolver extends TypedArgumentResolver<BaseUser> {
+public class UserArgumentResolver extends TypedArgumentResolver<UserDetails> {
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
     public UserArgumentResolver() {
-        super(BaseUser.class);
+        super(UserDetails.class);
     }
 
     @Override
-    public BaseUser resolveArgument(MethodParameter parameter) {
+    public UserDetails resolveArgument(MethodParameter parameter) {
         return currentAuthentication.isSet() ?
                 currentAuthentication.getUser() :
                 null;

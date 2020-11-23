@@ -17,8 +17,7 @@
 package security
 
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.security.authentication.CoreAuthentication
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -56,7 +55,7 @@ class CoreSecurityImplTest extends Specification {
         then:
 
         authentication != null
-        authentication instanceof CoreAuthentication
+        authentication instanceof UsernamePasswordAuthenticationToken
 
         when:
 

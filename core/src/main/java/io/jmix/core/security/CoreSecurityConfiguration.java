@@ -17,11 +17,11 @@
 package io.jmix.core.security;
 
 import io.jmix.core.CoreProperties;
-import io.jmix.core.MessageTools;
 import io.jmix.core.security.impl.SystemAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -38,7 +38,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  *
  *        &#64;Override
  *        public UserRepository userRepository() {
- * 	        InMemoryUserRepository repository = new InMemoryUserRepository();
+ * 	        InMemoryCoreUserRepository repository = new InMemoryCoreUserRepository();
 * 	        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
  * 	        return repository;
  *        }
@@ -51,19 +51,13 @@ public class CoreSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private CoreProperties coreProperties;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private MessageTools messageTools;
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(new SystemAuthenticationProvider(userRepository()));
 
-        CoreAuthenticationProvider userAuthenticationProvider = new CoreAuthenticationProvider(messageTools);
-        userAuthenticationProvider.setUserDetailsService(userRepository());
-        auth.authenticationProvider(userAuthenticationProvider);
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userRepository());
+        auth.authenticationProvider(daoAuthenticationProvider);
     }
 
     @Override

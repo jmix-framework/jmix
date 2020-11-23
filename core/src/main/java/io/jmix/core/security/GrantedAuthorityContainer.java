@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.core.entity;
+package io.jmix.core.security;
 
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
 
 /**
- * Base class for users. If the project needs custom user class, it must implement this interface.
+ * Provides the ability to store authorities on a {@link org.springframework.security.core.userdetails.UserDetails}
  */
-public interface BaseUser extends UserDetails {
-
-    /**
-     * Returns a string that is used for displaying users in suggestion fields, lookups, etc.
-     */
-    String getDisplayName();
-
+public interface GrantedAuthorityContainer {
+    void setAuthorities(Collection<? extends GrantedAuthority> authorities);
 }

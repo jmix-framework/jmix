@@ -67,6 +67,14 @@ public class ClientDetails implements Serializable {
             obj.timeZone = TimeZone.getDefault();
         }
 
+        public Builder of(ClientDetails clientDetails) {
+            return locale(clientDetails.getLocale())
+                    .timeZone(clientDetails.getTimeZone())
+                    .address(clientDetails.getAddress())
+                    .info(clientDetails.getInfo())
+                    .clientType(clientDetails.getClientType());
+        }
+
         public Builder locale(Locale locale) {
             obj.locale = locale;
             return this;

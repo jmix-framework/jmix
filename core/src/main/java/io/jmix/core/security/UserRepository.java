@@ -16,16 +16,16 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.entity.BaseUser;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
 public interface UserRepository extends UserDetailsService {
 
-    BaseUser getSystemUser();
+    UserDetails getSystemUser();
 
-    BaseUser getAnonymousUser();
+    UserDetails getAnonymousUser();
 
-    List<? extends BaseUser> getByUsernameLike(String username);
+    List<? extends UserDetails> getByUsernameLike(String username);
 }

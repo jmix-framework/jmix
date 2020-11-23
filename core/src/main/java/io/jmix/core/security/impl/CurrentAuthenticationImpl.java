@@ -16,14 +16,15 @@
 
 package io.jmix.core.security.impl;
 
+import io.jmix.core.MessageTools;
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.AuthenticationResolver;
+import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.authentication.CoreAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -37,6 +38,8 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
 
     @Autowired(required = false)
     protected List<AuthenticationResolver> authenticationResolvers;
+    @Autowired
+    protected MessageTools messagesTools;
 
     @Nullable
     @Override
@@ -53,12 +56,12 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     }
 
     @Override
-    public BaseUser getUser() {
+    public UserDetails getUser() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof BaseUser) {
-                return (BaseUser) principal;
+            if (principal instanceof UserDetails) {
+                return (UserDetails) principal;
             } else {
                 throw new RuntimeException("Authentication principal must be BaseUser");
             }
@@ -70,10 +73,12 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
     public Locale getLocale() {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
-            if (authentication instanceof CoreAuthentication) {
-                return ((CoreAuthentication) authentication).getLocale();
+            Object details = authentication.getDetails();
+            if (details instanceof ClientDetails) {
+                return ((ClientDetails) details).getLocale();
+            } else {
+                return Locale.getDefault();
             }
-            return Locale.getDefault();
         }
         throw new IllegalStateException("Authentication is not set");
     }

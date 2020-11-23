@@ -16,11 +16,10 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.security.authentication.CoreAuthentication;
 import org.springframework.security.core.Authentication;
 
 /**
- * Strategy for accessing {@link io.jmix.core.security.authentication.CoreAuthentication} from the current security context.
+ * Strategy for accessing root authentication from wrapped authentication in the current security context.
  */
 public interface AuthenticationResolver {
     /**
@@ -29,8 +28,7 @@ public interface AuthenticationResolver {
     boolean supports(Authentication authentication);
 
     /**
-     * Resolve {@link CoreAuthentication} from the authentication
-     * @return {@link CoreAuthentication}
+     * Resolve root authentication from the authentication
      */
     Authentication resolveAuthentication(Authentication authentication);
 }

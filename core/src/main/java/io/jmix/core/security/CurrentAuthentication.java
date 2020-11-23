@@ -16,8 +16,8 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.entity.BaseUser;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
@@ -36,7 +36,7 @@ public interface CurrentAuthentication {
      * @throws RuntimeException if Authentication is not set to {@link org.springframework.security.core.context.SecurityContext}
      *                          or user information cannot be extracted from current authentication
      */
-    BaseUser getUser();
+    UserDetails getUser();
 
     /**
      * @return locale of the current authentication or default locale if current authentication doesn't contain locale

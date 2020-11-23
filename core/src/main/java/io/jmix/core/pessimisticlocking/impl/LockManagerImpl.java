@@ -18,7 +18,6 @@ package io.jmix.core.pessimisticlocking.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.pessimisticlocking.*;
@@ -28,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -138,7 +138,7 @@ public class LockManagerImpl implements LockManager {
             return new LockNotSupported();
         }
 
-        BaseUser user = currentAuthentication.getUser();
+        UserDetails user = currentAuthentication.getUser();
         lockInfo = new LockInfo(user.getUsername(), name, id, timeSource.currentTimestamp());
         locks.put(key, lockInfo);
         log.debug("Locked {}/{}", name, id);

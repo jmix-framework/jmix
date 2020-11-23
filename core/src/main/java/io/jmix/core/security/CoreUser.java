@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.core.security.impl;
+package io.jmix.core.security;
 
-import io.jmix.core.entity.BaseUser;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
-public class CoreUser implements BaseUser {
+public class CoreUser implements UserDetails {
 
     private static final long serialVersionUID = 2032149054729862959L;
 
@@ -32,15 +32,28 @@ public class CoreUser implements BaseUser {
     private String username;
     private String password;
     private String name;
+    private Collection<? extends GrantedAuthority> authorities;
 
     public CoreUser(String username, String password) {
-        this(username, password, null);
+        this(username, password, null, null);
     }
 
     public CoreUser(String username, String password, @Nullable String name) {
+        this(username, password, name, null);
+    }
+
+    public CoreUser(String username, String password, @Nullable Collection<? extends GrantedAuthority> authorities) {
+        this(username, password, null, authorities);
+    }
+
+    public CoreUser(String username,
+                    String password,
+                    @Nullable String name,
+                    @Nullable Collection<? extends GrantedAuthority> authorities) {
         this.username = username;
         this.password = password;
         this.name = name;
+        this.authorities = authorities;
         this.id = UUID.randomUUID();
     }
 
@@ -50,7 +63,7 @@ public class CoreUser implements BaseUser {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return authorities != null ? authorities : Collections.emptyList();
     }
 
     @Override
@@ -81,10 +94,5 @@ public class CoreUser implements BaseUser {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return name;
     }
 }

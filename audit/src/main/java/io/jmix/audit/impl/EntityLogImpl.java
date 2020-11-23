@@ -24,7 +24,6 @@ import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
@@ -45,6 +44,7 @@ import org.eclipse.persistence.internal.sessions.ObjectChangeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -497,7 +497,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
 
 
     protected String findUserLogin() {
-        BaseUser currentUser = auditInfoProvider.getCurrentUser();
+        UserDetails currentUser = auditInfoProvider.getCurrentUser();
         if (currentUser != null)
             return currentUser.getUsername();
         else {

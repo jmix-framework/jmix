@@ -22,7 +22,6 @@ import io.jmix.audit.entity.EntityLogItem;
 import io.jmix.audit.entity.LoggedAttribute;
 import io.jmix.audit.entity.LoggedEntity;
 import io.jmix.core.*;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -40,6 +39,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -150,9 +150,9 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         changeTypeField.setOptionsMap(changeTypeMap);
 
         userField.setSearchExecutor((searchString, searchParams) -> {
-            List<? extends BaseUser> users = userRepository.getByUsernameLike(searchString);
+            List<? extends UserDetails> users = userRepository.getByUsernameLike(searchString);
             return users.stream()
-                    .map(BaseUser::getUsername)
+                    .map(UserDetails::getUsername)
                     .collect(Collectors.toList());
         });
         filterEntityNameField.setOptionsMap(entityMetaClassesMap);

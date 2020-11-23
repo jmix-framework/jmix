@@ -18,7 +18,7 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
-import io.jmix.security.authentication.SecuredGrantedAuthority;
+import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,14 +50,14 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     }
 
     protected Stream<ResourcePolicy> extractFromAuthentication(
-            Function<SecuredGrantedAuthority, Stream<ResourcePolicy>> extractor) {
+            Function<PolicyAwareGrantedAuthority, Stream<ResourcePolicy>> extractor) {
         Stream<ResourcePolicy> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         if (authentication != null) {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (authority instanceof SecuredGrantedAuthority) {
-                    Stream<ResourcePolicy> extractedStream = extractor.apply((SecuredGrantedAuthority) authority);
+                if (authority instanceof PolicyAwareGrantedAuthority) {
+                    Stream<ResourcePolicy> extractedStream = extractor.apply((PolicyAwareGrantedAuthority) authority);
                     if (extractedStream != null) {
                         stream = Stream.concat(stream, extractedStream);
                     }

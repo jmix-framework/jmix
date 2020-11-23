@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * @see ResourcePolicy
  * @see RowLevelPolicy
  */
-public interface SecuredGrantedAuthority extends GrantedAuthority {
+public interface PolicyAwareGrantedAuthority extends GrantedAuthority {
 
     Collection<ResourcePolicy> getResourcePolicies();
 

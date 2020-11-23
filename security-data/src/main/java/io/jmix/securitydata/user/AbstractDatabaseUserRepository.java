@@ -136,10 +136,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
-        List<String> roles = roleAssignmentRepository.getAssignmentsByUsername(username).stream()
+        return roleAssignmentRepository.getAssignmentsByUsername(username).stream()
                 .map(RoleAssignment::getRoleCode)
-                .collect(Collectors.toList());
-        return roles.stream()
                 .map(role -> roleRepository.getRoleByCode(role))
                 .filter(Objects::nonNull)
                 .map(RoleGrantedAuthority::new)

@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class RoleGrantedAuthority implements SecuredGrantedAuthority {
+public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     private static final long serialVersionUID = 2024837359721996022L;
 
     protected final String code;

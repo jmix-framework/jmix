@@ -21,7 +21,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.RowLevelPolicyIndex;
-import io.jmix.security.authentication.SecuredGrantedAuthority;
+import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.model.RowLevelPolicy;
@@ -92,14 +92,14 @@ public class AuthenticationPolicyStore implements PolicyStore {
                 authority.getResourcePoliciesByIndex(SpecificResourcePolicyByNameIndex.class, index -> index.getPolicies(resourceName)));
     }
 
-    protected <T> Stream<T> extractFromAuthentication(Function<SecuredGrantedAuthority, Stream<T>> extractor) {
+    protected <T> Stream<T> extractFromAuthentication(Function<PolicyAwareGrantedAuthority, Stream<T>> extractor) {
         Stream<T> stream = Stream.empty();
 
         Authentication authentication = currentAuthentication.getAuthentication();
         if (authentication != null) {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
-                if (authority instanceof SecuredGrantedAuthority) {
-                    Stream<T> extractedStream = extractor.apply((SecuredGrantedAuthority) authority);
+                if (authority instanceof PolicyAwareGrantedAuthority) {
+                    Stream<T> extractedStream = extractor.apply((PolicyAwareGrantedAuthority) authority);
                     if (extractedStream != null) {
                         stream = Stream.concat(stream, extractedStream);
                     }

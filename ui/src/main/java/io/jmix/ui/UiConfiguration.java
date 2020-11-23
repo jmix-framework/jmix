@@ -19,15 +19,23 @@ package io.jmix.ui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.ui.app.jmxconsole.JmxConsoleMBeanExporter;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
+import org.springframework.jmx.export.naming.ObjectNamingStrategy;
+import org.springframework.jmx.support.RegistrationPolicy;
+import org.springframework.util.StringUtils;
 
+import javax.management.MBeanServer;
 import java.util.Collections;
 
 @Configuration
@@ -36,6 +44,11 @@ import java.util.Collections;
 @JmixModule(dependsOn = CoreConfiguration.class)
 @PropertySource(name = "io.jmix.ui", value = "classpath:/io/jmix/ui/module.properties")
 public class UiConfiguration {
+    private final Environment environment;
+
+    public UiConfiguration(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean("ui_UiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
@@ -52,5 +65,17 @@ public class UiConfiguration {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
         actionsConfiguration.setBasePackages(Collections.singletonList("io.jmix.ui.action"));
         return actionsConfiguration;
+    }
+
+    @Bean
+    public AnnotationMBeanExporter mbeanExporter(ObjectNamingStrategy namingStrategy, BeanFactory beanFactory) {
+        AnnotationMBeanExporter exporter = new JmxConsoleMBeanExporter();
+        exporter.setRegistrationPolicy(RegistrationPolicy.FAIL_ON_EXISTING);
+        exporter.setNamingStrategy(namingStrategy);
+        String serverBean = this.environment.getProperty("spring.jmx.server", "mbeanServer");
+        if (StringUtils.hasLength(serverBean)) {
+            exporter.setServer(beanFactory.getBean(serverBean, MBeanServer.class));
+        }
+        return exporter;
     }
 }

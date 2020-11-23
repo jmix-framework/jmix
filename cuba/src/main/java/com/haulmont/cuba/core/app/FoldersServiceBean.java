@@ -22,11 +22,7 @@ import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TypedQuery;
 import com.haulmont.cuba.core.entity.AppFolder;
 import com.haulmont.cuba.core.entity.Folder;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.Scripting;
-import com.haulmont.cuba.core.global.Security;
-import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.core.sys.CubaXStream;
 import com.haulmont.cuba.security.entity.SearchFolder;
 import com.haulmont.cuba.security.global.UserSession;
@@ -34,7 +30,6 @@ import com.thoughtworks.xstream.XStream;
 import groovy.lang.Binding;
 import io.jmix.core.Resources;
 import io.jmix.core.TimeSource;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
@@ -52,6 +47,7 @@ import org.perf4j.slf4j.Slf4JStopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -307,7 +303,7 @@ public class FoldersServiceBean implements FoldersService {
                     folder.setCreateTs(existingFolder.getCreateTs());
                     folder.setCreatedBy(existingFolder.getCreatedBy());
                 } else {
-                    BaseUser user = userSessionSource.getUserSession().getUser();
+                    UserDetails user = userSessionSource.getUserSession().getUser();
                     folder.setCreatedBy(user.getUsername().toLowerCase());
                     folder.setCreateTs(timeSource.currentTimestamp());
                     folder.setUpdatedBy(null);

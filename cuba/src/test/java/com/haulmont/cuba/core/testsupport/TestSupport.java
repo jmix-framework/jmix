@@ -24,12 +24,13 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.authentication.CoreAuthenticationToken;
-import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.CoreUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -95,8 +96,9 @@ public class TestSupport {
 
     public static void setAuthenticationToSecurityContext() {
         CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin");
-        CoreAuthenticationToken authentication = new CoreAuthenticationToken(user, Collections.emptyList());
-        authentication.setLocale(Locale.US);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, Collections.emptyList());
+        authentication.setDetails(ClientDetails.builder().locale(Locale.US));
         SecurityContextHelper.setAuthentication(authentication);
+
     }
 }

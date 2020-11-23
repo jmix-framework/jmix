@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.core.global.impl;
 
-import io.jmix.core.entity.BaseUser;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public class UserIdUtils {
 
-    public static UUID getUserId(BaseUser user) {
+    public static UUID getUserId(UserDetails user) {
         Field idField = ReflectionUtils.findField(user.getClass(), "id");
         if (idField != null) {
             try {

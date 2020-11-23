@@ -19,14 +19,15 @@ package com.haulmont.cuba.core.global.impl;
 import com.haulmont.cuba.core.global.UserSessionSource;
 import com.haulmont.cuba.security.global.NoUserSessionException;
 import com.haulmont.cuba.security.global.UserSession;
-import io.jmix.core.entity.BaseUser;
+import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.authentication.CoreAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -58,14 +59,19 @@ public class UserSessionSourceImpl implements UserSessionSource {
         Authentication authentication = SecurityContextHelper.getAuthentication();
 
         UserSession session = new UserSession();
-        if (authentication instanceof CoreAuthentication) {
-            session.setUser(((CoreAuthentication) authentication).getUser());
-            session.setLocale(((CoreAuthentication) authentication).getLocale());
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            session.setUser((UserDetails) authentication.getPrincipal());
+            if (authentication.getDetails() instanceof ClientDetails) {
+                ClientDetails clientDetails = (ClientDetails) authentication.getDetails();
+                session.setLocale(clientDetails.getLocale());
+            } else {
+                session.setLocale(Locale.getDefault());
+            }
         } else if (authentication instanceof AnonymousAuthenticationToken ||
                 authentication instanceof SystemAuthenticationToken) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof BaseUser) {
-                session.setUser((BaseUser) authentication.getPrincipal());
+            if (principal instanceof UserDetails) {
+                session.setUser((UserDetails) authentication.getPrincipal());
                 session.setLocale(Locale.getDefault());
             } else {
                 session.setUser(userRepository.getSystemUser());

@@ -22,7 +22,7 @@ import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.CurrentAuthentication
-import io.jmix.core.security.impl.CoreUser
+import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification

@@ -18,7 +18,6 @@ package com.haulmont.cuba.core.model.common;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import io.jmix.core.DeletePolicy;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.entity.annotation.SystemLevel;
@@ -26,6 +25,7 @@ import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.text.MessageFormat;
@@ -41,7 +41,7 @@ import java.util.List;
 @Table(name = "TEST_USER")
 @NamePattern("#getCaption|login,name")
 @Listeners("test_UserEntityListener")
-public class User extends StandardEntity implements BaseUser {
+public class User extends StandardEntity implements UserDetails {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
@@ -345,10 +345,5 @@ public class User extends StandardEntity implements BaseUser {
     @Override
     public boolean isEnabled() {
         return Boolean.TRUE.equals(active);
-    }
-
-    @Override
-    public String getDisplayName() {
-        return name;
     }
 }

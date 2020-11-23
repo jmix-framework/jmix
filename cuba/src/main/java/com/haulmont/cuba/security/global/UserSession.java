@@ -17,10 +17,10 @@
 package com.haulmont.cuba.security.global;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.security.ClientDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -33,7 +33,7 @@ public class UserSession implements Authentication {
 
     protected UUID id = UUID.randomUUID();
 
-    protected BaseUser user;
+    protected UserDetails user;
 
     protected Authentication authentication;
 
@@ -49,8 +49,8 @@ public class UserSession implements Authentication {
 
     public UserSession(Authentication authentication) {
         this.authentication = authentication;
-        if (authentication.getPrincipal() instanceof BaseUser) {
-            user = (BaseUser) authentication.getPrincipal();
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            user = (UserDetails) authentication.getPrincipal();
         } else {
             throw new UnsupportedOperationException("UserSession does not support principal of type "
                     + authentication.getPrincipal().getClass().getName());
@@ -68,11 +68,11 @@ public class UserSession implements Authentication {
         return id;
     }
 
-    public BaseUser getUser() {
+    public UserDetails getUser() {
         return user;
     }
 
-    public void setUser(BaseUser user) {
+    public void setUser(UserDetails user) {
         this.user = user;
     }
 

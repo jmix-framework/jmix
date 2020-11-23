@@ -20,7 +20,7 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
 import com.haulmont.cuba.security.global.NoUserSessionException;
 import com.haulmont.cuba.security.global.UserSession;
-import io.jmix.core.security.impl.CoreUser;
+import io.jmix.core.security.CoreUser;
 
 import java.util.Locale;
 import java.util.UUID;

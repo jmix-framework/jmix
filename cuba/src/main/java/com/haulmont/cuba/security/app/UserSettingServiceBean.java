@@ -19,18 +19,18 @@ package com.haulmont.cuba.security.app;
 import com.haulmont.cuba.security.entity.FilterEntity;
 import com.haulmont.cuba.security.entity.SearchFolder;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.entity.BaseUser;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.PermissionType;
-import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.uidata.UserSettingServiceImpl;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
 import javax.persistence.Query;
@@ -44,7 +44,7 @@ import java.util.UUID;
 public class UserSettingServiceBean extends UserSettingServiceImpl {
 
     @Override
-    public void copySettings(BaseUser fromUser, BaseUser toUser) {
+    public void copySettings(UserDetails fromUser, UserDetails toUser) {
         Preconditions.checkNotNullArgument(fromUser);
         Preconditions.checkNotNullArgument(toUser);
 
@@ -116,8 +116,8 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
         });
     }
 
-    protected void copyUserFolders(BaseUser fromUser,
-                                   BaseUser toUser,
+    protected void copyUserFolders(UserDetails fromUser,
+                                   UserDetails toUser,
                                    Map<UUID, UiTablePresentation> presentationsMap) {
         transaction.executeWithoutResult(status -> {
             Query deleteSettingsQuery =
@@ -142,7 +142,7 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
 
     @Nullable
     protected SearchFolder copyFolder(SearchFolder searchFolder,
-                                      BaseUser toUser,
+                                      UserDetails toUser,
                                       Map<SearchFolder, SearchFolder> copiedFolders,
                                       Map<UUID, UiTablePresentation> presentationsMap) {
         SearchFolder newFolder;
@@ -186,7 +186,7 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
 
     @Nullable
     protected SearchFolder getParent(SearchFolder parentFolder,
-                                     BaseUser toUser,
+                                     UserDetails toUser,
                                      Map<SearchFolder, SearchFolder> copiedFolders,
                                      Map<UUID, UiTablePresentation> presentationMap) {
         if (parentFolder == null) {
@@ -198,7 +198,7 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
         return copyFolder(parentFolder, toUser, copiedFolders, presentationMap);
     }
 
-    protected Map<UUID, FilterEntity> copyFilters(BaseUser fromUser, BaseUser toUser) {
+    protected Map<UUID, FilterEntity> copyFilters(UserDetails fromUser, UserDetails toUser) {
         Map<UUID, FilterEntity> filtersMap = new HashMap<>();
 
         transaction.executeWithoutResult(status -> {

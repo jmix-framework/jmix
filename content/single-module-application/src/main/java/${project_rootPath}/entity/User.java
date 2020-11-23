@@ -122,17 +122,17 @@ public class User implements BaseUser {
 
     @Override
     public boolean isAccountNonExpired() {
-        return enabled;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return enabled;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return enabled;
+        return true;
     }
 
     @Override

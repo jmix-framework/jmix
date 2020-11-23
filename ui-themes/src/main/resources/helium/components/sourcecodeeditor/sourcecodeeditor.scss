@@ -126,9 +126,12 @@
     }
   }
 
-  .#{$primary-stylename}-error,
-  .#{$primary-stylename}-error.#{$primary-stylename}-focus {
+  .#{$primary-stylename}-error {
     @include he-input-error-style();
+  }
+
+  .#{$primary-stylename}-error.#{$primary-stylename}-focus {
+    @include he-focus-style(--error-color);
   }
 }
 

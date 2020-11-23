@@ -110,6 +110,11 @@
       border: he-border($color: --border-dim-color);
     }
   }
+
+  .#{$primary-stylename}-text.v-textfield-error,
+  .#{$primary-stylename}-text.v-textfield-error-error {
+    @include he-input-error-style();
+  }
 }
 
 @mixin he-currencyfield-size-style($primary-stylename : c-currencyfield,

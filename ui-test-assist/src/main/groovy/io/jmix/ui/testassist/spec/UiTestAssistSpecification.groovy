@@ -42,6 +42,8 @@ import org.springframework.context.ApplicationContext
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
@@ -145,10 +147,11 @@ class UiTestAssistSpecification extends Specification {
     }
 
     Authentication createCoreAuthentication() {
-        CoreUser user = new CoreUser(
-                uiTestAssistProperties.getUsername(),
-                uiTestAssistProperties.getPassword(),
-                uiTestAssistProperties.getUsername())
+        UserDetails user = User.builder()
+                .username(uiTestAssistProperties.getUsername())
+                .password(uiTestAssistProperties.getPassword())
+                .authorities(Collections.emptyList())
+                .build()
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList())

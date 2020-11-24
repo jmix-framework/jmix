@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright (c) 2008-2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,27 @@
 
 package io.jmix.ui.meta;
 
-import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
 
 /**
  * Indicates that the annotated method should be shown in Studio Screen Designer
  * as a nested group of elements of UI component, e.g. columns, actions, fields.
  */
-@Documented
-public @interface StudioElementsGroup {
-
+@Target({ElementType.METHOD})
+public @interface StudioCollection {
     /**
-     * @return XML tag of the elements group
+     * @return XML tag of the collection
      */
     String xmlElement() default "";
 
     /**
-     * Specifies path to the component icon, SVG or PNG. Relative to the component module root.
-     * The icon used in the Component Hierarchy.
-     * @return relative path to the SVG or PNG icon file.
+     * @return XML tag of the collection elements
      */
-    String icon() default "";
+    String itemXmlElement() default "";
 
     /**
-     * Specifies URL pointing to the documentation page for the annotated elements group.
+     * Specifies URL pointing to the documentation page for the annotated element.
      * Used in <i>Jmix Documentation</i> action in the Studio Screen Designer.<br>
      * If the documentation is version dependent, use %VERSION% as a placeholder.
      * It will be replaced with the minor version (e.g. 1.2) of the artifact containing UI component.
@@ -46,4 +44,9 @@ public @interface StudioElementsGroup {
      * @return URL of the documentation page
      */
     String documentationURL() default "";
+
+    /**
+     * @return collection item properties
+     */
+    StudioProperty[] itemProperties() default {};
 }

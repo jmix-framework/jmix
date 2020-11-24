@@ -20,6 +20,9 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.core.global.filter.ParameterInfo;
+import com.haulmont.cuba.core.global.filter.ParametersHelper;
+import com.haulmont.cuba.core.global.filter.QueryFilter;
 import com.haulmont.cuba.core.global.impl.UserIdUtils;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.DataSupplier;
@@ -36,9 +39,6 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
 import io.jmix.ui.component.HasValue;
-import com.haulmont.cuba.core.global.filter.ParameterInfo;
-import com.haulmont.cuba.core.global.filter.ParametersHelper;
-import com.haulmont.cuba.core.global.filter.QueryFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -411,7 +411,9 @@ public abstract class AbstractCollectionDatasource<T extends Entity, K>
         }
 
         String sessionPrefix = ParameterInfo.Type.SESSION.getPrefix() + "$";
-        templateParams.put(sessionPrefix + "userId", UserIdUtils.getUserId(userSession.getUser()));
+        if (UserIdUtils.hasUserId(userSession.getUser())) {
+            templateParams.put(sessionPrefix + "userId", UserIdUtils.getUserId(userSession.getUser()));
+        }
         templateParams.put(sessionPrefix + "userLogin", userSession.getUser().getUsername());
         for (String name : userSession.getAttributeNames()) {
             templateParams.put(sessionPrefix + name, userSession.getAttribute(name));

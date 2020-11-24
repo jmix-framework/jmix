@@ -21,7 +21,10 @@ import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
 import com.haulmont.cuba.security.global.NoUserSessionException;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.security.CoreUser;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -47,7 +50,11 @@ public class TestUserSessionSource extends UserSessionSourceImpl {
             throw new NoUserSessionException(UUID.fromString(USER_ID));
         }
         if (session == null) {
-            CoreUser user = new CoreUser("test_admin", "test_admin", "Test Administrator");
+            UserDetails user = User.builder()
+                    .username("test_admin")
+                    .password("test_admin")
+                    .authorities(Collections.emptyList())
+                    .build();
             session = new UserSession();
             session.setUser(user);
             session.setLocale(Locale.ENGLISH);

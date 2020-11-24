@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -95,7 +97,11 @@ public class TestSupport {
     }
 
     public static void setAuthenticationToSecurityContext() {
-        CoreUser user = new CoreUser("test_admin", "test_admin", "test_admin");
+        UserDetails user = User.builder()
+                .username("test_admin")
+                .password("test_admin")
+                .authorities(Collections.emptyList())
+                .build();
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, Collections.emptyList());
         authentication.setDetails(ClientDetails.builder().locale(Locale.US));
         SecurityContextHelper.setAuthentication(authentication);

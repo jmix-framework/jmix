@@ -23,9 +23,10 @@ import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.security.Authenticator
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import spec.haulmont.cuba.core.CoreTestSpecification
 
 class LegacySoftDeleteTest extends CoreTestSpecification {
@@ -41,10 +42,14 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
     @Autowired
     MetadataTools metadataTools
 
-    CoreUser admin
+    UserDetails admin
 
     def setup() {
-        admin = new CoreUser('admin', '{noop}admin123', 'Admin')
+        admin = User.builder()
+                .username('admin')
+                .password('{noop}admin123')
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(admin)
         authenticator.begin("admin")
     }

@@ -44,4 +44,8 @@ public class UserIdUtils {
             throw new RuntimeException("Cannot find the id attribute in the User entity");
         }
     }
+
+    public static boolean hasUserId(UserDetails user) {
+        return ReflectionUtils.findField(user.getClass(), "id") != null;
+    }
 }

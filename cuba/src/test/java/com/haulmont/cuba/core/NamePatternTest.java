@@ -23,12 +23,12 @@ import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.core.security.CoreUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
 
@@ -45,7 +45,12 @@ public class NamePatternTest {
 
     @BeforeEach
     public void setUp() {
-        Authentication authentication = new UsernamePasswordAuthenticationToken(new CoreUser("test", "test", "test"), Collections.emptyList());
+        UserDetails user = org.springframework.security.core.userdetails.User.builder()
+                .username("test")
+                .password("test")
+                .authorities(Collections.emptyList())
+                .build();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, Collections.emptyList());
         SecurityContextHelper.setAuthentication(authentication);
     }
 

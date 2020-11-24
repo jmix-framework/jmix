@@ -20,9 +20,10 @@ import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.security.Authenticator
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.DataSpec
 import test_support.entity.soft_delete.SoftDeleteEntity
 import test_support.entity.soft_delete.SoftDeleteWithUserEntity
@@ -41,10 +42,14 @@ class SoftDeleteTest extends DataSpec {
     @Autowired
     InMemoryUserRepository userRepository
 
-    CoreUser admin
+    UserDetails admin
 
     def setup() {
-        admin = new CoreUser('admin', '{noop}admin123', 'Admin')
+        admin = User.builder()
+                .username('admin')
+                .password('{noop}admin123')
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(admin)
         authenticator.begin()
     }

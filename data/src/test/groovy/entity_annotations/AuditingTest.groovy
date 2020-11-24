@@ -21,9 +21,10 @@ import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.security.Authenticator
 import io.jmix.core.security.CurrentAuthentication
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.DataSpec
 import test_support.entity.auditing.AuditableSubclass
 import test_support.entity.auditing.CreatableSubclass
@@ -46,10 +47,14 @@ class AuditingTest extends DataSpec {
     @Autowired
     InMemoryUserRepository userRepository
 
-    CoreUser admin
+    UserDetails admin
 
     def setup() {
-        admin = new CoreUser('admin', '{noop}admin123', 'Admin')
+        admin = User.builder()
+                .username('admin')
+                .password('{noop}admin123')
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(admin)
     }
 

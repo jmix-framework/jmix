@@ -17,7 +17,6 @@
 package security
 
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
@@ -25,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.User
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -44,7 +44,11 @@ class CoreSecurityImplTest extends Specification {
     InMemoryUserRepository userRepository
 
     def "authentication as admin"() {
-        def admin = new CoreUser('admin', '{noop}admin123', 'Admin')
+        def admin = User.builder()
+                .username('admin')
+                .password('{noop}admin123')
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(admin)
 
         when:

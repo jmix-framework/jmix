@@ -16,11 +16,13 @@
 
 package io.jmix.core.security;
 
-import io.jmix.core.entity.EntityValues;
+import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,11 +38,19 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     protected UserDetails createSystemUser() {
-        return new CoreUser("system", "{noop}", "System");
+        return User.builder()
+                .username("system")
+                .password("{noop}")
+                .authorities(Collections.emptyList())
+                .build();
     }
 
     protected UserDetails createAnonymousUser() {
-        return new CoreUser("anonymous", "{noop}", "Anonymous");
+        return User.builder()
+                .username("anonymous")
+                .password("{noop}")
+                .authorities(Collections.emptyList())
+                .build();
     }
 
     @Override
@@ -48,6 +58,7 @@ public class InMemoryUserRepository implements UserRepository {
         return users.stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findAny()
+                .map(this::copyUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("User '" + username + "' not found"));
     }
 
@@ -74,5 +85,13 @@ public class InMemoryUserRepository implements UserRepository {
 
     public void removeUser(UserDetails user) {
         users.remove(user);
+    }
+
+    protected UserDetails copyUserDetails(UserDetails userDetails) {
+        if (userDetails instanceof CredentialsContainer) {
+            return User.withUserDetails(userDetails).build();
+        } else {
+            return userDetails;
+        }
     }
 }

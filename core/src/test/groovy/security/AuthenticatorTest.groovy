@@ -24,6 +24,7 @@ import io.jmix.core.security.CoreUser
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -38,10 +39,14 @@ class AuthenticatorTest extends Specification {
     @Autowired
     InMemoryUserRepository userRepository
 
-    CoreUser admin
+    UserDetails admin
 
     def setup() {
-        admin = new CoreUser('admin', '{noop}admin123', 'Admin')
+        admin = User.builder()
+                .username('admin')
+                .password('{noop}admin123')
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(admin)
     }
 

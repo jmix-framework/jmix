@@ -34,24 +34,24 @@ public class JmxConsoleAutoConfiguration {
         this.environment = environment;
     }
 
-    @Bean
-    public AnnotationMBeanExporter mbeanExporter(ObjectNamingStrategy namingStrategy) {
-        AnnotationMBeanExporter exporter = new JmxConsoleMBeanExporter();
-        exporter.setNamingStrategy(namingStrategy);
-        return exporter;
-    }
-
-
-    @Bean
-    public ParentAwareNamingStrategy objectNamingStrategy() {
-        ParentAwareNamingStrategy namingStrategy = new ParentAwareNamingStrategy(new AnnotationJmxAttributeSource());
-        String defaultDomain = this.environment.getProperty("spring.jmx.default-domain");
-        if (StringUtils.hasLength(defaultDomain)) {
-            namingStrategy.setDefaultDomain(defaultDomain);
-        }
-        boolean uniqueNames = this.environment.getProperty("spring.jmx.unique-names", Boolean.class, false);
-        namingStrategy.setEnsureUniqueRuntimeObjectNames(uniqueNames);
-        return namingStrategy;
-    }
+//    @Bean
+//    public AnnotationMBeanExporter mbeanExporter(ObjectNamingStrategy namingStrategy) {
+//        AnnotationMBeanExporter exporter = new JmxConsoleMBeanExporter();
+//        exporter.setNamingStrategy(namingStrategy);
+//        return exporter;
+//    }
+//
+//
+//    @Bean
+//    public ParentAwareNamingStrategy objectNamingStrategy() {
+//        ParentAwareNamingStrategy namingStrategy = new ParentAwareNamingStrategy(new AnnotationJmxAttributeSource());
+//        String defaultDomain = this.environment.getProperty("spring.jmx.default-domain");
+//        if (StringUtils.hasLength(defaultDomain)) {
+//            namingStrategy.setDefaultDomain(defaultDomain);
+//        }
+//        boolean uniqueNames = this.environment.getProperty("spring.jmx.unique-names", Boolean.class, false);
+//        namingStrategy.setEnsureUniqueRuntimeObjectNames(uniqueNames);
+//        return namingStrategy;
+//    }
 
 }

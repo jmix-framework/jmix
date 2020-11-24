@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,8 +44,7 @@ public class RoleRepositoryImpl implements RoleRepository {
     }
 
     @Override
-    @Nullable
-    public Role getRoleByCode(String code) {
+    public Role findRoleByCode(String code) {
         for (RoleProvider roleProvider : roleProviders) {
             Role role = roleProvider.getRoleByCode(code);
             if (role != null) {

@@ -3,25 +3,23 @@ package datamanager
 import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.RoleRepository
-import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
-import io.jmix.security.role.assignment.RoleAssignment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
-import test_support.role.TestDataManagerReadQueryRole
-import test_support.role.TestLazyLoadingRole
 import test_support.entity.ManyToManyFirstEntity
 import test_support.entity.ManyToManySecondEntity
 import test_support.entity.ManyToOneEntity
 import test_support.entity.OneToManyEntity
+import test_support.role.TestLazyLoadingRole
 
 import javax.sql.DataSource
 
@@ -47,7 +45,7 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     @Autowired
     DataSource dataSource
 
-    CoreUser user1
+    UserDetails user1
 
     UUID manyToOneId, oneToManyId
 
@@ -56,8 +54,11 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     public static final String PASSWORD = "123"
 
     def setup() {
-        user1 = new CoreUser("user1", "{noop}$PASSWORD",
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(TestLazyLoadingRole.NAME))))
+        user1 = User.builder()
+                .username("user1")
+                .password("{noop}$PASSWORD")
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(TestLazyLoadingRole.NAME)))
+                .build()
         userRepository.addUser(user1)
 
         prepareManyToOne()

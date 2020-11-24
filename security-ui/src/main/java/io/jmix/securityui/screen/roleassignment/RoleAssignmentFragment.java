@@ -66,7 +66,7 @@ public class RoleAssignmentFragment extends ScreenFragment {
     @Subscribe
     public void onInit(InitEvent event) {
         roleAssignmentsTable.addGeneratedColumn("roleName", roleAssignmentEntity -> {
-            Role role = roleRepository.getRoleByCode(roleAssignmentEntity.getRoleCode());
+            Role role = roleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
             Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
             if (role != null) {
                 label.setValue(role.getName());

@@ -19,21 +19,20 @@ package datamanager
 import io.jmix.core.*
 import io.jmix.core.annotation.Secure
 import io.jmix.core.security.AccessDeniedException
-import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.RoleRepository
-import io.jmix.security.role.assignment.InMemoryRoleAssignmentProvider
-import io.jmix.security.role.assignment.RoleAssignment
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
-import test_support.role.TestDataManagerEntityOperationsRole
 import test_support.entity.TestOrder
+import test_support.role.TestDataManagerEntityOperationsRole
 
 import javax.sql.DataSource
 
@@ -63,7 +62,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     @Autowired
     DataSource dataSource
 
-    CoreUser user1, user2
+    UserDetails user1, user2
     TestOrder order
 
     Authentication systemAuthentication
@@ -71,11 +70,19 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     public static final String PASSWORD = "123"
 
     def setup() {
-        user1 = new CoreUser("user1", "{noop}$PASSWORD", "user1")
+        user1 = User.builder()
+                .username("user1")
+                .password("{noop}$PASSWORD")
+                .authorities(Collections.emptyList())
+                .build()
+
         userRepository.addUser(user1)
 
-        user2 = new CoreUser("user2", "{noop}$PASSWORD", "user2",
-        Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME))))
+        user2 = User.builder()
+                .username("user2")
+                .password("{noop}$PASSWORD")
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME)))
+                .build()
         userRepository.addUser(user2)
 
         order = metadata.create(TestOrder)

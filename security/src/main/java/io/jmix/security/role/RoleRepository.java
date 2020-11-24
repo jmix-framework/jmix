@@ -20,11 +20,16 @@ import io.jmix.security.model.Role;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Objects;
 
 public interface RoleRepository {
 
+    default Role getRoleByCode(String code) {
+        return Objects.requireNonNull(findRoleByCode(code), String.format("Role not found by code: %s", code));
+    }
+
     @Nullable
-    Role getRoleByCode(String code);
+    Role findRoleByCode(String code);
 
     boolean deleteRole(String code);
 

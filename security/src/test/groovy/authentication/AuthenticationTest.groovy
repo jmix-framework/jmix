@@ -25,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecuritySpecification
 
 class AuthenticationTest extends SecuritySpecification {
@@ -41,10 +43,14 @@ class AuthenticationTest extends SecuritySpecification {
     @Autowired
     InMemoryUserRepository userRepository
 
-    CoreUser user1
+    UserDetails user1
 
     def setup() {
-        user1 = new CoreUser("user1", "{noop}123", "user1")
+        user1 = User.builder()
+                .username("user1")
+                .password("{noop}123")
+                .authorities(Collections.emptyList())
+                .build()
         userRepository.addUser(user1)
     }
 
@@ -69,7 +75,7 @@ class AuthenticationTest extends SecuritySpecification {
         then:
 
         authentication instanceof UsernamePasswordAuthenticationToken
-        authentication.principal instanceof CoreUser
+        authentication.principal instanceof UserDetails
         authentication.principal == user1
     }
 

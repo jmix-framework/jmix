@@ -16,6 +16,7 @@
 
 package io.jmix.security.model;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -92,6 +93,7 @@ public class Role {
         this.rowLevelPolicies = rowLevelPolicies;
     }
 
+    @Nullable
     public Set<String> getChildRoles() {
         return childRoles;
     }

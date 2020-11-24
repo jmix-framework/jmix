@@ -29,9 +29,12 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
 import test_support.entity.TestOrder
 import test_support.role.TestDataManagerReadQueryRole
+import test_support.role.TestLazyLoadingRole
 
 import javax.sql.DataSource
 
@@ -57,7 +60,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
     @Autowired
     DataSource dataSource
 
-    CoreUser user1
+    UserDetails user1
     TestOrder orderDenied1, orderDenied2, orderAllowed
 
     Authentication systemAuthentication
@@ -65,8 +68,11 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
     public static final String PASSWORD = "123"
 
     def setup() {
-        user1 = new CoreUser("user1", "{noop}$PASSWORD",
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(TestDataManagerReadQueryRole.NAME))))
+        user1 = User.builder()
+                .username("user1")
+                .password("{noop}$PASSWORD")
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(TestDataManagerReadQueryRole.NAME)))
+                .build()
         userRepository.addUser(user1)
 
         orderDenied1 = metadata.create(TestOrder)

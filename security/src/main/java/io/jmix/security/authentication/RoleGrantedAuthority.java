@@ -23,6 +23,7 @@ import io.jmix.security.model.RowLevelPolicy;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
@@ -34,7 +35,18 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new HashMap<>();
     protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes = new HashMap<>();
 
-    public RoleGrantedAuthority(Role role) {
+    public static RoleGrantedAuthority ofRole(Role role) {
+        return new RoleGrantedAuthority(role);
+    }
+
+    public static Collection<RoleGrantedAuthority> ofRoles(Function<String, Role> roleBuilder, String... codes) {
+        return Stream.of(codes)
+                .map(roleBuilder)
+                .map(RoleGrantedAuthority::ofRole)
+                .collect(Collectors.toList());
+    }
+
+    private RoleGrantedAuthority(Role role) {
         this.code = role.getCode();
         this.resourcePolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getResourcePolicies()));
         this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getRowLevelPolicies()));

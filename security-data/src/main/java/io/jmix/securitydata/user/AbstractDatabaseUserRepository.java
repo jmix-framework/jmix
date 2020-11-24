@@ -138,9 +138,9 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
         return roleAssignmentRepository.getAssignmentsByUsername(username).stream()
                 .map(RoleAssignment::getRoleCode)
-                .map(role -> roleRepository.getRoleByCode(role))
+                .map(role -> roleRepository.findRoleByCode(role))
                 .filter(Objects::nonNull)
-                .map(RoleGrantedAuthority::new)
+                .map(RoleGrantedAuthority::ofRole)
                 .collect(Collectors.toList());
     }
 }

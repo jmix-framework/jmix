@@ -28,11 +28,11 @@ import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.security.SecurityConfiguration
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.RoleRepository
-import io.jmix.security.role.assignment.RoleAssignment
-import io.jmix.securitydata.entity.RoleAssignmentEntity
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -67,11 +67,15 @@ class RestSpec extends Specification {
     String userLogin = "admin"
     String userToken
     String baseUrl
-    CoreUser admin
+    UserDetails admin
 
     void setup() {
-        admin = new CoreUser(userLogin, "{noop}$userPassword", "Admin",
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))))
+        admin = User.builder()
+                .username(userLogin)
+                .password("{noop}$userPassword")
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .build()
+
         userRepository.addUser(admin)
 
         baseUrl = "http://localhost:" + port + "/rest"

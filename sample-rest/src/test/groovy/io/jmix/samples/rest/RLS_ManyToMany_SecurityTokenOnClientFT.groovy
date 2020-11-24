@@ -5,13 +5,15 @@
 
 package io.jmix.samples.rest
 
-import io.jmix.core.security.CoreUser
+
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.RoleRepository
 import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.TestPropertySource
 
 import static io.jmix.samples.rest.DataUtils.*
@@ -32,15 +34,19 @@ class RLS_ManyToMany_SecurityTokenOnClientFT extends RestSpec {
     private String userPassword = "password"
     private String userLogin = "user1"
     private String userToken
-    private CoreUser user
+    private UserDetails user
 
     @Autowired
     private RoleRepository roleRepository
 
     void setup() {
-        user = new CoreUser(userLogin, "{noop}" + userPassword,
-                Arrays.asList(new RoleGrantedAuthority(roleRepository.getRoleByCode(InMemoryManyToManyRowLevelRole.NAME)),
-                        new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))))
+        user = User.builder()
+                .username(userLogin)
+                .password("{noop}" + userPassword)
+                .authorities(RoleGrantedAuthority.ofRoles({ roleRepository.getRoleByCode(it) },
+                        InMemoryManyToManyRowLevelRole.NAME, FullAccessRole.NAME))
+                .build()
+
         userRepository.addUser(user)
 
         plantId = createPlant(dirtyData, sql, '001')

@@ -7,7 +7,6 @@ package io.jmix.samples.rest.tests;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
-import io.jmix.core.security.CoreUser;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.rest.RestConfiguration;
@@ -16,7 +15,6 @@ import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.api.DataSet;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.RoleRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,13 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.Collections;
 
 import static io.jmix.samples.rest.tools.RestSpecsUtils.getAuthToken;
+import static io.jmix.security.authentication.RoleGrantedAuthority.ofRole;
 
 @ContextConfiguration(classes = {
         CoreConfiguration.class,
@@ -58,7 +58,7 @@ public abstract class AbstractRestControllerFT {
     @Autowired
     protected DataManager dataManager;
 
-    protected CoreUser admin;
+    protected UserDetails admin;
 
     protected Connection conn;
     protected DataSet dirtyData = new DataSet();
@@ -67,9 +67,12 @@ public abstract class AbstractRestControllerFT {
 
     @BeforeEach
     public void setUp() throws Exception {
-        //noinspection ConstantConditions
-        admin = new CoreUser("admin", "{noop}admin123", "Admin",
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))));
+        admin = User.builder()
+                .username("admin")
+                .password("{noop}admin123")
+                .authorities(ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .build();
+
         userRepository.addUser(admin);
 
         baseUrl = "http://localhost:" + port + "/rest";

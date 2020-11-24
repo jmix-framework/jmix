@@ -17,11 +17,9 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.core.security.CoreUser;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.RoleRepository;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -36,14 +34,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
+import static io.jmix.security.authentication.RoleGrantedAuthority.ofRole;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,13 +63,15 @@ public class OAuthTokenFT {
     @Autowired
     protected RoleRepository roleRepository;
 
-    protected CoreUser admin;
+    protected UserDetails admin;
 
     @BeforeEach
     public void setUp() {
-        //noinspection ConstantConditions
-        admin = new CoreUser("admin", "{noop}admin123", "Admin",
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))));
+        admin = User.builder()
+                .username("admin")
+                .password("{noop}admin123")
+                .authorities(ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .build();
 
         userRepository.addUser(admin);
 

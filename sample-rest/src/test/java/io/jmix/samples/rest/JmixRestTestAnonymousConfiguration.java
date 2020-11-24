@@ -17,25 +17,20 @@
 package io.jmix.samples.rest;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.core.security.CoreUser;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.security.AnonymousAccessRole;
-import io.jmix.samples.rest.transformer.RepairJsonTransformerFromVersion;
-import io.jmix.samples.rest.transformer.RepairJsonTransformerToVersion;
-import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.RoleRepository;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.sql.DataSource;
-import java.util.Collections;
+import static io.jmix.security.authentication.RoleGrantedAuthority.ofRole;
 
 @Configuration
 @JmixModule(dependsOn = RestConfiguration.class)
@@ -51,8 +46,11 @@ public class JmixRestTestAnonymousConfiguration {
         return new InMemoryUserRepository() {
             @Override
             protected UserDetails createAnonymousUser() {
-                return new CoreUser("anonymous", "{noop}", "Anonymous",
-                        Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(AnonymousAccessRole.NAME))));
+                return User.builder()
+                        .username("anonymous")
+                        .password("{noop}")
+                        .authorities(ofRole(roleRepository.getRoleByCode(AnonymousAccessRole.NAME)))
+                        .build();
             }
         };
     }

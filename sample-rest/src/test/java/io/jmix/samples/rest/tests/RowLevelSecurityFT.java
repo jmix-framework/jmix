@@ -6,29 +6,28 @@
 package io.jmix.samples.rest.tests;
 
 import com.jayway.jsonpath.ReadContext;
-import io.jmix.core.security.CoreUser;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.samples.rest.security.InMemoryRowLevelRole;
-import io.jmix.security.authentication.RoleGrantedAuthority;
-import io.jmix.security.role.assignment.RoleAssignment;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import static io.jmix.samples.rest.tools.RestSpecsUtils.getAuthToken;
 import static io.jmix.samples.rest.tools.RestTestUtils.*;
+import static io.jmix.security.authentication.RoleGrantedAuthority.ofRoles;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,6 +49,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     private String userPassword = "rowLevelUser123";
     private String userLogin = "rowLevelUser";
     private String userToken;
+    private UserDetails user;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -63,6 +63,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     @AfterEach
     public void tearDown() throws SQLException {
+        userRepository.removeUser(user);
         dirtyData.cleanup(conn);
         if (conn != null)
             conn.close();
@@ -252,10 +253,13 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
 
     protected void createUsers() {
         //noinspection ConstantConditions
-        CoreUser coreUser = new CoreUser(userLogin, "{noop}" + userPassword, userLogin,
-                Arrays.asList(new RoleGrantedAuthority(roleRepository.getRoleByCode(InMemoryRowLevelRole.NAME)),
-                        new RoleGrantedAuthority(roleRepository.getRoleByCode(FullAccessRole.NAME))));
-        userRepository.addUser(coreUser);
+        user = User.builder()
+                .username(userLogin)
+                .password("{noop}" + userPassword)
+                .authorities(ofRoles(roleRepository::getRoleByCode, InMemoryRowLevelRole.NAME, FullAccessRole.NAME))
+                .build();
+
+        userRepository.addUser(user);
     }
 
     public void prepareDb() throws Exception {

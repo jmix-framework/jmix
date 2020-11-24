@@ -31,6 +31,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -57,11 +59,11 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     /**
      * User ids
      */
-    private CoreUser colorRead;
-    private CoreUser colorUpdate;
-    private CoreUser colorCreate;
-    private CoreUser colorDelete;
-    private CoreUser carRead;
+    private UserDetails colorRead;
+    private UserDetails colorUpdate;
+    private UserDetails colorCreate;
+    private UserDetails colorDelete;
+    private UserDetails carRead;
     /**
      * Logins
      */
@@ -282,29 +284,39 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
     }
 
     private void createUsers() {
-        //noinspection ConstantConditions
-        colorRead = new CoreUser(colorReadUserLogin, "{noop}" + colorReadUserPassword,
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorReadRole.NAME))));
+        colorRead = User.builder()
+                .username(colorReadUserLogin)
+                .password("{noop}" + colorReadUserPassword)
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorReadRole.NAME)))
+                .build();
         userRepository.addUser(colorRead);
 
-        //noinspection ConstantConditions
-        colorUpdate = new CoreUser(colorUpdateUserLogin, "{noop}" + colorUpdateUserPassword,
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorUpdateRole.NAME))));
+        colorUpdate = User.builder()
+                .username(colorUpdateUserLogin)
+                .password("{noop}" + colorUpdateUserPassword)
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorUpdateRole.NAME)))
+                .build();
         userRepository.addUser(colorUpdate);
 
-        //noinspection ConstantConditions
-        colorCreate = new CoreUser(colorCreateUserLogin, "{noop}" + colorCreateUserPassword,
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorCreateRole.NAME))));
+        colorCreate = User.builder()
+                .username(colorCreateUserLogin)
+                .password("{noop}" + colorCreateUserPassword)
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorCreateRole.NAME)))
+                .build();
         userRepository.addUser(colorCreate);
 
-        //noinspection ConstantConditions
-        colorDelete = new CoreUser(colorDeleteUserLogin, "{noop}" + colorDeleteUserPassword,
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(ColorDeleteRole.NAME))));
+        colorDelete = User.builder()
+                .username(colorDeleteUserLogin)
+                .password("{noop}" + colorDeleteUserPassword)
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorDeleteRole.NAME)))
+                .build();
         userRepository.addUser(colorDelete);
 
-        //noinspection ConstantConditions
-        carRead = new CoreUser(carReadUserLogin, "{noop}" + carReadUserPassword,
-                Collections.singleton(new RoleGrantedAuthority(roleRepository.getRoleByCode(CarReadRole.NAME))));
+        carRead = User.builder()
+                .username(carReadUserLogin)
+                .password("{noop}" + carReadUserPassword)
+                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(CarReadRole.NAME)))
+                .build();
         userRepository.addUser(carRead);
     }
 }

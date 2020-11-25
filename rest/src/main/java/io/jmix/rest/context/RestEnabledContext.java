@@ -19,7 +19,7 @@ package io.jmix.rest.context;
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
 public class RestEnabledContext extends SpecificOperationAccessContext {
-    public static final String NAME = "jmix.restApi.enabled";
+    public static final String NAME = "jmix.rest.enabled";
 
     public RestEnabledContext() {
         super(NAME);

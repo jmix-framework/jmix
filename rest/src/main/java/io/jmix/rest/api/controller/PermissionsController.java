@@ -17,7 +17,7 @@
 package io.jmix.rest.api.controller;
 
 import io.jmix.rest.api.service.PermissionsControllerManager;
-import io.jmix.rest.api.service.filter.data.EffectiveRoleInfo;
+import io.jmix.rest.api.service.filter.data.PermissionsInfo;
 import io.jmix.rest.api.service.filter.data.PermissionInfo;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,24 +39,13 @@ public class PermissionsController {
     protected PermissionsControllerManager permissionsControllerManager;
 
     @GetMapping("/rest/permissions")
-    public Collection<PermissionInfo> getPermissions() {
-        //todo security
-//        return permissionsControllerManager.getPermissionInfos();
-        return null;
-    }
-
-    @GetMapping("/rest/permissions/effective")
-    public EffectiveRoleInfo getEffectiveRole(@RequestParam(required = false) boolean entities,
-                                              @RequestParam(required = false) boolean entityAttributes,
-                                              @RequestParam(required = false) boolean specific) {
-        PermissionsControllerManager.EffectiveRoleRequestParams params =
-                new PermissionsControllerManager.EffectiveRoleRequestParams();
+    public PermissionsInfo getPermissions(@RequestParam(required = false) boolean entities,
+                                          @RequestParam(required = false) boolean entityAttributes) {
+        PermissionsControllerManager.PermissionRequestParams params =
+                new PermissionsControllerManager.PermissionRequestParams();
         params.setEntities(entities);
         params.setEntityAttributes(entityAttributes);
-        params.setSpecific(specific);
-        //todo security
-//        return permissionsControllerManager.getEffectiveRole(params);
-        return null;
+        return permissionsControllerManager.getPermissions(params);
     }
 
 }

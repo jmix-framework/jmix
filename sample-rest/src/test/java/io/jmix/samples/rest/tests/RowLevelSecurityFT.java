@@ -252,7 +252,6 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
     }
 
     protected void createUsers() {
-        //noinspection ConstantConditions
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)

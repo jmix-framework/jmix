@@ -32,7 +32,7 @@ public interface ColorDeleteRole {
 
     @EntityPolicy(entityName = "ref$Colour", actions = {DELETE, READ})
     @EntityAttributePolicy(entityName = "ref$Colour", attributes = "*", action = MODIFY)
-    @SpecificPolicy(resources = "jmix.restApi.enabled")
+    @SpecificPolicy(resources = "jmix.rest.enabled")
     void access();
 
 }

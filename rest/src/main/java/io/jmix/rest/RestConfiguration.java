@@ -19,13 +19,12 @@ package io.jmix.rest;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.rest.session.OAuth2AccessTokenSessionIdResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.http.MediaType;
+import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -70,5 +69,11 @@ public class RestConfiguration implements WebMvcConfigurer {
         if (!Arrays.asList(allowedOrigins).contains(CorsConfiguration.ALL)) {
             corsRegistration.allowCredentials(true);
         }
+    }
+
+    @Primary
+    @Bean
+    public HttpSessionIdResolver sessionIdResolver() {
+        return new OAuth2AccessTokenSessionIdResolver();
     }
 }

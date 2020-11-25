@@ -21,17 +21,18 @@ import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.Role;
 import io.jmix.security.role.annotation.SpecificPolicy;
 
-import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
+import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 import static io.jmix.security.model.EntityPolicyAction.READ;
+import static io.jmix.security.model.EntityPolicyAction.UPDATE;
 
-@Role(name = ColorReadRole.NAME, code = ColorReadRole.NAME)
-public interface ColorReadRole {
+@Role(name = PermissionRole.NAME, code = PermissionRole.NAME)
+public interface PermissionRole {
 
-    String NAME = "color-read-access";
+    String NAME = "permission-role";
 
-    @EntityPolicy(entityName = "ref$Colour", actions = {READ})
-    @EntityAttributePolicy(entityName = "ref$Colour", attributes = "*", action = VIEW)
+    @EntityPolicy(entityName = "ref_Car", actions = UPDATE)
+    @EntityPolicy(entityName = "ref$Currency", actions = READ)
+    @EntityAttributePolicy(entityName = "ref$Currency", attributes = "name", action = MODIFY)
     @SpecificPolicy(resources = "jmix.rest.enabled")
     void access();
-
 }

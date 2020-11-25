@@ -16,11 +16,20 @@
 
 package io.jmix.rest.api.service;
 
-import io.jmix.core.security.PermissionType;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.EntityAttributeContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.rest.api.controller.PermissionsController;
-import io.jmix.rest.api.exception.RestAPIException;
-import org.springframework.http.HttpStatus;
+import io.jmix.rest.api.service.filter.data.PermissionsInfo;
+import io.jmix.rest.api.service.filter.data.ShortPermissionInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class is used for getting current user permissions for the REST API. It contains a business logic required by the
@@ -28,91 +37,79 @@ import org.springframework.stereotype.Component;
  */
 @Component("rest_PermissionsControllerManager")
 public class PermissionsControllerManager {
+    @Autowired
+    protected Metadata metadata;
+    @Autowired
+    protected AccessManager accessManager;
 
+    protected static final int ALLOWED_CRUD_PERMISSION = 1;
+    protected static final int VIEW_ATTRIBUTE_PERMISSION = 1;
+    protected static final int MODIFY_ATTRIBUTE_PERMISSION = 2;
 
-    //todo RolesService
-//    @Autowired
-//    private RolesService rolesService;
+    public PermissionsInfo getPermissions(PermissionRequestParams params) {
+        PermissionsInfo permissionsInfo = new PermissionsInfo();
 
-//    public Collection<PermissionInfo> getPermissionInfos() {
-//        Collection<PermissionInfo> result = new ArrayList<>();
-//        for (PermissionType permissionType : PermissionType.values()) {
-//            Map<String, Integer> permissionsMap = userSessionSource.getUserSession().getPermissionsByType(permissionType);
-//            for (Map.Entry<String, Integer> entry : permissionsMap.entrySet()) {
-//                String target = entry.getKey();
-//                Integer value = entry.getValue();
-//                PermissionInfo permissionInfo = new PermissionInfo(permissionType.name(),
-//                        target,
-//                        getPermissionValueStr(permissionType, value),
-//                        value);
-//                result.add(permissionInfo);
-//            }
-//        }
-//        return result;
-//    }
+        List<ShortPermissionInfo> entityPermissions = new ArrayList<>();
+        List<ShortPermissionInfo> entityAttributePermissions = new ArrayList<>();
+        permissionsInfo.setEntities(entityPermissions);
+        permissionsInfo.setEntityAttributes(entityAttributePermissions);
 
-    protected String getPermissionValueStr(PermissionType permissionType, int value) {
-        switch (permissionType) {
-            case SCREEN:
-            case SPECIFIC:
-            case ENTITY_OP:
-                return value == 1 ? "ALLOW" : "DENY";
-            case ENTITY_ATTR:
-                switch (value) {
-                    case 0:
-                        return "DENY";
-                    case 1:
-                        return "VIEW";
-                    case 2:
-                        return "MODIFY";
+        for (MetaClass metaClass : metadata.getSession().getClasses()) {
+            CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(entityContext);
+
+            if (params.isEntities()) {
+                if (entityContext.isCreatePermitted()) {
+                    entityPermissions.add(new ShortPermissionInfo(getEntityTarget(metaClass, "create"),
+                            ALLOWED_CRUD_PERMISSION));
                 }
-            case UI:
-                switch (value) {
-                    case 0:
-                        return "HIDE";
-                    case 1:
-                        return "READ_ONLY";
-                    case 2:
-                        return "SHOW";
+                if (entityContext.isReadPermitted()) {
+                    entityPermissions.add(new ShortPermissionInfo(getEntityTarget(metaClass, "read"),
+                            ALLOWED_CRUD_PERMISSION));
                 }
+                if (entityContext.isUpdatePermitted()) {
+                    entityPermissions.add(new ShortPermissionInfo(getEntityTarget(metaClass, "update"),
+                            ALLOWED_CRUD_PERMISSION));
+                }
+                if (entityContext.isDeletePermitted()) {
+                    entityPermissions.add(new ShortPermissionInfo(getEntityTarget(metaClass, "delete"),
+                            ALLOWED_CRUD_PERMISSION));
+                }
+            }
+
+            if (params.isEntityAttributes()) {
+                for (MetaProperty metaProperty : metaClass.getProperties()) {
+                    EntityAttributeContext attributeContext = new EntityAttributeContext(metaClass, metaProperty.getName());
+                    accessManager.applyRegisteredConstraints(attributeContext);
+
+                    if (attributeContext.canModify()) {
+                        entityAttributePermissions.add(new ShortPermissionInfo(
+                                getEntityAttributeTarget(metaClass, metaProperty),
+                                MODIFY_ATTRIBUTE_PERMISSION));
+                    } else if (attributeContext.canView()) {
+                        entityAttributePermissions.add(new ShortPermissionInfo(
+                                getEntityAttributeTarget(metaClass, metaProperty),
+                                VIEW_ATTRIBUTE_PERMISSION));
+                    }
+                }
+            }
         }
-        throw new RestAPIException("Cannot evaluate permission value", "", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        return permissionsInfo;
     }
 
-//    public EffectiveRoleInfo getEffectiveRole(EffectiveRoleRequestParams params) {
-//        RoleDefinition joinedRole = userSessionSource.getUserSession().getJoinedRole();
-//        return createEffectiveRoleInfo(joinedRole, params);
-//    }
-//
-//    public EffectiveRoleInfo createEffectiveRoleInfo(RoleDefinition role, EffectiveRoleRequestParams params) {
-//        EffectiveRoleInfo roleInfo = new EffectiveRoleInfo();
-//        ExplicitPermissionsInfo explicitPermissionsInfo = roleInfo.getExplicitPermissions();
-//        if (params.isEntities()) {
-//            explicitPermissionsInfo.setEntities(new ArrayList<>());
-//            role.entityPermissions().getExplicitPermissions().forEach((key, value) ->
-//                    explicitPermissionsInfo.getEntities().add(new ShortPermissionInfo(key, value)));
-//        }
-//        if (params.isEntityAttributes()) {
-//            explicitPermissionsInfo.setEntityAttributes(new ArrayList<>());
-//            role.entityAttributePermissions().getExplicitPermissions().forEach((key, value) ->
-//                    explicitPermissionsInfo.getEntityAttributes().add(new ShortPermissionInfo(key, value)));
-//        }
-//        if (params.isSpecific()) {
-//            explicitPermissionsInfo.setSpecific(new ArrayList<>());
-//            role.specificPermissions().getExplicitPermissions().forEach((key, value) ->
-//                    explicitPermissionsInfo.getSpecific().add(new ShortPermissionInfo(key, value)));
-//        }
-//
-//        roleInfo.setUndefinedPermissionPolicy(rolesService.getPermissionUndefinedAccessPolicy().name());
-//
-//        return roleInfo;
-//    }
+    protected String getEntityTarget(MetaClass metaClass, String operation) {
+        return metaClass.getName() + ":" + operation;
+    }
 
-    public static class EffectiveRoleRequestParams {
+    protected String getEntityAttributeTarget(MetaClass metaClass, MetaProperty metaProperty) {
+        return metaClass.getName() + ":" + metaProperty.getName();
+    }
+
+    public static class PermissionRequestParams {
 
         private boolean entities;
         private boolean entityAttributes;
-        private boolean specific;
 
         public boolean isEntities() {
             return entities;
@@ -129,14 +126,5 @@ public class PermissionsControllerManager {
         public void setEntityAttributes(boolean entityAttributes) {
             this.entityAttributes = entityAttributes;
         }
-
-        public boolean isSpecific() {
-            return specific;
-        }
-
-        public void setSpecific(boolean specific) {
-            this.specific = specific;
-        }
     }
-
 }

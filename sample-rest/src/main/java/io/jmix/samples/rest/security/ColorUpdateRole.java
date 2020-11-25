@@ -34,7 +34,7 @@ public interface ColorUpdateRole {
     @EntityPolicy(entityName = "ref$Colour", actions = {UPDATE, READ})
     @EntityAttributePolicy(entityName = "ref$Colour", attributes = {"name"}, action = MODIFY)
     @EntityAttributePolicy(entityName = "ref$Colour", attributes = {"description"}, action = VIEW)
-    @SpecificPolicy(resources = "jmix.restApi.enabled")
+    @SpecificPolicy(resources = "jmix.rest.enabled")
     void access();
 
 }

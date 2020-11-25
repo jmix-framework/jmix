@@ -33,6 +33,6 @@ public interface AnonymousAccessRole {
 
     @EntityPolicy(entityName = "sec$User", actions = {READ})
     @EntityAttributePolicy(entityName = "sec$User", attributes = "*", action = VIEW)
-    @SpecificPolicy(resources = "jmix.restApi.enabled")
+    @SpecificPolicy(resources = "jmix.rest.enabled")
     void access();
 }

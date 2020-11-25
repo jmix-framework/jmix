@@ -33,7 +33,7 @@ public interface CarReadRole {
     @EntityPolicy(entityName = "ref_Car", actions = READ)
     @EntityAttributePolicy(entityName = "ref_Car", attributes = "vin", action = MODIFY)
     @EntityAttributePolicy(entityName = "ref_Car", attributes = "model", action = VIEW)
-    @SpecificPolicy(resources = "jmix.restApi.enabled")
+    @SpecificPolicy(resources = "jmix.rest.enabled")
     void access();
 
 }

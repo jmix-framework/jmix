@@ -118,11 +118,6 @@ public class MetadataLoader {
 
     protected void initMetaAnnotations(MetaClass metaClass) {
         for (Annotation annotation : metaClass.getJavaClass().getAnnotations()) {
-            if (isOrmAnnotation(annotation)) {
-                // todo ORM-based entity
-                metaClass.getAnnotations().put("jmix.orm", true);
-            }
-
             MetaAnnotation metaAnnotation = AnnotationUtils.findAnnotation(annotation.getClass(), MetaAnnotation.class);
             if (metaAnnotation != null) {
                 String name = annotation.annotationType().getName();

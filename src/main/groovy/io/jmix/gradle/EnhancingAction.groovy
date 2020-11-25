@@ -68,7 +68,7 @@ class EnhancingAction implements Action<Task> {
             classesInfo.converters.add(it)
         }
 
-        collectEntitiesFromJars(project, sourceSet, classesInfo)
+        collectEntitiesFromClasspath(project, sourceSet, classesInfo)
 
         constructPersistenceXml(project, sourceSet, classesInfo)
 
@@ -121,7 +121,7 @@ class EnhancingAction implements Action<Task> {
         return false
     }
 
-    protected void collectEntitiesFromJars(Project project, sourceSet, ClassesInfo classesInfo) {
+    protected void collectEntitiesFromClasspath(Project project, sourceSet, ClassesInfo classesInfo) {
         def jars = sourceSet.compileClasspath.asList().findAll { it.name.endsWith('.jar') }
         jars.each { lib ->
             project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
@@ -136,6 +136,38 @@ class EnhancingAction implements Action<Task> {
                 converters?.split(';')?.each { classesInfo.converters.add(it) }
 
                 project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+            }
+        }
+
+        def folders = sourceSet.compileClasspath.asList().findAll { it.isDirectory() }
+        ClassPool classPool = new ClassPool(null)
+        classPool.appendSystemPath()
+
+        folders.each { File folder ->
+            classPool.insertClassPath(folder.absolutePath)
+            project.fileTree(folder).each {
+                if (it.name.endsWith('.class')) {
+                    String pathStr = folder.toPath().relativize(it.toPath()).join('.')
+                    String className = pathStr.substring(0, pathStr.length() - '.class'.length())
+
+                    CtClass ctClass;
+
+                    try {
+                        ctClass = classPool.get(className)
+                    } catch (NotFoundException e) {
+                        project.logger.info "Cannot determine $className in classpath folder '${folder}': $e"
+                    }
+
+                    if (ctClass != null) {
+                        if (isJpaEntity(ctClass) || isJpaMappedSuperclass(ctClass) || isJpaEmbeddable(ctClass)) {
+                            classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
+                        } else if (isJpaConverter(ctClass)) {
+                            classesInfo.converters.add(className)
+                        } else if (isJmixEntity(ctClass)) {
+                            classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
+                        }
+                    }
+                }
             }
         }
     }

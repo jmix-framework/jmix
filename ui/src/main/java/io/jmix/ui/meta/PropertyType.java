@@ -38,6 +38,10 @@ public enum PropertyType {
      */
     LONG,
     /**
+     * Float type.
+     */
+    FLOAT,
+    /**
      * Double type.
      */
     DOUBLE,
@@ -99,6 +103,11 @@ public enum PropertyType {
      */
     ENTITY_NAME,
     /**
+     * FQN of Entity class.
+     */
+    ENTITY_CLASS,
+
+    /**
      * FQN of Java class.
      */
     JAVA_CLASS_NAME,
@@ -125,6 +134,10 @@ public enum PropertyType {
      * ID of a datasource.
      */
     DATASOURCE_REF,
+    /**
+     * ID of a collection datasource.
+     */
+    COLLECTION_DATASOURCE_REF,
     /**
      * ID of a data loader.
      */

@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 
 /**
  * Indicates that the annotated interface should be available in Studio Screen Designer as a part of UI Component,
- * e.g. column, action, field, etc. Provides metadata for Properties Panel of Screen Designer.
+ * e.g. column, action, field, etc. Provides metadata for Component Inspector of Screen Designer.
  *
  * When used on the getter or setter method, indicates that the annotated method should be shown in
  * Studio Screen Designer as a nested element of UI component, e.g. validator, formatter.
@@ -40,7 +40,9 @@ public @interface StudioElement {
     String description() default "";
 
     /**
-     * @return UI Components Hierarchy icon, SVG or PNG
+     * Specifies path to the component icon, SVG or PNG. Relative to the component module root.
+     * The icon used in the Component Hierarchy.
+     * @return relative path to the SVG or PNG icon file.
      */
     String icon() default "";
 
@@ -72,4 +74,14 @@ public @interface StudioElement {
      * @return names of unsupported properties that should be hidden from Properties panel
      */
     String[] unsupportedProperties() default {};
+
+    /**
+     * Specifies URL pointing to the documentation page for the annotated element.
+     * Used in <i>Jmix Documentation</i> action in the Studio Screen Designer.<br>
+     * If the documentation is version dependent, use %VERSION% as a placeholder.
+     * It will be replaced with the minor version (e.g. 1.2) of the artifact containing UI component.
+     *
+     * @return URL of the documentation page
+     */
+    String documentationURL() default "";
 }

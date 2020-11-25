@@ -20,13 +20,12 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
 import io.jmix.core.security.CoreSecurityConfiguration;
+import io.jmix.core.security.CoreUser;
+import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
-import io.jmix.core.security.impl.CoreUser;
-import io.jmix.core.security.impl.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.PersistenceConfigProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.email.EmailConfiguration;
 import org.springframework.cache.CacheManager;
@@ -65,11 +64,10 @@ public class EmailTestConfiguration extends CoreSecurityConfiguration {
     @Bean
     @Primary
     protected LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                          PersistenceConfigProcessor processor,
                                                                           JpaVendorAdapter jpaVendorAdapter,
                                                                           DbmsSpecifics dbmsSpecifics,
                                                                           JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, processor, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
     }
 
     @Bean

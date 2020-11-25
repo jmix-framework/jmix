@@ -16,7 +16,7 @@
 
 package io.jmix.core.accesscontext;
 
-public abstract class SpecificOperationAccessContext implements AccessContext {
+public class SpecificOperationAccessContext implements AccessContext {
     protected boolean permitted = true;
     protected final String name;
 

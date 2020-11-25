@@ -16,7 +16,6 @@
 
 package io.jmix.core.accesscontext;
 
-import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
 public class CrudEntityContext implements AccessContext {

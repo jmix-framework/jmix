@@ -44,40 +44,48 @@ class EnhancingAction implements Action<Task> {
     @Override
     void execute(Task task) {
         Project project = task.getProject()
-
         project.logger.lifecycle "Enhancing entities in $project for source set '$sourceSetName'"
-
-        ClassesInfo classesInfo = new ClassesInfo()
         SourceSet sourceSet = project.sourceSets.findByName(sourceSetName)
 
+        ClassesInfo classesInfo = collectClasses(project, sourceSet)
+
+        constructDescriptors(project, sourceSet, classesInfo)
+
+        persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
+
+        runJmixEnhancing(project, sourceSet, classesInfo)
+    }
+
+    protected ClassesInfo collectClasses(Project project, SourceSet sourceSet) {
+        ClassesInfo classesInfo = new ClassesInfo()
+
         if (sourceSetName == TEST_SET_NAME) {
-            generateEntityClassesList(project, project.sourceSets.findByName(MAIN_SET_NAME), classesInfo)
+            collectEntitiesFromSources(project, project.sourceSets.findByName(MAIN_SET_NAME), classesInfo)
         }
 
-        generateEntityClassesList(project, sourceSet, classesInfo)
-
+        collectEntitiesFromSources(project, sourceSet, classesInfo)
 
         if (sourceSetName == TEST_SET_NAME && classesInfo.modulePaths.size() > 1) {
             //test sourceSet can have 0 or more Configurations. Production Configuration path should be removed in case of test Configuration presence
             classesInfo.modulePaths.remove(0);
         }
 
-        project.logger.lifecycle("Found JPA entities: ${classesInfo.getJpaEntities()}, other model objects: $classesInfo.nonMappedClasses")
+        project.logger.debug("Project entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}")
 
         project.jmix.entitiesEnhancing.jpaConverters.each {
             classesInfo.converters.add(it)
         }
 
         collectEntitiesFromClasspath(project, sourceSet, classesInfo)
-        constructDescriptors(project, sourceSet, classesInfo)
-        persistenceProviderEnhancing().run(project, sourceSet, classesInfo.allStores())
-        runJmixEnhancing(project, sourceSet, classesInfo)
+
+        project.logger.lifecycle("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO:${classesInfo.getDtoEntities()}.\n" +
+                "Converters: ${classesInfo.getConverters()}")
+
+        return classesInfo
     }
 
-    protected void generateEntityClassesList(Project project, sourceSet, ClassesInfo classesInfo) {
-        ClassPool classPool = new ClassPool(null)
-        classPool.appendSystemPath()
-        classPool.insertClassPath(sourceSet.java.outputDir.absolutePath)
+    protected void collectEntitiesFromSources(Project project, sourceSet, ClassesInfo classesInfo) {
+        ClassPool classPool = createClassPool(project, sourceSet)
 
         sourceSet.allJava.getSrcDirs().each { File srcDir ->
             project.fileTree(srcDir).each { File file ->
@@ -85,23 +93,16 @@ class EnhancingAction implements Action<Task> {
                     String pathStr = srcDir.toPath().relativize(file.toPath()).join('.')
                     String className = pathStr.substring(0, pathStr.length() - '.java'.length())
 
-                    CtClass ctClass = null
                     try {
-                        ctClass = classPool.get(className)
-                    } catch (NotFoundException e) {
-                        project.logger.info "Cannot find $className in ${project} for enhancing: $e"
-                    }
+                        CtClass ctClass = classPool.get(className)
 
-                    if (ctClass != null) {
-                        if (isJpaEntity(ctClass) || isJpaMappedSuperclass(ctClass) || isJpaEmbeddable(ctClass)) {
-                            classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
-                        } else if (isJpaConverter(ctClass)) {
-                            classesInfo.converters.add(className)
-                        } else if (isJmixEntity(ctClass)) {
-                            classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
-                        } else if (isModuleConfig(ctClass)) {
+                        examineClass(ctClass, classesInfo)
+
+                        if (isModuleConfig(ctClass)) {
                             classesInfo.modulePaths.add(ctClass.getPackageName().replace('.', '/'));
                         }
+                    } catch (NotFoundException e) {
+                        project.logger.info "Cannot find $className in ${project} for enhancing: $e"
                     }
                 }
             }
@@ -127,35 +128,32 @@ class EnhancingAction implements Action<Task> {
         }
 
         def folders = sourceSet.compileClasspath.asList().findAll { it.isDirectory() }
-        ClassPool classPool = new ClassPool(null)
-        classPool.appendSystemPath()
+        ClassPool classPool = createClassPool(project, sourceSet)
 
         folders.each { File folder ->
-            classPool.insertClassPath(folder.absolutePath)
             project.fileTree(folder).each {
                 if (it.name.endsWith('.class')) {
                     String pathStr = folder.toPath().relativize(it.toPath()).join('.')
                     String className = pathStr.substring(0, pathStr.length() - '.class'.length())
 
-                    CtClass ctClass;
-
                     try {
-                        ctClass = classPool.get(className)
+                        CtClass ctClass = classPool.get(className)
+                        examineClass(ctClass, classesInfo)
                     } catch (NotFoundException e) {
                         project.logger.info "Cannot determine $className in classpath folder '${folder}': $e"
                     }
-
-                    if (ctClass != null) {
-                        if (isJpaEntity(ctClass) || isJpaMappedSuperclass(ctClass) || isJpaEmbeddable(ctClass)) {
-                            classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
-                        } else if (isJpaConverter(ctClass)) {
-                            classesInfo.converters.add(className)
-                        } else if (isJmixEntity(ctClass)) {
-                            classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(className)
-                        }
-                    }
                 }
             }
+        }
+    }
+
+    protected void examineClass(CtClass ctClass, ClassesInfo classesInfo) {
+        if (isJpaEntity(ctClass) || isJpaMappedSuperclass(ctClass) || isJpaEmbeddable(ctClass)) {
+            classesInfo.classesByStores[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(ctClass.getName())
+        } else if (isJpaConverter(ctClass)) {
+            classesInfo.converters.add(ctClass.getName())
+        } else if (isJmixEntity(ctClass)) {
+            classesInfo.nonMappedClasses[findStoreName(ctClass) ?: MAIN_STORE_NAME].add(ctClass.getName())
         }
     }
 
@@ -269,6 +267,10 @@ class EnhancingAction implements Action<Task> {
 
         Collection<String> getJpaEntities() {
             return classesByStores.values().flatten()
+        }
+
+        Collection<String> getDtoEntities() {
+            return nonMappedClasses.values().flatten()
         }
 
         /**

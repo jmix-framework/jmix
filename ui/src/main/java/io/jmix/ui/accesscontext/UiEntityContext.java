@@ -19,11 +19,7 @@ package io.jmix.ui.accesscontext;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 
-//security.isEntityOpPermitted(metaClass, EntityOp.READ))
-//security.isEntityOpPermitted(metaClass, EntityOp.DELETE)
-//security.isEntityOpPermitted(metaClass, EntityOp.CREATE);
 public class UiEntityContext implements AccessContext {
-
     protected final MetaClass entityClass;
     protected boolean createPermitted = true;
     protected boolean viewPermitted = true;

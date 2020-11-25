@@ -16,41 +16,16 @@
 
 package io.jmix.ui.accesscontext;
 
-import io.jmix.core.accesscontext.AccessContext;
+import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-public class UiEntityAttributeContext implements AccessContext {
-    protected final MetaPropertyPath propertyPath;
-
-    protected boolean viewPermitted = true;
-    protected boolean modifyPermitted = true;
-
+public class UiEntityAttributeContext extends EntityAttributeContext {
     public UiEntityAttributeContext(MetaPropertyPath propertyPath) {
-        this.propertyPath = propertyPath;
+        super(propertyPath);
     }
 
     public UiEntityAttributeContext(MetaClass metaClass, String attribute) {
-        this(metaClass.getPropertyPath(attribute));
-    }
-
-    public MetaPropertyPath getPropertyPath() {
-        return propertyPath;
-    }
-
-    public boolean canModify() {
-        return modifyPermitted;
-    }
-
-    public void setModifyDenied() {
-        this.modifyPermitted = false;
-    }
-
-    public boolean canView() {
-        return viewPermitted;
-    }
-
-    public void setViewDenied() {
-        this.viewPermitted = false;
+        super(metaClass, attribute);
     }
 }

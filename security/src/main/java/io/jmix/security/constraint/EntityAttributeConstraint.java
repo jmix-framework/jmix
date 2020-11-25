@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.constraint;
+package io.jmix.security.constraint;
 
+import io.jmix.core.accesscontext.EntityAttributeContext;
 import io.jmix.core.constraint.EntityOperationConstraint;
-import io.jmix.security.constraint.SecureOperations;
-import io.jmix.security.constraint.PolicyStore;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("sec_UiEntityAttributeConstraint")
+@Component("sec_EntityAttributeConstraint")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class UiEntityAttributeConstraint implements EntityOperationConstraint<UiEntityAttributeContext> {
+public class EntityAttributeConstraint implements EntityOperationConstraint<EntityAttributeContext> {
 
     protected PolicyStore policyStore;
     protected SecureOperations secureOperations;
@@ -43,12 +41,12 @@ public class UiEntityAttributeConstraint implements EntityOperationConstraint<Ui
     }
 
     @Override
-    public Class<UiEntityAttributeContext> getContextType() {
-        return UiEntityAttributeContext.class;
+    public Class<EntityAttributeContext> getContextType() {
+        return EntityAttributeContext.class;
     }
 
     @Override
-    public void applyTo(UiEntityAttributeContext context) {
+    public void applyTo(EntityAttributeContext context) {
         if (!secureOperations.isEntityAttrUpdatePermitted(context.getPropertyPath(), policyStore)) {
             context.setModifyDenied();
         }

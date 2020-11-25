@@ -41,7 +41,5 @@ public class UiSecurityConstraintsRegistration {
         accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
 
         accessConstraintsRegistry.register(beanFactory.getBean(UiEntityConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityAttributeConstraint.class));
     }
 }

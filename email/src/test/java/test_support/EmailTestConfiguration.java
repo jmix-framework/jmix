@@ -20,7 +20,6 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
 import io.jmix.core.Stores;
 import io.jmix.core.security.CoreSecurityConfiguration;
-import io.jmix.core.security.CoreUser;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
@@ -41,10 +40,12 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EmailConfiguration.class})
@@ -100,7 +101,11 @@ public class EmailTestConfiguration extends CoreSecurityConfiguration {
     @Override
     public UserRepository userRepository() {
         InMemoryUserRepository repository = new InMemoryUserRepository();
-        repository.addUser(new CoreUser("admin", "{noop}admin", "Administrator"));
+        repository.addUser(User.builder()
+                .username("admin")
+                .password("{noop}admin")
+                .authorities(Collections.emptyList())
+                .build());
         return repository;
     }
 

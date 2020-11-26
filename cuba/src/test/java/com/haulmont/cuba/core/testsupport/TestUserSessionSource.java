@@ -20,7 +20,6 @@ package com.haulmont.cuba.core.testsupport;
 import com.haulmont.cuba.core.global.impl.UserSessionSourceImpl;
 import com.haulmont.cuba.security.global.NoUserSessionException;
 import com.haulmont.cuba.security.global.UserSession;
-import io.jmix.core.security.CoreUser;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 

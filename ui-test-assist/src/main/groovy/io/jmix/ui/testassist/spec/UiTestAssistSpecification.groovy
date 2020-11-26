@@ -26,7 +26,6 @@ import io.jmix.core.MetadataTools
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory
 import io.jmix.core.security.ClientDetails
 import io.jmix.core.security.SecurityContextHelper
-import io.jmix.core.security.CoreUser
 import io.jmix.ui.*
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.sys.AppCookies

@@ -19,7 +19,6 @@ package io.jmix.samples.rest
 import groovy.sql.Sql
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.data.DataConfiguration
 import io.jmix.rest.RestConfiguration

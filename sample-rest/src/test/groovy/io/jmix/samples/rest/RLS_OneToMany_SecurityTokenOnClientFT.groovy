@@ -6,13 +6,10 @@
 package io.jmix.samples.rest
 
 
-import io.jmix.core.security.CoreUser
 import io.jmix.samples.rest.security.FullAccessRole
-import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
 import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
 import io.jmix.security.authentication.RoleGrantedAuthority
 import io.jmix.security.role.RoleRepository
-import io.jmix.security.role.assignment.RoleAssignment
 import org.apache.http.HttpStatus
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User

@@ -19,7 +19,6 @@ package io.jmix.samples.rest.tests;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.Id;
-import io.jmix.core.security.CoreUser;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.Colour;
 import io.jmix.samples.rest.entity.driver.Model;

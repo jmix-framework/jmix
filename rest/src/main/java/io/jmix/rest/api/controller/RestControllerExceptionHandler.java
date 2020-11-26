@@ -29,7 +29,6 @@ import io.jmix.core.validation.CustomValidationException;
 import io.jmix.rest.api.exception.ConstraintViolationInfo;
 import io.jmix.rest.api.exception.ErrorInfo;
 import io.jmix.rest.api.exception.RestAPIException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

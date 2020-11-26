@@ -78,7 +78,7 @@ class EnhancingAction implements Action<Task> {
 
         collectEntitiesFromClasspath(project, sourceSet, classesInfo)
 
-        project.logger.lifecycle("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO:${classesInfo.getDtoEntities()}.\n" +
+        project.logger.lifecycle("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
                 "Converters: ${classesInfo.getConverters()}")
 
         return classesInfo

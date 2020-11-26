@@ -24,13 +24,12 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.core.security.RowLevelSecurityException;
 import io.jmix.core.validation.CustomValidationException;
-import io.jmix.data.RowLevelSecurityException;
 import io.jmix.rest.api.exception.ConstraintViolationInfo;
 import io.jmix.rest.api.exception.ErrorInfo;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.eclipse.persistence.exceptions.OptimisticLockException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.OptimisticLockException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
@@ -112,7 +112,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(RowLevelSecurityException.class)
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleRowLevelSecurityException(RowLevelSecurityException e) {
-        log.error("RowLevelSecurityException in service", e);
+        log.error("RowLevelAccessException in service", e);
         ErrorInfo errorInfo = new ErrorInfo("Forbidden", e.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);
     }
@@ -125,18 +125,18 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(OptimisticLockException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorInfo> handleOptimisticLockException(OptimisticLockException e) {
+        log.error("Optimistic lock", e);
+        ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", e.getMessage());
+        return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleException(Exception e) {
         log.error("Exception in REST controller", e);
-        List<Throwable> list = ExceptionUtils.getThrowableList(e);
-        for (Throwable throwable : list) {
-            Throwable cause = throwable.getCause();
-            if (cause instanceof OptimisticLockException) {
-                ErrorInfo errorInfo = new ErrorInfo("Optimistic lock", cause.getMessage());
-                return new ResponseEntity<>(errorInfo, HttpStatus.BAD_REQUEST);
-            }
-        }
         ErrorInfo errorInfo = new ErrorInfo("Server error", "");
         return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -18,7 +18,6 @@ package io.jmix.rest;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.data.DataConfiguration;
 import io.jmix.rest.session.OAuth2AccessTokenSessionIdResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -37,7 +36,7 @@ import java.util.Arrays;
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
-@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {CoreConfiguration.class})
 @PropertySource("classpath:/io/jmix/rest/module.properties")
 public class RestConfiguration implements WebMvcConfigurer {
 

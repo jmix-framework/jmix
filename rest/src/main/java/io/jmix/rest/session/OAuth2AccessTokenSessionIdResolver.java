@@ -2,7 +2,7 @@ package io.jmix.rest.session;
 
 import io.jmix.core.session.SessionData;
 import io.jmix.rest.security.RestAuthDetails;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -13,7 +13,6 @@ import org.springframework.session.web.http.HttpSessionIdResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver
     protected TokenStore tokenStore;
 
     @Autowired
-    private ObjectFactory<SessionData> sessionDataFactory;
+    private ObjectProvider<SessionData> sessionDataProvider;
 
     @Override
     public List<String> resolveSessionIds(HttpServletRequest request) {
@@ -75,7 +74,10 @@ public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver
         String tokenValue = fromRequest(request);
         OAuth2AccessToken token;
         if (tokenValue == null) {
-            tokenValue = (String) sessionDataFactory.getObject().getAttribute(ACCESS_TOKEN);
+            SessionData sessionData = sessionDataProvider.getIfAvailable();
+            if (sessionData != null) {
+                tokenValue = (String) sessionData.getAttribute(ACCESS_TOKEN);
+            }
         }
         if (tokenValue != null) {
             token = tokenStore.readAccessToken(tokenValue);
@@ -87,7 +89,6 @@ public class OAuth2AccessTokenSessionIdResolver implements HttpSessionIdResolver
                 }
             }
         }
-
     }
 
     @Override

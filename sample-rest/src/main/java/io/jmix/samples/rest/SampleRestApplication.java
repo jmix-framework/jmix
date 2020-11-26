@@ -28,6 +28,7 @@ import org.springframework.context.event.EventListener;
 
 import javax.sql.DataSource;
 
+//@SpringBootApplication(exclude = {SessionAutoConfiguration.class, SessionsAutoConfiguration.class})
 @SpringBootApplication
 public class SampleRestApplication {
 

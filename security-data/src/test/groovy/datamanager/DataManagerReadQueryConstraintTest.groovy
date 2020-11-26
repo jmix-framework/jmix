@@ -19,7 +19,6 @@ package datamanager
 import io.jmix.core.AccessConstraintsRegistry
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.core.security.CoreUser
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
@@ -34,7 +33,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import test_support.SecurityDataSpecification
 import test_support.entity.TestOrder
 import test_support.role.TestDataManagerReadQueryRole
-import test_support.role.TestLazyLoadingRole
 
 import javax.sql.DataSource
 

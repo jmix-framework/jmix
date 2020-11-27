@@ -17,7 +17,7 @@
 package io.jmix.rest;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.rest.api.common.RestAuthUtils;
+import io.jmix.rest.api.common.RestLocaleUtils;
 import io.jmix.rest.security.UserPasswordTokenGranter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +56,7 @@ public class RestAuthorizationServerConfiguration extends AuthorizationServerCon
     protected AuthenticationManager authenticationManager;
 
     @Autowired
-    protected RestAuthUtils restAuthUtils;
+    protected RestLocaleUtils restAuthUtils;
 
     @Autowired
     @Qualifier("rest_tokenStore")

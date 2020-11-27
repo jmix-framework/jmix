@@ -18,7 +18,7 @@ package io.jmix.rest.security.filter;
 
 import com.google.common.base.Strings;
 import io.jmix.core.security.ClientDetails;
-import io.jmix.rest.api.common.RestAuthUtils;
+import io.jmix.rest.api.common.RestLocaleUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.api.event.AfterRestInvocationEvent;
 import io.jmix.rest.api.event.BeforeRestInvocationEvent;
@@ -54,14 +54,14 @@ public class RestLastSecurityFilter extends OncePerRequestFilter {
 
     protected ApplicationEventPublisher applicationEventPublisher;
     protected RestTokenMasker restTokenMasker;
-    protected RestAuthUtils restAuthUtils;
+    protected RestLocaleUtils restLocaleUtils;
 
     public RestLastSecurityFilter(ApplicationEventPublisher applicationEventPublisher,
                                   RestTokenMasker restTokenMasker,
-                                  RestAuthUtils restAuthUtils) {
+                                  RestLocaleUtils restLocaleUtils) {
         this.applicationEventPublisher = applicationEventPublisher;
         this.restTokenMasker = restTokenMasker;
-        this.restAuthUtils = restAuthUtils;
+        this.restLocaleUtils = restLocaleUtils;
     }
 
     @Override
@@ -121,7 +121,7 @@ public class RestLastSecurityFilter extends OncePerRequestFilter {
      * Method parses the request locale and sets it to the authentication
      */
     protected void parseRequestLocale(ServletRequest request) {
-        Locale locale = restAuthUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
+        Locale locale = restLocaleUtils.extractLocaleFromRequestHeader((HttpServletRequest) request);
         if (locale != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication instanceof OAuth2Authentication) {

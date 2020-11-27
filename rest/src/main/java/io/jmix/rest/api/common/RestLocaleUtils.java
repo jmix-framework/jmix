@@ -18,14 +18,13 @@ package io.jmix.rest.api.common;
 
 import com.google.common.base.Strings;
 import io.jmix.core.CoreProperties;
-import io.jmix.core.MessageTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Map;
@@ -33,13 +32,13 @@ import java.util.Map;
 /**
  * REST API authentication utility class
  */
-@Component("rest_RestAuthUtils")
-public class RestAuthUtils {
+@Component
+public class RestLocaleUtils {
 
     @Autowired
     protected CoreProperties coreProperties;
 
-    private static final Logger log = LoggerFactory.getLogger(RestAuthUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(RestLocaleUtils.class);
 
     /**
      * Method extracts locale information from the Accept-Language header. If no such header is specified or the

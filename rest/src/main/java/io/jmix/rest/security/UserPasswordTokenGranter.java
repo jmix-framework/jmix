@@ -16,7 +16,7 @@
 
 package io.jmix.rest.security;
 
-import io.jmix.rest.api.common.RestAuthUtils;
+import io.jmix.rest.api.common.RestLocaleUtils;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,17 +32,17 @@ import java.util.Locale;
 
 public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
     protected final AuthenticationManager authenticationManager;
-    protected final RestAuthUtils restAuthUtils;
+    protected final RestLocaleUtils restLocaleUtils;
 
     public UserPasswordTokenGranter(
-            RestAuthUtils restAuthUtils,
+            RestLocaleUtils restLocaleUtils,
             AuthenticationManager authenticationManager,
             AuthorizationServerTokenServices tokenServices,
             ClientDetailsService clientDetailsService,
             OAuth2RequestFactory requestFactory) {
         super(authenticationManager, tokenServices, clientDetailsService, requestFactory);
         this.authenticationManager = authenticationManager;
-        this.restAuthUtils = restAuthUtils;
+        this.restLocaleUtils = restLocaleUtils;
     }
 
     @Override
@@ -82,6 +82,6 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
     protected Locale requestLocale() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        return restAuthUtils.extractLocaleFromRequestHeader(request);
+        return restLocaleUtils.extractLocaleFromRequestHeader(request);
     }
 }

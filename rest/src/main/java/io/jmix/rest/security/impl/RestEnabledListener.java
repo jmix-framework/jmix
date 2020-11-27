@@ -20,7 +20,7 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
-import io.jmix.rest.context.RestEnabledContext;
+import io.jmix.rest.accesscontext.RestAccessContext;
 import io.jmix.rest.exception.RestApiAccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -43,7 +43,7 @@ public class RestEnabledListener {
             ClientDetails clientDetails = (ClientDetails) authentication.getDetails();
 
             if ("REST".equals(clientDetails.getClientType())) {
-                RestEnabledContext restEnabledContext = new RestEnabledContext();
+                RestAccessContext restEnabledContext = new RestAccessContext();
 
                 Authentication currentAuthentication = SecurityContextHelper.getAuthentication();
                 try {

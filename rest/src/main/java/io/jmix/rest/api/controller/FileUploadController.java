@@ -17,10 +17,8 @@
 package io.jmix.rest.api.controller;
 
 import com.google.common.base.Strings;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageException;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
+import io.jmix.rest.accesscontext.RestFileUploadContext;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.FileInfo;
 import org.slf4j.Logger;
@@ -60,9 +58,10 @@ public class FileUploadController {
     @Autowired
     protected FileStorageLocator fileStorageLocator;
 
-    protected FileStorage<URI, String> fileStorage;
+    @Autowired
+    protected AccessManager accessManager;
 
-//    protected static final String FILE_UPLOAD_PERMISSION_NAME = "cuba.restApi.fileUpload.enabled";
+    protected FileStorage<URI, String> fileStorage;
 
     /**
      * Method for simple file upload. File contents are placed in the request body. Optional file name parameter is
@@ -129,14 +128,15 @@ public class FileUploadController {
         }
     }
 
-    //todo security
     protected void checkFileUploadPermission() {
-//        UserSession userSession = userSessionSource.getUserSession();
-//        if (!userSession.isSpecificPermitted(FILE_UPLOAD_PERMISSION_NAME)) {
-//            log.warn(FILE_UPLOAD_PERMISSION_NAME + " is not permitted for user " + userSession.getUser().getLogin());
-//            throw new RestAPIException("File upload failed", "File upload is not permitted", HttpStatus.FORBIDDEN);
-//        }
+        RestFileUploadContext uploadContext = new RestFileUploadContext();
+        accessManager.applyRegisteredConstraints(uploadContext);
+
+        if (!uploadContext.isPermitted()) {
+            throw new RestAPIException("File upload failed", "File upload is not permitted", HttpStatus.FORBIDDEN);
+        }
     }
+
     protected void checkFileExists(@Nullable String ref) {
         if (Strings.isNullOrEmpty(ref)) {
             return;

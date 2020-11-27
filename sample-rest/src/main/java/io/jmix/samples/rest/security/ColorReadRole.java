@@ -31,7 +31,7 @@ public interface ColorReadRole {
 
     @EntityPolicy(entityName = "ref$Colour", actions = {READ})
     @EntityAttributePolicy(entityName = "ref$Colour", attributes = "*", action = VIEW)
-    @SpecificPolicy(resources = "jmix.rest.enabled")
+    @SpecificPolicy(resources = "rest.enabled")
     void access();
 
 }

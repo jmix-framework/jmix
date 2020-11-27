@@ -18,7 +18,7 @@ package io.jmix.rest.api.controller;
 
 import io.jmix.core.*;
 import io.jmix.core.common.util.URLEncodeUtils;
-import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.rest.accesscontext.RestFileDownloadContext;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -38,7 +38,6 @@ import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -70,7 +69,7 @@ public class FileDownloadController {
             fileStorage = fileStorageLocator.getDefault();
         }
 
-        checkCanReadFileDescriptor();
+        checkFileDownloadPermission();
 
         //parse file reference
         ResourceUrlProvider urlProvider = (ResourceUrlProvider) request
@@ -137,14 +136,12 @@ public class FileDownloadController {
         return FileTypesHelper.getMIMEType("." + extension.toLowerCase());
     }
 
-    protected void checkCanReadFileDescriptor() {
-//        CrudEntityContext entityContext = new CrudEntityContext(metadata.getClass(FileDescriptor.class));
-//        accessManager.applyRegisteredConstraints(entityContext);
-//
-//        if (!entityContext.isReadPermitted()) {
-//            throw new RestAPIException("Reading forbidden",
-//                    "Reading of the sys$FileDescriptor is forbidden",
-//                    HttpStatus.FORBIDDEN);
-//        }
+    protected void checkFileDownloadPermission() {
+        RestFileDownloadContext downloadContext = new RestFileDownloadContext();
+        accessManager.applyRegisteredConstraints(downloadContext);
+
+        if (!downloadContext.isPermitted()) {
+            throw new RestAPIException("File download failed", "File download is not permitted", HttpStatus.FORBIDDEN);
+        }
     }
 }

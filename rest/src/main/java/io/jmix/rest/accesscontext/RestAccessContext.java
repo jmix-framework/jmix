@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.context;
+package io.jmix.rest.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
-public class RestEnabledContext extends SpecificOperationAccessContext {
-    public static final String NAME = "jmix.rest.enabled";
+public class RestAccessContext extends SpecificOperationAccessContext {
+    public static final String NAME = "rest.enabled";
 
-    public RestEnabledContext() {
+    public RestAccessContext() {
         super(NAME);
     }
 }

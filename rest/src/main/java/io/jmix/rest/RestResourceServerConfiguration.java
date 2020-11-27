@@ -22,7 +22,7 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.session.SessionProperties;
 import io.jmix.rest.security.filter.RestLastSecurityFilter;
-import io.jmix.rest.api.common.RestAuthUtils;
+import io.jmix.rest.api.common.RestLocaleUtils;
 import io.jmix.rest.api.common.RestTokenMasker;
 import io.jmix.rest.security.filter.RestExceptionLoggingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +91,7 @@ public class RestResourceServerConfiguration extends ResourceServerConfigurerAda
     protected ClientDetailsService clientDetailsService;
 
     @Autowired
-    protected RestAuthUtils restAuthUtils;
+    protected RestLocaleUtils restLocaleUtils;
 
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
@@ -111,7 +111,7 @@ public class RestResourceServerConfiguration extends ResourceServerConfigurerAda
                 .toArray(String[]::new);
 
         RestLastSecurityFilter jmixRestLastSecurityFilter = new RestLastSecurityFilter(
-                applicationEventPublisher, restTokenMasker, restAuthUtils);
+                applicationEventPublisher, restTokenMasker, restLocaleUtils);
         RestExceptionLoggingFilter jmixRestExceptionLoggingFilter = new RestExceptionLoggingFilter();
 
         String[] requestMatcherAntPatterns = Stream.of(anonymousUrlPatterns, authenticatedUrlPatterns)

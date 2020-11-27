@@ -18,15 +18,12 @@
 package io.jmix.rest.api.service;
 
 import io.jmix.core.security.ClientDetails;
-import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.rest.api.auth.OAuthTokenRevoker;
-import io.jmix.rest.api.common.RestAuthUtils;
+import io.jmix.rest.api.common.RestLocaleUtils;
 import io.jmix.rest.api.exception.RestAPIException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Component;
@@ -39,12 +36,12 @@ import java.util.Locale;
 public class UserSessionControllerManager {
 
     @Autowired
-    protected RestAuthUtils restAuthUtils;
+    protected RestLocaleUtils restLocaleUtils;
     @Autowired
     protected TokenStore tokenStore;
 
     public void setSessionLocale(HttpServletRequest request) {
-        Locale locale = restAuthUtils.extractLocaleFromRequestHeader(request);
+        Locale locale = restLocaleUtils.extractLocaleFromRequestHeader(request);
 
         if (locale != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

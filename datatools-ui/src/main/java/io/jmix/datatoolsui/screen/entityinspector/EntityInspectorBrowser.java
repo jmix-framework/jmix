@@ -477,7 +477,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     }
 
     protected void showRestoreDialog() {
-        Set<Entity> entityList = entitiesTable.getSelected();
+        Set<Object> entityList = entitiesTable.getSelected();
         Object entity = entitiesDc.getItemOrNull();
         if (entity != null && entityList.size() > 0) {
             if (EntityValues.isSoftDeletionSupported(entity)) {

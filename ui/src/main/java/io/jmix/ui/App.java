@@ -24,7 +24,6 @@ import com.vaadin.ui.Window;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
-import io.jmix.core.security.LoginException;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
@@ -175,7 +174,7 @@ public abstract class App {
         return list;
     }
 
-    public abstract void loginOnStart() throws LoginException;
+    public abstract void loginOnStart();
 
     /**
      * Called when <em>the first</em> UI of the session is initialized.

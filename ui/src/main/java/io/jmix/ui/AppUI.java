@@ -27,7 +27,6 @@ import com.vaadin.ui.*;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.LoginException;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.event.AppInitializedEvent;
 import io.jmix.ui.event.UIRefreshEvent;
@@ -346,7 +345,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
         setContent(content);
     }
 
-    protected void setupUI() throws LoginException {
+    protected void setupUI() {
 //        if (!app.getConnection().isConnected()) {
 //            app.loginOnStart();
 //        } else {

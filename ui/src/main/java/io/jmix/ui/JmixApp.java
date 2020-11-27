@@ -17,7 +17,6 @@
 package io.jmix.ui;
 
 import com.vaadin.spring.annotation.VaadinSessionScope;
-import io.jmix.core.security.LoginException;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.util.OperationResult;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class JmixApp extends App {
     private Logger log = LoggerFactory.getLogger(JmixApp.class);
 
     @Override
-    public void loginOnStart() throws LoginException {
+    public void loginOnStart() {
         initializeUi();
     }
 

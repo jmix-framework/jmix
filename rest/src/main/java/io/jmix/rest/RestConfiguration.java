@@ -18,7 +18,7 @@ package io.jmix.rest;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.rest.session.OAuth2AccessTokenSessionIdResolver;
+import io.jmix.rest.security.oauth.OAuth2AccessTokenSessionIdResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.*;

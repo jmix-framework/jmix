@@ -17,8 +17,11 @@
 package io.jmix.rest;
 
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.session.SessionData;
 import io.jmix.rest.api.common.RestLocaleUtils;
-import io.jmix.rest.security.UserPasswordTokenGranter;
+import io.jmix.rest.security.oauth.RestTokenEnhancer;
+import io.jmix.rest.security.oauth.UserPasswordTokenGranter;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -59,12 +62,15 @@ public class RestAuthorizationServerConfiguration extends AuthorizationServerCon
     protected RestLocaleUtils restAuthUtils;
 
     @Autowired
+    private ObjectFactory<SessionData> sessionDataFactory;
+
+    @Autowired
     @Qualifier("rest_tokenStore")
     protected TokenStore tokenStore;
 
     @Bean(name = "rest_tokenEnhancer")
     public TokenEnhancer tokenEnhancer() {
-        return new ComplexTokenEnhancer();
+        return new RestTokenEnhancer();
     }
 
     @Bean(name = "rest_tokenServices")
@@ -90,7 +96,7 @@ public class RestAuthorizationServerConfiguration extends AuthorizationServerCon
 
         if (authenticationManager != null) {
             tokenGranters.add(new UserPasswordTokenGranter(restAuthUtils,
-                    authenticationManager, tokenServices, clientDetails, requestFactory));
+                    authenticationManager, tokenServices, clientDetails, requestFactory, sessionDataFactory));
         }
         return new CompositeTokenGranter(tokenGranters);
     }

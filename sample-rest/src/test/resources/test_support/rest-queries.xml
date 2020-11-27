@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<queries xmlns="http://schemas.haulmont.com/cuba/rest-queries.xsd">
+<queries xmlns="queries.xsd">
     <query name="carByVin" entity="ref_Car" fetchPlan="carEdit">
         <jpql><![CDATA[select c from ref_Car c where c.vin = :vin]]></jpql>
         <params>

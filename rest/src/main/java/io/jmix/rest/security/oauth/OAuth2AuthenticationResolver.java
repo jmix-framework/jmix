@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.security.impl;
+package io.jmix.rest.security.oauth;
 
 import io.jmix.core.security.AuthenticationResolver;
 import org.springframework.security.core.Authentication;

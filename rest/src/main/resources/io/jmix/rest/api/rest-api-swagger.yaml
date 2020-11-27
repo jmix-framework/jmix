@@ -1,13 +1,13 @@
 swagger: '2.0'
 
 info:
-  version: "7.1"
-  title: CUBA Platform REST API
+  version: "1.0.0"
+  title: Jmix Platform REST API
   description: |
 
     ## General Overview
 
-    CUBA Platform REST API provides the following functionality:
+    Jmix REST API provides the following functionality:
 
     * Entities CRUD operations
     * Execution of predefined JPQL queries
@@ -18,20 +18,20 @@ info:
     * Getting current user information (name, language, time zone, etc.)
     * Working with files
 
-    The REST API is available at the URL `/rest/v2` both in the web and the portal modules, e.g. `http://localhost:8080/app/rest/v2/entities/sales$Order`
+    The REST API is available at the URL `/rest/` both in the web and the portal modules, e.g. `http://localhost:8080/rest/entities/sales$Order`
 
     ## Authentication
 
     ### Authentication using the OAuth2 protocol
 
-    CUBA Platform REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://tools.ietf.org/html/rfc6749#page-37).
+    Jmix REST API uses an OAuth2 resource owner password credentials grant to protect the endpoints (https://tools.ietf.org/html/rfc6749#page-37).
 
     Before accessing a protected resource, a user must get an authentication token. The token can be obtained at the `/oauth/token` URL.
 
     The `/oauth/token` endpoint is protected with the basic authentication. The request must contain an `Authorization` header for basic
     authentication with REST API client credentials. Please note that client credentials are not the same as platform user credentials.
     By client we mean an application that uses the REST API. The default client credentials are defined by the following
-    application properties: `cuba.rest.client.id` and `cuba.rest.client.secret`. User credentials must be passed in the request body.
+    application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`. User credentials must be passed in the request body.
     The request format must be `application/x-www-form-urlencoded`.
 
     See the `/oauth/token` endpoint documentation for more details.
@@ -39,19 +39,19 @@ info:
     When the token is obtained it must be placed to the `Authorization` header with the `Bearer` type to all further requests, e.g.:
 
     ```
-    GET /rest/v2/entities/sales$Order
+    GET /rest/entities/sales$Order
          Host: example.com
          Authorization: Bearer 2YotnFZFEjr1zCsicMWpAA
     ```
 
     Access token can also placed to the request URL using the `access_token` parameter. This may be useful when you, for example, need to build
-    a link for downloading a file, like this: `http://localhost:8080/app/rest/v2/files/cedd218e-aaed-bafa-fc78-7c6ea5e32a61?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
+    a link for downloading a file, like this: `http://localhost:8080/rest/files/cedd218e-aaed-bafa-fc78-7c6ea5e32a61?access_token=acefdad0-d728-4279-aae3-6b42620f7ef9`.
 
     ### Anonymous access
 
     If the request to protected resource doesn't contain the `Authentication` header then the user will be authenticated with the anonymous session.
-    By default, anonymous access is forbidden. To enable it, set the `cuba.rest.anonymousEnabled` application property to `true`.
-    Read more about the anonymous sessions in the CUBA Platform Developer's Manual.
+    By default, anonymous access is forbidden. To enable it, set the `jmix.rest.anonymousEnabled` application property to `true`.
+    Read more about the anonymous sessions in the Jmix Developer's Manual.
 
   license:
     name: Apache 2.0
@@ -61,7 +61,7 @@ info:
 #                  Host, Base Path, Schemes and Content Types                  #
 ################################################################################
 
-basePath: /app/rest/v2
+basePath: /rest
 produces:
   - application/json
 consumes:
@@ -473,7 +473,7 @@ securityDefinitions:
   oauth2:
     type: oauth2
     flow: password
-    tokenUrl: http://localhost:8080/app/rest/v2/oauth/token
+    tokenUrl: http://localhost:8080/rest/oauth/token
     scopes:
       rest-api: use REST API
   tokenEndpointBasic:
@@ -500,11 +500,11 @@ paths:
         The endpoint is protected with the basic authentication. The request must contain an `Authorization`
         header for basic authentication with REST API client credentials. Please note, that client credentials
         is not the same as platform user credentials. By client we mean an application that uses the REST API.
-        The default client credentials are defined by the following application properties: `cuba.rest.client.id` and `cuba.rest.client.secret`.
+        The default client credentials are defined by the following application properties: `jmix.rest.client.id` and `jmix.rest.client.secret`.
         User credentials must be passed in the request body. The request format must be `application/x-www-form-urlencoded`.
 
         To disable refresh tokens for the default client, remove the refresh_token type from the
-        `cuba.rest.client.authorizedGrantTypes` application property value.
+        `jmix.rest.client.authorizedGrantTypes` application property value.
       consumes:
         - application/x-www-form-urlencoded
       parameters:
@@ -516,12 +516,12 @@ paths:
         - name: username
           in: formData
           type: string
-          description: CUBA Platform user login
+          description: Jmix user login
           default: admin
         - name: password
           in: formData
           type: string
-          description: CUBA Platform user password
+          description: Jmix user password
           default: admin
 
       responses:
@@ -530,7 +530,7 @@ paths:
           schema:
             $ref: '#/definitions/token'
         400:
-          description: Authentication failed, e.g. because of invalid CUBA user username or password
+          description: Authentication failed, e.g. because of invalid Jmix user username or password
           schema:
             $ref: '#/definitions/oauthError'
         401:
@@ -1160,7 +1160,7 @@ paths:
         If the 'Content-Type' header has some other value then file contents must be passed in the request body.
         The 'Content-Length' header will be used for FileDescriptor 'size' field value.
 
-        File upload may be disabled for the security role using the `cuba.restApi.fileUpload.enabled` specific permission.
+        File upload may be disabled for the security role using the `jmix.restApi.fileUpload.enabled` specific permission.
       parameters:
         - name: name
           in: query

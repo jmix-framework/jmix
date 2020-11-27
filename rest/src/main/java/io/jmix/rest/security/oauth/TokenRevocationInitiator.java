@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-@Internal
-package io.jmix.rest.api.auth;
+package io.jmix.rest.security.oauth;
 
-import io.jmix.core.annotation.Internal;
+public enum TokenRevocationInitiator {
+    CLIENT,
+    SERVER
+}

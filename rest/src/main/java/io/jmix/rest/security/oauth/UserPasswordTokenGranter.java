@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.security;
+package io.jmix.rest.security.oauth;
 
+import io.jmix.core.session.SessionData;
 import io.jmix.rest.api.common.RestLocaleUtils;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,16 +35,19 @@ import java.util.Locale;
 public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter {
     protected final AuthenticationManager authenticationManager;
     protected final RestLocaleUtils restLocaleUtils;
+    private final ObjectFactory<SessionData> sessionDataFactory;
 
     public UserPasswordTokenGranter(
             RestLocaleUtils restLocaleUtils,
             AuthenticationManager authenticationManager,
             AuthorizationServerTokenServices tokenServices,
             ClientDetailsService clientDetailsService,
-            OAuth2RequestFactory requestFactory) {
+            OAuth2RequestFactory requestFactory,
+            ObjectFactory<SessionData> sessionDataFactory) {
         super(authenticationManager, tokenServices, clientDetailsService, requestFactory);
         this.authenticationManager = authenticationManager;
         this.restLocaleUtils = restLocaleUtils;
+        this.sessionDataFactory = sessionDataFactory;
     }
 
     @Override
@@ -54,22 +59,25 @@ public class UserPasswordTokenGranter extends ResourceOwnerPasswordTokenGranter 
         ((AbstractAuthenticationToken) userAuth).setDetails(buildClientDetails());
         try {
             userAuth = authenticationManager.authenticate(userAuth);
-        } catch (AccountStatusException ase) {
-            //covers expired, locked, disabled cases (mentioned in section 5.2, draft 31)
+        } catch (AccountStatusException | UsernameNotFoundException | BadCredentialsException ase) {
             throw new InvalidGrantException(ase.getMessage());
-        } catch (BadCredentialsException e) {
-            // If the username/password are wrong the spec says we should send 400/invalid grant
-            throw new InvalidGrantException(e.getMessage());
-        } catch (UsernameNotFoundException e) {
-            // If the user is not found, report a generic error message
-            throw new InvalidGrantException(e.getMessage());
         }
+
         if (userAuth == null || !userAuth.isAuthenticated()) {
             throw new InvalidGrantException("Could not authenticate user: " + username);
         }
 
         OAuth2Request storedOAuth2Request = getRequestFactory().createOAuth2Request(client, tokenRequest);
-        return new OAuth2Authentication(storedOAuth2Request, userAuth);
+        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(storedOAuth2Request, userAuth);
+
+        if (userAuth.getDetails() instanceof io.jmix.core.security.ClientDetails) {
+            oAuth2Authentication.setDetails(io.jmix.core.security.ClientDetails.builder()
+                    .of((io.jmix.core.security.ClientDetails) userAuth.getDetails())
+                    .sessionId(sessionDataFactory.getObject().getSessionId())
+                    .build());
+        }
+
+        return oAuth2Authentication;
     }
 
     protected io.jmix.core.security.ClientDetails buildClientDetails() {

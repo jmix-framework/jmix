@@ -16,7 +16,7 @@
 
 package io.jmix.rest.api.event;
 
-import io.jmix.rest.api.auth.TokenRevocationInitiator;
+import io.jmix.rest.security.oauth.TokenRevocationInitiator;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 

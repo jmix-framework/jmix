@@ -4,7 +4,7 @@
   ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
   -->
 
-<services xmlns="http://schemas.haulmont.com/cuba/rest-services-v2.xsd">
+<services xmlns="services.xsd">
     <service name="jmix_RestTestService">
         <method name="sum" anonymousAllowed="true">
             <param name="number1"/>

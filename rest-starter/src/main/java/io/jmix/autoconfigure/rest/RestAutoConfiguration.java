@@ -18,7 +18,7 @@ package io.jmix.autoconfigure.rest;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.rest.RestConfiguration;
-import io.jmix.rest.api.auth.UniqueAuthenticationKeyGenerator;
+import io.jmix.rest.security.oauth.UniqueAuthenticationKeyGenerator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

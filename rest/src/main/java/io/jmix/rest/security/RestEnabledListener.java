@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.security.impl;
+package io.jmix.rest.security;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;

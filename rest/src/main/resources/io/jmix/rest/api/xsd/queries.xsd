@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://schemas.haulmont.com/cuba/rest-queries.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/rest/queries.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://schemas.haulmont.com/cuba/rest-queries.xsd"
+           xmlns="http://jmix.io/schema/rest/queries.xsd"
            elementFormDefault="qualified"
            attributeFormDefault="unqualified">
 

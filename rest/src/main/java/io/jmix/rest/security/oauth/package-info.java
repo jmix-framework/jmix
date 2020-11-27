@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.rest.session;
+package io.jmix.rest.security.oauth;
 
 import io.jmix.core.annotation.Internal;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,42 @@
  * limitations under the License.
  */
 
-package io.jmix.rest.api.auth;
+package io.jmix.rest.security.oauth;
 
+import io.jmix.core.session.SessionData;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Provides additional token details from authentication details with ext_ prefix.
+ * A token enhancer that provides session info details
  */
 @Component
-public class JmixTokenEnhancer implements TokenEnhancer {
-
-    public static final String EXTENDED_DETAILS_ATTRIBUTE_PREFIX = "ext_";
+public class RestTokenEnhancer implements TokenEnhancer {
+    @Autowired
+    private ObjectFactory<SessionData> sessionDataFactory;
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-        Map<String, String> requestParameters = authentication.getOAuth2Request().getRequestParameters();
-        Map<String, Object> additionalInfos = new HashMap<>();
+        Map<String, Object> additionalInformation = new HashMap<>(accessToken.getAdditionalInformation());
 
-        for (Map.Entry<String, String> entry : requestParameters.entrySet()) {
-            if (entry.getKey().startsWith(EXTENDED_DETAILS_ATTRIBUTE_PREFIX)) {
-                String detailsKey = entry.getKey().substring(EXTENDED_DETAILS_ATTRIBUTE_PREFIX.length());
-                additionalInfos.put(detailsKey, entry.getValue());
-            }
-        }
+        SessionData sessionData = sessionDataFactory.getObject();
+        HttpSession session = sessionData.getHttpSession();
 
-        additionalInfos.putAll(accessToken.getAdditionalInformation());
+        additionalInformation.put(OAuth2AccessTokenSessionIdResolver.SESSION_ID, session.getId());
 
         DefaultOAuth2AccessToken mutableAccessToken = (DefaultOAuth2AccessToken) accessToken;
-        mutableAccessToken.setAdditionalInformation(additionalInfos);
+        mutableAccessToken.setAdditionalInformation(additionalInformation);
+
+        sessionData.setAttribute(OAuth2AccessTokenSessionIdResolver.ACCESS_TOKEN, accessToken.getValue());
 
         return accessToken;
     }

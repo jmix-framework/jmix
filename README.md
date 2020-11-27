@@ -1,6 +1,6 @@
 # Jmix Email
 
-###Email sending configuration
+### Email sending configuration
 Two groups of application properties are used to configure email sending:
 1. Spring Boot mail properties (e.g. host, port, protocol and etc)
 2. Jmix specific properties (e.g. defaultFromAddress)
@@ -24,7 +24,7 @@ spring.mail.password=password
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 ```
-###File storage usage
+### File storage usage
 
 There is an ability to store email body text and attachments in file storage instead of BLOB columns in database.
      
@@ -34,7 +34,7 @@ To use JMIX file storage implementation it is needed to add the following depend
     ```
     dependencies {
             //...
-            implementation 'io.jmix.fsfilestorage:jmix-fsfilestorage-starter:0.2.0-SNAPSHOT'
+            implementation 'io.jmix.fsfilestorage:jmix-fsfilestorage-starter'
     }
     ``` 
 2. Enable file storage usage: <br/>

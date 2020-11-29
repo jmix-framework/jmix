@@ -15,16 +15,19 @@
  */
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.annotation.Order;
 
 import java.text.ParseException;
 import java.util.Locale;
 import java.util.UUID;
 
 @DatatypeDef(id = "uuid", javaClass = UUID.class, defaultForClass = true, value = "core_UuidDatatype")
+@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class UuidDatatype implements Datatype<UUID> {
 
     @Override

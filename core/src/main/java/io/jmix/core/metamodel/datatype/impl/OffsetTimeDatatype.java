@@ -16,9 +16,11 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.FormatStrings;
+import org.springframework.core.annotation.Order;
 
 import java.time.OffsetTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +30,7 @@ import java.util.Locale;
 
 @DatatypeDef(id = "offsetTime", javaClass = OffsetTime.class, defaultForClass = true, value = "core_OffsetTimeDatatype")
 @DateTimeFormat("HH:mm:ss Z")
+@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class OffsetTimeDatatype extends AbstractTemporalDatatype<OffsetTime> {
 
     @Override

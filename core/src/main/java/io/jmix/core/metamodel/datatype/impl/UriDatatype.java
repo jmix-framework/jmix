@@ -16,8 +16,10 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
+import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
 import java.net.URI;
@@ -26,6 +28,7 @@ import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "uri", javaClass = URI.class, defaultForClass = true, value = "core_UriDatatype")
+@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class UriDatatype implements Datatype<URI> {
 
     @Override

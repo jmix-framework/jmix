@@ -16,8 +16,10 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
+import org.springframework.core.annotation.Order;
 
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
@@ -25,6 +27,7 @@ import java.util.Base64;
 import java.util.Locale;
 
 @DatatypeDef(id = "byteArray", javaClass = byte[].class, defaultForClass = true, value = "core_ByteArrayDatatype")
+@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class ByteArrayDatatype implements Datatype<byte[]> {
 
     @Override

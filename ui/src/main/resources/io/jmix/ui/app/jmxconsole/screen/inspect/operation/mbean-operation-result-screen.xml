@@ -22,13 +22,16 @@
                 height="theme://jmix.ui.dialogSize.height.medium"
                 resizable="true"/>
 
-    <layout expand="resultContainer" spacing="true">
-        <label id="resultLabel" stylename="h2"/>
-        <scrollBox id="resultContainer" width="100%" scrollBars="both">
-        </scrollBox>
+    <layout expand="resultVBox" spacing="true">
+        <vbox id="resultVBox" expand="resultContainer" spacing="true">
+            <progressBar id="taskProgressBar" width="100%" indeterminate="true" />
+            <label id="resultLabel" stylename="h2"/>
+            <scrollBox id="resultContainer" width="100%" scrollBars="both">
+            </scrollBox>
+        </vbox>
         <hbox spacing="true">
             <button id="closeBtn" icon="icons/ok.png" caption="msg://actions.Close"/>
-            <button id="exportBtn" icon="icons/download.png" caption="msg://actions.Export"/>
+            <button id="exportBtn" icon="icons/download.png" caption="msg://actions.Export" enable="false"/>
         </hbox>
     </layout>
 </window>

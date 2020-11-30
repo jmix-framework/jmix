@@ -90,6 +90,7 @@ public class UiProperties {
     Map<String, Integer> entityPageSize;
     Map<String, Integer> entityMaxFetchSize;
     boolean propertyFilterAutoApply;
+    int jmxConsoleMBeanOperationTimeoutSec;
 
     public UiProperties(
             boolean testMode,
@@ -148,7 +149,8 @@ public class UiProperties {
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityPageSize,
             @Nullable Map<String, Integer> entityMaxFetchSize,
-            @DefaultValue("true") boolean propertyFilterAutoApply) {
+            @DefaultValue("true") boolean propertyFilterAutoApply,
+            @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
@@ -206,6 +208,7 @@ public class UiProperties {
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
         this.propertyFilterAutoApply = propertyFilterAutoApply;
+        this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -506,5 +509,12 @@ public class UiProperties {
      */
     public boolean isPropertyFilterAutoApply() {
         return propertyFilterAutoApply;
+    }
+
+    /**
+     * @return Timeout (in seconds) for MBean operation invoked in JMX console
+     */
+    public int getJmxConsoleMBeanOperationTimeoutSec() {
+        return jmxConsoleMBeanOperationTimeoutSec;
     }
 }

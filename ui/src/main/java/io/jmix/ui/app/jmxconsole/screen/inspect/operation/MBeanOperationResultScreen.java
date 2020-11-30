@@ -26,16 +26,20 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.app.jmxconsole.AttributeHelper;
+import io.jmix.ui.app.jmxconsole.JmxControl;
 import io.jmix.ui.app.jmxconsole.JmxControlException;
+import io.jmix.ui.app.jmxconsole.model.ManagedBeanOperation;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Label;
+import io.jmix.ui.component.ProgressBar;
 import io.jmix.ui.component.ScrollBoxLayout;
 import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.executor.BackgroundTask;
+import io.jmix.ui.executor.BackgroundTaskHandler;
+import io.jmix.ui.executor.BackgroundWorker;
+import io.jmix.ui.executor.TaskLifeCycle;
+import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,17 +63,15 @@ public class MBeanOperationResultScreen extends Screen {
     @Autowired
     protected TimeSource timeSource;
 
-    @WindowParam
     protected Object result;
 
-    @WindowParam
     protected Throwable exception;
 
     @WindowParam
-    protected String methodName;
+    protected ManagedBeanOperation operation;
 
     @WindowParam
-    protected String beanName;
+    protected Object[] paramValues;
 
     @Autowired
     protected UiComponents uiComponents;
@@ -86,22 +88,32 @@ public class MBeanOperationResultScreen extends Screen {
     @Autowired
     protected Notifications notifications;
 
+    @Autowired
+    protected JmxControl jmxControl;
+
+    @Autowired
+    protected Button exportBtn;
+
+    @Autowired
+    protected ProgressBar taskProgressBar;
+
+    @Autowired
+    protected BackgroundWorker backgroundWorker;
+
+    protected BackgroundTaskHandler<Object> taskHandler;
+
     @Subscribe
-    public void beforeShow(BeforeShowEvent beforeShowEvent) {
-        String resultMessage = messages.getMessage(getClass(), "operationResult.void");
-        Label<String> label = null;
-        if (exception != null) {
-            label = createLabel(getExceptionMessage(exception));
-            resultMessage = messages.getMessage(getClass(), "operationResult.exception");
-        } else if (result != null) {
-            label = createLabel(AttributeHelper.convertToString(result));
-            resultMessage = messages.getMessage(getClass(), "operationResult.result");
-        }
+    public void afterShow(AfterShowEvent afterShowEvent) {
+        BackgroundTask<Long, Object> task = new OperationBackgroundTask(uiProperties.getJmxConsoleMBeanOperationTimeoutSec(),
+                this);
+        taskHandler = backgroundWorker.handle(task);
+        taskHandler.execute();
+    }
 
-        resultLabel.setValue(resultMessage);
-
-        if (label != null) {
-            resultContainer.add(label);
+    @Subscribe
+    public void beforeClose(BeforeCloseEvent event) {
+        if (taskHandler.isAlive()) {
+            taskHandler.cancel();
         }
     }
 
@@ -113,7 +125,8 @@ public class MBeanOperationResultScreen extends Screen {
     @Subscribe("exportBtn")
     public void exportToFile(Button.ClickEvent clickEvent) {
         if (result != null || exception != null) {
-            String exportResult = String.format("JMX Method %s : %s result\n", beanName, methodName);
+            String exportResult = String.format("JMX Method %s : %s result\n",
+                    operation.getMbean().getClassName(), operation.getName());
 
             if (result != null) {
                 exportResult += AttributeHelper.convertToString(result);
@@ -126,8 +139,8 @@ public class MBeanOperationResultScreen extends Screen {
             downloader.download(new ByteArrayDataProvider(bytes, uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
                             coreProperties.getTempDir()),
                     String.format("jmx.%s-%s-%s.log",
-                            beanName,
-                            methodName,
+                            operation.getMbean().getClassName(),
+                            operation.getName(),
                             new SimpleDateFormat("HH:mm:ss").format(
                                     timeSource.currentTimestamp())));
         } else {
@@ -169,5 +182,64 @@ public class MBeanOperationResultScreen extends Screen {
             msg = "";
         }
         return msg;
+    }
+
+    protected class OperationBackgroundTask extends BackgroundTask<Long, Object> {
+        protected Label<String> label = null;
+        protected String resultMessage;
+
+        protected OperationBackgroundTask(long timeoutSeconds, Screen screen) {
+            super(timeoutSeconds, screen);
+        }
+
+        @Override
+        public Object run(TaskLifeCycle<Long> taskLifeCycle) throws Exception {
+            return jmxControl.invokeOperation(operation, paramValues);
+        }
+
+        @Override
+        public void done(Object res) {
+            result = res;
+            if (result != null) {
+                label = createLabel(AttributeHelper.convertToString(result));
+                resultMessage = messages.getMessage(getClass(), "operationResult.result");
+            } else {
+                resultMessage = messages.getMessage(getClass(), "operationResult.void");
+            }
+            showResult();
+        }
+
+        @Override
+        public boolean handleException(Exception ex) {
+            exception = ex;
+            label = createLabel(getExceptionMessage(ex));
+            resultMessage = messages.getMessage(getClass(), "operationResult.exception");
+            showResult();
+            return true;
+        }
+
+        @Override
+        public boolean handleTimeoutException() {
+            Screen screen = getOwnerScreen();
+            ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);
+            screenContext.getScreens().remove(screen);
+
+            notifications.create(Notifications.NotificationType.WARNING)
+                    .withCaption(messages.getMessage(OperationBackgroundTask.class, "backgroundWorkProgress.timeout"))
+                    .withDescription(messages.getMessage(OperationBackgroundTask.class, "backgroundWorkProgress.timeoutMessage"))
+                    .show();
+
+            return true;
+        }
+
+        protected void showResult() {
+            taskProgressBar.setVisible(false);
+            resultLabel.setValue(resultMessage);
+
+            if (label != null) {
+                resultContainer.add(label);
+            }
+            exportBtn.setEnabled(true);
+        }
     }
 }

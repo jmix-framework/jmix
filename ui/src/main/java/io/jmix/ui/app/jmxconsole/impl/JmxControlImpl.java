@@ -48,8 +48,6 @@ public class JmxControlImpl implements JmxControl {
 
     public static final String JMX_PORT_SYSTEM_PROPERTY = "com.sun.management.jmxremote.port";
 
-    protected static final String FIELD_RUN_ASYNC = "runAsync";
-    protected static final String FIELD_TIMEOUT = "timeout";
     public static final String RMI_SERVER_HOSTNAME_SYSTEM_PROPERTY = "java.rmi.server.hostname";
 
     private final Logger log = LoggerFactory.getLogger(JmxControlImpl.class);
@@ -383,14 +381,6 @@ public class JmxControlImpl implements JmxControl {
         o.setDescription(operation.getDescription());
         o.setMbean(mbean);
         o.setReturnType(cleanType(operation.getReturnType()));
-
-        Descriptor descriptor = operation.getDescriptor();
-        Object runAsync = descriptor.getFieldValue(FIELD_RUN_ASYNC);
-
-        if (runAsync != null) {
-            o.setRunAsync((Boolean) runAsync);
-            o.setTimeout((Long) descriptor.getFieldValue(FIELD_TIMEOUT));
-        }
 
         List<ManagedBeanOperationParameter> paramList = new ArrayList<>();
         MBeanParameterInfo[] mBeanParameterInfos = operation.getSignature();

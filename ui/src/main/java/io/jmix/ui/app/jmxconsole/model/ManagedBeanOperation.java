@@ -39,8 +39,6 @@ public class ManagedBeanOperation {
 
     protected String description;
 
-    protected Boolean runAsync = false;
-
     protected Long timeout;
 
     protected ManagedBeanInfo mbean;
@@ -85,14 +83,6 @@ public class ManagedBeanOperation {
 
     public void setParameters(List<ManagedBeanOperationParameter> parameters) {
         this.parameters = parameters;
-    }
-
-    public Boolean getRunAsync() {
-        return runAsync;
-    }
-
-    public void setRunAsync(Boolean runAsync) {
-        this.runAsync = runAsync;
     }
 
     public Long getTimeout() {

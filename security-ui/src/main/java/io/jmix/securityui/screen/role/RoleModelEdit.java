@@ -510,6 +510,23 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
         if (event.getChangeType() == CollectionChangeType.ADD_ITEMS) {
             Collection<? extends ResourcePolicyModel> addedItems = event.getChanges();
             addedItems.forEach(resourcePolicy -> resourcePoliciesTable.expandPath(resourcePolicy));
+            removeDuplicateResourcePolicy(addedItems);
         }
+    }
+
+    private void removeDuplicateResourcePolicy(Collection<? extends ResourcePolicyModel> addedItems) {
+        List<ResourcePolicyModel> allItems = resourcePoliciesDc.getMutableItems();
+        List<ResourcePolicyModel> forRemove = new ArrayList<>();
+        for (ResourcePolicyModel addedItem : addedItems) {
+            for (ResourcePolicyModel allItem : allItems) {
+                if (Objects.equals(allItem.getType(), addedItem.getType()) &&
+                        Objects.equals(allItem.getAction(), addedItem.getAction()) &&
+                        Objects.equals(allItem.getResource(), addedItem.getResource()) &&
+                        !Objects.equals(allItem.getId(), addedItem.getId())) {
+                    forRemove.add(addedItem);
+                }
+            }
+        }
+        resourcePoliciesDc.getMutableItems().removeAll(forRemove);
     }
 }

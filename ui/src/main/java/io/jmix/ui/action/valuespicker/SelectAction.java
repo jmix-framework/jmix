@@ -298,7 +298,7 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     }
 
     /**
-     * Sets the resolution of of {@link DateField} component. The {@link DateField} component is used to select values
+     * Sets the resolution of {@link DateField} component. The {@link DateField} component is used to select values
      * which have date value type. The component is used in {@link SelectValueController} screen.
      *
      * @param resolution the resolution of {@link DateField}

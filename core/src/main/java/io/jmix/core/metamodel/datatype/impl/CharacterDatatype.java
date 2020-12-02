@@ -53,4 +53,9 @@ public class CharacterDatatype implements Datatype<Character> {
     public Character parse(@Nullable String value, Locale locale) throws ParseException {
         return parse(value);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

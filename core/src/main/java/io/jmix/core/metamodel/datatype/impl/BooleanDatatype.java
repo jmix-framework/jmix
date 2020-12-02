@@ -21,9 +21,9 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.util.Locale;
 

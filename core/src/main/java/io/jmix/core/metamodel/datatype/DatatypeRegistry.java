@@ -29,9 +29,14 @@ public interface DatatypeRegistry {
      * @return Datatype instance
      * @throws IllegalArgumentException if no datatype with the given name found
      */
-    Datatype get(String id);
+    Datatype<?> get(String id);
 
-    Datatype find(String id);
+    /**
+     * Get Datatype instance by id.
+     * @return Datatype instance or null if not found
+     */
+    @Nullable
+    Datatype<?> find(String id);
 
     /**
      * Get Datatype instance by the corresponding Java class. This method tries to find matching supertype too.
@@ -51,7 +56,7 @@ public interface DatatypeRegistry {
      * Returns an ID of the given datatype in the registry.
      * @throws IllegalArgumentException if the datatype is not registered
      */
-    String getId(Datatype datatype);
+    String getId(Datatype<?> datatype);
 
     /**
      * Returns an ID of a first datatype handling the given Java class.
@@ -70,5 +75,5 @@ public interface DatatypeRegistry {
      * @param id                    unique registration id
      * @param defaultForJavaClass   true if the datatype should be default for a Java class handled by this datatype
      */
-    void register(Datatype datatype, String id, boolean defaultForJavaClass);
+    void register(Datatype<?> datatype, String id, boolean defaultForJavaClass);
 }

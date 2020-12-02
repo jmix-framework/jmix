@@ -16,9 +16,14 @@
 
 package io.jmix.dynattr.impl;
 
+import io.jmix.core.DataStore;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
+import io.jmix.core.datastore.AbstractDataStore;
+import io.jmix.core.datastore.AfterEntityLoadEvent;
+import io.jmix.core.datastore.DataStoreCustomizer;
+import io.jmix.core.datastore.DataStoreInterceptor;
 import io.jmix.data.impl.JpaDataStoreListener;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
@@ -29,23 +34,29 @@ import java.util.Collection;
 import java.util.Map;
 
 @Component("dynattr_DynAttrLifecycleListener")
-public class DynAttrLifecycleListener implements JpaDataStoreListener {
+public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStoreInterceptor, DataStoreCustomizer {
 
     @Autowired
     protected DynAttrManager dynAttrManager;
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
-        Map<String, Object> hints = loadContext.getHints();
+    public void afterEntityLoad(AfterEntityLoadEvent event) {
+        LoadContext<?> context = event.getLoadContext();
+        Map<String, Object> hints = context.getHints();
         if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
-            //noinspection unchecked
-            dynAttrManager.loadValues(entities, loadContext.getFetchPlan(), loadContext.getAccessConstraints());
+            dynAttrManager.loadValues(event.getResultEntities(), context.getFetchPlan(), context.getAccessConstraints());
         }
     }
 
     @Override
     public void onSave(Collection<Object> entities, SaveContext saveContext) {
         dynAttrManager.storeValues(entities, saveContext.getAccessConstraints());
+    }
+
+    @Override
+    public void customize(DataStore dataStore) {
+        if (dataStore instanceof AbstractDataStore) {
+            ((AbstractDataStore) dataStore).registerInterceptor(this);
+        }
     }
 }

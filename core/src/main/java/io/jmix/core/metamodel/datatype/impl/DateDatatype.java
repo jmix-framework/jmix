@@ -16,7 +16,6 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
@@ -25,9 +24,7 @@ import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,7 +40,6 @@ import java.util.Map;
  */
 @DatatypeDef(id = "date", javaClass = java.sql.Date.class, defaultForClass = true, value = "core_DateDatatype")
 @DateTimeFormat("yyyy-MM-dd")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
 
     @Autowired

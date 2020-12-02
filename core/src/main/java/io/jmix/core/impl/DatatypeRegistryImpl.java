@@ -16,6 +16,7 @@
 
 package io.jmix.core.impl;
 
+import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("core_DatatypeRegistry")
 public class DatatypeRegistryImpl implements DatatypeRegistry {
@@ -37,22 +39,34 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
     protected Map<String, Datatype> datatypeById = new HashMap<>();
 
     @Autowired
-    public DatatypeRegistryImpl(List<Datatype> datatypeList) {
-        for (Datatype datatype : datatypeList) {
+    public DatatypeRegistryImpl(List<Datatype<?>> datatypeList, JmixModulesAwareBeanSelector beanSelector) {
+        for (Datatype<?> datatype : datatypeList) {
             register(datatype, datatype.getId(), DatatypeDefUtils.isDefaultForClass(datatype));
         }
+
+        // DefaultForClass datatypes must respect the Jmix modules hierarchy
+        datatypeList.stream()
+                .filter(DatatypeDefUtils::isDefaultForClass)
+                .collect(Collectors.groupingBy(Datatype::getJavaClass))
+                .values()
+                .forEach(datatypes -> {
+                    Datatype<?> datatype = beanSelector.selectFrom(datatypes);
+                    if (datatype != null) {
+                        register(datatype, datatype.getId(), true);
+                    }
+                });
     }
 
     @Override
-    public Datatype get(String id) {
-        Datatype datatype = find(id);
+    public Datatype<?> get(String id) {
+        Datatype<?> datatype = find(id);
         if (datatype == null)
             throw new IllegalArgumentException("Datatype '" + id + "' is not found");
         return datatype;
     }
 
     @Override
-    public Datatype find(String id) {
+    public Datatype<?> find(String id) {
         return datatypeById.get(id);
     }
 
@@ -87,7 +101,7 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
     }
 
     @Override
-    public String getId(Datatype datatype) {
+    public String getId(Datatype<?> datatype) {
         for (Map.Entry<String, Datatype> entry : datatypeById.entrySet()) {
             if (entry.getValue().equals(datatype))
                 return entry.getKey();
@@ -110,7 +124,7 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
     }
 
     @Override
-    public void register(Datatype datatype, String id, boolean defaultForJavaClass) {
+    public void register(Datatype<?> datatype, String id, boolean defaultForJavaClass) {
         Preconditions.checkNotNullArgument(datatype, "datatype is null");
         Preconditions.checkNotNullArgument(id, "id is null");
         log.trace("Register datatype: {}, id: {}, defaultForJavaClass: {}", datatype.getClass(), id, defaultForJavaClass);

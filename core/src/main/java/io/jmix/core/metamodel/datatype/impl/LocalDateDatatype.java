@@ -16,12 +16,10 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.Order;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -32,7 +30,6 @@ import java.util.Locale;
 
 @DatatypeDef(id = "localDate", javaClass = LocalDate.class, defaultForClass = true, value = "core_LocalDateDatatype")
 @DateTimeFormat("yyyy-MM-dd")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class LocalDateDatatype extends AbstractTemporalDatatype<LocalDate> {
 
     @Override

@@ -16,15 +16,12 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -36,7 +33,6 @@ import java.util.Locale;
 @io.jmix.core.metamodel.annotation.NumberFormat(
         pattern = "0"
 )
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class IntegerDatatype extends NumberDatatype implements Datatype<Integer> {
 
     @Autowired

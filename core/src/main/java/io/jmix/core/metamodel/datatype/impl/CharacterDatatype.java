@@ -16,18 +16,15 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "char", javaClass = Character.class, defaultForClass = true, value = "core_CharacterDatatype")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class CharacterDatatype implements Datatype<Character> {
     @Override
     public String format(@Nullable Object value) {

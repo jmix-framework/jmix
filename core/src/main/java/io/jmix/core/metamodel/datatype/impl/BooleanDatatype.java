@@ -16,22 +16,18 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-
 import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "boolean", javaClass = Boolean.class, defaultForClass = true, value = "core_BooleanDatatype")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class BooleanDatatype implements Datatype<Boolean> {
 
     @Autowired

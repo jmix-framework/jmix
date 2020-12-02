@@ -16,16 +16,13 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.datatype.Datatype;
-import org.springframework.core.annotation.Order;
 
 import java.text.ParseException;
 import java.util.Locale;
 
 @DatatypeDef(id = "string", javaClass = String.class, defaultForClass = true, value = "core_StringDatatype")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class StringDatatype implements Datatype<String> {
 
     @Override

@@ -16,14 +16,12 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 
 import javax.annotation.Nullable;
 import java.text.DateFormat;
@@ -36,7 +34,6 @@ import java.util.TimeZone;
 
 @DatatypeDef(id = "dateTime", javaClass = Date.class, defaultForClass = true, value = "core_DateTimeDatatype")
 @DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
-@Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, TimeZoneAwareDatatype {
 
     private String formatPattern;

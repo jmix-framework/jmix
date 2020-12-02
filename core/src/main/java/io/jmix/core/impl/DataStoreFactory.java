@@ -16,13 +16,14 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.annotation.Internal;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.DataStore;
 import io.jmix.core.Stores;
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.datastore.DataStoreCustomizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,7 +37,7 @@ public class DataStoreFactory {
 
     protected Map<String, DataStore> dataStores = new ConcurrentHashMap<>();
 
-    @Autowired
+    @Autowired(required = false)
     protected Stores stores;
 
     @Autowired
@@ -47,6 +48,10 @@ public class DataStoreFactory {
         return dataStores.computeIfAbsent(name, key -> {
             DataStore dataStore = (DataStore) applicationContext.getBean(beanName);
             dataStore.setName(name);
+
+            applicationContext.getBeanProvider(DataStoreCustomizer.class).stream()
+                    .forEach(customizer -> customizer.customize(dataStore));
+
             return dataStore;
         });
     }

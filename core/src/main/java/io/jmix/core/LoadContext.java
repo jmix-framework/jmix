@@ -128,6 +128,7 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     /**
      * @return id of an entity to be loaded
      */
+    @Nullable
     public Object getId() {
         return id;
     }

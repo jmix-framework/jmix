@@ -19,7 +19,6 @@ package io.jmix.data;
 public class DataConfigPropertiesAccess {
 
     public static void setInMemoryDistinct(DataProperties properties, boolean value) {
-        properties.inMemoryDistinct = value;
     }
 
     public static void setNumberIdCacheSize(DataProperties properties, int value) {

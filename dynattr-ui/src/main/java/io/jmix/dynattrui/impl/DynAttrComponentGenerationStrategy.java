@@ -28,7 +28,6 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
-import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
@@ -51,7 +50,6 @@ import org.springframework.core.Ordered;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
 
@@ -407,14 +405,11 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                     .setOptions(new ListOptions(options));
         });
 
-        List<CategoryAttribute> dependsOnAttributes = attribute.getConfiguration().getDependsOnAttributes();
-        if (dependsOnAttributes != null && !dependsOnAttributes.isEmpty()) {
-            List<String> dependsOnAttributesCodes = dependsOnAttributes.stream()
-                    .map(a -> DynAttrUtils.getPropertyFromAttributeCode(a.getCode()))
-                    .collect(Collectors.toList());
+        List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
+        if (dependsOnAttributeCodes != null && !dependsOnAttributeCodes.isEmpty()) {
 
             container.addItemPropertyChangeListener(e -> {
-                if (dependsOnAttributesCodes.contains(e.getProperty())) {
+                if (dependsOnAttributeCodes.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
                             .setOptions(new ListOptions(options));
@@ -440,14 +435,11 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             lookupField.setOptions(new ListOptions(options));
         });
 
-        List<CategoryAttribute> dependsOnAttributes = attribute.getConfiguration().getDependsOnAttributes();
-        if (dependsOnAttributes != null && !dependsOnAttributes.isEmpty()) {
-            List<String> dependsOnAttributesCodes = dependsOnAttributes.stream()
-                    .map(a -> DynAttrUtils.getPropertyFromAttributeCode(a.getCode()))
-                    .collect(Collectors.toList());
+        List<String> dependsOnAttributeCodes = attribute.getConfiguration().getDependsOnAttributeCodes();
+        if (dependsOnAttributeCodes != null && !dependsOnAttributeCodes.isEmpty()) {
 
             container.addItemPropertyChangeListener(e -> {
-                if (dependsOnAttributesCodes.contains(e.getProperty())) {
+                if (dependsOnAttributeCodes.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
                     //noinspection unchecked
                     lookupField.setOptions(new ListOptions(options));

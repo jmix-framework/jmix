@@ -23,6 +23,7 @@
             <fetchPlan extends="_local">
                 <property name="categoryAttrs" fetchPlan="_local">
                     <property name="defaultEntity" fetchPlan="_local"/>
+                    <property name="category" fetchPlan="_local"/>
                 </property>
             </fetchPlan>
             <loader id="categoryDl"/>

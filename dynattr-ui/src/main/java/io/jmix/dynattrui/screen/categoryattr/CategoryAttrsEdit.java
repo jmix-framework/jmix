@@ -30,6 +30,7 @@ import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.ConfigurationExclusionStrategy;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
@@ -54,11 +55,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
@@ -167,6 +168,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected Notifications notifications;
     @Autowired
     protected ScreensHelper screensHelper;
+    @Autowired
+    protected DynAttrMetadata dynAttrMetadata;
 
     @Autowired
     protected CheckBox lookupField;
@@ -214,7 +217,6 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     protected TextField<BigDecimal> maxDecimalField;
     @Autowired
     protected ValuesPicker<CategoryAttribute> dependsOnAttributesField;
-
     @Autowired
     protected CollectionContainer<TargetScreenComponent> targetScreensDc;
     @Autowired
@@ -513,6 +515,17 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         SelectAction<CategoryAttribute> selectAction =
                 (SelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
         selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
+
+        if (getEditedEntity().getConfiguration() != null
+                && getEditedEntity().getConfiguration().getDependsOnAttributeCodes() != null
+                && !getEditedEntity().getConfiguration().getDependsOnAttributeCodes().isEmpty()) {
+            dependsOnAttributesField.setValue(
+                    dataManager.load(CategoryAttribute.class)
+                            .query("select e from sys_CategoryAttribute e where e.code in (:codes)")
+                            .parameter("codes", String.join(",", getEditedEntity().getConfiguration().getDependsOnAttributeCodes()))
+                            .list()
+            );
+        }
     }
 
     protected void setupNumberFormat() {
@@ -951,7 +964,15 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     protected void preCommitConfiguration() {
-        if (getScreenData().getDataContext().isModified(getEditedEntity().getCategory())) {
+        if (getEditedEntity().getConfiguration() != null) {
+            getEditedEntity().getConfiguration().setDependsOnAttributeCodes(
+                    Objects.requireNonNull(dependsOnAttributesField.getValue())
+                            .stream()
+                            .map(CategoryAttribute::getCode)
+                            .collect(Collectors.toList())
+            );
+        }
+        if (getScreenData().getDataContext().isModified(getEditedEntity().getConfiguration())) {
             Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
             getEditedEntity().setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
         }

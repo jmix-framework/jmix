@@ -120,7 +120,9 @@
                  margin="true">
                 <form id="calculatedValuesAndOptionsForm" dataContainer="categoryAttributeDc" width="100%">
                     <column width="100%">
-                        <valuesPicker id="dependsOnAttributesField" property="configuration.dependsOnAttributes"
+                        <valuesPicker id="dependsOnAttributesField"
+                                      caption="msg://io.jmix.dynattr.model/CategoryAttributeConfiguration.dependsOnAttributes"
+
                                       fieldEditable="true">
                             <actions>
                                 <action id="select" type="values_select"/>

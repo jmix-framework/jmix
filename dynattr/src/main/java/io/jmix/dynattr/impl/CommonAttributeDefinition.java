@@ -161,8 +161,8 @@ public class CommonAttributeDefinition implements AttributeDefinition {
         }
 
         @Override
-        public List<CategoryAttribute> getDependsOnAttributes() {
-            return attribute.getConfiguration().getDependsOnAttributes();
+        public List<String> getDependsOnAttributeCodes() {
+            return attribute.getConfiguration().getDependsOnAttributeCodes();
         }
 
         @Nullable

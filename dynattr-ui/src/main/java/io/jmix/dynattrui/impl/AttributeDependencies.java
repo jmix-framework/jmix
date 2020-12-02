@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("dynattr_AttributeDependencies")
 public class AttributeDependencies {
@@ -33,9 +34,16 @@ public class AttributeDependencies {
         Set<AttributeDefinition> dependentAttributes = new HashSet<>();
         Collection<AttributeDefinition> attributes = dynAttrMetadata.getAttributes(attribute.getMetaProperty().getDomain());
         for (AttributeDefinition currentAttribute : attributes) {
-            if (currentAttribute.getConfiguration().getDependsOnAttributes() != null)
-            if (currentAttribute.getConfiguration().getDependsOnAttributes().contains(attribute)) {
-                dependentAttributes.add(currentAttribute);
+            if (currentAttribute.getConfiguration().getDependsOnAttributeCodes() != null && !currentAttribute.getConfiguration().getDependsOnAttributeCodes().isEmpty()) {
+                List<AttributeDefinition> attributeDefinitions = currentAttribute.getConfiguration().getDependsOnAttributeCodes()
+                        .stream()
+                        .map(code -> dynAttrMetadata.getAttributeByCode(currentAttribute.getMetaProperty().getDomain(), code))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(Collectors.toList());
+                if (attributeDefinitions.contains(attribute)) {
+                    dependentAttributes.add(currentAttribute);
+                }
             }
         }
         return dependentAttributes;

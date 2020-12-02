@@ -17,7 +17,6 @@
 package io.jmix.dynattr;
 
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.dynattr.model.CategoryAttribute;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -92,7 +91,7 @@ public interface AttributeDefinition extends Serializable {
         Integer getRowNumber();
 
         @Nullable
-        List<CategoryAttribute> getDependsOnAttributes();
+        List<String> getDependsOnAttributeCodes();
 
         @Nullable
         String getLookupScreen();

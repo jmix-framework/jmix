@@ -88,16 +88,8 @@ public class CategoryAttributeConfiguration implements Serializable {
     @JmixProperty
     protected Integer rowNumber;
 
-//    todo
-//    @Transient
-//    protected transient Collection<CategoryAttribute> dependentAttributes;
-//
-//    @Transient
-//    protected List<UUID> dependsOnCategoryAttributesIds;
-
-    @JmixProperty
     @Transient
-    protected transient List<CategoryAttribute> dependsOnAttributes;
+    protected List<String> dependsOnAttributeCodes;
 
     public CategoryAttributeConfiguration() {
         id = UUID.randomUUID().toString();
@@ -207,23 +199,13 @@ public class CategoryAttributeConfiguration implements Serializable {
         this.recalculationScript = recalculationScript;
     }
 
-    public List<CategoryAttribute> getDependsOnAttributes() {
-        return dependsOnAttributes;
+    public List<String> getDependsOnAttributeCodes() {
+        return dependsOnAttributeCodes;
     }
 
-    public void setDependsOnAttributes(List<CategoryAttribute> dependsOnAttributes) {
-        this.dependsOnAttributes = dependsOnAttributes;
+    public void setDependsOnAttributeCodes(List<String> dependsOnAttributeCodes) {
+        this.dependsOnAttributeCodes = dependsOnAttributeCodes;
     }
-
-//    TODO:
-//    public Collection<CategoryAttribute> getDependentAttributes() {
-//        if (dependentAttributes == null) {
-//            DynamicAttributesTools dynamicAttributesTools = AppBeans.get(DynamicAttributesTools.NAME);
-//            dependentAttributes = dynamicAttributesTools.getDependentCategoryAttributes(categoryAttribute);
-//        }
-//
-//        return dependentAttributes;
-//    }
 
     public Boolean isReadOnly() {
         return !Strings.isNullOrEmpty(recalculationScript);

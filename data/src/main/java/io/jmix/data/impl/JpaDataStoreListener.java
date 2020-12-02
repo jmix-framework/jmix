@@ -16,8 +16,6 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.FetchPlan;
-import io.jmix.core.LoadContext;
 import io.jmix.core.SaveContext;
 import io.jmix.data.EntityChangeType;
 
@@ -47,12 +45,6 @@ public interface JpaDataStoreListener {
      * @param storeName name of data store
      */
     default void onFlush(String storeName) {
-    }
-
-    /**
-     * Invoked when entities are loaded from ORM store
-     */
-    default void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
     }
 
     /**

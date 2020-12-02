@@ -19,10 +19,11 @@ package io.jmix.data.impl.lazyloading;
 import io.jmix.core.*;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.constraint.InMemoryConstraint;
+import io.jmix.core.datastore.AfterEntityLoadEvent;
+import io.jmix.core.datastore.DataStoreInterceptor;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.impl.JpaDataStoreListener;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.internal.expressions.ExpressionIterator;
@@ -44,10 +45,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-@Component("data_LazyLoadingHelper")
-public class LazyLoadingHelper implements JpaDataStoreListener {
+@Component("data_JpaLazyLoadingInterceptor")
+public class JpaLazyLoadingInterceptor implements DataStoreInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(LazyLoadingHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaLazyLoadingInterceptor.class);
 
     @Autowired
     protected Metadata metadata;
@@ -59,15 +60,27 @@ public class LazyLoadingHelper implements JpaDataStoreListener {
     protected DataManager dataManager;
     @Autowired
     protected BeanFactory beanFactory;
+    @Autowired
+    protected FetchPlanRepository fetchPlanRepository;
+    @Autowired
+    protected ExtendedEntities extendedEntities;
 
     @Override
-    public void onLoad(Collection<Object> entities, LoadContext loadContext, FetchPlan effectiveFetchPlan) {
-        for (Object item : entities) {
-            replaceValueHolders(item, loadContext, effectiveFetchPlan);
+    public void afterEntityLoad(AfterEntityLoadEvent event) {
+        LoadContext<?> context = event.getLoadContext();
+
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
+
+        FetchPlan fetchPlan = context.getFetchPlan();
+        if (fetchPlan == null) {
+            fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.LOCAL);
+        }
+        for (Object entity : event.getResultEntities()) {
+            replaceValueHolders(entity, context, fetchPlan);
         }
     }
 
-    public void replaceValueHolders(Object instance, LoadContext loadContext, FetchPlan fetchPlan/*List<FetchPlan> fetchPlans*/) {
+    public void replaceValueHolders(Object instance, LoadContext loadContext, FetchPlan fetchPlan) {
         Map<Object, Set<FetchPlan>> collectedFetchPlans = new HashMap<>();
 
         if (fetchPlan != null) {

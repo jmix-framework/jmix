@@ -57,6 +57,8 @@ public class JpqlQueryBuilder {
     protected UUID sessionId;
     protected int queryKey;
 
+    protected boolean countQuery;
+
     protected String resultQuery;
     protected Map<String, Object> resultParameters;
 
@@ -78,7 +80,7 @@ public class JpqlQueryBuilder {
     @Autowired
     protected BeanFactory beanFactory;
 
-    public JpqlQueryBuilder setId(Object id) {
+    public JpqlQueryBuilder setId(@Nullable Object id) {
         this.id = id;
         return this;
     }
@@ -122,6 +124,11 @@ public class JpqlQueryBuilder {
         this.previousResults = true;
         this.sessionId = sessionId;
         this.queryKey = queryKey;
+        return this;
+    }
+
+    public JpqlQueryBuilder setCountQuery() {
+        this.countQuery = true;
         return this;
     }
 
@@ -187,6 +194,7 @@ public class JpqlQueryBuilder {
         }
         applyFiltering();
         applySorting();
+        applyCount();
         restrictByPreviousResults();
     }
 
@@ -254,6 +262,14 @@ public class JpqlQueryBuilder {
             propertyConditions.add((PropertyCondition) rootCondition);
         }
         return propertyConditions;
+    }
+
+    protected void applyCount() {
+        if (countQuery) {
+            QueryTransformer transformer = queryTransformerFactory.transformer(resultQuery);
+            transformer.replaceWithCount();
+            resultQuery = transformer.getResult();
+        }
     }
 
     protected void restrictByPreviousResults() {

@@ -19,21 +19,24 @@ package io.jmix.data.impl;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.*;
-import io.jmix.data.*;
-import io.jmix.core.accesscontext.CrudEntityContext;
-import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.data.DataProperties;
+import io.jmix.data.EntityFetcher;
+import io.jmix.data.PersistenceHints;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
-import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.persistence.DbmsSpecifics;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.exceptions.QueryException;
 import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.slf4j.Logger;
@@ -56,8 +59,6 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static io.jmix.core.entity.EntityValues.getId;
@@ -69,7 +70,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
  */
 @Component("data_JpaDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class JpaDataStore implements DataStore, DataSortingOptions {
+public class JpaDataStore extends AbstractDataStore implements DataSortingOptions {
 
     public static final String LOAD_TX_PREFIX = "JpaDataStore-load-";
     public static final String SAVE_TX_PREFIX = "JpaDataStore-save-";
@@ -158,341 +159,105 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
     @Nullable
     @Override
-    public Object load(LoadContext<?> context) {
+    protected Object loadOne(LoadContext<?> context) {
         if (log.isDebugEnabled()) {
-            log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}", storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
+            log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}",
+                    storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
         }
 
-        final MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        final Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
-        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyConstraints(entityContext, accessConstraints);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
-        if (!entityContext.isReadPermitted()) {
-            log.debug("reading of {} not permitted, returning null", metaClass);
-            return null;
-        }
+        Query query = createQuery(em, context, false);
 
-        Object result = null;
-        EntityAttributesEraser.ReferencesCollector referencesCollector = null;
-        boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
+        List<Object> resultList = executeQuery(query, isSingleResult(context));
 
-        TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
-        try {
-            EntityManager em = storeAwareLocator.getEntityManager(storeName);
-
-            if (!context.isSoftDeletion())
-                em.setProperty(PersistenceHints.SOFT_DELETION, false);
-
-            // If maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility
-            boolean singleResult = !(context.getQuery() != null
-                    && context.getQuery().getMaxResults() == 1
-                    && context.getQuery().getQueryString() != null)
-                    && context.getId() != null;
-
-            FetchPlan fetchPlan = createFetchPlan(context, applyInMemoryPredicates);
-            Query query = createQuery(em, context, singleResult, false);
-
-            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-
-            List<Object> resultList = executeQuery(query, singleResult);
-            if (!resultList.isEmpty()) {
-                result = resultList.get(0);
-            }
-
-            InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
-            accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
-
-            if (result != null && !inMemoryEntityContext.isReadPermitted(result)) {
-                //noinspection unchecked
-                result = null;
-            }
-
-            if (result != null) {
-                referencesCollector = entityAttributesEraser.collectErasingReferences(Collections.singletonList(result),
-                        entity -> {
-                            InMemoryCrudEntityContext childEntityContext =
-                                    new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
-                            accessManager.applyConstraints(childEntityContext, accessConstraints);
-                            return childEntityContext.isReadPermitted(entity);
-                        });
-                fireLoadListeners(Collections.singletonList(result), context, fetchPlan);
-            }
-
-            if (context.isJoinTransaction()) {
-                em.flush();
-                if (result != null) {
-                    detachEntity(em, result, fetchPlan, false);
-                    entityEventManager.publishEntityLoadingEvent(result);
-                }
-            }
-
-        } catch (RuntimeException e) {
-            rollbackTransaction(txStatus);
-            throw e;
-        }
-
-        commitTransaction(txStatus);
-
-        if (result != null) {
-            entityAttributesEraser.eraseReferences(referencesCollector);
-        }
-
-        return result;
+        return resultList.isEmpty() ? null : resultList.get(0);
     }
 
-
     @Override
-    public List<Object> loadList(LoadContext<?> context) {
-        if (log.isDebugEnabled())
-            log.debug("loadList: store=" + storeName + ", metaClass=" + context.getEntityMetaClass() + ", fetchPlan=" + context.getFetchPlan()
-                    + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
-                    + ", query=" + context.getQuery()
-                    + (context.getQuery() == null || context.getQuery().getFirstResult() == 0 ? "" : ", first=" + context.getQuery().getFirstResult())
-                    + (context.getQuery() == null || context.getQuery().getMaxResults() == 0 ? "" : ", max=" + context.getQuery().getMaxResults()));
-
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        final Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
-
-
-        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyConstraints(entityContext, accessConstraints);
-
-        if (!entityContext.isReadPermitted()) {
-            log.debug("reading of {} not permitted, returning empty list", metaClass);
-            return Collections.emptyList();
+    @SuppressWarnings("unchecked")
+    protected List<Object> loadAll(LoadContext<?> context) {
+        if (log.isDebugEnabled()) {
+            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, from selected={}, query={}",
+                    storeName, context.getEntityMetaClass(), context.getFetchPlan(),
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
         }
+
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
         queryResultsManager.savePreviousQueryResults(context);
 
-        List<Object> resultList;
-        EntityAttributesEraser.ReferencesCollector referencesCollector = null;
-        boolean applyInMemoryPredicates = hasInMemoryPredicates(context);
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
-        TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
-        try {
-            EntityManager em = storeAwareLocator.getEntityManager(storeName);
-            em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
-
-            boolean ensureDistinct = false;
-            if (properties.isInMemoryDistinct() && context.getQuery() != null) {
-                QueryTransformer transformer = queryTransformerFactory.transformer(
-                        context.getQuery().getQueryString());
-                ensureDistinct = transformer.removeDistinct();
-                if (ensureDistinct) {
-                    context.getQuery().setQueryString(transformer.getResult());
-                }
-            }
-            FetchPlan fetchPlan = createFetchPlan(context, applyInMemoryPredicates);
-
-            InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
-            accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
-
-            List<Object> entities;
-
-            Integer maxIdsBatchSize = dbmsSpecifics.getDbmsFeatures(storeName).getMaxIdsBatchSize();
-            if (!context.getIds().isEmpty() && entityHasEmbeddedId(metaClass)) {
-                entities = loadListBySingleIds(context, inMemoryEntityContext.readPredicate(), em, fetchPlan);
-            } else if (!context.getIds().isEmpty() && maxIdsBatchSize != null && context.getIds().size() > maxIdsBatchSize) {
-                entities = loadListByBatchesOfIds(context, inMemoryEntityContext.readPredicate(), em, fetchPlan, maxIdsBatchSize);
+        if (!context.getIds().isEmpty()) {
+            if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                return loadAllByIds(context, em);
             } else {
-                Query query = createQuery(em, context, false, false);
-                query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-                entities = getResultList(context, query, inMemoryEntityContext.readPredicate(), ensureDistinct);
+                return loadAllByIdBatches(context, em);
             }
-            if (context.getIds().isEmpty()) {
-                resultList = entities;
-            } else {
-                resultList = checkAndReorderLoadedEntities(context.getIds(), entities, metaClass);
-            }
+        } else {
+            Query query = createQuery(em, context, false);
+            return executeQuery(query, false);
+        }
+    }
 
-            if (!resultList.isEmpty()) {
-                referencesCollector = entityAttributesEraser.collectErasingReferences(resultList, entity -> {
-                    InMemoryCrudEntityContext childEntityContext =
-                            new InMemoryCrudEntityContext(metadata.getClass(entity.getClass()));
-                    accessManager.applyConstraints(childEntityContext, accessConstraints);
-                    return childEntityContext.isReadPermitted(entity);
-                });
-                fireLoadListeners(resultList, context, fetchPlan);
-            }
+    protected List<Object> loadAllByIds(LoadContext<?> context, EntityManager em) {
+        LoadContext<?> contextCopy = context.copy();
+        contextCopy.setIds(Collections.emptyList());
 
-            if (context.isJoinTransaction()) {
-                em.flush();
-                for (Object entity : resultList) {
-                    detachEntity(em, entity, fetchPlan, false);
-                    entityEventManager.publishEntityLoadingEvent(entity);
-                }
-            }
+        List<Object> entities = new ArrayList<>(context.getIds().size());
 
-        } catch (RuntimeException e) {
-            rollbackTransaction(txStatus);
-            throw e;
+        for (Object id : context.getIds()) {
+            contextCopy.setId(id);
+            Query query = createQuery(em, contextCopy, false);
+            List<Object> list = executeQuery(query, true);
+            entities.addAll(list);
         }
 
-        commitTransaction(txStatus);
+        return entities;
+    }
 
+    @SuppressWarnings("unchecked")
+    protected List<Object> loadAllByIdBatches(LoadContext<?> context, EntityManager em) {
+        Integer batchSize = dbmsSpecifics.getDbmsFeatures(storeName).getMaxIdsBatchSize();
 
-        if (referencesCollector != null) {
-            entityAttributesEraser.eraseReferences(referencesCollector);
+        List<Object> resultList = new ArrayList<>(context.getIds().size());
+
+        List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(),
+                batchSize == null ? Integer.MAX_VALUE : batchSize);
+        for (List<Object> partition : partitions) {
+            LoadContext<Object> contextCopy = (LoadContext<Object>) context.copy();
+            contextCopy.setIds(partition);
+
+            Query query = createQuery(em, contextCopy, false);
+            List<Object> list = executeQuery(query, false);
+
+            resultList.addAll(list);
         }
 
         return resultList;
     }
 
-    protected MetaClass getEffectiveMetaClassFromContext(LoadContext<?> context) {
-        return extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
-    }
-
-    protected boolean entityHasEmbeddedId(MetaClass metaClass) {
-        MetaProperty pkProperty = metadataTools.getPrimaryKeyProperty(metaClass);
-        return pkProperty == null || pkProperty.getRange().isClass();
-    }
-
-    protected List<Object> loadListBySingleIds(LoadContext<?> context, @Nullable Predicate<Object> filteringPredicate, EntityManager em, FetchPlan fetchPlan) {
-        LoadContext<?> contextCopy = context.copy();
-        contextCopy.setIds(Collections.emptyList());
-
-        List<Object> entities = new ArrayList<>(context.getIds().size());
-        for (Object id : context.getIds()) {
-            contextCopy.setId(id);
-            Query query = createQuery(em, contextCopy, true, false);
-            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-            List<Object> list = executeQuery(query, true);
-            entities.addAll(list);
-        }
-
-        if (filteringPredicate != null) {
-            return entities.stream()
-                    .filter(filteringPredicate)
-                    .collect(Collectors.toList());
-        } else {
-            return entities;
-        }
-    }
-
-    protected List<Object> loadListByBatchesOfIds(LoadContext<?> context, @Nullable Predicate<Object> filteringPredicate, EntityManager em, FetchPlan fetchPlan, int batchSize) {
-        @SuppressWarnings("unchecked")
-        List<List<Object>> partitions = Lists.partition((List<Object>) context.getIds(), batchSize);
-
-        List<Object> entities = new ArrayList<>(context.getIds().size());
-        for (List<Object> partition : partitions) {
-            LoadContext<?> contextCopy = context.copy();
-            contextCopy.setIds(partition);
-
-            Query query = createQuery(em, contextCopy, false, false);
-            query.setHint(PersistenceHints.FETCH_PLAN, fetchPlan);
-            List<Object> list = executeQuery(query, false);
-            entities.addAll(list);
-        }
-
-        if (filteringPredicate != null) {
-            return entities.stream()
-                    .filter(filteringPredicate)
-                    .collect(Collectors.toList());
-        } else {
-            return entities;
-        }
-    }
-
-    protected List<Object> checkAndReorderLoadedEntities(List<?> ids, List<Object> entities, MetaClass metaClass) {
-        List<Object> result = new ArrayList<>(ids.size());
-        Map<Object, Object> idToEntityMap = entities.stream().collect(Collectors.toMap(e -> getId(e), Function.identity()));
-        for (Object id : ids) {
-            Object entity = idToEntityMap.get(id);
-            if (entity == null) {
-                throw new EntityAccessException(metaClass, id);
-            }
-            result.add(entity);
-        }
-        return result;
-    }
-
     @Override
-    public long getCount(LoadContext<?> context) {
-        if (log.isDebugEnabled())
-            log.debug("getCount: store=" + storeName + ", metaClass=" + context.getEntityMetaClass()
-                    + (context.getPreviousQueries().isEmpty() ? "" : ", from selected")
-                    + ", query=" + context.getQuery());
-
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
-        Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
-
-        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
-        accessManager.applyConstraints(entityContext, accessConstraints);
-
-        if (!entityContext.isReadPermitted()) {
-            log.debug("reading of {} not permitted, returning 0", metaClass);
-            return 0;
+    protected long countAll(LoadContext<?> context) {
+        if (log.isDebugEnabled()) {
+            log.debug("getCount: store={}, metaClass={}, from selected={}, query={}",
+                    storeName, context.getEntityMetaClass(),
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
         }
 
         queryResultsManager.savePreviousQueryResults(context);
 
-        context = context.copy();
-        if (context.getQuery() == null) {
-            context.setQuery(new LoadContext.Query(""));
-        }
-        if (StringUtils.isBlank(context.getQuery().getQueryString())) {
-            context.getQuery().setQueryString("select e from " + metaClass.getName() + " e");
-        }
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
-        InMemoryCrudEntityContext inMemoryEntityContext = new InMemoryCrudEntityContext(metaClass);
-        accessManager.applyConstraints(inMemoryEntityContext, accessConstraints);
+        Query query = createQuery(em, context, true);
+        Number result = (Number) query.getSingleResult();
 
-        Predicate filteringPredicate = inMemoryEntityContext.readPredicate();
-
-        if (filteringPredicate != null) {
-            List resultList;
-            TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
-            try {
-                EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
-
-                boolean ensureDistinct = false;
-                if (properties.isInMemoryDistinct() && context.getQuery() != null) {
-                    QueryTransformer transformer = queryTransformerFactory.transformer(
-                            context.getQuery().getQueryString());
-                    ensureDistinct = transformer.removeDistinct();
-                    if (ensureDistinct) {
-                        context.getQuery().setQueryString(transformer.getResult());
-                    }
-                }
-                context.getQuery().setFirstResult(0);
-                context.getQuery().setMaxResults(0);
-
-                Query query = createQuery(em, context, false, false);
-                query.setHint(PersistenceHints.FETCH_PLAN, createFetchPlan(context, true));
-
-                resultList = getResultList(context, query, filteringPredicate, ensureDistinct);
-
-            } catch (RuntimeException e) {
-                rollbackTransaction(txStatus);
-                throw e;
-            }
-            commitTransaction(txStatus);
-            return resultList.size();
-        } else {
-            QueryTransformer transformer = queryTransformerFactory.transformer(context.getQuery().getQueryString());
-            transformer.replaceWithCount();
-            context.getQuery().setQueryString(transformer.getResult());
-
-            Number result;
-            TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
-            try {
-                EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
-
-                Query query = createQuery(em, context, false, true);
-                result = (Number) query.getSingleResult();
-
-            } catch (RuntimeException e) {
-                rollbackTransaction(txStatus);
-                throw e;
-            }
-            commitTransaction(txStatus);
-
-            return result.longValue();
-        }
+        return result.longValue();
     }
 
     @Override
@@ -501,8 +266,8 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
         Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
 
-        Set saved = new HashSet<>();
-        List persisted = new ArrayList<>();
+        Set<Object> saved = new HashSet<>();
+        List<Object> persisted = new ArrayList<>();
 
         boolean softDeletionBefore;
         EntityManager em;
@@ -540,7 +305,7 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
                         if (!context.isDiscardSaved()) {
                             FetchPlan fetchPlan = getFetchPlanFromContextOrNull(context, entity);
-                            entityFetcher.fetch((Entity) entity, fetchPlan, true);
+                            entityFetcher.fetch(entity, fetchPlan, true);
                         }
                     }
                 }
@@ -552,8 +317,7 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
                         MetaClass metaClass = metadata.getClass(entity.getClass());
 
-                        assertToken(accessConstraints, entity);
-                        entityAttributesEraser.restoreAttributes((Entity) entity);
+                        entityAttributesEraser.restoreAttributes(entity);
 
                         Object merged = em.merge(entity);
                         saved.add(merged);
@@ -576,8 +340,7 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
                 for (Object entity : context.getEntitiesToRemove()) {
                     MetaClass metaClass = metadata.getClass(entity.getClass());
 
-                    assertToken(accessConstraints, entity);
-                    entityAttributesEraser.restoreAttributes((Entity) entity);
+                    entityAttributesEraser.restoreAttributes(entity);
                     Object e;
                     if (EntityValues.isSoftDeletionSupported(entity)) {
                         e = em.merge(entity);
@@ -596,27 +359,6 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
                     em.remove(e);
                     saved.add(e);
-
-                    // todo dynamic attributes
-                    //                if (entityHasDynamicAttributes(entity)) {
-                    //                    Map<String, CategoryAttributeValue> dynamicAttributes = ((BaseGenericIdEntity) entity).getDynamicAttributes();
-                    //
-                    //                    // old values of dynamic attributes on deleted entity are used in EntityChangedEvent
-                    //                    ((BaseGenericIdEntity) e).setDynamicAttributes(dynamicAttributes);
-                    //
-                    //                    //dynamicAttributes checked for null in entityHasDynamicAttributes()
-                    //                    //noinspection ConstantConditions
-                    //                    for (CategoryAttributeValue categoryAttributeValue : dynamicAttributes.values()) {
-                    //                        if (!entityStates.isNew(categoryAttributeValue)) {
-                    //                            if (Stores.isMain(storeName)) {
-                    //                                em.remove(categoryAttributeValue);
-                    //                            } else {
-                    //                                attributeValuesToRemove.add(categoryAttributeValue);
-                    //                            }
-                    //                            saved.add(categoryAttributeValue);
-                    //                        }
-                    //                    }
-                    //                }
                 }
 
                 if (!context.isDiscardSaved()) {
@@ -665,31 +407,11 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
             handleCascadePersistException(e);
         }
 
-        // todo dynamic attributes
-//        if (!attributeValuesToRemove.isEmpty()) {
-//            try (Transaction tx = getSaveTransaction(Stores.MAIN, context.isJoinTransaction())) {
-//                EntityManager em = getEntityManager();
-//                for (CategoryAttributeValue entity : attributeValuesToRemove) {
-//                    em.remove(entity);
-//                }
-//                tx.commit();
-//            }
-//        }
-
-        // todo dynamic attributes
-//        if (!identityEntitiesToStoreDynamicAttributes.isEmpty()) {
-//            try (Transaction tx = getSaveTransaction(storeName, context.isJoinTransaction())) {
-//                for (BaseGenericIdEntity entity : identityEntitiesToStoreDynamicAttributes) {
-//                    dynamicAttributesManagerAPI.storeDynamicAttributes(entity);
-//                }
-//                tx.commit();
-//            }
-//        }
-
         Set<Object> resultEntities = savedEntitiesHolder.getEntities(saved);
 
         reloadIfUnfetched(resultEntities, context);
 
+        //todo: event
         if (!context.isDiscardSaved()) {
             entityAttributesEraser.eraseReferences(referencesCollector);
         }
@@ -701,6 +423,52 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         }
 
         return context.isDiscardSaved() ? Collections.emptySet() : resultEntities;
+    }
+
+    protected void checkCRUDConstraints(SaveContext context) {
+        if (context.getAccessConstraints().isEmpty()) {
+            return;
+        }
+
+        Map<MetaClass, CrudEntityContext> accessCache = new HashMap<>();
+
+        for (Object entity : context.getEntitiesToSave()) {
+            if (entity == null)
+                continue;
+
+            MetaClass metaClass = metadata.getClass(entity);
+
+            CrudEntityContext entityContext = accessCache.computeIfAbsent(metaClass, key -> {
+                CrudEntityContext newEntityContext = new CrudEntityContext(key);
+                accessManager.applyConstraints(newEntityContext, context.getAccessConstraints());
+                return newEntityContext;
+            });
+
+            if (entityStates.isNew(entity)) {
+                if (!entityContext.isCreatePermitted()) {
+                    throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, metaClass.getName());
+                }
+            } else if (!entityContext.isUpdatePermitted()) {
+                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.UPDATE, metaClass.getName());
+            }
+        }
+
+        for (Object entity : context.getEntitiesToRemove()) {
+            if (entity == null)
+                continue;
+
+            MetaClass metaClass = metadata.getClass(entity);
+
+            CrudEntityContext entityContext = accessCache.computeIfAbsent(metaClass, key -> {
+                CrudEntityContext newEntityContext = new CrudEntityContext(key);
+                accessManager.applyConstraints(newEntityContext, context.getAccessConstraints());
+                return newEntityContext;
+            });
+
+            if (!entityContext.isDeletePermitted()) {
+                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.DELETE, metaClass.getName());
+            }
+        }
     }
 
     protected void reloadIfUnfetched(Set<Object> resultEntities, SaveContext context) {
@@ -760,7 +528,7 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
 
         List<KeyValueEntity> entities = new ArrayList<>();
 
-        TransactionStatus txStatus = beginLoadTransaction(context.isJoinTransaction());
+        Object txStatus = beginLoadTransaction(context.isJoinTransaction());
         try {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
@@ -833,8 +601,8 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         return context.getFetchPlans().get(entity);
     }
 
-    protected Query createQuery(EntityManager em, LoadContext<?> context, boolean singleResult, boolean countQuery) {
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
+    protected Query createQuery(EntityManager em, LoadContext<?> context, boolean countQuery) {
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
         LoadContext.Query contextQuery = context.getQuery();
 
@@ -853,6 +621,10 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
             }
         }
 
+        if (countQuery) {
+            queryBuilder.setCountQuery();
+        }
+
         if (!context.getPreviousQueries().isEmpty()) {
             log.debug("Restrict query by previous results");
             //todo MG maybe use user key instead of session id
@@ -860,11 +632,6 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         }
 
         JmixQuery<?> query = queryBuilder.getQuery(em);
-
-        ReadEntityQueryContext queryContext = new ReadEntityQueryContext(query, metaClass, queryTransformerFactory);
-        accessManager.applyConstraints(queryContext, context.getAccessConstraints());
-
-        query = queryContext.getResultQuery();
 
         if (contextQuery != null) {
             if (contextQuery.getFirstResult() != 0)
@@ -880,112 +647,26 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
             query.setHint(hint.getKey(), hint.getValue());
         }
 
+        if (!countQuery) {
+            query.setHint(PersistenceHints.FETCH_PLAN, createFetchPlan(context));
+        }
+
+        ReadEntityQueryContext queryContext = new ReadEntityQueryContext(query, metaClass, queryTransformerFactory);
+        accessManager.applyConstraints(queryContext, context.getAccessConstraints());
+
+        query = queryContext.getResultQuery();
+
         return query;
     }
 
-    protected FetchPlan createFetchPlan(LoadContext<?> context, boolean applyInMemoryPredicates) {
-        MetaClass metaClass = getEffectiveMetaClassFromContext(context);
+    protected FetchPlan createFetchPlan(LoadContext<?> context) {
+        MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
         FetchPlan fetchPlan = context.getFetchPlan() != null ? context.getFetchPlan() :
                 fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.BASE);
 
-        if (applyInMemoryPredicates) {
-            return fetchPlans.builder(fetchPlan)
-                    .partial(false)
-                    .build();
-        } else {
-            return fetchPlans.builder(fetchPlan)
-                    .partial(context.isLoadPartialEntities())
-                    .build();
-        }
-    }
-
-    protected List<Object> getResultList(LoadContext<?> context, Query query, @Nullable Predicate<Object> filteringPredicate,
-                                        boolean ensureDistinct) {
-        List<Object> list = executeQuery(query, false);
-        int initialSize = list.size();
-        if (initialSize == 0) {
-            return list;
-        }
-
-        List<Object> filteredList = list;
-        if (filteringPredicate != null) {
-            filteredList = list.stream()
-                    .filter(filteringPredicate)
-                    .collect(Collectors.toList());
-        }
-
-        if (!ensureDistinct) {
-            return list.size() != filteredList.size() ?
-                    getResultListIteratively(context, query, filteringPredicate, filteredList, initialSize) : filteredList;
-        }
-
-        int requestedFirst = context.getQuery().getFirstResult();
-        LinkedHashSet<Object> set = new LinkedHashSet<>(filteredList);
-        if (set.size() == filteredList.size() && requestedFirst == 0 && list.size() == filteredList.size()) {
-            // If this is the first chunk and it has no duplicates and security constraints are not applied, just return it
-            return filteredList;
-        }
-        // In case of not first chunk, even if there where no duplicates, start filling the set from zero
-        // to ensure correct paging
-        return getResultListIteratively(context, query, filteringPredicate, set, initialSize);
-    }
-
-    protected List<Object> getResultListIteratively(LoadContext<?> context, Query query,
-                                                   @Nullable Predicate<Object> filteredPredicate,
-                                                   Collection<Object> filteredList,
-                                                   int initialSize) {
-        int requestedFirst = context.getQuery().getFirstResult();
-        int requestedMax = context.getQuery().getMaxResults();
-
-        if (requestedMax == 0) {
-            // set contains all items if query without paging
-            return new ArrayList<>(filteredList);
-        }
-
-        int setSize = initialSize + requestedFirst;
-        int factor = filteredList.size() == 0 ? 2 : initialSize / filteredList.size() * 2;
-
-        filteredList.clear();
-
-        int firstResult = 0;
-        int maxResults = (requestedFirst + requestedMax) * factor;
-        int i = 0;
-        while (filteredList.size() < setSize) {
-            if (i++ > 10000) {
-                log.warn("In-memory distinct: endless loop detected for " + context);
-                break;
-            }
-            query.setFirstResult(firstResult);
-            query.setMaxResults(maxResults);
-            //noinspection unchecked
-            List<Object> list = query.getResultList();
-            if (list.size() == 0) {
-                break;
-            }
-
-            if (filteredPredicate != null) {
-                filteredList.addAll(list.stream()
-                        .filter(filteredPredicate)
-                        .collect(Collectors.toList()));
-            } else {
-                filteredList.addAll(list);
-            }
-
-            firstResult = firstResult + maxResults;
-        }
-
-        // Copy by iteration because subList() returns non-serializable class
-        int max = Math.min(requestedFirst + requestedMax, filteredList.size());
-        List<Object> result = new ArrayList<>(max - requestedFirst);
-        int j = 0;
-        for (Object item : filteredList) {
-            if (j >= max)
-                break;
-            if (j >= requestedFirst)
-                result.add(item);
-            j++;
-        }
-        return result;
+        return fetchPlans.builder(fetchPlan)
+                .partial(context.isLoadPartialEntities())
+                .build();
     }
 
     protected List<Object> executeQuery(Query query, boolean singleResult) {
@@ -1015,53 +696,8 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         return list;
     }
 
-    protected void checkCRUDConstraints(SaveContext context) {
-        if (context.getAccessConstraints().isEmpty()) {
-            return;
-        }
-
-        Map<MetaClass, CrudEntityContext> accessCache = new HashMap<>();
-
-        for (Object entity : context.getEntitiesToSave()) {
-            if (entity == null)
-                continue;
-
-            MetaClass metaClass = metadata.getClass(entity);
-
-            CrudEntityContext entityContext = accessCache.computeIfAbsent(metaClass, key -> {
-                CrudEntityContext newEntityContext = new CrudEntityContext(key);
-                accessManager.applyConstraints(newEntityContext, context.getAccessConstraints());
-                return newEntityContext;
-            });
-
-            if (entityStates.isNew(entity)) {
-                if (!entityContext.isCreatePermitted()) {
-                    throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, metaClass.getName());
-                }
-            } else if (!entityContext.isUpdatePermitted()) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.UPDATE, metaClass.getName());
-            }
-        }
-
-        for (Object entity : context.getEntitiesToRemove()) {
-            if (entity == null)
-                continue;
-
-            MetaClass metaClass = metadata.getClass(entity);
-
-            CrudEntityContext entityContext = accessCache.computeIfAbsent(metaClass, key -> {
-                CrudEntityContext newEntityContext = new CrudEntityContext(key);
-                accessManager.applyConstraints(newEntityContext, context.getAccessConstraints());
-                return newEntityContext;
-            });
-
-            if (!entityContext.isDeletePermitted()) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.DELETE, metaClass.getName());
-            }
-        }
-    }
-
-    protected TransactionStatus beginLoadTransaction(boolean joinTransaction) {
+    @Override
+    protected Object beginLoadTransaction(boolean joinTransaction) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName(LOAD_TX_PREFIX + txCount.incrementAndGet());
 
@@ -1074,17 +710,33 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
             def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         }
         PlatformTransactionManager txManager = storeAwareLocator.getTransactionManager(storeName);
+
         return txManager.getTransaction(def);
     }
 
-    protected void commitTransaction(TransactionStatus txStatus) {
-        PlatformTransactionManager txManager = storeAwareLocator.getTransactionManager(storeName);
-        txManager.commit(txStatus);
+    @Override
+    protected void commitLoadTransaction(Object transaction, LoadContext<?> context, List<Object> entities) {
+        if (context.isJoinTransaction()) {
+            EntityManager em = storeAwareLocator.getEntityManager(storeName);
+            for (Object entity : entities) {
+                detachEntity(em, entity, context.getFetchPlan(), false);
+                entityEventManager.publishEntityLoadingEvent(entity);
+            }
+        }
+        commitTransaction(transaction);
     }
 
-    protected void rollbackTransaction(TransactionStatus txStatus) {
+    protected void rollbackTransaction(Object transaction) {
+        TransactionStatus transactionStatus = (TransactionStatus) transaction;
+        if (!transactionStatus.isCompleted()) {
+            PlatformTransactionManager txManager = storeAwareLocator.getTransactionManager(storeName);
+            txManager.rollback(transactionStatus);
+        }
+    }
+
+    protected void commitTransaction(Object transaction) {
         PlatformTransactionManager txManager = storeAwareLocator.getTransactionManager(storeName);
-        txManager.rollback(txStatus);
+        txManager.commit((TransactionStatus) transaction);
     }
 
     protected TransactionStatus beginSaveTransaction(boolean joinTransaction) {
@@ -1137,54 +789,6 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         });
     }
 
-    protected void fireLoadListeners(Collection entities, LoadContext<?> context, FetchPlan effectiveFetchPlan) {
-        if (dataStoreListeners != null) {
-            for (JpaDataStoreListener lifecycleListener : dataStoreListeners) {
-                //noinspection unchecked
-                lifecycleListener.onLoad(entities, context, effectiveFetchPlan);
-            }
-        }
-    }
-
-    protected void fireSaveListeners(Collection<Object> entities, SaveContext saveContext) {
-        if (dataStoreListeners != null) {
-            for (JpaDataStoreListener lifecycleListener : dataStoreListeners) {
-                lifecycleListener.onSave(entities, saveContext);
-            }
-        }
-    }
-
-    protected void assertToken(Collection<AccessConstraint<?>> accessConstraints, Object entity) {
-        //TODO: use InMemoryCRUD entity context
-
-//        @Override
-//        public void assertToken(Entity entity) {
-//            EntityEntry entityEntry = entity.__getEntityEntry();
-//            if (entityEntry.getSecurityState().getSecurityToken() == null) {
-//                assertSecurityConstraints(entity, (e, metaProperty) -> entityStates.isDetached(entity)
-//                        && !entityStates.isLoaded(entity, metaProperty.getName()));
-//            }
-//        }
-//
-//        protected void assertSecurityConstraints(Entity entity, BiPredicate<Entity, MetaProperty> predicate) {
-//            MetaClass metaClass = metadata.getClass(entity.getClass());
-//            for (MetaProperty metaProperty : metaClass.getProperties()) {
-//                if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)) {
-//                    if (predicate.test(entity, metaProperty)) {
-//                        continue;
-//                    }
-//                    if (security.hasInMemoryConstraints(metaProperty.getRange().asClass(), ConstraintOperationType.READ,
-//                            ConstraintOperationType.ALL)) {
-//                        throw new RowLevelSecurityException(format("Could not read security token from entity %s, " +
-//                                        "even though there are active READ/ALL constraints for the property: %s", entity,
-//                                metaProperty.getName()),
-//                                metaClass.getName());
-//                    }
-//                }
-//            }
-//        }
-    }
-
     protected void handleCascadePersistException(IllegalStateException e) throws IllegalStateException {
         IllegalStateException exception = e;
         if (!Strings.isNullOrEmpty(e.getMessage())
@@ -1197,38 +801,21 @@ public class JpaDataStore implements DataStore, DataSortingOptions {
         throw exception;
     }
 
-    protected boolean hasInMemoryPredicates(LoadContext<?> context) {
-        return collectEntityClasses(context).stream()
-                .anyMatch(entityClass -> {
-                    InMemoryCrudEntityContext crudContext =
-                            new InMemoryCrudEntityContext(entityClass);
-                    accessManager.applyConstraints(crudContext, context.getAccessConstraints());
-                    return crudContext.readPredicate() != null;
-                });
-    }
-
-    protected Collection<MetaClass> collectEntityClasses(LoadContext<?> context) {
-        if (context.getFetchPlan() == null) {
-            return Collections.singletonList(context.getEntityMetaClass());
-        }
-        return collectEntityClasses(context.getFetchPlan(), new HashSet<>());
-    }
-
-    protected Collection<MetaClass> collectEntityClasses(FetchPlan fetchPlan, Set<FetchPlan> visited) {
-        if (visited.contains(fetchPlan)) {
-            return Collections.emptySet();
-        } else {
-            visited.add(fetchPlan);
-        }
-
-        Set<MetaClass> entityClasses = new HashSet<>();
-        entityClasses.add(metadata.getClass(fetchPlan.getEntityClass()));
-        for (FetchPlanProperty property : fetchPlan.getProperties()) {
-            if (property.getFetchPlan() != null) {
-                entityClasses.addAll(collectEntityClasses(property.getFetchPlan(), visited));
+    protected void fireSaveListeners(Collection<Object> entities, SaveContext saveContext) {
+        if (dataStoreListeners != null) {
+            for (JpaDataStoreListener dataStoreListener : dataStoreListeners) {
+                dataStoreListener.onSave(entities, saveContext);
             }
         }
-        return entityClasses;
+    }
+
+    /**
+     * @param context - loading context
+     * @return false if maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility
+     */
+    protected boolean isSingleResult(LoadContext<?> context) {
+        return !(context.getQuery() != null && context.getQuery().getMaxResults() == 1)
+                && context.getId() != null;
     }
 
     @Override

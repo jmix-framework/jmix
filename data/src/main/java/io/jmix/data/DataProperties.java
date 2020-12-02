@@ -31,21 +31,14 @@ public class DataProperties {
     boolean useEntityDataStoreForIdSequence;
 
     public DataProperties(
-            boolean inMemoryDistinct,
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
             @DefaultValue("true") boolean queryCacheEnabled,
             @DefaultValue("100") int numberIdCacheSize,
-            boolean useEntityDataStoreForIdSequence
-    ) {
-        this.inMemoryDistinct = inMemoryDistinct;
+            boolean useEntityDataStoreForIdSequence) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
         this.queryCacheEnabled = queryCacheEnabled;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
-    }
-
-    public boolean isInMemoryDistinct() {
-        return inMemoryDistinct;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {

@@ -21,9 +21,19 @@ plugins {
 
 group = 'io.jmix.templates.studio'
 
-task contentJar(type: Jar) {
-    from("content")
-    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: bomVersion])
+task copyContent(type: Copy) {
+    from('content') {
+        exclude '**/gradle/wrapper/**'
+        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [bomVersion: bomVersion])
+    }
+    from('content') {
+        include '**/gradle/wrapper/**'
+    }
+    into "$buildDir/content"
+}
+
+task contentJar(type: Jar, dependsOn: copyContent) {
+    from("$buildDir/content")
     manifest {
         attributes('Studio-Version-Range': '0-1') // perhaps we should keep it either here OR in pom (see below)
     }

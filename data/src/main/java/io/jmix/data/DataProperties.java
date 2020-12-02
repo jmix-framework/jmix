@@ -24,7 +24,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class DataProperties {
 
-    boolean inMemoryDistinct;
     boolean useReadOnlyTransactionForLoad;
     boolean queryCacheEnabled;
     int numberIdCacheSize;

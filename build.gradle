@@ -70,67 +70,80 @@ dependencies {
     api platform("org.springframework.boot:spring-boot-dependencies:2.4.0")
 
     def baseVersion = '0.2.0'
+    def auditVersion = baseVersion
+    def coreVersion = baseVersion
+    def cubaVersion = baseVersion
+    def dataVersion = baseVersion
+    def dynattrVersion = baseVersion
+    def emailVersion = baseVersion
+    def fsfilestorageVersion = baseVersion
+    def restVersion = baseVersion
+    def datatoolsVersion = baseVersion
+    def securityVersion = baseVersion
+    def sessionsVersion = baseVersion
+    def translationsVersion = baseVersion
+    def uiVersion = baseVersion
 
     constraints {
-        api "io.jmix.audit:jmix-audit:${snapshotOr(baseVersion)}"
-        api "io.jmix.audit:jmix-audit-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.audit:jmix-audit-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.audit:jmix-audit-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-ui:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-starter:${snapshotOr(auditVersion)}"
+        api "io.jmix.audit:jmix-audit-ui-starter:${snapshotOr(auditVersion)}"
 
-        api "io.jmix.core:jmix-core:${snapshotOr(baseVersion)}"
-        api "io.jmix.core:jmix-core-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
+        api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"
 
-        api "io.jmix.cuba:jmix-cuba:${snapshotOr(baseVersion)}"
-        api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.cuba:jmix-cuba:${snapshotOr(cubaVersion)}"
+        api "io.jmix.cuba:jmix-cuba-starter:${snapshotOr(cubaVersion)}"
 
-        api "io.jmix.data:jmix-data:${snapshotOr(baseVersion)}"
-        api "io.jmix.data:jmix-data-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.data:jmix-data:${snapshotOr(dataVersion)}"
+        api "io.jmix.data:jmix-data-starter:${snapshotOr(dataVersion)}"
 
-        api "io.jmix.dynattr:jmix-dynattr:${snapshotOr(baseVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(dynattrVersion)}"
+        api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(dynattrVersion)}"
 
-        api "io.jmix.email:jmix-email:${snapshotOr(baseVersion)}"
-        api "io.jmix.email:jmix-email-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.email:jmix-email-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.fsfilestorage:jmix-fsfilestorage:${snapshotOr(fsfilestorageVersion)}"
+        api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:${snapshotOr(fsfilestorageVersion)}"
 
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage:${snapshotOr(baseVersion)}"
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.email:jmix-email:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
+        api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
 
-        api "io.jmix.rest:jmix-rest:${snapshotOr(baseVersion)}"
-        api "io.jmix.rest:jmix-rest-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
+        api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
 
-        api "io.jmix.datatools:jmix-datatools:${snapshotOr(baseVersion)}"
-        api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.datatools:jmix-datatools:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-starter:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-ui:${snapshotOr(datatoolsVersion)}"
+        api "io.jmix.datatools:jmix-datatools-ui-starter:${snapshotOr(datatoolsVersion)}"
 
-        api "io.jmix.security:jmix-security:${snapshotOr(baseVersion)}"
-        api "io.jmix.security:jmix-security-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.security:jmix-security-data:${snapshotOr(baseVersion)}"
-        api "io.jmix.security:jmix-security-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.security:jmix-security-data-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.security:jmix-security:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-ui:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-data:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-data-starter:${snapshotOr(securityVersion)}"
 
-        api "io.jmix.sessions:jmix-sessions:${snapshotOr(baseVersion)}"
-        api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.sessions:jmix-sessions:${snapshotOr(sessionsVersion)}"
+        api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(sessionsVersion)}"
 
-        api "io.jmix.translations:jmix-translations-fr:${snapshotOr(baseVersion)}"
-        api "io.jmix.translations:jmix-translations-ru:${snapshotOr(baseVersion)}"
+        api "io.jmix.translations:jmix-translations-fr:${snapshotOr(translationsVersion)}"
+        api "io.jmix.translations:jmix-translations-ru:${snapshotOr(translationsVersion)}"
 
-        api "io.jmix.ui:jmix-ui:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-data:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-export:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-export-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-themes:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-widgets:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-starter:${snapshotOr(baseVersion)}"
-        api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(baseVersion)}"
+        api "io.jmix.ui:jmix-ui:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-data:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-export:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-export-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-test-assist:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-themes:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-themes-compiled:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
 
         api 'com.google.guava:guava:27.0.1-jre'
         api 'commons-io:commons-io:2.6'

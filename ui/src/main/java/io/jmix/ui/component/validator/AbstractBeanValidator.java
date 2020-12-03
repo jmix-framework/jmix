@@ -87,21 +87,23 @@ public class AbstractBeanValidator implements io.jmix.ui.component.validation.Va
             groups = new Class[]{Default.class, UiComponentChecks.class};
         }
 
-        @SuppressWarnings("unchecked")
-        Set<ConstraintViolation> violations = validator.validateValue(beanClass, beanProperty, value, groups);
+        if (metadata.getClass(beanClass).findProperty(beanProperty) != null) {
+            @SuppressWarnings("unchecked")
+            Set<ConstraintViolation> violations = validator.validateValue(beanClass, beanProperty, value, groups);
 
-        if (!violations.isEmpty()) {
-            List<CompositeValidationException.ViolationCause> causes = new ArrayList<>(violations.size());
-            for (ConstraintViolation violation : violations) {
-                causes.add(new BeanPropertyValidator.BeanValidationViolationCause(violation));
+            if (!violations.isEmpty()) {
+                List<CompositeValidationException.ViolationCause> causes = new ArrayList<>(violations.size());
+                for (ConstraintViolation violation : violations) {
+                    causes.add(new BeanPropertyValidator.BeanValidationViolationCause(violation));
+                }
+
+                String validationMessage = this.validationErrorMessage;
+                if (validationMessage == null) {
+                    validationMessage = getDefaultErrorMessage();
+                }
+
+                throw new CompositeValidationException(validationMessage, causes);
             }
-
-            String validationMessage = this.validationErrorMessage;
-            if (validationMessage == null) {
-                validationMessage = getDefaultErrorMessage();
-            }
-
-            throw new CompositeValidationException(validationMessage, causes);
         }
     }
 

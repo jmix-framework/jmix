@@ -57,6 +57,7 @@
     .jmix-drawer-header {
       $logo-size: 20px;
 
+      color: valo-font-color($cuba-sidemenu-title-background-color, 0.9);
       background: $cuba-sidemenu-title-background-color;
 
       display: flex;

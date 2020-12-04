@@ -964,17 +964,20 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     }
 
     protected void preCommitConfiguration() {
-        if (getEditedEntity().getConfiguration() != null) {
-            getEditedEntity().getConfiguration().setDependsOnAttributeCodes(
-                    Objects.requireNonNull(dependsOnAttributesField.getValue())
-                            .stream()
-                            .map(CategoryAttribute::getCode)
-                            .collect(Collectors.toList())
-            );
+        CategoryAttribute attribute = getEditedEntity();
+        if (attribute.getConfiguration() != null) {
+            if (dependsOnAttributesField.getValue() != null) {
+                attribute.getConfiguration().setDependsOnAttributeCodes(
+                        dependsOnAttributesField.getValue().stream()
+                                .map(CategoryAttribute::getCode)
+                                .collect(Collectors.toList()));
+            } else {
+                attribute.getConfiguration().setDependsOnAttributeCodes(Collections.emptyList());
+            }
         }
-        if (getScreenData().getDataContext().isModified(getEditedEntity().getConfiguration())) {
+        if (getScreenData().getDataContext().isModified(attribute.getConfiguration())) {
             Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-            getEditedEntity().setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
+            attribute.setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
         }
     }
 }

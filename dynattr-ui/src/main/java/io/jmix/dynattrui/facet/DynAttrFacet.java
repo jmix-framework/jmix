@@ -17,6 +17,14 @@
 package io.jmix.dynattrui.facet;
 
 import io.jmix.ui.component.Facet;
+import io.jmix.ui.meta.StudioFacet;
 
+@StudioFacet(
+        xmlElement = "dynamicAttributes",
+        caption = "Dynamic attributes",
+        description = "Shows dynamic attributes on a screen",
+        xmlns = "http://jmix.io/schema/dynattr/dynattrui.xsd",
+        xmlnsAlias = "dynattrui"
+)
 public interface DynAttrFacet extends Facet {
 }

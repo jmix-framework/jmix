@@ -110,7 +110,8 @@ class EnhancingAction implements Action<Task> {
     }
 
     protected void collectEntitiesFromClasspath(Project project, sourceSet, ClassesInfo classesInfo) {
-        def jars = sourceSet.compileClasspath.asList().findAll { it.name.endsWith('.jar') }
+        def runtimeCP = sourceSet.runtimeClasspath.asList()
+        def jars = sourceSet.compileClasspath.asList().findAll { runtimeCP.contains(it) && it.name.endsWith('.jar') }
         jars.each { lib ->
             project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
                 Node doc = new XmlParser().parse(it)
@@ -127,7 +128,7 @@ class EnhancingAction implements Action<Task> {
             }
         }
 
-        def folders = sourceSet.compileClasspath.asList().findAll { it.isDirectory() }
+        def folders = sourceSet.compileClasspath.asList().findAll { runtimeCP.contains(it) && it.isDirectory() }
         ClassPool classPool = createClassPool(project, sourceSet)
 
         folders.each { File folder ->

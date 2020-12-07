@@ -27,4 +27,5 @@ import io.jmix.ui.meta.StudioFacet;
         xmlnsAlias = "dynattrui"
 )
 public interface DynAttrFacet extends Facet {
+    String FACET_NAME = "dynamicAttributes";
 }

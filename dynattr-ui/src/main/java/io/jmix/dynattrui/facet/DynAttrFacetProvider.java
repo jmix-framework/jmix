@@ -43,7 +43,7 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public String getFacetTag() {
-        return "dynamicAttributes";
+        return DynAttrFacet.FACET_NAME;
     }
 
     @Override

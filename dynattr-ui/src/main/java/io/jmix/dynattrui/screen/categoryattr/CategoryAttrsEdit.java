@@ -35,6 +35,7 @@ import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
+import io.jmix.dynattrui.facet.DynAttrFacet;
 import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.*;
@@ -435,8 +436,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         if (category != null) {
             MetaClass categorizedEntityMetaClass = metadata.findClass(getEditedEntity().getCategory().getEntityType());
             Map<String, String> availableScreensMap = categorizedEntityMetaClass != null ?
-                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(), true)) :
-                    new HashMap<>();
+                    new HashMap<>(screensHelper.getAvailableScreens(categorizedEntityMetaClass.getJavaClass(),
+                            Collections.singletonList(DynAttrFacet.FACET_NAME), true)) : new HashMap<>();
 
             targetScreensTable.addGeneratedColumn(
                     "screen",

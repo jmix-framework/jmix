@@ -156,6 +156,7 @@
                 </form>
             </tab>
             <tab id="visibilityTab" caption="msg://visibilityTab.caption" spacing="true" margin="true">
+                <label value="msg://visibilityTab.help" htmlEnabled="true"/>
                 <groupTable id="targetScreensTable" dataContainer="targetScreensDc" width="100%" height="250px"
                             editable="true">
                     <actions>

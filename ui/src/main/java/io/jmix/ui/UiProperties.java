@@ -91,6 +91,7 @@ public class UiProperties {
     Map<String, Integer> entityMaxFetchSize;
     boolean propertyFilterAutoApply;
     int jmxConsoleMBeanOperationTimeoutSec;
+    String uniqueConstraintViolationPattern;
 
     public UiProperties(
             boolean testMode,
@@ -150,7 +151,8 @@ public class UiProperties {
             @Nullable Map<String, Integer> entityPageSize,
             @Nullable Map<String, Integer> entityMaxFetchSize,
             @DefaultValue("true") boolean propertyFilterAutoApply,
-            @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec) {
+            @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
+            @Nullable String uniqueConstraintViolationPattern) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
@@ -209,6 +211,7 @@ public class UiProperties {
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
         this.propertyFilterAutoApply = propertyFilterAutoApply;
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
+        this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -516,5 +519,13 @@ public class UiProperties {
      */
     public int getJmxConsoleMBeanOperationTimeoutSec() {
         return jmxConsoleMBeanOperationTimeoutSec;
+    }
+
+    /**
+     * @return Overridden pattern to parse Unique Constraint Violation exception
+     */
+    @Nullable
+    public String getUniqueConstraintViolationPattern() {
+        return uniqueConstraintViolationPattern;
     }
 }

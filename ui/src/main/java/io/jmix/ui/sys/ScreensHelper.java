@@ -26,8 +26,8 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.component.Fragment;
 import io.jmix.ui.accesscontext.UiShowScreenContext;
+import io.jmix.ui.component.Fragment;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.LookupComponent;
@@ -129,7 +129,7 @@ public class ScreensHelper {
     }
 
     public Map<String, String> getAvailableBrowserScreens(Class entityClass) {
-        return getAvailableScreensMap(entityClass, ScreenType.BROWSER, false);
+        return getAvailableScreensMap(entityClass, ScreenType.BROWSER, Collections.emptyList(), false);
     }
 
     public Map<String, String> getAvailableScreens(Class entityClass) {
@@ -148,11 +148,27 @@ public class ScreensHelper {
      *                         entity class will be returned.
      */
     public Map<String, String> getAvailableScreens(Class entityClass, boolean useComplexSearch) {
-        return getAvailableScreensMap(entityClass, ScreenType.ALL, useComplexSearch);
+        return getAvailableScreensMap(entityClass, ScreenType.ALL, Collections.emptyList(), useComplexSearch);
     }
 
-    protected Map<String, String> getAvailableScreensMap(Class entityClass, ScreenType filterScreenType, boolean useComplexSearch) {
-        String key = getScreensCacheKey(entityClass.getName(), currentAuthentication.getLocale(), filterScreenType, useComplexSearch);
+    /**
+     * Method returns a map of the screens that use the provided entity class in a data element
+     * (data container or datasource) and contain specific facets
+     *
+     * @param entityClass      entity class used to search
+     * @param facets           facet names used to search
+     * @param useComplexSearch if the value is 'true', all screens that use provided entity class in some data element
+     *                         will be returned (including screens for entities that contain the provided class as a
+     *                         composition or association).
+     *                         if value equals 'false', only main screens (browser, lookup, editor) for the provided
+     *                         entity class will be returned.
+     */
+    public Map<String, String> getAvailableScreens(Class entityClass, List<String> facets, boolean useComplexSearch) {
+        return getAvailableScreensMap(entityClass, ScreenType.ALL, facets, useComplexSearch);
+    }
+
+    protected Map<String, String> getAvailableScreensMap(Class entityClass, ScreenType filterScreenType, List<String> facets, boolean useComplexSearch) {
+        String key = getScreensCacheKey(entityClass.getName(), currentAuthentication.getLocale(), filterScreenType, facets, useComplexSearch);
         Map<String, String> screensMap = availableScreensCache.get(key);
         if (screensMap != null) {
             return screensMap;
@@ -176,8 +192,8 @@ public class ScreensHelper {
                 try {
                     Element windowElement = getWindowElement(src);
                     if (windowElement != null) {
-                        if (isEntityAvailable(windowElement,
-                                windowInfo.getControllerClass(), entityClass, filterScreenType, useComplexSearch)) {
+                        if (isEntityAvailable(windowElement, windowInfo.getControllerClass(), entityClass,
+                                filterScreenType, useComplexSearch) && isFacetAvailable(windowElement, facets)) {
                             String caption = getScreenCaption(windowElement, src);
                             caption = getDetailedScreenCaption(caption, windowId);
                             screensMap.put(caption, windowId);
@@ -186,7 +202,7 @@ public class ScreensHelper {
                         screensMap.put(windowId, windowId);
                     }
                 } catch (FileNotFoundException e) {
-                    log.error("Unable to find file of screen", e.getMessage());
+                    log.error("Unable to find file of screen: {}", e.getMessage());
                 }
             }
 
@@ -234,6 +250,28 @@ public class ScreensHelper {
             dataElementIds.addAll(getDataElementsIdForComposition(dataElement, entityClass, editedEntityDataElementId));
         }
         return dataElementIds.size() > 0;
+    }
+
+    protected boolean isFacetAvailable(Element window, List<String> facetNames) {
+        if (facetNames.isEmpty()) {
+            return true;
+        }
+
+        if (window.element("dsContext") != null) {
+            return true;
+        }
+
+        Element facets = window.element("facets");
+        if (facets != null) {
+            for (String facetName : facetNames) {
+                if (facets.element(facetName) == null) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     @Nullable
@@ -545,8 +583,8 @@ public class ScreensHelper {
         return src + locale.toString();
     }
 
-    protected String getScreensCacheKey(String className, Locale locale, ScreenType filterScreenType, boolean useComplexSearch) {
-        return String.format("%s_%s_%s_%s", className, locale.toString(), filterScreenType, useComplexSearch);
+    protected String getScreensCacheKey(String className, Locale locale, ScreenType filterScreenType, List<String> facets, boolean useComplexSearch) {
+        return String.format("%s_%s_%s_%s_%s", className, locale.toString(), filterScreenType, facets, useComplexSearch);
     }
 
     public void clearCache() {

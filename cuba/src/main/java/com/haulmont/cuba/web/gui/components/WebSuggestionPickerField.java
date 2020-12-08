@@ -18,10 +18,10 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.SuggestionPickerField;
+import com.haulmont.cuba.web.theme.HaloTheme;
 import com.vaadin.server.Resource;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.impl.EntitySuggestionFieldImpl;
-import io.jmix.ui.theme.HaloTheme;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;

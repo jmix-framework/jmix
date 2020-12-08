@@ -171,7 +171,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
 
         notifications.create(NotificationType.WARNING)
                 .withCaption(
-                        messages.formatMessage("multiupload.filesizeLimitExceed",
+                        messages.formatMessage("", "multiupload.filesizeLimitExceed",
                                 e.getFileName(), getFileSizeLimitString())
                 )
                 .show();
@@ -181,7 +181,7 @@ public class FileMultiUploadFieldImpl extends AbstractComponent<JmixFileUpload>
         Notifications notifications = getScreenContext(this).getNotifications();
 
         notifications.create(NotificationType.WARNING)
-                .withCaption(messages.formatMessage("upload.fileIncorrectExtension.message", e.getFileName()))
+                .withCaption(messages.formatMessage("", "upload.fileIncorrectExtension.message", e.getFileName()))
                 .show();
     }
 

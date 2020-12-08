@@ -144,7 +144,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
         Notifications notifications = getScreenContext(this).getNotifications();
 
         notifications.create(Notifications.NotificationType.WARNING)
-                .withCaption(messages.formatMessage("upload.fileTooBig.message", e.getFileName(),
+                .withCaption(messages.formatMessage("", "upload.fileTooBig.message", e.getFileName(),
                         getFileSizeLimitString()))
                 .show();
     }
@@ -153,7 +153,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
         Notifications notifications = getScreenContext(this).getNotifications();
 
         notifications.create(Notifications.NotificationType.WARNING)
-                .withCaption(messages.formatMessage("upload.fileIncorrectExtension.message", e.getFileName()))
+                .withCaption(messages.formatMessage("", "upload.fileIncorrectExtension.message", e.getFileName()))
                 .show();
     }
 

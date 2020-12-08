@@ -19,7 +19,7 @@ import io.jmix.ui.component.Button;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
+import static io.jmix.ui.theme.ThemeClassNames.PRIMARY_ACTION;
 
 public class ButtonLoader extends AbstractComponentLoader<Button> {
 

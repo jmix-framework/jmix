@@ -25,7 +25,7 @@ import io.jmix.ui.component.KeyCombination
 import io.jmix.ui.icon.Icons
 import io.jmix.ui.icon.JmixIcon
 import io.jmix.ui.testassist.spec.ScreenSpecification
-import io.jmix.ui.theme.HaloTheme
+import io.jmix.ui.theme.ThemeClassNames
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
@@ -47,7 +47,7 @@ class ActionOwnerTest extends ScreenSpecification {
         owner.shortcut = 'CTRL-ENTER'
         owner.enabled = true
         owner.visible = true
-        owner.addStyleName(HaloTheme.PRIMARY_ACTION)
+        owner.addStyleName(ThemeClassNames.PRIMARY_ACTION)
         owner.icon = icons.get(JmixIcon.SEARCH)
 
         and: 'Action properties are initialized'
@@ -87,7 +87,7 @@ class ActionOwnerTest extends ScreenSpecification {
         owner.shortcut = 'CTRL-ENTER'
         owner.enabled = true
         owner.visible = true
-        owner.addStyleName(HaloTheme.PRIMARY_ACTION)
+        owner.addStyleName(ThemeClassNames.PRIMARY_ACTION)
         owner.icon = icons.get(JmixIcon.SEARCH)
 
         and: 'Action properties are initialized'
@@ -112,7 +112,7 @@ class ActionOwnerTest extends ScreenSpecification {
         owner.shortcutCombination == KeyCombination.create('CTRL-ENTER')
         owner.enabled
         owner.visible
-        owner.styleName == HaloTheme.PRIMARY_ACTION
+        owner.styleName == ThemeClassNames.PRIMARY_ACTION
         owner.icon == icons.get(JmixIcon.SEARCH)
     }
 

@@ -33,11 +33,7 @@ import io.jmix.ui.app.backgroundwork.BackgroundWorkDialog;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
-import io.jmix.ui.component.ContentMode;
-import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.component.SizeUnit;
-import io.jmix.ui.component.ValidationErrors;
-import io.jmix.ui.component.WindowMode;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.inputdialog.InputDialogAction;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundWorker;
@@ -62,7 +58,7 @@ import java.util.function.Function;
 
 import static io.jmix.ui.component.ComponentsHelper.setClickShortcut;
 import static io.jmix.ui.component.impl.WrapperUtils.*;
-import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
+import static io.jmix.ui.theme.ThemeClassNames.PRIMARY_ACTION;
 
 @UIScope
 @Component("ui_Dialogs")
@@ -847,7 +843,7 @@ public class DialogsImpl implements Dialogs {
         }
     }
 
-    public class BackgroundWorkDialogBuilderImpl<T extends Number, V> implements BackgroundWorkDialogBuilder<T,V> {
+    public class BackgroundWorkDialogBuilderImpl<T extends Number, V> implements BackgroundWorkDialogBuilder<T, V> {
 
         protected BackgroundWorkDialog<T, V> backgroundWorkDialog;
 
@@ -861,7 +857,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialogBuilder<T,V> withCancelAllowed(boolean cancelAllowed) {
+        public BackgroundWorkDialogBuilder<T, V> withCancelAllowed(boolean cancelAllowed) {
             backgroundWorkDialog.setCancelAllowed(cancelAllowed);
             return this;
         }
@@ -872,7 +868,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialogBuilder<T,V> withTotal(Number total) {
+        public BackgroundWorkDialogBuilder<T, V> withTotal(Number total) {
             backgroundWorkDialog.setTotal(total);
             return this;
         }
@@ -883,7 +879,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialogBuilder<T,V> withShowProgressInPercentage(boolean percentProgress) {
+        public BackgroundWorkDialogBuilder<T, V> withShowProgressInPercentage(boolean percentProgress) {
             backgroundWorkDialog.setShowProgressInPercentage(percentProgress);
             return this;
         }
@@ -894,7 +890,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialogBuilder<T,V> withCaption(String caption) {
+        public BackgroundWorkDialogBuilder<T, V> withCaption(String caption) {
             backgroundWorkDialog.getWindow().setCaption(caption);
             return this;
         }
@@ -906,7 +902,7 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialogBuilder<T,V> withMessage(String message) {
+        public BackgroundWorkDialogBuilder<T, V> withMessage(String message) {
             backgroundWorkDialog.setMessage(message);
             return this;
         }
@@ -917,13 +913,13 @@ public class DialogsImpl implements Dialogs {
         }
 
         @Override
-        public BackgroundWorkDialog<T,V> show() {
+        public BackgroundWorkDialog<T, V> show() {
             backgroundWorkDialog.show();
             return backgroundWorkDialog;
         }
 
         @Override
-        public BackgroundWorkDialog<T,V> build() {
+        public BackgroundWorkDialog<T, V> build() {
             return backgroundWorkDialog;
         }
     }

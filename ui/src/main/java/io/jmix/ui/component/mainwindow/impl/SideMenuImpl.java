@@ -27,7 +27,7 @@ import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.component.mainwindow.SideMenu;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.menu.SideMenuBuilder;
-import io.jmix.ui.theme.HaloTheme;
+import io.jmix.ui.theme.ThemeClassNames;
 import io.jmix.ui.widget.JmixSideMenu;
 
 import javax.annotation.Nullable;
@@ -51,7 +51,7 @@ public class SideMenuImpl extends AbstractComponent<JmixSideMenu> implements Sid
         component = new JmixSideMenu();
         component.setBeforeMenuItemTriggeredHandler(menuItem -> {
             if (sidePanel != null) {
-                sidePanel.removeStyleName(HaloTheme.SIDEMENU_PANEL_OPEN);
+                sidePanel.removeStyleName(ThemeClassNames.SIDEMENU_PANEL_OPEN);
             }
         });
 
@@ -103,10 +103,10 @@ public class SideMenuImpl extends AbstractComponent<JmixSideMenu> implements Sid
 
     protected void toggleSidePanel() {
         if (sidePanel != null) {
-            if (sidePanel.getStyleName().contains(HaloTheme.SIDEMENU_PANEL_OPEN)) {
-                sidePanel.removeStyleName(HaloTheme.SIDEMENU_PANEL_OPEN);
+            if (sidePanel.getStyleName().contains(ThemeClassNames.SIDEMENU_PANEL_OPEN)) {
+                sidePanel.removeStyleName(ThemeClassNames.SIDEMENU_PANEL_OPEN);
             } else {
-                sidePanel.addStyleName(HaloTheme.SIDEMENU_PANEL_OPEN);
+                sidePanel.addStyleName(ThemeClassNames.SIDEMENU_PANEL_OPEN);
             }
         }
     }

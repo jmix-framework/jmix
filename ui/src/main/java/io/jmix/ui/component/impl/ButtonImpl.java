@@ -33,7 +33,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import static io.jmix.ui.theme.HaloTheme.PRIMARY_ACTION;
+import static io.jmix.ui.theme.ThemeClassNames.PRIMARY_ACTION;
 
 public class ButtonImpl extends AbstractComponent<JmixButton> implements Button {
 

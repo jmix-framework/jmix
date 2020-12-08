@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
-import static io.jmix.ui.theme.HaloTheme.POPUP_BUTTON_NO_POPUP_INDICATOR;
+import static io.jmix.ui.theme.ThemeClassNames.POPUP_BUTTON_NO_POPUP_INDICATOR;
 
 public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implements PropertyFilter<V>,
         CompositeWithHtmlCaption, CompositeWithHtmlDescription {

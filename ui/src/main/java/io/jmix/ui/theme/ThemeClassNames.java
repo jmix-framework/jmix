@@ -16,7 +16,7 @@
 
 package io.jmix.ui.theme;
 
-public class HaloTheme {
+public class ThemeClassNames {
 
     public static final String NAME = "halo";
 
@@ -105,7 +105,7 @@ public class HaloTheme {
     public static final String BUTTON_DANGER = "danger";
 
     /**
-     * "Quiet" button, which looks like {@link HaloTheme#BUTTON_BORDERLESS} until you
+     * "Quiet" button, which looks like {@link ThemeClassNames#BUTTON_BORDERLESS} until you
      * hover over it with the mouse. Can be combined with any other Button
      * style.
      */

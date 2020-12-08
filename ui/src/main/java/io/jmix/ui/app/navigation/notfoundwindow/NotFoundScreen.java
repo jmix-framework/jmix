@@ -26,7 +26,7 @@ import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
-import io.jmix.ui.theme.HaloTheme;
+import io.jmix.ui.theme.ThemeClassNames;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -51,7 +51,7 @@ public class NotFoundScreen extends Screen {
 
         Label<String> msgLabel = uiComponents.create(Label.TYPE_STRING);
         msgLabel.setAlignment(Component.Alignment.TOP_CENTER);
-        msgLabel.addStyleName(HaloTheme.LABEL_H1);
+        msgLabel.addStyleName(ThemeClassNames.LABEL_H1);
         msgLabel.setValue(messages.formatMessage("","notAssociatedRoute", requestedRoute));
 
         window.add(msgLabel);

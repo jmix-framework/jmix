@@ -30,7 +30,7 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.TestIdManager;
-import io.jmix.ui.theme.HaloTheme;
+import io.jmix.ui.theme.ThemeClassNames;
 import io.jmix.ui.widget.JmixButton;
 import io.jmix.ui.widget.JmixPickerField;
 import org.apache.commons.lang3.StringUtils;
@@ -353,7 +353,7 @@ public class ValuePickerImpl<V>
             this.fieldIconProvider = iconProvider;
 
             component.setStyleName("c-has-field-icon", iconProvider != null);
-            component.getField().setStyleName(HaloTheme.TEXTFIELD_INLINE_ICON, iconProvider != null);
+            component.getField().setStyleName(ThemeClassNames.TEXTFIELD_INLINE_ICON, iconProvider != null);
 
             component.setIconGenerator(iconProvider != null
                     ? this::generateOptionIcon

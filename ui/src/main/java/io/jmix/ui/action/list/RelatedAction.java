@@ -23,8 +23,10 @@ import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
-import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
+import io.jmix.ui.meta.StudioAction;
+import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
+import io.jmix.ui.relatedentities.RelatedEntitiesSupport;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
@@ -35,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-//@StudioAction(category = "List Actions", description = "")
+@StudioAction(category = "List Actions", description = "Opens a browser screen with list of related entities")
 @ActionType(RelatedAction.ID)
 public class RelatedAction extends SecuredListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {
@@ -46,6 +48,7 @@ public class RelatedAction extends SecuredListAction
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
 
     protected MetaProperty metaProperty;
+    protected String property;
     protected String filterCaption;
 
     public RelatedAction() {
@@ -67,6 +70,7 @@ public class RelatedAction extends SecuredListAction
         return screenInitializer.getOpenMode();
     }
 
+    @StudioPropertiesItem
     @Override
     public void setOpenMode(@Nullable OpenMode openMode) {
         screenInitializer.setOpenMode(openMode);
@@ -78,6 +82,7 @@ public class RelatedAction extends SecuredListAction
         return screenInitializer.getScreenId();
     }
 
+    @StudioPropertiesItem
     @Override
     public void setScreenId(@Nullable String screenId) {
         screenInitializer.setScreenId(screenId);
@@ -89,6 +94,7 @@ public class RelatedAction extends SecuredListAction
         return screenInitializer.getScreenClass();
     }
 
+    @StudioPropertiesItem
     @Override
     public void setScreenClass(@Nullable Class<? extends Screen> screenClass) {
         screenInitializer.setScreenClass(screenClass);
@@ -109,19 +115,55 @@ public class RelatedAction extends SecuredListAction
         screenInitializer.setAfterCloseHandler(afterCloseHandler);
     }
 
+    /**
+     * @return the MetaProperty from which you want to show related entities
+     */
+    @Nullable
     public MetaProperty getMetaProperty() {
         return metaProperty;
     }
 
-    public void setMetaProperty(MetaProperty metaProperty) {
+    /**
+     * Sets the MetaProperty from which you want to show related entities.
+     *
+     * @param metaProperty the MetaProperty to set
+     */
+    public void setMetaProperty(@Nullable MetaProperty metaProperty) {
         this.metaProperty = metaProperty;
     }
 
+    /**
+     * @return the property from which you want to show related entities
+     */
+    @Nullable
+    public String getProperty() {
+        return property;
+    }
+
+    /**
+     * Sets the property from which you want to show related entities.
+     *
+     * @param property the property to set
+     */
+    @StudioPropertiesItem
+    public void setProperty(@Nullable String property) {
+        this.property = property;
+    }
+
+    /**
+     * @return the caption that will be set to filter in opened screen
+     */
     @Nullable
     public String getFilterCaption() {
         return filterCaption;
     }
 
+    /**
+     * Sets the caption that will be set to filter in opened screen.
+     *
+     * @param filterCaption the caption to set
+     */
+    @StudioPropertiesItem
     public void setFilterCaption(@Nullable String filterCaption) {
         this.filterCaption = filterCaption;
     }
@@ -151,8 +193,8 @@ public class RelatedAction extends SecuredListAction
             throw new IllegalStateException("Target is not bound to entity");
         }
 
-        if (metaProperty == null) {
-            throw new IllegalStateException("'metaProperty' is not set");
+        if (metaProperty == null && property == null) {
+            throw new IllegalStateException("Either 'metaProperty' or 'property' must be defined");
         }
 
         Frame frame = target.getFrame();
@@ -162,6 +204,7 @@ public class RelatedAction extends SecuredListAction
 
         RelatedEntitiesBuilder builder = relatedEntitiesSupport.builder(frame.getFrameOwner())
                 .withMetaClass(metaClass)
+                .withProperty(property)
                 .withMetaProperty(metaProperty)
                 .withSelectedEntities(target.getSelected())
                 .withFilterCaption(filterCaption);

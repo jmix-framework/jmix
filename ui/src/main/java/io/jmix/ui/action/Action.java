@@ -254,43 +254,49 @@ public interface Action {
     interface ScreenOpeningAction {
 
         /**
-         * Returns the editor screen open mode if it was set by {@link #setOpenMode(OpenMode)}
-         * or in the screen XML, otherwise returns null.
+         * Returns the screen open mode if it was set by {@link #setOpenMode(OpenMode)}
+         * or in the screen XML, otherwise returns {@code null}.
          */
         @Nullable
         OpenMode getOpenMode();
 
         /**
-         * Sets the editor screen open mode.
+         * Sets the screen open mode.
+         *
+         * @param openMode the open mode to set
          */
         void setOpenMode(@Nullable OpenMode openMode);
 
         /**
-         * Returns the editor screen id if it was set by {@link #setScreenId(String)}
-         * or in the screen XML, otherwise returns null.
+         * Returns the screen id if it was set by {@link #setScreenId(String)}
+         * or in the screen XML, otherwise returns {@code null}.
          */
         @Nullable
         String getScreenId();
 
         /**
-         * Sets the editor screen id.
+         * Sets the screen id.
+         *
+         * @param screenId the screen id to set
          */
         void setScreenId(@Nullable String screenId);
 
         /**
-         * Returns the editor screen class if it was set by {@link #setScreenClass(Class)}
-         * or in the screen XML, otherwise returns null.
+         * Returns the screen class if it was set by {@link #setScreenClass(Class)}
+         * or in the screen XML, otherwise returns {@code null}.
          */
         @Nullable
         Class<? extends Screen> getScreenClass();
 
         /**
-         * Sets the editor screen id.
+         * Sets the screen class.
+         *
+         * @param screenClass the screen class to set
          */
         void setScreenClass(@Nullable Class<? extends Screen> screenClass);
 
         /**
-         * Sets the editor screen options supplier. The supplier provides
+         * Sets the screen options supplier. The supplier provides
          * {@code ScreenOptions} to the opened screen.
          * <p>
          * The preferred way to set the supplier is using a controller method
@@ -305,7 +311,7 @@ public interface Action {
         void setScreenOptionsSupplier(Supplier<ScreenOptions> screenOptionsSupplier);
 
         /**
-         * Sets the editor screen configurer. Use the configurer if you need to provide
+         * Sets the screen configurer. Use the configurer if you need to provide
          * parameters to the opened screen through setters.
          * <p>
          * The preferred way to set the configurer is using a controller method

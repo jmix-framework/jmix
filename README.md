@@ -1,5 +1,12 @@
 # Jmix Email
 
+This repository contains Email project of the [Jmix](https://jmix.io) framework.
+
+For more information see:
+
+* Jmix Core project source [repository](https://github.com/Haulmont/jmix-core).
+* Jmix [documentation](https://docs.jmix.io).
+
 ### Email sending configuration
 Two groups of application properties are used to configure email sending:
 1. Spring Boot mail properties (e.g. host, port, protocol and etc)

@@ -27,15 +27,17 @@ import io.jmix.dynattrui.impl.model.AttributeLocalizedEnumValue;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.action.Action;
+import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.LinkButton;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.TextInputField;
 import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
@@ -48,8 +50,8 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,8 @@ public class AttributeEnumerationScreen extends Screen {
     protected MsgBundleTools msgBundleTools;
     @Autowired
     protected UiComponents uiComponents;
+    @Autowired
+    protected Icons icons;
 
     @Autowired
     protected VBoxLayout localizationBox;
@@ -121,9 +125,18 @@ public class AttributeEnumerationScreen extends Screen {
         return localizedEnumValues;
     }
 
+    @Subscribe("valueField")
+    protected void onValueFieldEnterPress(TextInputField.EnterPressEvent event) {
+        addEnumerationValue((String) event.getSource().getValue());
+    }
+
     @Subscribe("localizedEnumValuesDataGrid.add")
     protected void onLocalizedEnumValuesDataGridAdd(Action.ActionPerformedEvent event) {
-        String value = valueField.getValue();
+        addEnumerationValue(valueField.getValue());
+        valueField.focus();
+    }
+
+    protected void addEnumerationValue(String value) {
         if (!Strings.isNullOrEmpty(value) && !valueExists(value)) {
             AttributeLocalizedEnumValue localizedEnumValue = createAttributeLocalizedEnumValue(value);
             localizedEnumValues.add(localizedEnumValue);
@@ -135,14 +148,13 @@ public class AttributeEnumerationScreen extends Screen {
     @Install(to = "localizedEnumValuesDataGrid.removeItem", subject = "columnGenerator")
     protected LinkButton localizedEnumValuesDataGridRemoveItemColumnGenerator(DataGrid.ColumnGeneratorEvent<AttributeLocalizedEnumValue> event) {
         LinkButton linkButton = uiComponents.create(LinkButton.class);
-        linkButton.setIconFromSet(JmixIcon.REMOVE);
-        linkButton.setAction(new AbstractAction("") {
-            @Override
-            public void actionPerform(Component component) {
-                localizedEnumValues.remove(event.getItem());
-                localizedEnumValuesDl.load();
-            }
-        });
+        Action removeAction = new BaseAction("remove_item_" + event.getItem().getValue())
+                .withHandler(actionPerformedEvent -> {
+                    localizedEnumValues.remove(event.getItem());
+                    localizedEnumValuesDl.load();
+                })
+                .withIcon(icons.get(JmixIcon.REMOVE));
+        linkButton.setAction(removeAction);
         return linkButton;
     }
 

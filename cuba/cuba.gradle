@@ -31,7 +31,7 @@ dependencies {
     api 'io.jmix.security:jmix-security-ui'
     api 'io.jmix.dynattr:jmix-dynattr'
     api 'io.jmix.dynattr:jmix-dynattr-ui'
-    api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
+    api 'io.jmix.localfs:jmix-localfs'
 
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'

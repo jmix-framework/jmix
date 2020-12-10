@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.FileStorage;
 import io.jmix.core.TimeSource;
 import io.jmix.core.common.util.URLEncodeUtils;
-import io.jmix.fsfilestorage.FileSystemFileStorage;
+import io.jmix.localfs.LocalFileStorage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Calendar;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -43,7 +41,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class CubaFileStorage implements FileStorageAPI {
 
     @Autowired
-    protected FileSystemFileStorage delegate;
+    protected LocalFileStorage delegate;
 
     @Autowired
     protected Metadata metadata;

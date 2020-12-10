@@ -22,7 +22,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
-import io.jmix.fsfilestorage.FileSystemFileStorageConfiguration;
+import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import io.jmix.ui.UiConfiguration;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
@@ -42,7 +42,7 @@ import javax.cache.configuration.MutableConfiguration;
         UiConfiguration.class,
         DynAttrConfiguration.class,
         DynAttrUiConfiguration.class,
-        FileSystemFileStorageConfiguration.class,
+        LocalFileStorageConfiguration.class,
         UiDataConfiguration.class,
         CubaConfiguration.class})
 public class CubaAutoConfiguration {

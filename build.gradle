@@ -76,7 +76,7 @@ dependencies {
     def dataVersion = baseVersion
     def dynattrVersion = baseVersion
     def emailVersion = baseVersion
-    def fsfilestorageVersion = baseVersion
+    def localfsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
     def securityVersion = baseVersion
@@ -104,13 +104,13 @@ dependencies {
         api "io.jmix.dynattr:jmix-dynattr-starter:${snapshotOr(dynattrVersion)}"
         api "io.jmix.dynattr:jmix-dynattr-ui-starter:${snapshotOr(dynattrVersion)}"
 
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage:${snapshotOr(fsfilestorageVersion)}"
-        api "io.jmix.fsfilestorage:jmix-fsfilestorage-starter:${snapshotOr(fsfilestorageVersion)}"
-
         api "io.jmix.email:jmix-email:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
+
+        api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
+        api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
 
         api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
         api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"

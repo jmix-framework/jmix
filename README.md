@@ -41,7 +41,7 @@ To use JMIX file storage implementation it is needed to add the following depend
     ```
     dependencies {
             //...
-            implementation 'io.jmix.fsfilestorage:jmix-fsfilestorage-starter'
+            implementation 'io.jmix.localfs:jmix-localfs-starter'
     }
     ``` 
 2. Enable file storage usage: <br/>

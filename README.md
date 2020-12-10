@@ -1,6 +1,6 @@
-# Jmix File System File Storage
+# Jmix Local File Storage
 
-This repository contains File System File Storage project of the [Jmix](https://jmix.io) framework.
+This repository contains Local File Storage project of the [Jmix](https://jmix.io) framework.
 
 For more information see:
 

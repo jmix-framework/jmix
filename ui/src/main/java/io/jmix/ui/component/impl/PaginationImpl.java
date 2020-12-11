@@ -22,17 +22,16 @@ import com.vaadin.ui.Button;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.pagination.data.PaginationDataBinder;
-import io.jmix.ui.component.pagination.Paging;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.widget.JmixPagination;
+import io.jmix.ui.widget.JmixPagination.JmixPage;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContextAware;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class PaginationImpl extends AbstractPagination<JmixPagination> implements Pagination,
@@ -41,8 +40,6 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     private static final Logger log = LoggerFactory.getLogger(PaginationImpl.class);
 
     protected static final int FIRST_PAGE = 1;
-
-    protected Paging pages = new Paging();
 
     protected Registration firstButtonClickRegistration;
     protected Registration prevButtonClickRegistration;
@@ -97,10 +94,10 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
         initListeners();
 
         createPageButtons();
-        pages.setCurrentPageNumber(FIRST_PAGE);
+        component.setCurrentPageNumber(FIRST_PAGE);
 
         if (dataBinderContainsItems()) {
-            pages.updatePageSelections();
+            component.updatePageSelections();
 
             // if items has already loaded we should reload
             // them with maxResult from ComboBox
@@ -143,12 +140,12 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
     @Override
     public int getMaxVisiblePages() {
-        return pages.getMaxVisiblePages();
+        return component.getMaxVisiblePages();
     }
 
     @Override
     public void setMaxVisiblePages(int maxVisiblePages) {
-        pages.setMaxVisiblePages(maxVisiblePages);
+        component.setMaxVisiblePages(maxVisiblePages);
     }
 
     @Override
@@ -178,55 +175,55 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
         dataBinder.setMaxResults(maxResult);
 
         // move to the first page, as page count could change
-        pages.forceSelectPage(FIRST_PAGE);
+        component.forceSelectPage(FIRST_PAGE);
     }
 
     protected void onFirstButtonClick(Button.ClickEvent event) {
-        pages.selectFirstPage();
+        component.selectFirstPage();
     }
 
     protected void onPrevButtonClick(Button.ClickEvent event) {
-        pages.selectPreviousPage();
+        component.selectPreviousPage();
     }
 
     protected void onNextButtonClick(Button.ClickEvent event) {
-        pages.selectNextPage();
+        component.selectNextPage();
     }
 
     protected void onLastButtonClick(Button.ClickEvent event) {
-        pages.selectLastPage();
+        component.selectLastPage();
     }
 
     protected void onCollectionChange(CollectionChangeType changeType) {
-        if (CollectionUtils.isEmpty(pages.getPages())) {
+        if (CollectionUtils.isEmpty(component.getPages())) {
             createPageButtons();
-            pages.setCurrentPageNumber(FIRST_PAGE);
+            component.setCurrentPageNumber(FIRST_PAGE);
         }
 
         int firstResult = dataBinder.getFirstResult();
         int maxResult = dataBinder.getMaxResult();
 
-        if (pages.isFirstResultInRanges(firstResult)) {
+        if (component.isFirstResultInRanges(firstResult)) {
             // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
-            if (pages.getItemsToDisplay() != dataBinder.getMaxResult()) {
+            if (component.getItemsToDisplay() != dataBinder.getMaxResult()) {
                 if (isItemsPerPageVisible()) {
                     setSilentlyItemsPerPageValue(maxResult);
                 }
 
                 createPageButtons();
 
-                pages.setCurrentPageNumberByFirstResult(firstResult);
+                component.setCurrentPageNumberByFirstResult(firstResult);
             } else {
-                // check if current page is corresponds to the dataBinder's firstResult
-                Paging.Page currentPage = pages.getCurrentPage();
+                // check if current page corresponds to the dataSourceProvider's firstResult
+                JmixPage currentPage = component.getCurrentPage();
                 if (currentPage != null
                         && currentPage.getFirstResult() != firstResult) {
-                    pages.setCurrentPageNumberByFirstResult(firstResult);
+                    component.setCurrentPageNumberByFirstResult(firstResult);
                 }
             }
 
-            pages.updatePageNumbers();
-            pages.updatePageSelections();
+            component.updatePageNumbers();
+            component.updatePageSelections();
 
             updateState();
             return;
@@ -248,33 +245,22 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
     protected void createPageButtons() {
         checkDataBound();
-        removePageButtons();
+        component.removePages();
 
         if (!dataBinderContainsItems()) {
             return;
         }
 
-        pages.setDataBinder(dataBinder);
-        pages.createPages(getTotalCount(), getItemsCountToDisplay());
-        pages.setOnAfterDataRefreshListener(this::fireAfterRefreshEvent);
-        pages.setPageChangeListener(this::firePageChangeEvent);
-        pages.setDataRefreshedProvider(this::refreshData);
+        component.createPages(getTotalCount(), getItemsCountToDisplay());
 
-        List<Paging.Page> pageBtns = pages.getPages();
-        for (int i = 0; i < pageBtns.size(); i++) {
-            component.addComponent(pageBtns.get(i).getButton(), 2 + i);
-        }
-    }
-
-    protected void removePageButtons() {
-        for (Paging.Page page : pages.getPages()) {
-            component.removeComponent(page.getButton());
-        }
-        pages.removePages();
+        component.setDataBinder(dataBinder);
+        component.setOnAfterRefreshListener(this::fireAfterRefreshEvent);
+        component.setPageChangeListener(this::firePageChangeEvent);
+        component.setDataRefreshedProvider(this::refreshData);
     }
 
     protected void updateState() {
-        State state = pages.getLastPageNumber() == -1 ? State.FIRST_COMPLETE : getCurrentState();
+        State state = component.getLastPageNumber() == -1 ? State.FIRST_COMPLETE : getCurrentState();
 
         switch (state) {
             case FIRST_COMPLETE:
@@ -305,9 +291,9 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
     }
 
     protected State getCurrentState() {
-        if (pages.getCurrentPageNumber() == FIRST_PAGE) {
-            return pages.getLastPageNumber() != 1 ? State.FIRST_INCOMPLETE : State.FIRST_COMPLETE;
-        } else if (pages.getCurrentPageNumber() == pages.getLastPageNumber()) {
+        if (component.getCurrentPageNumber() == FIRST_PAGE) {
+            return component.getLastPageNumber() != 1 ? State.FIRST_INCOMPLETE : State.FIRST_COMPLETE;
+        } else if (component.getCurrentPageNumber() == component.getLastPageNumber()) {
             return State.LAST;
         }
         return State.MIDDLE;

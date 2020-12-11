@@ -145,30 +145,30 @@ class PaginationTest extends ScreenSpecification {
         def screen = (PaginationConsistenceTestScreen) getScreens().create(PaginationConsistenceTestScreen)
         screen.show()
 
-        when: "Change page from Pagination with SIMPLE mode"
+        when: "Change page from SimplePagination"
         screen.jmixSimplePagination.nextButton.click()
 
-        then: "Pagination with EXTENDED mode should change page accordingly"
-        ((PaginationImpl) screen.pagination).pages.getCurrentPageNumber() == 2
+        then: "Pagination change page accordingly"
+        screen.pagination.unwrap(JmixPagination).getCurrentPageNumber() == 2
 
-        when: "Change ItemsPerPage value from Pagination with SIMPLE mode"
+        when: "Change ItemsPerPage value from SimplePagination"
         screen.jmixSimplePagination.itemsPerPageComboBox.setValue(2)
 
-        then: "Pagination with EXTENDED mode should change value accordingly"
+        then: "Pagination should change value accordingly"
         screen.jmixSimplePagination.itemsPerPageComboBox.getValue() == 2
 
         // vice versa
 
-        when: "Change page from Pagination with EXTENDED mode"
+        when: "Change page from Pagination"
         screen.jmixPagination.nextButton.click()
 
-        then: "Pagination with SIMPLE mode should change page accordingly"
+        then: "SimplePagination should change page accordingly"
         screen.jmixSimplePagination.label.value.contains("3-4")
 
-        when: "Change ItemsPerPage value from Pagination with EXTENDED mode"
+        when: "Change ItemsPerPage value from Pagination"
         screen.jmixPagination.itemsPerPageLayout.itemsPerPageComboBox.setValue(1)
 
-        then: "Pagination with SIMPLE mode should change value accordingly"
+        then: "SimplePagination should change value accordingly"
         screen.jmixSimplePagination.itemsPerPageComboBox.getValue() == 1
     }
 
@@ -180,10 +180,7 @@ class PaginationTest extends ScreenSpecification {
         def screen = (PaginationTestScreen) getScreens().create(PaginationTestScreen)
         screen.show()
 
-        then: """
-              Pagination in EXTENDED mode should have disabled change buttons and
-              ItemsPerPage ComboBox
-              """
+        then: "Pagination should have disabled change buttons and ItemsPerPage ComboBox"
 
         def jmixPagination = screen.paginationWithoutDataSource.unwrap(JmixPagination)
 

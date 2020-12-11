@@ -43,7 +43,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public abstract class AbstractPagination<T extends JmixAbstractPagination> extends AbstractComponent<T>
+public abstract class AbstractPagination<T extends JmixAbstractPagination>
+        extends AbstractComponent<T>
         implements PaginationComponent {
 
     protected enum State {

@@ -22,5 +22,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 @JmixEntity(name = "ui_GroupFilterCondition")
 @SystemLevel
 public class GroupFilterCondition extends LogicalFilterCondition {
+    private static final long serialVersionUID = 382807587518148724L;
 }
 

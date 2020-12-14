@@ -19,6 +19,7 @@ package io.jmix.ui.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
@@ -30,6 +31,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(value = {"parent"})
 public abstract class FilterCondition implements Serializable {
 
+    private static final long serialVersionUID = -2993349561173596671L;
+
     @JmixProperty
     protected String componentId;
 
@@ -40,6 +43,7 @@ public abstract class FilterCondition implements Serializable {
     protected Boolean enabled = true;
 
     @JmixProperty
+    @InstanceName
     protected String caption;
 
     @JmixProperty

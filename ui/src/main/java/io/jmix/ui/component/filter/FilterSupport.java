@@ -68,8 +68,8 @@ public class FilterSupport {
                 .anyMatch(configuration -> configurationCode.equals(configuration.getCode()));
     }
 
-    public void removeFilterConfiguration(Filter.Configuration configuration, Filter filter) {
-        filter.removeConfiguration(configuration);
+    public void removeCurrentFilterConfiguration(Filter filter) {
+        filter.removeConfiguration(filter.getCurrentConfiguration());
     }
 
     public Class<? extends ScreenFragment> getConfigurationFormFragmentClass() {

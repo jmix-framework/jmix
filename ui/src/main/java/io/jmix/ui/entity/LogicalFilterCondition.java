@@ -17,6 +17,7 @@
 package io.jmix.ui.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.component.LogicalFilterComponent;
@@ -29,7 +30,10 @@ import java.util.List;
 @SystemLevel
 public abstract class LogicalFilterCondition extends FilterCondition {
 
+    private static final long serialVersionUID = 5915361115976376590L;
+
     @JmixProperty
+    @InstanceName
     @Convert(converter = GroupFilterOperationConverter.class)
     protected LogicalFilterComponent.Operation operation;
 

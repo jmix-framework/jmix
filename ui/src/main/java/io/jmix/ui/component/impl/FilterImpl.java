@@ -232,6 +232,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
             clearValues();
             updateConditionsLayout();
+            updateSelectConfigurationButton();
         }
     }
 
@@ -284,11 +285,14 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
     @Override
     public void removeConfiguration(Configuration configuration) {
-        if (configuration != getEmptyConfiguration()) {
+        if (configuration != getEmptyConfiguration()
+                && !(configuration instanceof DesignTimeConfiguration)) {
             configurations.remove(configuration);
 
             if (configuration == getCurrentConfiguration()) {
                 setCurrentConfiguration(getEmptyConfiguration());
+            } else {
+                updateSelectConfigurationButton();
             }
         }
     }
@@ -409,12 +413,13 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         }
     }
 
-    protected Button createConditionRemoveButton(PropertyFilter<?> propertyFilter, String removeButtonId) {
-        Button conditionRemoveButton = uiComponents.create(Button.NAME);
+    protected LinkButton createConditionRemoveButton(PropertyFilter<?> propertyFilter, String removeButtonId) {
+        LinkButton conditionRemoveButton = uiComponents.create(LinkButton.NAME);
         conditionRemoveButton.setId(removeButtonId);
         conditionRemoveButton.setIconFromSet(JmixIcon.TIMES);
         conditionRemoveButton.addStyleName(ThemeClassNames.BUTTON_ICON_ONLY);
         conditionRemoveButton.addStyleName(ThemeClassNames.BUTTON_BORDERLESS);
+        conditionRemoveButton.setAlignment(Alignment.MIDDLE_CENTER);
 
         conditionRemoveButton.addClickListener(clickEvent -> {
             removeFilterComponent(propertyFilter);
@@ -453,7 +458,6 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     }
 
     protected void addSelectConfigurationAction(Configuration configuration) {
-        configuration.getCaption();
         Action configurationAction = new BaseAction("filter_select_" + configuration.getCode())
                 .withCaption(configuration.getCaption())
                 .withHandler(actionPerformedEvent -> setCurrentConfiguration(configuration));
@@ -533,7 +537,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         String removeButtonId = removeButtonPrefix + "conditionRemoveButton";
 
         HBoxLayout propertyFilterLayout = ((PropertyFilterImpl<?>) propertyFilter).getComposition();
-        Button removeButton = (Button) propertyFilterLayout.getComponent(removeButtonId);
+        LinkButton removeButton = (LinkButton) propertyFilterLayout.getComponent(removeButtonId);
 
         if (getCurrentConfiguration().isModified(propertyFilter)) {
             // If the removeButton is added to the propertyFilterLayout
@@ -554,6 +558,14 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             if (removeButton != null) {
                 propertyFilterLayout.remove(removeButton);
             }
+        }
+    }
+
+    protected void updateSelectConfigurationButton() {
+        selectConfigurationButton.removeAllActions();
+        initSelectConfigurationButton();
+        for (Configuration configuration : getConfigurations()) {
+            addSelectConfigurationAction(configuration);
         }
     }
 

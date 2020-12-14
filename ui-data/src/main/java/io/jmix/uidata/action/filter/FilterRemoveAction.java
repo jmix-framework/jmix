@@ -66,6 +66,6 @@ public class FilterRemoveAction extends FilterAction {
 
     @Override
     public void execute() {
-        filterSupport.removeFilterConfiguration(filter.getCurrentConfiguration(), filter);
+        filterSupport.removeCurrentFilterConfiguration(filter);
     }
 }

@@ -161,18 +161,12 @@ public class FilterSaveAsAction extends FilterAction {
     protected void collectConfiguration(Filter.Configuration configuration) {
         ((DataFilterSupport) filterSupport).saveFilterConfiguration(configuration);
         filter.addConfiguration(configuration);
-        setFilterCurrentConfiguration(configuration);
-        clearEmptyConfiguration(configuration);
+        setCurrentFilterConfiguration(configuration);
+        filter.getEmptyConfiguration().getRootLogicalFilterComponent().removeAll();
     }
 
-    protected void setFilterCurrentConfiguration(Filter.Configuration configuration) {
+    protected void setCurrentFilterConfiguration(Filter.Configuration configuration) {
         configuration.setModified(false);
         filter.setCurrentConfiguration(configuration);
-    }
-
-    protected void clearEmptyConfiguration(Filter.Configuration configuration) {
-        if (configuration == filter.getEmptyConfiguration()) {
-            configuration.getRootLogicalFilterComponent().removeAll();
-        }
     }
 }

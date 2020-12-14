@@ -68,7 +68,8 @@ public class DataFilterSupport extends FilterSupport {
 
         List<Filter.Configuration> configurations = new ArrayList<>();
         for (FilterConfiguration filterConfiguration : filterConfigurations) {
-            Filter.Configuration configuration = filterConfigurationConverter.toConfiguration(filterConfiguration, filter);
+            Filter.Configuration configuration =
+                    filterConfigurationConverter.toConfiguration(filterConfiguration, filter);
             configurations.add(configuration);
         }
         return configurations;
@@ -84,8 +85,9 @@ public class DataFilterSupport extends FilterSupport {
                         .add(PropertyCondition.equal("componentId", filterComponentId))
                         .add(PropertyCondition.equal("code", configuration.getCode()))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.equal("username", null))
-                                .add(PropertyCondition.equal("username", currentAuthentication.getUser().getUsername()))))
+                                .add(PropertyCondition.equal("username", ""))
+                                .add(PropertyCondition.equal("username",
+                                        currentAuthentication.getUser().getUsername()))))
                 .optional()
                 .orElse(null);
     }
@@ -99,17 +101,18 @@ public class DataFilterSupport extends FilterSupport {
                         .add(PropertyCondition.equal("componentId", filterComponentId))
                         .add(PropertyCondition.equal("code", configurationCode))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.equal("username", null))
-                                .add(PropertyCondition.equal("username", currentAuthentication.getUser().getUsername()))))
+                                .add(PropertyCondition.equal("username", ""))
+                                .add(PropertyCondition.equal("username",
+                                        currentAuthentication.getUser().getUsername()))))
                 .optional()
                 .isPresent();
     }
 
     @Override
-    public void removeFilterConfiguration(Filter.Configuration configuration, Filter filter) {
-        super.removeFilterConfiguration(configuration, filter);
+    public void removeCurrentFilterConfiguration(Filter filter) {
+        super.removeCurrentFilterConfiguration(filter);
 
-        FilterConfiguration filterConfiguration = loadFilterConfiguration(configuration);
+        FilterConfiguration filterConfiguration = loadFilterConfiguration(filter.getCurrentConfiguration());
         if (filterConfiguration != null) {
             dataManager.remove(filterConfiguration);
         }
@@ -119,7 +122,8 @@ public class DataFilterSupport extends FilterSupport {
         FilterConfiguration filterConfiguration;
         FilterConfiguration existedFilterConfiguration = loadFilterConfiguration(configuration);
         if (existedFilterConfiguration != null) {
-            filterConfiguration = filterConfigurationConverter.toFilterConfiguration(configuration, existedFilterConfiguration);
+            filterConfiguration =
+                    filterConfigurationConverter.toFilterConfiguration(configuration, existedFilterConfiguration);
         } else {
             filterConfiguration = filterConfigurationConverter.toFilterConfiguration(configuration);
         }
@@ -132,8 +136,9 @@ public class DataFilterSupport extends FilterSupport {
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("componentId", filterComponentId))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.equal("username", null))
-                                .add(PropertyCondition.equal("username", currentAuthentication.getUser().getUsername()))))
+                                .add(PropertyCondition.equal("username", ""))
+                                .add(PropertyCondition.equal("username",
+                                        currentAuthentication.getUser().getUsername()))))
                 .list();
     }
 }

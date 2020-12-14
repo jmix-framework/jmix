@@ -57,7 +57,7 @@ public class FilterSaveAction extends FilterSaveAsAction {
             openInputDialog();
         } else {
             ((DataFilterSupport) filterSupport).saveFilterConfiguration(configuration);
-            setFilterCurrentConfiguration(configuration);
+            setCurrentFilterConfiguration(configuration);
         }
     }
 }

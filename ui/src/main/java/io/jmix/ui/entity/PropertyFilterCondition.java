@@ -29,6 +29,8 @@ import javax.persistence.Transient;
 @SystemLevel
 public class PropertyFilterCondition extends FilterCondition {
 
+    private static final long serialVersionUID = 486148668136186191L;
+
     @JmixProperty
     protected String property;
 

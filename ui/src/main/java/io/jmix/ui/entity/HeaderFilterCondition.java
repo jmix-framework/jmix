@@ -22,4 +22,5 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 @JmixEntity(name = "ui_HeaderFilterCondition")
 @SystemLevel
 public class HeaderFilterCondition extends FilterCondition {
+    private static final long serialVersionUID = -1421443543250467229L;
 }

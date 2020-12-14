@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.filter.condition;
 
-import io.jmix.core.Messages;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
@@ -29,8 +28,6 @@ import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.filter.FilterConditionsBuilder;
-import io.jmix.ui.component.filter.registration.FilterComponents;
-import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
@@ -55,13 +52,7 @@ import java.util.List;
 public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFilterCondition> {
 
     @Autowired
-    protected LogicalFilterSupport logicalFilterSupport;
-    @Autowired
-    protected FilterComponents filterComponents;
-    @Autowired
     protected FilterConditionsBuilder builder;
-    @Autowired
-    protected Messages messages;
 
     @Autowired
     protected InstanceContainer<GroupFilterCondition> filterConditionDc;

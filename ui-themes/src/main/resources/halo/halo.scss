@@ -88,6 +88,9 @@
 @import "components/pagination/pagination";
 @import "components/simplepagination/simplepagination";
 @import "components/propertyfilter/propertyfilter";
+@import "components/tagpicker/tagpicker";
+@import "components/taglabel/taglabel";
+@import "components/tagcontainer/tagcontainer";
 
 // Application specific
 @import "app/log-control";
@@ -178,6 +181,9 @@
   @include halo-pagination;
   @include halo-simplepagination;
   @include halo-property-filter;
+  @include halo-tagpicker;
+  @include halo-taglabel;
+  @include halo-tagcontainer;
 
   @include halo-cuba-groupbox;
   @include halo-cuba-tokenlist;

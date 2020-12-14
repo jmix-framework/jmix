@@ -14,44 +14,32 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.tokenlistlabel;
+package io.jmix.ui.widget.client.tagpickerlabel;
 
-import io.jmix.ui.widget.JmixTokenListLabel;
 import com.vaadin.client.communication.StateChangeEvent;
-import com.vaadin.client.ui.csslayout.CssLayoutConnector;
+import com.vaadin.client.ui.AbstractComponentConnector;
 import com.vaadin.shared.ui.Connect;
+import io.jmix.ui.widget.JmixTagLabel;
 
-/**
- * Is used for TokenList from compatibility module.
- */
-@Connect(JmixTokenListLabel.class)
-public class JmixTokenListLabelConnector extends CssLayoutConnector {
+@Connect(JmixTagLabel.class)
+public class JmixTagLabelConnector extends AbstractComponentConnector {
 
     @Override
-    public JmixTokenListLabelWidget getWidget() {
-        return (JmixTokenListLabelWidget) super.getWidget();
-    }
-
-    @Override
-    public void init() {
+    protected void init() {
         super.init();
 
-        getWidget().handler = new JmixTokenListLabelWidget.TokenListLabelHandler() {
-            @Override
-            public void remove() {
-                getRpcProxy(JmixTokenListLabelServerRpc.class).removeToken();
-            }
-
-            @Override
-            public void click() {
-                getRpcProxy(JmixTokenListLabelServerRpc.class).itemClick();
-            }
-        };
+        getWidget().setItemClickHandler(() -> getRpcProxy(JmixTagLabelServerRpc.class).itemClick());
+        getWidget().setRemoveItemHandler(() -> getRpcProxy(JmixTagLabelServerRpc.class).removeItem());
     }
 
     @Override
-    public JmixTokenListLabelState getState() {
-        return (JmixTokenListLabelState) super.getState();
+    public JmixTagLabelWidget getWidget() {
+        return (JmixTagLabelWidget) super.getWidget();
+    }
+
+    @Override
+    public JmixTagLabelState getState() {
+        return (JmixTagLabelState) super.getState();
     }
 
     @Override
@@ -62,8 +50,8 @@ public class JmixTokenListLabelConnector extends CssLayoutConnector {
             getWidget().setEditable(getState().editable);
         }
 
-        if (stateChangeEvent.hasPropertyChanged("canOpen")) {
-            getWidget().setCanOpen(getState().canOpen);
+        if (stateChangeEvent.hasPropertyChanged("clickable")) {
+            getWidget().setClickable(getState().clickable);
         }
 
         if (stateChangeEvent.hasPropertyChanged("text")) {

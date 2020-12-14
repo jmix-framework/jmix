@@ -21,10 +21,9 @@ import io.jmix.core.Messages;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.Component;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
-import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.util.OperationResult;
@@ -182,10 +181,9 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
 
     @Override
     public void setLookupComponentMultiSelect(boolean multiSelect) {
-        // LookupComponent<T> lookupComponent = getLookupComponent();
+         LookupComponent<T> lookupComponent = getLookupComponent();
 
-        // todo implement
-        /*if (lookupComponent instanceof Table) {
+        if (lookupComponent instanceof Table) {
             ((Table<T>) lookupComponent).setMultiSelect(multiSelect);
         } else if (lookupComponent instanceof DataGrid) {
             ((DataGrid<T>) lookupComponent).setSelectionMode(multiSelect
@@ -195,6 +193,6 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
             ((Tree<T>) lookupComponent).setSelectionMode(multiSelect
                     ? Tree.SelectionMode.MULTI
                     : Tree.SelectionMode.SINGLE);
-        }*/
+        }
     }
 }

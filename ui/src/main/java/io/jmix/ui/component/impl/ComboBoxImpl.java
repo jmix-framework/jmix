@@ -52,7 +52,7 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
     public static final StyleGenerator NULL_STYLE_GENERATOR = item -> null;
     public static final IconGenerator NULL_ITEM_ICON_GENERATOR = item -> null;
 
-    protected ComboBox.FilterMode filterMode = FilterMode.CONTAINS;
+    protected FilterMode filterMode = FilterMode.CONTAINS;
 
     protected boolean nullOptionVisible = true;
 

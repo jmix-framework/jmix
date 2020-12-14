@@ -247,6 +247,39 @@ public class ScreenBuilders {
     }
 
     /**
+     * Creates a screen builder using {@link TagPicker} component.
+     * <p>
+     * Example of building a lookup screen for setting value to {@link TagPicker}:
+     * <pre>{@code
+     * SomeCustomerListScreen screen = screenBuilders.lookup(customerTagPicker)
+     *         .withScreen(SomeCustomerListScreen.class)
+     *         .build();
+     * }</pre>
+     *
+     * @param field {@link TagPicker}
+     * @param <E>   type of entity
+     * @return instance of lookup builder
+     * @see #lookup(Class, FrameOwner)
+     */
+    public <E> LookupBuilder<E> lookup(TagPicker<E> field) {
+        checkNotNullArgument(field);
+        checkNotNullArgument(field.getFrame());
+
+        FrameOwner frameOwner = field.getFrame().getFrameOwner();
+        Class<E> entityClass;
+        MetaClass metaClass = field.getMetaClass();
+        if (metaClass != null) {
+            entityClass = metaClass.getJavaClass();
+        } else {
+            throw new IllegalStateException(String.format("Component %s is not bound to meta class", field));
+        }
+
+        LookupBuilder<E> builder = new LookupBuilder<>(frameOwner, entityClass, lookupBuilderProcessor::buildLookup);
+        builder.withValuesField(field);
+        return builder;
+    }
+
+    /**
      * Creates a screen builder.
      * <p>
      * Example of building a screen:

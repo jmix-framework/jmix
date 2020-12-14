@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package component.token_list.screen;
+package io.jmix.ui.widget.client.tagpickerlabel;
 
-import io.jmix.ui.component.TokenList;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import test_support.entity.sales.OrderLine;
+import com.vaadin.shared.AbstractComponentState;
 
-@UiController
-@UiDescriptor("token-list-test-screen.xml")
-public class TokenListTestScreen extends Screen {
-    @Autowired
-    public TokenList<OrderLine> tokenList;
+public class JmixTagLabelState extends AbstractComponentState {
+
+    public String text;
+    public boolean editable;
+    public boolean clickable;
 }

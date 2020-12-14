@@ -47,7 +47,8 @@ public class LookupBuilder<E> {
 
     protected String screenId;
     protected ListComponent<E> listComponent;
-    protected HasValue<E> field;
+    protected HasValue field;
+    protected boolean isFieldCollectionValue = false;
 
     public LookupBuilder(LookupBuilder<E> builder) {
         this.entityClass = builder.entityClass;
@@ -112,6 +113,22 @@ public class LookupBuilder<E> {
      */
     public <T extends HasValue<E>> LookupBuilder<E> withField(T field) {
         this.field = field;
+        isFieldCollectionValue = false;
+        return this;
+    }
+
+    /**
+     * Sets the field component with collection value type.
+     * <p>
+     * If the field is set, the framework sets the selected entity to the field after successful lookup.
+     *
+     * @param field field to set
+     * @param <T>   type of field
+     * @return the builder for chaining
+     */
+    public <T extends HasValue<Collection<E>>> LookupBuilder<E> withValuesField(T field) {
+        this.field = field;
+        isFieldCollectionValue = true;
         return this;
     }
 
@@ -228,7 +245,7 @@ public class LookupBuilder<E> {
      * Returns the field component set by {@link #withField(HasValue)}.
      */
     @Nullable
-    public HasValue<E> getField() {
+    public HasValue getField() {
         return field;
     }
 
@@ -266,5 +283,9 @@ public class LookupBuilder<E> {
     public Screen show() {
         return handler.apply(this)
                 .show();
+    }
+
+    protected boolean isFieldCollectionValue() {
+        return isFieldCollectionValue;
     }
 }

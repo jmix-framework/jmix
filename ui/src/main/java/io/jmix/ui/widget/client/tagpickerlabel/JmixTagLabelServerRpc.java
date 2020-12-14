@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.widget.client.tokenlistlabel;
+package io.jmix.ui.widget.client.tagpickerlabel;
 
-import com.vaadin.shared.ui.csslayout.CssLayoutState;
+import com.vaadin.shared.communication.ServerRpc;
 
 /**
- * Is used for TokenList component from compatibility module.
+ * Server RPC for tag label component.
  */
-@Deprecated
-public class JmixTokenListLabelState extends CssLayoutState {
+public interface JmixTagLabelServerRpc extends ServerRpc {
 
-    public String text;
-    public boolean editable;
-    public boolean canOpen;
+    /**
+     * User clicks on close element.
+     */
+    void removeItem();
+
+    /**
+     * User clicks on tag label.
+     */
+    void itemClick();
 }

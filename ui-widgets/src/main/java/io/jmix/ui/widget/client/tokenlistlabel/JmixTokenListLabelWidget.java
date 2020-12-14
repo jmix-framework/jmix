@@ -22,6 +22,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Label;
 import com.vaadin.client.ui.VCssLayout;
 
+/**
+ * Widget is used for TokenList from compatibility module.
+ */
+@Deprecated
 public class JmixTokenListLabelWidget extends VCssLayout {
 
     protected static final String CLOSE_STYLENAME = "c-tokenlist-label-close";

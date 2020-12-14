@@ -72,6 +72,7 @@
 @import "components/timefield/timefield";
 @import "components/resizabletextarea/resizabletextarea";
 @import "components/tokenlist/tokenlist";
+@import "components/taglabel/taglabel";
 @import "components/treedatagrid/treedatagrid";
 @import "components/tree/tree";
 @import "components/twincolumn/twincolumn";
@@ -147,6 +148,8 @@
   @include he-searchselect;
   @include he-pagination;
   @include he-simplepagination;
+
+  @include he-taglabel;
 
   @include he-login-window;
   @include he-main-window;
@@ -512,6 +515,14 @@
 
   --tokenlist-label-text-color: var(--primary-contrast-text-color);
   --tokenlist-label-background-color: var(--primary-color);
+
+  /* TagLabel */
+
+  --taglabel-text-color: var(--primary-contrast-text-color);
+  --taglabel-background-color: var(--primary-color);
+
+  --taglabel-hover-text-color: var(--taglabel-text-color);
+  --taglabel-hover-background-color: var(--primary-color-shade-1);
 
   /* Table */
 

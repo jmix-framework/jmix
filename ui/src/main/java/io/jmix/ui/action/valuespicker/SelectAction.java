@@ -127,7 +127,7 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void setPicker(@Nullable ValuePicker valuePicker) {
-        if (!(valuePicker instanceof ValuesPicker)) {
+        if (valuePicker != null && !(valuePicker instanceof ValuesPicker)) {
             throw new IllegalArgumentException("Incorrect component type. Must be " +
                     "'ValuesPicker' or its inheritors");
         }
@@ -403,6 +403,10 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void execute() {
+        if (valuesPicker == null) {
+            throw new IllegalStateException("Action is not bound to a ValuesPicker");
+        }
+
         if (valuesPicker.getFrame() == null) {
             throw new IllegalStateException("ValuesPicker component is not bound to a frame");
         }

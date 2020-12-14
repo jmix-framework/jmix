@@ -102,7 +102,7 @@ class UiComponentsTest extends ScreenSpecification {
                 PopupButton.NAME,
                 PopupView.NAME,
 
-                TokenList.NAME,
+                TagPicker.NAME,
                 TwinColumn.NAME,
                 ProgressBar.NAME,
                 Pagination.NAME,

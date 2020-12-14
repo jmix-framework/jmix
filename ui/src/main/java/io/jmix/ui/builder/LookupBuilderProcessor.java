@@ -44,9 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static io.jmix.ui.screen.UiControllerUtils.getScreenContext;
@@ -87,16 +85,16 @@ public class LookupBuilderProcessor {
         LookupScreen<E> lookupScreen = (LookupScreen) screen;
 
         if (builder.getField() != null) {
-            HasValue<E> field = builder.getField();
-
+            HasValue field = builder.getField();
             if (field instanceof io.jmix.ui.component.Component.Focusable) {
                 screen.addAfterCloseListener(event -> {
                     // move focus to owner
                     ((io.jmix.ui.component.Component.Focusable) field).focus();
                 });
             }
+
             lookupScreen.setSelectHandler(items ->
-                    handleSelectionWithField(builder, field, items)
+                    handleSelectionWithField(builder, field, items, builder.isFieldCollectionValue())
             );
         }
 
@@ -183,41 +181,57 @@ public class LookupBuilderProcessor {
         return screen;
     }
 
-    @SuppressWarnings("unchecked")
     protected <E> void handleSelectionWithField(@SuppressWarnings("unused") LookupBuilder<E> builder,
-                                                HasValue<E> field, Collection<E> itemsFromLookup) {
+                                                HasValue field,
+                                                Collection<E> itemsFromLookup,
+                                                boolean isCollectionValue) {
         if (itemsFromLookup.isEmpty()) {
             return;
         }
-
         Collection<E> selectedItems = transform(itemsFromLookup, builder);
+        Object newValue = isCollectionValue ? selectedItems : selectedItems.iterator().next();
 
-        E newValue = selectedItems.iterator().next();
-
-        FetchPlan fetchPlanForField = properties.isReloadUnfetchedAttributesFromLookupScreens() && metadataTools.isPersistent(newValue.getClass()) ?
-                getFetchPlanForField(field) :
-                null;
-        if (fetchPlanForField != null && !entityStates.isLoadedWithFetchPlan(newValue, fetchPlanForField)) {
-            newValue = dataManager.load(Id.of(newValue)).fetchPlan(fetchPlanForField).one();
+        FetchPlan fetchPlan = getFetchPlanForField(field);
+        if (fetchPlan != null) {
+            Collection<E> reloadedItems = reloadItemsByFetchPlan(fetchPlan, toCollection(newValue, isCollectionValue));
+            if (!reloadedItems.isEmpty()) {
+                newValue = fromCollection(reloadedItems, isCollectionValue);
+            }
         }
 
-        if (field instanceof EntityComboBox) {
-            EntityComboBox entityComboBox = (EntityComboBox) field;
-            Options options = entityComboBox.getOptions();
-            if (options instanceof EntityOptions) {
-                EntityOptions entityOptions = (EntityOptions) options;
-                if (entityOptions.containsItem(newValue)) {
-                    entityOptions.updateItem(newValue);
+        if (field instanceof OptionsField) {
+            updateFieldOptions((OptionsField) field, toCollection(newValue, isCollectionValue));
+        }
+
+        if (isCollectionValue) {
+            Collection<E> fieldValue = new ArrayList<>(field.getValue() == null
+                    ? Collections.emptyList()
+                    : (Collection<E>) field.getValue());
+
+            Collection<E> itemsToAppend = (Collection<E>) newValue;
+            for (E item : itemsToAppend) {
+                if (!fieldValue.contains(item)) {
+                    fieldValue.add(item);
                 }
             }
+
+            newValue = fieldValue;
         }
 
         // In case of PickerField set the value as if the user had set it
         if (field instanceof SupportsUserAction) {
-            ((SupportsUserAction<E>) field).setValueFromUser((E) newValue);
+            ((SupportsUserAction) field).setValueFromUser(newValue);
         } else {
-            field.setValue((E) newValue);
+            field.setValue(newValue);
         }
+    }
+
+    protected <E> Collection<E> toCollection(Object value, boolean isCollectionValue) {
+        return isCollectionValue ? (Collection<E>) value : Collections.singletonList((E) value);
+    }
+
+    protected <E> Object fromCollection(Collection<E> value, boolean isCollectionValue) {
+        return isCollectionValue ? value : value.iterator().next();
     }
 
     protected <E> void handleSelectionWithContainer(LookupBuilder<E> builder,
@@ -257,9 +271,9 @@ public class LookupBuilderProcessor {
 
         List<E> mergedItems = new ArrayList<>(selectedItems.size());
         FetchPlan viewForCollectionContainer = properties.isReloadUnfetchedAttributesFromLookupScreens() &&
-                collectionDc.getEntityMetaClass() != null && metadataTools.isPersistent(collectionDc.getEntityMetaClass()) ?
-                getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty) :
-                null;
+                collectionDc.getEntityMetaClass() != null && metadataTools.isPersistent(collectionDc.getEntityMetaClass())
+                ? getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty)
+                : null;
         for (E item : selectedItems) {
             if (!collectionDc.containsItem(EntityValues.getId(item))) {
                 if (viewForCollectionContainer != null && !entityStates.isLoadedWithFetchPlan(item, viewForCollectionContainer)) {
@@ -287,20 +301,20 @@ public class LookupBuilderProcessor {
     }
 
     /**
+     * The method evaluates the fetch plan that is used for the entity in the given {@code field}
+     * <p>
      * If the value for a component (e.g. {@link EntityPicker}) is selected from lookup screen then there may be cases
      * when in entities in lookup screen some attributes required in the editor are not loaded.
-     * <p>
-     * The method evaluates the fetch plan that is used for the entity in the given {@code field}
      *
-     * @return a view or null if the fetch plan cannot be evaluated
+     * @return a view or {@code null} if the fetch plan cannot be evaluated
      */
     @Nullable
-    protected <E> FetchPlan getFetchPlanForField(HasValue<E> field) {
+    protected FetchPlan getFetchPlanForField(HasValue field) {
         if (field instanceof HasValueSource) {
             ValueSource valueSource = ((HasValueSource) field).getValueSource();
             if (valueSource instanceof ContainerValueSource) {
                 ContainerValueSource containerValueSource = (ContainerValueSource) valueSource;
-                InstanceContainer<E> container = containerValueSource.getContainer();
+                InstanceContainer container = containerValueSource.getContainer();
                 FetchPlan fetchPlan = container.getFetchPlan();
                 if (fetchPlan != null) {
                     MetaPropertyPath metaPropertyPath = containerValueSource.getMetaPropertyPath();
@@ -350,5 +364,48 @@ public class LookupBuilderProcessor {
             fetchPlan = collectionDc.getFetchPlan();
         }
         return fetchPlan;
+    }
+
+    protected <E> Collection<E> reloadItemsByFetchPlan(FetchPlan fetchPlan, Collection<E> itemsFromLookup) {
+        if (itemsFromLookup.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        E firstItem = itemsFromLookup.iterator().next();
+
+        boolean reloadByFetchPlan = properties.isReloadUnfetchedAttributesFromLookupScreens()
+                && metadataTools.isPersistent(firstItem.getClass());
+
+        Collection<E> reloadedItems = new ArrayList<>(itemsFromLookup.size());
+        if (reloadByFetchPlan) {
+            if (!entityStates.isLoadedWithFetchPlan(firstItem, fetchPlan)) {
+                for (E selectedItem : itemsFromLookup) {
+                    E reloadedItem = dataManager.load(Id.of(selectedItem)).fetchPlan(fetchPlan).one();
+                    reloadedItems.add(reloadedItem);
+                }
+            }
+        }
+        return reloadedItems;
+    }
+
+    /**
+     * Updates entities in options if they contain selected item from lookup screen.
+     *
+     * @param field options field to update
+     * @param items selected entities from lookup screen to update options in field
+     * @param <E>   entity type
+     */
+    @SuppressWarnings("rawtypes")
+    public <E> void updateFieldOptions(OptionsField field, Collection<E> items) {
+        Options options = field.getOptions();
+
+        if (options instanceof EntityOptions) {
+            EntityOptions entityOptions = (EntityOptions) options;
+            for (E newItem : items) {
+                if (entityOptions.containsItem(newItem)) {
+                    entityOptions.updateItem(newItem);
+                }
+            }
+        }
     }
 }

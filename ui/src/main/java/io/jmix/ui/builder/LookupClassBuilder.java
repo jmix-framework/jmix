@@ -78,6 +78,12 @@ public class LookupClassBuilder<E, S extends Screen & LookupScreen<E>> extends L
     }
 
     @Override
+    public <T extends HasValue<Collection<E>>> LookupClassBuilder<E, S> withValuesField(T field) {
+        super.withValuesField(field);
+        return this;
+    }
+
+    @Override
     public LookupBuilder<E> withScreenId(String screenId) {
         throw new IllegalStateException("LookupClassBuilder does not support screenId");
     }

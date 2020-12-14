@@ -28,7 +28,8 @@ import java.util.function.Predicate;
  * @param <V> type of options and value
  */
 public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered,
-        Component.Focusable, HasOptionStyleProvider<V>, HasOptionIconProvider<V>, HasOptionImageProvider<V> {
+        Component.Focusable, HasOptionStyleProvider<V>, HasOptionIconProvider<V>, HasOptionImageProvider<V>,
+        HasFilterMode {
 
     String NAME = "comboBox";
 
@@ -54,9 +55,6 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @param nullOption the caption to set, not {@code null}
      */
     void setNullSelectionCaption(String nullOption);
-
-    FilterMode getFilterMode();
-    void setFilterMode(FilterMode mode);
 
     /**
      * @return true if text input allowed
@@ -179,11 +177,5 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
         public String getSearchString() {
             return searchString;
         }
-    }
-
-    enum FilterMode {
-        NO,
-        STARTS_WITH,
-        CONTAINS
     }
 }

@@ -119,7 +119,7 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(PopupButton.NAME, PopupButtonImpl.class);
         classes.put(PopupView.NAME, PopupViewImpl.class);
 
-        classes.put(TokenList.NAME, WebTokenList.class);
+        classes.put(TagPicker.NAME, TagPickerImpl.class);
         classes.put(TwinColumn.NAME, TwinColumnImpl.class);
         classes.put(ProgressBar.NAME, ProgressBarImpl.class);
         classes.put(Pagination.NAME, PaginationImpl.class);

@@ -23,6 +23,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Is used for TokenList from compatibility module.
+ */
+@Deprecated
 public class JmixTokenListLabel extends CssLayout {
 
     protected static final String LABEL_STYLENAME = "c-tokenlist-label";

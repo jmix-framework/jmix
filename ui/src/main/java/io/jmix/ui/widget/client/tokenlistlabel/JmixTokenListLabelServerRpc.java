@@ -18,6 +18,10 @@ package io.jmix.ui.widget.client.tokenlistlabel;
 
 import com.vaadin.shared.communication.ServerRpc;
 
+/**
+ * Is used for TokenList from compatibility module.
+ */
+@Deprecated
 public interface JmixTokenListLabelServerRpc extends ServerRpc {
     void removeToken();
     void itemClick();

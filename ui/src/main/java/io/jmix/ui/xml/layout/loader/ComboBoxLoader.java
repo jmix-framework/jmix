@@ -21,6 +21,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.HasFilterMode;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
@@ -133,7 +134,7 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
     protected void loadFilterMode(ComboBox component, Element element) {
         String filterMode = element.attributeValue("filterMode");
         if (!StringUtils.isEmpty(filterMode)) {
-            component.setFilterMode(ComboBox.FilterMode.valueOf(filterMode));
+            component.setFilterMode(HasFilterMode.FilterMode.valueOf(filterMode));
         }
     }
 }

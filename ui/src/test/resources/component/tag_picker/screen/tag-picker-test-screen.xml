@@ -18,19 +18,36 @@
     <data>
         <instance id="orderDc"
                   class="test_support.entity.sales.Order">
-            <loader/>
-            <collection id="orderLinesDc" property="orderLines"/>
             <fetchPlan extends="_local">
-                <property name="orderLines" fetchPlan="_local"/>
+                <property name="orderLines"/>
             </fetchPlan>
+            <collection id="orderLinesDc" property="orderLines"/>
+            <loader/>
         </instance>
+        <collection id="optOrderLinesDc"
+                    class="test_support.entity.sales.OrderLine">
+            <fetchPlan extends="_local">
+                <property name="order" fetchPlan="_instance_name"/>
+            </fetchPlan>
+            <loader>
+                <query>select e from test_OrderLine e</query>
+            </loader>
+        </collection>
     </data>
-
-    <layout spacing="true">
-        <tokenList id="tokenList"
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout>
+        <tagPicker id="entityTagPicker"
                    dataContainer="orderDc"
                    property="orderLines">
-            <lookup/>
-        </tokenList>
+            <actions>
+                <action id="lookup" type="tag_lookup"/>
+                <action id="clear" type="value_clear"/>
+            </actions>
+        </tagPicker>
+        <tagPicker id="requiredTagPicker"
+                   required="true"/>
+        <tagPicker id="tagPicker"/>
     </layout>
 </window>

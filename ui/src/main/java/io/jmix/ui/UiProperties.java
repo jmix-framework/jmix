@@ -313,7 +313,7 @@ public class UiProperties {
     }
 
     /**
-     * If true, then LookupBuilder and TokenList will reload entity after it is selected from lookup window if the selected entity doesn't contain all
+     * If true, then LookupBuilder will reload entity after it is selected from lookup window if the selected entity doesn't contain all
      * required entity attributes
      */
     public boolean isReloadUnfetchedAttributesFromLookupScreens() {

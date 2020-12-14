@@ -17,13 +17,12 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.ui.component.ValuesPicker;
+import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.widget.JmixPickerField;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class ValuesPickerImpl<V> extends ValuePickerImpl<Collection<V>> implements ValuesPicker<V> {
 
@@ -44,12 +43,11 @@ public class ValuesPickerImpl<V> extends ValuePickerImpl<Collection<V>> implemen
     protected void setValueInternal(@Nullable Collection<V> value, boolean userOriginated) {
         Collection<V> oldValue = getOldValue(value);
 
-        oldValue = new ArrayList<>(oldValue != null
-                ? oldValue
-                : Collections.emptyList());
+        oldValue = convertToModel(oldValue);
 
         setValueToPresentation(convertToPresentation(value));
 
+        value = convertToModel(value);
         this.internalValue = value;
 
         fireValueChange(oldValue, value, userOriginated);
@@ -61,6 +59,33 @@ public class ValuesPickerImpl<V> extends ValuePickerImpl<Collection<V>> implemen
         return equalCollections(newValue, internalValue)
                 ? component.getValue()
                 : internalValue;
+    }
+
+    @Override
+    protected List<V> convertToPresentation(@Nullable Collection<V> modelValue) throws ConversionException {
+        if (modelValue instanceof List) {
+            return (List<V>) modelValue;
+        }
+        return modelValue == null
+                ? Collections.emptyList()
+                : new ArrayList<>(modelValue);
+    }
+
+    @Override
+    protected Collection<V> convertToModel(@Nullable Collection<V> componentRawValue) throws ConversionException {
+        if (valueBinding != null) {
+            Class<?> collectionType = valueBinding.getSource().getType();
+
+            if (Set.class.isAssignableFrom(collectionType)) {
+                return CollectionUtils.isEmpty(componentRawValue)
+                        ? Collections.emptySet()
+                        : new LinkedHashSet<>(componentRawValue);
+            }
+        }
+
+        return CollectionUtils.isEmpty(componentRawValue)
+                ? Collections.emptyList()
+                : new ArrayList<>(componentRawValue);
     }
 
     @Override

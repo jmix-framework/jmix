@@ -20,7 +20,10 @@ import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
-import io.jmix.ui.*;
+import io.jmix.ui.Dialogs;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ActionType;
@@ -32,12 +35,10 @@ import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 @ActionType(ChangePasswordAction.ID)
@@ -45,14 +46,10 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
     public static final String ID = "changePassword";
 
-    protected Dialogs.InputDialogBuilder inputDialogBuilder;
     protected UiComponents uiComponents;
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
     // Set default caption only once
-    protected boolean captionInitialized = false;
     protected boolean currentPasswordRequired = false;
     protected PasswordEncoder passwordEncoder;
-    protected UiEventPublisher uiEventPublisher;
     protected Messages messages;
     protected UserManager userManager;
     protected Notifications notifications;
@@ -77,11 +74,6 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     }
 
     @Autowired
-    public void setUiEventPublisher(UiEventPublisher uiEventPublisher) {
-        this.uiEventPublisher = uiEventPublisher;
-    }
-
-    @Autowired
     public void setNotifications(Notifications notifications) {
         this.notifications = notifications;
     }
@@ -103,13 +95,6 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
     public void setCurrentPasswordRequired(boolean currentPasswordRequired) {
         this.currentPasswordRequired = currentPasswordRequired;
-    }
-
-    @Override
-    public void setCaption(@Nullable String caption) {
-        super.setCaption(caption);
-
-        this.captionInitialized = true;
     }
 
     @Override

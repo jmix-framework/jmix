@@ -89,7 +89,9 @@ public class UiProperties {
     Integer defaultMaxFetchSize;
     Map<String, Integer> entityPageSize;
     Map<String, Integer> entityMaxFetchSize;
-    boolean propertyFilterAutoApply;
+    boolean genericFilterAutoApply;
+    int genericFilterPropertiesHierarchyDepth;
+    int genericFilterColumnsCount;
     int jmxConsoleMBeanOperationTimeoutSec;
     String uniqueConstraintViolationPattern;
 
@@ -150,7 +152,9 @@ public class UiProperties {
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityPageSize,
             @Nullable Map<String, Integer> entityMaxFetchSize,
-            @DefaultValue("true") boolean propertyFilterAutoApply,
+            @DefaultValue("true") boolean genericFilterAutoApply,
+            @DefaultValue("2") int genericFilterPropertiesHierarchyDepth,
+            @DefaultValue("3") int genericFilterColumnsCount,
             @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
             @Nullable String uniqueConstraintViolationPattern) {
         this.testMode = testMode;
@@ -209,7 +213,9 @@ public class UiProperties {
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
-        this.propertyFilterAutoApply = propertyFilterAutoApply;
+        this.genericFilterAutoApply = genericFilterAutoApply;
+        this.genericFilterPropertiesHierarchyDepth = genericFilterPropertiesHierarchyDepth;
+        this.genericFilterColumnsCount = genericFilterColumnsCount;
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
     }
@@ -510,8 +516,16 @@ public class UiProperties {
     /**
      * @return default value for the autoApply attribute of the {@link io.jmix.ui.component.PropertyFilter} component
      */
-    public boolean isPropertyFilterAutoApply() {
-        return propertyFilterAutoApply;
+    public boolean isGenericFilterAutoApply() {
+        return genericFilterAutoApply;
+    }
+
+    public int getGenericFilterPropertiesHierarchyDepth() {
+        return genericFilterPropertiesHierarchyDepth;
+    }
+
+    public int getGenericFilterColumnsCount() {
+        return genericFilterColumnsCount;
     }
 
     /**

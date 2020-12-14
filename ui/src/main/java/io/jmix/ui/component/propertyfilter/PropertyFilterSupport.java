@@ -34,7 +34,12 @@ import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
 import org.springframework.stereotype.Component;
 
-import java.time.*;
+import javax.annotation.Nullable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -72,7 +77,28 @@ public class PropertyFilterSupport {
     }
 
     /**
-     * Sets default caption to the passed {@link PropertyFilter}.
+     * Returns the prefix for id of {@link PropertyFilter}. This prefix used for internal
+     * {@link PropertyFilter} components.
+     *
+     * @param id       an id of property filter
+     * @param property a property
+     * @return a prefix
+     */
+    public String getPropertyFilterPrefix(@Nullable String id, String property) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (id != null) {
+            stringBuilder.append(id);
+        } else {
+            stringBuilder.append("propertyFilter_");
+            stringBuilder.append(property);
+        }
+        stringBuilder.append("_");
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Returns default caption for {@link PropertyFilter}.
      * <p>
      * Default caption consist of the related entity property caption and the operation caption (if the operation
      * caption is configured to be visible), e.g. "Last name contains".
@@ -149,10 +175,16 @@ public class PropertyFilterSupport {
         return getAvailableOperations(mpp);
     }
 
-    public HasValue generateValueField(MetaClass metaClass, String property, Operation operation) {
+    public HasValue generateValueComponent(MetaClass metaClass,
+                                           String property,
+                                           Operation operation,
+                                           @Nullable String ownerId) {
         ComponentGenerationContext context =
                 new PropertyFilterComponentGenerationContext(metaClass, property, operation);
         context.setTargetClass(PropertyFilter.class);
+
+        HasValue valueComponent = ((HasValue) uiComponentsGenerator.generate(context));
+        valueComponent.setId(getPropertyFilterPrefix(ownerId, property) + "valueComponent");
 
         return ((HasValue) uiComponentsGenerator.generate(context));
     }
@@ -185,6 +217,46 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.IS_NULL;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
+        }
+    }
+
+    public Operation fromPropertyConditionOperation(String conditionOperation) {
+        switch (conditionOperation) {
+            case PropertyCondition.Operation.EQUAL:
+                return EQUAL;
+            case PropertyCondition.Operation.NOT_EQUAL:
+                return NOT_EQUAL;
+            case PropertyCondition.Operation.GREATER:
+                return GREATER;
+            case PropertyCondition.Operation.GREATER_OR_EQUAL:
+                return GREATER_OR_EQUAL;
+            case PropertyCondition.Operation.LESS:
+                return LESS;
+            case PropertyCondition.Operation.LESS_OR_EQUAL:
+                return LESS_OR_EQUAL;
+            case PropertyCondition.Operation.CONTAINS:
+                return CONTAINS;
+            case PropertyCondition.Operation.NOT_CONTAINS:
+                return NOT_CONTAINS;
+            case PropertyCondition.Operation.STARTS_WITH:
+                return STARTS_WITH;
+            case PropertyCondition.Operation.ENDS_WITH:
+                return ENDS_WITH;
+            case PropertyCondition.Operation.IS_NOT_NULL:
+                return IS_SET;
+            case PropertyCondition.Operation.IS_NULL:
+                return IS_NOT_SET;
+            default:
+                throw new IllegalArgumentException("Unknown condition operation: " + conditionOperation);
+        }
+    }
+
+    public String getValueComponentName(HasValue<?> valueComponent) {
+        try {
+            return (String) valueComponent.getClass().getField("NAME").get(null);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new IllegalArgumentException(String.format("Class '%s' doesn't have NAME field",
+                    valueComponent.getClass().getName()));
         }
     }
 

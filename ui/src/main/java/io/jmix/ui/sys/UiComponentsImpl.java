@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.ParameterizedTypeReference;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -114,7 +115,6 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(Calendar.NAME, CalendarImpl.class);
         classes.put(Image.NAME, ImageImpl.class);
         classes.put(BrowserFrame.NAME, BrowserFrameImpl.class);
-//        classes.put(Filter.NAME, WebFilter.class); // todo filter
         classes.put(ButtonsPanel.NAME, ButtonsPanelImpl.class);
         classes.put(PopupButton.NAME, PopupButtonImpl.class);
         classes.put(PopupView.NAME, PopupViewImpl.class);
@@ -131,8 +131,11 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(Form.NAME, FormImpl.class);
 
         classes.put(EntityLinkField.NAME, EntityLinkFieldImpl.class);
-        classes.put(PropertyFilter.NAME, PropertyFilterImpl.class);
         classes.put(JavaScriptComponent.NAME, JavaScriptComponentImpl.class);
+
+        classes.put(Filter.NAME, FilterImpl.class);
+        classes.put(GroupFilter.NAME, GroupFilterImpl.class);
+        classes.put(PropertyFilter.NAME, PropertyFilterImpl.class);
 
         /* Main window components */
 
@@ -179,12 +182,7 @@ public class UiComponentsImpl implements UiComponents {
     public <T extends Component> T create(Class<T> type) {
         String name = names.get(type);
         if (name == null) {
-            java.lang.reflect.Field nameField;
-            try {
-                nameField = type.getField("NAME");
-                name = (String) nameField.get(null);
-            } catch (NoSuchFieldException | IllegalAccessException ignore) {
-            }
+            name = getComponentName(type);
             if (name == null)
                 throw new DevelopmentException(String.format("Class '%s' doesn't have NAME field", type.getName()));
             else
@@ -207,6 +205,34 @@ public class UiComponentsImpl implements UiComponents {
             }
         }
         return t;
+    }
+
+    @Override
+    public boolean isComponentRegistered(String name) {
+        return classes.containsKey(name);
+    }
+
+    @Override
+    public boolean isComponentRegistered(Class<?> type) {
+        String name = names.get(type);
+        if (name != null) {
+            return true;
+        }
+
+        name = getComponentName(type);
+
+        return name != null && isComponentRegistered(name);
+    }
+
+    @Nullable
+    protected String getComponentName(Class<?> type) {
+        java.lang.reflect.Field nameField;
+        try {
+            nameField = type.getField("NAME");
+            return (String) nameField.get(null);
+        } catch (NoSuchFieldException | IllegalAccessException ignore) {
+        }
+        return null;
     }
 
     protected void autowireContext(Component instance) {

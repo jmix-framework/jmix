@@ -20,6 +20,8 @@ import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.formatter.Formatter;
 
 import javax.annotation.Nullable;
@@ -48,7 +50,14 @@ public class CaptionAdapter implements Formatter<Object> {
 
         if (captionProperty != null) {
 
-            if (metadata.getClass(entity).getPropertyPath(captionProperty) == null) {
+            MetaClass entityMetaClass;
+            if (entity instanceof KeyValueEntity) {
+                entityMetaClass = ((KeyValueEntity) entity).getInstanceMetaClass();
+            } else {
+                entityMetaClass = metadata.getClass(entity);
+            }
+
+            if (entityMetaClass.getPropertyPath(captionProperty) == null) {
                 throw new IllegalArgumentException(String.format("Couldn't find property with name '%s'", captionProperty));
             }
 

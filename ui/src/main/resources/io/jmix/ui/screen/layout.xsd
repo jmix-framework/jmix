@@ -1054,6 +1054,37 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="groupFilterOperation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="AND"/>
+            <xs:enumeration value="OR"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="propertyFilterCaptionPosition">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="TOP"/>
+            <xs:enumeration value="LEFT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="propertyFilterOperation">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EQUAL"/>
+            <xs:enumeration value="NOT_EQUAL"/>
+            <xs:enumeration value="GREATER"/>
+            <xs:enumeration value="GREATER_OR_EQUAL"/>
+            <xs:enumeration value="LESS"/>
+            <xs:enumeration value="LESS_OR_EQUAL"/>
+            <xs:enumeration value="CONTAINS"/>
+            <xs:enumeration value="NOT_CONTAINS"/>
+            <xs:enumeration value="STARTS_WITH"/>
+            <xs:enumeration value="ENDS_WITH"/>
+            <xs:enumeration value="IS_SET"/>
+            <xs:enumeration value="IS_NOT_SET"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- Interfaces -->
 
     <xs:attributeGroup name="hasId">
@@ -2850,71 +2881,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- Filter -->
-    <xs:complexType name="filterComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="properties" minOccurs="0">
-                        <xs:complexType>
-                            <xs:attribute name="include" type="xs:string" use="required"/>
-                            <xs:attribute name="exclude" type="xs:string"/>
-                            <xs:attribute name="excludeProperties" type="xs:string"/>
-                            <xs:attribute name="excludeRecursively" type="xs:boolean"/>
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
-                        <xs:complexType>
-                            <xs:attribute name="name" type="xs:string" use="required"/>
-                            <xs:attribute name="caption" type="resourceString"/>
-                            <xs:attribute name="paramWhere" type="xs:string"/>
-                            <xs:attribute name="paramView" type="xs:string"/>
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="custom" minOccurs="0" maxOccurs="unbounded">
-                        <xs:complexType mixed="true">
-                            <xs:attribute name="name" type="xs:string" use="required"/>
-                            <xs:attribute name="caption" type="resourceString"/>
-                            <xs:attribute name="paramClass" type="xs:string"/>
-                            <xs:attribute name="inExpr" type="xs:boolean"/>
-                            <xs:attribute name="join" type="xs:string"/>
-                            <xs:attribute name="paramWhere" type="xs:string"/>
-                            <xs:attribute name="paramView" type="xs:string"/>
-                            <xs:attribute name="operatorType" type="operatorType"/>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-
-                <xs:attributeGroup ref="hasDatasource"/>
-
-                <xs:attribute name="margin" type="xs:string"/>
-
-                <xs:attribute name="dataLoader" type="xs:string"/>
-                <xs:attribute name="applyTo" type="xs:string"/>
-                <xs:attribute name="useMaxResults" type="xs:boolean"/>
-                <xs:attribute name="textMaxResults" type="xs:boolean"/>
-                <xs:attribute name="manualApplyRequired" type="xs:boolean"/>
-                <xs:attribute name="editable" type="xs:boolean"/>
-                <xs:attribute name="folderActionsEnabled" type="xs:boolean"/>
-                <xs:attribute name="columnsCount" type="xs:int"/>
-                <xs:attribute name="collapsable" type="xs:boolean"/>
-                <xs:attribute name="collapsed" type="xs:boolean"/>
-                <xs:attribute name="defaultMode">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="generic"/>
-                            <xs:enumeration value="fts"/>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="modeSwitchVisible" type="xs:boolean"/>
-                <xs:attribute name="borderVisible" type="xs:boolean"/>
-                <xs:attribute name="controlsLayoutTemplate" type="xs:string"/>
-                <xs:attribute name="windowCaptionUpdateEnabled" type="xs:boolean"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- FieldGroup.FieldConfig -->
     <xs:complexType name="fieldGroupField">
         <xs:sequence>
@@ -4074,8 +4040,6 @@
                 <xs:element name="simplePagination" type="simplePaginationComponent"/>
                 <xs:element name="calendar" type="calendarComponent"/>
 
-                <xs:element name="filter" type="filterComponent"/>
-
                 <xs:element name="fieldGroup" type="fieldGroupComponent"/>
                 <xs:element name="tagPicker" type="tagPickerComponent"/>
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
@@ -4083,6 +4047,8 @@
                 <xs:element name="bulkEditor" type="bulkEditorComponent"/>
 
                 <xs:element name="form" type="formComponent"/>
+
+                <xs:element name="filter" type="filterComponent"/>
                 <xs:element name="propertyFilter" type="propertyFilterComponent"/>
 
                 <xs:element name="capsLockIndicator" type="capsLockIndicatorComponent"/>
@@ -4163,49 +4129,111 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="propertyFilterComponent">
+    <!-- Filter -->
+    <xs:complexType name="filterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="actions" minOccurs="0" type="componentActions"/>
+                    <xs:element name="conditions" minOccurs="0" type="filterConditions"/>
+                    <xs:element name="configurations" minOccurs="0" type="filterConfigurations"/>
+                    <xs:element name="properties" minOccurs="0">
+                        <xs:complexType>
+                            <xs:attribute name="include" type="xs:string" use="required"/>
+                            <xs:attribute name="exclude" type="xs:string"/>
+                            <xs:attribute name="excludeProperties" type="xs:string"/>
+                            <xs:attribute name="excludeRecursively" type="xs:boolean"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+
+                <xs:attributeGroup ref="hasContextHelp"/>
+
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+                <xs:attribute name="autoApply" type="xs:boolean"/>
+                <xs:attribute name="collapsable" type="xs:boolean"/>
+                <xs:attribute name="collapsed" type="xs:boolean"/>
+                <xs:attribute name="columnsCount" type="xs:int"/>
+
+                <xs:attribute name="margin" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="filterConditions">
+        <xs:sequence>
+            <xs:element name="groupFilter" type="groupFilterComponent" minOccurs="0"/>
+            <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="filterConfigurations">
+        <xs:sequence>
+            <xs:element name="configuration" type="filterConfiguration"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Filter.Configuration -->
+    <xs:complexType name="filterConfiguration">
+        <xs:sequence>
+            <xs:element name="groupFilter" type="groupFilterComponent" minOccurs="0"/>
+            <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="caption" type="resourceString"/>
+        <xs:attribute name="code" type="xs:string" use="required"/>
+        <xs:attribute name="showOnLayout" type="xs:boolean"/>
+        <xs:attribute name="operation" type="groupFilterOperation"/>
+    </xs:complexType>
+
+    <!-- GroupFilter -->
+    <xs:complexType name="groupFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="baseComponent">
+                <xs:sequence>
+                    <xs:element name="groupFilter" type="groupFilterComponent" minOccurs="0"/>
+                    <xs:element name="propertyFilter" type="basePropertyFilterComponent" minOccurs="0"/>
+                </xs:sequence>
+                <xs:attribute name="operation" type="groupFilterOperation" use="required"/>
+                <xs:attribute name="operationCaptionVisible" type="xs:boolean"/>
+                <xs:attribute name="columnsCount" type="xs:int"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- PropertyFilter for Filter-->
+    <xs:complexType name="basePropertyFilterComponent">
         <xs:complexContent>
             <xs:extension base="baseComponent">
                 <xs:sequence>
                     <xs:group ref="layoutOrComponent"/>
                 </xs:sequence>
-                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
+
+                <xs:attributeGroup ref="hasTabIndex"/>
+                <xs:attributeGroup ref="hasEditable"/>
+                <xs:attributeGroup ref="hasRequirements"/>
+                <xs:attributeGroup ref="hasContextHelp"/>
+
                 <xs:attribute name="property" type="xs:string" use="required"/>
                 <xs:attribute name="operation" type="propertyFilterOperation" use="required"/>
                 <xs:attribute name="operationEditable" type="xs:boolean"/>
                 <xs:attribute name="operationCaptionVisible" type="xs:boolean"/>
                 <xs:attribute name="captionPosition" type="propertyFilterCaptionPosition"/>
+                <xs:attribute name="parameterName" type="xs:string"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- PropertyFilter -->
+    <xs:complexType name="propertyFilterComponent">
+        <xs:complexContent>
+            <xs:extension base="basePropertyFilterComponent">
+                <xs:attribute name="dataLoader" type="xs:string" use="required"/>
                 <xs:attribute name="captionWidth" type="xs:string"/>
                 <xs:attribute name="autoApply" type="xs:boolean"/>
-                <xs:attribute name="parameterName" type="xs:string"/>
 
                 <xs:attributeGroup ref="hasEditable"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
-    <xs:simpleType name="propertyFilterCaptionPosition">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="TOP"/>
-            <xs:enumeration value="LEFT"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="propertyFilterOperation">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="EQUAL"/>
-            <xs:enumeration value="NOT_EQUAL"/>
-            <xs:enumeration value="GREATER"/>
-            <xs:enumeration value="GREATER_OR_EQUAL"/>
-            <xs:enumeration value="LESS"/>
-            <xs:enumeration value="LESS_OR_EQUAL"/>
-            <xs:enumeration value="CONTAINS"/>
-            <xs:enumeration value="NOT_CONTAINS"/>
-            <xs:enumeration value="STARTS_WITH"/>
-            <xs:enumeration value="ENDS_WITH"/>
-            <xs:enumeration value="IS_SET"/>
-            <xs:enumeration value="IS_NOT_SET"/>
-        </xs:restriction>
-    </xs:simpleType>
 
 </xs:schema>

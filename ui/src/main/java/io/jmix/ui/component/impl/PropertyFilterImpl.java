@@ -55,9 +55,9 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
     protected String icon;
 
     protected CaptionPosition captionPosition = CaptionPosition.LEFT;
-    protected PropertyCondition propertyCondition = new PropertyCondition();
+    protected PropertyCondition queryCondition = new PropertyCondition();
 
-    protected boolean autoApply;
+    protected boolean autoApply = true;
 
     protected Operation operation;
     protected boolean operationEditable = false;
@@ -109,7 +109,8 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
     protected Label<String> createCaptionLabel() {
         Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
-
+        String prefix = propertyFilterSupport.getPropertyFilterPrefix(getId(), getProperty());
+        label.setId(prefix + "captionLabel");
         label.setAlignment(Alignment.MIDDLE_LEFT);
         label.setWidth(captionWidth);
         label.setValue(caption);
@@ -121,6 +122,8 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
     protected PopupButton createOperationSelector() {
         PopupButton operationSelector = uiComponents.create(PopupButton.class);
+        String prefix = propertyFilterSupport.getPropertyFilterPrefix(getId(), getProperty());
+        operationSelector.setId(prefix + "operationSelector");
         operationSelector.addStyleName(POPUP_BUTTON_NO_POPUP_INDICATOR);
         operationSelector.setAlignment(getChildAlignment());
 
@@ -172,7 +175,7 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
         }
 
         if (rootCondition instanceof LogicalCondition) {
-            ((LogicalCondition) rootCondition).add(propertyCondition);
+            ((LogicalCondition) rootCondition).add(queryCondition);
         }
 
         initOperationSelectorActions(operationSelector);
@@ -180,16 +183,16 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
     @Override
     public String getProperty() {
-        return propertyCondition.getProperty();
+        return queryCondition.getProperty();
     }
 
     @Override
     public void setProperty(String property) {
         //noinspection ConstantConditions
-        checkState(this.propertyCondition.getProperty() == null, "Property has already been initialized");
+        checkState(this.queryCondition.getProperty() == null, "Property has already been initialized");
         checkNotNullArgument(property);
 
-        this.propertyCondition.setProperty(property);
+        this.queryCondition.setProperty(property);
 
         initOperationSelectorActions(operationSelector);
     }
@@ -209,7 +212,7 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
     }
 
     protected void setOperationInternal(Operation operation) {
-        propertyCondition.setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));
+        queryCondition.setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));
 
         if (operationSelector != null) {
             operationSelector.setCaption(getOperationCaption(operation));
@@ -224,27 +227,32 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
             //noinspection ConstantConditions
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
-                HasValue newValueComponent = propertyFilterSupport.generateValueField(metaClass, getProperty(), operation);
+                HasValue newValueComponent = propertyFilterSupport.generateValueComponent(metaClass,
+                        getProperty(), operation, getId());
                 setValueComponent(newValueComponent);
             }
         }
 
+        Operation prevOperation = this.operation != null ? this.operation : operation;
         this.operation = operation;
+
+        OperationChangeEvent operationChangeEvent = new OperationChangeEvent(this, operation, prevOperation);
+        publish(OperationChangeEvent.class, operationChangeEvent);
     }
 
     @Override
     public String getParameterName() {
-        return this.propertyCondition.getParameterName();
+        return this.queryCondition.getParameterName();
     }
 
     @Override
     public void setParameterName(String parameterName) {
         //noinspection ConstantConditions
-        checkState(this.propertyCondition.getParameterName() == null,
+        checkState(this.queryCondition.getParameterName() == null,
                 "Parameter name has already been initialized");
         checkNotNullArgument(parameterName);
 
-        this.propertyCondition.setParameterName(parameterName);
+        this.queryCondition.setParameterName(parameterName);
     }
 
     @Override
@@ -277,8 +285,9 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
                 : Alignment.TOP_LEFT;
     }
 
-    public PropertyCondition getPropertyCondition() {
-        return propertyCondition;
+    @Override
+    public PropertyCondition getQueryCondition() {
+        return queryCondition;
     }
 
     @Nullable
@@ -324,7 +333,7 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
     protected void onValueChanged(ValueChangeEvent<V> valueChangeEvent) {
         V value = valueChangeEvent.getValue();
-        propertyCondition.setParameterValue(value);
+        queryCondition.setParameterValue(value);
 
         if (autoApply) {
             dataLoader.load();
@@ -340,6 +349,11 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
     @Override
     public Subscription addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
         return getEventHub().subscribe(ValueChangeEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    public Subscription addOperationChangeListener(Consumer<OperationChangeEvent> listener) {
+        return getEventHub().subscribe(OperationChangeEvent.class, listener);
     }
 
     @Override
@@ -510,6 +524,90 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
         if (operationSelector != null) {
             operationSelector.setTabIndex(tabIndex);
+        }
+    }
+
+    @Override
+    public boolean isRequired() {
+        return valueComponent instanceof Requirable
+                && ((Requirable) valueComponent).isRequired();
+    }
+
+    @Override
+    public void setRequired(boolean required) {
+        if (valueComponent instanceof Requirable) {
+            ((Requirable) valueComponent).setRequired(required);
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getRequiredMessage() {
+        return valueComponent instanceof Requirable
+                ? ((Requirable) valueComponent).getRequiredMessage()
+                : null;
+    }
+
+    @Override
+    public void setRequiredMessage(@Nullable String msg) {
+        if (valueComponent instanceof Requirable) {
+            ((Requirable) valueComponent).setRequiredMessage(msg);
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getContextHelpText() {
+        return valueComponent instanceof HasContextHelp
+                ? ((HasContextHelp) valueComponent).getContextHelpText()
+                : null;
+    }
+
+    @Override
+    public void setContextHelpText(@Nullable String contextHelpText) {
+        if (valueComponent instanceof HasContextHelp) {
+            ((HasContextHelp) valueComponent).setContextHelpText(contextHelpText);
+        }
+    }
+
+    @Override
+    public boolean isContextHelpTextHtmlEnabled() {
+        return valueComponent instanceof HasContextHelp
+                && ((HasContextHelp) valueComponent).isContextHelpTextHtmlEnabled();
+    }
+
+    @Override
+    public void setContextHelpTextHtmlEnabled(boolean enabled) {
+        if (valueComponent instanceof HasContextHelp) {
+            ((HasContextHelp) valueComponent).setContextHelpTextHtmlEnabled(enabled);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Consumer<ContextHelpIconClickEvent> getContextHelpIconClickHandler() {
+        return valueComponent instanceof HasContextHelp
+                ? ((HasContextHelp) valueComponent).getContextHelpIconClickHandler()
+                : null;
+    }
+
+    @Override
+    public void setContextHelpIconClickHandler(@Nullable Consumer<ContextHelpIconClickEvent> handler) {
+        if (valueComponent instanceof HasContextHelp) {
+            ((HasContextHelp) valueComponent).setContextHelpIconClickHandler(handler);
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        return valueComponent instanceof Validatable
+                && ((Validatable) valueComponent).isValid();
+    }
+
+    @Override
+    public void validate() throws ValidationException {
+        if (valueComponent instanceof Validatable) {
+            ((Validatable) valueComponent).validate();
         }
     }
 

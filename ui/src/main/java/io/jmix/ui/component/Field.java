@@ -16,49 +16,12 @@
 package io.jmix.ui.component;
 
 import io.jmix.ui.component.data.HasValueSource;
-import io.jmix.ui.component.validation.Validator;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
 
 /**
  * Base interface for "fields" - components intended to display and edit value of a certain entity attribute.
  */
 public interface Field<V> extends HasValueSource<V>, Component.HasCaption,
         HasValue<V>, Component.Editable, Component.BelongToFrame, Validatable, Component.HasIcon,
-        HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
-
-    /**
-     * @return whether the field must contain a non-null value
-     */
-    boolean isRequired();
-
-    void setRequired(boolean required);
-
-    @Nullable
-    String getRequiredMessage();
-
-    /**
-     * A message that will be displayed to user if the field is required but has null value
-     */
-    void setRequiredMessage(@Nullable String msg);
-
-    /**
-     * Add validator instance.
-     * {@link ValidationException} this exception must be thrown by the validator if the value is not valid.
-     */
-    void addValidator(Validator<? super V> validator);
-
-    void removeValidator(Validator<V> validator);
-
-    default void addValidators(Validator<? super V>... validators) {
-        for (Validator<? super V> validator : validators) {
-            addValidator(validator);
-        }
-    }
-
-    /**
-     * @return unmodifiable collection with Field validators
-     */
-    Collection<Validator<V>> getValidators();
+        HasContextHelp, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, HasValidator<V>,
+        Requirable {
 }

@@ -1,0 +1,74 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://propertyFilterConditionEdit.caption"
+        focusComponent="tabSheet">
+    <data>
+        <instance id="filterConditionDc"
+                  class="io.jmix.ui.entity.PropertyFilterCondition">
+            <fetchPlan extends="_local">
+                <property name="valueComponent" fetchPlan="_local"/>
+            </fetchPlan>
+            <loader/>
+            <instance id="valueComponentDc" property="valueComponent"/>
+        </instance>
+    </data>
+    <dialogMode resizable="true" forceDialog="true"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout spacing="true" expand="editActions">
+        <tabSheet id="tabSheet" width="100%" height="100%">
+            <tab id="propertyConditionTab" caption="msg://propertyFilterConditionEdit.propertyConditionTab"
+                 spacing="true" margin="true,false,false,false">
+                <form id="propertyConditionForm" dataContainer="filterConditionDc" width="100%" height="100%">
+                    <column>
+                        <checkBox id="visibleField" property="visible"/>
+                        <checkBox id="enabledField" property="enabled"/>
+                        <checkBox id="requiredField" property="required"/>
+                        <textField id="propertyField" property="property" required="true"/>
+                        <textField id="captionField" property="caption"/>
+                        <comboBox id="captionPositionField" property="captionPosition" nullOptionVisible="false"/>
+                        <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                        <checkBox id="operationEditableField" property="operationEditable"/>
+                        <textField id="parameterNameField" property="parameterName"/>
+                        <textField id="styleNameField" property="styleName"/>
+                        <textField id="componentIdField" property="componentId"/>
+                    </column>
+                </form>
+            </tab>
+            <tab id="valueComponentTab" caption="msg://propertyFilterConditionEdit.valueComponentTab" spacing="true"
+                 margin="true,false,false,false">
+                <form id="valueComponentForm" dataContainer="valueComponentDc" width="100%" height="100%">
+                    <column width="100%">
+                        <textField id="valueComponentIdField" property="componentId"/>
+                        <textField id="valueComponentName" property="componentName" required="true">
+                            <validators>
+                                <custom bean="ui_ValueComponentNameValidator"/>
+                            </validators>
+                        </textField>
+                        <textField id="valueComponentStyleNameField" property="styleName"/>
+                    </column>
+                </form>
+            </tab>
+        </tabSheet>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

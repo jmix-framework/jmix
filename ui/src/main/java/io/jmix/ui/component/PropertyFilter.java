@@ -16,7 +16,11 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.model.DataLoader;
+
+import java.util.EventObject;
+import java.util.function.Consumer;
 
 /**
  * PropertyFilter is a UI component used for filtering entities returned by the {@link DataLoader}. The component is
@@ -24,23 +28,12 @@ import io.jmix.ui.model.DataLoader;
  * a PropertyFilter layout contains a label with entity property caption, operation label or selector (=, contains,
  * &#62;, etc.) and a field for editing a property value.
  */
-public interface PropertyFilter<V> extends Component, Component.BelongToFrame, HasValue<V>,
+public interface PropertyFilter<V> extends FilterComponent, Component.BelongToFrame, HasValue<V>,
         Component.HasCaption, Component.HasIcon, Component.Focusable, Component.Editable,
-        HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition {
+        HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition, Requirable,
+        Validatable, HasContextHelp {
 
     String NAME = "propertyFilter";
-
-    /**
-     * @return a {@link DataLoader} related to the current PropertyFilter
-     */
-    DataLoader getDataLoader();
-
-    /**
-     * Sets a {@link DataLoader} related to the current PropertyFilter.
-     *
-     * @param dataLoader a {@link DataLoader} to set
-     */
-    void setDataLoader(DataLoader dataLoader);
 
     /**
      * @return related entity property name
@@ -120,19 +113,46 @@ public interface PropertyFilter<V> extends Component, Component.BelongToFrame, H
     void setCaptionWidth(String captionWidth);
 
     /**
-     * @return {@code true} if the filter should be automatically applied to the
-     * {@link DataLoader} when the value component value is changed
+     * Adds a listener that is invoked when the {@code operation} property changes.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
      */
-    boolean isAutoApply();
+    Subscription addOperationChangeListener(Consumer<OperationChangeEvent> listener);
 
     /**
-     * Sets whether the filter should be automatically applied to the {@link DataLoader}
-     * when the value component value is changed.
-     *
-     * @param autoApply {@code true} if the filter should be automatically applied to the
-     *                  {@link DataLoader} when the value component value is changed
+     * Event sent when the {@code operation} property is changed.
      */
-    void setAutoApply(boolean autoApply);
+    class OperationChangeEvent extends EventObject {
+
+        protected final Operation newOperation;
+        protected final Operation prevOperation;
+
+        public OperationChangeEvent(PropertyFilter source, Operation newOperation, Operation prevOperation) {
+            super(source);
+            this.prevOperation = prevOperation;
+            this.newOperation = newOperation;
+        }
+
+        @Override
+        public PropertyFilter getSource() {
+            return (PropertyFilter) super.getSource();
+        }
+
+        /**
+         * @return new operation value
+         */
+        public Operation getNewOperation() {
+            return newOperation;
+        }
+
+        /**
+         * @return previous operation value
+         */
+        public Operation getPreviousOperation() {
+            return prevOperation;
+        }
+    }
 
     /**
      * Operation representing corresponding filtering condition.

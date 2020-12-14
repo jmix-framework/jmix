@@ -26,7 +26,9 @@ dependencies {
     api 'io.jmix.data:jmix-data'
     api project(':ui')
 
-    api 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
 
     testImplementation project(':ui-test-assist')
     testRuntimeOnly 'org.slf4j:slf4j-simple'

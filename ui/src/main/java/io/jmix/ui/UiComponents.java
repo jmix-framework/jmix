@@ -33,7 +33,7 @@ public interface UiComponents {
      * @param name component name. It is usually defined in NAME constant inside the component interface,
      *             e.g. {@link io.jmix.ui.component.Label#NAME}.
      *             It is also usually equal to component's XML name.
-     * @return component instance for the current client type (web or desktop)
+     * @return component instance
      */
     <T extends Component> T create(String name);
 
@@ -41,7 +41,7 @@ public interface UiComponents {
      * Create a component instance by its type.
      *
      * @param type component type
-     * @return component instance for the current client type (web or desktop)
+     * @return component instance
      */
     <T extends Component> T create(Class<T> type);
 
@@ -54,4 +54,22 @@ public interface UiComponents {
      * @see io.jmix.ui.component.TextField#TYPE_DEFAULT
      */
     <T extends Component> T create(ParameterizedTypeReference<T> type);
+
+    /**
+     * Checks that a component with given name is registered.
+     *
+     * @param name component name. It is usually defined in NAME constant inside the component interface,
+     *             e.g. {@link io.jmix.ui.component.Label#NAME}.
+     *             It is also usually equal to component's XML name.
+     * @return true if the component is registered
+     */
+    boolean isComponentRegistered(String name);
+
+    /**
+     * Checks that a component with given type is registered.
+     *
+     * @param type component type reference
+     * @return true if the component is registered
+     */
+    boolean isComponentRegistered(Class<?> type);
 }

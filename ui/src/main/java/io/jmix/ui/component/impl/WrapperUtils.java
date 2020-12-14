@@ -30,6 +30,7 @@ import com.vaadin.shared.ui.slider.SliderOrientation;
 import com.vaadin.ui.Dependency;
 import com.vaadin.v7.shared.ui.combobox.FilteringMode;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
 import io.jmix.ui.component.DataGrid.DataGridStaticCellType;
@@ -1019,6 +1020,28 @@ public final class WrapperUtils {
                 return com.vaadin.shared.ui.window.WindowMode.MAXIMIZED;
             default:
                 throw new IllegalArgumentException("Can't be converted to WindowMode: " + windowMode);
+        }
+    }
+
+    public static LogicalCondition.Type toLogicalConditionType(LogicalFilterComponent.Operation operation) {
+        switch (operation) {
+            case AND:
+                return LogicalCondition.Type.AND;
+            case OR:
+                return LogicalCondition.Type.OR;
+            default:
+                throw new IllegalArgumentException("Unknown operation " + operation);
+        }
+    }
+
+    public static LogicalFilterComponent.Operation fromLogicalConditionType(LogicalCondition.Type type) {
+        switch (type) {
+            case AND:
+                return LogicalFilterComponent.Operation.AND;
+            case OR:
+                return LogicalFilterComponent.Operation.OR;
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
 }

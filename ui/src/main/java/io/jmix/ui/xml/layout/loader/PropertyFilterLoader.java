@@ -35,7 +35,7 @@ import org.dom4j.Element;
 
 import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
 
-public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter> {
+public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter<?>> {
 
     @Override
     public void createComponent() {
@@ -46,18 +46,19 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
     @Override
     public void loadComponent() {
         assignFrame(resultComponent);
+        assignXmlDescriptor(resultComponent, element);
 
         loadVisible(resultComponent, element);
-        loadWidth(resultComponent, element);
-        loadHeight(resultComponent, element);
-
         loadEnable(resultComponent, element);
 
         loadStyleName(resultComponent, element);
+        loadHtmlSanitizerEnabled(resultComponent, element);
 
         loadDescription(resultComponent, element);
         loadIcon(resultComponent, element);
         loadCss(resultComponent, element);
+        loadAlign(resultComponent, element);
+        loadResponsive(resultComponent, element);
 
         loadString(element, "property", resultComponent::setProperty);
         loadEnum(element, Operation.class, "operation", resultComponent::setOperation);
@@ -70,12 +71,17 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
         loadString(element, "captionWidth", resultComponent::setCaptionWidth);
 
         loadDataLoader(resultComponent, element);
+        loadBoolean(element, "autoApply", resultComponent::setAutoApply);
         loadValueComponent(resultComponent, element);
 
         loadCaption(resultComponent, element);
+        loadContextHelp(resultComponent, element);
+        loadRequired(resultComponent, element);
+        loadEditable(resultComponent, element);
+        loadTabIndex(resultComponent, element);
 
-        resultComponent.setAutoApply(loadBoolean(element, "autoApply")
-                .orElse(getUiProperties().isPropertyFilterAutoApply()));
+        loadWidth(resultComponent, element);
+        loadHeight(resultComponent, element);
     }
 
     protected void loadDataLoader(PropertyFilter<?> resultComponent, Element element) {
@@ -121,8 +127,8 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
             valueComponent = valueComponentLoader.getResultComponent();
         } else {
             MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
-            valueComponent = getPropertyFilterSupport()
-                    .generateValueField(metaClass, resultComponent.getProperty(), resultComponent.getOperation());
+            valueComponent = getPropertyFilterSupport().generateValueComponent(metaClass,
+                    resultComponent.getProperty(), resultComponent.getOperation(), resultComponent.getId());
         }
 
         if (!(valueComponent instanceof HasValue)) {

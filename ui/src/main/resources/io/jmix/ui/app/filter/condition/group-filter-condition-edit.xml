@@ -1,0 +1,78 @@
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://groupFilterConditionEdit.caption"
+        focusComponent="form">
+    <data>
+        <instance id="filterConditionDc"
+                  class="io.jmix.ui.entity.GroupFilterCondition">
+            <fetchPlan extends="_local"/>
+            <loader id="filterConditionDl"/>
+        </instance>
+        <collection id="filterConditionsDc"
+                    class="io.jmix.ui.entity.FilterCondition">
+            <fetchPlan extends="_local">
+                <property name="parent" fetchPlan="_local"/>
+            </fetchPlan>
+        </collection>
+    </data>
+    <dialogMode resizable="true" forceDialog="true" width="800" height="600"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+    <layout spacing="true" expand="editBox">
+        <vbox id="editBox" spacing="true" expand="conditionsTree" width="100%">
+            <form id="form" dataContainer="filterConditionDc" width="100%">
+                <column width="100%">
+                    <checkBox id="visibleField" property="visible"/>
+                    <checkBox id="enabledField" property="enabled"/>
+                    <textField id="captionField" property="caption"/>
+                </column>
+                <column width="100%">
+                    <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                    <textField id="componentIdField" property="componentId"/>
+                    <textField id="styleNameField" property="styleName"/>
+                </column>
+            </form>
+            <tree id="conditionsTree"
+                  dataContainer="filterConditionsDc"
+                  hierarchyProperty="parent"
+                  captionProperty="caption"
+                  multiselect="false"
+                  width="100%">
+                <actions>
+                    <action id="addCondition" type="filter_add_condition"/>
+                    <action id="edit" type="edit"/>
+                    <action id="remove" type="remove"/>
+                    <action id="moveUp" icon="ARROW_UP" trackSelection="true"/>
+                    <action id="moveDown" icon="ARROW_DOWN" trackSelection="true"/>
+                </actions>
+                <buttonsPanel id="buttonsPanel" alwaysVisible="true">
+                    <button id="addConditionButton" action="conditionsTree.addCondition"/>
+                    <button id="editButton" action="conditionsTree.edit"/>
+                    <button id="removeButton" action="conditionsTree.remove"/>
+                    <button id="moveUpButton" action="conditionsTree.moveUp"/>
+                    <button id="moveDownButton" action="conditionsTree.moveDown"/>
+                </buttonsPanel>
+            </tree>
+        </vbox>
+        <hbox id="editActions" spacing="true">
+            <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
+            <button id="closeBtn" action="windowClose"/>
+        </hbox>
+    </layout>
+</window>

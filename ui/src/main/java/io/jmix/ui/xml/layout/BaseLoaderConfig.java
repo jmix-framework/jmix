@@ -91,7 +91,6 @@ public abstract class BaseLoaderConfig {
         loaders.put(Accordion.NAME, AccordionLoader.class);
         loaders.put(Image.NAME, ImageLoader.class);
         loaders.put(BrowserFrame.NAME, BrowserFrameLoader.class);
-//        loaders.put(Filter.NAME, FilterLoader.class); // todo filter
         loaders.put(ButtonsPanel.NAME, ButtonsPanelLoader.class);
         loaders.put(PopupButton.NAME, PopupButtonLoader.class);
         loaders.put(PopupView.NAME, PopupViewLoader.class);
@@ -105,8 +104,11 @@ public abstract class BaseLoaderConfig {
         loaders.put(CapsLockIndicator.NAME, CapsLockIndicatorLoader.class);
 
         loaders.put(Form.NAME, FormLoader.class);
-        loaders.put(PropertyFilter.NAME, PropertyFilterLoader.class);
         loaders.put(JavaScriptComponent.NAME, JavaScriptComponentLoader.class);
+
+        loaders.put(Filter.NAME, FilterLoader.class);
+        loaders.put(GroupFilter.NAME, GroupFilterLoader.class);
+        loaders.put(PropertyFilter.NAME, PropertyFilterLoader.class);
 
         loaders.put(Fragment.NAME, FragmentComponentLoader.class);
 

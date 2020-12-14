@@ -36,6 +36,8 @@ import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.formatter.FormatterLoadFactory;
+import io.jmix.ui.component.validation.Validator;
+import io.jmix.ui.component.validation.ValidatorLoadFactory;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
@@ -60,6 +62,7 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -321,6 +324,35 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         String htmlEnabled = element.attributeValue("contextHelpTextHtmlEnabled");
         if (StringUtils.isNotEmpty(htmlEnabled)) {
             component.setContextHelpTextHtmlEnabled(Boolean.parseBoolean(htmlEnabled));
+        }
+    }
+
+    protected void loadRequired(Requirable component, Element element) {
+        String required = element.attributeValue("required");
+        if (StringUtils.isNotEmpty(required)) {
+            component.setRequired(Boolean.parseBoolean(required));
+        }
+
+        String requiredMessage = element.attributeValue("requiredMessage");
+        if (requiredMessage != null) {
+            component.setRequiredMessage(loadResourceString(requiredMessage));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void loadValidation(HasValidator component, Element element) {
+        Element validatorsHolder = element.element("validators");
+        if (validatorsHolder != null) {
+            List<Element> validators = validatorsHolder.elements();
+
+            ValidatorLoadFactory loadFactory = applicationContext.getBean(ValidatorLoadFactory.class);
+
+            for (Element validatorElem : validators) {
+                Validator validator = loadFactory.createValidator(validatorElem, context.getMessagesPack());
+                if (validator != null) {
+                    component.addValidator(validator);
+                }
+            }
         }
     }
 

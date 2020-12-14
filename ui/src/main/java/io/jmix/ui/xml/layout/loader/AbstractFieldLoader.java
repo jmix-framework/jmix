@@ -59,35 +59,6 @@ public abstract class AbstractFieldLoader<T extends Field> extends AbstractCompo
         loadCss(resultComponent, element);
     }
 
-    protected void loadRequired(Field component, Element element) {
-        String required = element.attributeValue("required");
-        if (StringUtils.isNotEmpty(required)) {
-            component.setRequired(Boolean.parseBoolean(required));
-        }
-
-        String requiredMessage = element.attributeValue("requiredMessage");
-        if (requiredMessage != null) {
-            component.setRequiredMessage(loadResourceString(requiredMessage));
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void loadValidation(Field component, Element element) {
-        Element validatorsHolder = element.element("validators");
-        if (validatorsHolder != null) {
-            List<Element> validators = validatorsHolder.elements();
-
-            ValidatorLoadFactory loadFactory = applicationContext.getBean(ValidatorLoadFactory.class);
-
-            for (Element validatorElem : validators) {
-                Validator validator = loadFactory.createValidator(validatorElem, context.getMessagesPack());
-                if (validator != null) {
-                    component.addValidator(validator);
-                }
-            }
-        }
-    }
-
     protected void loadBuffered(Buffered component, Element element) {
         String buffered = element.attributeValue("buffered");
         if (StringUtils.isNotEmpty(buffered)) {

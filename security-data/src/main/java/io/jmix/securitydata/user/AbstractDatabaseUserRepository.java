@@ -18,8 +18,11 @@ package io.jmix.securitydata.user;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.GrantedAuthorityContainer;
+import io.jmix.core.security.PasswordNotMatchException;
+import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.role.RoleRepository;
@@ -29,7 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.util.ObjectUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +47,7 @@ import java.util.stream.Collectors;
  *
  * @param <T>
  */
-public abstract class AbstractDatabaseUserRepository<T extends UserDetails> implements UserRepository {
+public abstract class AbstractDatabaseUserRepository<T extends UserDetails> implements UserRepository, UserManager {
 
     protected T systemUser;
     protected T anonymousUser;
@@ -133,6 +138,18 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         } else {
             throw new UsernameNotFoundException("User not found");
         }
+    }
+
+    @Override
+    public void changePassword(@Nullable String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
+        Preconditions.checkNotNullArgument(userName, "Null userName");
+        Preconditions.checkNotNullArgument(newPassword, "Null new password hash");
+        T userDetails = loadUserByUsername(userName);
+        if (!ObjectUtils.isEmpty(oldPassword) && oldPassword.equals(userDetails.getPassword())) {
+            throw new PasswordNotMatchException();
+        }
+        EntityValues.setValue(userDetails, "password", newPassword);
+        dataManager.save(userDetails);
     }
 
     protected Collection<? extends GrantedAuthority> createAuthorities(String username) {

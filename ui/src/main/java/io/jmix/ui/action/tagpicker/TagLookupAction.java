@@ -51,10 +51,7 @@ public class TagLookupAction<E> extends AbstractLookupAction<E>
 
     protected TagPicker tagPicker;
 
-    protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
-
     protected UiProperties uiProperties;
-    protected EntityStates entityStates;
 
     protected boolean multiSelect = true;
     protected boolean editable = true;
@@ -70,11 +67,6 @@ public class TagLookupAction<E> extends AbstractLookupAction<E>
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
         this.uiProperties = uiProperties;
-    }
-
-    @Autowired
-    public void setEntityStates(EntityStates entityStates) {
-        this.entityStates = entityStates;
     }
 
     @Override

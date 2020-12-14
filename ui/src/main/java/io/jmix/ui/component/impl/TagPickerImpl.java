@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -34,7 +33,6 @@ import io.jmix.ui.widget.JmixTagPicker;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -46,8 +44,6 @@ import java.util.stream.Stream;
 public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V>, InitializingBean {
 
     public static final String NOACTION_STYLENAME = "no-actions";
-
-    protected MetadataTools metadataTools;
 
     protected OptionsBinding<V> optionsBinding;
     protected Function<? super V, String> optionCaptionProvider;
@@ -67,11 +63,6 @@ public class TagPickerImpl<V> extends ValuesPickerImpl<V> implements TagPicker<V
     @Override
     protected JmixTagPicker<V> createComponent() {
         return new JmixTagPicker<>();
-    }
-
-    @Autowired
-    public void setMetadataTools(MetadataTools metadataTools) {
-        this.metadataTools = metadataTools;
     }
 
     protected void initComponent(JmixPickerField<Collection<V>> component) {

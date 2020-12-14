@@ -68,7 +68,6 @@ import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TimeField;
-import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;

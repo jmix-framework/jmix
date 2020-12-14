@@ -52,7 +52,6 @@ import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.SuggestionField;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.TimeField;
-import io.jmix.ui.component.TokenList;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.TreeDataGrid;
 import io.jmix.ui.component.TreeTable;
@@ -116,7 +115,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(Table.NAME, CubaTableLoader.class);
         loaders.put(GroupTable.NAME, CubaGroupTableLoader.class);
         loaders.put(TreeTable.NAME, CubaTreeTableLoader.class);
-        loaders.put(TokenList.NAME, CubaTokenListLoader.class);
+        loaders.put(TokenList.NAME, TokenListLoader.class);
         loaders.put(TwinColumn.NAME, CubaTwinColumnLoader.class);
         loaders.put(Image.NAME, CubaImageLoader.class);
         loaders.put(SearchPickerField.NAME, CubaSearchPickerFieldLoader.class);

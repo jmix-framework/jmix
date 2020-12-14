@@ -624,7 +624,7 @@ public class FluentLoader<E> {
         /**
          * Sets custom hint that should be used by the query.
          */
-        public ByQuery hint(String hintName, Serializable value) {
+        public ByQuery<E> hint(String hintName, Serializable value) {
             if (loader.hints == null) {
                 loader.hints = new HashMap<>();
             }
@@ -635,7 +635,7 @@ public class FluentLoader<E> {
         /**
          * Sets custom hints that should be used by the query.
          */
-        public ByQuery hints(Map<String, Serializable> hints) {
+        public ByQuery<E> hints(Map<String, Serializable> hints) {
             loader.hints = hints;
             return this;
         }
@@ -643,7 +643,7 @@ public class FluentLoader<E> {
         /**
          * Sets additional query condition.
          */
-        public ByQuery condition(Condition condition) {
+        public ByQuery<E> condition(Condition condition) {
             this.condition = condition;
             return this;
         }

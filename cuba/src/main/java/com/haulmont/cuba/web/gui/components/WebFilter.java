@@ -42,6 +42,7 @@ import java.util.function.Consumer;
 /**
  * Generic filter implementation for the web-client.
  */
+@Deprecated
 public class WebFilter extends AbstractComponent<com.vaadin.ui.Component> implements Filter, FilterImplementation,
         Component.HasXmlDescriptor {
 

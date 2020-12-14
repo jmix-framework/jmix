@@ -24,6 +24,7 @@ import com.haulmont.cuba.gui.components.ButtonsPanel;
 import com.haulmont.cuba.gui.components.CssLayout;
 import com.haulmont.cuba.gui.components.FileMultiUploadField;
 import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.FlowBoxLayout;
 import com.haulmont.cuba.gui.components.Form;
 import com.haulmont.cuba.gui.components.Fragment;

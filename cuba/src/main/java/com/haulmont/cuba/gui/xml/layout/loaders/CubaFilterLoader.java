@@ -31,7 +31,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class FilterLoader extends AbstractComponentLoader<Filter> {
+public class CubaFilterLoader extends AbstractComponentLoader<Filter> {
 
     public static final String DEFAULT_FILTER_ID = "filterWithoutId";
     public static final String FTS_MODE_VALUE = "fts";

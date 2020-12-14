@@ -29,6 +29,8 @@ import java.util.List;
 
 /**
  * Generic filter component.
+ *
+ * @deprecated Use {@link io.jmix.ui.component.Filter} instead
  */
 @Deprecated
 public interface Filter extends HasMargin, Component.BelongToFrame, HasNamedComponents, HasSettings, HasDataLoadingSettings, Component.HasCaption, HasContextHelp,

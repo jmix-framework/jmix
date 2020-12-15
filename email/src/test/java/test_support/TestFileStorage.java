@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestFileStorage implements FileStorage<URI, String> {
+public class TestFileStorage implements FileStorage<URI> {
 
     private Map<URI, byte[]> files = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class TestFileStorage implements FileStorage<URI, String> {
     }
 
     @Override
-    public String getFileInfo(URI reference) {
+    public String getFileName(URI reference) {
         String path = reference.getRawPath();
         return path.split(";", -1)[1];
     }

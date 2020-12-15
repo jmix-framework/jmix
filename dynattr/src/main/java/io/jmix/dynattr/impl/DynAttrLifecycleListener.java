@@ -28,13 +28,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component("dynattr_DynAttrLifecycleListener")
-public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStoreInterceptor, DataStoreCustomizer {
+public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStoreEventListener, DataStoreCustomizer {
 
     @Autowired
     protected DynAttrManager dynAttrManager;
 
     @Override
-    public void afterEntityLoad(AfterEntityLoadEvent event) {
+    public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
         Map<String, Object> hints = context.getHints();
         if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
@@ -43,7 +43,7 @@ public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStore
     }
 
     @Override
-    public void entitySaving(EntitySavingEvent event) {
+    public void entitySaving(DataStoreEntitySavingEvent event) {
         dynAttrManager.storeValues(event.getSaveContext().getEntitiesToSave(), event.getSaveContext().getAccessConstraints());
     }
 

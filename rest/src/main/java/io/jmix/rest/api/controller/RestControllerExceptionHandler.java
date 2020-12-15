@@ -23,8 +23,8 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.core.security.RowLevelSecurityException;
 import io.jmix.core.validation.CustomValidationException;
 import io.jmix.rest.api.exception.ConstraintViolationInfo;
 import io.jmix.rest.api.exception.ErrorInfo;
@@ -108,10 +108,10 @@ public class RestControllerExceptionHandler {
         return new ResponseEntity<>(errorInfo, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(RowLevelSecurityException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
-    public ResponseEntity<ErrorInfo> handleRowLevelSecurityException(RowLevelSecurityException e) {
-        log.error("RowLevelAccessException in service", e);
+    public ResponseEntity<ErrorInfo> handleRowLevelSecurityException(AccessDeniedException e) {
+        log.error("AccessDeniedException in service", e);
         ErrorInfo errorInfo = new ErrorInfo("Forbidden", e.getMessage());
         return new ResponseEntity<>(errorInfo, HttpStatus.FORBIDDEN);
     }

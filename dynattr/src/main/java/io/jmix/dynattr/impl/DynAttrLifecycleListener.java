@@ -17,20 +17,14 @@
 package io.jmix.dynattr.impl;
 
 import io.jmix.core.DataStore;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
-import io.jmix.core.SaveContext;
-import io.jmix.core.datastore.AbstractDataStore;
-import io.jmix.core.datastore.AfterEntityLoadEvent;
-import io.jmix.core.datastore.DataStoreCustomizer;
-import io.jmix.core.datastore.DataStoreInterceptor;
+import io.jmix.core.datastore.*;
 import io.jmix.data.impl.JpaDataStoreListener;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.Map;
 
 @Component("dynattr_DynAttrLifecycleListener")
@@ -49,8 +43,8 @@ public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStore
     }
 
     @Override
-    public void onSave(Collection<Object> entities, SaveContext saveContext) {
-        dynAttrManager.storeValues(entities, saveContext.getAccessConstraints());
+    public void entitySaving(EntitySavingEvent event) {
+        dynAttrManager.storeValues(event.getSaveContext().getEntitiesToSave(), event.getSaveContext().getAccessConstraints());
     }
 
     @Override

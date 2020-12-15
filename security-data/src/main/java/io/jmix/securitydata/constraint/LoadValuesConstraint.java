@@ -20,7 +20,6 @@ import io.jmix.core.constraint.EntityOperationConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.PermissionType;
 import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -62,7 +61,7 @@ public class LoadValuesConstraint implements EntityOperationConstraint<LoadValue
 
         for (MetaPropertyPath propertyPath : context.getAllPropertyPaths()) {
             if (!secureOperations.isEntityAttrReadPermitted(propertyPath, policyStore)) {
-                throw new AccessDeniedException(PermissionType.ENTITY_ATTR, propertyPath.getMetaClass() + "." + propertyPath.toPathString());
+                throw new AccessDeniedException("attribute", propertyPath.getMetaClass() + "." + propertyPath.toPathString());
             }
         }
 

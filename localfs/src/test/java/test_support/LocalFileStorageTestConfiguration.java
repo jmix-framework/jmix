@@ -35,7 +35,7 @@ import java.net.URI;
 public class LocalFileStorageTestConfiguration {
     @Bean
     @Primary
-    FileStorage<URI, String> fileStorage() {
+    FileStorage<URI> fileStorage() {
         return new LocalFileStorage();
     }
 

@@ -56,7 +56,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Internal
 @Component("localfs_FileStorage")
-public class LocalFileStorage implements FileStorage<URI, String> {
+public class LocalFileStorage implements FileStorage<URI> {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileStorage.class);
 
@@ -109,7 +109,7 @@ public class LocalFileStorage implements FileStorage<URI, String> {
      * The original filename is passed as an argument to {@link #createReference(String)}.
      */
     @Override
-    public String getFileInfo(URI reference) {
+    public String getFileName(URI reference) {
         String[] parts = getReferenceParts(reference);
         String encodedFilename = StringUtils.EMPTY;
         if (parts.length > 1) {
@@ -294,14 +294,14 @@ public class LocalFileStorage implements FileStorage<URI, String> {
     protected void checkPrimaryStorageAccessible(Path[] roots, URI reference) {
         if (!roots[0].toFile().exists()) {
             log.error("Inaccessible primary storage at {}", roots[0]);
-            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileInfo(reference));
+            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileName(reference));
         }
     }
 
     protected void checkStorageDefined(Path[] roots, URI reference) {
         if (roots.length == 0) {
             log.error("No storage directories defined");
-            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileInfo(reference));
+            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileName(reference));
         }
     }
 

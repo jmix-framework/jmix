@@ -32,7 +32,7 @@ import test_support.TestContextInititalizer
 class LocalFileStorageTest extends Specification {
 
     @Autowired
-    private FileStorage<URI, String> fileStorage
+    private FileStorage<URI> fileStorage
 
     def "write/load data using file storage"() {
         URI reference = fileStorage.createReference('test.txt')
@@ -54,19 +54,19 @@ class LocalFileStorageTest extends Specification {
         def uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4.txt*1.txt')
 
         then:
-        fileStorage.getFileInfo(uri) == '1.txt'
+        fileStorage.getFileName(uri) == '1.txt'
 
         when: "Filename is not defined"
         uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4')
 
         then:
-        fileStorage.getFileInfo(uri) == ''
+        fileStorage.getFileName(uri) == ''
 
         when: "Create file reference"
         uri = fileStorage.createReference('test.txt')
 
         then:
-        fileStorage.getFileInfo(uri) == 'test.txt'
+        fileStorage.getFileName(uri) == 'test.txt'
     }
 
 }

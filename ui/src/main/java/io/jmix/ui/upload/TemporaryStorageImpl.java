@@ -75,6 +75,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
 
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
+        dir.mkdirs();
         File file = new File(dir, uuid.toString());
         try {
             if (file.exists()) {
@@ -98,6 +99,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
 
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
+        dir.mkdirs();
         File file = new File(dir, uuid.toString());
         if (file.exists()) {
             throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS, file.getAbsolutePath());
@@ -136,6 +138,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     protected FileInfo createFileInternal() {
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
+        dir.mkdirs();
         File file = new File(dir, uuid.toString());
 
         if (file.exists()) {

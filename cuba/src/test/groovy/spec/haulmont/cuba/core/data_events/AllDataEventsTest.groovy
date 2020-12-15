@@ -21,11 +21,11 @@ import com.haulmont.cuba.core.Transaction
 import com.haulmont.cuba.core.TransactionalDataManager
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.Events
 import com.haulmont.cuba.core.model.sales.Order
 import com.haulmont.cuba.core.model.sales.TestEntityChangedEventListener
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.EntityStates
-import com.haulmont.cuba.core.global.Events
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
@@ -293,5 +293,4 @@ class AllDataEventsTest extends CoreTestSpecification {
         tx.end()
         testSupport.deleteRecord(order)
     }
-
 }

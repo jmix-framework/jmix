@@ -16,15 +16,13 @@
 
 package spec.haulmont.cuba.core.entity_manager
 
+import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.model.not_persistent.CustomerWithNonPersistentRef
 import com.haulmont.cuba.core.model.not_persistent.TestNotPersistentEntity
 import com.haulmont.cuba.core.model.primary_keys.EntityKey
-import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.testsupport.TestSupport
-import spec.haulmont.cuba.core.CoreTestSpecification
-
 import org.springframework.beans.factory.annotation.Autowired
-
+import spec.haulmont.cuba.core.CoreTestSpecification
 
 class EntityManagerTest extends CoreTestSpecification {
     @Autowired

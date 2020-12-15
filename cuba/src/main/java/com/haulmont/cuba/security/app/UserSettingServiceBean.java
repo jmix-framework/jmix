@@ -54,7 +54,7 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
         accessManager.applyRegisteredConstraints(entityContext);
 
         if (!entityContext.isCreatePermitted()) {
-            throw new AccessDeniedException(PermissionType.ENTITY_OP, metaClass.getName());
+            throw new AccessDeniedException("entity", metaClass.getName());
         }
 
         transaction.executeWithoutResult(status -> {

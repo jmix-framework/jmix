@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.core.global.filter.QueryFilter;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.DevelopmentException;
@@ -34,9 +35,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.PermissionType;
 import io.jmix.ui.component.AggregationInfo;
-import com.haulmont.cuba.core.global.filter.QueryFilter;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -291,7 +290,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
         MetaClass parentMetaClass = masterDs.getMetaClass();
 
         if (!security.isEntityAttrPermitted(parentMetaClass, metaProperty.getName(), EntityAttrAccess.MODIFY)) {
-            throw new AccessDeniedException(PermissionType.ENTITY_ATTR, parentMetaClass + "." + metaProperty.getName());
+            throw new AccessDeniedException("attribute", parentMetaClass + "." + metaProperty.getName());
         }
     }
 

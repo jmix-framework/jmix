@@ -82,9 +82,10 @@ class DataManagerTransactionalTest extends CoreTestSpecification {
 
         println(">>>" + TestCustomerListener.events)
 
-        TestCustomerListener.events.size() == 2
+        TestCustomerListener.events.size() == 3
         TestCustomerListener.events[0] == 'onAfterInsert: tx1'
         TestCustomerListener.events[1] == 'onBeforeDetach: tx1'
+        TestCustomerListener.events[2] == 'onBeforeDetach: tx1'
 
         when:
 

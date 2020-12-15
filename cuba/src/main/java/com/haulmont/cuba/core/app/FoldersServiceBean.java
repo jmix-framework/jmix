@@ -33,7 +33,6 @@ import io.jmix.core.TimeSource;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.PermissionType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -257,7 +256,7 @@ public class FoldersServiceBean implements FoldersService {
     @Override
     public Folder importFolder(Folder parentFolder, byte[] bytes) throws IOException {
         if (!security.isEntityOpPermitted(Folder.class, EntityOp.CREATE)) {
-            throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, Folder.class.getSimpleName());
+            throw new AccessDeniedException("entity", Folder.class.getSimpleName(), "create");
         }
 
         Folder folder = null;
@@ -338,15 +337,15 @@ public class FoldersServiceBean implements FoldersService {
             SearchFolder searchFolder = (SearchFolder) folder;
             String currentUsername = userSession.getUser().getUsername();
             if (searchFolder.getUsername() != null && !currentUsername.equals(searchFolder.getUsername())) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, Folder.class.getSimpleName());
+                throw new AccessDeniedException("entity", Folder.class.getSimpleName());
             }
             if (searchFolder.getUsername() == null && !security.isSpecificPermitted("cuba.gui.searchFolder.global")) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, Folder.class.getSimpleName());
+                throw new AccessDeniedException("entity", Folder.class.getSimpleName());
             }
         }
         if (folder instanceof AppFolder) {
             if (!security.isSpecificPermitted("cuba.gui.appFolder.global")) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, Folder.class.getSimpleName());
+                throw new AccessDeniedException("entity", Folder.class.getSimpleName());
             }
         }
     }

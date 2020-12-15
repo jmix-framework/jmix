@@ -138,7 +138,7 @@ public class SecurityImpl implements Security {
     @Override
     public void checkSpecificPermission(String name) {
         if (!isSpecificPermitted(name))
-            throw new AccessDeniedException(PermissionType.SPECIFIC, name);
+            throw new AccessDeniedException("specific", name);
     }
 
     protected boolean isEntityAttrPermitted(MetaClass metaClass, MetaPropertyPath propertyPath, EntityAttrAccess access) {

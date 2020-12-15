@@ -19,8 +19,8 @@ package io.jmix.data.impl.lazyloading;
 import io.jmix.core.*;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.constraint.InMemoryConstraint;
-import io.jmix.core.datastore.AfterEntityLoadEvent;
-import io.jmix.core.datastore.DataStoreInterceptor;
+import io.jmix.core.datastore.DataStoreAfterEntityLoadEvent;
+import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -46,9 +46,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component("data_JpaLazyLoadingInterceptor")
-public class JpaLazyLoadingInterceptor implements DataStoreInterceptor {
+public class JpaLazyLoadingListener implements DataStoreEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(JpaLazyLoadingInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(JpaLazyLoadingListener.class);
 
     @Autowired
     protected Metadata metadata;
@@ -66,7 +66,7 @@ public class JpaLazyLoadingInterceptor implements DataStoreInterceptor {
     protected ExtendedEntities extendedEntities;
 
     @Override
-    public void afterEntityLoad(AfterEntityLoadEvent event) {
+    public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());

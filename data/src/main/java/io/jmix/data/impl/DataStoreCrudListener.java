@@ -19,10 +19,10 @@ package io.jmix.data.impl;
 import io.jmix.core.*;
 import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.constraint.AccessConstraint;
-import io.jmix.core.datastore.BeforeEntityCountEvent;
-import io.jmix.core.datastore.BeforeEntityLoadEvent;
-import io.jmix.core.datastore.BeforeEntitySaveEvent;
-import io.jmix.core.datastore.DataStoreInterceptor;
+import io.jmix.core.datastore.DataStoreBeforeEntityCountEvent;
+import io.jmix.core.datastore.DataStoreBeforeEntityLoadEvent;
+import io.jmix.core.datastore.DataStoreBeforeEntitySaveEvent;
+import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class DataStoreCrudInterceptor implements DataStoreInterceptor {
+public class DataStoreCrudListener implements DataStoreEventListener {
 
     @Autowired
     protected AccessManager accessManager;
@@ -44,7 +44,7 @@ public class DataStoreCrudInterceptor implements DataStoreInterceptor {
     @Autowired
     protected Metadata metadata;
 
-    public void beforeEntityLoad(BeforeEntityLoadEvent event) {
+    public void beforeEntityLoad(DataStoreBeforeEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
@@ -57,7 +57,7 @@ public class DataStoreCrudInterceptor implements DataStoreInterceptor {
         }
     }
 
-    public void beforeEntityCount(BeforeEntityCountEvent event) {
+    public void beforeEntityCount(DataStoreBeforeEntityCountEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
@@ -71,7 +71,7 @@ public class DataStoreCrudInterceptor implements DataStoreInterceptor {
     }
 
     @Override
-    public void beforeEntitySave(BeforeEntitySaveEvent event) {
+    public void beforeEntitySave(DataStoreBeforeEntitySaveEvent event) {
         SaveContext context = event.getSaveContext();
         Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
 

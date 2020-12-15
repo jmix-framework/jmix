@@ -20,7 +20,7 @@ import io.jmix.core.DataStore;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.datastore.DataStoreCustomizer;
-import io.jmix.data.impl.lazyloading.JpaLazyLoadingInterceptor;
+import io.jmix.data.impl.lazyloading.JpaLazyLoadingListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -29,11 +29,11 @@ import org.springframework.stereotype.Component;
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class JpaDataStoreCustomizer implements DataStoreCustomizer {
     @Autowired
-    protected DataStoreCrudInterceptor crudInterceptor;
+    protected DataStoreCrudListener crudInterceptor;
     @Autowired
-    protected DataStoreInMemoryCrudInterceptor inMemoryCRUDInterceptor;
+    protected DataStoreInMemoryCrudListener inMemoryCRUDInterceptor;
     @Autowired
-    protected JpaLazyLoadingInterceptor lazyLoadingInterceptor;
+    protected JpaLazyLoadingListener lazyLoadingInterceptor;
 
     @Override
     public void customize(DataStore dataStore) {

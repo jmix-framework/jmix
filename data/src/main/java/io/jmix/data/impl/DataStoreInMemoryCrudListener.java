@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
+public class DataStoreInMemoryCrudListener implements DataStoreEventListener {
 
     @Autowired
     protected AccessManager accessManager;
@@ -44,7 +44,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
     @Autowired
     protected EntityStates entityStates;
 
-    public void beforeEntityLoad(BeforeEntityLoadEvent event) {
+    public void beforeEntityLoad(DataStoreBeforeEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         if (hasInMemoryRead(context)) {
@@ -52,7 +52,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
         }
     }
 
-    public void beforeEntityCount(BeforeEntityCountEvent event) {
+    public void beforeEntityCount(DataStoreBeforeEntityCountEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         if (hasInMemoryRead(context)) {
@@ -61,7 +61,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
     }
 
     @Override
-    public void beforeEntitySave(BeforeEntitySaveEvent event) {
+    public void beforeEntitySave(DataStoreBeforeEntitySaveEvent event) {
         SaveContext context = event.getSaveContext();
 
         for (Object entity : context.getEntitiesToSave()) {
@@ -75,7 +75,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
         }
     }
 
-    public void entityLoading(EntityLoadingEvent event) {
+    public void entityLoading(DataStoreEntityLoadingEvent event) {
         LoadContext<?> context = event.getLoadContext();
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
@@ -104,7 +104,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
     }
 
     @Override
-    public void afterEntityLoad(AfterEntityLoadEvent event) {
+    public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
         EntityAttributesEraser.ReferencesCollector references =
                 (EntityAttributesEraser.ReferencesCollector) event.getEventState().getValue("erasedReferences");
         if (references != null) {
@@ -113,7 +113,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
     }
 
     @Override
-    public void entitySaving(EntitySavingEvent event) {
+    public void entitySaving(DataStoreEntitySavingEvent event) {
         SaveContext context = event.getSaveContext();
 
         for (Object entity : event.getEntities()) {
@@ -135,7 +135,7 @@ public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
     }
 
     @Override
-    public void entityDeleting(EntityDeletingEvent event) {
+    public void entityDeleting(DataStoreEntityDeletingEvent event) {
         SaveContext context = event.getSaveContext();
 
         for (Object entity : event.getEntities()) {

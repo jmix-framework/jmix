@@ -72,11 +72,13 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterInsertEntityListener'
         listener.allEvents[i++].message == 'JPA PostPersist'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, CREATED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, CREATED'
+        listener.allEvents[i++].message == 'JPA PostLoad'
+        listener.allEvents[i++].message == 'BeforeDetachEntityListener'
+        listener.allEvents[i++].message == 'EntityLoadingEvent'
     }
 
     def "update sequence"() {
@@ -103,11 +105,13 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterUpdateEntityListener'
         listener.allEvents[i++].message == 'JPA PostUpdate'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, UPDATED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
         listener.allEvents[i++].message == 'EntityChangedEvent: afterCommit, UPDATED'
+        listener.allEvents[i++].message == 'JPA PostLoad'
+        listener.allEvents[i++].message == 'BeforeDetachEntityListener'
+        listener.allEvents[i++].message == 'EntityLoadingEvent'
     }
 
     def "delete sequence"() {
@@ -132,7 +136,6 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterDeleteEntityListener'
         listener.allEvents[i++].message == 'JPA PostRemove'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, DELETED'
         listener.allEvents[i++].message == 'BeforeCommitTransactionListener'
         listener.allEvents[i++].message == 'AfterCompleteTransactionListener'
@@ -160,8 +163,10 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterInsertEntityListener'
         listener.allEvents[i++].message == 'JPA PostPersist'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, CREATED'
+        listener.allEvents[i++].message == 'JPA PostLoad'
+        listener.allEvents[i++].message == 'BeforeDetachEntityListener'
+        listener.allEvents[i++].message == 'EntityLoadingEvent'
 
         when:
 
@@ -180,8 +185,10 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterUpdateEntityListener'
         listener.allEvents[i++].message == 'JPA PostUpdate'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, UPDATED'
+        listener.allEvents[i++].message == 'JPA PostLoad'
+        listener.allEvents[i++].message == 'BeforeDetachEntityListener'
+        listener.allEvents[i++].message == 'EntityLoadingEvent'
 
         when:
 
@@ -198,7 +205,6 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterDeleteEntityListener'
         listener.allEvents[i++].message == 'JPA PostRemove'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, DELETED'
 
         when:
@@ -261,8 +267,10 @@ class AllDataEventsTest extends DataSpec {
         listener.allEvents[i++].message == 'AfterUpdateEntityListener'
         listener.allEvents[i++].message == 'JPA PostUpdate'
         listener.allEvents[i++].message == 'BeforeDetachEntityListener'
-        listener.allEvents[i++].message == 'EntityLoadingEvent'
         listener.allEvents[i++].message == 'EntityChangedEvent: beforeCommit, UPDATED'
+        listener.allEvents[i++].message == 'JPA PostLoad'
+        listener.allEvents[i++].message == 'BeforeDetachEntityListener'
+        listener.allEvents[i++].message == 'EntityLoadingEvent'
 
         when:
 

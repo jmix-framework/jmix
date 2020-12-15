@@ -16,11 +16,9 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.SaveContext;
 import io.jmix.data.EntityChangeType;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
 
 /**
  * Beans implementing this interface are notified by {@link JpaDataStore} and {@link PersistenceSupport} on their
@@ -45,11 +43,5 @@ public interface JpaDataStoreListener {
      * @param storeName name of data store
      */
     default void onFlush(String storeName) {
-    }
-
-    /**
-     * Invoked when entities are saved in ORM store
-     */
-    default void onSave(Collection<Object> entities, SaveContext saveContext) {
     }
 }

@@ -252,8 +252,14 @@ public class JpaLazyLoadingInterceptor implements DataStoreInterceptor {
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)
-                    || !metadataTools.isPersistent(metaProperty))
+                    || !metadataTools.isPersistent(metaProperty)) {
                 continue;
+            }
+
+            if (metadataTools.isEmbedded(metaProperty) &&
+                    !entityStates.isLoaded(instance, property.getName())) {
+                continue;
+            }
 
             Object value = EntityValues.getValue(instance, property.getName());
             FetchPlan propertyFetchPlan = property.getFetchPlan();

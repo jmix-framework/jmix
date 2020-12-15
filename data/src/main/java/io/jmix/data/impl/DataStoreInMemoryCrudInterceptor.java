@@ -20,13 +20,14 @@ import io.jmix.core.*;
 import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
 import io.jmix.core.datastore.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
+public class DataStoreInMemoryCrudInterceptor implements DataStoreInterceptor {
 
     @Autowired
     protected AccessManager accessManager;
@@ -40,26 +41,42 @@ public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected EntityAttributesEraser entityAttributesEraser;
+    @Autowired
+    protected EntityStates entityStates;
 
-    public void beforeEntityLoad(BeforeEntityLoadEvent beforeLoadEvent) {
-        LoadContext<?> context = beforeLoadEvent.getLoadContext();
-
+    public void beforeEntityLoad(BeforeEntityLoadEvent event) {
+        LoadContext<?> context = event.getLoadContext();
 
         if (hasInMemoryRead(context)) {
             context.setLoadPartialEntities(false);
         }
     }
 
-    public void beforeEntityCount(BeforeEntityCountEvent beforeCountEvent) {
-        LoadContext<?> context = beforeCountEvent.getLoadContext();
+    public void beforeEntityCount(BeforeEntityCountEvent event) {
+        LoadContext<?> context = event.getLoadContext();
 
         if (hasInMemoryRead(context)) {
-            beforeCountEvent.setCountByItems();
+            event.setCountByItems();
         }
     }
 
-    public void entityLoaded(EntityLoadedEvent loadedEvent) {
-        LoadContext<?> context = loadedEvent.getLoadContext();
+    @Override
+    public void beforeEntitySave(BeforeEntitySaveEvent event) {
+        SaveContext context = event.getSaveContext();
+
+        for (Object entity : context.getEntitiesToSave()) {
+            if (!entityStates.isNew(entity)) {
+                entityAttributesEraser.restoreAttributes(entity);
+            }
+        }
+
+        for (Object entity : context.getEntitiesToRemove()) {
+            entityAttributesEraser.restoreAttributes(entity);
+        }
+    }
+
+    public void entityLoading(EntityLoadingEvent event) {
+        LoadContext<?> context = event.getLoadContext();
 
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
@@ -68,9 +85,9 @@ public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
 
         List<Object> entities = new ArrayList<>();
 
-        for (Object entity : loadedEvent.getResultEntities()) {
+        for (Object entity : event.getResultEntities()) {
             if (!crudContext.isReadPermitted(entity)) {
-                loadedEvent.excludeEntity(entity);
+                event.excludeEntity(entity);
             } else {
                 entities.add(entity);
             }
@@ -83,7 +100,7 @@ public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
                     accessManager.applyConstraints(childCrudContext, context.getAccessConstraints());
                     return childCrudContext.isReadPermitted(entity);
                 });
-        loadedEvent.getEventState().setValue("erasedReferences", references);
+        event.getEventState().setValue("erasedReferences", references);
     }
 
     @Override
@@ -93,6 +110,49 @@ public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
         if (references != null) {
             entityAttributesEraser.eraseReferences(references);
         }
+    }
+
+    @Override
+    public void entitySaving(EntitySavingEvent event) {
+        SaveContext context = event.getSaveContext();
+
+        for (Object entity : event.getEntities()) {
+            MetaClass metaClass = metadata.getClass(entity);
+
+            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyConstraints(entityContext, context.getAccessConstraints());
+
+            if (isNew(context, entity)) {
+                if (!entityContext.isCreatePermitted(entity)) {
+                    throw new AccessDeniedException("entity", entity.toString(), "create");
+                }
+            } else {
+                if (!entityContext.isUpdatePermitted(entity)) {
+                    throw new AccessDeniedException("entity", entity.toString(), "update");
+                }
+            }
+        }
+    }
+
+    @Override
+    public void entityDeleting(EntityDeletingEvent event) {
+        SaveContext context = event.getSaveContext();
+
+        for (Object entity : event.getEntities()) {
+            MetaClass metaClass = metadata.getClass(entity);
+
+            InMemoryCrudEntityContext entityContext = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyConstraints(entityContext, context.getAccessConstraints());
+
+            if (!entityContext.isDeletePermitted(entity)) {
+                throw new AccessDeniedException("entity", entity.toString(), "delete");
+            }
+        }
+    }
+
+    @Override
+    public int getOrder() {
+        return JmixOrder.HIGHEST_PRECEDENCE + 10;
     }
 
     protected boolean hasInMemoryRead(LoadContext<?> context) {
@@ -126,5 +186,13 @@ public class DataStoreInMemoryCRUDInterceptor implements DataStoreInterceptor {
             }
         }
         return entityClasses;
+    }
+
+    protected boolean isNew(SaveContext saveContext, Object entity) {
+        Object entityToSave = saveContext.getEntitiesToSave().stream()
+                .filter(e -> Objects.equals(e, entity))
+                .findFirst()
+                .orElse(null);
+        return entityToSave != null && entityStates.isNew(entityToSave);
     }
 }

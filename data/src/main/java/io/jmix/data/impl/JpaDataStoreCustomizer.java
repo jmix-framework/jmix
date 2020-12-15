@@ -29,9 +29,9 @@ import org.springframework.stereotype.Component;
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class JpaDataStoreCustomizer implements DataStoreCustomizer {
     @Autowired
-    protected DataStoreCRUDInterceptor crudInterceptor;
+    protected DataStoreCrudInterceptor crudInterceptor;
     @Autowired
-    protected DataStoreInMemoryCRUDInterceptor inMemoryCRUDInterceptor;
+    protected DataStoreInMemoryCrudInterceptor inMemoryCRUDInterceptor;
     @Autowired
     protected JpaLazyLoadingInterceptor lazyLoadingInterceptor;
 

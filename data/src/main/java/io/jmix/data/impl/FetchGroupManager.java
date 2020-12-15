@@ -143,8 +143,11 @@ public class FetchGroupManager {
 
         List<FetchGroupField> refFields = new ArrayList<>();
         for (FetchGroupField field : fetchGroupFields) {
-            if (field.metaProperty.getRange().isClass() && !metadataTools.isEmbedded(field.metaProperty))
+            if (field.metaProperty.getRange().isClass()
+                    && !metadataTools.isEmbedded(field.metaProperty)
+                    && !metadataTools.isEmbeddedId(field.metaProperty)) {
                 refFields.add(field);
+            }
         }
 
         MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
@@ -433,7 +436,7 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             for (MetaProperty metaProperty : entityMetaClass.getProperties()) {
-                if (metaProperty.getRange().isClass()  && metadataTools.isPersistent(metaProperty)
+                if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)
                         && !metadataTools.isEmbedded(metaProperty)
                         && !fetchPlan.containsProperty(metaProperty.getName())) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, metaProperty.getName(), FetchMode.AUTO, true));

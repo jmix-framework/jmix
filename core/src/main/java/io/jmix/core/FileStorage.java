@@ -22,9 +22,8 @@ import java.io.InputStream;
  * Interface of a component to store and load files defined by file reference.
  *
  * @param <R> file reference type
- * @param <I> file info type
  */
-public interface FileStorage<R, I> {
+public interface FileStorage<R> {
 
     /**
      * Returns file reference type.
@@ -33,15 +32,17 @@ public interface FileStorage<R, I> {
 
     /**
      * Creates new file reference, which can be used to store a file.
+     *
+     * @param fileName file name
      */
-    R createReference(I fileInfo);
+    R createReference(String fileName);
 
     /**
-     * Returns file info for the given file reference.
+     * Returns file name for the given file reference.
      *
      * @throws IllegalArgumentException if file reference is invalid
      */
-    I getFileInfo(R reference);
+    String getFileName(R reference);
 
     /**
      * Saves an InputStream contents into file storage.

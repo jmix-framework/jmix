@@ -61,7 +61,7 @@ public class FileStorageTest {
     @Test
     void testLocator() {
         // usage with typed reference
-        FileStorage<URI, String> fs1 = fileStorageLocator.get("testFileStorage");
+        FileStorage<URI> fs1 = fileStorageLocator.get("testFileStorage");
         URI ref1 = fs1.createReference("testfile");
         fs1.saveStream(ref1, new ByteArrayInputStream(new byte[0]));
 

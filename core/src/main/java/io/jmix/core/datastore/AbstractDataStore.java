@@ -32,7 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractDataStore implements DataStore {
-    protected final List<DataStoreInterceptor> interceptors = new ArrayList<>();
+    protected final List<DataStoreEventListener> interceptors = new ArrayList<>();
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDataStore.class);
 
@@ -60,7 +60,7 @@ public abstract class AbstractDataStore implements DataStore {
     public Object load(LoadContext<?> context) {
         EventSharedState loadState = new EventSharedState();
 
-        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, loadState);
+        DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(context, loadState);
 
         fireEvent(beforeLoadEvent);
 
@@ -73,7 +73,7 @@ public abstract class AbstractDataStore implements DataStore {
         try {
             entity = loadOne(context);
 
-            EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entity, loadState);
+            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entity, loadState);
             fireEvent(loadEvent);
 
             entity = loadEvent.getResultEntity();
@@ -85,7 +85,7 @@ public abstract class AbstractDataStore implements DataStore {
             rollbackTransaction(transaction);
         }
 
-        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, entity, loadState);
+        DataStoreAfterEntityLoadEvent afterLoadEvent = new DataStoreAfterEntityLoadEvent(context, entity, loadState);
         fireEvent(afterLoadEvent);
 
         return afterLoadEvent.getResultEntity();
@@ -95,7 +95,7 @@ public abstract class AbstractDataStore implements DataStore {
     public List<Object> loadList(LoadContext<?> context) {
         EventSharedState loadState = new EventSharedState();
 
-        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, loadState);
+        DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(context, loadState);
         fireEvent(beforeLoadEvent);
 
         if (beforeLoadEvent.loadPrevented()) {
@@ -108,7 +108,7 @@ public abstract class AbstractDataStore implements DataStore {
             if (context.getIds().isEmpty()) {
                 List<Object> entities = loadAll(context);
 
-                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entities, loadState);
+                DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, loadState);
                 fireEvent(loadEvent);
 
                 resultList = loadEvent.getResultEntities();
@@ -122,7 +122,7 @@ public abstract class AbstractDataStore implements DataStore {
             } else {
                 resultList = loadAll(context);
 
-                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, resultList, loadState);
+                DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, resultList, loadState);
                 fireEvent(loadEvent);
 
                 resultList = checkAndReorderLoadedEntities(context, loadEvent.getResultEntities());
@@ -134,7 +134,7 @@ public abstract class AbstractDataStore implements DataStore {
             rollbackTransaction(transaction);
         }
 
-        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, resultList, loadState);
+        DataStoreAfterEntityLoadEvent afterLoadEvent = new DataStoreAfterEntityLoadEvent(context, resultList, loadState);
         fireEvent(afterLoadEvent);
 
         return afterLoadEvent.getResultEntities();
@@ -144,7 +144,7 @@ public abstract class AbstractDataStore implements DataStore {
     public long getCount(LoadContext<?> context) {
         EventSharedState eventState = new EventSharedState();
 
-        BeforeEntityCountEvent beforeCountEvent = new BeforeEntityCountEvent(context, eventState);
+        DataStoreBeforeEntityCountEvent beforeCountEvent = new DataStoreBeforeEntityCountEvent(context, eventState);
         fireEvent(beforeCountEvent);
 
         if (beforeCountEvent.countPrevented()) {
@@ -163,7 +163,7 @@ public abstract class AbstractDataStore implements DataStore {
 
                 List<?> entities = loadAll(countContext);
 
-                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entities, eventState);
+                DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, entities, eventState);
                 fireEvent(loadEvent);
 
                 List<?> resultList = loadEvent.getResultEntities();
@@ -184,7 +184,7 @@ public abstract class AbstractDataStore implements DataStore {
     public Set<?> save(SaveContext context) {
         EventSharedState saveState = new EventSharedState();
 
-        BeforeEntitySaveEvent beforeSaveEvent = new BeforeEntitySaveEvent(context, saveState);
+        DataStoreBeforeEntitySaveEvent beforeSaveEvent = new DataStoreBeforeEntitySaveEvent(context, saveState);
         fireEvent(beforeSaveEvent);
 
         Set<Object> savedEntities;
@@ -192,11 +192,11 @@ public abstract class AbstractDataStore implements DataStore {
         Object transaction = beginSaveTransaction(context.isJoinTransaction());
         try {
             savedEntities = saveAll(context);
-            EntitySavingEvent savingEvent = new EntitySavingEvent(context, savedEntities, saveState);
+            DataStoreEntitySavingEvent savingEvent = new DataStoreEntitySavingEvent(context, savedEntities, saveState);
             fireEvent(savingEvent);
 
             deletedEntities = deleteAll(context);
-            EntityDeletingEvent deletingEvent = new EntityDeletingEvent(context, savedEntities, saveState);
+            DataStoreEntityDeletingEvent deletingEvent = new DataStoreEntityDeletingEvent(context, savedEntities, saveState);
             fireEvent(deletingEvent);
 
             beforeCommitSaveTransaction(context, savedEntities, deletedEntities);
@@ -234,14 +234,14 @@ public abstract class AbstractDataStore implements DataStore {
                                                Collection<Object> removedEntities) {
     }
 
-    public void registerInterceptor(DataStoreInterceptor interceptor) {
+    public void registerInterceptor(DataStoreEventListener interceptor) {
         interceptors.add(interceptor);
-        interceptors.sort(Comparator.comparing(DataStoreInterceptor::getOrder));
+        interceptors.sort(Comparator.comparing(DataStoreEventListener::getOrder));
     }
 
     protected <T extends BaseDataStoreEvent> void fireEvent(T event) {
-        for (DataStoreInterceptor interceptor : interceptors) {
-            event.applyBy(interceptor);
+        for (DataStoreEventListener interceptor : interceptors) {
+            event.sendTo(interceptor);
         }
     }
 
@@ -276,7 +276,7 @@ public abstract class AbstractDataStore implements DataStore {
                 break;
             }
 
-            EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, list, eventState);
+            DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(context, list, eventState);
             fireEvent(loadEvent);
 
             entities.addAll(loadEvent.getResultEntities());
@@ -323,7 +323,7 @@ public abstract class AbstractDataStore implements DataStore {
                         .setId(Objects.requireNonNull(EntityValues.getId(entity)))
                         .setFetchPlan(getFetchPlanForSave(context.getFetchPlans(), entity));
 
-                BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(loadContext, loadState);
+                DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(loadContext, loadState);
                 fireEvent(beforeLoadEvent);
 
                 if (!beforeLoadEvent.loadPrevented()) {
@@ -334,7 +334,7 @@ public abstract class AbstractDataStore implements DataStore {
 
                         copyNonPersistentAttributes(entity, fetchedEntity);
 
-                        EntityLoadingEvent loadEvent = new EntityLoadingEvent(loadContext, fetchedEntity, loadState);
+                        DataStoreEntityLoadingEvent loadEvent = new DataStoreEntityLoadingEvent(loadContext, fetchedEntity, loadState);
                         fireEvent(loadEvent);
 
                         loadedEntities.add(loadEvent.getResultEntity());
@@ -355,7 +355,7 @@ public abstract class AbstractDataStore implements DataStore {
         for (Object entity : loadedEntities) {
             EntityLoadInfo loadInfo = loadInfoMap.get(entity);
 
-            AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(loadInfo.loadContext, entity, loadInfo.eventState);
+            DataStoreAfterEntityLoadEvent afterLoadEvent = new DataStoreAfterEntityLoadEvent(loadInfo.loadContext, entity, loadInfo.eventState);
             fireEvent(afterLoadEvent);
 
             if (afterLoadEvent.getResultEntity() != null) {

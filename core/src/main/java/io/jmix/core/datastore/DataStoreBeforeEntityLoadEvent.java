@@ -16,38 +16,37 @@
 
 package io.jmix.core.datastore;
 
-import io.jmix.core.SaveContext;
+import io.jmix.core.LoadContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-public class EntitySavingEvent extends BaseDataStoreEvent {
+public class DataStoreBeforeEntityLoadEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
+    protected boolean loadPrevented;
     protected final EventSharedState eventState;
-    protected final List<Object> entities;
 
-    public EntitySavingEvent(SaveContext saveContext, Set<Object> entities, EventSharedState eventState) {
-        super(saveContext);
+    public DataStoreBeforeEntityLoadEvent(LoadContext<?> loadContext, EventSharedState eventState) {
+        super(loadContext);
         this.eventState = eventState;
-        this.entities = new ArrayList<>(entities);
     }
 
-    public SaveContext getSaveContext() {
-        return (SaveContext) getSource();
+    public LoadContext<?> getLoadContext() {
+        return (LoadContext<?>) getSource();
     }
 
     public EventSharedState getEventState() {
         return eventState;
     }
 
-    public List<Object> getEntities() {
-        return entities;
+    public void setLoadPrevented() {
+        this.loadPrevented = true;
+    }
+
+    public boolean loadPrevented() {
+        return loadPrevented;
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.entitySaving(this);
+    public void sendTo(DataStoreEventListener interceptor) {
+        interceptor.beforeEntityLoad(this);
     }
 }

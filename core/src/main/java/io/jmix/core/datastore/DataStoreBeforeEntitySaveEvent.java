@@ -18,13 +18,13 @@ package io.jmix.core.datastore;
 
 import io.jmix.core.SaveContext;
 
-public class BeforeEntitySaveEvent extends BaseDataStoreEvent {
+public class DataStoreBeforeEntitySaveEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected boolean savePrevented;
     protected final EventSharedState eventState;
 
-    public BeforeEntitySaveEvent(SaveContext saveContext, EventSharedState eventState) {
+    public DataStoreBeforeEntitySaveEvent(SaveContext saveContext, EventSharedState eventState) {
         super(saveContext);
         this.eventState = eventState;
     }
@@ -46,7 +46,7 @@ public class BeforeEntitySaveEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
+    public void sendTo(DataStoreEventListener interceptor) {
         interceptor.beforeEntitySave(this);
     }
 }

@@ -18,13 +18,14 @@ package io.jmix.core.datastore;
 
 import io.jmix.core.LoadContext;
 
-public class BeforeEntityLoadEvent extends BaseDataStoreEvent {
+public class DataStoreBeforeEntityCountEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
-    protected boolean loadPrevented;
+    protected boolean countPrevented;
+    protected boolean countByItems;
     protected final EventSharedState eventState;
 
-    public BeforeEntityLoadEvent(LoadContext<?> loadContext, EventSharedState eventState) {
+    public DataStoreBeforeEntityCountEvent(LoadContext<?> loadContext, EventSharedState eventState) {
         super(loadContext);
         this.eventState = eventState;
     }
@@ -37,16 +38,24 @@ public class BeforeEntityLoadEvent extends BaseDataStoreEvent {
         return eventState;
     }
 
-    public void setLoadPrevented() {
-        this.loadPrevented = true;
+    public void setCountPrevented() {
+        this.countPrevented = true;
     }
 
-    public boolean loadPrevented() {
-        return loadPrevented;
+    public boolean countPrevented() {
+        return countPrevented;
+    }
+
+    public void setCountByItems() {
+        this.countByItems = true;
+    }
+
+    public boolean countByItems() {
+        return countByItems;
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.beforeEntityLoad(this);
+    public void sendTo(DataStoreEventListener interceptor) {
+        interceptor.beforeEntityCount(this);
     }
 }

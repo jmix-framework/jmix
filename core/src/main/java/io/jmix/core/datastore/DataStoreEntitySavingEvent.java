@@ -22,13 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class EntityDeletingEvent extends BaseDataStoreEvent {
+public class DataStoreEntitySavingEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected final EventSharedState eventState;
     protected final List<Object> entities;
 
-    public EntityDeletingEvent(SaveContext saveContext, Set<Object> entities, EventSharedState eventState) {
+    public DataStoreEntitySavingEvent(SaveContext saveContext, Set<Object> entities, EventSharedState eventState) {
         super(saveContext);
         this.eventState = eventState;
         this.entities = new ArrayList<>(entities);
@@ -47,7 +47,7 @@ public class EntityDeletingEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.entityDeleting(this);
+    public void sendTo(DataStoreEventListener interceptor) {
+        interceptor.entitySaving(this);
     }
 }

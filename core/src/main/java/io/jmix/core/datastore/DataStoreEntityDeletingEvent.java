@@ -16,46 +16,38 @@
 
 package io.jmix.core.datastore;
 
-import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 
-public class BeforeEntityCountEvent extends BaseDataStoreEvent {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class DataStoreEntityDeletingEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
-    protected boolean countPrevented;
-    protected boolean countByItems;
     protected final EventSharedState eventState;
+    protected final List<Object> entities;
 
-    public BeforeEntityCountEvent(LoadContext<?> loadContext, EventSharedState eventState) {
-        super(loadContext);
+    public DataStoreEntityDeletingEvent(SaveContext saveContext, Set<Object> entities, EventSharedState eventState) {
+        super(saveContext);
         this.eventState = eventState;
+        this.entities = new ArrayList<>(entities);
     }
 
-    public LoadContext<?> getLoadContext() {
-        return (LoadContext<?>) getSource();
+    public SaveContext getSaveContext() {
+        return (SaveContext) getSource();
     }
 
     public EventSharedState getEventState() {
         return eventState;
     }
 
-    public void setCountPrevented() {
-        this.countPrevented = true;
-    }
-
-    public boolean countPrevented() {
-        return countPrevented;
-    }
-
-    public void setCountByItems() {
-        this.countByItems = true;
-    }
-
-    public boolean countByItems() {
-        return countByItems;
+    public List<Object> getEntities() {
+        return entities;
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.beforeEntityCount(this);
+    public void sendTo(DataStoreEventListener interceptor) {
+        interceptor.entityDeleting(this);
     }
 }

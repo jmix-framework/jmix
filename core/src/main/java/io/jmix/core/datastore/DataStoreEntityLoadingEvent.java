@@ -20,23 +20,24 @@ import io.jmix.core.LoadContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class AfterEntityLoadEvent extends BaseDataStoreEvent {
+public class DataStoreEntityLoadingEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected final List<Object> entities;
     protected List<Object> excludedEntities;
     protected final EventSharedState eventState;
 
-    public AfterEntityLoadEvent(LoadContext<?> loadContext, List<Object> entities, EventSharedState eventState) {
+    public DataStoreEntityLoadingEvent(LoadContext<?> loadContext, List<Object> entities, EventSharedState eventState) {
         super(loadContext);
         this.entities = entities;
         this.eventState = eventState;
     }
 
-    public AfterEntityLoadEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
+    public DataStoreEntityLoadingEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
         super(loadContext);
         this.entities = entity == null ? Collections.emptyList() : Collections.singletonList(entity);
         this.eventState = eventState;
@@ -48,6 +49,10 @@ public class AfterEntityLoadEvent extends BaseDataStoreEvent {
 
     public EventSharedState getEventState() {
         return eventState;
+    }
+
+    public Collection<Object> getEntities() {
+        return entities;
     }
 
     public void excludeEntity(Object entity) {
@@ -74,7 +79,7 @@ public class AfterEntityLoadEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.afterEntityLoad(this);
+    public void sendTo(DataStoreEventListener interceptor) {
+        interceptor.entityLoading(this);
     }
 }

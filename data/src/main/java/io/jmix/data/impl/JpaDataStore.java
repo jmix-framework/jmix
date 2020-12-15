@@ -72,9 +72,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     protected DataProperties properties;
 
     @Autowired
-    protected MetadataTools metadataTools;
-
-    @Autowired
     protected FetchPlans fetchPlans;
 
     @Autowired

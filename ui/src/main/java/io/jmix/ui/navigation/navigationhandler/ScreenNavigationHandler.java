@@ -22,14 +22,12 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.PermissionType;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.app.navigation.notfoundwindow.NotFoundScreen;
 import io.jmix.ui.component.impl.WindowImpl;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.navigation.*;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.MapUtils;
@@ -332,12 +330,12 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
         if (!entityContext.isViewPermitted()) {
             urlChangeHandler.revertNavigationState();
-            throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.READ, entityClass.getSimpleName());
+            throw new AccessDeniedException("entity", entityClass.getSimpleName(), "read");
         }
 
         if (NEW_ENTITY_ID.equals(idParam)) {
             if (!entityContext.isCreatePermitted()) {
-                throw new AccessDeniedException(PermissionType.ENTITY_OP, EntityOp.CREATE, entityClass.getSimpleName());
+                throw new AccessDeniedException("entity", entityClass.getSimpleName(), "create");
             }
             return ParamsMap.of("item", metadata.create(entityClass));
         }

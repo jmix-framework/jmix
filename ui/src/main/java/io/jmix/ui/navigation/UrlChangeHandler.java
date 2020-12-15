@@ -19,16 +19,14 @@ package io.jmix.ui.navigation;
 import com.vaadin.server.Page;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.AccessManager;
-import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.PermissionType;
 import io.jmix.ui.*;
+import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.RootWindow;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.WindowImpl;
-import io.jmix.ui.accesscontext.UiShowScreenContext;
 import io.jmix.ui.navigation.NavigationFilter.AccessCheckResult;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
@@ -41,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -212,7 +211,7 @@ public class UrlChangeHandler implements InitializingBean {
         if (!showScreenContext.isPermitted()) {
             revertNavigationState();
 
-            throw new AccessDeniedException(PermissionType.SCREEN, windowInfo.getId());
+            throw new AccessDeniedException("screen", windowInfo.getId());
         }
 
         NavigationFilter.AccessCheckResult navigationAllowed = navigationAllowed(requestedState);

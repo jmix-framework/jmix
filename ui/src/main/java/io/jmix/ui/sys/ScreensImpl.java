@@ -22,7 +22,6 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.Messages;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.PermissionType;
 import io.jmix.ui.*;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.accesscontext.UiShowScreenContext;
@@ -37,6 +36,7 @@ import io.jmix.ui.component.impl.TabWindowImpl;
 import io.jmix.ui.component.impl.WindowImpl;
 import io.jmix.ui.component.impl.WindowImplementation;
 import io.jmix.ui.event.screen.ScreenClosedEvent;
+import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
@@ -47,7 +47,6 @@ import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlTools;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.screen.Screen.*;
-import io.jmix.ui.event.screen.ScreenOpenedEvent;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
@@ -915,7 +914,7 @@ public class ScreensImpl implements Screens {
             accessManager.applyRegisteredConstraints(showScreenContext);
 
             if (!showScreenContext.isPermitted()) {
-                throw new AccessDeniedException(PermissionType.SCREEN, windowInfo.getId());
+                throw new AccessDeniedException("screen", windowInfo.getId());
             }
         }
     }

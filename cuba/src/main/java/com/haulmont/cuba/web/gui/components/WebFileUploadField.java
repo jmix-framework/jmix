@@ -63,7 +63,7 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
     @Override
     public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
         //ignore FileStorageLocator and use cuba file storage
-        fileStorage = (FileStorage) cubaFileStorage.getFileStorageAdapter();
+        fileStorage = cubaFileStorage.getFileStorageAdapter();
     }
 
     @Override

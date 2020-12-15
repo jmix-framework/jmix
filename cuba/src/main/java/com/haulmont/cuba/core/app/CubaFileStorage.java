@@ -137,7 +137,7 @@ public class CubaFileStorage implements FileStorageAPI {
     /**
      * Returns an adapter to use this storage as {@link FileStorage}.
      */
-    public FileStorage<FileDescriptor, String> getFileStorageAdapter() {
+    public FileStorage<FileDescriptor> getFileStorageAdapter() {
         return new CubaFileStorageAdapter();
     }
 
@@ -150,25 +150,25 @@ public class CubaFileStorage implements FileStorageAPI {
     /**
      * An adapter to use {@link CubaFileStorage} as {@link FileStorage}.
      */
-    protected class CubaFileStorageAdapter implements FileStorage<FileDescriptor, String> {
+    protected class CubaFileStorageAdapter implements FileStorage<FileDescriptor> {
         @Override
         public Class<FileDescriptor> getReferenceType() {
             return FileDescriptor.class;
         }
 
         @Override
-        public FileDescriptor createReference(String fileInfo) {
+        public FileDescriptor createReference(String fileName) {
             FileDescriptor fileDescriptor = metadata.create(FileDescriptor.class);
-            fileDescriptor.setName(fileInfo);
-            fileDescriptor.setExtension(FilenameUtils.getExtension(fileInfo));
+            fileDescriptor.setName(fileName);
+            fileDescriptor.setExtension(FilenameUtils.getExtension(fileName));
             fileDescriptor.setCreateDate(timeSource.currentTimestamp());
 
             return fileDescriptor;
         }
 
         @Override
-        public String getFileInfo(FileDescriptor reference) {
-            return delegate.getFileInfo(toURI(reference));
+        public String getFileName(FileDescriptor reference) {
+            return delegate.getFileName(toURI(reference));
         }
 
         @Override

@@ -61,7 +61,7 @@ public class FileUploadController {
     @Autowired
     protected AccessManager accessManager;
 
-    protected FileStorage<URI, String> fileStorage;
+    protected FileStorage<URI> fileStorage;
 
     /**
      * Method for simple file upload. File contents are placed in the request body. Optional file name parameter is

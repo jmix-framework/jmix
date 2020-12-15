@@ -59,7 +59,7 @@ public class FileDownloadController {
     @Autowired
     protected AccessManager accessManager;
 
-    protected FileStorage<URI, String> fileStorage;
+    protected FileStorage<URI> fileStorage;
 
     @GetMapping("/**")
     public void downloadFile(@RequestParam(required = false) Boolean attachment,
@@ -100,7 +100,7 @@ public class FileDownloadController {
             response.setDateHeader("Expires", 0);
             response.setHeader("Content-Type", getContentType(fileReference));
 
-            String filename = fileStorage.getFileInfo(fileReference);
+            String filename = fileStorage.getFileName(fileReference);
             String contentDisposition = BooleanUtils.isTrue(attachment) ? "attachment" : "inline";
             if (StringUtils.isNotEmpty(filename)) {
                 contentDisposition += "; filename=\"" + URLEncodeUtils.encodeUtf8(filename) + "\"";
@@ -128,7 +128,7 @@ public class FileDownloadController {
     }
 
     protected String getContentType(URI fileReference) {
-        String fileName = fileStorage.getFileInfo(fileReference);
+        String fileName = fileStorage.getFileName(fileReference);
         String extension = FilenameUtils.getExtension(fileName);
         if (StringUtils.isEmpty(extension)) {
             return FileTypesHelper.DEFAULT_MIME_TYPE;

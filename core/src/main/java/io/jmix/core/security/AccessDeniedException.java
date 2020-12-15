@@ -15,59 +15,56 @@
  */
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
+
 /**
  * Exception that is raised on attempt to violate a security constraint.
  * <p>
  * You can throw this exception in application code if you want a standard notification about "access denied"
  * to be shown to the user and the event to be logged.
  */
-public class AccessDeniedException extends RuntimeException
-{
+public class AccessDeniedException extends RuntimeException {
     private static final long serialVersionUID = -3097861878301424338L;
 
-    private PermissionType type;
-
-    private EntityOp entityOp;
-
-    private String target;
+    private final String type;
+    private final String resource;
+    private final String action;
 
     /**
      * Constructor.
      *
-     * @param type      permission type
-     * @param target    permission target object, e.g. a screen id or entity operation name. When throwing the exception
-     *                  in application code, can be any string suitable to describe the situation in the log.
+     * @param resource permission target object, e.g. a screen id or entity operation name. When throwing the exception
+     *                 in application code, can be any string suitable to describe the situation in the log.
+     * @param type     permission type
      */
-    public AccessDeniedException(PermissionType type, String target) {
-        super(type.toString() + " " + target);
-        this.type = type;
-        this.target = target;
+    public AccessDeniedException(String type, String resource) {
+        this(type, resource, null);
     }
 
     /**
      * Constructor.
      *
-     * @param type      permission type
-     * @param entityOp  type of operation on entity
-     * @param target    permission target object, e.g. a screen id or entity operation name. When throwing the exception
-     *                  in application code, can be any string suitable to describe the situation in the log.
+     * @param resource permission target object, e.g. a screen id or entity operation name. When throwing the exception
+     *                 in application code, can be any string suitable to describe the situation in the log.
+     * @param type     permission type
+     * @param action   type of operation on resource
      */
-    public AccessDeniedException(PermissionType type, EntityOp entityOp, String target) {
-        super(type.toString() + ":" + entityOp.toString() + " " + target);
+    public AccessDeniedException(String type, String resource, @Nullable String action) {
+        super(String.format("resource: %s, type: %s, action: %s", resource, type, action));
         this.type = type;
-        this.target = target;
-        this.entityOp = entityOp;
+        this.resource = resource;
+        this.action = action;
     }
 
-    public PermissionType getType() {
+    public String getType() {
         return type;
     }
 
-    public String getTarget() {
-        return target;
+    public String getResource() {
+        return resource;
     }
 
-    public EntityOp getEntityOp() {
-        return entityOp;
+    public String getAction() {
+        return action;
     }
 }

@@ -17,18 +17,17 @@
 package io.jmix.core.datastore;
 
 import com.google.common.base.Preconditions;
-import io.jmix.core.DataStore;
-import io.jmix.core.EntityAccessException;
-import io.jmix.core.LoadContext;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaProperty;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,12 +36,31 @@ public abstract class AbstractDataStore implements DataStore {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractDataStore.class);
 
+    protected Metadata metadata;
+    protected MetadataTools metadataTools;
+    protected EntityStates entityStates;
+
+    @Autowired
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    @Autowired
+    public void setMetadataTools(MetadataTools metadataTools) {
+        this.metadataTools = metadataTools;
+    }
+
+    @Autowired
+    public void setEntityStates(EntityStates entityStates) {
+        this.entityStates = entityStates;
+    }
+
     @Nullable
     @Override
     public Object load(LoadContext<?> context) {
-        EventSharedState eventState = new EventSharedState();
+        EventSharedState loadState = new EventSharedState();
 
-        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, eventState);
+        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, loadState);
 
         fireEvent(beforeLoadEvent);
 
@@ -50,23 +68,24 @@ public abstract class AbstractDataStore implements DataStore {
             return null;
         }
 
-        Object entity = null;
+        Object entity;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
             entity = loadOne(context);
 
-            EntityLoadedEvent loadEvent = new EntityLoadedEvent(context, entity, eventState);
+            EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entity, loadState);
             fireEvent(loadEvent);
 
             entity = loadEvent.getResultEntity();
 
-            commitLoadTransaction(transaction, context,
+            beforeCommitLoadTransaction(context,
                     entity == null ? Collections.emptyList() : Collections.singletonList(entity));
+            commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
         }
 
-        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, entity, eventState);
+        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, entity, loadState);
         fireEvent(afterLoadEvent);
 
         return afterLoadEvent.getResultEntity();
@@ -74,22 +93,22 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public List<Object> loadList(LoadContext<?> context) {
-        EventSharedState eventState = new EventSharedState();
+        EventSharedState loadState = new EventSharedState();
 
-        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, eventState);
+        BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(context, loadState);
         fireEvent(beforeLoadEvent);
 
         if (beforeLoadEvent.loadPrevented()) {
             return Collections.emptyList();
         }
 
-        List<Object> resultList = Collections.emptyList();
+        List<Object> resultList;
         Object transaction = beginLoadTransaction(context.isJoinTransaction());
         try {
             if (context.getIds().isEmpty()) {
                 List<Object> entities = loadAll(context);
 
-                EntityLoadedEvent loadEvent = new EntityLoadedEvent(context, entities, eventState);
+                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entities, loadState);
                 fireEvent(loadEvent);
 
                 resultList = loadEvent.getResultEntities();
@@ -97,24 +116,25 @@ public abstract class AbstractDataStore implements DataStore {
                 if (entities.size() != resultList.size()) {
                     Preconditions.checkNotNull(context.getQuery());
                     if (context.getQuery().getMaxResults() != 0) {
-                        resultList = loadListByBatches(context, resultList.size(), eventState);
+                        resultList = loadListByBatches(context, resultList.size(), loadState);
                     }
                 }
             } else {
                 resultList = loadAll(context);
 
-                EntityLoadedEvent loadEvent = new EntityLoadedEvent(context, resultList, eventState);
+                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, resultList, loadState);
                 fireEvent(loadEvent);
 
                 resultList = checkAndReorderLoadedEntities(context, loadEvent.getResultEntities());
             }
 
-            commitLoadTransaction(transaction, context, resultList);
+            beforeCommitLoadTransaction(context, resultList);
+            commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
         }
 
-        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, resultList, eventState);
+        AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(context, resultList, loadState);
         fireEvent(afterLoadEvent);
 
         return afterLoadEvent.getResultEntities();
@@ -143,8 +163,7 @@ public abstract class AbstractDataStore implements DataStore {
 
                 List<?> entities = loadAll(countContext);
 
-                //noinspection unchecked,rawtypes,rawtypes
-                EntityLoadedEvent loadEvent = new EntityLoadedEvent(context, entities, eventState);
+                EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, entities, eventState);
                 fireEvent(loadEvent);
 
                 List<?> resultList = loadEvent.getResultEntities();
@@ -153,11 +172,40 @@ public abstract class AbstractDataStore implements DataStore {
                 count = countAll(context);
             }
 
-            commitLoadTransaction(transaction, context, Collections.emptyList());
+            beforeCommitLoadTransaction(context, Collections.emptyList());
+            commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
         }
         return count;
+    }
+
+    @Override
+    public Set<?> save(SaveContext context) {
+        EventSharedState saveState = new EventSharedState();
+
+        BeforeEntitySaveEvent beforeSaveEvent = new BeforeEntitySaveEvent(context, saveState);
+        fireEvent(beforeSaveEvent);
+
+        Set<Object> savedEntities;
+        Set<Object> deletedEntities;
+        Object transaction = beginSaveTransaction(context.isJoinTransaction());
+        try {
+            savedEntities = saveAll(context);
+            EntitySavingEvent savingEvent = new EntitySavingEvent(context, savedEntities, saveState);
+            fireEvent(savingEvent);
+
+            deletedEntities = deleteAll(context);
+            EntityDeletingEvent deletingEvent = new EntityDeletingEvent(context, savedEntities, saveState);
+            fireEvent(deletingEvent);
+
+            beforeCommitSaveTransaction(context, savedEntities, deletedEntities);
+            commitTransaction(transaction);
+        } finally {
+            rollbackTransaction(transaction);
+        }
+
+        return context.isDiscardSaved() ? Collections.emptySet() : loadAllAfterSave(context, savedEntities);
     }
 
     @Nullable
@@ -167,14 +215,28 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract long countAll(LoadContext<?> context);
 
+    protected abstract Set<Object> saveAll(SaveContext saveContext);
+
+    protected abstract Set<Object> deleteAll(SaveContext saveContext);
+
     protected abstract Object beginLoadTransaction(boolean joinTransaction);
 
-    protected abstract void commitLoadTransaction(Object transaction, LoadContext<?> context, List<Object> entities);
+    protected abstract Object beginSaveTransaction(boolean joinTransaction);
+
+    protected abstract void commitTransaction(Object transaction);
 
     protected abstract void rollbackTransaction(Object transaction);
 
+    protected void beforeCommitLoadTransaction(LoadContext<?> context, Collection<Object> entities) {
+    }
+
+    protected void beforeCommitSaveTransaction(SaveContext context, Collection<Object> savedEntities,
+                                               Collection<Object> removedEntities) {
+    }
+
     public void registerInterceptor(DataStoreInterceptor interceptor) {
         interceptors.add(interceptor);
+        interceptors.sort(Comparator.comparing(DataStoreInterceptor::getOrder));
     }
 
     protected <T extends BaseDataStoreEvent> void fireEvent(T event) {
@@ -203,7 +265,6 @@ public abstract class AbstractDataStore implements DataStore {
                 break;
             }
 
-            //noinspection unchecked
             LoadContext<?> batchContext = context.copy();
 
             assert batchContext.getQuery() != null;
@@ -215,7 +276,7 @@ public abstract class AbstractDataStore implements DataStore {
                 break;
             }
 
-            EntityLoadedEvent loadEvent = new EntityLoadedEvent(context, list, eventState);
+            EntityLoadingEvent loadEvent = new EntityLoadingEvent(context, list, eventState);
             fireEvent(loadEvent);
 
             entities.addAll(loadEvent.getResultEntities());
@@ -248,5 +309,98 @@ public abstract class AbstractDataStore implements DataStore {
             result.add(entity);
         }
         return result;
+    }
+
+    protected Set<Object> loadAllAfterSave(SaveContext context, Set<Object> savedEntities) {
+        Map<Object, EntityLoadInfo> loadInfoMap = new HashMap<>();
+
+        Set<Object> loadedEntities = new HashSet<>();
+        Object loadTransaction = beginLoadTransaction(context.isJoinTransaction());
+        try {
+            for (Object entity : savedEntities) {
+                EventSharedState loadState = new EventSharedState();
+                LoadContext<?> loadContext = new LoadContext<>(metadata.getClass(entity))
+                        .setId(Objects.requireNonNull(EntityValues.getId(entity)))
+                        .setFetchPlan(getFetchPlanForSave(context.getFetchPlans(), entity));
+
+                BeforeEntityLoadEvent beforeLoadEvent = new BeforeEntityLoadEvent(loadContext, loadState);
+                fireEvent(beforeLoadEvent);
+
+                if (!beforeLoadEvent.loadPrevented()) {
+                    Object fetchedEntity = loadOne(loadContext);
+
+                    if (fetchedEntity != null) {
+                        loadInfoMap.put(fetchedEntity, new EntityLoadInfo(loadContext, loadState));
+
+                        copyNonPersistentAttributes(entity, fetchedEntity);
+
+                        EntityLoadingEvent loadEvent = new EntityLoadingEvent(loadContext, fetchedEntity, loadState);
+                        fireEvent(loadEvent);
+
+                        loadedEntities.add(loadEvent.getResultEntity());
+                    }
+                }
+            }
+
+            for (Object entity : loadedEntities) {
+                EntityLoadInfo loadInfo = loadInfoMap.get(entity);
+                beforeCommitLoadTransaction(loadInfo.loadContext, Collections.singletonList(entity));
+            }
+            commitTransaction(loadTransaction);
+        } finally {
+            rollbackTransaction(loadTransaction);
+        }
+
+        Set<Object> resultEntities = new HashSet<>();
+        for (Object entity : loadedEntities) {
+            EntityLoadInfo loadInfo = loadInfoMap.get(entity);
+
+            AfterEntityLoadEvent afterLoadEvent = new AfterEntityLoadEvent(loadInfo.loadContext, entity, loadInfo.eventState);
+            fireEvent(afterLoadEvent);
+
+            if (afterLoadEvent.getResultEntity() != null) {
+                resultEntities.add(afterLoadEvent.getResultEntity());
+            }
+        }
+
+        return resultEntities;
+    }
+
+    protected FetchPlan getFetchPlanForSave(Map<Object, FetchPlan> fetchPlans, Object entity) {
+        FetchPlan fetchPlan = fetchPlans.get(entity);
+        if (fetchPlan == null) {
+            fetchPlan = entityStates.getCurrentFetchPlan(entity);
+        }
+        return fetchPlan;
+    }
+
+    protected void copyNonPersistentAttributes(Object source, Object destination) {
+        // copy non-persistent attributes to the resulting merged instance
+        for (MetaProperty property : metadata.getClass(source.getClass()).getProperties()) {
+            if (!metadataTools.isPersistent(property) && !property.isReadOnly()) {
+                // copy using reflection to avoid executing getter/setter code
+                Field field = FieldUtils.getField(source.getClass(), property.getName(), true);
+                if (field != null) {
+                    try {
+                        Object value = FieldUtils.readField(field, source);
+                        if (value != null) {
+                            FieldUtils.writeField(field, destination, value);
+                        }
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("Error copying non-persistent attribute values", e);
+                    }
+                }
+            }
+        }
+    }
+
+    protected static class EntityLoadInfo {
+        protected LoadContext<?> loadContext;
+        protected EventSharedState eventState;
+
+        public EntityLoadInfo(LoadContext<?> loadContext, EventSharedState eventState) {
+            this.loadContext = loadContext;
+            this.eventState = eventState;
+        }
     }
 }

@@ -24,20 +24,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class EntityLoadedEvent extends BaseDataStoreEvent {
+public class EntityLoadingEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected final List<Object> entities;
     protected List<Object> excludedEntities;
     protected final EventSharedState eventState;
 
-    public EntityLoadedEvent(LoadContext<?> loadContext, List<Object> entities, EventSharedState eventState) {
+    public EntityLoadingEvent(LoadContext<?> loadContext, List<Object> entities, EventSharedState eventState) {
         super(loadContext);
         this.entities = entities;
         this.eventState = eventState;
     }
 
-    public EntityLoadedEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
+    public EntityLoadingEvent(LoadContext<?> loadContext, @Nullable Object entity, EventSharedState eventState) {
         super(loadContext);
         this.entities = entity == null ? Collections.emptyList() : Collections.singletonList(entity);
         this.eventState = eventState;
@@ -80,6 +80,6 @@ public class EntityLoadedEvent extends BaseDataStoreEvent {
 
     @Override
     public void applyBy(DataStoreInterceptor interceptor) {
-        interceptor.entityLoaded(this);
+        interceptor.entityLoading(this);
     }
 }

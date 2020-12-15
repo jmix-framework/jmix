@@ -16,16 +16,33 @@
 
 package io.jmix.core.datastore;
 
-public interface DataStoreInterceptor {
+import io.jmix.core.JmixOrder;
+import org.springframework.core.Ordered;
+
+public interface DataStoreInterceptor extends Ordered {
     default void beforeEntityLoad(BeforeEntityLoadEvent event) {
     }
 
-    default void entityLoaded(EntityLoadedEvent event) {
+    default void entityLoading(EntityLoadingEvent event) {
     }
 
     default void afterEntityLoad(AfterEntityLoadEvent event) {
     }
 
     default void beforeEntityCount(BeforeEntityCountEvent event) {
+    }
+
+    default void beforeEntitySave(BeforeEntitySaveEvent event) {
+    }
+
+    default void entitySaving(EntitySavingEvent event) {
+    }
+
+    default void entityDeleting(EntityDeletingEvent event) {
+    }
+
+    @Override
+    default int getOrder() {
+        return JmixOrder.LOWEST_PRECEDENCE;
     }
 }

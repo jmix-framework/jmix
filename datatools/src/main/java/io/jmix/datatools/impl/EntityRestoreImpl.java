@@ -48,10 +48,11 @@ public class EntityRestoreImpl implements EntityRestore {
     @Autowired
     protected MetadataTools metadataTools;
 
-    public int restoreEntities(Collection<Entity> entities) {
+    @Override
+    public int restoreEntities(Collection<Object> entities) {
         SaveContext saveContext = new SaveContext();
         log.debug("Restore {} root entities", entities.size());
-        for (Entity entity : entities) {
+        for (Object entity : entities) {
             log.debug("Process entity: {}", entity);
             if (!metadataTools.isSoftDeletable(entity.getClass())) {
                 continue;
@@ -68,10 +69,10 @@ public class EntityRestoreImpl implements EntityRestore {
         return saveContext.getEntitiesToSave().size();
     }
 
-    protected void restoreEntity(Entity entity, SaveContext saveContext) {
-        Optional<Entity> reloadedEntityOpt = dataManager.load(Id.of(entity)).softDeletion(false).optional();
+    protected void restoreEntity(Object entity, SaveContext saveContext) {
+        Optional<Object> reloadedEntityOpt = dataManager.load(Id.of(entity)).softDeletion(false).optional();
         if (reloadedEntityOpt.isPresent() && EntityValues.isSoftDeleted(reloadedEntityOpt.get())) {
-            Entity reloadedEntity = reloadedEntityOpt.get();
+            Object reloadedEntity = reloadedEntityOpt.get();
             log.info("Restoring deleted entity {}", reloadedEntity);
             Date deleteTs = (Date)((EntityEntrySoftDelete) getUncheckedEntityEntry(reloadedEntity)).getDeletedDate(); //TODO: add to EntityValues?
             EntityValues.setDeletedDate(reloadedEntity, null);
@@ -242,17 +243,17 @@ public class EntityRestoreImpl implements EntityRestore {
     }
 
     private static class RestorationContext {
-        private final Entity entity;
+        private final Object entity;
         private final Date deleteTs;
         private final SaveContext saveContext;
 
-        public RestorationContext(Entity entity, Date deleteTs, SaveContext saveContext) {
+        public RestorationContext(Object entity, Date deleteTs, SaveContext saveContext) {
             this.entity = entity;
             this.deleteTs = deleteTs;
             this.saveContext = saveContext;
         }
 
-        public Entity getEntity() {
+        public Object getEntity() {
             return entity;
         }
 
@@ -260,7 +261,7 @@ public class EntityRestoreImpl implements EntityRestore {
             return EntityValues.getId(entity);
         }
 
-        public Class<? extends Entity> getEntityClass() {
+        public Class<?> getEntityClass() {
             return entity.getClass();
         }
 

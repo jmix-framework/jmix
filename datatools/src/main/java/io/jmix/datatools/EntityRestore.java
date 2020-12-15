@@ -17,7 +17,6 @@
 package io.jmix.datatools;
 
 import java.util.Collection;
-import io.jmix.core.Entity;
 
 /**
  * Allows to restore entities have been soft-deleted previously
@@ -29,5 +28,5 @@ public interface EntityRestore {
      * @param entities entities to restore
      * @return Amount of restored entities (initially selected + dependent)
      */
-    int restoreEntities(Collection<Entity> entities);
+    int restoreEntities(Collection<Object> entities);
 }

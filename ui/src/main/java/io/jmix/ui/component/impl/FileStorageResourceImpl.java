@@ -42,7 +42,7 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
     protected FileStorageLocator fileStorageLocator;
 
     protected T fileReference;
-    protected FileStorage<T, ?> fileStorage;
+    protected FileStorage<T> fileStorage;
 
     protected String mimeType;
 
@@ -85,18 +85,18 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
     }
 
     @SuppressWarnings("unchecked")
-    protected FileStorage<T, ?> getFileStorage() {
+    protected FileStorage<T> getFileStorage() {
         if (fileStorage == null) {
-            FileStorage<?, ?> defaultFileStorage = fileStorageLocator.getDefault();
+            FileStorage<?> defaultFileStorage = fileStorageLocator.getDefault();
             if (!defaultFileStorage.getReferenceType().isAssignableFrom(fileReference.getClass())) {
                 throw new IllegalArgumentException("Reference type is not compatible with the default file storage");
             }
-            fileStorage = (FileStorage<T, ?>) defaultFileStorage;
+            fileStorage = (FileStorage<T>) defaultFileStorage;
         }
         return fileStorage;
     }
 
-    public void setFileStorage(FileStorage<T, ?> fileStorage) {
+    public void setFileStorage(FileStorage<T> fileStorage) {
         this.fileStorage = fileStorage;
     }
 
@@ -105,7 +105,7 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
 
         String fullName = StringUtils.isNotEmpty(fileName)
                 ? fileName
-                : getFileStorage().getFileInfo(fileReference).toString();
+                : getFileStorage().getFileName(fileReference);
         String baseName = FilenameUtils.getBaseName(fullName);
 
         if (StringUtils.isEmpty(baseName)) {

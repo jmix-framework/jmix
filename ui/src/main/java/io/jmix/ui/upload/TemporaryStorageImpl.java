@@ -75,7 +75,10 @@ public class TemporaryStorageImpl implements TemporaryStorage {
 
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
-        dir.mkdirs();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create temp directory: " + dir.getAbsolutePath());
+        }
         File file = new File(dir, uuid.toString());
         try {
             if (file.exists()) {
@@ -99,7 +102,10 @@ public class TemporaryStorageImpl implements TemporaryStorage {
 
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
-        dir.mkdirs();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create temp directory: " + dir.getAbsolutePath());
+        }
         File file = new File(dir, uuid.toString());
         if (file.exists()) {
             throw new FileStorageException(FileStorageException.Type.FILE_ALREADY_EXISTS, file.getAbsolutePath());
@@ -138,7 +144,10 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     protected FileInfo createFileInternal() {
         UUID uuid = UuidProvider.createUuid();
         File dir = new File(tempDir);
-        dir.mkdirs();
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create temp directory: " + dir.getAbsolutePath());
+        }
         File file = new File(dir, uuid.toString());
 
         if (file.exists()) {
@@ -192,11 +201,11 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     }
 
     @Override
-    public <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R, ?> fileStorage) {
+    public <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R> fileStorage) {
         File file = getFile(fileId);
         if (file == null) {
             throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND,
-                    String.valueOf(fileStorage.getFileInfo(reference)));
+                    fileStorage.getFileName(reference));
         }
 
         try (InputStream io = new FileInputStream(file)) {
@@ -206,7 +215,7 @@ public class TemporaryStorageImpl implements TemporaryStorage {
                     "Temp file is not found " + file.getAbsolutePath());
         } catch (IOException e) {
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    String.valueOf(fileStorage.getFileInfo(reference)));
+                    fileStorage.getFileName(reference));
         }
 
         deleteFile(fileId);
@@ -215,11 +224,11 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     @Override
     @SuppressWarnings("unchecked")
     public <R> void putFileIntoStorage(UUID fileId, R reference) {
-        FileStorage<?, ?> defaultFileStorage = fileStorageLocator.getDefault();
+        FileStorage<?> defaultFileStorage = fileStorageLocator.getDefault();
         if (!defaultFileStorage.getReferenceType().isAssignableFrom(reference.getClass())) {
             throw new IllegalArgumentException("Reference type is not compatible with the default file storage");
         }
-        putFileIntoStorage(fileId, reference, ((FileStorage<R, ?>) defaultFileStorage));
+        putFileIntoStorage(fileId, reference, (FileStorage<R>) defaultFileStorage);
     }
 
     //todo shalyganov MBean

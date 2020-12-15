@@ -28,9 +28,9 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class FileDataProvider<R> implements DownloadDataProvider {
 
     protected R fileReference;
-    protected FileStorage<R, ?> fileStorage;
+    protected FileStorage<R> fileStorage;
 
-    public FileDataProvider(R fileReference, FileStorage<R, ?> fileStorage) {
+    public FileDataProvider(R fileReference, FileStorage<R> fileStorage) {
         checkNotNullArgument(fileReference, "Null file reference");
         this.fileReference = fileReference;
         this.fileStorage = fileStorage;

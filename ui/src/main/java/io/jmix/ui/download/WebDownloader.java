@@ -171,12 +171,12 @@ public class WebDownloader implements Downloader {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
-        String fileName = fileStorage.getFileInfo(fileReference).toString();
+        String fileName = fileStorage.getFileName(fileReference);
         download(new FileDataProvider<>(fileReference, fileStorage), fileName, format);
     }
 
     @Override
-    public <R> void setFileStorage(FileStorage<R, ?> fileStorage) {
+    public <R> void setFileStorage(FileStorage<R> fileStorage) {
         this.fileStorage = fileStorage;
     }
 
@@ -198,7 +198,7 @@ public class WebDownloader implements Downloader {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
-        String fileName = fileStorage.getFileInfo(fileReference).toString();
+        String fileName = fileStorage.getFileName(fileReference);
         DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileName));
         download(new FileDataProvider<>(fileReference, fileStorage), format);
     }

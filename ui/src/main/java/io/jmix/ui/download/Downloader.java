@@ -70,7 +70,7 @@ public interface Downloader {
      * @param fileStorage file storage
      * @param <R>         file reference type
      */
-    <R> void setFileStorage(FileStorage<R, ?> fileStorage);
+    <R> void setFileStorage(FileStorage<R> fileStorage);
 
     /**
      * @return {@code true} if downloader should open a new window with the file content

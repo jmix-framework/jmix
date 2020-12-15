@@ -146,7 +146,7 @@ public class ImageImpl<T> extends AbstractResourceView<JmixImage> implements Ima
     }
 
     protected boolean isFileReference(final Object resourceObject) {
-        FileStorage<?, ?> defaultFileStorage = applicationContext.getBean(FileStorageLocator.class).getDefault();
+        FileStorage<?> defaultFileStorage = applicationContext.getBean(FileStorageLocator.class).getDefault();
         return defaultFileStorage.getReferenceType().isAssignableFrom(resourceObject.getClass());
     }
 

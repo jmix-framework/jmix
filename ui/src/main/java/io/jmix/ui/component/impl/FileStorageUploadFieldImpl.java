@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.Objects;
 import java.util.UUID;
 
 public class FileStorageUploadFieldImpl<T> extends AbstractSingleFileUploadField<T>
@@ -39,7 +40,7 @@ public class FileStorageUploadFieldImpl<T> extends AbstractSingleFileUploadField
     private static final Logger log = LoggerFactory.getLogger(FileUploadFieldImpl.class);
 
     protected TemporaryStorage temporaryStorage;
-    protected FileStorage<T, Object> fileStorage;
+    protected FileStorage<T> fileStorage;
     protected String fileStorageName;
 
     protected FileStoragePutMode mode = FileStoragePutMode.MANUAL;
@@ -171,7 +172,7 @@ public class FileStorageUploadFieldImpl<T> extends AbstractSingleFileUploadField
     }
 
     protected String getFileNameByValue(T value) {
-        return String.valueOf(fileStorage.getFileInfo(value));
+        return fileStorage.getFileName(value);
     }
 
     @Nullable

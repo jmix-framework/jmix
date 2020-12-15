@@ -101,7 +101,7 @@ public interface TemporaryStorage {
      * @param fileStorage file storage
      * @param <R>         file reference type
      */
-    <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R, ?> fileStorage);
+    <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R> fileStorage);
 
     /**
      * Uploads a file from the temporary storage to the default FileStorage,

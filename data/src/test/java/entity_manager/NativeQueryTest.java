@@ -35,6 +35,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import test_support.DataTestConfiguration;
 import test_support.TestContextInititalizer;
 import test_support.entity.sales.Customer;
+import test_support.entity.sales.Order;
 
 import javax.persistence.EntityManager;
 
@@ -61,6 +62,7 @@ public class NativeQueryTest {
     public void cleanup() throws Exception {
         try {
             jdbc.update("delete from SALES_CUSTOMER");
+            jdbc.update("delete from SALES_ORDER");
         } catch (DataAccessException e) {
             // ignore
         }
@@ -98,21 +100,30 @@ public class NativeQueryTest {
         // given:
         Customer customer = dataManager.create(Customer.class);
         customer.setName("c1");
-        dataManager.save(customer);
+
+        Order order = dataManager.create(Order.class);
+        order.setNumber("c1");
+        order.setCustomer(customer);
+
+        dataManager.save(customer, order);
 
         storeAwareLocator.getTransactionTemplate(Stores.MAIN).
                 executeWithoutResult(tx -> {
                     EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
 
-                    entityManager.createNativeQuery("select id from SALES_CUSTOMER where ID = ?1", Customer.class)
-                            .setParameter(1, customer.getId())
+                    entityManager.createNativeQuery("select id from SALES_ORDER where ID = ?1", Order.class)
+                            .setParameter(1, order.getId())
                             .getSingleResult();
 
-                    Customer reloadedCustomer = dataManager.load(Customer.class).id(customer.getId())
-                            .fetchPlan(FetchPlan.LOCAL)
+                    Order reloadedOrder = dataManager.load(Order.class).id(order.getId())
+                            .fetchPlan(builder -> {
+                                builder.add("number")
+                                        .add("customer", FetchPlan.LOCAL);
+                            })
                             .one();
 
-                    assertEquals("c1", reloadedCustomer.getName());
+                    assertEquals("c1", reloadedOrder.getNumber());
+                    assertEquals(customer, reloadedOrder.getCustomer());
                 });
     }
 }

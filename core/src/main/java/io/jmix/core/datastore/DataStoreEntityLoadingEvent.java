@@ -79,7 +79,7 @@ public class DataStoreEntityLoadingEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void sendTo(DataStoreEventListener interceptor) {
-        interceptor.entityLoading(this);
+    public void sendTo(DataStoreEventListener listener) {
+        listener.entityLoading(this);
     }
 }

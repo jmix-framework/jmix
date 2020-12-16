@@ -16,21 +16,26 @@
 
 package io.jmix.core.datastore;
 
-import io.jmix.core.LoadContext;
+import io.jmix.core.ValueLoadContext;
 
-public class DataStoreBeforeEntityLoadEvent extends BaseDataStoreEvent {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class DataStoreBeforeValueLoadEvent extends BaseDataStoreEvent {
     private static final long serialVersionUID = -6243582872039288321L;
 
     protected boolean loadPrevented;
+    protected List<Integer> deniedProperties;
     protected final EventSharedState eventState;
 
-    public DataStoreBeforeEntityLoadEvent(LoadContext<?> loadContext, EventSharedState eventState) {
+    public DataStoreBeforeValueLoadEvent(ValueLoadContext loadContext, EventSharedState eventState) {
         super(loadContext);
         this.eventState = eventState;
     }
 
-    public LoadContext<?> getLoadContext() {
-        return (LoadContext<?>) getSource();
+    public ValueLoadContext getLoadContext() {
+        return (ValueLoadContext) getSource();
     }
 
     public EventSharedState getEventState() {
@@ -45,8 +50,19 @@ public class DataStoreBeforeEntityLoadEvent extends BaseDataStoreEvent {
         return loadPrevented;
     }
 
+    public void addDeniedProperty(Integer property) {
+        if (deniedProperties == null) {
+            deniedProperties = new ArrayList<>();
+        }
+        deniedProperties.add(property);
+    }
+
+    public List<Integer> deniedProperties() {
+        return deniedProperties != null ? deniedProperties : Collections.emptyList();
+    }
+
     @Override
     public void sendTo(DataStoreEventListener listener) {
-        listener.beforeEntityLoad(this);
+        listener.beforeValueLoad(this);
     }
 }

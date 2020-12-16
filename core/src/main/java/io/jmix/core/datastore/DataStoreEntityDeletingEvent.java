@@ -47,7 +47,7 @@ public class DataStoreEntityDeletingEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void sendTo(DataStoreEventListener interceptor) {
-        interceptor.entityDeleting(this);
+    public void sendTo(DataStoreEventListener listener) {
+        listener.entityDeleting(this);
     }
 }

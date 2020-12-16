@@ -23,5 +23,5 @@ public abstract class BaseDataStoreEvent extends EventObject {
         super(source);
     }
 
-    public abstract void sendTo(DataStoreEventListener interceptor);
+    public abstract void sendTo(DataStoreEventListener listener);
 }

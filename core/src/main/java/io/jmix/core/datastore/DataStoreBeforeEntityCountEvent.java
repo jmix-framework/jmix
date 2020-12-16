@@ -55,7 +55,7 @@ public class DataStoreBeforeEntityCountEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void sendTo(DataStoreEventListener interceptor) {
-        interceptor.beforeEntityCount(this);
+    public void sendTo(DataStoreEventListener listener) {
+        listener.beforeEntityCount(this);
     }
 }

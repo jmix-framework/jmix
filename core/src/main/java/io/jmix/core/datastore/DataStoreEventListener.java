@@ -41,6 +41,9 @@ public interface DataStoreEventListener extends Ordered {
     default void entityDeleting(DataStoreEntityDeletingEvent event) {
     }
 
+    default void beforeValueLoad(DataStoreBeforeValueLoadEvent event) {
+    }
+
     @Override
     default int getOrder() {
         return JmixOrder.LOWEST_PRECEDENCE;

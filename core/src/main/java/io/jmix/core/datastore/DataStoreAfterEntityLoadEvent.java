@@ -74,7 +74,7 @@ public class DataStoreAfterEntityLoadEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void sendTo(DataStoreEventListener interceptor) {
-        interceptor.afterEntityLoad(this);
+    public void sendTo(DataStoreEventListener listener) {
+        listener.afterEntityLoad(this);
     }
 }

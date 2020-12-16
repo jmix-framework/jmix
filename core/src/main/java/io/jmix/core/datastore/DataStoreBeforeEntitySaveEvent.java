@@ -46,7 +46,7 @@ public class DataStoreBeforeEntitySaveEvent extends BaseDataStoreEvent {
     }
 
     @Override
-    public void sendTo(DataStoreEventListener interceptor) {
-        interceptor.beforeEntitySave(this);
+    public void sendTo(DataStoreEventListener listener) {
+        listener.beforeEntitySave(this);
     }
 }

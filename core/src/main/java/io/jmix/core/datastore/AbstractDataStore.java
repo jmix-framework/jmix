@@ -19,6 +19,7 @@ package io.jmix.core.datastore;
 import com.google.common.base.Preconditions;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
@@ -32,13 +33,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AbstractDataStore implements DataStore {
-    protected final List<DataStoreEventListener> interceptors = new ArrayList<>();
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractDataStore.class);
+    protected final List<DataStoreEventListener> listeners = new ArrayList<>();
 
     protected Metadata metadata;
     protected MetadataTools metadataTools;
     protected EntityStates entityStates;
+    protected KeyValueMapper keyValueMapper;
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractDataStore.class);
 
     @Autowired
     public void setMetadata(Metadata metadata) {
@@ -55,9 +57,19 @@ public abstract class AbstractDataStore implements DataStore {
         this.entityStates = entityStates;
     }
 
+    @Autowired
+    public void setKeyValueMapper(KeyValueMapper keyValueMapper) {
+        this.keyValueMapper = keyValueMapper;
+    }
+
     @Nullable
     @Override
     public Object load(LoadContext<?> context) {
+        if (log.isDebugEnabled()) {
+            log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}",
+                    getName(), context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
+        }
+
         EventSharedState loadState = new EventSharedState();
 
         DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(context, loadState);
@@ -93,6 +105,12 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public List<Object> loadList(LoadContext<?> context) {
+        if (log.isDebugEnabled()) {
+            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, from selected={}, query={}",
+                    getName(), context.getEntityMetaClass(), context.getFetchPlan(),
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
+        }
+
         EventSharedState loadState = new EventSharedState();
 
         DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(context, loadState);
@@ -142,6 +160,12 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public long getCount(LoadContext<?> context) {
+        if (log.isDebugEnabled()) {
+            log.debug("getCount: store={}, metaClass={}, from selected={}, query={}",
+                    getName(), context.getEntityMetaClass(),
+                    context.getPreviousQueries().isEmpty(), context.getQuery());
+        }
+
         EventSharedState eventState = new EventSharedState();
 
         DataStoreBeforeEntityCountEvent beforeCountEvent = new DataStoreBeforeEntityCountEvent(context, eventState);
@@ -182,6 +206,9 @@ public abstract class AbstractDataStore implements DataStore {
 
     @Override
     public Set<?> save(SaveContext context) {
+        log.debug("save: store={}, entities to save: {}, entities to remove: {}",
+                getName(), context.getEntitiesToSave(), context.getEntitiesToRemove());
+
         EventSharedState saveState = new EventSharedState();
 
         DataStoreBeforeEntitySaveEvent beforeSaveEvent = new DataStoreBeforeEntitySaveEvent(context, saveState);
@@ -208,6 +235,40 @@ public abstract class AbstractDataStore implements DataStore {
         return context.isDiscardSaved() ? Collections.emptySet() : loadAllAfterSave(context, savedEntities);
     }
 
+    @Override
+    public List<KeyValueEntity> loadValues(ValueLoadContext context) {
+        Preconditions.checkNotNull(context, "context is null");
+        Preconditions.checkNotNull(context.getQuery(), "query is null");
+
+        if (log.isDebugEnabled()) {
+            log.debug("loadValues: store={}, query={}", getName(), context.getQuery());
+        }
+
+        EventSharedState eventState = new EventSharedState();
+
+        DataStoreBeforeValueLoadEvent beforeLoadEvent = new DataStoreBeforeValueLoadEvent(context, eventState);
+        fireEvent(beforeLoadEvent);
+
+        if (beforeLoadEvent.loadPrevented()) {
+            return Collections.emptyList();
+        }
+
+        List<KeyValueEntity> keyValueEntities;
+        Object transaction = beginLoadTransaction(context.isJoinTransaction());
+        try {
+            List<Object> values = loadAllValues(context);
+
+            keyValueEntities = keyValueMapper.mapValues(values, context.getIdName(),
+                    context.getProperties(), beforeLoadEvent.deniedProperties());
+
+            commitTransaction(transaction);
+        } finally {
+            rollbackTransaction(transaction);
+        }
+
+        return keyValueEntities;
+    }
+
     @Nullable
     protected abstract Object loadOne(LoadContext<?> context);
 
@@ -215,9 +276,11 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract long countAll(LoadContext<?> context);
 
-    protected abstract Set<Object> saveAll(SaveContext saveContext);
+    protected abstract Set<Object> saveAll(SaveContext context);
 
-    protected abstract Set<Object> deleteAll(SaveContext saveContext);
+    protected abstract Set<Object> deleteAll(SaveContext context);
+
+    protected abstract List<Object> loadAllValues(ValueLoadContext context);
 
     protected abstract Object beginLoadTransaction(boolean joinTransaction);
 
@@ -234,13 +297,13 @@ public abstract class AbstractDataStore implements DataStore {
                                                Collection<Object> removedEntities) {
     }
 
-    public void registerInterceptor(DataStoreEventListener interceptor) {
-        interceptors.add(interceptor);
-        interceptors.sort(Comparator.comparing(DataStoreEventListener::getOrder));
+    public void registerInterceptor(DataStoreEventListener listener) {
+        listeners.add(listener);
+        listeners.sort(Comparator.comparing(DataStoreEventListener::getOrder));
     }
 
     protected <T extends BaseDataStoreEvent> void fireEvent(T event) {
-        for (DataStoreEventListener interceptor : interceptors) {
+        for (DataStoreEventListener interceptor : listeners) {
             event.sendTo(interceptor);
         }
     }

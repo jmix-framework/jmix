@@ -29,19 +29,22 @@ import org.springframework.stereotype.Component;
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class JpaDataStoreCustomizer implements DataStoreCustomizer {
     @Autowired
-    protected DataStoreCrudListener crudInterceptor;
+    protected DataStoreCrudListener crudListener;
     @Autowired
-    protected DataStoreInMemoryCrudListener inMemoryCRUDInterceptor;
+    protected DataStoreInMemoryCrudListener inMemoryCrudListener;
     @Autowired
-    protected JpaLazyLoadingListener lazyLoadingInterceptor;
+    protected JpaLazyLoadingListener lazyLoadingListener;
+    @Autowired
+    protected DataStoreCrudValuesListener crudValuesListener;
 
     @Override
     public void customize(DataStore dataStore) {
         if (dataStore instanceof JpaDataStore) {
             AbstractDataStore abstractStore = (AbstractDataStore) dataStore;
-            abstractStore.registerInterceptor(crudInterceptor);
-            abstractStore.registerInterceptor(inMemoryCRUDInterceptor);
-            abstractStore.registerInterceptor(lazyLoadingInterceptor);
+            abstractStore.registerInterceptor(crudListener);
+            abstractStore.registerInterceptor(inMemoryCrudListener);
+            abstractStore.registerInterceptor(lazyLoadingListener);
+            abstractStore.registerInterceptor(crudValuesListener);
         }
     }
 }

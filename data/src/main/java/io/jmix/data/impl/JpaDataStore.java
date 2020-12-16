@@ -18,8 +18,6 @@ package io.jmix.data.impl;
 
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
-import io.jmix.core.common.util.Preconditions;
-import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.event.EntityChangedEvent;
@@ -127,11 +125,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     @Nullable
     @Override
     protected Object loadOne(LoadContext<?> context) {
-        if (log.isDebugEnabled()) {
-            log.debug("load: store={}, metaClass={}, id={}, fetchPlan={}",
-                    storeName, context.getEntityMetaClass(), context.getId(), context.getFetchPlan());
-        }
-
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
         em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
@@ -146,12 +139,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     @Override
     @SuppressWarnings("unchecked")
     protected List<Object> loadAll(LoadContext<?> context) {
-        if (log.isDebugEnabled()) {
-            log.debug("loadList: store={}, metaClass={}, fetchPlan={}, from selected={}, query={}",
-                    storeName, context.getEntityMetaClass(), context.getFetchPlan(),
-                    context.getPreviousQueries().isEmpty(), context.getQuery());
-        }
-
         MetaClass metaClass = extendedEntities.getEffectiveMetaClass(context.getEntityMetaClass());
 
         queryResultsManager.savePreviousQueryResults(context);
@@ -210,12 +197,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     protected long countAll(LoadContext<?> context) {
-        if (log.isDebugEnabled()) {
-            log.debug("getCount: store={}, metaClass={}, from selected={}, query={}",
-                    storeName, context.getEntityMetaClass(),
-                    context.getPreviousQueries().isEmpty(), context.getQuery());
-        }
-
         queryResultsManager.savePreviousQueryResults(context);
 
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
@@ -229,7 +210,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     protected Set<Object> saveAll(SaveContext context) {
-        log.debug("save: store={}, entities={}", storeName, context.getEntitiesToSave());
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
         Set<Object> result = new HashSet<>();
@@ -254,8 +234,6 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
     @Override
     protected Set<Object> deleteAll(SaveContext context) {
-        log.debug("remove: store={}, entities={}", storeName, context.getEntitiesToRemove());
-
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
         Set<Object> result = new HashSet<>();
         boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
@@ -273,85 +251,12 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     @Override
-    public List<KeyValueEntity> loadValues(ValueLoadContext context) {
-        Preconditions.checkNotNullArgument(context, "context is null");
-        Preconditions.checkNotNullArgument(context.getQuery(), "query is null");
+    protected List<Object> loadAllValues(ValueLoadContext context) {
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
-        ValueLoadContext.Query contextQuery = context.getQuery();
-        Collection<AccessConstraint<?>> accessConstraints = context.getAccessConstraints();
-
-        if (log.isDebugEnabled())
-            log.debug("query: " + (JpqlQueryBuilder.printQuery(contextQuery.getQueryString()))
-                    + (contextQuery.getFirstResult() == 0 ? "" : ", first=" + contextQuery.getFirstResult())
-                    + (contextQuery.getMaxResults() == 0 ? "" : ", max=" + contextQuery.getMaxResults()));
-
-        LoadValuesAccessContext queryContext =
-                new LoadValuesAccessContext(contextQuery.getQueryString(), queryTransformerFactory, metadata);
-        accessManager.applyConstraints(queryContext, accessConstraints);
-
-        if (!queryContext.isPermitted()) {
-            return Collections.emptyList();
-        }
-
-        List<KeyValueEntity> entities = new ArrayList<>();
-
-        Object txStatus = beginLoadTransaction(context.isJoinTransaction());
-        try {
-            EntityManager em = storeAwareLocator.getEntityManager(storeName);
-            em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
-
-            List<String> keys = context.getProperties();
-
-            JpqlQueryBuilder queryBuilder = jpqlQueryBuilderProvider.getObject();
-
-            queryBuilder.setValueProperties(context.getProperties())
-                    .setQueryString(contextQuery.getQueryString())
-                    .setCondition(contextQuery.getCondition())
-                    .setSort(contextQuery.getSort())
-                    .setQueryParameters(contextQuery.getParameters());
-
-            Query query = queryBuilder.getQuery(em);
-
-            if (contextQuery.getFirstResult() != 0)
-                query.setFirstResult(contextQuery.getFirstResult());
-            if (contextQuery.getMaxResults() != 0)
-                query.setMaxResults(contextQuery.getMaxResults());
-
-            List resultList = query.getResultList();
-            List<Integer> deniedFieldIndexes = queryContext.getDeniedSelectedIndexes();
-            for (Object item : resultList) {
-                KeyValueEntity entity = new KeyValueEntity();
-                entity.setIdName(context.getIdName());
-                entities.add(entity);
-
-                if (item instanceof Object[]) {
-                    Object[] row = (Object[]) item;
-                    for (int i = 0; i < keys.size(); i++) {
-                        String key = keys.get(i);
-                        if (row.length > i) {
-                            if (deniedFieldIndexes.contains(i)) {
-                                entity.setValue(key, null);
-                            } else {
-                                entity.setValue(key, row[i]);
-                            }
-                        }
-                    }
-                } else if (!keys.isEmpty()) {
-                    if (!deniedFieldIndexes.isEmpty()) {
-                        entity.setValue(keys.get(0), null);
-                    } else {
-                        entity.setValue(keys.get(0), item);
-                    }
-                }
-            }
-
-        } catch (RuntimeException e) {
-            rollbackTransaction(txStatus);
-            throw e;
-        }
-        commitTransaction(txStatus);
-
-        return entities;
+        Query query = createLoadQuery(em, context);
+        return executeQuery(query, false);
     }
 
     @Override
@@ -499,6 +404,27 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         accessManager.applyConstraints(queryContext, context.getAccessConstraints());
 
         query = queryContext.getResultQuery();
+
+        return query;
+    }
+
+    protected Query createLoadQuery(EntityManager em, ValueLoadContext context) {
+        JpqlQueryBuilder queryBuilder = jpqlQueryBuilderProvider.getObject();
+
+        ValueLoadContext.Query contextQuery = context.getQuery();
+
+        queryBuilder.setValueProperties(context.getProperties())
+                .setQueryString(contextQuery.getQueryString())
+                .setCondition(contextQuery.getCondition())
+                .setSort(contextQuery.getSort())
+                .setQueryParameters(contextQuery.getParameters());
+
+        Query query = queryBuilder.getQuery(em);
+
+        if (contextQuery.getFirstResult() != 0)
+            query.setFirstResult(contextQuery.getFirstResult());
+        if (contextQuery.getMaxResults() != 0)
+            query.setMaxResults(contextQuery.getMaxResults());
 
         return query;
     }

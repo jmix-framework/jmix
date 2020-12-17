@@ -27,7 +27,7 @@ public interface DescriptorProcessor {
 
     /**
      * Updates entity descriptor according to the processor's aim.
-     * @param descriptor - descriptor to update.
+     * @param context Context data contains objects that cannot be injected.
      */
     void process(DescriptorProcessorContext context);
 }

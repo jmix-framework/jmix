@@ -21,9 +21,9 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
@@ -91,6 +91,9 @@ public class PersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected EntityStates entityStates;
+
+    @Autowired
+    protected ExtraAttributesHelper extraAttributesHelper;
 
     @Autowired(required = false)
     protected List<JpaDataStoreListener> lifecycleListeners = new ArrayList<>();
@@ -593,10 +596,17 @@ public class PersistenceSupport implements ApplicationContextAware {
                 return true;
             }
 
+
             AttributeChangeListener changeListener =
                     (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
+
             if (changeListener == null)
                 return false;
+
+            EntityAttributeChanges changes = new EntityAttributeChanges();
+            // add changes before listener
+            changes.addChanges(entity);
+
 
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
@@ -612,13 +622,10 @@ public class PersistenceSupport implements ApplicationContextAware {
                 jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
 
-            } else if (changeListener.hasChanges()) {
-
-                EntityAttributeChanges changes = new EntityAttributeChanges();
-                // add changes before listener
-                changes.addChanges(entity);
-
-                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
+            } else if (changes.hasChanges()) {//changeListener.hasChanges()
+                if (changeListener != null && changeListener.hasChanges()) {
+                    entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
+                }
 
                 // add changes after listener
                 changes.addChanges(entity);

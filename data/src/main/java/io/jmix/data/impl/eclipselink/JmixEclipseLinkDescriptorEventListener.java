@@ -16,10 +16,7 @@
 
 package io.jmix.data.impl.eclipselink;
 
-import io.jmix.core.Entity;
-import io.jmix.core.EntityStates;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.TimeSource;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.AuditInfoProvider;
@@ -143,6 +140,10 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
 
     @Override
     public void postMerge(DescriptorEvent event) {
+        EntityEntry targetEntry = ((Entity) event.getObject()).__getEntityEntry();
+        EntityEntry sourceEntry = ((Entity) event.getOriginalObject()).__getEntityEntry();
+        targetEntry.copy(sourceEntry);
+        targetEntry.setManaged(true);
     }
 
     @Override

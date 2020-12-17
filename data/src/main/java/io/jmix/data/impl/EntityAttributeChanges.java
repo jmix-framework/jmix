@@ -16,6 +16,9 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Entity;
+import io.jmix.core.EntityEntryExtraState;
+import io.jmix.core.EntityValuesProvider;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
@@ -23,10 +26,7 @@ import org.eclipse.persistence.sessions.changesets.ChangeRecord;
 import org.eclipse.persistence.sessions.changesets.ObjectChangeSet;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +75,24 @@ public class EntityAttributeChanges {
             return;
 
         addChanges(changeListener.getObjectChangeSet());
+
+        addExtraChanges(entity);
+    }
+
+    /**
+     * INTERNAL
+     */
+    public void addExtraChanges(Object entity) {
+        if (entity instanceof Entity) {
+            Collection<EntityEntryExtraState> extraStates = ((Entity) entity).__getEntityEntry().getAllExtraState();
+            for (EntityEntryExtraState state : extraStates) {
+                if (state instanceof EntityValuesProvider) {
+                    for (Map.Entry<String, Object> entry : ((EntityValuesProvider) state).getChanges().entrySet()) {
+                        addChange(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -153,6 +171,16 @@ public class EntityAttributeChanges {
             }
         }
         return null;
+    }
+
+    public boolean hasChanges() {
+        if (!changes.isEmpty())
+            return true;
+        for (EntityAttributeChanges embedded : embeddedChanges.values()) {
+            if (embedded.hasChanges())
+                return true;
+        }
+        return false;
     }
 
     /**

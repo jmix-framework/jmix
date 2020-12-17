@@ -31,6 +31,10 @@ import static io.jmix.core.metamodel.model.utils.ObjectPathUtils.parseValuePath;
 
 public class EntityValues {
 
+    public static boolean isEntity(Object entity) {
+        return entity instanceof Entity;
+    }
+
     @Nullable
     public static Object getId(Object entity) {
         return getEntityEntry(entity).getEntityId();

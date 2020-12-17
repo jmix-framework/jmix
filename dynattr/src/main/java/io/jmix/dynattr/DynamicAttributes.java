@@ -18,18 +18,21 @@ package io.jmix.dynattr;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DynamicAttributes implements Serializable {
     protected final Map<String, ValueHolder> values;
 
     public static class Changes implements Serializable {
-        protected Set<String> created;
-        protected Set<String> updated;
-        protected Set<String> deleted;
+        protected Map<String, Object> created;
+        protected Map<String, Object> updated;
+        protected Map<String, Object> deleted;
 
-        protected Changes(Set<String> created, Set<String> updated, Set<String> deleted) {
+        protected Changes(Map<String, Object> created, Map<String, Object> updated, Map<String, Object> deleted) {
             this.created = created;
             this.updated = updated;
             this.deleted = deleted;
@@ -40,27 +43,27 @@ public class DynamicAttributes implements Serializable {
         }
 
         public boolean isCreated(String attribute) {
-            return created.contains(attribute);
+            return created.containsKey(attribute);
         }
 
-        public Set<String> getCreated() {
-            return Collections.unmodifiableSet(created);
+        public Map<String, Object> getCreated() {
+            return Collections.unmodifiableMap(created);
         }
 
         public boolean isUpdated(String attribute) {
-            return updated.contains(attribute);
+            return updated.containsKey(attribute);
         }
 
-        public Set<String> getUpdated() {
-            return Collections.unmodifiableSet(updated);
+        public Map<String, Object> getUpdated() {
+            return Collections.unmodifiableMap(updated);
         }
 
         public boolean isDeleted(String attribute) {
-            return deleted.contains(attribute);
+            return deleted.containsKey(attribute);
         }
 
-        public Set<String> getDeleted() {
-            return Collections.unmodifiableSet(deleted);
+        public Map<String, Object> getDeleted() {
+            return Collections.unmodifiableMap(deleted);
         }
     }
 
@@ -68,11 +71,13 @@ public class DynamicAttributes implements Serializable {
         protected String code;
         protected Object value;
         protected State state;
+        protected Object oldValue;
 
         public ValueHolder(String code, Object value) {
             this.code = code;
             this.value = value;
             this.state = State.LOADED;
+            this.oldValue = null;
         }
 
         public Object getValue() {
@@ -81,6 +86,14 @@ public class DynamicAttributes implements Serializable {
 
         public void setValue(Object value) {
             this.value = value;
+        }
+
+        public Object getOldValue() {
+            return oldValue;
+        }
+
+        public void setOldValue(Object oldValue) {
+            this.oldValue = oldValue;
         }
 
         public State getState() {
@@ -117,6 +130,7 @@ public class DynamicAttributes implements Serializable {
         ValueHolder holder = values.get(code);
         if (value == null) {
             if (holder != null) {
+                holder.setOldValue(holder.getValue());
                 holder.setValue(null);
                 holder.setState(State.DELETED);
             }
@@ -126,6 +140,7 @@ public class DynamicAttributes implements Serializable {
                 holder.setState(State.CREATED);
                 values.put(code, holder);
             } else {
+                holder.setOldValue(holder.getValue());
                 holder.setValue(value);
                 holder.setState(State.UPDATED);
             }
@@ -142,17 +157,17 @@ public class DynamicAttributes implements Serializable {
     }
 
     public Changes getChanges() {
-        Set<String> created = new HashSet<>();
-        Set<String> updated = new HashSet<>();
-        Set<String> deleted = new HashSet<>();
+        Map<String, Object> created = new HashMap<>();
+        Map<String, Object> updated = new HashMap<>();
+        Map<String, Object> deleted = new HashMap<>();
 
         for (ValueHolder holder : values.values()) {
             if (holder.getState() == State.CREATED) {
-                created.add(holder.getCode());
+                created.put(holder.getCode(), holder.getOldValue());
             } else if (holder.getState() == State.UPDATED) {
-                updated.add(holder.getCode());
+                updated.put(holder.getCode(), holder.getOldValue());
             } else if (holder.getState() == State.DELETED) {
-                deleted.add(holder.getCode());
+                deleted.put(holder.getCode(), holder.getOldValue());
             }
         }
 
@@ -167,6 +182,7 @@ public class DynamicAttributes implements Serializable {
             ValueHolder fromValueHolder = entry.getValue();
             ValueHolder valueHolder = new ValueHolder(fromValueHolder.getCode(), fromValueHolder.getValue());
             valueHolder.setState(fromValueHolder.getState());
+            valueHolder.setOldValue(fromValueHolder.getOldValue());
             this.values.put(entry.getKey(), valueHolder);
         }
     }

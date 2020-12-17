@@ -20,6 +20,7 @@ package io.jmix.dynattr.impl;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.entity.EntitySystemAccess;
@@ -28,7 +29,6 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.dynattr.*;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeValue;
@@ -128,7 +128,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                     }
                 }
 
-                for (String attributeName : changes.getCreated()) {
+                for (String attributeName : changes.getCreated().keySet()) {
                     if (changes.isCreated(attributeName)) {
                         dynAttrMetadata.getAttributeByCode(metaClass, attributeName)
                                 .ifPresent(attribute -> {

@@ -23,7 +23,10 @@ import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.impl.EntityInternals;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class DynamicAttributesState implements EntityEntryExtraState, EntityValuesProvider {
     protected EntityEntry entityEntry;
@@ -77,6 +80,30 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
         if (extraState instanceof DynamicAttributesState) {
             this.dynamicModel = new DynamicAttributes();
             this.dynamicModel.copy(((DynamicAttributesState) extraState).dynamicModel);
+        }
+    }
+
+    @Override
+    public Set<String> getAttributes() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getChanges() {
+        DynamicAttributes.Changes changes = dynamicModel.getChanges();
+        Map<String, Object> oldValues = new HashMap<>();
+
+        putTransformed(oldValues, changes.getCreated());
+        putTransformed(oldValues, changes.getUpdated());
+        putTransformed(oldValues, changes.getDeleted());
+
+        return oldValues;
+    }
+
+
+    protected void putTransformed(Map<String, Object> output, Map<String, Object> source) {
+        for (Map.Entry<String, Object> entry : source.entrySet()) {
+            output.put('+' + entry.getKey(), entry.getValue());
         }
     }
 }

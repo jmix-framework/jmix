@@ -37,7 +37,7 @@ public class ObjectPathUtils {
         if (path == null)
             return new String[0];
 
-        if (path.startsWith("+"))
+        if (path.startsWith("+"))//todo taimanov: core shouldn't know about dynattr?
             return new String[]{path};
 
         List<String> elements = new ArrayList<>(4);

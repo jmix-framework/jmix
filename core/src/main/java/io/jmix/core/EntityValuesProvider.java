@@ -17,6 +17,8 @@
 package io.jmix.core;
 
 import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.Set;
 
 public interface EntityValuesProvider {
 
@@ -26,4 +28,8 @@ public interface EntityValuesProvider {
     <T> T getAttributeValue(String name);
 
     void setAttributeValue(String name, @Nullable Object value, boolean checkEquals);
+
+    Set<String> getAttributes();
+
+    Map<String, Object> getChanges();
 }

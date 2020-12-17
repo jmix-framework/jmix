@@ -17,50 +17,29 @@
 package io.jmix.data.impl.eclipselink;
 
 import com.google.common.base.Strings;
-import io.jmix.core.EntityStates;
 import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
-import io.jmix.core.common.datastruct.Pair;
-import io.jmix.core.entity.EntityValues;
-import io.jmix.core.entity.JmixSettersEnhanced;
-import io.jmix.core.entity.annotation.DisableEnhancing;
-import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.impl.DescriptorEventManagerWrapper;
-import io.jmix.data.impl.UuidConverter;
-import io.jmix.data.persistence.EntityNotEnhancedException;
-import org.apache.commons.lang3.ArrayUtils;
+import io.jmix.data.persistence.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.annotations.CacheCoordinationType;
 import org.eclipse.persistence.config.CacheIsolationType;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.descriptors.InheritancePolicy;
-import org.eclipse.persistence.expressions.ExpressionBuilder;
-import org.eclipse.persistence.internal.descriptors.PersistenceObject;
-import org.eclipse.persistence.internal.helper.DatabaseField;
-import org.eclipse.persistence.internal.weaving.PersistenceWeaved;
-import org.eclipse.persistence.internal.weaving.PersistenceWeavedFetchGroups;
-import org.eclipse.persistence.mappings.*;
-import org.eclipse.persistence.platform.database.*;
+import org.eclipse.persistence.mappings.DatabaseMapping;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.SessionEvent;
 import org.eclipse.persistence.sessions.SessionEventAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.OneToOne;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component("data_JmixEclipseLinkSessionEventListener")
 public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
@@ -70,193 +49,45 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
     @Autowired
     private Metadata metadata;
     @Autowired
-    private MetadataTools metadataTools;
-    @Autowired
-    private EntityStates entityStates;
-    @Autowired
-    private BeanFactory beanFactory;
+    private ListableBeanFactory beanFactory;
 
     private static final Logger log = LoggerFactory.getLogger(JmixEclipseLinkSessionEventListener.class);
 
     @Override
     public void preLogin(SessionEvent event) {
-
         Session session = event.getSession();
+
         setPrintInnerJoinOnClause(session);
-
-        List<String> wrongFetchTypes = new ArrayList<>();
-        List<Pair<Class, String>> missingEnhancements = new ArrayList<>();
-
-        Map<Class, ClassDescriptor> descriptorMap = session.getDescriptors();
         boolean hasMultipleTableConstraintDependency = hasMultipleTableConstraintDependency();
-        for (Map.Entry<Class, ClassDescriptor> entry : descriptorMap.entrySet()) {
+
+        //noinspection rawtypes
+        for (Map.Entry<Class, ClassDescriptor> entry : session.getDescriptors().entrySet()) {
             MetaClass metaClass = metadata.getSession().getClass(entry.getKey());
-            ClassDescriptor desc = entry.getValue();
+            ClassDescriptor descriptor = entry.getValue();
 
-            enhancementCheck(entry.getKey(), missingEnhancements);
-
-            setCacheable(metaClass, desc, session);
+            setCacheable(metaClass, descriptor, session);
 
             if (hasMultipleTableConstraintDependency) {
-                setMultipleTableConstraintDependency(metaClass, desc);
+                setMultipleTableConstraintDependency(descriptor);
             }
 
-            if (Entity.class.isAssignableFrom(desc.getJavaClass())) {
+            if (Entity.class.isAssignableFrom(descriptor.getJavaClass())) {
                 // set DescriptorEventManager that doesn't invoke listeners for base classes
-                desc.setEventManager(new DescriptorEventManagerWrapper(desc.getDescriptorEventManager()));
-                desc.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
-
-
-                Class<?> entityClass = desc.getJavaClass();
-
-                if (metadataTools.isSoftDeletable(entityClass)) {
-                    String fieldName = metadataTools.findDeletedDateProperty(entityClass);
-                    desc.getQueryManager().setAdditionalCriteria("this." + fieldName + " is null");
-
-                    desc.setDeletePredicate(entity -> {
-                        if (EntityValues.isSoftDeletionSupported(entity)) {
-                            return entityStates.isLoaded(entity, fieldName) && EntityValues.isSoftDeleted(entity);
-                        }
-                        return false;
-                    });
-                }
-
+                descriptor.setEventManager(new DescriptorEventManagerWrapper(descriptor.getDescriptorEventManager()));
+                descriptor.getEventManager().addListener(beanFactory.getBean(JmixEclipseLinkDescriptorEventListener.class));
             }
 
-            List<DatabaseMapping> mappings = desc.getMappings();
-            for (DatabaseMapping mapping : mappings) {
-                //Fetch type check
-                fetchTypeCheck(mapping, entry.getKey(), wrongFetchTypes);
+            setAdditionalCriteria(descriptor);
 
-                // support UUID
-                String attributeName = mapping.getAttributeName();
-                MetaProperty metaProperty = metaClass.getProperty(attributeName);
-                if (metaProperty.getRange().isDatatype()) {
-                    if (metaProperty.getJavaType().equals(UUID.class)) {
-                        ((DirectToFieldMapping) mapping).setConverter(UuidConverter.getInstance());
-                        setDatabaseFieldParameters(session, mapping.getField());
-                    }
-                } else if (metaProperty.getRange().isClass() && !metaProperty.getRange().getCardinality().isMany()) {
-                    MetaClass refMetaClass = metaProperty.getRange().asClass();
-                    MetaProperty refPkProperty = metadataTools.getPrimaryKeyProperty(refMetaClass);
-                    if (refPkProperty != null && refPkProperty.getJavaType().equals(UUID.class)) {
-                        for (DatabaseField field : ((OneToOneMapping) mapping).getForeignKeyFields()) {
-                            setDatabaseFieldParameters(session, field);
-                        }
-                    }
-                }
-                // embedded attributes
-                if (mapping instanceof AggregateObjectMapping) {
-                    EmbeddedParameters embeddedParameters =
-                            metaProperty.getAnnotatedElement().getAnnotation(EmbeddedParameters.class);
-                    if (embeddedParameters != null && !embeddedParameters.nullAllowed())
-                        ((AggregateObjectMapping) mapping).setIsNullAllowed(false);
-                }
+            executeDescriptorProcessors(descriptor, session);
 
-                if (mapping.isOneToManyMapping()) {
-                    OneToManyMapping oneToManyMapping = (OneToManyMapping) mapping;
-                    Class referenceClass = oneToManyMapping.getReferenceClass();
-                    if (metadataTools.isSoftDeletable(referenceClass)) {
-                        oneToManyMapping.setAdditionalJoinCriteria(new ExpressionBuilder().get(metadataTools.findDeletedDateProperty(referenceClass)).isNull());
-                    }
-                }
-
-                if (mapping.isOneToOneMapping()) {
-                    OneToOneMapping oneToOneMapping = (OneToOneMapping) mapping;
-                    if (metadataTools.isSoftDeletable(oneToOneMapping.getReferenceClass())) {
-                        if (mapping.isManyToOneMapping()) {
-                            oneToOneMapping.setSoftDeletionForBatch(false);
-                            oneToOneMapping.setSoftDeletionForValueHolder(false);
-                        } else {
-                            OneToOne oneToOne = metaProperty.getAnnotatedElement().getAnnotation(OneToOne.class);
-                            if (oneToOne != null) {
-                                if (Strings.isNullOrEmpty(oneToOne.mappedBy())) {
-                                    oneToOneMapping.setSoftDeletionForBatch(false);
-                                    oneToOneMapping.setSoftDeletionForValueHolder(false);
-                                } else {
-                                    oneToOneMapping.setAdditionalJoinCriteria(
-                                            new ExpressionBuilder().get(metadataTools.findDeletedDateProperty(oneToOneMapping.getReferenceClass())).isNull());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        logCheckResult(wrongFetchTypes, missingEnhancements);
-    }
-
-    protected void enhancementCheck(Class entityClass, List<Pair<Class, String>> missingEnhancements) {
-        boolean jmixEnhanced = ArrayUtils.contains(entityClass.getInterfaces(), JmixSettersEnhanced.class)
-                || !(Entity.class.isAssignableFrom(entityClass))
-                || ArrayUtils.contains(entityClass.getDeclaredAnnotations(), DisableEnhancing.class);
-        boolean persistenceObject = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceObject.class);
-        boolean persistenceWeaved = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeaved.class);
-        boolean persistenceWeavedFetchGroups = ArrayUtils.contains(entityClass.getInterfaces(), PersistenceWeavedFetchGroups.class);
-        if (!jmixEnhanced || !persistenceObject || !persistenceWeaved || !persistenceWeavedFetchGroups) {
-            String message = String.format("Entity class %s is missing some of enhancing interfaces:%s%s%s%s",
-                    entityClass.getSimpleName(),
-                    jmixEnhanced ? "" : " JmixEnhanced;",
-                    persistenceObject ? "" : " PersistenceObject;",
-                    persistenceWeaved ? "" : " PersistenceWeaved;",
-                    persistenceWeavedFetchGroups ? "" : " PersistenceWeavedFetchGroups;");
-            missingEnhancements.add(new Pair<>(entityClass, message));
+            executeMappingProcessors(descriptor, session);
         }
     }
 
-    protected void fetchTypeCheck(DatabaseMapping mapping, Class entityClass, List<String> wrongFetchTypes) {
-        if ((mapping.isOneToOneMapping() || mapping.isOneToManyMapping()
-                || mapping.isManyToOneMapping() || mapping.isManyToManyMapping())) {
-            if (!mapping.isLazy()) {
-                mapping.setIsLazy(true);
-                wrongFetchTypes.add(String.format("EAGER fetch type detected for reference field %s of entity %s; Set to LAZY",
-                        mapping.getAttributeName(), entityClass.getSimpleName()));
-            }
-        } else {
-            if (mapping.isLazy()) {
-                mapping.setIsLazy(false);
-                wrongFetchTypes.add(String.format("LAZY fetch type detected for basic field %s of entity %s; Set to EAGER",
-                        mapping.getAttributeName(), entityClass.getSimpleName()));
-            }
-        }
-    }
-
-    protected void logCheckResult(List<String> wrongFetchTypes, List<Pair<Class, String>> missingEnhancements) {
-        if (!wrongFetchTypes.isEmpty()) {
-            StringBuilder message = new StringBuilder();
-            message.append("\n=================================================================");
-            message.append("\nIncorrectly defined fetch types detected:");
-            for (String wft : wrongFetchTypes) {
-                message.append("\n");
-                message.append(wft);
-            }
-            message.append("\n=================================================================");
-            log.warn(message.toString());
-        }
-        if (!missingEnhancements.isEmpty()) {
-            StringBuilder message = new StringBuilder();
-            message.append("\n=================================================================");
-            message.append("\nProblems with entity enhancement detected:");
-            for (Pair me : missingEnhancements) {
-                message.append("\n");
-                message.append(me.getSecond());
-            }
-            message.append("\n=================================================================");
-            log.error(message.toString());
-            if (!Boolean.parseBoolean(environment.getProperty("jmix.data.disableEntityEnhancementCheck"))) {
-                StringBuilder exceptionMessage = new StringBuilder();
-                for (Pair me : missingEnhancements) {
-                    exceptionMessage.append(me.getFirst());
-                    exceptionMessage.append("; ");
-                }
-                throw new EntityNotEnhancedException(exceptionMessage.toString());
-            }
-        }
-    }
-
-    private void setCacheable(MetaClass metaClass, ClassDescriptor desc, Session session) {
+    protected void setCacheable(MetaClass metaClass, ClassDescriptor desc, Session session) {
         String property = (String) session.getProperty("eclipselink.cache.shared.default");
-        boolean defaultCache = property == null || Boolean.valueOf(property);
+        boolean defaultCache = property == null || Boolean.parseBoolean(property);
 
         if ((defaultCache && !desc.isIsolated())
                 || desc.getCacheIsolation() == CacheIsolationType.SHARED
@@ -266,54 +97,55 @@ public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
         }
     }
 
-    private void setMultipleTableConstraintDependency(MetaClass metaClass, ClassDescriptor desc) {
+    protected void setMultipleTableConstraintDependency(ClassDescriptor desc) {
         InheritancePolicy policy = desc.getInheritancePolicyOrNull();
         if (policy != null && policy.isJoinedStrategy() && policy.getParentClass() != null) {
-            boolean hasOneToMany = metaClass.getOwnProperties().stream().anyMatch(metaProperty ->
-                    metadataTools.isPersistent(metaProperty)
-                            && metaProperty.getRange().isClass()
-                            && metaProperty.getRange().getCardinality() == Range.Cardinality.ONE_TO_MANY);
-            if (hasOneToMany) {
-                desc.setHasMultipleTableConstraintDependecy(true);
-            }
+            desc.setHasMultipleTableConstraintDependecy(true);
         }
     }
 
-    private boolean hasMultipleTableConstraintDependency() {
-        String value = environment.getProperty("cuba.hasMultipleTableConstraintDependency");
+    protected boolean hasMultipleTableConstraintDependency() {
+        String value = environment.getProperty("jmix.data.hasMultipleTableConstraintDependency");
         return value == null || BooleanUtils.toBoolean(value);
     }
 
-    private void setDatabaseFieldParameters(Session session, DatabaseField field) {
-        if (session.getPlatform() instanceof PostgreSQLPlatform) {
-            field.setSqlType(Types.OTHER);
-            field.setType(UUID.class);
-            field.setColumnDefinition("UUID");
-        } else if (session.getPlatform() instanceof MySQLPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar(32)");
-        } else if (session.getPlatform() instanceof HSQLPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar(36)");
-        } else if (session.getPlatform() instanceof SQLServerPlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("uniqueidentifier");
-        } else if (session.getPlatform() instanceof OraclePlatform) {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
-            field.setColumnDefinition("varchar2(32)");
-        } else {
-            field.setSqlType(Types.VARCHAR);
-            field.setType(String.class);
+    protected void setPrintInnerJoinOnClause(Session session) {
+        boolean useInnerJoinOnClause = BooleanUtils.toBoolean(
+                environment.getProperty("jmix.data.useInnerJoinOnClause"));
+        session.getPlatform().setPrintInnerJoinInWhereClause(!useInnerJoinOnClause);
+    }
+
+    protected void setAdditionalCriteria(ClassDescriptor descriptor) {
+        String criteria = beanFactory.getBeansOfType(AdditionalCriteriaProvider.class)
+                .values().stream()
+                .filter(provider -> provider.requiresAdditionalCriteria(descriptor.getJavaClass()))
+                .map(provider -> provider.getAdditionalCriteria(descriptor.getJavaClass()))
+                .collect(Collectors.joining(" and "));
+
+        if (!Strings.isNullOrEmpty(criteria)) {
+            descriptor.getQueryManager().setAdditionalCriteria(criteria);
         }
     }
 
-    private void setPrintInnerJoinOnClause(Session session) {
-        boolean useInnerJoinOnClause = BooleanUtils.toBoolean(
-                environment.getProperty("cuba.useInnerJoinOnClause"));
-        session.getPlatform().setPrintInnerJoinInWhereClause(!useInnerJoinOnClause);
+    protected void executeDescriptorProcessors(ClassDescriptor descriptor, Session session) {
+        Map<String, DescriptorProcessor> descriptorProcessors = beanFactory.getBeansOfType(DescriptorProcessor.class);
+        DescriptorProcessorContext descriptorContext = new DescriptorProcessorContext(descriptor, session);
+        for (DescriptorProcessor dp : descriptorProcessors.values()) {
+            log.trace("{} descriptor processor is started", dp.getClass());
+            dp.process(descriptorContext);
+            log.trace("{} descriptor processor is finished", dp.getClass());
+        }
+    }
+
+    protected void executeMappingProcessors(ClassDescriptor descriptor, Session session) {
+        Map<String, MappingProcessor> mappingProcessors = beanFactory.getBeansOfType(MappingProcessor.class);
+        for (DatabaseMapping mapping : descriptor.getMappings()) {
+            MappingProcessorContext mappingContext = new MappingProcessorContext(mapping, session);
+            for (MappingProcessor mp : mappingProcessors.values()) {
+                log.trace("{} mapping processor is started", mp.getClass());
+                mp.process(mappingContext);
+                log.trace("{} mapping processor is finished", mp.getClass());
+            }
+        }
     }
 }

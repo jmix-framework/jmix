@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.data.persistence;
+package io.jmix.data.impl.eclipselink.mapping;
 
 public class EntityNotEnhancedException extends RuntimeException {
-
     public EntityNotEnhancedException(String message) {
         super(message);
     }

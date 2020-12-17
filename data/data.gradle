@@ -30,7 +30,7 @@ dependencies {
     api 'org.eclipse.persistence:org.eclipse.persistence.jpa'
     implementation 'org.springframework:spring-messaging'
     implementation 'org.eclipse.persistence:org.eclipse.persistence.extension'
-    implementation 'org.postgresql:postgresql'
+    compileOnly 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

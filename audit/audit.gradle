@@ -24,6 +24,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.data:jmix-data'
+    testImplementation 'io.jmix.dynattr:jmix-dynattr'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'

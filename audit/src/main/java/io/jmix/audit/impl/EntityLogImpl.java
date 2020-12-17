@@ -27,6 +27,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -36,6 +37,7 @@ import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityAttributeChanges;
+import io.jmix.data.impl.ExtraAttributesHelper;
 import io.jmix.data.impl.JpaDataStoreListener;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
@@ -88,6 +90,11 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     protected ReferenceToEntitySupport referenceToEntitySupport;
     @Autowired
     protected Stores stores;
+    @Autowired
+    protected ExtraAttributesHelper extraAttributesHelper;
+    @Autowired
+    protected DatatypeRegistry datatypeRegistry;
+
     @PersistenceContext
     protected EntityManager entityManager;
 
@@ -177,31 +184,9 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     protected void computeChanges(EntityLogItem itemToSave, List<EntityLogItem> sameEntityList) {
         Set<String> attributes = sameEntityList.stream()
                 .flatMap(entityLogItem -> entityLogItem.getAttributes().stream().map(EntityLogAttr::getName))
-//              TODO: DynamicAttributes
-//              .filter(attr -> !EntityLogDynamicAttrHelper.isDynamicAttribute(attr))
                 .collect(Collectors.toSet());
 
-//        if (EntityLogDynamicAttrHelper.dynamicAttributesEnabled()) {
-//            List<EntityLogItem> dynamicAttributeChanges = sameEntityList.stream()
-//                    .filter(item -> item.getAttributes().stream()
-//                            .allMatch(attr -> EntityLogDynamicAttrHelper.isDynamicAttribute(attr.getName())))
-//                    .collect(Collectors.toList());
-//
-//            sameEntityList.removeAll(dynamicAttributeChanges);
-//            processAttributes(itemToSave, sameEntityList, attributes);
-//            sameEntityList.addAll(dynamicAttributeChanges);
-//
-//            for (EntityLogItem dynamicAttributeLogItem : dynamicAttributeChanges) {
-//                dynamicAttributeLogItem.getAttributes().stream()
-//                        .findFirst()
-//                        .ifPresent(attr -> {
-//                            setAttributeOldValue(attr, itemToSave);
-//                            setAttributeNewValue(attr, itemToSave);
-//                        });
-//            }
-//        } else {
         processAttributes(itemToSave, sameEntityList, attributes);
-//        }
 
         Properties properties = new Properties();
 
@@ -378,15 +363,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     protected String getEntityName(Object entity) {
-        MetaClass metaClass;
-//        TODO: DynamicAttributes
-//        if (entity instanceof CategoryAttributeValue) {
-//            CategoryAttribute categoryAttribute = ((CategoryAttributeValue) entity).getCategoryAttribute();
-//            Preconditions.checkNotNullArgument(categoryAttribute, "Category attribute is null");
-//            metaClass = metadata.getClass(categoryAttribute.getCategoryEntityType());
-//        } else {
-        metaClass = metadata.getSession().getClass(entity.getClass());
-//        }
+        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
         return extendedEntities.getOriginalOrThisMetaClass(metaClass).getName();
     }
 
@@ -414,9 +391,9 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         try {
             if (doNotRegister(entity))
                 return;
-            String masterEntityName = getEntityName(entity);
+            String entityName = getEntityName(entity);
 
-            Set<String> attributes = getLoggedAttributes(masterEntityName, auto);
+            Set<String> attributes = getLoggedAttributes(entityName, auto);
             if (attributes != null && attributes.contains("*")) {
                 attributes = getAllAttributes(entity);
             }
@@ -424,31 +401,21 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                 return;
             }
 
-            MetaClass metaClass = metadata.getClass(masterEntityName);
-            attributes = filterRemovedAttributes(metaClass, attributes);
-//            TODO: DynamicAttributes
-//            if (entity instanceof CategoryAttributeValue) {
-//                internalRegisterModifyAttributeValue(entity, null, attributes);
-//            } else {
+            MetaClass metaClass = metadata.getClass(entityName);
+            attributes = filterRemovedAttributes(entity, attributes);
             String storeName = metadataTools.getStoreName(metaClass);
-            internalRegisterCreate(entity, masterEntityName, storeName, attributes);
-//            }
+            internalRegisterCreate(entity, entityName, storeName, attributes);
         } catch (Exception e) {
             logError(entity, e);
         }
     }
 
-    protected Set<String> filterRemovedAttributes(MetaClass metaClass, Set<String> attributes) {
+    protected Set<String> filterRemovedAttributes(Object entity, Set<String> attributes) {
+        MetaClass metaClass = metadata.getClass(entity);
         // filter attributes that do not exists in entity anymore
         return attributes.stream()
-                .filter(attributeName -> {
-//                    TODO: DynamicAttributes
-//                    if (EntityLogDynamicAttrHelper.isDynamicAttribute(attributeName)) {
-//                        return EntityLogDynamicAttrHelper.getMetaPropertyPath(metaClass, attributeName) != null;
-//                    } else {
-                    return metaClass.getPropertyPath(attributeName) != null;
-//                    }
-                })
+                .filter(attributeName -> extraAttributesHelper.isExtraAttribute(attributeName, entity)
+                        || metaClass.getPropertyPath(attributeName) != null)
                 .collect(Collectors.toSet());
     }
 
@@ -464,37 +431,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         assert item != null;
         enqueueItem(item, storeName);
     }
-
-//        TODO: DynamicAttributes
-//        protected void internalRegisterModifyAttributeValue(CategoryAttributeValue entity, @Nullable EntityAttributeChanges changes,
-//                                                        Set<String> attributes) {
-//        String propertyName = DynamicAttributesUtils.encodeAttributeCode(entity.getCode());
-//        if (!attributes.contains(propertyName)) {
-//            return;
-//        }
-//
-//        Date ts = timeSource.currentTimestamp();
-//        EntityManager em = persistence.getEntityManager();
-//
-//        Set<String> dirty = changes == null ?
-//                persistenceTools.getDirtyFields(entity) : changes.getOwnAttributes();
-//        boolean registerDeleteOp = dirty.contains("deleteTs") && entity.isDeleted();
-//        boolean hasChanges = dirty.stream().anyMatch(s -> s.endsWith("Value"));
-//        if (hasChanges) {
-//            EntityLogItem item = metadata.create(EntityLogItem.class);
-//            item.setEventTs(ts);
-//            item.setUser(findUser(em));
-//            item.setType(EntityLogItem.Type.MODIFY);
-//            item.setEntity(getEntityName(entity));
-//            Entity realEntity = findEntity(em, entity);
-//            item.setEntityInstanceName(realEntity == null ? "" : metadataTools.getInstanceName(realEntity));
-//            item.setObjectEntityId(entity.getObjectEntityId());
-//            item.setAttributes(createDynamicLogAttribute(entity, changes, registerDeleteOp));
-//
-//            enqueueItem(item, Stores.MAIN);
-//        }
-//    }
-
 
     protected String findUserLogin() {
         UserDetails currentUser = auditInfoProvider.getCurrentUser();
@@ -550,8 +486,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             if (doNotRegister(entity))
                 return;
 
-            String masterEntityName = getEntityName(entity);
-            Set<String> attributes = getLoggedAttributes(masterEntityName, auto);
+            String entityName = getEntityName(entity);
+            Set<String> attributes = getLoggedAttributes(entityName, auto);
             if (attributes != null && attributes.contains("*")) {
                 attributes = getAllAttributes(entity);
             }
@@ -559,13 +495,9 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                 return;
             }
 
-            MetaClass metaClass = metadata.getClass(masterEntityName);
-            attributes = filterRemovedAttributes(metaClass, attributes);
+            MetaClass metaClass = metadata.getClass(entityName);
+            attributes = filterRemovedAttributes(entity, attributes);
 
-//            TODO: DynamicAttributes
-//            if (entity instanceof CategoryAttributeValue) {
-//                internalRegisterModifyAttributeValue((CategoryAttributeValue) entity, changes, attributes);
-//            } else {
             String storeName = metadataTools.getStoreName(metaClass);
             // Create a new transaction in main DB if we are saving an entity from additional data store
             if (!Stores.isMain(storeName)) {
@@ -598,10 +530,13 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             type = EntityLogItem.Type.MODIFY;
             Set<String> dirtyAttributes = new HashSet<>();
             for (String attributePath : attributes) {
-//                TODO: DynamicAttributes
-//                if (DynamicAttributesUtils.isDynamicAttribute(attributePath)) {
-//                    continue;
-//                }
+                if (extraAttributesHelper.isExtraAttribute(attributePath, entity)) {
+                    if (dirty.contains(attributePath)) {
+                        dirtyAttributes.add(attributePath);
+                    }
+                    continue;
+                }
+
                 MetaPropertyPath propertyPath = metaClass.getPropertyPath(attributePath);
                 Preconditions.checkNotNullArgument(propertyPath,
                         "Property path %s isn't exists for type %s", attributePath, metaClass.getName());
@@ -636,15 +571,12 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                                                      @Nullable EntityAttributeChanges changes) {
         Set<EntityLogAttr> result = new HashSet<>();
         for (String name : attributes) {
-//            TODO: DynamicAttributes
-//            if (DynamicAttributesUtils.isDynamicAttribute(name)) {
-//                continue;
-//            }
+
             EntityLogAttr attr = metadata.create(EntityLogAttr.class);
             attr.setName(name);
 
             MetaPropertyPath propertyPath = metadata.getClass(entity).getPropertyPath(name);
-            MetaProperty metaProperty = propertyPath.getMetaProperty();
+            MetaProperty metaProperty = propertyPath == null ? null : propertyPath.getMetaProperty();
 
             String value = stringify(EntityValues.getValueEx(entity, name), metaProperty);
             attr.setValue(value);
@@ -675,33 +607,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         return result;
     }
 
-//        TODO: DynamicAttributes
-//    protected Set<EntityLogAttr> createDynamicLogAttribute(CategoryAttributeValue entity, @Nullable EntityAttributeChanges changes, boolean registerDeleteOp) {
-//        Set<EntityLogAttr> result = new HashSet<>();
-//        EntityLogAttr attr = metadata.create(EntityLogAttr.class);
-//        attr.setName(DynamicAttributesUtils.encodeAttributeCode(entity.getCode()));
-//
-//        MetaProperty valueMetaProperty = entity.getMetaClass().getProperty(getCategoryAttributeValueName(entity));
-//
-//        Object value = entity.getValue();
-//        attr.setValue(stringify(value, valueMetaProperty));
-//
-//        Object valueId = getValueId(value);
-//        if (valueId != null)
-//            attr.setValueId(valueId.toString());
-//
-//        if (changes != null || registerDeleteOp) {
-//            Object oldValue = getOldCategoryAttributeValue(entity, changes);
-//            attr.setOldValue(stringify(oldValue, valueMetaProperty));
-//            Object oldValueId = getValueId(oldValue);
-//            if (oldValueId != null) {
-//                attr.setOldValueId(oldValueId.toString());
-//            }
-//        }
-//        result.add(attr);
-//        return result;
-//    }
-
     protected String getChanges(Properties properties) {
         try {
             StringWriter writer = new StringWriter();
@@ -726,8 +631,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             if (doNotRegister(entity))
                 return;
 
-            String masterEntityName = getEntityName(entity);
-            Set<String> attributes = getLoggedAttributes(masterEntityName, auto);
+            String entityName = getEntityName(entity);
+            Set<String> attributes = getLoggedAttributes(entityName, auto);
             if (attributes != null && attributes.contains("*")) {
                 attributes = getAllAttributes(entity);
             }
@@ -735,15 +640,10 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                 return;
             }
 
-            MetaClass metaClass = metadata.getClass(masterEntityName);
-            attributes = filterRemovedAttributes(metaClass, attributes);
-//            TODO: DynamicAttributes
-//            if (entity instanceof CategoryAttributeValue) {
-//                internalRegisterModifyAttributeValue((CategoryAttributeValue) entity, null, attributes);
-//            } else {
+            MetaClass metaClass = metadata.getClass(entityName);
+            attributes = filterRemovedAttributes(entity, attributes);
             String storeName = metadataTools.getStoreName(metaClass);
-            internalRegisterDelete(entity, masterEntityName, storeName, attributes);
-//            }
+            internalRegisterDelete(entity, entityName, storeName, attributes);
         } catch (Exception e) {
             logError(entity, e);
         }
@@ -795,16 +695,9 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             }
             attributes.add(metaProperty.getName());
         }
-//        TODO: DynamicAttributes
-//        Collection<CategoryAttribute> categoryAttributes = dynamicAttributes.getAttributesForMetaClass(metaClass);
-//        if (categoryAttributes != null) {
-//            for (CategoryAttribute categoryAttribute : categoryAttributes) {
-//                if (BooleanUtils.isNotTrue(categoryAttribute.getIsCollection())) {
-//                    attributes.add(
-//                            DynamicAttributesUtils.getMetaPropertyPath(metaClass, categoryAttribute).getMetaProperty().getName());
-//                }
-//            }
-//        }
+
+        attributes.addAll(extraAttributesHelper.getExtraAttributes(entity));
+
         return attributes;
     }
 
@@ -821,13 +714,18 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         }
     }
 
-    protected String stringify(@Nullable Object value, MetaProperty metaProperty) {
+    protected String stringify(@Nullable Object value, @Nullable MetaProperty metaProperty) {
         if (value == null)
             return "";
         else if (value instanceof Entity) {
             return metadataTools.getInstanceName(value);
         } else if (value instanceof Date) {
-            Datatype datatype = metaProperty.getRange().asDatatype();
+            Datatype datatype;
+            if (metaProperty != null) {
+                datatype = metaProperty.getRange().asDatatype();
+            } else {
+                datatype = datatypeRegistry.get(value.getClass());
+            }
             return datatype.format(value);
         } else if (value instanceof Iterable) {
             StringBuilder sb = new StringBuilder();
@@ -839,7 +737,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                 sb.deleteCharAt(sb.length() - 1);
             sb.append("]");
             return sb.toString();
-        } else if (metaProperty.getRange().isEnum() && EnumClass.class.isAssignableFrom(metaProperty.getJavaType())) {
+        } else if (metaProperty != null && metaProperty.getRange().isEnum() && EnumClass.class.isAssignableFrom(metaProperty.getJavaType())) {
             Class enumClass = metaProperty.getJavaType();
             try {
                 Enum e = Enum.valueOf(enumClass, String.valueOf(value));
@@ -851,16 +749,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             return String.valueOf(value);
         }
     }
-
-//        TODO: DynamicAttributes
-//    protected Object getOldCategoryAttributeValue(CategoryAttributeValue attributeValue, EntityAttributeChanges changes) {
-//        String fieldName = getCategoryAttributeValueName(attributeValue);
-//        if (fieldName != null) {
-//            return changes != null ? changes.getOldValue(fieldName) :
-//                    persistenceTools.getOldValue(attributeValue, fieldName);
-//        }
-//        return null;
-//    }
 
     protected Set<String> calculateDirtyFields(Object entity, @Nullable EntityAttributeChanges changes) {
         if (changes == null) {
@@ -874,6 +762,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             if (objectChanges != null) {
                 changes.addChanges(objectChanges);
             }
+
+            changes.addExtraChanges(entity);
         }
         return changes.getAttributes();
     }
@@ -891,37 +781,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         return null;
     }
 
-//        TODO: DynamicAttributes
-//    protected String getCategoryAttributeValueName(CategoryAttributeValue attributeValue) {
-//        CategoryAttribute categoryAttribute = attributeValue.getCategoryAttribute();
-//        String fieldName = null;
-//        switch (categoryAttribute.getDataType()) {
-//            case DATE_WITHOUT_TIME:
-//                fieldName = "dateWithoutTimeValue";
-//                break;
-//            case DATE:
-//                fieldName = "dateValue";
-//                break;
-//            case ENUMERATION:
-//            case STRING:
-//                fieldName = "stringValue";
-//                break;
-//            case INTEGER:
-//                fieldName = "intValue";
-//                break;
-//            case DOUBLE:
-//                fieldName = "doubleValue";
-//                break;
-//            case DECIMAL:
-//                fieldName = "decimalValue";
-//                break;
-//            case BOOLEAN:
-//                fieldName = "booleanValue";
-//                break;
-//        }
-//
-//        return fieldName;
-//    }
 
     private boolean isSoftDeleteEntityRestored(Object entity, Set<String> dirty) {
         return EntityValues.isSoftDeletionSupported(entity)

@@ -74,11 +74,11 @@ public class CurrentAuthenticationImpl implements CurrentAuthentication {
         Authentication authentication = getAuthentication();
         if (authentication != null) {
             Object details = authentication.getDetails();
+            Locale locale = null;
             if (details instanceof ClientDetails) {
-                return ((ClientDetails) details).getLocale();
-            } else {
-                return Locale.getDefault();
+                locale = ((ClientDetails) details).getLocale();
             }
+            return locale == null ? messagesTools.getDefaultLocale() : locale;
         }
         throw new IllegalStateException("Authentication is not set");
     }

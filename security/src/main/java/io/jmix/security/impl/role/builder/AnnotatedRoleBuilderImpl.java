@@ -17,12 +17,12 @@
 package io.jmix.security.impl.role.builder;
 
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
+import io.jmix.security.impl.role.builder.extractor.RowLevelPolicyExtractor;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.Role;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.role.annotation.ImportRoles;
-import io.jmix.security.role.builder.extractor.RowLevelPolicyExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.role.builder.extractor;
+package io.jmix.security.impl.role.builder.extractor;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;

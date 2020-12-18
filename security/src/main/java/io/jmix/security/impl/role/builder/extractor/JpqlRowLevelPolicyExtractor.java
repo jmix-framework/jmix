@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 @Component("sec_JpqlRowLevelPolicyExtractor")
-public class JpqlRowLevelPolicyExtractor implements io.jmix.security.role.builder.extractor.RowLevelPolicyExtractor {
+public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
 
     private Metadata metadata;
 

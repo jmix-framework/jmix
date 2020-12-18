@@ -23,7 +23,7 @@ import io.jmix.security.model.*
 import io.jmix.securitydata.entity.ResourcePolicyEntity
 import io.jmix.securitydata.entity.RoleEntity
 import io.jmix.securitydata.entity.RowLevelPolicyEntity
-import io.jmix.securitydata.role.provider.DatabaseRoleProvider
+import io.jmix.securitydata.impl.role.provider.DatabaseRoleProvider
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityDataSpecification
 import test_support.entity.TestOrder

@@ -18,7 +18,7 @@ package annotated_role_provider
 
 
 import io.jmix.security.model.Role
-import io.jmix.security.role.provider.AnnotatedRoleProvider
+import io.jmix.security.impl.role.provider.AnnotatedRoleProvider
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 

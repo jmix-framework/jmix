@@ -16,6 +16,8 @@
 
 package io.jmix.security.role.annotation;
 
+import io.jmix.security.impl.role.provider.AnnotatedRoleProvider;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -30,7 +32,7 @@ import java.lang.annotation.Target;
  * Row-level policies restrict which data should be return to the user (e.g. a user should only see contracts created by
  * user's department) or which data the user can create, update or delete.
  * <p>
- * Annotated interfaces are parsed by the {@link io.jmix.security.role.provider.AnnotatedRoleProvider} and {@link
+ * Annotated interfaces are parsed by the {@link AnnotatedRoleProvider} and {@link
  * io.jmix.security.model.Role} objects are created using the information from the annotated interface.
  * <p>
  * Role definition example:

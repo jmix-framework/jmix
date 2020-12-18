@@ -19,7 +19,7 @@ package annotated_role_builder
 import io.jmix.security.model.ResourcePolicy
 import io.jmix.security.model.ResourcePolicyType
 import io.jmix.security.model.Role
-import io.jmix.security.role.builder.AnnotatedRoleBuilder
+import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityUiSpecification
 import test_support.annotated_role_builder.TestMultipleMenuPoliciesOnMethodRole

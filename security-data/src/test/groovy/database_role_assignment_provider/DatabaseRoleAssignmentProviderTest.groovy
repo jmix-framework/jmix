@@ -20,7 +20,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
 import io.jmix.securitydata.entity.RoleAssignmentEntity
-import io.jmix.securitydata.role.assignment.DatabaseRoleAssignmentProvider
+import io.jmix.securitydata.impl.role.assignment.DatabaseRoleAssignmentProvider
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityDataSpecification
 

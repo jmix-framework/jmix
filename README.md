@@ -14,11 +14,11 @@
 
 # Overview
 
-The IMAP-addon provides a readily available instrument for integrating email messaging into any JMIX-based application
+The IMAP-addon provides a readily available instrument for integrating email messaging into any Jmix-based application
 via the IMAP protocol. The main model of the component is designed to interact with incoming emails via Spring application events.
 
 The component includes the following set of functionalities:
-* Integration between any IMAP servers and JMIX applications.
+* Integration between any IMAP servers and Jmix applications.
 * Basic API methods to work with the main email server functionalities:
     * Connecting to servers;
     * Retrieving and viewing emails;
@@ -29,16 +29,12 @@ The component includes the following set of functionalities:
 
 # Add-on Configuration
 
-Before using the add-on do the following:
+There is an ability to override default values of properties required to encrypt a password for a mailbox:
 
-1. Open `application.properties` file of your application and configure the following application properties:
+Open `application.properties` file of your application and configure the following application properties:
 
-```
-#IMAP configuration
-jmix.imap.encryption.key = HBXv3Q70IlmBMiW4EMyPHw==
-jmix.imap.encryption.iv = DYOKud/GWV5boeGvmR/ttg==
-
-```
+1. ```jmix.imap.encryption.key```
+2. ```jmix.imap.encryption.iv```
 
 # Usage
 
@@ -83,7 +79,7 @@ a list of folders from the email server to work with.
 
 The *Advanced* section provides a set of additional options for connecting to an email server.
 
-* *Custom Flag*: specify a custom flag.
+* *Custom Flag*: specify a custom flag to mark emails with when retrieving them from an email server.
 * *Use trash folder to remove emails*: if checked, then it is possible to specify a trash folder of a current mailbox
 (the *Trash Folder* field becomes available). The setting works as follows: if an email is moved to the specified folder on
 the email server, `EmailDeletedImapEvent` occurs (for more details, see [Event Types](#event-types)).
@@ -115,7 +111,7 @@ For each folder you can select a set of IMAP events by using the *Events* table 
 
 All emails from connected mailboxes are displayed in *IMAP Message Browser* (available from *Menu: Administration → IMAP → IMAP Message Browser*).
 
-![IMAP Message Browser](img/Imap-message-browser.png)
+![IMAP Message Browser](img/imap-message-browser.png)
 
 Selecting an email and clicking *View* opens it for reading. Email Screen contains all general details of an email:
 date, author, subject, etc., and two tabs: *Body* and *Attachments*.
@@ -201,6 +197,7 @@ but does not count a trash folder, if one is configured.
 The component provides the following API to interact with the IMAP server:
 
 * `ImapManager` methods:
+    * `ImapConnectResult testConnection(ImapMailBox)` — check a connection for specified mail box.
     * `Collection<ImapFolderDto> fetchFolders(ImapMailBox)` — retrieves all folders preserving the tree structure.
     * `Collection<ImapFolderDto> fetchFolders(ImapMailBox, String...)` — retrieves folders with the specified names.
     The result is not structured as a tree.

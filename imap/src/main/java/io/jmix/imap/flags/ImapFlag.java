@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.imap;
+package io.jmix.imap.flags;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;

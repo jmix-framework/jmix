@@ -25,11 +25,11 @@ import com.sun.mail.imap.IMAPFolder
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.imap.ImapEventsTestListener
-import io.jmix.imap.ImapFlag
 import io.jmix.imap.ImapManager
 import io.jmix.imap.data.ImapDataProvider
 import io.jmix.imap.entity.*
 import io.jmix.imap.events.*
+import io.jmix.imap.flags.ImapFlag
 import io.jmix.imap.impl.ImapOperations
 import io.jmix.imap.sync.ImapSynchronizer
 import io.jmix.imap.sync.events.ImapEvents
@@ -109,11 +109,11 @@ class ImapEventsTest extends Specification {
         imapEvents.handleNewMessages(INBOX)
 
         then: "2 new messages are in database"
-        ImapMessage newMessage1 = imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID)
+        ImapMessage newMessage1 = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID)
         newMessage1 != null
         newMessage1.getImapFlags().contains(JMIX_FLAG)
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1) == null
-        ImapMessage newMessage2 = imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 2)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1) == null
+        ImapMessage newMessage2 = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2)
         newMessage2 != null
         newMessage2.getImapFlags().contains(JMIX_FLAG)
 
@@ -149,8 +149,8 @@ class ImapEventsTest extends Specification {
         imapEvents.handleChangedMessages(INBOX)
 
         then: "both messages have 'SEEN' flag in database"
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID).getImapFlags().contains(Flags.Flag.SEEN)
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1).getImapFlags().contains(Flags.Flag.SEEN)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID).getImapFlags().contains(Flags.Flag.SEEN)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1).getImapFlags().contains(Flags.Flag.SEEN)
 
         and: "1 event with type 'EMAIL_SEEN' is fired"
         def imapEvents = eventListener.events
@@ -184,8 +184,8 @@ class ImapEventsTest extends Specification {
         imapEvents.handleChangedMessages(INBOX)
 
         then: "both message have 'ANSWERED' flag in database"
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1).getImapFlags().contains(Flags.Flag.ANSWERED)
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 2).getImapFlags().contains(Flags.Flag.ANSWERED)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1).getImapFlags().contains(Flags.Flag.ANSWERED)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2).getImapFlags().contains(Flags.Flag.ANSWERED)
 
         and: "1 event with type 'NEW_ANSWER' is fired"
         def imapEvents = eventListener.events
@@ -221,9 +221,9 @@ class ImapEventsTest extends Specification {
         imapEvents.handleMissedMessages(INBOX)
 
         then: "there is only 1 message remaining in database"
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID) != null
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1) == null
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 2) == null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID) != null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1) == null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2) == null
 
         and: "2 events with type 'EMAIL_DELETED' are fired"
         def imapEvents = eventListener.events
@@ -282,9 +282,9 @@ class ImapEventsTest extends Specification {
         when: "check for modified messages"
         eventListener.events.clear()
         imapEvents.handleChangedMessages(INBOX)
-        Flags msg1Flags = imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID).getImapFlags()
-        Flags msg2Flags = imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1).getImapFlags()
-        Flags msg3Flags = imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 2).getImapFlags()
+        Flags msg1Flags = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID).getImapFlags()
+        Flags msg2Flags = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1).getImapFlags()
+        Flags msg3Flags = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2).getImapFlags()
         Collection<BaseImapEvent> imapEvents = eventListener.events
 
         then: "1st message has JMIX and SEEN flags"
@@ -372,8 +372,8 @@ class ImapEventsTest extends Specification {
         imapManager.moveMessage(message2, "other-folder")
         imapManager.moveMessage(message3, "trash-folder")
 
-        INBOX.disabled = false
-        otherFolder.disabled = false
+        INBOX.deleted = false
+        otherFolder.deleted = false
         dataManager.save(INBOX, otherFolder)
 
 
@@ -391,9 +391,9 @@ class ImapEventsTest extends Specification {
         imapEvents.handleMissedMessages(INBOX)
 
         then: "there is only 1 message remaining in database"
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID) != null
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 1) == null
-        imapDataProvider.findMessageByUid(INBOX.getId(), START_EMAIL_UID + 2) == null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID) != null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1) == null
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2) == null
 
         and: "1 event with type 'EMAIL_DELETED' and 1 event with type 'EMAIL_MOVED' are fired"
         def imapEvents = eventListener.events
@@ -459,8 +459,8 @@ class ImapEventsTest extends Specification {
     }
 
     @SuppressWarnings(["GroovyAssignabilityCheck", "GroovyAccessibility"])
-    ImapFolder inbox(ImapMailBox mailBox, eventTypes, disabled = false) {
-        ImapFolder imapFolder = imapFolder(mailBox, "INBOX", disabled)
+    ImapFolder inbox(ImapMailBox mailBox, eventTypes, deleted = false) {
+        ImapFolder imapFolder = imapFolder(mailBox, "INBOX", deleted)
 
         def events = eventTypes.collect {
             ImapFolderEvent event = metadata.create(ImapFolderEvent)
@@ -479,12 +479,12 @@ class ImapEventsTest extends Specification {
     }
 
     @SuppressWarnings(["GroovyAssignabilityCheck", "GroovyAccessibility"])
-    ImapFolder imapFolder(ImapMailBox mailBox, folderName, disabled = false) {
+    ImapFolder imapFolder(ImapMailBox mailBox, folderName, deleted = false) {
         ImapFolder imapFolder = metadata.create(ImapFolder)
         imapFolder.name = folderName
         imapFolder.mailBox = mailBox
         imapFolder.selected = true
-        imapFolder.disabled = disabled
+        imapFolder.deleted = deleted
 
         dataManager.save(imapFolder)
 

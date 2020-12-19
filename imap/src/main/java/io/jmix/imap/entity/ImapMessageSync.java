@@ -16,32 +16,30 @@
 
 package io.jmix.imap.entity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.imap.ImapFlag;
+import io.jmix.imap.flags.FlagsConverter;
+import io.jmix.imap.flags.ImapFlag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.mail.Flags;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Table(name = "IMAP_MESSAGE_SYNC")
 @Entity(name = "imap_MessageSync")
 @JmixEntity
 public class ImapMessageSync {
     private final static Logger log = LoggerFactory.getLogger(ImapMessageSync.class);
-
-    protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Id
     @Column(name = "ID")
@@ -108,41 +106,22 @@ public class ImapMessageSync {
     }
 
     public void setImapFlags(Flags flags) {
-        Flags.Flag[] systemFlags = flags.getSystemFlags();
-        String[] userFlags = flags.getUserFlags();
-        List<ImapFlag> internalFlags = new ArrayList<>(systemFlags.length + userFlags.length);
-        for (Flags.Flag systemFlag : systemFlags) {
-            internalFlags.add(new ImapFlag(ImapFlag.SystemFlag.valueOf(systemFlag)));
-        }
-        for (String userFlag : userFlags) {
-            internalFlags.add(new ImapFlag(userFlag));
-        }
-        try {
-            if (!internalFlags.equals(this.internalFlags)) {
-                log.debug("Convert imap flags {} to raw string", internalFlags);
-                this.flags = OBJECT_MAPPER.writeValueAsString(internalFlags);
-                this.internalFlags = internalFlags;
-            }
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Can't convert flags " + internalFlags, e);
+        List<ImapFlag> internalFlags = FlagsConverter.convertToImapFlags(flags);
+        if (!internalFlags.equals(this.internalFlags)) {
+            log.debug("Convert imap flags {} to raw string", internalFlags);
+            this.flags = FlagsConverter.convertToString(internalFlags);
+            this.internalFlags = internalFlags;
         }
     }
 
     public Flags getImapFlags() {
-        try {
-            log.debug("Parse imap flags from raw string {}", flags);
-            if (flags == null) {
-                return new Flags();
-            }
-            this.internalFlags = OBJECT_MAPPER.readValue(this.flags, new TypeReference<List<ImapFlag>>() {
-            });
-        } catch (IOException e) {
-            throw new RuntimeException("Can't parse flags from string " + flags, e);
+        log.debug("Parse imap flags from raw string {}", flags);
+        if (flags == null) {
+            return new Flags();
         }
+        this.internalFlags = FlagsConverter.convertToImapFlags(this.flags);
 
-        Flags flags = new Flags();
-        internalFlags.forEach(internalFlag -> flags.add(internalFlag.imapFlags()));
-        return flags;
+        return FlagsConverter.convertToFlags(internalFlags);
     }
 
 

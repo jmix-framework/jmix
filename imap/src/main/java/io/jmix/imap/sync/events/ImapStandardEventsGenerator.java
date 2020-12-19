@@ -18,11 +18,11 @@ package io.jmix.imap.sync.events;
 
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.Authenticator;
-import io.jmix.imap.ImapFlag;
 import io.jmix.imap.ImapProperties;
 import io.jmix.imap.data.ImapMessageSyncDataProvider;
 import io.jmix.imap.entity.*;
 import io.jmix.imap.events.*;
+import io.jmix.imap.flags.ImapFlag;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,7 +181,6 @@ public class ImapStandardEventsGenerator extends ImapEventsBatchedGenerator {
             modificationEvents.add(new EmailFlagChangedImapEvent(msg, changedFlagsWithNewValue));
             msg.setImapFlags(newFlags);
             msg.setUpdateTs(timeSource.currentTimestamp());
-//            msg.setThreadId();
             authentication.begin();
             try {
                 transaction.executeWithoutResult(transactionStatus -> entityManager.merge(msg));

@@ -28,7 +28,6 @@ public class ImapProperties {
     boolean clearCustomFlags;
     boolean debug;
     int timeoutSeconds;
-    int syncTimeout;
     int eventsBatchSize;
 
     public ImapProperties(@DefaultValue("false") boolean trustAllCertificates,
@@ -36,14 +35,12 @@ public class ImapProperties {
                           @DefaultValue("false") boolean clearCustomFlags,
                           @DefaultValue("false") boolean debug,
                           @DefaultValue("5") int timeoutSeconds,
-                          @DefaultValue("5") int syncTimeout,
                           @DefaultValue("20") int eventsBatchSize) {
         this.trustAllCertificates = trustAllCertificates;
         this.updateBatchSize = updateBatchSize;
         this.clearCustomFlags = clearCustomFlags;
         this.debug = debug;
         this.timeoutSeconds = timeoutSeconds;
-        this.syncTimeout = syncTimeout;
         this.eventsBatchSize = eventsBatchSize;
     }
 
@@ -65,10 +62,6 @@ public class ImapProperties {
 
     public int getTimeoutSeconds() {
         return timeoutSeconds;
-    }
-
-    public int getSyncTimeout() {
-        return syncTimeout;
     }
 
     public int getEventsBatchSize() {

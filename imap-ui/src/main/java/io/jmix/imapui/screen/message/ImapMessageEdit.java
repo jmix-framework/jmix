@@ -31,6 +31,7 @@ import io.jmix.ui.executor.BackgroundTaskHandler;
 import io.jmix.ui.executor.BackgroundWorker;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,8 @@ public class ImapMessageEdit extends StandardEditor<ImapMessage> {
     protected BackgroundWorker backgroundWorker;
     @Autowired
     protected Downloader downloader;
+    @Autowired
+    protected DataLoader imapDemoAttachmentsLoader;
 
     @Override
     public void setEntityToEdit(ImapMessage item) {
@@ -140,7 +143,7 @@ public class ImapMessageEdit extends StandardEditor<ImapMessage> {
         public void done(ImapMessageDto dto) {
             imapMessageDtoDc.setItem(dto);
             bodyContent.setHtmlEnabled(dto.getHtml());
-            if (Boolean.TRUE.equals(dto.getHtml()) ) {
+            if (Boolean.TRUE.equals(dto.getHtml())) {
                 byte[] bytes = dto.getBody().getBytes(StandardCharsets.UTF_8);
                 bodyContentHtml.setSource(io.jmix.ui.component.StreamResource.class)
                         .setStreamSupplier(() -> new ByteArrayInputStream(bytes))
@@ -183,6 +186,7 @@ public class ImapMessageEdit extends StandardEditor<ImapMessage> {
 
         @Override
         public void done(Integer attachmentCount) {
+            imapDemoAttachmentsLoader.load();
             hideProgressBar(loadProgress);
         }
 

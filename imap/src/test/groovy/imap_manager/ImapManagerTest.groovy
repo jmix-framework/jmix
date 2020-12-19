@@ -25,12 +25,12 @@ import com.icegreen.greenmail.util.ServerSetup
 import com.sun.mail.imap.IMAPFolder
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
-import io.jmix.imap.ImapFlag
 import io.jmix.imap.ImapManager
 import io.jmix.imap.crypto.Encryptor
 import io.jmix.imap.dto.ImapMessageDto
 import io.jmix.imap.entity.*
 import io.jmix.imap.exception.ImapException
+import io.jmix.imap.flags.ImapFlag
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration

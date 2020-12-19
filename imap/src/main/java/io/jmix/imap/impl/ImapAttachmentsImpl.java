@@ -148,7 +148,6 @@ public class ImapAttachmentsImpl implements ImapAttachments {
     @Override
     public InputStream openStream(ImapMessageAttachment attachment) {
         log.info("Open stream for attachment {}", attachment);
-        //todo: streaming should be fair
         return new ByteArrayInputStream(loadFile(attachment));
     }
 

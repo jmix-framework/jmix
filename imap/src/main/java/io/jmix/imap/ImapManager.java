@@ -21,6 +21,7 @@ import io.jmix.imap.dto.ImapFolderDto;
 import io.jmix.imap.dto.ImapMessageDto;
 import io.jmix.imap.entity.ImapMailBox;
 import io.jmix.imap.entity.ImapMessage;
+import io.jmix.imap.flags.ImapFlag;
 
 import java.util.Collection;
 import java.util.List;

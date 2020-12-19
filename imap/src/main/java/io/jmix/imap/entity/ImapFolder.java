@@ -89,11 +89,11 @@ public class ImapFolder {
     @Column(name = "SELECTED", nullable = false)
     protected Boolean selected = false;
 
-    @Column(name = "SELECTABLE", nullable = false)
-    protected Boolean selectable = false;
+    @Column(name = "CAN_HOLD_MESSAGES", nullable = false)
+    protected Boolean canHoldMessages = false;
 
-    @Column(name = "DISABLED")
-    protected Boolean disabled;
+    @Column(name = "DELETED")
+    protected Boolean deleted;
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -214,20 +214,20 @@ public class ImapFolder {
         this.selected = selected;
     }
 
-    public Boolean getSelectable() {
-        return selectable;
+    public Boolean getCanHoldMessages() {
+        return canHoldMessages;
     }
 
-    public void setSelectable(Boolean selectable) {
-        this.selectable = selectable;
+    public void setCanHoldMessages(Boolean canHoldMessages) {
+        this.canHoldMessages = canHoldMessages;
     }
 
-    public Boolean getDisabled() {
-        return disabled;
+    public Boolean getDeleted() {
+        return deleted;
     }
 
-    public void setDisabled(Boolean disabled) {
-        this.disabled = disabled;
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
     }
 
     public ImapFolder getParent() {

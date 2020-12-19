@@ -51,7 +51,7 @@ public class ImapFlaglessSynchronizer extends ImapSynchronizer {
             for (IMAPMessage imapMessage : imapMessages) {
                 log.debug("[{}]insert message with uid {} to db after changing flags on server",
                         jmixFolder, imapFolder.getUID(imapMessage));
-                ImapMessage jmixMessage = insertNewMessage(imapMessage, jmixFolder);
+                ImapMessage jmixMessage = createMessage(imapMessage, jmixFolder);
                 if (jmixMessage != null && jmixMessage.getReferenceId() != null) {
                     checkAnswers.add(jmixMessage);
                 }

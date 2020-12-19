@@ -16,8 +16,8 @@
 
 package io.jmix.imap.events;
 
-import io.jmix.imap.ImapFlag;
 import io.jmix.imap.entity.ImapMessage;
+import io.jmix.imap.flags.ImapFlag;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Map;

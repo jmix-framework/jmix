@@ -91,7 +91,6 @@
             </column>
             <column name="SECURE_MODE" type="varchar(50)"/>
             <column name="ROOT_CERTIFICATE" type="clob"/>
-            <column name="CLIENT_CERTIFICATE" type="clob"/>
             <column name="AUTHENTICATION_METHOD" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
@@ -145,10 +144,10 @@
             <column name="SELECTED" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="SELECTABLE" type="boolean">
+            <column name="CAN_HOLD_MESSAGES" type="boolean">
                 <constraints nullable="false"/>
             </column>
-            <column name="DISABLED" type="boolean"/>
+            <column name="DELETED" type="boolean"/>
             <column name="PARENT_FOLDER_ID" type="uuid">
                 <constraints foreignKeyName="FK_IMAP_FOLDER_PARENT_FOLDER"
                              references="IMAP_FOLDER(ID)"/>

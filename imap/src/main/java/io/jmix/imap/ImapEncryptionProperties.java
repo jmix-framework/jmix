@@ -18,6 +18,7 @@ package io.jmix.imap;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @ConfigurationProperties(prefix = "jmix.imap.encryption")
 @ConstructorBinding
@@ -25,8 +26,8 @@ public class ImapEncryptionProperties {
     String key;
     String iv;
 
-    public ImapEncryptionProperties(String key,
-                                    String iv) {
+    public ImapEncryptionProperties(@DefaultValue("HBXv3Q70IlmBMiW4EMyPHw==") String key,
+                                    @DefaultValue("DYOKud/GWV5boeGvmR/ttg==") String iv) {
         this.key = key;
         this.iv = iv;
     }

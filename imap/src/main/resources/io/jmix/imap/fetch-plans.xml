@@ -55,7 +55,6 @@
           extends="_local"
           name="imap-mailBox-connect">
         <property name="rootCertificate"/>
-        <property name="clientCertificate"/>
         <property name="authentication"
                   fetchPlan="_instance_name">
             <property name="username"/>

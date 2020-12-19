@@ -325,7 +325,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     public CheckBox foldersTableSelectedColumnGenerator(ImapFolder folder) {
         CheckBox checkBox = componentsFactory.create(CheckBox.class);
         checkBox.setValueSource(new ContainerValueSource(foldersTable.getInstanceContainer(folder), "selected"));
-        checkBox.setEditable(Boolean.TRUE.equals(folder.getSelectable() && !Boolean.TRUE.equals(folder.getDisabled())));
+        checkBox.setEditable(Boolean.TRUE.equals(folder.getCanHoldMessages() && !Boolean.TRUE.equals(folder.getDeleted())));
         checkBox.setFrame(getWindow().getFrame());
         checkBox.setWidth("20");
         return checkBox;
@@ -346,15 +346,15 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         foldersWithState.forEach((folder, state) -> {
             switch (state) {
                 case NEW:
-                    folder.setDisabled(false);
+                    folder.setDeleted(false);
                     folder.setUnregistered(true);
                     break;
                 case DELETED:
-                    folder.setDisabled(true);
+                    folder.setDeleted(true);
                     folder.setUnregistered(false);
                     break;
                 case UNCHANGED:
-                    folder.setDisabled(false);
+                    folder.setDeleted(false);
                     folder.setUnregistered(false);
                     break;
             }
@@ -404,7 +404,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         Label<String> label = componentsFactory.create(Label.NAME);
         label.setHtmlEnabled(true);
 
-        if (Boolean.TRUE.equals(folder.getDisabled())) {
+        if (Boolean.TRUE.equals(folder.getDeleted())) {
             label.setValue("<strike>" + folder.getName() + "</strike>");
         } else if (Boolean.TRUE.equals(folder.getUnregistered())) {
             label.setValue("<span>* " + folder.getName() + "</span>");
@@ -428,7 +428,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
 
     protected void changeSelection(ImapFolder folder, boolean selection) {
         if (folder != null
-                && Boolean.TRUE.equals(folder.getSelectable())
+                && Boolean.TRUE.equals(folder.getCanHoldMessages())
                 && Boolean.TRUE.equals(folder.getSelected()) != selection) {
 
             folder.setSelected(selection);
@@ -585,20 +585,12 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
                 event.setEventHandlers(new ArrayList<>());
             }
 
-            Screen eventEditor = screenBuilders.editor(ImapFolderEvent.class, getWindow().getFrameOwner())
+           screenBuilders.editor(ImapFolderEvent.class, getWindow().getFrameOwner())
                     .editEntity(event)
                     .withOpenMode(OpenMode.DIALOG)
                     .withContainer(eventsDc)
                     .build()
                     .show();
-
-            eventEditor.addAfterCloseListener(e -> {
-                for (int i = 0; i < event.getEventHandlers().size(); i++) {
-                    ImapEventHandler handler = event.getEventHandlers().get(i);
-                    handler.setHandlingOrder(i);
-                    handlersDc.replaceItem(handler);
-                }
-            });
         }
     }
 }

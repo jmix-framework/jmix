@@ -105,6 +105,7 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
         }
 
         removeAction.setConfirmation(false);
+        removeAction.setAfterActionPerformedHandler(e -> updateHandlingOrders());
     }
 
     @Install(to = "handlersTable.beanName", subject = "columnGenerator")
@@ -183,11 +184,7 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
         if (handler == null) {
             return;
         }
-
-        List<ImapEventHandler> eventHandlers = handlersDc.getItems();
-        int index = eventHandlers.indexOf(handler);
-        upHandlerBtn.setEnabled(index != 0);
-        downHandlerBtn.setEnabled(index != eventHandlers.size() - 1);
+        updateButtons(handler);
     }
 
     protected void removeMissedHandlers(Map<String, List<String>> availableBeans) {
@@ -226,6 +223,7 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
     public void addHandler(Action.ActionPerformedEvent event) {
         ImapEventHandler handler = metadata.create(ImapEventHandler.class);
         handler.setEvent(getEditedEntity());
+        handler.setHandlingOrder(getMaxHandlingOrder());
         handlersDc.getMutableItems().add(handler);
     }
 
@@ -236,9 +234,8 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
             List<ImapEventHandler> eventHandlers = handlersDc.getMutableItems();
             int index = eventHandlers.indexOf(handler);
             if (index != 0) {
-                eventHandlers.remove(index);
-                eventHandlers.add(index - 1, handler);
-                handlersTable.setSelected(handler);
+                Collections.swap(eventHandlers, index, index - 1);
+                updateButtons(handler);
             }
         }
     }
@@ -250,14 +247,31 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
             List<ImapEventHandler> eventHandlers = handlersDc.getMutableItems();
             int index = eventHandlers.indexOf(handler);
             if (index != eventHandlers.size() - 1) {
-                eventHandlers.add(index + 2, handler);
-                eventHandlers.remove(index);
-                handlersTable.setSelected(handler);
+                Collections.swap(eventHandlers, index, index + 1);
+                updateButtons(handler);
             }
         }
     }
 
     protected void enableAddButton() {
         addHandlerBtn.setEnabled(handlersDc.getItems().size() < maxHandlersCount);
+    }
+
+    protected void updateHandlingOrders() {
+        for (int i = 0; i < handlersDc.getItems().size(); i++) {
+            ImapEventHandler item = handlersDc.getItems().get(i);
+            item.setHandlingOrder(i);
+            handlersDc.replaceItem(item);
+        }
+    }
+
+    protected int getMaxHandlingOrder() {
+        return CollectionUtils.isNotEmpty(handlersDc.getItems()) ? handlersDc.getItems().size() - 1 : 0;
+    }
+
+    protected void updateButtons(ImapEventHandler handler) {
+        int index = handlersDc.getItemIndex(handler);
+        upHandlerBtn.setEnabled(index > 0);
+        downHandlerBtn.setEnabled(index < handlersDc.getItems().size() - 1);
     }
 }

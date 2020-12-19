@@ -90,9 +90,6 @@ public class ImapMailBox {
     @Column(name = "ROOT_CERTIFICATE")
     protected URI rootCertificate;
 
-    @Column(name = "CLIENT_CERTIFICATE")
-    protected URI clientCertificate;
-
     @Column(name = "AUTHENTICATION_METHOD", nullable = false)
     protected String authenticationMethod;
 
@@ -232,7 +229,7 @@ public class ImapMailBox {
 
     public List<ImapFolder> getProcessableFolders() {
         return folders.stream()
-                .filter(f -> Boolean.TRUE.equals(f.getSelected()) && !Boolean.TRUE.equals(f.getDisabled()))
+                .filter(f -> Boolean.TRUE.equals(f.getSelected()) && !Boolean.TRUE.equals(f.getDeleted()))
                 .collect(Collectors.toList());
     }
 
@@ -303,14 +300,6 @@ public class ImapMailBox {
 
     public URI getRootCertificate() {
         return rootCertificate;
-    }
-
-    public void setClientCertificate(URI clientCertificate) {
-        this.clientCertificate = clientCertificate;
-    }
-
-    public URI getClientCertificate() {
-        return clientCertificate;
     }
 
     public void setHost(String host) {

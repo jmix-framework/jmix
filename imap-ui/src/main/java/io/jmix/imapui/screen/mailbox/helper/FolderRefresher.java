@@ -65,7 +65,7 @@ public class FolderRefresher {
             folderDtos.stream()
                     .flatMap(dto -> folderWithChildren(dto).stream())
                     .peek(f -> {
-                        if (Boolean.TRUE.equals(f.getSelectable())) {
+                        if (Boolean.TRUE.equals(f.getCanHoldMessages())) {
                             enableCompletely(f);
                         }
                     }).forEach(folder -> result.put(folder, State.UNCHANGED));
@@ -150,7 +150,7 @@ public class FolderRefresher {
         ImapFolder imapFolder = metadata.create(ImapFolder.class);
 
         imapFolder.setName(dto.getFullName());
-        imapFolder.setSelectable(Boolean.TRUE.equals(dto.getCanHoldMessages()));
+        imapFolder.setCanHoldMessages(Boolean.TRUE.equals(dto.getCanHoldMessages()));
         return imapFolder;
     }
 

@@ -88,10 +88,10 @@ public class ImapDataProvider {
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public ImapMessage findMessageByUid(UUID mailFolderId, long messageUid) {
+    public ImapMessage findMessageByUid(ImapFolder mailFolder, long messageUid) {
         return dataManager.load(ImapMessage.class)
                 .query("select m from imap_Message m where m.msgUid = :msgUid and m.folder.id = :mailFolderId")
-                .parameter("mailFolderId", mailFolderId)
+                .parameter("mailFolderId", mailFolder.getId())
                 .parameter("msgUid", messageUid)
                 .fetchPlan("imap-msg-full")
                 .optional()

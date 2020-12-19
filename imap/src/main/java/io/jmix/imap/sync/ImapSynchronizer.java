@@ -22,12 +22,12 @@ import com.sun.mail.imap.IMAPStore;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;
 import io.jmix.core.security.Authenticator;
-import io.jmix.imap.ImapFlag;
 import io.jmix.imap.ImapProperties;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.data.ImapMessageSyncDataProvider;
 import io.jmix.imap.entity.*;
 import io.jmix.imap.exception.ImapException;
+import io.jmix.imap.flags.ImapFlag;
 import io.jmix.imap.impl.ImapHelper;
 import io.jmix.imap.impl.ImapOperations;
 import org.apache.commons.collections4.CollectionUtils;
@@ -94,8 +94,6 @@ public class ImapSynchronizer {
     }
 
     public void synchronize(ImapMailBox imapMailBox) {
-
-        log.info("ImapSynchronizer, mail box: {}", imapMailBox.getName());
         authenticator.begin();
         try {
             ImapMailBox mailBox = imapDataProvider.findMailBox(imapMailBox.getId());
@@ -210,7 +208,7 @@ public class ImapSynchronizer {
                 imapMessage.setFlags(imapHelper.jmixFlags(mailBox), true);
                 log.debug("[{}]insert message with uid {} to db after changing flags on server",
                         jmixFolder, imapFolder.getUID(imapMessage));
-                ImapMessage jmixMessage = insertNewMessage(imapMessage, jmixFolder);
+                ImapMessage jmixMessage = createMessage(imapMessage, jmixFolder);
                 if (jmixMessage != null && jmixMessage.getReferenceId() != null) {
                     checkAnswers.add(jmixMessage);
                 }
@@ -337,8 +335,8 @@ public class ImapSynchronizer {
         }
     }
 
-    protected ImapMessage insertNewMessage(IMAPMessage msg,
-                                           ImapFolder jmixFolder) throws MessagingException {
+    protected ImapMessage createMessage(IMAPMessage msg,
+                                        ImapFolder jmixFolder) throws MessagingException {
 
         long uid = ((IMAPFolder) msg.getFolder()).getUID(msg);
         return transaction.execute(status -> {

@@ -173,6 +173,9 @@ public class EntityAttributeChanges {
         return null;
     }
 
+    /**
+     * @return true if changes is not empty
+     */
     public boolean hasChanges() {
         if (!changes.isEmpty())
             return true;

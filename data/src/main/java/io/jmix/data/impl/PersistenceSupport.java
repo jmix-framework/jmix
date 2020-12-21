@@ -92,9 +92,6 @@ public class PersistenceSupport implements ApplicationContextAware {
     @Autowired
     protected EntityStates entityStates;
 
-    @Autowired
-    protected ExtraAttributesHelper extraAttributesHelper;
-
     @Autowired(required = false)
     protected List<JpaDataStoreListener> lifecycleListeners = new ArrayList<>();
 

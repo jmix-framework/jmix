@@ -28,6 +28,7 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
@@ -309,6 +310,18 @@ public class MetadataTools {
      */
     public boolean isSoftDeletable(Class<?> entityClass) {
         return findDeletedDateProperty(entityClass) != null;
+    }
+
+    /**
+     * Determine whether the given property denotes an embedded object.
+     *
+     * @see io.jmix.core.metamodel.annotation.JmixEntity
+     */
+    public boolean isJustJmixEntity(MetaProperty metaProperty) {
+        Objects.requireNonNull(metaProperty, "metaProperty is null");
+        List<? extends Class<? extends Annotation>> annotations = Arrays.stream(metaProperty.getJavaType().getAnnotations())
+                .map(Annotation::annotationType).collect(Collectors.toList());
+        return annotations.contains(JmixEntity.class) && !annotations.contains(javax.persistence.Entity.class);
     }
 
     /**

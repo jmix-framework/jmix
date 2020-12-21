@@ -341,6 +341,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
             return false;
         }
 
+        //noinspection ConstantConditions
         return CollectionUtils.isEqualCollection(a, b);
     }
 
@@ -348,6 +349,11 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
         entityComboBox.setFrame(frame);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty() || equalCollections(getValue(), getEmptyValue());
     }
 
     @Override

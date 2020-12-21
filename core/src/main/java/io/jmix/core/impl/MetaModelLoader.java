@@ -25,6 +25,7 @@ import io.jmix.core.Stores;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.JmixId;
@@ -88,7 +89,8 @@ public class MetaModelLoader {
             LastModifiedDate.class,
             LastModifiedBy.class,
             DeletedDate.class,
-            DeletedBy.class
+            DeletedBy.class,
+            TenantId.class
     );
 
     protected DatatypeRegistry datatypes;

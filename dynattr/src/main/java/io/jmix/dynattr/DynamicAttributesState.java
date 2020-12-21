@@ -85,7 +85,7 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
 
     @Override
     public Set<String> getAttributes() {
-        return null;
+        return dynamicModel.getKeys();
     }
 
     @Override

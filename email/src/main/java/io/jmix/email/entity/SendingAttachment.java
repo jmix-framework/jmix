@@ -18,6 +18,7 @@ package io.jmix.email.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -96,6 +97,10 @@ public class SendingAttachment implements Serializable {
 
     @Column(name = "TEXT_ENCODING", length = 50)
     protected String encoding;
+
+    @TenantId
+    @Column(name = "SYS_TENANT_ID")
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -215,5 +220,13 @@ public class SendingAttachment implements Serializable {
 
     public void setContentFile(URI contentFile) {
         this.contentFile = contentFile;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

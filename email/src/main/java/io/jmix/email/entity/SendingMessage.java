@@ -18,6 +18,7 @@ package io.jmix.email.entity;
 
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -134,6 +135,10 @@ public class SendingMessage implements Serializable {
 
     @Column(name = "BODY_CONTENT_TYPE", length = BODY_CONTENT_TYPE_LENGTH)
     protected String bodyContentType;
+
+    @TenantId
+    @Column(name = "SYS_TENANT_ID")
+    protected String sysTenantId;
 
     @PrePersist
     protected void initLastAttemptTime() {
@@ -337,5 +342,13 @@ public class SendingMessage implements Serializable {
 
     public void setBcc(String bcc) {
         this.bcc = bcc;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

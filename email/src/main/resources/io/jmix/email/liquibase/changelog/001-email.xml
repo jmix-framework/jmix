@@ -70,4 +70,13 @@
             <column name="MESSAGE_ID"/>
         </createIndex>
     </changeSet>
+
+    <changeSet author="email" id="2">
+        <addColumn tableName="EMAIL_SENDING_MESSAGE">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="EMAIL_SENDING_ATTACHMENT">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

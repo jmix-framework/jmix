@@ -19,6 +19,7 @@ package com.haulmont.cuba.core.entity;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import io.jmix.core.UuidProvider;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -49,7 +50,7 @@ public class FileDescriptor extends StandardEntity {
     @Column(name = "CREATE_DATE")
     private Date createDate;
 
-    @SystemLevel
+    @TenantId
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
 

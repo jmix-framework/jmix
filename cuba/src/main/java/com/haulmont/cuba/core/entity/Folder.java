@@ -16,6 +16,7 @@
  */
 package com.haulmont.cuba.core.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.EnableRestore;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
@@ -52,6 +53,7 @@ public class Folder extends StandardEntity {
     @Column(name = "TAB_NAME")
     protected String tabName;
 
+    @TenantId
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
 

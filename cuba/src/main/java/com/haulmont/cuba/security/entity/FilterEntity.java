@@ -19,6 +19,7 @@ package com.haulmont.cuba.security.entity;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
@@ -53,7 +54,7 @@ public class FilterEntity extends StandardEntity {
     @Column(name = "GLOBAL_DEFAULT")
     protected Boolean globalDefault = false;
 
-    @SystemLevel
+    @TenantId
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
 

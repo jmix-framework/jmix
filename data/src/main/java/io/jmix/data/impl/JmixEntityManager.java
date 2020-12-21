@@ -27,6 +27,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.converters.AuditConversionService;
+import io.jmix.data.persistence.AdditionalCriteriaProvider;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.eclipse.persistence.internal.helper.CubaUtil;
@@ -34,6 +35,7 @@ import org.eclipse.persistence.sessions.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 import javax.annotation.Nullable;
 import javax.persistence.*;
@@ -51,7 +53,7 @@ public class JmixEntityManager implements EntityManager {
 
     private EntityManager delegate;
 
-    private BeanFactory beanFactory;
+    private ListableBeanFactory beanFactory;
 
     private PersistenceSupport support;
     private ExtendedEntities extendedEntities;
@@ -66,7 +68,7 @@ public class JmixEntityManager implements EntityManager {
 
     private static final Logger log = LoggerFactory.getLogger(JmixEntityManager.class);
 
-    public JmixEntityManager(EntityManager delegate, BeanFactory beanFactory) {
+    public JmixEntityManager(EntityManager delegate, ListableBeanFactory beanFactory) {
         this.delegate = delegate;
         this.beanFactory = beanFactory;
 
@@ -80,6 +82,8 @@ public class JmixEntityManager implements EntityManager {
         timeSource = beanFactory.getBean(TimeSource.class);
         auditInfoProvider = beanFactory.getBean(AuditInfoProvider.class);
         auditConverter = beanFactory.getBean(AuditConversionService.class);
+
+        setAdditionalProperties();
     }
 
     @Override
@@ -588,6 +592,16 @@ public class JmixEntityManager implements EntityManager {
                 }
             } else {
                 EntityValues.setValue(dest, name, value);
+            }
+        }
+    }
+
+    protected void setAdditionalProperties() {
+        for (AdditionalCriteriaProvider acp : beanFactory.getBeansOfType(AdditionalCriteriaProvider.class).values()) {
+            if (acp.getCriteriaParameters() != null) {
+                for (Map.Entry<String, Object> entry : acp.getCriteriaParameters().entrySet()) {
+                    this.delegate.setProperty(entry.getKey(), entry.getValue());
+                }
             }
         }
     }

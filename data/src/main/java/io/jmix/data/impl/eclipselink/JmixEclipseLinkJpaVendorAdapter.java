@@ -25,7 +25,7 @@ import org.eclipse.persistence.internal.sessions.AbstractSession;
 import org.eclipse.persistence.sessions.Session;
 import org.eclipse.persistence.sessions.coordination.CommandProcessor;
 import org.eclipse.persistence.sessions.coordination.RemoteCommandManager;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -54,7 +54,7 @@ public class JmixEclipseLinkJpaVendorAdapter extends EclipseLinkJpaVendorAdapter
                                            JmixEclipseLinkJpaDialect jpaDialect,
                                            JmixEclipseLinkSessionEventListener sessionEventListener,
                                            ObjectProvider<JmixEclipseLinkTransportManager> transportManagerProvider,
-                                           BeanFactory beanFactory,
+                                           ListableBeanFactory beanFactory,
                                            MetadataTools metadataTools) {
         this.environment = environment;
         this.jpaDialect = jpaDialect;

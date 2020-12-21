@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,9 +27,9 @@ public class JmixEntityManagerFactory implements EntityManagerFactory {
 
     private EntityManagerFactory delegate;
 
-    private BeanFactory beanFactory;
+    private ListableBeanFactory beanFactory;
 
-    public JmixEntityManagerFactory(EntityManagerFactory delegate, BeanFactory beanFactory) {
+    public JmixEntityManagerFactory(EntityManagerFactory delegate, ListableBeanFactory beanFactory) {
         this.delegate = delegate;
         this.beanFactory = beanFactory;
     }

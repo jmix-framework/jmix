@@ -18,6 +18,7 @@ package io.jmix.data.impl;
 
 import org.eclipse.persistence.jpa.PersistenceProvider;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ListableBeanFactory;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -25,9 +26,9 @@ import java.util.Map;
 
 public class JmixPersistenceProvider extends PersistenceProvider {
 
-    private BeanFactory beanFactory;
+    private ListableBeanFactory beanFactory;
 
-    public JmixPersistenceProvider(BeanFactory beanFactory) {
+    public JmixPersistenceProvider(ListableBeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 

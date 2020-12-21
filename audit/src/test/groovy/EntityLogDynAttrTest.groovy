@@ -35,8 +35,6 @@ import test_support.testmodel.dynattr.AdditionalEntity
 import test_support.testmodel.dynattr.FirstEntity
 import test_support.testmodel.dynattr.SecondEntity
 
-import javax.sql.DataSource
-
 /*
  * Copyright 2020 Haulmont.
  *
@@ -67,11 +65,11 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
     @Autowired
     protected Metadata metadata
     @Autowired
-    protected DataSource dataSource
+    protected EntityStates entityStates
 
     protected Category firstCategory, secondCategory
 
-    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute
+    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute, entityCollectionAttribute
 
     void setup() {
         clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
@@ -101,7 +99,8 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
                 notLoggedAttribute,
 
                 secondCategory,
-                entityAttribute)
+                entityAttribute,
+                entityCollectionAttribute)
 
         dynamicModelConfiguration.reload()
     }
@@ -109,7 +108,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
     protected void initEntityLogConfiguration() {
         saveEntityLogAutoConfFor('dynaudit$FirstEntity', '+firstAttribute')
 
-        saveEntityLogAutoConfFor('dynaudit$SecondEntity', '+entityAttribute')//todo taimanov try '*'
+        saveEntityLogAutoConfFor('dynaudit$SecondEntity', '*')
     }
 
 
@@ -152,15 +151,15 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         entityAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
         entityAttribute.defaultEntity = new ReferenceToEntity()
 
-        /*userGroupCollectionAttribute = metadata.create(CategoryAttribute)//todo taimanov finish this and other types later
-        userGroupCollectionAttribute.name = 'userGroupCollectionAttribute'
-        userGroupCollectionAttribute.code = 'userGroupCollectionAttribute'
-        userGroupCollectionAttribute.dataType = AttributeType.ENTITY
-        userGroupCollectionAttribute.categoryEntityType = 'logdynattr$User'
-        userGroupCollectionAttribute.category = userCategory
-        userGroupCollectionAttribute.entityClass = 'test_support.testmodel.dynattr.entity.Group'
-        userGroupCollectionAttribute.isCollection = true
-        userGroupCollectionAttribute.defaultEntity = new ReferenceToEntity()*/
+        entityCollectionAttribute = metadata.create(CategoryAttribute)
+        entityCollectionAttribute.name = 'entityCollectionAttribute'
+        entityCollectionAttribute.code = 'entityCollectionAttribute'
+        entityCollectionAttribute.dataType = AttributeType.ENTITY
+        entityCollectionAttribute.categoryEntityType = 'logdynattr$User'
+        entityCollectionAttribute.category = secondCategory
+        entityCollectionAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
+        entityCollectionAttribute.isCollection = true
+        entityCollectionAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     @Ignore
@@ -198,10 +197,15 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'modification logged'
         firstChange.type == EntityLogItem.Type.MODIFY
-        firstChange.changes == "+firstAttribute=changed first time\n+firstAttribute-oldVl=\n"
+        firstChange.changes.count("\n") == 2
+        firstChange.changes.contains("+firstAttribute=changed first time\n")
+        firstChange.changes.contains("+firstAttribute-oldVl=\n")
 
         secondChange.type == EntityLogItem.Type.MODIFY
-        secondChange.changes == "+firstAttribute=changed second time\n+firstAttribute-oldVl=changed first time\n"
+
+        secondChange.changes.count("\n") == 2
+        secondChange.changes.contains("+firstAttribute=changed second time\n")
+        secondChange.changes.contains("+firstAttribute-oldVl=changed first time\n")
 
 
         when: 'entity deleted'
@@ -228,7 +232,9 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'restoration logged'
         restoreRecord.type == EntityLogItem.Type.RESTORE
-        restoreRecord.changes == "+firstAttribute=changed second time\n+firstAttribute-oldVl=\n"
+        restoreRecord.changes.count("\n") == 2
+        restoreRecord.changes.contains("+firstAttribute=changed second time\n")
+        restoreRecord.changes.contains("+firstAttribute-oldVl=\n")
     }
 
     def "test attribute types"() {
@@ -240,33 +246,42 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'All attributes considered'
         creationRecord.type == EntityLogItem.Type.CREATE
-        creationRecord.changes == "+entityAttribute=\n"
-
+        creationRecord.changes == "stringAttribute=\nid=${secondEntity.id}\n"
 
         when: 'Entity modified'
 
         AdditionalEntity prevExtraEntity = metadata.create(AdditionalEntity)
-        dataManager.save(prevExtraEntity)
+        prevExtraEntity.name = "prev"
+        AdditionalEntity anotherExtraEntity = metadata.create(AdditionalEntity)
+        anotherExtraEntity.name = "2"
+        dataManager.save(prevExtraEntity, anotherExtraEntity)
+
 
         EntityValues.setValue(secondEntity, '+entityAttribute', prevExtraEntity)
+        EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [prevExtraEntity, anotherExtraEntity])
         dataManager.save(secondEntity)
 
         AdditionalEntity newExtraEntity = metadata.create(AdditionalEntity)
+        newExtraEntity.name = "new"
         dataManager.save(newExtraEntity)
-        //secondEntity = reloadWithDynamicAttributes(secondEntity)//todo discuss: entity not loaded
+        //secondEntity = reloadWithDynamicAttributes(secondEntity)//todo taimanov discuss: entity attribute value is not loaded
+        secondEntity.stringAttribute = "new string value"
         EntityValues.setValue(secondEntity, '+entityAttribute', newExtraEntity)
+        EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [newExtraEntity, anotherExtraEntity])
         dataManager.save(secondEntity)
 
         def modificationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
         then: 'All changes logged correctly'
-
-        modificationRecord.changes == "+entityAttribute-oldVlId=${prevExtraEntity.id}\n" +
-                "+entityAttribute=test_support.testmodel.dynattr.AdditionalEntity-${newExtraEntity.id} [detached]\n" +
-                "+entityAttribute-oldVl=test_support.testmodel.dynattr.AdditionalEntity-${prevExtraEntity.id} [detached]\n" +
-                "+entityAttribute-id=${newExtraEntity.id}\n"
-
-
+        modificationRecord.changes.count("\n") == 8
+        modificationRecord.changes.contains("+entityAttribute-oldVlId=${prevExtraEntity.id}\n")
+        modificationRecord.changes.contains("+entityAttribute=>new<\n")
+        modificationRecord.changes.contains("+entityCollectionAttribute=[>new<,>2<]\n")
+        modificationRecord.changes.contains("+entityAttribute-oldVl=>prev<\n")
+        modificationRecord.changes.contains("+entityAttribute-id=${newExtraEntity.id}\n")
+        modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>prev<,>2<]\n")
+        modificationRecord.changes.contains("stringAttribute=new string value\n")
+        modificationRecord.changes.contains("stringAttribute-oldVl=\n")
     }
 
     protected Object reloadWithDynamicAttributes(Entity entity) {

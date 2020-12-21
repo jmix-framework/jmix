@@ -17,6 +17,8 @@
 package test_support.testmodel.dynattr;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 
 import javax.persistence.Column;
@@ -28,6 +30,7 @@ import java.util.UUID;
 @JmixEntity
 @Table(name = "DA_ADDITIONAL_ENTITY")
 @Entity(name = "dynaudit$AdditionalEntity")
+
 public class AdditionalEntity {
     @JmixGeneratedValue
     @Id
@@ -51,5 +54,11 @@ public class AdditionalEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @InstanceName
+    @DependsOnProperties({"name"})
+    public String getCaption() {
+        return ">" + name + "<";
     }
 }

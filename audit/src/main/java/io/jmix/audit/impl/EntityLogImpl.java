@@ -35,14 +35,12 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
+import io.jmix.data.ExtraAttributesHelper;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityAttributeChanges;
-import io.jmix.data.impl.ExtraAttributesHelper;
 import io.jmix.data.impl.JpaDataStoreListener;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
-import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
-import org.eclipse.persistence.internal.sessions.ObjectChangeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +55,6 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.*;
@@ -90,8 +87,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     protected ReferenceToEntitySupport referenceToEntitySupport;
     @Autowired
     protected Stores stores;
-    @Autowired
-    protected ExtraAttributesHelper extraAttributesHelper;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
 
@@ -414,7 +409,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         MetaClass metaClass = metadata.getClass(entity);
         // filter attributes that do not exists in entity anymore
         return attributes.stream()
-                .filter(attributeName -> extraAttributesHelper.isExtraAttribute(attributeName, entity)
+                .filter(attributeName -> ExtraAttributesHelper.isExtraAttribute(attributeName, entity)
                         || metaClass.getPropertyPath(attributeName) != null)
                 .collect(Collectors.toSet());
     }
@@ -530,7 +525,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             type = EntityLogItem.Type.MODIFY;
             Set<String> dirtyAttributes = new HashSet<>();
             for (String attributePath : attributes) {
-                if (extraAttributesHelper.isExtraAttribute(attributePath, entity)) {
+                if (ExtraAttributesHelper.isExtraAttribute(attributePath, entity)) {
                     if (dirty.contains(attributePath)) {
                         dirtyAttributes.add(attributePath);
                     }
@@ -696,7 +691,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             attributes.add(metaProperty.getName());
         }
 
-        attributes.addAll(extraAttributesHelper.getExtraAttributes(entity));
+        attributes.addAll(ExtraAttributesHelper.getExtraAttributes(entity));
 
         return attributes;
     }
@@ -754,16 +749,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         if (changes == null) {
             if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
                 return Collections.emptySet();
-            PropertyChangeListener propertyChangeListener = ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
-            if (propertyChangeListener == null)
-                throw new IllegalStateException("Entity '" + entity + "' is a ChangeTracker but has no PropertyChangeListener");
             changes = new EntityAttributeChanges();
-            ObjectChangeSet objectChanges = ((AttributeChangeListener) propertyChangeListener).getObjectChangeSet();
-            if (objectChanges != null) {
-                changes.addChanges(objectChanges);
-            }
-
-            changes.addExtraChanges(entity);
+            changes.addChanges(entity);
         }
         return changes.getAttributes();
     }

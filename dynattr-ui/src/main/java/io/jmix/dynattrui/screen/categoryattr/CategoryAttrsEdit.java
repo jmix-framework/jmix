@@ -977,7 +977,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             }
         }
         if (getScreenData().getDataContext().isModified(attribute.getConfiguration())) {
-            attribute.setConfiguration(configurationDc.getItemOrNull());
+            Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
+            attribute.setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
         }
     }
 }

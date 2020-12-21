@@ -227,7 +227,7 @@ class GetOldValueTest extends CoreTestSpecification {
         }
 
         then: "old value does not include previously deleted item"
-
+        //also fails when JmixEclipseLinkDescriptorEventListener.postMerge() returns detached instance
         oldValue.sort { it.productName } == [orderLine1, orderLine12]
 
         cleanup:

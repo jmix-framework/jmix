@@ -37,7 +37,7 @@ public class ObjectPathUtils {
         if (path == null)
             return new String[0];
 
-        if (path.startsWith("+"))//todo taimanov: core shouldn't know about dynattr?
+        if (path.startsWith("+"))//todo taimanov discuss and remove if no dots in extra attribute name allowed
             return new String[]{path};
 
         List<String> elements = new ArrayList<>(4);

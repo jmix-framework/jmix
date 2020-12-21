@@ -19,6 +19,7 @@ package io.jmix.securitydata.entity;
 import io.jmix.core.DeletePolicy;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
@@ -104,6 +105,10 @@ public class RoleEntity implements Serializable {
     @Column(name = "CHILD_ROLES")
     @Convert(converter = AggregatedRoleChildrenConverter.class)
     private Set<String> childRoles;
+
+    @TenantId
+    @Column(name = "SYS_TENANT_ID")
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -223,5 +228,13 @@ public class RoleEntity implements Serializable {
 
     public void setRoleType(RoleType roleType) {
         this.roleType = roleType == null ? null : roleType.getId();
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

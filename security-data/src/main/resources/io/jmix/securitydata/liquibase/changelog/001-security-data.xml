@@ -201,4 +201,10 @@
         </createIndex>
     </changeSet>
 
+    <changeSet author="security-data" id="5">
+        <addColumn tableName="SEC_ROLE_ENTITY">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

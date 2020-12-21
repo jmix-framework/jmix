@@ -58,6 +58,8 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
 
         column.setFormatter(getColumnFormatter(attribute));
 
+        column.setSortable(false);
+
         setMaxTextLength(column, attribute);
 
         setColumnAlignment(column, attribute);

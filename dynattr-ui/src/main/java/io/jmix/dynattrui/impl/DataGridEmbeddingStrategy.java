@@ -73,6 +73,8 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
 
         column.setRenderer(null, getColumnFormatter(attribute));
 
+        column.setSortable(false);
+
         setColumnWidth(column, attribute);
     }
 

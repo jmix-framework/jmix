@@ -17,6 +17,7 @@
 package io.jmix.audit.entity;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
@@ -122,6 +123,10 @@ public class EntityLogItem implements Serializable {
     @Column(name = "CHANGES")
     private String changes;
 
+    @Column(name = "SYS_TENANT_ID")
+    @TenantId
+    protected String sysTenantId;
+
     @PostConstruct
     public void init(Metadata metadata) {
         entityRef = metadata.create(ReferenceToEntity.class);
@@ -224,5 +229,13 @@ public class EntityLogItem implements Serializable {
 
     public void setEntityInstanceName(String entityInstanceName) {
         this.entityInstanceName = entityInstanceName;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

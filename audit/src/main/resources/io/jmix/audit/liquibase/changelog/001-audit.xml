@@ -60,4 +60,10 @@
 
     </changeSet>
 
+    <changeSet author="audit" id="2">
+        <addColumn tableName="AUDIT_ENTITY_LOG">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

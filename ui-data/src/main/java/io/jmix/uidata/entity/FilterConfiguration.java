@@ -16,6 +16,7 @@
 
 package io.jmix.uidata.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -53,6 +54,10 @@ public class FilterConfiguration {
     @Lob
     @Convert(converter = FilterConditionConverter.class)
     protected LogicalFilterCondition rootCondition;
+
+    @TenantId
+    @Column(name = "SYS_TENANT_ID")
+    protected String sysTenantId;
 
     public UUID getId() {
         return id;
@@ -92,5 +97,13 @@ public class FilterConfiguration {
 
     public void setRootCondition(LogicalFilterCondition rootCondition) {
         this.rootCondition = rootCondition;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 }

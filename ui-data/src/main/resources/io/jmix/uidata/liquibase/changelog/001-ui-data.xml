@@ -66,4 +66,12 @@
         </createTable>
     </changeSet>
 
+    <changeSet author="ui-data" id="3">
+        <addColumn tableName="UI_TABLE_PRESENTATION">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+        <addColumn tableName="UI_FILTER_CONFIGURATION">
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

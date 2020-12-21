@@ -16,6 +16,7 @@
 
 package io.jmix.uidata.entity;
 
+import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -77,6 +78,10 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     @Column(name = "UPDATED_BY", length = 50)
     protected String updatedBy;
 
+    @TenantId
+    @Column(name = "SYS_TENANT_ID")
+    protected String sysTenantId;
+
     @Transient
     private Boolean isDefault;
 
@@ -118,6 +123,14 @@ public class UiTablePresentation implements TablePresentation, Serializable {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getSysTenantId() {
+        return sysTenantId;
+    }
+
+    public void setSysTenantId(String sysTenantId) {
+        this.sysTenantId = sysTenantId;
     }
 
     @Override

@@ -34,6 +34,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.ConfigurationExclusionStrategy;
+import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -188,11 +189,8 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "ENUMERATION_LOCALES")
     protected String enumerationLocales;
 
-    @Lob
     @Column(name = "ATTRIBUTE_CONFIGURATION_JSON")
-    protected String attributeConfigurationJson;
-
-    @Transient
+    @Convert(converter = CategoryAttributeConfigurationConvertor.class)
     protected CategoryAttributeConfiguration configuration;
 
     @PostConstruct
@@ -542,26 +540,15 @@ public class CategoryAttribute implements Serializable {
         return enumerationLocales;
     }
 
-    public void setAttributeConfigurationJson(String attributeConfigurationJson) {
-        this.attributeConfigurationJson = attributeConfigurationJson;
-    }
-
-    public String getAttributeConfigurationJson() {
-        return attributeConfigurationJson;
-    }
-
-    @Transient
-    @JmixProperty
     public CategoryAttributeConfiguration getConfiguration() {
         if (configuration == null) {
-            if (!Strings.isNullOrEmpty(getAttributeConfigurationJson())) {
-                Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                configuration = gson.fromJson(getAttributeConfigurationJson(), CategoryAttributeConfiguration.class);
-            } else {
-                configuration = new CategoryAttributeConfiguration();
-            }
+            configuration = new CategoryAttributeConfiguration();
         }
         return configuration;
+    }
+
+    public void setConfiguration(CategoryAttributeConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @PrePersist

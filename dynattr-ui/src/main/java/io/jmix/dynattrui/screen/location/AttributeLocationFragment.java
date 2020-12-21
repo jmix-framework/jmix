@@ -126,8 +126,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                     if (configuration != null) {
                         configuration.setColumnNumber(dataContainers.indexOf(currentList));
                         configuration.setRowNumber(currentList.indexOf(attribute));
-                        Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                        attribute.setAttributeConfigurationJson(gson.toJson(configuration));
+                        attribute.setConfiguration(configuration);
                     }
                 }
             }
@@ -139,8 +138,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                 if (configuration != null) {
                     configuration.setColumnNumber(null);
                     configuration.setRowNumber(null);
-                    Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                    attribute.setAttributeConfigurationJson(gson.toJson(attribute.getConfiguration()));
+                    attribute.setConfiguration(attribute.getConfiguration());
                 }
             }
         }

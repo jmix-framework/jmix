@@ -24,32 +24,22 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class UiBackgroundTaskProperties {
 
-    int minThreadsCount;
-    int maxActiveTasksCount;
+    int threadsCount;
     int timeoutSeconds;
 
     public UiBackgroundTaskProperties(
-            @DefaultValue("4") int minThreadsCount,
-            @DefaultValue("100") int maxActiveTasksCount,
+            @DefaultValue("10") int threadsCount,
             @DefaultValue("60") int timeoutSeconds
     ) {
-        this.minThreadsCount = minThreadsCount;
-        this.maxActiveTasksCount = maxActiveTasksCount;
+        this.threadsCount = threadsCount;
         this.timeoutSeconds = timeoutSeconds;
     }
 
     /**
-     * Minimum number of background task threads.
+     * Number of background task threads.
      */
-    public int getMinThreadsCount() {
-        return minThreadsCount;
-    }
-
-    /**
-     * Maximum number of active background tasks.
-     */
-    public int getMaxActiveTasksCount() {
-        return maxActiveTasksCount;
+    public int getThreadsCount() {
+        return threadsCount;
     }
 
     /**

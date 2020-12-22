@@ -85,14 +85,15 @@ public class WebBackgroundWorker implements BackgroundWorker {
         }
 
         this.executorService = new ThreadPoolExecutor(
-                properties.getMinThreadsCount(),
-                properties.getMaxActiveTasksCount(),
+                properties.getThreadsCount(),
+                properties.getThreadsCount(),
                 10L, TimeUnit.MINUTES,
                 new LinkedBlockingQueue<>(),
                 new ThreadFactoryBuilder()
                         .setNameFormat(THREAD_NAME_PREFIX + "%d")
                         .build()
         );
+        ((ThreadPoolExecutor)this.executorService).allowCoreThreadTimeOut(true);
     }
 
     @PreDestroy

@@ -95,6 +95,56 @@
 
     .jmix-drawer-footer {
       background: $cuba-sidemenu-title-background-color;
+
+      display: flex;
+      align-items: center;
+
+      overflow: hidden;
+
+      height: $cuba-sidemenu-layout-collapsed-width;
+
+      & > * {
+        flex-shrink: 0;
+
+        border-radius: 0;
+      }
+
+      .c-settings-button,
+      .c-logout-button,
+      .c-login-button {
+        @include drawer-footer-button();
+
+        width: $v-unit-size;
+
+        color: $cuba-menubar-text-color;
+
+        &:hover {
+          color: $cuba-menubar-menuitem-text-selected-color;
+        }
+      }
+
+      .c-logout-button,
+      .c-login-button {
+        margin-left: auto;
+      }
+
+      .c-userindicator {
+        width: $cuba-sidemenu-layout-expanded-width - $cuba-sidemenu-layout-collapsed-width - 2 * $v-unit-size;
+        padding: 0 round($v-layout-spacing-horizontal / 2);
+
+        font-size: 1.1em;
+        text-align: center;
+
+        & > .v-label {
+          width: 100%;
+          overflow: hidden;
+          text-align: center;
+        }
+
+        @if $cuba-sidemenu-layout-collapse-enabled == false {
+          width: $cuba-sidemenu-layout-expanded-width - 2 * $v-unit-size;
+        }
+      }
     }
 
     @include drawer-collapse-button()
@@ -103,30 +153,37 @@
 
 @mixin drawer-collapse-button($button-stylename: jmix-drawer-collapse-button, $font-size: 1.2em) {
   .#{$button-stylename} {
+    @include drawer-footer-button();
+
     width: $cuba-sidemenu-layout-collapsed-width;
-    height: $cuba-sidemenu-layout-collapsed-width;
+
     margin-right: auto;
-    padding: 0;
 
     font-size: $font-size;
-
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
 
     &::before {
       height: 100%;
     }
 
-    &::after {
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-    }
-
     @if $cuba-sidemenu-layout-collapse-enabled == false {
       display: none;
     }
+  }
+}
+
+@mixin drawer-footer-button() {
+  height: $cuba-sidemenu-layout-collapsed-width;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+
+  &::after {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }

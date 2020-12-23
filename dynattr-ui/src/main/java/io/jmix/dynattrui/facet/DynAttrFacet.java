@@ -23,6 +23,8 @@ import io.jmix.ui.meta.StudioFacet;
         xmlElement = "dynamicAttributes",
         caption = "Dynamic attributes",
         description = "Shows dynamic attributes on a screen",
+        category = "Facets",
+        icon = "icon/dynamicAttributes.svg",
         xmlns = "http://jmix.io/schema/dynattr/dynattrui.xsd",
         xmlnsAlias = "dynattrui"
 )

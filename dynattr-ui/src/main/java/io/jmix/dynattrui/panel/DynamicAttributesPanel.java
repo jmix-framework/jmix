@@ -30,6 +30,10 @@ import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSourceProvider;
+import io.jmix.ui.meta.CanvasIconSize;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
 import io.jmix.ui.model.InstanceContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,6 +42,11 @@ import javax.validation.constraints.Positive;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@StudioComponent(category = "Components",
+        unsupportedProperties = {"enable", "responsive"},
+        icon = "icon/dynamicAttributesPanel.svg",
+        canvasIcon = "icon/dynamicAttributesPanel_canvas.svg",
+        canvasIconSize = CanvasIconSize.LARGE)
 @CompositeDescriptor("dynamic-attributes-panel.xml")
 public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> implements Validatable {
 
@@ -263,6 +272,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param instanceContainer {@link InstanceContainer} object with editing entity
      */
+    @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF, required = true)
     public void setInstanceContainer(InstanceContainer<Object> instanceContainer) {
         this.instanceContainer = instanceContainer;
         propertiesForm.setValueSourceProvider(new ContainerValueSourceProvider<>(instanceContainer));
@@ -277,6 +287,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param cols positive integer or {@code null}
      */
+    @StudioProperty(name = "cols")
     @Positive
     public void setColumnsCount(Integer cols) {
         if (cols != null && cols <= 0) {
@@ -291,6 +302,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param rows positive integer or {@code null}
      */
+    @StudioProperty(name = "rows")
     @Positive
     public void setRowsCount(Integer rows) {
         if (rows != null && rows <= 0) {
@@ -305,6 +317,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param fieldWidth width of the fields
      */
+    @StudioProperty(type = PropertyType.SIZE)
     public void setFieldWidth(String fieldWidth) {
         this.fieldWidth = fieldWidth;
     }
@@ -314,6 +327,7 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
      *
      * @param fieldCaptionWidth width of the fields caption
      */
+    @StudioProperty(type = PropertyType.SIZE)
     public void setFieldCaptionWidth(String fieldCaptionWidth) {
         this.fieldCaptionWidth = fieldCaptionWidth;
     }

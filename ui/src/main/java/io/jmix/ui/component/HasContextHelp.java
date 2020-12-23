@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 import java.util.EventObject;
 import java.util.function.Consumer;
@@ -35,6 +38,7 @@ public interface HasContextHelp {
      *
      * @param contextHelpText context help text to be set
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setContextHelpText(@Nullable String contextHelpText);
 
     /**
@@ -47,6 +51,7 @@ public interface HasContextHelp {
      *
      * @param enabled true if field accepts context help text in HTML format, false otherwise
      */
+    @StudioProperty(defaultValue = "false")
     void setContextHelpTextHtmlEnabled(boolean enabled);
 
     /**

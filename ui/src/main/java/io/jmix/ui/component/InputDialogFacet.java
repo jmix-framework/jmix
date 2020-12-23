@@ -34,7 +34,8 @@ import java.util.function.Function;
         caption = "Input Dialog",
         description = "Prepares and shows input dialogs",
         defaultProperty = "caption",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -62,7 +63,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param width width
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.SIZE)
     void setWidth(@Nullable String width);
 
     /**
@@ -80,7 +81,7 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param height height
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.SIZE)
     void setHeight(@Nullable String height);
 
     /**
@@ -99,7 +100,8 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onAction", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.action.Action")
     void setActionTarget(@Nullable String actionId);
 
     /**
@@ -114,7 +116,8 @@ public interface InputDialogFacet extends Facet, ActionsAwareDialogFacet<InputDi
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onButton", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.component.Button")
     void setButtonTarget(@Nullable String buttonId);
 
     /**

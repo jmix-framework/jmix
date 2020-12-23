@@ -37,7 +37,8 @@ import java.util.function.Supplier;
         caption = "Screen",
         description = "Prepares and shows screens",
         defaultProperty = "screenId",
-        category = "Facets"
+        category = "Facets",
+        icon = "icon/screen.svg"
 )
 @StudioProperties(
         properties = {
@@ -65,7 +66,7 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param screenClass screen class
      */
-    @StudioProperty(type = PropertyType.JAVA_CLASS_NAME)
+    @StudioProperty(type = PropertyType.SCREEN_CLASS_NAME, typeParameter = "S")
     void setScreenClass(@Nullable Class<S> screenClass);
 
     /**
@@ -125,7 +126,8 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onAction", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.action.Action")
     void setActionTarget(@Nullable String actionId);
 
     /**
@@ -139,7 +141,8 @@ public interface ScreenFacet<S extends Screen> extends Facet, ApplicationContext
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onButton", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.component.Button")
     void setButtonTarget(@Nullable String buttonId);
 
     /**

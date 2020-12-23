@@ -31,7 +31,8 @@ import javax.annotation.Nullable;
         caption = "Message Dialog",
         description = "Prepares and shows message dialogs",
         defaultProperty = "message",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -156,7 +157,8 @@ public interface MessageDialogFacet extends Facet {
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onAction", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.action.Action")
     void setActionTarget(@Nullable String actionId);
 
     /**
@@ -171,7 +173,8 @@ public interface MessageDialogFacet extends Facet {
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onButton", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.component.Button")
     void setButtonTarget(@Nullable String buttonId);
 
     /**

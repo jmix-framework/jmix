@@ -15,11 +15,28 @@
  */
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.*;
+
 import javax.annotation.Nullable;
 
 /**
  * Component for uploading files from client to server.
  */
+@StudioComponent(xmlElement = "fileUpload",
+        category = "Components",
+        icon = "icon/fileUpload.svg",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        canvasText = "Upload",
+        canvasTextProperty = "uploadButtonCaption")
+@StudioProperties(properties = {
+        @StudioProperty(name = "css", type = PropertyType.STRING),
+        @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "byteArray"),
+        @StudioProperty(name = "datasource", type = PropertyType.DATASOURCE_REF),
+        @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+}, groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"datasource", "property"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataContainer", "property"})
+})
 public interface FileUploadField extends SingleFileUploadField, Field<byte[]> {
     String NAME = "fileUpload";
 

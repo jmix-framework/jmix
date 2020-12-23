@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 public interface HasHtmlCaption extends Component.HasCaption {
     /**
      * @return {@code true} if the caption is rendered as HTML,
@@ -30,5 +32,6 @@ public interface HasHtmlCaption extends Component.HasCaption {
      *                      {@code false} if rendered as plain text
      * @see #setCaption(String)
      */
+    @StudioProperty(defaultValue = "false")
     void setCaptionAsHtml(boolean captionAsHtml);
 }

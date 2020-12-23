@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 public interface HasHtmlDescription extends Component.HasDescription {
 
     /**
@@ -31,5 +33,6 @@ public interface HasHtmlDescription extends Component.HasDescription {
      *                          {@code false} if rendered as plain text
      * @see #setDescription(String)
      */
+    @StudioProperty(defaultValue = "false")
     void setDescriptionAsHtml(boolean descriptionAsHtml);
 }

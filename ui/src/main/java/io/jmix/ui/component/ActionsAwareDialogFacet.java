@@ -17,6 +17,10 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.annotation.Internal;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioElement;
+import io.jmix.ui.meta.StudioElementsGroup;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -37,6 +41,7 @@ public interface ActionsAwareDialogFacet<T> {
      *
      * @param actions actions
      */
+    @StudioElementsGroup(xmlElement = "actions", icon = "icon/actions.svg")
     void setActions(@Nullable Collection<DialogAction<T>> actions);
 
     /**
@@ -70,6 +75,7 @@ public interface ActionsAwareDialogFacet<T> {
     /**
      * Immutable POJO that stores dialog action settings.
      */
+    @StudioElement(xmlElement = "action", icon = "icon/action.svg")
     class DialogAction<T> {
 
         protected final String id;
@@ -88,25 +94,30 @@ public interface ActionsAwareDialogFacet<T> {
             this.primary = primary;
         }
 
+        @StudioProperty(type = PropertyType.COMPONENT_ID, required = true)
         public String getId() {
             return id;
         }
 
+        @StudioProperty(type = PropertyType.LOCALIZED_STRING)
         @Nullable
         public String getCaption() {
             return caption;
         }
 
+        @StudioProperty(type = PropertyType.LOCALIZED_STRING)
         @Nullable
         public String getDescription() {
             return description;
         }
 
+        @StudioProperty(type = PropertyType.ICON_ID)
         @Nullable
         public String getIcon() {
             return icon;
         }
 
+        @StudioProperty(name = "primary", defaultValue = "false")
         public boolean isPrimary() {
             return primary;
         }

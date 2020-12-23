@@ -36,7 +36,8 @@ import java.util.function.Predicate;
         xmlElement = "lookupScreen",
         caption = "Lookup Screen",
         description = "Prepares and shows lookup screens",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/screen.svg"
 )
 @StudioProperties(
         properties = {

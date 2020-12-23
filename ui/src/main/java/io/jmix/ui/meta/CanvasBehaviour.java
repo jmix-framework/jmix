@@ -35,5 +35,10 @@ public enum CanvasBehaviour {
     /**
      * Component is shown on canvas as a component container.
      */
-    CONTAINER
+    CONTAINER,
+
+    /**
+     * Component is shown on canvas as a button.
+     */
+    BUTTON
 }

@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 /**
  * Data aware component that supports buffered write mode.
  */
@@ -48,6 +50,7 @@ public interface Buffered {
      *
      * @param buffered {@code true} if buffered mode should be turned on, {@code false} otherwise
      */
+    @StudioProperty(defaultValue = "false")
     void setBuffered(boolean buffered);
 
     /**

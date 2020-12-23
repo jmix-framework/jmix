@@ -16,6 +16,8 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.StudioProperty;
+
 public interface HasHtmlSanitizer {
 
     /**
@@ -28,5 +30,6 @@ public interface HasHtmlSanitizer {
      *
      * @param htmlSanitizerEnabled specifies whether html sanitizer is enabled
      */
+    @StudioProperty(defaultValue = "false")
     void setHtmlSanitizerEnabled(boolean htmlSanitizerEnabled);
 }

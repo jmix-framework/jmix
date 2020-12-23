@@ -16,6 +16,9 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
@@ -33,6 +36,7 @@ public interface Requirable {
      *
      * @param required required
      */
+    @StudioProperty(defaultValue = "false")
     void setRequired(boolean required);
 
     /**
@@ -46,5 +50,6 @@ public interface Requirable {
      *
      * @param msg message
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setRequiredMessage(@Nullable String msg);
 }

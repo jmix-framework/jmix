@@ -91,6 +91,19 @@ public @interface StudioComponent {
     CanvasIconSize canvasIconSize() default CanvasIconSize.SMALL;
 
     /**
+     * Specifies text that will be shown on a canvas for the UI component
+     * E.g. button caption for {@link CanvasBehaviour#BUTTON} component
+     */
+    String canvasText() default "";
+
+    /**
+     * Specifies name of the component property that provides value that will be used
+     * as {@link StudioComponent#canvasText}. If property value is not set then
+     * {@link StudioComponent#canvasText} attribute value will be used
+     */
+    String canvasTextProperty() default "";
+
+    /**
      * @return behaviour of UI component on Screen designer canvas
      */
     CanvasBehaviour canvasBehaviour() default CanvasBehaviour.COMPONENT;

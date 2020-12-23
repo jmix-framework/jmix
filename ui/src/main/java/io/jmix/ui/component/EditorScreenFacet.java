@@ -37,7 +37,8 @@ import java.util.function.Supplier;
         xmlElement = "editorScreen",
         caption = "Editor Screen",
         description = "Prepares and shows editor screens",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/screen.svg"
 )
 @StudioProperties(
         properties = {

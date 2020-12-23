@@ -16,11 +16,18 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioComponent;
+import io.jmix.ui.meta.StudioProperty;
+
 import javax.annotation.Nullable;
 
 /**
  * Component shows if CapsLock key is enabled when user inputs password.
  */
+@StudioComponent(icon = "icon/capsLockIndicator.svg",
+        unsupportedProperties = {"enable", "responsive"},
+        category = "Components")
 public interface CapsLockIndicator extends Component {
     String NAME = "capsLockIndicator";
 
@@ -29,6 +36,7 @@ public interface CapsLockIndicator extends Component {
      *
      * @param capsLockOnMessage text message
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setCapsLockOnMessage(@Nullable String capsLockOnMessage);
 
     /**
@@ -42,6 +50,7 @@ public interface CapsLockIndicator extends Component {
      *
      * @param capsLockOffMessage text message
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setCapsLockOffMessage(@Nullable String capsLockOffMessage);
 
     /**

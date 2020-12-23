@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.meta.*;
 import io.jmix.ui.upload.TemporaryStorage;
 
 import javax.annotation.Nullable;
@@ -26,6 +27,21 @@ import java.util.UUID;
  *
  * @param <T> file reference type
  */
+@StudioComponent(xmlElement = "fileStorageUpload",
+        category = "Components",
+        icon = "icon/fileUpload.svg",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        canvasText = "Upload",
+        canvasTextProperty = "uploadButtonCaption")
+@StudioProperties(properties = {
+        @StudioProperty(name = "css", type = PropertyType.STRING),
+        @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "T"),
+        @StudioProperty(name = "datasource", type = PropertyType.DATASOURCE_REF),
+        @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
+}, groups = {
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"datasource", "property"}),
+        @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataContainer", "property"})
+})
 public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<T> {
     String NAME = "fileStorageUpload";
 
@@ -68,6 +84,8 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
     /**
      * Sets mode which determines when file will be put into FileStorage.
      */
+    @StudioProperty(name = "fileStoragePutMode", type = PropertyType.ENUMERATION,
+            defaultValue = "MANUAL", required = true)
     void setMode(FileStoragePutMode mode);
 
     /**
@@ -80,6 +98,7 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
      *
      * @param fileStorageName the name of file storage
      */
+    @StudioProperty(name = "fileStorage", type = PropertyType.STRING)
     void setFileStorageName(@Nullable String fileStorageName);
 
     /**

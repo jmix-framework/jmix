@@ -17,6 +17,8 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -59,6 +61,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      * Sets maximum allowed file size in bytes.
      * Default value is 0. In this case component uses system value.
      */
+    @StudioProperty
     void setFileSizeLimit(long fileSizeLimit);
 
     /**
@@ -77,6 +80,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param accept comma separated types of files
      */
+    @StudioProperty(type = PropertyType.STRING)
     void setAccept(@Nullable String accept);
 
     /**
@@ -87,6 +91,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param permittedExtensions permitted extensions.
      */
+    @StudioProperty(type = PropertyType.STRING)
     void setPermittedExtensions(@Nullable Set<String> permittedExtensions);
 
     /**
@@ -109,6 +114,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param dropZone drop zone descriptor
      */
+    @StudioProperty(type = PropertyType.COMPONENT_REF, options = "io.jmix.ui.component.BoxLayout")
     void setDropZone(@Nullable DropZone dropZone);
 
     /**
@@ -119,6 +125,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param pasteZone paste zone container
      */
+    @StudioProperty(type = PropertyType.COMPONENT_REF, options = "io.jmix.ui.component.ComponentContainer")
     void setPasteZone(@Nullable ComponentContainer pasteZone);
 
     /**
@@ -138,6 +145,7 @@ public interface UploadField extends Component, Component.HasCaption, Component.
      *
      * @param dropZonePrompt drop zone prompt
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setDropZonePrompt(@Nullable String dropZonePrompt);
 
     /**

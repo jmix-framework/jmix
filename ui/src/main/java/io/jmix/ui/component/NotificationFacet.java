@@ -33,7 +33,8 @@ import java.util.function.Supplier;
         caption = "Notification",
         description = "Prepares and shows notifications",
         defaultProperty = "caption",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/notification.svg"
 )
 @StudioProperties(
         properties = {
@@ -89,7 +90,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param type type
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "HUMANIZED")
     void setType(Notifications.NotificationType type);
 
     /**
@@ -102,7 +103,7 @@ public interface NotificationFacet extends Facet {
      *
      * @param contentMode content mode
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.ENUMERATION, defaultValue = "TEXT", options = {"HTML", "TEXT"})
     void setContentMode(ContentMode contentMode);
 
     /**
@@ -149,7 +150,8 @@ public interface NotificationFacet extends Facet {
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onAction", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.action.Action")
     void setActionTarget(@Nullable String actionId);
 
     /**
@@ -164,7 +166,8 @@ public interface NotificationFacet extends Facet {
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onButton", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.component.Button")
     void setButtonTarget(@Nullable String buttonId);
 
     /**

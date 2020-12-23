@@ -16,6 +16,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.*;
 
 import java.util.EventObject;
 import java.util.Map;
@@ -25,6 +26,13 @@ import java.util.function.Consumer;
 /**
  * Component for uploading files from client to server that supports multiple file selection.
  */
+@StudioComponent(xmlElement = "fileMultiUpload",
+        category = "Components",
+        icon = "icon/fileUpload.svg",
+        canvasBehaviour = CanvasBehaviour.BUTTON,
+        canvasText = "Upload",
+        canvasTextProperty = "caption")
+@StudioProperties(properties = @StudioProperty(name = "css", type = PropertyType.STRING))
 public interface FileMultiUploadField extends UploadField {
 
     String NAME = "fileMultiUpload";

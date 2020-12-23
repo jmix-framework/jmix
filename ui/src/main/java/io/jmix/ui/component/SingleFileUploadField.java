@@ -17,6 +17,8 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.meta.PropertyType;
+import io.jmix.ui.meta.StudioProperty;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -35,6 +37,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Enable or disable displaying name of uploaded file next to upload button.
      */
+    @StudioProperty(defaultValue = "false")
     void setShowFileName(boolean showFileName);
 
     /**
@@ -45,6 +48,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup caption of upload button.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setUploadButtonCaption(@Nullable String caption);
 
     /**
@@ -56,6 +60,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup upload button icon.
      */
+    @StudioProperty(type = PropertyType.ICON_ID)
     void setUploadButtonIcon(@Nullable String icon);
 
     /**
@@ -67,6 +72,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup upload button description.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setUploadButtonDescription(@Nullable String description);
 
     /**
@@ -78,6 +84,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Enable or disable displaying name of clear button.
      */
+    @StudioProperty(defaultValue = "false")
     void setShowClearButton(boolean showClearButton);
 
     /**
@@ -88,6 +95,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup clear button caption.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setClearButtonCaption(@Nullable String caption);
 
     /**
@@ -99,6 +107,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup clear button icon.
      */
+    @StudioProperty(type = PropertyType.ICON_ID)
     void setClearButtonIcon(@Nullable String icon);
 
     /**
@@ -110,6 +119,7 @@ public interface SingleFileUploadField extends UploadField, Component.Focusable,
     /**
      * Setup clear button description.
      */
+    @StudioProperty(type = PropertyType.LOCALIZED_STRING)
     void setClearButtonDescription(String description);
 
     /**

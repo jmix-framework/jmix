@@ -31,7 +31,8 @@ import javax.annotation.Nullable;
         caption = "Option Dialog",
         description = "Prepares and shows option dialogs",
         defaultProperty = "message",
-        category = "Non-visual"
+        category = "Facets",
+        icon = "icon/dialog.svg"
 )
 @StudioProperties(
         properties = {
@@ -113,7 +114,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param width width
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.SIZE)
     void setWidth(@Nullable String width);
 
     /**
@@ -131,7 +132,7 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param height height
      */
-    @StudioProperty
+    @StudioProperty(type = PropertyType.SIZE)
     void setHeight(@Nullable String height);
 
     /**
@@ -156,7 +157,8 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param actionId action id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onAction", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.action.Action")
     void setActionTarget(@Nullable String actionId);
 
     /**
@@ -171,7 +173,8 @@ public interface OptionDialogFacet extends Facet, ActionsAwareDialogFacet<Option
      *
      * @param buttonId button id
      */
-    @StudioProperty(type = PropertyType.COMPONENT_REF)
+    @StudioProperty(name = "onButton", type = PropertyType.COMPONENT_REF,
+            options = "io.jmix.ui.component.Button")
     void setButtonTarget(@Nullable String buttonId);
 
     /**

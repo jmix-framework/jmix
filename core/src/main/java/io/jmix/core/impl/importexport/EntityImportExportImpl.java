@@ -653,7 +653,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         if (result == null) {
             LoadContext<?> ctx = new LoadContext<>(metadata.getClass(entity.getClass()))
                     .setSoftDeletion(false)
-                    .setFetchPlan(fetchPlans.builder(metadata.getClass(entity).getJavaClass()).build())
+                    .setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getClass(entity).getJavaClass(), FetchPlan.INSTANCE_NAME))
                     .setId(EntityValues.getId(entity));
             result = dataManager.load(ctx);
             if (result == null) {

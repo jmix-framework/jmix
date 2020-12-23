@@ -1,0 +1,39 @@
+/* Define your theme modifications inside next mixin */
+@mixin grapesjs {
+    /* Theming */
+
+    /* Primary color for the background */
+    #gjs .gjs-one-bg {
+      background-color: #fafafa ;
+    }
+
+    /* Secondary color for the text color */
+    #gjs .gjs-two-color {
+      color: #464646 ;
+    }
+
+    /* Tertiary color for the background */
+    #gjs .gjs-three-bg {
+      background-color: #fafafa ;
+
+    }
+
+    /* Quaternary color for the text color */
+    #gjs .gjs-four-color,
+    #gjs .gjs-four-color-h:hover {
+      color: $v-focus-color;
+    }
+
+    #gjs .gjs-pn-btn:hover{
+        color: $v-focus-color ;
+    }
+
+    #gjs .gjs-pn-btn{
+        color: #464646 ;
+    }
+
+    #gjs .gjs-pn-btn .fa,
+    #gjs .gjs-pn-btn{
+        font-size: $v-font-size;
+    }
+}

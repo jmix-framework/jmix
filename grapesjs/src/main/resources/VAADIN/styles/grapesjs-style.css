@@ -1,0 +1,175 @@
+    .nl-link {
+      color: inherit;
+    }
+    .info-link {
+      text-decoration: none;
+    }
+    #info-cont {
+      line-height: 17px;
+    }
+
+    #toast-container {
+      font-size: 13px;
+      font-weight: lighter;
+    }
+    #toast-container > div,
+    #toast-container > div:hover{
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      font-family: Helvetica, sans-serif;
+    }
+    #toast-container > div{
+      opacity: 0.95;
+    }
+
+    /* We can remove the border we've set at the beginnig */
+    #gjs {
+      border: none;
+    }
+    /* Theming */
+
+    /* Primary color for the background */
+    #gjs .gjs-one-bg {
+      background-color: #fafafa ;
+    }
+
+    /* Secondary color for the text color */
+    #gjs .gjs-two-color {
+      color: #464646 ;
+    }
+
+    /* Tertiary color for the background */
+    #gjs .gjs-three-bg {
+      background-color: #fafafa ;
+
+    }
+
+    /* Quaternary color for the text color */
+    #gjs .gjs-four-color,
+    #gjs .gjs-four-color-h:hover {
+      color: #197de1 ;
+    }
+
+    #gjs .gjs-pn-btn:hover{
+        color: #197de1 ;
+    }
+
+    #gjs .gjs-pn-btn{
+        color: #464646 ;
+    }
+
+    #gjs .gjs-pn-btn .fa, .gjs-pn-btn{
+        font-size: 18px !important;
+    }
+
+    #gjs .gjs-field select{
+        background-image: none;
+    }
+
+    #gjs .gjs-radio-item input:checked+.gjs-radio-item-label{
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    #gjs .gjs-radio-item > .gjs-radio-item input:checked {
+        background-color: rgba(0,0,0,0.2);
+    }
+
+    .icon-add-comp::before, .icon-comp100::before,.icon-comp50::before,.icon-comp30::before,.icon-rm::before{ content: '';}
+        .icon-add-comp {
+          background: url("./img/icon-sq-a.png") no-repeat center;
+        }
+        .icon-comp100 {
+          background: url("./img/icon-sq-1.png") no-repeat center;
+        }
+        .icon-comp50 {
+          background: url("./img/icon-sq-2.png") no-repeat center;
+        }
+        .icon-comp30 {
+          background: url("./img/icon-sq-3.png") no-repeat center;
+        }
+        .icon-rm {
+          background: url("./img/icon-sq-r.png") no-repeat center;
+        }
+
+        .icons-flex {
+          background-size: 17px 18px !important;
+          height: 18px;
+          opacity: 0.9;
+        }
+        .icon-dir-row {
+          background: url("../img/flex-dir-row.png") no-repeat center;
+        }
+        .icon-dir-row-rev {
+          background: url("../img/flex-dir-row-rev.png") no-repeat center;
+        }
+        .icon-dir-col {
+          background: url("../img/flex-dir-col.png") no-repeat center;
+        }
+        .icon-dir-col-rev {
+          background: url("../img/flex-dir-col-rev.png") no-repeat center;
+        }
+        .icon-just-start{
+         background: url("../img/flex-just-start.png") no-repeat center;
+        }
+        .icon-just-end{
+         background: url("../img/flex-just-end.png") no-repeat center;
+        }
+        .icon-just-sp-bet{
+         background: url("../img/flex-just-sp-bet.png") no-repeat center;
+        }
+        .icon-just-sp-ar{
+         background: url("../img/flex-just-sp-ar.png") no-repeat center;
+        }
+        .icon-just-sp-cent{
+         background: url("../img/flex-just-sp-cent.png") no-repeat center;
+        }
+        .icon-al-start{
+         background: url("../img/flex-al-start.png") no-repeat center;
+        }
+        .icon-al-end{
+         background: url("../img/flex-al-end.png") no-repeat center;
+        }
+        .icon-al-str{
+         background: url("../img/flex-al-str.png") no-repeat center;
+        }
+        .icon-al-center{
+         background: url("../img/flex-al-center.png") no-repeat center;
+        }
+
+         [data-tooltip]::after {
+           background: rgba(51, 51, 51, 0.9);
+         }
+
+         .gjs-pn-commands {
+           min-height: 40px;
+         }
+
+         #gjs-sm-float,
+         .gjs-pn-views .fa-cog {
+            //display: none;
+         }
+
+         .gjs-am-preview-cont {
+           height: 100px;
+           width: 100%;
+         }
+
+        .gjs-pn-panel.gjs-pn-views {
+          padding: 0;
+          border-bottom: none;
+        }
+
+        .gjs-pn-btn.gjs-pn-active {
+          box-shadow: none;
+        }
+
+        .gjs-pn-views .gjs-pn-btn {
+            margin: 0;
+            height: 40px;
+            padding: 10px;
+            width: 33.3333%;
+        }
+
+        .CodeMirror {
+          min-height: 450px;
+          margin-bottom: 8px;
+        }

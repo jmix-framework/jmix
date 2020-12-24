@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
@@ -30,7 +31,6 @@ import io.jmix.ui.xml.layout.loader.GroupTableLoader;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -43,7 +43,6 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         super.loadComponent();
 
         ComponentLoaderHelper.loadSettingsEnabled((GroupTable) resultComponent, element);
-        ComponentLoaderHelper.loadTableValidators(resultComponent, element, context, getClassManager());
     }
 
     @Override
@@ -87,11 +86,6 @@ public class CubaGroupTableLoader extends GroupTableLoader {
         ComponentLoaderHelper.loadRowsCount((GroupTable) resultComponent, element, () -> factory.create(RowsCount.NAME));
 
         super.loadTableData();
-
-        List<Table.Column> columns = resultComponent.getColumns();
-        for (io.jmix.ui.component.Table.Column column : columns) {
-            ComponentLoaderHelper.loadTableColumnValidators(resultComponent, column, context, getClassManager(), getMessages());
-        }
     }
 
     @Override
@@ -131,6 +125,19 @@ public class CubaGroupTableLoader extends GroupTableLoader {
                 getProperties(),
                 applicationContext.getBean(CubaProperties.class),
                 context);
+    }
+
+    @Override
+    protected Table.Column loadColumn(Table component, Element element, MetaClass metaClass) {
+        Table.Column column = super.loadColumn(component, element, metaClass);
+        ComponentLoaderHelper.loadTableColumnType(column, element, applicationContext);
+
+        if (column instanceof com.haulmont.cuba.gui.components.Table.Column) {
+            loadBoolean(element, "groupAllowed",
+                    ((com.haulmont.cuba.gui.components.Table.Column<?>) column)::setGroupAllowed);
+        }
+
+        return column;
     }
 
     protected static class CubaGroupTableDataHolder extends TableDataHolder {

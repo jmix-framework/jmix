@@ -30,15 +30,20 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Field;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.factory.DefaultComponentGenerationStrategy;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component(CubaDefaultComponentGenerationStrategy.NAME)
 public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGenerationStrategy {
@@ -96,14 +101,25 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
     }
 
     @Override
-    protected void setLinkFieldAttributes(io.jmix.ui.component.EntityLinkField linkField, ComponentGenerationContext context) {
+    protected void setLinkFieldAttributes(io.jmix.ui.component.EntityLinkField linkField,
+                                          ComponentGenerationContext context) {
         super.setLinkFieldAttributes(linkField, context);
 
         Element xmlDescriptor = context.getXmlDescriptor();
         if (xmlDescriptor != null) {
-            String openTypeAttribute = xmlDescriptor.attributeValue("linkScreenOpenType");
-            if (StringUtils.isNotEmpty(openTypeAttribute)) {
-                ((EntityLinkField) linkField).setScreenOpenType(OpenType.valueOf(openTypeAttribute));
+            String linkScreenOpenType = xmlDescriptor.attributeValue("linkScreenOpenType");
+            if (StringUtils.isNotEmpty(linkScreenOpenType)) {
+                ((EntityLinkField) linkField).setScreenOpenType(OpenType.valueOf(linkScreenOpenType));
+            }
+
+            String linkScreenAttribute = xmlDescriptor.attributeValue("linkScreen");
+            if (StringUtils.isNotEmpty(linkScreenAttribute)) {
+                linkField.setScreen(linkScreenAttribute);
+            }
+
+            String invokeMethodName = xmlDescriptor.attributeValue("linkInvoke");
+            if (StringUtils.isNotEmpty(invokeMethodName)) {
+                linkField.setCustomClickHandler(new InvokeEntityLinkClickHandler(invokeMethodName));
             }
         }
     }
@@ -184,6 +200,47 @@ public class CubaDefaultComponentGenerationStrategy extends DefaultComponentGene
             setLinkFieldAttributes(linkField, context);
 
             return linkField;
+        }
+    }
+
+    protected static class InvokeEntityLinkClickHandler implements Consumer<io.jmix.ui.component.EntityLinkField> {
+        protected final String invokeMethodName;
+
+        public InvokeEntityLinkClickHandler(String invokeMethodName) {
+            this.invokeMethodName = invokeMethodName;
+        }
+
+        @Override
+        public void accept(io.jmix.ui.component.EntityLinkField field) {
+            io.jmix.ui.component.Window frame = ComponentsHelper.getWindow(field);
+            if (frame == null) {
+                throw new IllegalStateException("Please specify Frame for EntityLinkField");
+            }
+
+            FrameOwner controller = frame.getFrameOwner();
+            Method method;
+            try {
+                method = controller.getClass().getMethod(invokeMethodName, io.jmix.ui.component.EntityLinkField.class);
+                try {
+                    method.invoke(controller, field);
+                } catch (Exception e) {
+                    throw new RuntimeException(String.format("Can't invoke method with name '%s'",
+                            invokeMethodName), e);
+                }
+            } catch (NoSuchMethodException e) {
+                try {
+                    method = controller.getClass().getMethod(invokeMethodName);
+                    try {
+                        method.invoke(controller);
+                    } catch (Exception ex) {
+                        throw new RuntimeException(String.format("Can't invoke method with name '%s'",
+                                invokeMethodName), ex);
+                    }
+                } catch (NoSuchMethodException e1) {
+                    throw new IllegalStateException(String.format("No suitable methods named '%s' for invoke",
+                            invokeMethodName));
+                }
+            }
         }
     }
 }

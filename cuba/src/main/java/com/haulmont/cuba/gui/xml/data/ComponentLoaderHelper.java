@@ -33,8 +33,9 @@ import com.haulmont.cuba.gui.xml.DeclarativeTrackingAction;
 import io.jmix.core.ClassManager;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
@@ -156,39 +157,6 @@ public final class ComponentLoaderHelper {
         }
 
         return (DataGrid.Renderer) applicationContext.getBean(rendererClass);
-    }
-
-    public static void loadTableValidators(io.jmix.ui.component.Table component, Element element, ComponentLoader.Context context,
-                                           ClassManager classManager) {
-        List<Element> validatorElements = element.elements("validator");
-
-        for (Element validatorElement : validatorElements) {
-            Consumer<?> validator = loadValidator(validatorElement, context, classManager);
-            component.addValidator(validator);
-        }
-    }
-
-    public static void loadTableColumnValidators(io.jmix.ui.component.Table component, io.jmix.ui.component.Table.Column column,
-                                                 ComponentLoader.Context context, ClassManager classManager, Messages messages) {
-        List<Element> validatorElements = column.getXmlDescriptor().elements("validator");
-
-        if (!validatorElements.isEmpty()) {
-            for (Element validatorElement : validatorElements) {
-                Consumer<?> validator = loadValidator(validatorElement, context, classManager);
-                component.addValidator(column, validator);
-            }
-        } else if (column.isEditable()) {
-            if (!(column.getId() instanceof MetaPropertyPath)) {
-                throw new GuiDevelopmentException(String.format("Column '%s' has editable=true, but there is no " +
-                        "property of an entity with this id", column.getId()), context);
-            }
-
-            MetaPropertyPath propertyPath = (MetaPropertyPath) column.getId();
-            Consumer<?> validator = getDefaultValidator(propertyPath.getMetaProperty(), messages);
-            if (validator != null) {
-                component.addValidator(column, validator);
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -474,10 +442,10 @@ public final class ComponentLoaderHelper {
 
     @Nullable
     public static String loadShortcutFromAlias(String shortcut,
-                                           Map<String, Function<UiProperties, String>> shortcutAliases,
-                                           UiProperties uiProperties,
-                                           CubaProperties cubaProperties,
-                                           ComponentLoader.Context context) {
+                                               Map<String, Function<UiProperties, String>> shortcutAliases,
+                                               UiProperties uiProperties,
+                                               CubaProperties cubaProperties,
+                                               ComponentLoader.Context context) {
         if (shortcut.endsWith("_SHORTCUT}")) {
             String alias = shortcut.substring(2, shortcut.length() - 1);
             if (shortcutAliases.containsKey(alias)) {
@@ -491,5 +459,24 @@ public final class ComponentLoaderHelper {
             }
         }
         return null;
+    }
+
+    public static void loadTableColumnType(io.jmix.ui.component.Table.Column column,
+                                    Element element,
+                                    ApplicationContext applicationContext) {
+        if (!(column instanceof Table.Column)) {
+            return;
+        }
+
+        if (column.getMetaPropertyPath() != null) {
+            ((Table.Column<?>) column).setType(column.getMetaPropertyPath().getRangeJavaClass());
+        }
+
+        String type = element.attributeValue("type");
+        if (StringUtils.isNotEmpty(type)) {
+            DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
+            Datatype datatype = datatypeRegistry.get(type);
+            ((Table.Column<?>) column).setType(datatype.getJavaClass());
+        }
     }
 }

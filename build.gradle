@@ -76,6 +76,7 @@ dependencies {
     def dataVersion = baseVersion
     def dynattrVersion = baseVersion
     def emailVersion = baseVersion
+    def graphqlVersion = baseVersion
     def localfsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
@@ -108,6 +109,9 @@ dependencies {
         api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
+
+        api "io.jmix.graphql:jmix-graphql:${snapshotOr(graphqlVersion)}"
+        api "io.jmix.graphql:jmix-graphql-starter:${snapshotOr(graphqlVersion)}"
 
         api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
         api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"

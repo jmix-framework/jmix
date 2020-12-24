@@ -53,7 +53,10 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
     @Override
     protected Table.Column loadColumn(Table component, Element element, MetaClass metaClass) {
         Table.Column column = super.loadColumn(component, element, metaClass);
-        loadBoolean(element, "groupAllowed", ((GroupTable.GroupColumn) column)::setGroupAllowed);
+
+        if (column instanceof GroupTable.GroupColumn) {
+            loadBoolean(element, "groupAllowed", ((GroupTable.GroupColumn) column)::setGroupAllowed);
+        }
         return column;
     }
 

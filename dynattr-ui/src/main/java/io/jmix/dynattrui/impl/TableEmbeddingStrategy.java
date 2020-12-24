@@ -50,7 +50,8 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
         MetaProperty metaProperty = attribute.getMetaProperty();
         MetaClass entityMetaClass = getEntityMetaClass(table);
 
-        Table.Column column = new Table.Column(new MetaPropertyPath(entityMetaClass, metaProperty));
+        MetaPropertyPath propertyPath = new MetaPropertyPath(entityMetaClass, metaProperty);
+        Table.Column column = table.addColumn(propertyPath);
 
         column.setDescription(getColumnDescription(attribute));
 
@@ -65,8 +66,6 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
         setColumnAlignment(column, attribute);
 
         setColumnWidth(column, attribute);
-
-        table.addColumn(column);
     }
 
     @Override

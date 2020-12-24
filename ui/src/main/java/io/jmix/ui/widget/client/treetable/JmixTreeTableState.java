@@ -45,8 +45,6 @@ public class JmixTreeTableState extends TreeTableState {
     @NoLayout
     public boolean customPopupAutoClose = false;
 
-    public String[] clickableColumnKeys;
-
     public String[] clickableTableColumnKeys;
 
     @NoLayout

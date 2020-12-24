@@ -18,11 +18,9 @@ package io.jmix.ui.component.table;
 
 import com.google.common.base.Strings;
 import com.vaadin.ui.VerticalLayout;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.App;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.theme.ThemeConstants;
@@ -32,72 +30,77 @@ import io.jmix.ui.widget.JmixTextArea;
 import io.jmix.ui.widget.client.resizabletextarea.ResizeDirection;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
+
 import static io.jmix.ui.component.impl.AbstractTable.MAX_TEXT_LENGTH_GAP;
 
-public class AbbreviatedCellClickListener implements Table.CellClickListener {
+@SuppressWarnings("rawtypes")
+public class AbbreviatedCellClickListener implements Consumer<Table.Column.ClickEvent> {
 
-    protected Table table;
     protected MetadataTools metadataTools;
-    protected Metadata metadata;
 
-    public AbbreviatedCellClickListener(Table table, Metadata metadata, MetadataTools metadataTools) {
-        this.table = table;
+    public AbbreviatedCellClickListener(MetadataTools metadataTools) {
         this.metadataTools = metadataTools;
-        this.metadata = metadata;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void onClick(Object item, String columnId) {
-        Table.Column column = table.getColumn(columnId);
-
-        MetaClass metaClass = metadata.getClass(item.getClass());
-        MetaProperty metaProperty = metadataTools.resolveMetaPropertyPath(metaClass, columnId).getMetaProperty();
-
-        Object value = EntityValues.getValueEx(item, columnId);
-        String stringValue = metadataTools.format(value, metaProperty);
-
-        if (column != null && column.getMaxTextLength() != null) {
-            boolean isMultiLineCell = StringUtils.contains(stringValue, "\n");
-            if (stringValue == null || (stringValue.length() <= column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP
-                    && !isMultiLineCell)) {
-                // todo artamonov if we click with CTRL and Table is multiselect then we lose previous selected items
-                if (!table.getSelected().contains(item)) {
-                    table.setSelected(item);
-                }
-                // do not show popup view
-                return;
-            }
+    public void accept(Table.Column.ClickEvent clickEvent) {
+        if (!clickEvent.isText() || clickEvent.getSource().getMaxTextLength() == null) {
+            return;
         }
 
+        Table.Column<?> column = clickEvent.getSource();
+        Table owner = column.getOwner();
+        if (owner == null || owner.getFrame() == null) {
+            return;
+        }
+
+        Object rowItem = clickEvent.getItem();
+        MetaPropertyPath mpp = column.getMetaPropertyPathNN();
+        Object itemValue = EntityValues.getValueEx(rowItem, mpp);
+        String stringItemValue = metadataTools.format(itemValue, mpp.getMetaProperty());
+
+        boolean isMultiLineCell = StringUtils.contains(stringItemValue, "\n");
+        if (StringUtils.isEmpty(stringItemValue)
+                || (stringItemValue.length() <= column.getMaxTextLength() + MAX_TEXT_LENGTH_GAP
+                && !isMultiLineCell)) {
+            return;
+        }
+
+        VerticalLayout layout = createRootLayout();
+        JmixTextArea textArea = createTextArea(stringItemValue);
+        layout.addComponent(createContent(textArea));
+
+        owner.withUnwrapped(JmixEnhancedTable.class, enhancedTable -> {
+            enhancedTable.showCustomPopup(layout);
+            enhancedTable.setCustomPopupAutoClose(false);
+        });
+    }
+
+    protected VerticalLayout createRootLayout() {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(false);
         layout.setSpacing(false);
         layout.setWidthUndefined();
         layout.setStyleName("c-table-view-textcut");
+        return layout;
+    }
 
+    protected JmixTextArea createTextArea(String stringItemValue) {
         JmixTextArea textArea = new JmixTextArea();
-        textArea.setValue(Strings.nullToEmpty(stringValue));
+        textArea.setValue(Strings.nullToEmpty(stringItemValue));
         textArea.setReadOnly(true);
+        return textArea;
+    }
 
+    protected JmixResizableTextAreaWrapper createContent(JmixTextArea textArea) {
         JmixResizableTextAreaWrapper content = new JmixResizableTextAreaWrapper(textArea);
         content.setResizableDirection(ResizeDirection.BOTH);
 
-        // todo implement injection for ThemeConstains in components
         ThemeConstants theme = App.getInstance().getThemeConstants();
-        if (theme != null) {
-            content.setWidth(theme.get("jmix.ui.Table.abbreviatedPopupWidth"));
-            content.setHeight(theme.get("jmix.ui.Table.abbreviatedPopupHeight"));
-        } else {
-            content.setWidth("320px");
-            content.setHeight("200px");
-        }
+        content.setWidth(theme.get("jmix.ui.Table.abbreviatedPopupWidth"));
+        content.setHeight(theme.get("jmix.ui.Table.abbreviatedPopupHeight"));
 
-        layout.addComponent(content);
-
-        table.withUnwrapped(JmixEnhancedTable.class, enhancedTable -> {
-            enhancedTable.showCustomPopup(layout);
-            enhancedTable.setCustomPopupAutoClose(false);
-        });
+        return content;
     }
 }

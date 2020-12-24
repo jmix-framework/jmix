@@ -1577,11 +1577,11 @@
             <xs:element name="group" minOccurs="0">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="column" maxOccurs="unbounded" type="tableColumnComponent"/>
+                        <xs:element name="column" maxOccurs="unbounded" type="groupTableColumnComponent"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="column" maxOccurs="unbounded" type="tableColumnComponent"/>
+            <xs:element name="column" maxOccurs="unbounded" type="groupTableColumnComponent"/>
         </xs:sequence>
         <xs:attributeGroup ref="columnsLoadType"/>
     </xs:complexType>
@@ -2705,10 +2705,7 @@
 
         <xs:attribute name="generator" type="xs:string"/>
 
-        <xs:attribute name="type" type="datatypeEnum"/>
-
         <xs:attribute name="collapsed" type="xs:boolean"/>
-        <xs:attribute name="groupAllowed" type="xs:boolean"/>
         <xs:attribute name="sortable" type="xs:boolean"/>
         <xs:attribute name="maxTextLength" type="xs:integer"/>
         <xs:attribute name="align" type="columnAlignment"/>
@@ -2718,8 +2715,7 @@
 
         <!-- Show entity reference as clickable link -->
         <xs:attribute name="link" type="xs:boolean"/>
-        <xs:attribute name="linkScreen" type="xs:string"/>
-        <xs:attribute name="linkInvoke" type="xs:string"/>
+        <xs:attribute name="linkScreenId" type="xs:string"/>
         <xs:attribute name="linkScreenOpenMode" type="openMode"/>
 
         <!-- Additional attributes, use only for editable table -->
@@ -2728,6 +2724,15 @@
         <xs:attributeGroup ref="hasCaptionSource"/>
         <xs:attribute name="resolution" type="dateFieldResolution"/>
         <xs:attribute name="dateFormat" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- GroupTable.Column -->
+    <xs:complexType name="groupTableColumnComponent">
+        <xs:complexContent>
+            <xs:extension base="tableColumnComponent">
+                <xs:attribute name="groupAllowed" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <!-- Table -->
@@ -2928,9 +2933,8 @@
 
         <!-- Show entity reference as clickable link -->
         <xs:attribute name="link" type="xs:boolean"/>
-        <xs:attribute name="linkScreen" type="xs:string"/>
+        <xs:attribute name="linkScreenId" type="xs:string"/>
         <xs:attribute name="linkScreenOpenMode" type="openMode"/>
-        <xs:attribute name="linkInvoke" type="xs:string"/>
 
         <xs:attribute name="generator" type="xs:string"/>
     </xs:complexType>

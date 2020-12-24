@@ -20,7 +20,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.columnmanager.GroupColumnManager;
 import io.jmix.ui.component.data.GroupInfo;
 import io.jmix.ui.component.data.GroupTableItems;
 import io.jmix.ui.component.data.TableItems;
@@ -46,9 +45,8 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Strings.emptyToNull;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
-@SuppressWarnings("deprecation")
 public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
-        implements GroupTable<E>, GroupColumnManager {
+        implements GroupTable<E> {
 
     protected Map<Table.Column, GroupAggregationCells> groupAggregationCells = null;
 
@@ -294,12 +292,6 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
                 component.getGroupProperties().isEmpty();
     }
 
-    @Override
-    public void setColumnGroupAllowed(String columnId, boolean allowed) {
-        Column column = getColumnNN(columnId);
-        setColumnGroupAllowed(column, allowed);
-    }
-
     protected Column getColumnNN(String columnId) {
         Column column = getColumn(columnId);
         if (column == null) {
@@ -307,16 +299,6 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
         }
 
         return column;
-    }
-
-    @Override
-    public void setColumnGroupAllowed(Column column, boolean allowed) {
-        checkNotNullArgument(column, "column must be non null");
-
-        if (column.isGroupAllowed() != allowed) {
-            column.setGroupAllowed(allowed);
-        }
-        component.setColumnGroupAllowed(column.getId(), allowed);
     }
 
     @Override
@@ -577,10 +559,8 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
     }
 
     @Override
-    public void addColumn(Column<E> column) {
-        super.addColumn(column);
-
-        setColumnGroupAllowed(column, column.isGroupAllowed());
+    protected ColumnImpl<E> createColumn(Object id, AbstractTable<?, E> owner) {
+        return new GroupColumnImpl<>(id, owner);
     }
 
     protected class JmixGroupTableExt extends JmixGroupTable {
@@ -617,6 +597,41 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
                 }
             }
             return ids;
+        }
+    }
+
+    protected static class GroupColumnImpl<E> extends ColumnImpl<E> implements GroupColumn<E> {
+
+        protected boolean groupAllowed = true;
+
+        public GroupColumnImpl(Object id, AbstractTable<?, E> owner) {
+            super(id, owner);
+        }
+
+        @Override
+        public boolean isGroupAllowed() {
+            return groupAllowed;
+        }
+
+        @Override
+        public void setGroupAllowed(boolean groupAllowed) {
+            if (isGroupAllowed() != groupAllowed) {
+                this.groupAllowed = groupAllowed;
+
+                if (owner != null && owner.getComponent() instanceof JmixGroupTable) {
+                    ((JmixGroupTable) owner.getComponent()).setColumnGroupAllowed(id, groupAllowed);
+                }
+            }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 }

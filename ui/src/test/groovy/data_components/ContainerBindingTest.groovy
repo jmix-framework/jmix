@@ -69,7 +69,7 @@ class ContainerBindingTest extends ScreenSpecification {
         CollectionContainer<Order> container = dataComponents.createCollectionContainer(Order)
 
         Table<Order> table = uiComponents.create(Table)
-        table.addColumn(new Table.Column(metadata.getClass(Order).getPropertyPath("number")))
+        table.addColumn(metadata.getClass(Order).getPropertyPath('number'))
         table.setItems(new ContainerTableItems(container))
 
         TextField textField = uiComponents.create(TextField)

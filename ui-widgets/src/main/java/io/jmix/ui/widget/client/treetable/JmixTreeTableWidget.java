@@ -22,7 +22,11 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.HasFocusHandlers;
+import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
@@ -30,12 +34,6 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import io.jmix.ui.widget.client.Tools;
-import io.jmix.ui.widget.client.aggregation.TableAggregationRow;
-import io.jmix.ui.widget.client.image.JmixImageWidget;
-import io.jmix.ui.widget.client.tableshared.TableEmptyState;
-import io.jmix.ui.widget.client.tableshared.TableWidget;
-import io.jmix.ui.widget.client.tableshared.TableWidgetDelegate;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ComputedStyle;
 import com.vaadin.client.UIDL;
@@ -46,6 +44,12 @@ import com.vaadin.client.ui.VEmbedded;
 import com.vaadin.v7.client.ui.VLabel;
 import com.vaadin.v7.client.ui.VTextField;
 import com.vaadin.v7.client.ui.VTreeTable;
+import io.jmix.ui.widget.client.Tools;
+import io.jmix.ui.widget.client.aggregation.TableAggregationRow;
+import io.jmix.ui.widget.client.image.JmixImageWidget;
+import io.jmix.ui.widget.client.tableshared.TableEmptyState;
+import io.jmix.ui.widget.client.tableshared.TableWidget;
+import io.jmix.ui.widget.client.tableshared.TableWidgetDelegate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +58,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static io.jmix.ui.widget.client.Tools.isAnyModifierKeyPressed;
-import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.*;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_CELL_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_TEXT_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TREE_TABLE_SPACER;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.WIDGET_CELL_CLASSNAME;
 
 public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
 
@@ -558,14 +566,14 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
 
                 Action firstAction = actions[0];
                 if (firstAction instanceof VisibleColumnAction
-                     && collapsedColumns.contains(((VisibleColumnAction) firstAction).getColKey())) {
-                        firstAction.execute();
+                        && collapsedColumns.contains(((VisibleColumnAction) firstAction).getColKey())) {
+                    firstAction.execute();
                 }
 
                 for (int i = 1; i < actions.length; i++) {
                     Action action = actions[i];
                     if (action instanceof VisibleColumnAction
-                    && !collapsedColumns.contains(((VisibleColumnAction) action).getColKey())) {
+                            && !collapsedColumns.contains(((VisibleColumnAction) action).getColKey())) {
                         action.execute();
                     }
                 }
@@ -795,10 +803,9 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
                         if (_delegate.cellClickListener != null) {
                             _delegate.cellClickListener.onClick(columnKey, rowKey, isClickableCellText);
 
-                            if (isClickableCellText
-                                    && _delegate.clickableColumns != null
-                                    && _delegate.clickableColumns.contains(columnKey)) {
-                                // stop the event propagation if the user clicked on cell text to avoid highlighting the table row
+                            if (isClickableCellText) {
+                                // stop the event propagation if the user clicked on cell text to avoid
+                                // highlighting the table row
                                 event.preventDefault();
                                 event.stopPropagation();
 
@@ -815,7 +822,8 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
                     Widget widget = WidgetUtil.findWidget(eventTarget, null);
 
                     if (widget != this) {
-                        if (widget instanceof com.vaadin.client.Focusable || widget instanceof com.google.gwt.user.client.ui.Focusable) {
+                        if (widget instanceof com.vaadin.client.Focusable
+                                || widget instanceof com.google.gwt.user.client.ui.Focusable) {
                             lastFocusedWidget = widget;
                         }
                     }
@@ -900,8 +908,8 @@ public class JmixTreeTableWidget extends VTreeTable implements TableWidget {
                 Element tdElement = td.cast();
                 Tools.textSelectionEnable(tdElement, _delegate.textSelectionEnabled);
 
-                if ((_delegate.clickableColumns != null && _delegate.clickableColumns.contains(currentColumnKey))
-                        || (_delegate.clickableTableColumns != null && _delegate.clickableTableColumns.contains(currentColumnKey))) {
+                if (_delegate.clickableTableColumns != null
+                        && _delegate.clickableTableColumns.contains(currentColumnKey)) {
                     tdElement.addClassName(TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME);
                     Element wrapperElement = tdElement.getFirstChildElement();
                     final Element clickableSpan = DOM.createSpan().cast();

@@ -49,40 +49,49 @@ public class GroupTableLoader extends AbstractTableLoader<GroupTable> {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
-    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
-        List<Table.Column> columns = new ArrayList<>();
+    protected Table.Column loadColumn(Table component, Element element, MetaClass metaClass) {
+        Table.Column column = super.loadColumn(component, element, metaClass);
+        loadBoolean(element, "groupAllowed", ((GroupTable.GroupColumn) column)::setGroupAllowed);
+        return column;
+    }
+
+    @Override
+    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass,
+                                             FetchPlan fetchPlan) {
+        List<Table.Column> columns = super.loadColumns(component, columnsElement, metaClass, fetchPlan);
 
         Element groupElement = columnsElement.element("group");
         if (groupElement != null) {
-            columns.addAll(super.loadColumns(component, groupElement, metaClass, fetchPlan));
             final List<Object> groupProperties = new ArrayList<>(columns.size());
-            for (Table.Column column : columns) {
-                if (column.isCollapsed()) {
-                    String msg = String.format("Can't group by collapsed column: %s", column.getId());
-                    throw new GuiDevelopmentException(msg, context);
-                }
 
-                if (column.isGroupAllowed()) {
-                    groupProperties.add(column.getId());
+            List<Element> columnElements = groupElement.elements("column");
+            for (Element columnElement : columnElements) {
+                String visible = columnElement.attributeValue("visible");
+                if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
+                    Object id = loadColumnId(columnElement, metaClass);
+                    Table.Column column = component.getColumn(id.toString());
+
+                    if (column == null) {
+                        column = loadColumn(component, columnElement, metaClass);
+                    }
+
+                    if (column.isCollapsed()) {
+                        String msg = String.format("Can't group by collapsed column: %s", column.getId());
+                        throw new GuiDevelopmentException(msg, context);
+                    }
+
+                    if (column instanceof GroupTable.GroupColumn
+                            && ((GroupTable.GroupColumn<?>) column).isGroupAllowed()) {
+                        groupProperties.add(column.getId());
+                    }
                 }
             }
+
             getComponentContext().addPostInitTask((context1, window) ->
                     ((GroupTable) component).groupBy(groupProperties.toArray())
             );
-        }
-
-        // check for duplicate
-        String includeAll = columnsElement.attributeValue("includeAll");
-        if (StringUtils.isNotBlank(includeAll)) {
-            List<Table.Column> columnList = super.loadColumns(component, columnsElement, metaClass, fetchPlan);
-            for (Table.Column column : columnList) {
-                if (!columns.contains(column)) {
-                    columns.add(column);
-                }
-            }
-        } else {
-            columns.addAll(super.loadColumns(component, columnsElement, metaClass, fetchPlan));
         }
 
         return columns;

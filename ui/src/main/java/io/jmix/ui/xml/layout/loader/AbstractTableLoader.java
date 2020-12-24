@@ -19,8 +19,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.metamodel.datatype.Datatype;
-import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -168,7 +166,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
 
         for (Table.Column column : availableColumns) {
-            resultComponent.addColumn(column);
             loadRequired(resultComponent, column);
         }
 
@@ -185,7 +182,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 if (StringUtils.isNotEmpty(generatorMethod)) {
                     //noinspection unchecked
                     resultComponent.addGeneratedColumn(String.valueOf(column),
-                            applicationContext.getBean(DeclarativeColumnGenerator.class, resultComponent, generatorMethod));
+                            applicationContext.getBean(DeclarativeColumnGenerator.class,
+                                    resultComponent, generatorMethod));
                 }
             }
         }
@@ -313,7 +311,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
     }
 
-    protected List<Table.Column> loadColumnsByInclude(Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected List<Table.Column> loadColumnsByInclude(Table component, Element columnsElement, MetaClass metaClass,
+                                                      FetchPlan fetchPlan) {
         Collection<String> appliedProperties = getAppliedProperties(columnsElement, fetchPlan, metaClass);
 
         List<Table.Column> columns = new ArrayList<>(appliedProperties.size());
@@ -333,7 +332,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
             String visible = column.attributeValue("visible");
             if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
-                columns.add(loadColumn(column, metaClass));
+                columns.add(loadColumn(component, column, metaClass));
             }
         }
 
@@ -351,7 +350,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                 if (propertyPath == null || getMetadataTools().fetchPlanContainsProperty(fetchPlan, propertyPath)) {
                     String visible = column.attributeValue("visible");
                     if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
-                        columns.add(loadColumn(column, metaClass));
+                        columns.add(loadColumn(component, column, metaClass));
                     }
                 }
             }
@@ -360,11 +359,12 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         return columns;
     }
 
-    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass, FetchPlan fetchPlan) {
+    protected List<Table.Column> loadColumns(Table component, Element columnsElement, MetaClass metaClass,
+                                             FetchPlan fetchPlan) {
         String includeAll = columnsElement.attributeValue("includeAll");
         if (StringUtils.isNotBlank(includeAll)
                 && Boolean.parseBoolean(includeAll)) {
-            return loadColumnsByInclude(columnsElement, metaClass, fetchPlan);
+            return loadColumnsByInclude(component, columnsElement, metaClass, fetchPlan);
         }
 
         List<Element> columnElements = columnsElement.elements("column");
@@ -373,7 +373,7 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         for (Element columnElement : columnElements) {
             String visible = columnElement.attributeValue("visible");
             if (StringUtils.isEmpty(visible) || Boolean.parseBoolean(visible)) {
-                columns.add(loadColumn(columnElement, metaClass));
+                columns.add(loadColumn(component, columnElement, metaClass));
             }
         }
         return columns;
@@ -400,7 +400,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
     protected void createButtonsPanel(T table, Element element) {
         panelElement = element.element("buttonsPanel");
         if (panelElement != null) {
-            ButtonsPanelLoader loader = (ButtonsPanelLoader) getLayoutLoader().getLoader(panelElement, ButtonsPanel.NAME);
+            ButtonsPanelLoader loader = (ButtonsPanelLoader) getLayoutLoader()
+                    .getLoader(panelElement, ButtonsPanel.NAME);
             loader.createComponent();
             ButtonsPanel panel = loader.getResultComponent();
 
@@ -437,12 +438,9 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
     }
 
-    protected Table.Column loadColumn(Element element, MetaClass metaClass) {
-        String id = element.attributeValue("id");
-
-        MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, id);
-
-        Table.Column column = new Table.Column(metaPropertyPath != null ? metaPropertyPath : id);
+    protected Table.Column loadColumn(Table component, Element element, MetaClass metaClass) {
+        Object id = loadColumnId(element, metaClass);
+        Table.Column column = component.addColumn(id);
 
         String editable = element.attributeValue("editable");
         if (StringUtils.isNotEmpty(editable)) {
@@ -452,11 +450,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         String collapsed = element.attributeValue("collapsed");
         if (StringUtils.isNotEmpty(collapsed)) {
             column.setCollapsed(Boolean.parseBoolean(collapsed));
-        }
-
-        String groupAllowed = element.attributeValue("groupAllowed");
-        if (StringUtils.isNotEmpty(groupAllowed)) {
-            column.setGroupAllowed(Boolean.parseBoolean(groupAllowed));
         }
 
         String sortable = element.attributeValue("sortable");
@@ -493,8 +486,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         }
 
         column.setXmlDescriptor(element);
-        if (metaPropertyPath != null)
-            column.setType(metaPropertyPath.getRangeJavaClass());
 
         String expandRatio = element.attributeValue("expandRatio");
         String width = loadThemeString(element.attributeValue("width"));
@@ -523,11 +514,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             column.setAlignment(Table.ColumnAlignment.valueOf(align));
         }
 
-        String type = element.attributeValue("type");
-        if (StringUtils.isNotEmpty(type)) {
-            setColumnType(column, type);
-        }
-
         column.setFormatter(loadFormatter(element));
 
         loadAggregation(column, element);
@@ -537,10 +523,10 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         return column;
     }
 
-    protected void setColumnType(Table.Column column, String datatypeName) {
-        DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
-        Datatype datatype = datatypeRegistry.get(datatypeName);
-        column.setType(datatype.getJavaClass());
+    protected Object loadColumnId(Element element, MetaClass metaClass) {
+        String id = element.attributeValue("id");
+        MetaPropertyPath metaPropertyPath = getMetadataTools().resolveMetaPropertyPathOrNull(metaClass, id);
+        return metaPropertyPath != null ? metaPropertyPath : id;
     }
 
     protected void loadCaptionAsHtml(Table.Column component, Element element) {
@@ -573,7 +559,6 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
             Formatter formatter = loadFormatter(aggregationElement);
             aggregation.setFormatter(formatter == null ? column.getFormatter() : formatter);
-            column.setAggregation(aggregation);
 
             String strategyClass = aggregationElement.attributeValue("strategyClass");
             if (StringUtils.isNotEmpty(strategyClass)) {
@@ -595,6 +580,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
             if (aggregationType == null && strategyClass == null) {
                 throw new GuiDevelopmentException("Incorrect aggregation - type or strategyClass is required", context);
             }
+
+            column.setAggregation(aggregation);
         }
     }
 
@@ -680,15 +667,17 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
                     " sorted '%s' column", column.getStringId(), sortedColumnId), getContext());
         }
 
-        if (column.getBoundProperty() == null) {
+        if (column.getMetaPropertyPath() == null) {
             throw new GuiDevelopmentException(
-                    String.format("Can't sort column '%s' because it is not bounded with entity's property", column.getStringId()),
+                    String.format("Can't sort column '%s' because it is not bounded with entity's property",
+                            column.getStringId()),
                     getContext());
         }
 
         if (!column.isSortable()) {
             throw new GuiDevelopmentException(
-                    String.format("Can't sort column '%s' because it is disabled for sorting by 'sortable' attribute", column.getStringId()),
+                    String.format("Can't sort column '%s' because it is disabled for sorting by 'sortable' attribute",
+                            column.getStringId()),
                     getContext());
         }
 

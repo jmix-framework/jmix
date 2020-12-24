@@ -45,8 +45,6 @@ public class JmixTableState extends TableState {
     @NoLayout
     public boolean customPopupAutoClose = false;
 
-    public String[] clickableColumnKeys;
-
     public String[] clickableTableColumnKeys;
 
     @NoLayout

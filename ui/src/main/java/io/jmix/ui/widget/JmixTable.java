@@ -64,8 +64,6 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
 
     protected Set<Object> nonSortableProperties; // lazily initialized Set
 
-    protected Map<Object, CellClickListener> cellClickListeners; // lazily initialized map
-
     protected Map<Object, String> columnDescriptions; // lazily initialized map
 
     protected Map<Object, String> aggregationTooltips; // lazily initialized map
@@ -103,13 +101,6 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
                 // itemId could be null if rendering in process
                 // If itemId is null it causes NPE
                 if (itemId != null) {
-                    if (cellClickListeners != null && isText) {
-                        CellClickListener cellClickListener = cellClickListeners.get(columnId);
-                        if (cellClickListener != null) {
-                            cellClickListener.onClick(itemId, columnId);
-                        }
-                    }
-
                     fireEvent(new TableCellClickEvent(JmixTable.this, itemId, columnId, isText));
                 }
             }
@@ -774,21 +765,6 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
     }
 
     @Override
-    public void setClickListener(Object propertyId, CellClickListener clickListener) {
-        if (cellClickListeners == null) {
-            cellClickListeners = new HashMap<>();
-        }
-        cellClickListeners.put(propertyId, clickListener);
-    }
-
-    @Override
-    public void removeClickListener(Object propertyId) {
-        if (cellClickListeners != null) {
-            cellClickListeners.remove(propertyId);
-        }
-    }
-
-    @Override
     public void addTableCellClickListener(Object propertyId, TableCellClickListener listener) {
         if (clickableTableColumnIds == null) {
             clickableTableColumnIds = new ArrayList<>();
@@ -866,7 +842,6 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
     public void beforeClientResponse(boolean initial) {
         super.beforeClientResponse(initial);
 
-        updateClickableColumnKeys();
         updateClickableTableColumnKeys();
         updateColumnDescriptions();
         updateAggregatableTooltips();
@@ -905,12 +880,6 @@ public class JmixTable extends com.vaadin.v7.ui.Table implements TableSortableCo
 
             String value = (String) aggregations.get(columnId);
             setColumnFooter(columnId, value);
-        }
-    }
-
-    protected void updateClickableColumnKeys() {
-        if (cellClickListeners != null) {
-            getState().clickableColumnKeys = getClickableColumnKeys(cellClickListeners.keySet());
         }
     }
 

@@ -116,13 +116,6 @@ public class JmixTreeTableConnector extends TreeTableConnector {
         if (stateChangeEvent.hasPropertyChanged("multiLineCells")) {
             getWidget()._delegate.multiLineCells = getState().multiLineCells;
         }
-        if (stateChangeEvent.hasPropertyChanged("clickableColumnKeys")) {
-            if (getState().clickableColumnKeys != null) {
-                getWidget()._delegate.clickableColumns = new HashSet<String>(Arrays.asList(getState().clickableColumnKeys));
-            } else {
-                getWidget()._delegate.clickableColumns = null;
-            }
-        }
         if (stateChangeEvent.hasPropertyChanged("clickableTableColumnKeys")) {
             if (getState().clickableTableColumnKeys != null) {
                 getWidget()._delegate.clickableTableColumns = new HashSet<>(Arrays.asList(getState().clickableTableColumnKeys));

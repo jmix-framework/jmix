@@ -17,20 +17,30 @@
 package io.jmix.ui.widget.client.table;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.*;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.TableCellElement;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.HasFocusHandlers;
+import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.*;
-import io.jmix.ui.widget.client.Tools;
-import io.jmix.ui.widget.client.aggregation.TableAggregationRow;
-import io.jmix.ui.widget.client.image.JmixImageWidget;
-import io.jmix.ui.widget.client.tableshared.TableEmptyState;
-import io.jmix.ui.widget.client.tableshared.TableWidget;
-import io.jmix.ui.widget.client.tableshared.TableWidgetDelegate;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.BrowserInfo;
+import com.vaadin.client.ComputedStyle;
 import com.vaadin.client.Focusable;
-import com.vaadin.client.*;
+import com.vaadin.client.UIDL;
+import com.vaadin.client.WidgetUtil;
 import com.vaadin.client.ui.Action;
 import com.vaadin.client.ui.ShortcutActionHandler;
 import com.vaadin.client.ui.VEmbedded;
@@ -38,6 +48,12 @@ import com.vaadin.v7.client.ui.VLabel;
 import com.vaadin.v7.client.ui.VScrollTable;
 import com.vaadin.v7.client.ui.VTextField;
 import com.vaadin.v7.shared.ui.table.TableConstants;
+import io.jmix.ui.widget.client.Tools;
+import io.jmix.ui.widget.client.aggregation.TableAggregationRow;
+import io.jmix.ui.widget.client.image.JmixImageWidget;
+import io.jmix.ui.widget.client.tableshared.TableEmptyState;
+import io.jmix.ui.widget.client.tableshared.TableWidget;
+import io.jmix.ui.widget.client.tableshared.TableWidgetDelegate;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,7 +63,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static io.jmix.ui.widget.client.Tools.isAnyModifierKeyPressed;
-import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.*;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_CELL_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.TABLE_CLICKABLE_TEXT_CLASSNAME;
+import static io.jmix.ui.widget.client.tableshared.TableWidgetDelegate.WIDGET_CELL_CLASSNAME;
 
 public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
 
@@ -904,10 +923,9 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
                         if (_delegate.cellClickListener != null) {
                             _delegate.cellClickListener.onClick(columnKey, rowKey, isClickableCellText);
 
-                            if (isClickableCellText
-                                    && _delegate.clickableColumns != null
-                                    && _delegate.clickableColumns.contains(columnKey)) {
-                                // stop the event propagation if the user clicked on cell text to avoid highlighting the table row
+                            if (isClickableCellText) {
+                                // stop the event propagation if the user clicked on cell text to avoid
+                                // highlighting the table row
                                 event.preventDefault();
                                 event.stopPropagation();
                                 return;
@@ -927,7 +945,8 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
                     Widget widget = WidgetUtil.findWidget(eventTarget, null);
 
                     if (widget != this) {
-                        if (widget instanceof Focusable || widget instanceof com.google.gwt.user.client.ui.Focusable) {
+                        if (widget instanceof Focusable
+                                || widget instanceof com.google.gwt.user.client.ui.Focusable) {
                             lastFocusedWidget = widget;
                         }
                     }
@@ -1011,8 +1030,8 @@ public class JmixScrollTableWidget extends VScrollTable implements TableWidget {
                 final Element tdElement = td.cast();
                 Tools.textSelectionEnable(tdElement, _delegate.textSelectionEnabled);
 
-                if ((_delegate.clickableColumns != null && _delegate.clickableColumns.contains(currentColumnKey))
-                        || (_delegate.clickableTableColumns != null && _delegate.clickableTableColumns.contains(currentColumnKey))) {
+                if (_delegate.clickableTableColumns != null
+                        && _delegate.clickableTableColumns.contains(currentColumnKey)) {
                     tdElement.addClassName(TABLE_CLICKABLE_CELL_CONTENT_CLASSNAME);
                     Element wrapperElement = tdElement.getFirstChildElement();
                     final Element clickableSpan = DOM.createSpan().cast();

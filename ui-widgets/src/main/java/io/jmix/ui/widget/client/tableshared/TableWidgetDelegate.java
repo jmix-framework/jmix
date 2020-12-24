@@ -72,7 +72,6 @@ public class TableWidgetDelegate {
     public TableEmptyState tableEmptyState;
     public Runnable emptyStateLinkClickHandler;
 
-    public Set<String> clickableColumns;
     public Set<String> clickableTableColumns;
     public Set<String> htmlCaptionColumns;
     public TableCellClickListener cellClickListener;

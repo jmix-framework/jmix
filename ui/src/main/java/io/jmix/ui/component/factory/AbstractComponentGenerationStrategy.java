@@ -391,19 +391,14 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     protected void setLinkFieldAttributes(EntityLinkField linkField, ComponentGenerationContext context) {
         Element xmlDescriptor = context.getXmlDescriptor();
         if (xmlDescriptor != null) {
-            String linkScreen = xmlDescriptor.attributeValue("linkScreen");
-            if (StringUtils.isNotEmpty(linkScreen)) {
-                linkField.setScreen(linkScreen);
+            String linkScreenId = xmlDescriptor.attributeValue("linkScreenId");
+            if (StringUtils.isNotEmpty(linkScreenId)) {
+                linkField.setScreen(linkScreenId);
             }
 
-            String invokeMethodName = xmlDescriptor.attributeValue("linkInvoke");
-            if (StringUtils.isNotEmpty(invokeMethodName)) {
-                linkField.setCustomClickHandler(new InvokeEntityLinkClickHandler(invokeMethodName));
-            }
-
-            String openOpenModeAttribute = xmlDescriptor.attributeValue("linkScreenOpenMode");
-            if (StringUtils.isNotEmpty(openOpenModeAttribute)) {
-                linkField.setOpenMode(OpenMode.valueOf(openOpenModeAttribute));
+            String linkScreenOpenMode = xmlDescriptor.attributeValue("linkScreenOpenMode");
+            if (StringUtils.isNotEmpty(linkScreenOpenMode)) {
+                linkField.setOpenMode(OpenMode.valueOf(linkScreenOpenMode));
             }
         }
     }
@@ -416,46 +411,5 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
     @SuppressWarnings("unchecked")
     protected void setValueSource(Field field, ComponentGenerationContext context) {
         field.setValueSource(context.getValueSource());
-    }
-
-    protected static class InvokeEntityLinkClickHandler implements Consumer<EntityLinkField> {
-        protected final String invokeMethodName;
-
-        public InvokeEntityLinkClickHandler(String invokeMethodName) {
-            this.invokeMethodName = invokeMethodName;
-        }
-
-        @Override
-        public void accept(EntityLinkField field) {
-            Window frame = ComponentsHelper.getWindow(field);
-            if (frame == null) {
-                throw new IllegalStateException("Please specify Frame for EntityLinkField");
-            }
-
-            FrameOwner controller = frame.getFrameOwner();
-            Method method;
-            try {
-                method = controller.getClass().getMethod(invokeMethodName, EntityLinkField.class);
-                try {
-                    method.invoke(controller, field);
-                } catch (Exception e) {
-                    throw new RuntimeException(String.format("Can't invoke method with name '%s'",
-                            invokeMethodName), e);
-                }
-            } catch (NoSuchMethodException e) {
-                try {
-                    method = controller.getClass().getMethod(invokeMethodName);
-                    try {
-                        method.invoke(controller);
-                    } catch (Exception ex) {
-                        throw new RuntimeException(String.format("Can't invoke method with name '%s'",
-                                invokeMethodName), ex);
-                    }
-                } catch (NoSuchMethodException e1) {
-                    throw new IllegalStateException(String.format("No suitable methods named '%s' for invoke",
-                            invokeMethodName));
-                }
-            }
-        }
     }
 }

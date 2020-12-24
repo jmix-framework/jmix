@@ -22,13 +22,24 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.*;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
 import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.Table.ColumnHeaderMode;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Entity;
+import io.jmix.core.EntityStates;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityPreconditions;
@@ -51,23 +62,38 @@ import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.ShowInfoAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.AggregationInfo;
+import io.jmix.ui.component.ButtonsPanel;
+import io.jmix.ui.component.HasInnerComponents;
+import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
-import io.jmix.ui.component.columnmanager.ColumnManager;
-import io.jmix.ui.component.data.*;
+import io.jmix.ui.component.PaginationComponent;
+import io.jmix.ui.component.SimplePagination;
+import io.jmix.ui.component.Table;
+import io.jmix.ui.component.UiComponentsGenerator;
+import io.jmix.ui.component.VisibilityChangeNotifier;
+import io.jmix.ui.component.data.BindingState;
+import io.jmix.ui.component.data.DataUnit;
+import io.jmix.ui.component.data.HasValueSource;
+import io.jmix.ui.component.data.TableItems;
+import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.aggregation.Aggregation;
 import io.jmix.ui.component.data.aggregation.Aggregations;
+import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.component.data.meta.EmptyDataUnit;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.meta.EntityTableItems;
 import io.jmix.ui.component.formatter.Formatter;
-import io.jmix.ui.component.pagination.data.*;
+import io.jmix.ui.component.pagination.data.PaginationDataBinder;
+import io.jmix.ui.component.pagination.data.PaginationDataUnitBinder;
+import io.jmix.ui.component.pagination.data.PaginationEmptyBinder;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.table.*;
-import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;
 import io.jmix.ui.icon.IconResolver;
-import io.jmix.ui.model.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataComponents;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
 import io.jmix.ui.screen.FrameOwner;
@@ -93,6 +119,7 @@ import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -116,7 +143,7 @@ import static io.jmix.ui.screen.LookupScreen.LOOKUP_ITEM_CLICK_ACTION_ID;
 public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhancedTable, E>
         extends AbstractActionsHolderComponent<T>
         implements Table<E>, TableItemsEventsDelegate<E>, LookupSelectionChangeNotifier<E>,
-        HasInnerComponents, InstallTargetHandler, InitializingBean, ColumnManager {
+        HasInnerComponents, InstallTargetHandler, InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractTable.class);
 
@@ -162,8 +189,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     // Style names used by table itself
     protected List<String> internalStyles = new ArrayList<>(2);
 
-    protected Map<Object, Table.Column<E>> columns = new HashMap<>();
-    protected List<Table.Column<E>> columnsOrder = new ArrayList<>();
+    protected Map<Object, Column<E>> columns = new HashMap<>();
+    protected List<Column<E>> columnsOrder = new ArrayList<>();
 
     protected boolean sortable = true;
     protected boolean editable;
@@ -187,7 +214,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected ButtonsPanel buttonsPanel;
     protected PaginationComponent pagination;
 
-    protected Map<Table.Column, String> aggregationCells = null;
+    protected Map<Column, String> aggregationCells = null;
 
     protected boolean usePresentations;
     protected TablePresentations presentations;
@@ -441,7 +468,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public List<Table.Column<E>> getColumns() {
+    public List<Column<E>> getColumns() {
         return Collections.unmodifiableList(columnsOrder);
     }
 
@@ -456,8 +483,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     @Nullable
     @Override
-    public Table.Column<E> getColumn(String id) {
-        for (Table.Column<E> column : columnsOrder) {
+    public Column<E> getColumn(String id) {
+        for (Column<E> column : columnsOrder) {
             if (column.getStringId().equals(id))
                 return column;
         }
@@ -465,8 +492,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public void addColumn(Table.Column<E> column) {
-        addColumnInternal(column, columnsOrder.size());
+    public void addColumn(Column<E> column) {
+        addColumn(column, columnsOrder.size());
     }
 
     @Override
@@ -475,15 +502,38 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         // Update column order only if we add a column to an arbitrary position.
         component.setVisibleColumns(columnsOrder.stream()
-                .map(Table.Column::getId)
+                .map(Column::getId)
                 .toArray());
+    }
+
+    @Override
+    public Column<E> addColumn(Object id) {
+        return addColumn(id, columnsOrder.size());
+    }
+
+    @Override
+    public Column<E> addColumn(Object id, int index) {
+        ColumnImpl<E> column = createColumn(id, this);
+        addColumnInternal(column, index);
+        return column;
+    }
+
+    protected ColumnImpl<E> createColumn(Object id, AbstractTable<?, E> owner) {
+        return new ColumnImpl<>(id, owner);
+    }
+
+    @Nullable
+    protected Class getColumnType(Column<E> column) {
+        return column.getMetaPropertyPath() != null
+                ? column.getMetaPropertyPath().getRangeJavaClass()
+                : null;
     }
 
     protected void addColumnInternal(Column<E> column, int index) {
         checkNotNullArgument(column, "Column must be non null");
 
         Object columnId = column.getId();
-        component.addContainerProperty(columnId, column.getType(), null);
+        component.addContainerProperty(columnId, getColumnType(column), null);
 
         if (StringUtils.isNotBlank(column.getDescription())) {
             component.setColumnDescription(columnId, column.getDescription());
@@ -512,15 +562,15 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         setColumnHeader(columnId, getColumnCaption(columnId, column));
 
-        component.setColumnCaptionAsHtml(columnId, column.getCaptionAsHtml());
+        component.setColumnCaptionAsHtml(columnId, column.isCaptionAsHtml());
 
-        if (column.getExpandRatio() != null) {
+        if (column.getExpandRatio() != -1) {
             component.setColumnExpandRatio(columnId, column.getExpandRatio());
         }
 
         column.setOwner(this);
 
-        MetaPropertyPath propertyPath = column.getBoundProperty();
+        MetaPropertyPath propertyPath = column.getMetaPropertyPath();
         if (propertyPath != null) {
             MetaProperty metaProperty = propertyPath.getMetaProperty();
             MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(propertyPath);
@@ -564,7 +614,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public void removeColumn(Table.Column column) {
+    public void removeColumn(Column column) {
         Preconditions.checkNotNullArgument(column);
 
         component.removeContainerProperty(column.getId());
@@ -573,36 +623,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         column.setOwner(null);
     }
-
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
-    @Override
-    public Datasource getItemDatasource(Entity item) {
-        if (fieldDatasources == null) {
-            fieldDatasources = new WeakHashMap<>();
-        }
-
-        Object fieldDatasource = fieldDatasources.get(item);
-        if (fieldDatasource instanceof Datasource) {
-            return (Datasource) fieldDatasource;
-        }
-
-        EntityTableItems containerTableItems = (EntityTableItems) getItems();
-        Datasource datasource = DsBuilder.create()
-                .setAllowCommit(false)
-                .setMetaClass(containerTableItems.getEntityMetaClass())
-                .setRefreshMode(CollectionDatasource.RefreshMode.NEVER)
-                .setViewName(View.LOCAL)
-                .buildDatasource();
-
-        ((DatasourceImplementation) datasource).valid();
-
-        datasource.setItem(item);
-        fieldDatasources.put(item, datasource);
-
-        return datasource;
-    }*/
 
     @SuppressWarnings("unchecked")
     @Override
@@ -673,7 +693,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     @Override
     @Nullable
-    public Printable getPrintable(Table.Column column) {
+    public Printable getPrintable(Column column) {
         return getPrintable(column.getStringId());
     }
 
@@ -776,11 +796,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 if (component.getColumnGenerator(column.getId()) == null) {
                     if (propertyId.getRange().isClass()) {
                         if (StringUtils.isNotEmpty(isLink)) {
-                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, applicationContext));
+                            column.addClickListener(createLinkCellClickListener());
                         }
                     } else if (propertyId.getRange().isDatatype()) {
                         if (StringUtils.isNotEmpty(isLink)) {
-                            setClickListener(propertyId.toString(), new LinkCellClickListener(this, applicationContext));
+                            column.addClickListener(createLinkCellClickListener());
                         } else {
                             if (column.getMaxTextLength() != null) {
                                 addGeneratedColumnInternal(propertyId, new AbbreviatedColumnGenerator(column, metadataTools));
@@ -790,6 +810,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                 }
             }
         }
+    }
+
+    protected Consumer<Column.ClickEvent> createLinkCellClickListener() {
+        return new LinkCellClickListener(applicationContext);
     }
 
     protected void setEditableColumns(List<MetaPropertyPath> editableColumns) {
@@ -806,15 +830,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         this.sortable = sortable;
 
         component.setSortEnabled(sortable && canBeSorted(getItems()));
-    }
-
-    @Override
-    public void setAutoScrolling(boolean autoScroll) {
-    }
-
-    @Override
-    public boolean isAutoScrolling() {
-        return true;
     }
 
     @Override
@@ -839,16 +854,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public void setColumnControlVisible(boolean columnCollapsingAllowed) {
-        component.setColumnCollapsingAllowed(columnCollapsingAllowed);
-    }
-
-    @Override
-    public void sortBy(Object propertyId, boolean ascending) {
-        if (isSortable()) {
-            component.setSortOptions(propertyId, ascending);
-            component.sort();
-        }
+    public void setColumnControlVisible(boolean columnControlVisible) {
+        component.setColumnCollapsingAllowed(columnControlVisible);
     }
 
     @Override
@@ -1328,7 +1335,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         String joinedStyle = styleProviders.stream()
                 .map(sp -> sp.getStyleName(item, propertyStringId))
-                .filter(Objects::nonNull)
+                .filter(StringUtils::isNotEmpty)
                 .collect(Collectors.joining(" "));
 
         return Strings.emptyToNull(joinedStyle);
@@ -1416,7 +1423,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     protected void removeAllClickListeners() {
         for (Column column : columnsOrder) {
-            component.removeClickListener(column.getId());
             component.removeTableCellClickListener(column.getId());
         }
     }
@@ -1444,7 +1450,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         Collection<MetaPropertyPath> properties = (Collection<MetaPropertyPath>) ds.getContainerPropertyIds();
 
         for (MetaPropertyPath propertyPath : properties) {
-            Table.Column column = columns.get(propertyPath);
+            Column column = columns.get(propertyPath);
 
             if (column != null && !(editable && column.isEditable())) {
                 String isLink = column.getXmlDescriptor() == null ?
@@ -1452,15 +1458,16 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
                 if (propertyPath.getRange().isClass()) {
                     if (StringUtils.isNotEmpty(isLink)) {
-                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, applicationContext));
+                        column.addClickListener(createLinkCellClickListener());
                     }
                 } else if (propertyPath.getRange().isDatatype()) {
                     if (StringUtils.isNotEmpty(isLink)) {
-                        setClickListener(propertyPath.toString(), new LinkCellClickListener(this, applicationContext));
+                        column.addClickListener(createLinkCellClickListener());
                     } else {
                         if (column.getMaxTextLength() != null) {
-                            addGeneratedColumnInternal(propertyPath, new AbbreviatedColumnGenerator(column, metadataTools));
-                            setClickListener(propertyPath.toString(), new AbbreviatedCellClickListener(this, metadata, metadataTools));
+                            addGeneratedColumnInternal(propertyPath,
+                                    new AbbreviatedColumnGenerator(column, metadataTools));
+                            column.addClickListener(new AbbreviatedCellClickListener(metadataTools));
                         }
                     }
                 }
@@ -1502,7 +1509,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
             createColumns(component.getContainerDataSource());
 
-            for (Table.Column column : this.columnsOrder) {
+            for (Column column : this.columnsOrder) {
                 if (editable && column.getAggregation() != null
                         && (BooleanUtils.isTrue(column.isEditable()))) {
                     addAggregationCell(column);
@@ -1570,7 +1577,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         MetaClass entityMetaClass = entityTableSource.getEntityMetaClass();
         return columnsOrder.stream()
                 .filter(c -> {
-                    MetaPropertyPath propertyPath = c.getBoundProperty();
+                    MetaPropertyPath propertyPath = c.getMetaPropertyPath();
                     if (propertyPath != null) {
                         UiEntityAttributeContext attributeContext =
                                 new UiEntityAttributeContext(entityMetaClass, propertyPath.toString());
@@ -1580,7 +1587,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     }
                     return false;
                 })
-                .map(Column::getBoundProperty)
+                .map(Column::getMetaPropertyPath)
                 .collect(Collectors.toList());
     }
 
@@ -1589,7 +1596,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         List<MetaPropertyPath> editableColumns = Collections.emptyList();
 
-        for (Map.Entry<Object, Table.Column<E>> entry : this.columns.entrySet()) {
+        for (Map.Entry<Object, Column<E>> entry : this.columns.entrySet()) {
             Object columnId = entry.getKey();
             Column<E> column = entry.getValue();
 
@@ -1661,15 +1668,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             MetaProperty property = metaPropertyPath.getMetaProperty();
             if (!property.getRange().getCardinality().isMany()
                     && !metadataTools.isSystem(property)) {
-                Table.Column<E> column = new Table.Column<>(metaPropertyPath);
+                Column<E> column = addColumn(metaPropertyPath);
 
                 String propertyName = property.getName();
                 MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
 
                 column.setCaption(messageTools.getPropertyCaption(propertyMetaClass, propertyName));
-                column.setType(metaPropertyPath.getRangeJavaClass());
-
-                addColumn(column);
             }
         }
     }
@@ -1684,18 +1688,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                     // otherwise use all properties from meta-class
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }
-
-        /*if (entityTableSource instanceof DatasourceDataUnit) {
-
-            TODO: legacy-ui
-            CollectionDatasource datasource = ((DatasourceDataUnit) entityTableSource).getDatasource();
-
-            return datasource.getView() != null ?
-                    // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(datasource.getView(), datasource.getMetaClass()) :
-                    // otherwise use all properties from meta-class
-                    metadataTools.getPropertyPaths(datasource.getMetaClass());
-        }*/
 
         if (entityTableSource instanceof EmptyDataUnit) {
             return metadataTools.getPropertyPaths(entityTableSource.getEntityMetaClass());
@@ -1752,12 +1744,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             if (entry.getValue() instanceof InstanceContainer) {
                 InstanceContainer container = (InstanceContainer) entry.getValue();
                 container.setItem(null);
-            }/*
-             TODO: legacy-ui
-             else if (entry.getValue() instanceof Datasource) {
-                Datasource datasource = (Datasource) entry.getValue();
-                datasource.setItem(null);
-            }*/
+            }
         }
 
         fieldDatasources.clear();
@@ -1793,6 +1780,382 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             return new AggregatableSortableDataContainer<>((TableItems.Sortable<E>) tableItems, this);
         }
         return new AggregatableTableDataContainer<>(tableItems, this);
+    }
+
+    public static class ColumnImpl<E> implements Column<E> {
+
+        protected final Object id;
+
+        protected String caption;
+        protected boolean captionAsHtml;
+        protected String description;
+        protected String valueDescription;
+        protected boolean editable;
+        protected ColumnAlignment alignment;
+        protected Integer width;
+        protected boolean collapsed;
+        protected boolean sortable = true;
+        protected AggregationInfo aggregation;
+        protected Integer maxTextLength;
+        protected float expandRatio = -1;
+
+        protected Formatter formatter;
+        protected Function<E, Object> valueProvider;
+
+        protected Element element;
+
+        protected EventHub eventHub;
+
+        protected AbstractTable<?, E> owner;
+
+        public ColumnImpl(Object id, @Nullable AbstractTable<?, E> owner) {
+            this.id = id;
+            this.owner = owner;
+        }
+
+        @Override
+        public Object getId() {
+            return id;
+        }
+
+        @Override
+        public String getStringId() {
+            if (id instanceof MetaPropertyPath) {
+                return ((MetaPropertyPath) id).toPathString();
+            }
+            return String.valueOf(id);
+        }
+
+        @Nullable
+        @Override
+        public MetaPropertyPath getMetaPropertyPath() {
+            if (id instanceof MetaPropertyPath) {
+                return (MetaPropertyPath) id;
+            }
+            return null;
+        }
+
+        @Override
+        public MetaPropertyPath getMetaPropertyPathNN() {
+            if (id instanceof MetaPropertyPath) {
+                return (MetaPropertyPath) id;
+            }
+            throw new IllegalStateException("Column is not bound to meta property " + id);
+        }
+
+        @Nullable
+        @Override
+        public Table<E> getOwner() {
+            return owner;
+        }
+
+        @Override
+        public void setOwner(@Nullable Table<E> owner) {
+            this.owner = (AbstractTable<?, E>) owner;
+        }
+
+        @Nullable
+        @Override
+        public String getCaption() {
+            return caption;
+        }
+
+        @Override
+        public void setCaption(@Nullable String caption) {
+            if (!Objects.equals(getCaption(), caption)) {
+                this.caption = caption;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnHeader(id, caption);
+                }
+            }
+        }
+
+        @Override
+        public boolean isCaptionAsHtml() {
+            return captionAsHtml;
+        }
+
+        @Override
+        public void setCaptionAsHtml(boolean captionAsHtml) {
+            if (isCaptionAsHtml() != captionAsHtml) {
+                this.captionAsHtml = captionAsHtml;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnCaptionAsHtml(id, captionAsHtml);
+                }
+            }
+        }
+
+        @Nullable
+        @Override
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public void setDescription(@Nullable String description) {
+            if (!Objects.equals(getDescription(), description)) {
+                this.description = description;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnDescription(id, description);
+                }
+            }
+        }
+
+        @Nullable
+        @Override
+        public Element getXmlDescriptor() {
+            return element;
+        }
+
+        @Override
+        public void setXmlDescriptor(@Nullable Element element) {
+            this.element = element;
+        }
+
+        @Nullable
+        @Override
+        public Formatter getFormatter() {
+            return formatter;
+        }
+
+        @Override
+        public void setFormatter(@Nullable Formatter formatter) {
+            this.formatter = formatter;
+        }
+
+        @Override
+        public Function<E, Object> getValueProvider() {
+            return valueProvider;
+        }
+
+        @Override
+        public void setValueProvider(@Nullable Function<E, Object> valueProvider) {
+            this.valueProvider = valueProvider;
+        }
+
+        @Nullable
+        @Override
+        public String getValueDescription() {
+            return valueDescription;
+        }
+
+        @Override
+        public void setValueDescription(@Nullable String valueDescription) {
+            this.valueDescription = valueDescription;
+        }
+
+        @Override
+        public boolean isEditable() {
+            return editable;
+        }
+
+        @Override
+        public void setEditable(boolean editable) {
+            this.editable = editable;
+        }
+
+        @Nullable
+        @Override
+        public ColumnAlignment getAlignment() {
+            return alignment;
+        }
+
+        @Override
+        public void setAlignment(@Nullable Table.ColumnAlignment alignment) {
+            if (getAlignment() != alignment) {
+                this.alignment = alignment;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnAlignment(id, WrapperUtils.convertColumnAlignment(alignment));
+                }
+            }
+        }
+
+        @Nullable
+        @Override
+        public Integer getWidth() {
+            return width;
+        }
+
+        @Override
+        public void setWidth(@Nullable Integer width) {
+            if (getWidth() == null || !getWidth().equals(width)) {
+                this.width = width;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnWidth(id, width);
+                }
+            }
+        }
+
+        @Override
+        public boolean isCollapsed() {
+            return collapsed;
+        }
+
+        @Override
+        public void setCollapsed(boolean collapsed) {
+            if (isCollapsed() != collapsed) {
+                if (owner == null || owner.getColumnControlVisible()) {
+                    this.collapsed = collapsed;
+
+                    if (owner != null) {
+                        owner.getComponent().setColumnCollapsed(id, collapsed);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean isSortable() {
+            return sortable;
+        }
+
+        @Override
+        public void setSortable(boolean sortable) {
+            if (isSortable() != sortable) {
+                if (owner == null || owner.isSortable()) {
+                    this.sortable = sortable;
+
+                    if (owner != null) {
+                        owner.getComponent().setColumnSortable(id, sortable);
+                    }
+                }
+            }
+        }
+
+        @Nullable
+        @Override
+        public Integer getMaxTextLength() {
+            return maxTextLength;
+        }
+
+        @Override
+        public void setMaxTextLength(@Nullable Integer maxTextLength) {
+            this.maxTextLength = maxTextLength;
+        }
+
+        @Nullable
+        @Override
+        public AggregationInfo getAggregation() {
+            return aggregation;
+        }
+
+        @Override
+        public void setAggregation(@Nullable AggregationInfo aggregation) {
+            if (getAggregation() != aggregation) {
+                this.aggregation = aggregation;
+
+                if (owner == null) {
+                    return;
+                }
+
+                if (aggregation == null) {
+                    owner.getComponent().removeContainerPropertyAggregation(id);
+                } else if (owner.getItems() instanceof AggregationContainer) {
+                    owner.checkAggregation(aggregation);
+                    if (aggregation.getType() != null) {
+                        owner.getComponent().addContainerPropertyAggregation(id,
+                                WrapperUtils.convertAggregationType(aggregation.getType()));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean isAggregationEditable() {
+            return aggregation != null && aggregation.isEditable();
+        }
+
+        @Override
+        public void setExpandRatio(float ratio) {
+            if (getExpandRatio() != ratio) {
+                this.expandRatio = ratio;
+
+                if (owner != null) {
+                    owner.getComponent().setColumnExpandRatio(id, ratio);
+                }
+            }
+        }
+
+        @Override
+        public float getExpandRatio() {
+            return expandRatio;
+        }
+
+        @Override
+        public Subscription addClickListener(Consumer<Column.ClickEvent<E>> listener) {
+            getEventHub().subscribe(Column.ClickEvent.class, (Consumer) listener);
+
+            if (owner != null) {
+                owner.getComponent().addTableCellClickListener(id, this::onClick);
+            }
+            return () -> removeClickListener(listener);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+
+            Column column = (Column) obj;
+
+            return id.equals(column.getId());
+        }
+
+        @Override
+        public int hashCode() {
+            return id.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return id.toString();
+        }
+
+        protected void onClick(JmixEnhancedTable.TableCellClickEvent event) {
+            if (owner == null) {
+                return;
+            }
+
+            TableItems<E> tableItems = owner.getItems();
+            if (tableItems == null) {
+                return;
+            }
+
+            E item = tableItems.getItem(event.getItemId());
+            if (item == null) {
+                return;
+            }
+
+            if (!Objects.equals(event.getColumnId(), id)) {
+                return;
+            }
+
+            Column.ClickEvent<E> clickEvent = new Column.ClickEvent<>(this, item, event.isText());
+            getEventHub().publish(Column.ClickEvent.class, clickEvent);
+        }
+
+        protected void removeClickListener(Consumer<Column.ClickEvent<E>> listener) {
+            getEventHub().unsubscribe(Column.ClickEvent.class, (Consumer) listener);
+
+            if (owner != null) {
+                owner.getComponent().removeTableCellClickListener(id);
+            }
+        }
+
+        /**
+         * @return the EventHub for the column
+         */
+        protected EventHub getEventHub() {
+            if (eventHub == null) {
+                eventHub = new EventHub();
+            }
+            return eventHub;
+        }
     }
 
     protected class AggregatableTableDataContainer<I> extends TableDataContainer<I> implements AggregationContainer {
@@ -1936,12 +2299,13 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         return StringUtils.capitalize(getColumnCaption(columnId));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void createStubsForGeneratedColumns() {
         for (Column column : columnsOrder) {
             if (!(column.getId() instanceof MetaPropertyPath)
                     && component.getColumnGenerator(column.getId()) == null) {
 
-                if (column.getValueProvider() == null && column.getType() == null) {
+                if (column.getValueProvider() == null && getColumnType(column) == null) {
                     component.addGeneratedColumn(column.getId(), VOID_COLUMN_GENERATOR);
                 } else {
                     component.addGeneratedColumn(column.getId(), VALUE_PROVIDER_GENERATOR);
@@ -1998,7 +2362,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public void setRequired(Table.Column column, boolean required, String message) {
+    public void setRequired(Column column, boolean required, String message) {
         if (required) {
             if (requiredColumns == null) {
                 requiredColumns = new HashMap<>();
@@ -2232,13 +2596,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         Column column = getColumn(columnId);
         Column associatedRuntimeColumn = null;
         if (column == null) {
-            Column<E> newColumn = new Column<>(generatedColumnId);
+            Column<E> newColumn = createColumn(generatedColumnId, this);
 
             columns.put(newColumn.getId(), newColumn);
             columnsOrder.add(newColumn);
 
             associatedRuntimeColumn = newColumn;
-            newColumn.setOwner(this);
         }
 
         // save column order
@@ -2319,7 +2682,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         addGeneratedColumn(columnId, generator);
         columnsOrder.add(index, columnsOrder.remove(columnsOrder.size() - 1));
         component.setVisibleColumns(columnsOrder.stream()
-                .map(Table.Column::getId)
+                .map(Column::getId)
                 .toArray());
     }
 
@@ -2340,185 +2703,13 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public void addAggregationProperty(String columnId, AggregationInfo.Type type) {
-        addAggregationProperty(getColumn(columnId), type);
-    }
-
-    @Override
-    public void addAggregationProperty(Column column, AggregationInfo.Type type) {
-        checkAggregation(column.getAggregation());
-
-        component.addContainerPropertyAggregation(column.getId(), WrapperUtils.convertAggregationType(type));
-
-        if (column.getAggregation() != null) {
-            addAggregationCell(column);
-        }
-    }
-
-    @Override
-    public void removeAggregationProperty(String columnId) {
-        component.removeContainerPropertyAggregation(getColumn(columnId).getId());
-        removeAggregationCell(getColumn(columnId));
-    }
-
-    @Override
-    public void setColumnCaption(String columnId, @Nullable String caption) {
-        Column column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnCaption(column, caption);
-    }
-
-    @Override
-    public void setColumnCaption(Column column, @Nullable String caption) {
-        checkNotNullArgument(column, "column must be non null");
-
-        if (!Objects.equals(column.getCaption(), caption)) {
-            column.setCaption(caption);
-        }
-        component.setColumnHeader(column.getId(), caption);
-    }
-
-    @Override
-    public void setColumnDescription(String columnId, @Nullable String description) {
-        Column column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnDescription(column, description);
-    }
-
-    @Override
-    public void setColumnDescription(Column column, @Nullable String description) {
-        checkNotNullArgument(column, "column must be non null");
-
-        if (!Objects.equals(column.getDescription(), description)) {
-            column.setDescription(description);
-        }
-        component.setColumnDescription(column.getId(), description);
-    }
-
-    @Override
     public boolean isTextSelectionEnabled() {
         return component.isTextSelectionEnabled();
     }
 
     @Override
-    public void setTextSelectionEnabled(boolean value) {
-        component.setTextSelectionEnabled(value);
-    }
-
-    @Override
-    public void setColumnSortable(String columnId, boolean sortable) {
-        Column column = getColumn(columnId);
-        setColumnSortable(column, sortable);
-    }
-
-    @Override
-    public void setColumnSortable(Column column, boolean sortable) {
-        checkNotNullArgument(column, "column must be non null");
-        if (column.isSortable() != sortable) {
-            column.setSortable(sortable);
-        }
-        component.setColumnSortable(column.getId(), sortable);
-    }
-
-    @Override
-    public void setColumnCollapsed(String columnId, boolean collapsed) {
-        Column column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnCollapsed(column, collapsed);
-    }
-
-    @Override
-    public void setColumnCollapsed(Column column, boolean collapsed) {
-        if (!getColumnControlVisible()) {
-            return;
-        }
-
-        checkNotNullArgument(column, "column must be non null");
-
-        if (column.isCollapsed() != collapsed) {
-            column.setCollapsed(collapsed);
-        }
-        component.setColumnCollapsed(column.getId(), collapsed);
-    }
-
-    @Override
-    public void setColumnAlignment(Column column, ColumnAlignment alignment) {
-        checkNotNullArgument(column, "column must be non null");
-
-        if (column.getAlignment() != alignment) {
-            column.setAlignment(alignment);
-        }
-        component.setColumnAlignment(column.getId(), WrapperUtils.convertColumnAlignment(alignment));
-    }
-
-    @Override
-    public void setColumnAlignment(String columnId, ColumnAlignment alignment) {
-        Column column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnAlignment(column, alignment);
-    }
-
-    @Override
-    public void setColumnWidth(Column column, int width) {
-        checkNotNullArgument(column, "column must be non null");
-
-        if (column.getWidth() == null || column.getWidth() != width) {
-            column.setWidth(width);
-        }
-        component.setColumnWidth(column.getId(), width);
-    }
-
-    @Override
-    public void setColumnWidth(String columnId, int width) {
-        Column column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnWidth(column, width);
-    }
-
-    @Override
-    public void setColumnCaptionAsHtml(String columnId, boolean captionAsHtml) {
-        Column<E> column = getColumn(columnId);
-        if (column == null) {
-            throw new IllegalStateException(String.format("Column with id '%s' not found", columnId));
-        }
-
-        setColumnCaptionAsHtml(column, captionAsHtml);
-    }
-
-    @Override
-    public void setColumnCaptionAsHtml(Column column, boolean captionAsHtml) {
-        checkNotNullArgument(column, "Column must be non null");
-
-        if (column.getCaptionAsHtml() != captionAsHtml) {
-            column.setCaptionAsHtml(captionAsHtml);
-        }
-        component.setColumnCaptionAsHtml(column.getId(), captionAsHtml);
-    }
-
-    @Deprecated
-    @Override
-    public void refresh() {
-        // TableItems<E> tableItems = getItems();
-        /*
-        TODO: legacy-ui
-        if (tableItems instanceof DatasourceTableItems) {
-            ((DatasourceTableItems) tableItems).getDatasource().refresh();
-        }*/
+    public void setTextSelectionEnabled(boolean textSelectionEnabled) {
+        component.setTextSelectionEnabled(textSelectionEnabled);
     }
 
     @Override
@@ -2608,7 +2799,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected List<AggregationInfo> getAggregationInfos(AggregationContainer container) {
         List<AggregationInfo> aggregationInfos = new ArrayList<>();
         for (Object propertyId : container.getAggregationPropertyIds()) {
-            Table.Column column = columns.get(propertyId);
+            Column column = columns.get(propertyId);
             AggregationInfo aggregation = column.getAggregation();
             if (aggregation != null) {
                 checkAggregation(aggregation);
@@ -2622,7 +2813,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                                                                            Map<AggregationInfo, ?> aggregationInfoMap) {
         Map<Object, Object> resultsByColumns = new LinkedHashMap<>();
         for (Object propertyId : container.getAggregationPropertyIds()) {
-            Table.Column column = columns.get(propertyId);
+            Column column = columns.get(propertyId);
             if (column.getAggregation() != null) {
                 resultsByColumns.put(column.getId(), aggregationInfoMap.get(column.getAggregation()));
             }
@@ -2633,7 +2824,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected Map<Object, Object> __handleAggregationResults(AggregationContainer.Context context,
                                                              Map<Object, Object> results) {
         for (Map.Entry<Object, Object> entry : results.entrySet()) {
-            Table.Column<E> column = columns.get(entry.getKey());
+            Column<E> column = columns.get(entry.getKey());
             if (aggregationCells.get(column) != null) {
                 Object value = entry.getValue();
                 String cellText = getFormattedValue(column, value);
@@ -2667,13 +2858,13 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         return cellText;
     }
 
-    protected void removeAggregationCell(Table.Column column) {
+    protected void removeAggregationCell(Column column) {
         if (aggregationCells != null) {
             aggregationCells.remove(column);
         }
     }
 
-    protected void addAggregationCell(Table.Column column) {
+    protected void addAggregationCell(Column column) {
         if (aggregationCells == null) {
             aggregationCells = new HashMap<>();
         }
@@ -2713,12 +2904,12 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     @Override
-    public List<Table.Column> getNotCollapsedColumns() {
+    public List<Column> getNotCollapsedColumns() {
         Object[] componentVisibleColumns = component.getVisibleColumns();
         if (componentVisibleColumns == null)
             return Collections.emptyList();
 
-        List<Table.Column> visibleColumns = new ArrayList<>(componentVisibleColumns.length);
+        List<Column> visibleColumns = new ArrayList<>(componentVisibleColumns.length);
         for (Object key : componentVisibleColumns) {
             if (!component.isColumnCollapsed(key)) {
                 Column column = columns.get(key);
@@ -2869,11 +3060,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         getEventHub().subscribe(ColumnCollapseEvent.class, listener);
 
-        return () -> removeColumnCollapseListener(listener);
+        return () -> internalRemoveColumnCollapseListener(listener);
     }
 
-    @Override
-    public void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
+    protected void internalRemoveColumnCollapseListener(Consumer<ColumnCollapseEvent> listener) {
         unsubscribe(ColumnCollapseEvent.class, listener);
 
         if (!hasSubscriptions(ColumnCollapseEvent.class)
@@ -2889,65 +3079,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         ColumnCollapseEvent<E> event = new ColumnCollapseEvent<>(this, collapsedColumn, collapsed);
         publish(ColumnCollapseEvent.class, event);
-    }
-
-    @Override
-    @Deprecated
-    public void setCellClickListener(String columnId, Consumer<CellClickEvent<E>> clickListener) {
-        checkNotNullArgument(getColumn(columnId), String.format("column with id '%s' not found", columnId));
-
-        component.setClickListener(getColumn(columnId).getId(), (itemId, columnId1) -> {
-            TableItems<E> tableItems = getItems();
-            if (tableItems == null) {
-                return;
-            }
-
-            E item = tableItems.getItem(itemId);
-            CellClickEvent<E> event = new CellClickEvent<>(this, item, columnId1.toString());
-            clickListener.accept(event);
-        });
-    }
-
-    @Override
-    @Deprecated
-    public void removeClickListener(String columnId) {
-        component.removeClickListener(getColumn(columnId).getId());
-    }
-
-    @Override
-    public void addCellClickListener(String columnId) {
-        Table.Column<E> column = getColumn(columnId);
-        checkNotNullArgument(column, String.format("column with id '%s' not found", columnId));
-
-        component.addTableCellClickListener(column.getId(), this::onCellClick);
-    }
-
-    protected void onCellClick(JmixEnhancedTable.TableCellClickEvent event) {
-        TableItems<E> tableItems = getItems();
-        if (tableItems == null) {
-            return;
-        }
-
-        E item = tableItems.getItem(event.getItemId());
-        if (item == null) {
-            return;
-        }
-
-        Table.Column<E> column = getColumn(String.valueOf(event.getColumnId()));
-        if (column == null) {
-            return;
-        }
-
-        Column.ClickEvent<E> clickEvent = new Column.ClickEvent<>(column, item, event.isText());
-        column.fireClickEvent(clickEvent);
-    }
-
-    @Override
-    public void removeCellClickListener(String columnId) {
-        Table.Column<E> column = getColumn(columnId);
-        checkNotNullArgument(column, String.format("column with id '%s' not found", columnId));
-
-        component.removeTableCellClickListener(column.getId());
     }
 
     @SuppressWarnings("unchecked")
@@ -3006,20 +3137,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         component.setSelectable(showSelection);
     }
 
-    @Override
-    public void setColumnExpandRatio(Column column, float ratio) {
-        checkNotNullArgument(column, "Column must be non null");
-
-        component.setColumnExpandRatio(column.getId(), ratio);
-    }
-
-    @Override
-    public float getColumnExpandRatio(Column column) {
-        checkNotNullArgument(column, "Column must be non null");
-
-        return component.getColumnExpandRatio(column.getId());
-    }
-
     @Nullable
     protected String generateCellStyle(@Nullable Object itemId, @Nullable Object propertyId) {
         String style = null;
@@ -3072,9 +3189,10 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         Column column = getColumn(stringPropertyId);
         if (column != null)
             if (column.getValueProvider() != null) {
+                Class<?> columnType = getColumnType(column);
                 // column ValueProvider supports Boolean type
                 if (dataBinding != null
-                        && column.getType() == Boolean.class
+                        && columnType == Boolean.class
                         && column.getFormatter() == null) {
 
                     Object item = dataBinding.getTableItems().getItem(itemId);

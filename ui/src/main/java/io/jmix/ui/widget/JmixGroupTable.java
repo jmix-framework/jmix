@@ -724,23 +724,6 @@ public class JmixGroupTable extends JmixTable implements GroupTableContainer {
     }
 
     @Override
-    protected void updateClickableColumnKeys() {
-        if (cellClickListeners != null) {
-            Collection<?> groupProperties = getGroupProperties();
-            String[] clickableColumnKeys = new String[cellClickListeners.size()];
-            int i = 0;
-            for (Object columnId : cellClickListeners.keySet()) {
-                if (!groupProperties.contains(columnId)) {
-                    clickableColumnKeys[i] = _columnIdMap().key(columnId);
-                    i++;
-                }
-            }
-
-            getState().clickableColumnKeys = clickableColumnKeys;
-        }
-    }
-
-    @Override
     public void setSortOptions(Object propertyId, boolean sortAscending) {
         super.setContainerSortOptions(propertyId, sortAscending);
     }

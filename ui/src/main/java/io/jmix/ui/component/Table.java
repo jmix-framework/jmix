@@ -16,29 +16,23 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.component.columnmanager.ColumnManager;
-import io.jmix.ui.component.columnmanager.GroupColumnManager;
-import io.jmix.ui.component.compatibility.TableCellClickListenerWrapper;
-import io.jmix.ui.component.compatibility.TableColumnCollapseListenerWrapper;
 import io.jmix.ui.component.data.TableItems;
-import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.model.InstanceContainer;
-import org.dom4j.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.EventObject;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
-import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
  * Table UI component bound to entity type.
@@ -51,20 +45,28 @@ public interface Table<E>
         HasContextHelp, Component.HasIcon, LookupComponent<E>, Component.Focusable, HasSubParts, HasHtmlCaption,
         HasHtmlDescription, HasHtmlSanitizer, HasPagination {
 
-    enum ColumnAlignment {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
     String NAME = "table";
 
     static <T> ParameterizedTypeReference<Table<T>> of(Class<T> itemClass) {
-        return new ParameterizedTypeReference<Table<T>>() {};
+        return new ParameterizedTypeReference<Table<T>>() {
+        };
     }
 
+    /**
+     * Returns a copy of currently configured columns in their current visual
+     * order in this Table.
+     *
+     * @return unmodifiable copy of current columns
+     * @see #getNotCollapsedColumns()
+     */
     List<Column<E>> getColumns();
 
+    /**
+     * Returns a column by id.
+     *
+     * @param id the column id
+     * @return the column or {@code null} if not found
+     */
     @Nullable
     Column<E> getColumn(String id);
 
@@ -75,6 +77,8 @@ public interface Table<E>
      *
      * @param column the column to add
      * @see #addColumn(Column, int)
+     * @see #addColumn(Object)
+     * @see #addColumn(Object, int)
      */
     void addColumn(Column<E> column);
 
@@ -86,8 +90,35 @@ public interface Table<E>
      * @param column the column to add
      * @param index  index of a new column
      * @see #addColumn(Column)
+     * @see #addColumn(Object)
+     * @see #addColumn(Object, int)
      */
     void addColumn(Column<E> column, int index);
+
+    /**
+     * Creates new column with given Id, then adds this column to Table.
+     *
+     * @param id the column id or the instance of {@link MetaPropertyPath} representing a relative path
+     *           to a property from certain {@link MetaClass}
+     * @return the newly created column
+     * @see #addColumn(Column)
+     * @see #addColumn(Column, int)
+     * @see #addColumn(Object, int)
+     */
+    Column<E> addColumn(Object id);
+
+    /**
+     * Creates new column with given Id at the specified index, then adds this column to Table.
+     *
+     * @param id    the column id or the instance of {@link MetaPropertyPath} representing a relative path
+     *              to a property from certain {@link MetaClass}
+     * @param index index of a new column
+     * @return the newly created column
+     * @see #addColumn(Column)
+     * @see #addColumn(Column, int)
+     * @see #addColumn(Object)
+     */
+    Column<E> addColumn(Object id, int index);
 
     /**
      * Removes the given column from Table or do nothing if column is {@code null}.
@@ -103,38 +134,38 @@ public interface Table<E>
      */
     Map<Object, Object> getAggregationResults();
 
+    /**
+     * Sets an instance of {@link TableItems} as the Table data source.
+     *
+     * @param tableItems the Table data source
+     */
     void setItems(@Nullable TableItems<E> tableItems);
 
+    /**
+     * @return the Table data source
+     */
     @Override
     @Nullable
     TableItems<E> getItems();
 
+    /**
+     * Sets whether the component inside a column must contain a non-null value.
+     *
+     * @param column   a column
+     * @param required required
+     * @param message  required message
+     */
     void setRequired(Column<E> column, boolean required, String message);
 
     /**
-     * @deprecated automatic validation of Table is not supported
+     * Sets whether text selection in Table cells is enabled.
+     *
+     * @param textSelectionEnabled whether text selection in Table cells is enabled
      */
-    @Deprecated
-    default void addValidator(Column column, Consumer<?> validator) {
-        LoggerFactory.getLogger(Table.class).warn("Field.Validator for Table is not supported");
-    }
+    void setTextSelectionEnabled(boolean textSelectionEnabled);
 
     /**
-     * @deprecated automatic validation of Table is not supported
-     */
-    @Deprecated
-    default void addValidator(Consumer<?> validator) {
-        LoggerFactory.getLogger(Table.class).warn("Field.Validator for Table is not supported");
-    }
-
-    /**
-     * Enable or disable text selection in Table cells.
-     * Set true to enable.
-     */
-    void setTextSelectionEnabled(boolean value);
-
-    /**
-     * @return true if text selection is enabled.
+     * @return whether text selection in Table cells is enabled
      */
     boolean isTextSelectionEnabled();
 
@@ -151,6 +182,10 @@ public interface Table<E>
      */
     void setItemClickAction(Action action);
 
+    /**
+     * @return an action that is performed when the user double-clicks inside a table row
+     * @see #setItemClickAction(Action)
+     */
     @Nullable
     Action getItemClickAction();
 
@@ -168,66 +203,98 @@ public interface Table<E>
      */
     void setEnterPressAction(Action action);
 
+    /**
+     * @return an action to be executed on Enter key press, assigned by {@link #setEnterPressAction(Action)}
+     */
     @Nullable
     Action getEnterPressAction();
 
+    /**
+     * @return a list of visible columns
+     */
     List<Column> getNotCollapsedColumns();
 
+    /**
+     * Defines if sortable attribute can be changed for individual column or not. Default value is {@code true}.
+     *
+     * @param sortable {@code true} if individual column sortable
+     *                 attribute can be set to {@code true}, {@code false} otherwise
+     */
     void setSortable(boolean sortable);
 
+    /**
+     * @return {@code true} if individual column sortable
+     * attribute can be set to {@code true}, {@code false} otherwise
+     */
     boolean isSortable();
 
     /**
-     * Enables or disables automatic scroll to a selected row after table update.
+     * Sets whether aggregation is enabled. Default value is false.
+     *
+     * @param aggregatable whether aggregation is enabled.
      */
-    void setAutoScrolling(boolean autoScroll);
-
-    /**
-     * @return whether automatic scroll to a selected row is enabled for this table.
-     */
-    boolean isAutoScrolling();
-
     void setAggregatable(boolean aggregatable);
 
+    /**
+     * @return true if the Table is aggregatable
+     */
     boolean isAggregatable();
 
+    /**
+     * Shows in which aggregation the changes occurred: in the total or group.
+     *
+     * @param showAggregation {@code true} if the aggregation column should show
+     *                        changes in total aggregation, {@code false} if in
+     *                        the group aggregation
+     */
     void setShowTotalAggregation(boolean showAggregation);
 
+    /**
+     * @return {@code true} if the aggregation column should show changes in
+     * total aggregation, {@code false} if in the group aggregation
+     */
     boolean isShowTotalAggregation();
 
+    /**
+     * Sets whether or not column reordering is allowed. Default value is {@code true}.
+     *
+     * @param columnReorderingAllowed specifies whether column reordering is allowed
+     */
     void setColumnReorderingAllowed(boolean columnReorderingAllowed);
 
+    /**
+     * Returns whether column reordering is allowed. Default value is {@code true}.
+     *
+     * @return {@code true} if reordering is allowed
+     */
     boolean getColumnReorderingAllowed();
 
     /**
      * Registers a new column reorder listener.
      *
-     * @param listener the listener to register
+     * @param listener the listener to add
+     * @return a registration object for removing an event listener
      */
     Subscription addColumnReorderListener(Consumer<ColumnReorderEvent<E>> listener);
 
     /**
-     * An event that is fired when a columns are reordered by the user.
+     * Sets whether user can hide columns using the columnControlButton dropdown on
+     * the right side of the table header.
+     *
+     * @param columnControlVisible whether user can hide columns using the
+     *                             columnControlButton dropdown on the right side
+     *                             of the table header
      */
-    class ColumnReorderEvent<E> extends EventObject {
+    void setColumnControlVisible(boolean columnControlVisible);
 
-        public ColumnReorderEvent(Table<E> source) {
-            super(source);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Table<E> getSource() {
-            return (Table<E>) super.getSource();
-        }
-    }
-
-    void setColumnControlVisible(boolean columnCollapsingAllowed);
-
+    /**
+     * @return whether user can hide columns using the columnControlButton dropdown on
+     * the right side of the table header
+     */
     boolean getColumnControlVisible();
 
     /**
-     * Set focus on inner field of editable/generated column.
+     * Sets focus on inner field of editable/generated column.
      *
      * @param entity   entity
      * @param columnId column id
@@ -235,23 +302,11 @@ public interface Table<E>
     void requestFocus(E entity, String columnId);
 
     /**
-     * Scroll table to specified row.
+     * Scrolls table to specified row.
      *
      * @param entity entity
      */
     void scrollTo(E entity);
-
-    /**
-     * Sort the table by a column.
-     * For example:
-     * <pre>table.sortBy(table.getDatasource().getMetaClass().getPropertyPath("name"), ascending);</pre>
-     *
-     * @param propertyId column indicated by a corresponding {@code MetaPropertyPath} object
-     * @param ascending  sort direction
-     * @deprecated Use {@link Table#sort(String, SortDirection)} method
-     */
-    @Deprecated
-    void sortBy(Object propertyId, boolean ascending);
 
     /**
      * Sorts the Table data for passed column id in the chosen sort direction.
@@ -267,35 +322,58 @@ public interface Table<E>
     @Nullable
     SortInfo getSortInfo();
 
+    /**
+     * Marks all the items in the current data source as selected.
+     */
     void selectAll();
 
+    /**
+     * @return whether multi-line display is enabled for cells containing several lines of text
+     */
     boolean isMultiLineCells();
 
+    /**
+     * Sets whether multi-line display is enabled for cells containing several lines of text.
+     * The default value is false.
+     *
+     * @param multiLineCells whether multi-line display is enabled for cells containing several
+     *                       lines of text
+     */
     void setMultiLineCells(boolean multiLineCells);
 
+    /**
+     * @return whether context menu is enabled
+     */
     boolean isContextMenuEnabled();
 
+    /**
+     * Sets whether context menu is enabled.
+     *
+     * @param contextMenuEnabled whether context menu is enabled
+     */
     void setContextMenuEnabled(boolean contextMenuEnabled);
 
     /**
-     * Set width of row header column. Row header shows icons if Icon Provider is specified.
+     * Sets the width of row header column. Row header shows icons if Icon Provider is specified.
      *
      * @param width width of row header column in px
      */
     void setRowHeaderWidth(int width);
 
+    /**
+     * @return width of row header column in px
+     */
     int getRowHeaderWidth();
 
+    /**
+     * Sets whether multiple selection mode is enabled.
+     *
+     * @param multiselect whether multiple selection mode is enabled
+     */
     void setMultiSelect(boolean multiselect);
 
     /**
-     * @deprecated refresh datasource instead
-     */
-    @Deprecated
-    void refresh();
-
-    /**
-     * Repaint UI representation of the table (columns, generated columns) without refreshing the table data
+     * Repaints UI representation of the table (columns, generated columns) without refreshing the table data.
      */
     void repaint();
 
@@ -351,34 +429,6 @@ public interface Table<E>
     @Nullable
     Consumer<EmptyStateClickEvent<E>> getEmptyStateLinkClickHandler();
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @deprecated Use {@link #addColumnCollapseListener(Consumer)} instead
-     */
-    @Deprecated
-    interface ColumnCollapseListener {
-        void columnCollapsed(Column collapsedColumn, boolean collapsed);
-    }
-
-    /**
-     * @param columnCollapsedListener a listener to add
-     * @deprecated Use {@link #addColumnCollapseListener(Consumer)} instead
-     */
-    @Deprecated
-    default void addColumnCollapsedListener(ColumnCollapseListener columnCollapsedListener) {
-        addColumnCollapseListener(new TableColumnCollapseListenerWrapper(columnCollapsedListener));
-    }
-
-    /**
-     * @param columnCollapseListener a listener to remove
-     * @deprecated Use {@link #addColumnCollapseListener(Consumer)} instead
-     */
-    @Deprecated
-    default void removeColumnCollapseListener(ColumnCollapseListener columnCollapseListener) {
-        removeColumnCollapseListener(new TableColumnCollapseListenerWrapper(columnCollapseListener));
-    }
-
     /**
      * Adds a listener for column collapse events.
      *
@@ -388,101 +438,52 @@ public interface Table<E>
     Subscription addColumnCollapseListener(Consumer<ColumnCollapseEvent> listener);
 
     /**
-     * @param listener a listener to remove
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeColumnCollapseListener(Consumer<ColumnCollapseEvent> listener);
-
-    /**
-     * Event sent every time column collapse state changes.
+     * Sets the row header mode.
      *
-     * @param <E> type of a table
+     * @param mode row header mode
      */
-    class ColumnCollapseEvent<E> extends EventObject {
-        protected final Column column;
-        protected final boolean collapsed;
-
-        public ColumnCollapseEvent(Table<E> source, Column column, boolean collapsed) {
-            super(source);
-            this.column = column;
-            this.collapsed = collapsed;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Table<E> getSource() {
-            return (Table<E>) super.getSource();
-        }
-
-        public Column getColumn() {
-            return column;
-        }
-
-        public boolean isCollapsed() {
-            return collapsed;
-        }
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum RowHeaderMode {
-        NONE,
-        ICON
-    }
-
     void setRowHeaderMode(RowHeaderMode mode);
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    enum AggregationStyle {
-        TOP,
-        BOTTOM
-    }
-
+    /**
+     * Sets the location of the aggregation row.
+     *
+     * @param aggregationStyle the location of the aggregation row
+     */
     void setAggregationStyle(AggregationStyle aggregationStyle);
 
+    /**
+     * @return the location of the aggregation row
+     */
     AggregationStyle getAggregationStyle();
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
-     * Allows to define different styles for table cells.
-     */
-    interface StyleProvider<E> {
-        /**
-         * Called by {@link Table} to get a style for row or cell.<br>
-         * All unhandled exceptions from StyleProvider in Web components by default are logged with ERROR level
-         * and not shown to users.
-         *
-         * @param entity   an entity instance represented by the current row
-         * @param property column identifier if getting a style for a cell, or null if getting the style for a row
-         * @return style name or null to apply the default
-         */
-        String getStyleName(E entity, @Nullable String property);
-    }
-
-    /**
-     * Set the cell style provider for the table.<br>
+     * Sets the cell style provider for the table.<br>
      * All style providers added before this call will be removed.
+     *
+     * @param styleProvider a style provider to set
      */
     void setStyleProvider(@Nullable StyleProvider<? super E> styleProvider);
 
     /**
      * Add style provider for the table.<br>
      * Table can use several providers to obtain many style names for cells and rows.
+     *
+     * @param styleProvider a style provider to add
      */
     void addStyleProvider(StyleProvider<? super E> styleProvider);
 
     /**
-     * Remove style provider for the table.
+     * Removes style provider for the table.
+     *
+     * @param styleProvider a style provider to remove
      */
     void removeStyleProvider(StyleProvider<? super E> styleProvider);
 
     /**
-     * Set the row icon provider for the table.
+     * Sets the row icon provider for the Table.
      *
-     * @see #setRowHeaderWidth(int)
+     * @param iconProvider an icon provider to set
+     * @see #setRowHeaderMode(RowHeaderMode)
      */
     void setIconProvider(@Nullable Function<? super E, String> iconProvider);
 
@@ -505,41 +506,9 @@ public interface Table<E>
     @Nullable
     BiFunction<? super E, String, String> getItemDescriptionProvider();
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
-     * This method returns the datasource which contains the provided item. It can be used in data-aware components,
-     * created in generated columns. <br>
-     *
-     * <b>Do not save to final variables, just get it from table when you need.</b>
-     *
-     * <pre>{@code
-     * modelsTable.addGeneratedColumn(
-     *     "numberOfSeats",
-     *     new Table.ColumnGenerator<Model>() {
-     *         public Component generateCell(Model entity) {
-     *             LookupField lookupField = componentsFactory.createComponent(LookupField.NAME);
-     *             lookupField.setDatasource(modelsTable.getItemDatasource(entity), "numberOfSeats");
-     *             lookupField.setOptionsList(Arrays.asList(2, 4, 5));
-     *             lookupField.setWidth("100px");
-     *             return lookupField;
-     *         }
-     *     }
-     * );
-     * }</pre>
-     *
-     * @param item entity item
-     * @return datasource containing the item
-     * @deprecated Use {@link #getInstanceContainer(Object)} instead.
-     */
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    Datasource getItemDatasource(Entity item);*/
-
-    /**
-     * This method returns the InstanceContainer which contains the provided item. It can be used in data-aware components,
-     * created in generated columns. <br>
+     * This method returns the InstanceContainer which contains the provided item.
+     * It can be used in data-aware components, created in generated columns. <br>
      *
      * <b>Do not save to final variables, just get it from table when you need.</b>
      *
@@ -556,6 +525,489 @@ public interface Table<E>
      * @return InstanceContainer containing the item
      */
     InstanceContainer<E> getInstanceContainer(E item);
+
+    /**
+     * Adds a generated column to the table.
+     *
+     * @param columnId  column identifier as defined in XML descriptor.
+     *                  May or may not correspond to an entity property.
+     * @param generator column generator instance
+     */
+    void addGeneratedColumn(String columnId, ColumnGenerator<? super E> generator);
+
+    /**
+     * Adds a generated column at the specified index to Table.
+     *
+     * @param columnId  column identifier as defined in XML descriptor. May correspond to an entity property
+     * @param index     index of a new column
+     * @param generator column generator instance
+     */
+    void addGeneratedColumn(String columnId, int index, ColumnGenerator<? super E> generator);
+
+    /**
+     * Adds a generated column to the table.
+     * <br> This method useful for desktop UI. Table can make additional look, feel and performance tweaks
+     * if it knows the class of components that will be generated.
+     *
+     * @param columnId       column identifier as defined in XML descriptor.
+     *                       May or may not correspond to an entity property.
+     * @param generator      column generator instance
+     * @param componentClass class of components that generator will provide
+     */
+    void addGeneratedColumn(String columnId, ColumnGenerator<? super E> generator, Class<? extends Component> componentClass);
+
+    /**
+     * Removes generated column from the Table by column id.
+     *
+     * @param columnId the column id
+     */
+    void removeGeneratedColumn(String columnId);
+
+    /**
+     * Adds {@link Printable} representation for column. <br>
+     * Explicitly added Printable will be used instead of inherited from generated column.
+     *
+     * @param columnId  column id
+     * @param printable printable representation
+     */
+    void addPrintable(String columnId, Printable<? super E, ?> printable);
+
+    /**
+     * Removes {@link Printable} representation of column. <br>
+     * Unable to remove Printable representation inherited from generated column.
+     *
+     * @param columnId column id
+     */
+    void removePrintable(String columnId);
+
+    /**
+     * Gets {@link Printable} representation for column.
+     *
+     * @param column table column
+     * @return printable
+     */
+    @Nullable
+    Printable getPrintable(Column column);
+
+    /**
+     * Gets {@link Printable} representation for column.
+     *
+     * @param columnId column id
+     * @return printable
+     */
+    @Nullable
+    Printable getPrintable(String columnId);
+
+    /**
+     * Sets aggregation distribution provider to handle distribution of data on rows. Supports only TOP
+     * aggregation style.
+     *
+     * @param distributionProvider distribution provider
+     */
+    void setAggregationDistributionProvider(@Nullable AggregationDistributionProvider<E> distributionProvider);
+
+    /**
+     * @return aggregation distribution provider
+     */
+    @Nullable
+    AggregationDistributionProvider<E> getAggregationDistributionProvider();
+
+    /**
+     * Shows popup inside of Table, relative to last cell click event.<br>
+     * Call this method from {@link io.jmix.ui.component.Table.Column.ClickEvent} implementation.
+     *
+     * @param popupComponent popup content
+     */
+    void showCustomPopup(Component popupComponent);
+
+    /**
+     * Shows autocloseable popup view with actions, relative to last cell click event.<br>
+     * Call this method from {@link io.jmix.ui.component.Table.Column.ClickEvent} implementation.<br>
+     * Autocloseable means that after any click on action popup will be closed.
+     *
+     * @param actions actions
+     */
+    void showCustomPopupActions(List<Action> actions);
+
+    /**
+     * Sets whether table header is displayed.
+     *
+     * @param columnHeaderVisible whether table header is displayed
+     */
+    void setColumnHeaderVisible(boolean columnHeaderVisible);
+
+    /**
+     * @return whether table header is displayed
+     */
+    boolean isColumnHeaderVisible();
+
+    /**
+     * Sets whether a current row is highlighted.
+     *
+     * @param showSelection whether a current row is highlighted
+     */
+    void setShowSelection(boolean showSelection);
+
+    /**
+     * @return whether a current row is highlighted
+     */
+    boolean isShowSelection();
+
+    /**
+     * Registers a new selection listener
+     *
+     * @param listener the listener to register
+     */
+    Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Table column.
+     * <p>
+     * Use {@link Table#addColumn(Object)} and {@link Table#addColumn(Object, int)} methods to create
+     * and add column to the Table.
+     *
+     * @param <E> row item type
+     */
+    interface Column<E> extends HasXmlDescriptor, HasHtmlCaption, HasFormatter {
+
+        /**
+         * Returns a column identifier. It could be a {@link String} or an instance of {@link MetaPropertyPath}.
+         *
+         * @return id of a column
+         */
+        Object getId();
+
+        /**
+         * Returns a column identifier as a {@link String}. If the id is an instance of {@link MetaPropertyPath},
+         * then the {@link MetaPropertyPath#toPathString()} will be returned.
+         *
+         * @return a column identifier as a string
+         */
+        String getStringId();
+
+        /**
+         * @return the instance of {@link MetaPropertyPath} representing a relative path
+         * to a property from certain MetaClass or null
+         */
+        @Nullable
+        MetaPropertyPath getMetaPropertyPath();
+
+        /**
+         * @return the instance of {@link MetaPropertyPath} representing a relative path
+         * to a property from certain MetaClass
+         */
+        MetaPropertyPath getMetaPropertyPathNN();
+
+        /**
+         * @return the Table this column belongs to
+         */
+        @Nullable
+        Table<E> getOwner();
+
+        /**
+         * @param owner the Table this column belongs to
+         */
+        void setOwner(@Nullable Table<E> owner);
+
+        /**
+         * INTERNAL
+         * <p>
+         * Intended to install declarative {@code columnGenerator} instance.
+         *
+         * @param columnGenerator column generator instance
+         */
+        @Internal
+        default void setColumnGenerator(Function<E, Component> columnGenerator) {
+            if (getOwner() != null) {
+                getOwner().addGeneratedColumn(getStringId(), columnGenerator::apply);
+            }
+        }
+
+        /**
+         * @return a value provider or null
+         */
+        @Nullable
+        Function<E, Object> getValueProvider();
+
+        /**
+         * Sets value provider for the column. Value provider can be called 0 or more times depending on visibility
+         * of a cell and value type. Return type must be the same as type of the column.
+         *
+         * @param valueProvider a callback interface for providing column values from a given source
+         */
+        void setValueProvider(@Nullable Function<E, Object> valueProvider);
+
+        /**
+         * @return a hint which is displayed in a popup when a user hovers the mouse cursor on the aggregated value
+         */
+        @Nullable
+        String getValueDescription();
+
+        /**
+         * Defines a hint which is displayed in a popup when a user hovers the mouse cursor on the aggregated value.
+         * For the operations listed above (SUM, AVG, COUNT, MIN, MAX), popup hints are already available by default.
+         *
+         * @param valueDescription a hint
+         * @see io.jmix.ui.widget.data.AggregationContainer.Type
+         */
+        void setValueDescription(@Nullable String valueDescription);
+
+        /**
+         * Returns whether editing is allowed for the corresponding column in the table.
+         *
+         * @return whether editing is allowed for the corresponding column in the table
+         */
+        boolean isEditable();
+
+        /**
+         * Sets whether editing is allowed for the corresponding column in the table.
+         *
+         * <em>NOTE:</em> changing this property at runtime is not supported.
+         *
+         * @param editable whether editing is allowed for the corresponding column in the table
+         */
+        void setEditable(boolean editable);
+
+        /**
+         * @return a text alignment of column cells
+         */
+        @Nullable
+        ColumnAlignment getAlignment();
+
+        /**
+         * Sets a text alignment of column cells. The default alignment is {@link ColumnAlignment#LEFT}.
+         *
+         * @param alignment a text alignment of column cells
+         */
+        void setAlignment(@Nullable ColumnAlignment alignment);
+
+        /**
+         * Returns default column width. May contain only numeric values in pixels.
+         *
+         * @return default column width
+         */
+        @Nullable
+        Integer getWidth();
+
+        /**
+         * Sets default column width. May contain only numeric values in pixels.
+         *
+         * @param width default column width
+         */
+        void setWidth(@Nullable Integer width);
+
+        /**
+         * @return {@code true} if the column is currently hidden, {@code false} otherwise
+         */
+        boolean isCollapsed();
+
+        /**
+         * Hides or shows the column. By default columns are visible before
+         * explicitly hiding them.
+         *
+         * @param collapsed {@code true} to hide the column, {@code false} to show
+         */
+        void setCollapsed(boolean collapsed);
+
+        /**
+         * Returns whether the user can sort the data by this column.
+         *
+         * @return {@code true} if the column is sortable by the user, {@code false} otherwise
+         */
+        boolean isSortable();
+
+        /**
+         * Sets whether this column is sortable by the user. The Table can be
+         * sorted by a sortable column by clicking or tapping the column's
+         * default header.
+         *
+         * @param sortable {@code true} if the user should be able to sort the
+         *                 column, {@code false} otherwise
+         * @see Table#setSortable(boolean)
+         */
+        void setSortable(boolean sortable);
+
+        /**
+         * @return the maximum number of characters in a cell
+         */
+        @Nullable
+        Integer getMaxTextLength();
+
+        /**
+         * Limits the number of characters in a cell. If the difference between the actual and the maximum
+         * allowed number of characters does not exceed the 10 character threshold, the extra characters
+         * remain unhidden. To see the entire record, users need to click on its visible part.
+         *
+         * @param maxTextLength the maximum number of characters in a cell
+         * @see io.jmix.ui.component.table.AbbreviatedCellClickListener
+         */
+        void setMaxTextLength(@Nullable Integer maxTextLength);
+
+        /**
+         * @return an aggregation info
+         */
+        @Nullable
+        AggregationInfo getAggregation();
+
+        /**
+         * Sets an aggregation info in order to perform aggregation for this column.
+         *
+         * @param aggregation aggregation info
+         */
+        void setAggregation(@Nullable AggregationInfo aggregation);
+
+        /**
+         * When the aggregation is editable in conjunction with using
+         * the {@link #setAggregationDistributionProvider(AggregationDistributionProvider)} method,
+         * this allows users to implement algorithms for distributing data between table rows.
+         *
+         * @return whether aggregation info is editable
+         */
+        boolean isAggregationEditable();
+
+        /**
+         * Sets the ratio with which the column expands. The default value is -1.
+         * <p>
+         * By default (without expand ratios) the excess space is divided
+         * proportionally to columns natural widths.
+         *
+         * @param ratio the expand ratio of this column. {@code 0} to not have it
+         *              expand at all. A negative number to clear the expand
+         *              value.
+         */
+        void setExpandRatio(float ratio);
+
+        /**
+         * @return the ratio with which the column expands
+         */
+        float getExpandRatio();
+
+        /**
+         * Adds a click listener for column.
+         *
+         * @param listener a listener to add
+         * @return a registration object for removing an event listener
+         */
+        Subscription addClickListener(Consumer<Column.ClickEvent<E>> listener);
+
+        /**
+         * An event is fired when the user clicks inside the table cell that belongs to the current column.
+         *
+         * @param <E> an entity class
+         */
+        class ClickEvent<E> extends EventObject {
+
+            protected final E item;
+            protected final boolean isText;
+
+            /**
+             * Constructor for a click event.
+             *
+             * @param source the Table column from which this event originates
+             * @param item   an entity instance represented by the clicked row
+             * @param isText {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
+             */
+            public ClickEvent(Column<E> source, E item, boolean isText) {
+                super(source);
+                this.item = item;
+                this.isText = isText;
+            }
+
+            /**
+             * @return the Table column from which this event originates
+             */
+            @SuppressWarnings("unchecked")
+            @Override
+            public Column<E> getSource() {
+                return (Column<E>) super.getSource();
+            }
+
+            /**
+             * @return an entity instance represented by the clicked row
+             */
+            public E getItem() {
+                return item;
+            }
+
+            /**
+             * @return {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
+             */
+            public boolean isText() {
+                return isText;
+            }
+        }
+    }
+
+    /**
+     * Column alignment.
+     */
+    enum ColumnAlignment {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
+    /**
+     * Row header mode.
+     */
+    enum RowHeaderMode {
+        NONE,
+        ICON
+    }
+
+    /**
+     * The location of the aggregation row.
+     */
+    enum AggregationStyle {
+        TOP,
+        BOTTOM
+    }
+
+    /**
+     * Describes sorting direction.
+     */
+    enum SortDirection {
+        /**
+         * Ascending (e.g. A-Z, 1..9) sort order
+         */
+        ASCENDING,
+
+        /**
+         * Descending (e.g. Z-A, 9..1) sort order
+         */
+        DESCENDING
+    }
+
+    /**
+     * Allows to handle a group or total aggregation value changes.
+     */
+    interface AggregationDistributionProvider<E> {
+
+        /**
+         * Invoked when a group or total aggregation value is changed.
+         *
+         * @param context context
+         */
+        void onDistribution(AggregationDistributionContext<E> context);
+    }
+
+    /**
+     * Allows to define different styles for table cells.
+     */
+    interface StyleProvider<E> {
+        /**
+         * Called by {@link Table} to get a style for row or cell.<br>
+         * All unhandled exceptions from StyleProvider in Web components by default are logged with ERROR level
+         * and not shown to users.
+         *
+         * @param entity   an entity instance represented by the current row
+         * @param property column identifier if getting a style for a cell, or null if getting the style for a row
+         * @return style name or null to apply the default
+         */
+        String getStyleName(E entity, @Nullable String property);
+    }
 
     /**
      * Allows rendering of an arbitrary {@link Component} inside a table cell.
@@ -592,197 +1044,8 @@ public interface Table<E>
     }
 
     /**
-     * Add a generated column to the table.
-     *
-     * @param columnId  column identifier as defined in XML descriptor. May or may not correspond to an entity property.
-     * @param generator column generator instance
+     * Object that contains information about column sorting.
      */
-    void addGeneratedColumn(String columnId, ColumnGenerator<? super E> generator);
-
-    /**
-     * Adds a generated column at the specified index to Table.
-     *
-     * @param columnId  column identifier as defined in XML descriptor. May correspond to an entity property
-     * @param index     index of a new column
-     * @param generator column generator instance
-     */
-    void addGeneratedColumn(String columnId, int index, ColumnGenerator<? super E> generator);
-
-    /**
-     * Add a generated column to the table.
-     * <br> This method useful for desktop UI. Table can make additional look, feel and performance tweaks
-     * if it knows the class of components that will be generated.
-     *
-     * @param columnId       column identifier as defined in XML descriptor. May or may not correspond to an entity property.
-     * @param generator      column generator instance
-     * @param componentClass class of components that generator will provide
-     */
-    void addGeneratedColumn(String columnId, ColumnGenerator<? super E> generator, Class<? extends Component> componentClass);
-
-    void removeGeneratedColumn(String columnId);
-
-    /**
-     * Adds {@link Printable} representation for column. <br>
-     * Explicitly added Printable will be used instead of inherited from generated column.
-     *
-     * @param columnId  column id
-     * @param printable printable representation
-     */
-    void addPrintable(String columnId, Printable<? super E, ?> printable);
-
-    /**
-     * Removes {@link Printable} representation of column. <br>
-     * Unable to remove Printable representation inherited from generated column.
-     *
-     * @param columnId column id
-     */
-    void removePrintable(String columnId);
-
-    /**
-     * Get {@link Printable} representation for column.
-     *
-     * @param column table column
-     * @return printable
-     */
-    @Nullable
-    Printable getPrintable(Table.Column column);
-
-    /**
-     * Get {@link Printable} representation for column.
-     *
-     * @param columnId column id
-     * @return printable
-     */
-    @Nullable
-    Printable getPrintable(String columnId);
-
-    /**
-     * Add lightweight click handler for column cells.<br>
-     * Web specific: cell value will be wrapped in span with cuba-table-clickable-cell style name.<br>
-     * You can use .cuba-table-clickable-cell for CSS rules to specify custom representation of cell value.
-     *
-     * @param columnId      id of column
-     * @param clickListener click listener
-     * @deprecated Use {@link Column#addClickListener(Consumer)} instead
-     */
-    @Deprecated
-    default void setClickListener(String columnId, CellClickListener<? super E> clickListener) {
-        //noinspection unchecked
-        setCellClickListener(columnId, new TableCellClickListenerWrapper(clickListener));
-    }
-
-    /**
-     * Add lightweight click handler for text in column cells.<br>
-     * Web specific: cell value will be wrapped in span with cuba-table-clickable-cell style name.<br>
-     * You can use .cuba-table-clickable-cell for CSS rules to specify custom representation of cell value.
-     * <p>
-     * You cannot use cellClickListener for column with maxTextLength attribute, since cellClickListener is
-     * already defined to display abbreviated cell text.
-     *
-     * @param columnId      id of column
-     * @param clickListener cell text click listener
-     * @deprecated Use {@link Column#addClickListener(Consumer)} instead
-     */
-    @Deprecated
-    void setCellClickListener(String columnId, Consumer<CellClickEvent<E>> clickListener);
-
-    /**
-     * Remove click listener.
-     *
-     * @param columnId id of column
-     * @deprecated Use {@link Subscription} instead
-     */
-    @Deprecated
-    void removeClickListener(String columnId);
-
-    /**
-     * Lightweight click listener for table cells.
-     *
-     * @deprecated Use {@link Column#addClickListener(Consumer)}  instead.
-     */
-    @Deprecated
-    interface CellClickListener<T> {
-        /**
-         * @param item     row item
-         * @param columnId id of column
-         */
-        void onClick(T item, String columnId);
-    }
-
-    class CellClickEvent<T> extends EventObject {
-        protected final T item;
-        protected final String columnId;
-
-        public CellClickEvent(Table<T> source, @Nullable T item, String columnId) {
-            super(source);
-            this.item = item;
-            this.columnId = columnId;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Table<T> getSource() {
-            return (Table<T>) super.getSource();
-        }
-
-        @Nullable
-        public T getItem() {
-            return item;
-        }
-
-        public String getColumnId() {
-            return columnId;
-        }
-    }
-
-    /**
-     * Set aggregation distribution provider to handle distribution of data on rows. Supports only TOP
-     * aggregation style.
-     *
-     * @param distributionProvider distribution provider
-     */
-    void setAggregationDistributionProvider(@Nullable AggregationDistributionProvider<E> distributionProvider);
-
-    /**
-     * @return aggregation distribution provider
-     */
-    @Nullable
-    AggregationDistributionProvider<E> getAggregationDistributionProvider();
-
-    /**
-     * Show popup inside of Table, relative to last cell click event.<br>
-     * Call this method from {@link io.jmix.ui.component.Table.CellClickListener} implementation.
-     *
-     * @param popupComponent popup content
-     */
-    void showCustomPopup(Component popupComponent);
-
-    /**
-     * Show autocloseable popup view with actions, relative to last cell click event.<br>
-     * Call this method from {@link io.jmix.ui.component.Table.CellClickListener} implementation.<br>
-     * Autocloseable means that after any click on action popup will be closed.
-     *
-     * @param actions actions
-     */
-    void showCustomPopupActions(List<Action> actions);
-
-    /**
-     * Set visibility for table header
-     */
-    void setColumnHeaderVisible(boolean columnHeaderVisible);
-
-    boolean isColumnHeaderVisible();
-
-    /**
-     * Hide or show selection
-     */
-    void setShowSelection(boolean showSelection);
-
-    /**
-     * @return true if selection is visible
-     */
-    boolean isShowSelection();
-
     class SortInfo {
         protected final Object propertyId;
         protected final boolean ascending;
@@ -814,26 +1077,112 @@ public interface Table<E>
     }
 
     /**
-     * Describes sorting direction.
+     * Object that contains information about aggregation distribution.
+     *
+     * @param <E> entity type
      */
-    enum SortDirection {
-        /**
-         * Ascending (e.g. A-Z, 1..9) sort order
-         */
-        ASCENDING,
+    class AggregationDistributionContext<E> {
+        protected Column column;
+        protected Object value;
+        protected Collection<E> scope;
+        protected boolean isTotalAggregation;
+
+        public AggregationDistributionContext(Column column, @Nullable Object value, Collection<E> scope,
+                                              boolean isTotalAggregation) {
+            this.column = column;
+            this.value = value;
+            this.scope = scope;
+            this.isTotalAggregation = isTotalAggregation;
+        }
 
         /**
-         * Descending (e.g. Z-A, 9..1) sort order
+         * @return a column
          */
-        DESCENDING
+        public Column getColumn() {
+            return column;
+        }
+
+        /**
+         * @return a column id
+         */
+        public String getColumnId() {
+            return column.getStringId();
+        }
+
+        /**
+         * @return the new aggregation value
+         */
+        @Nullable
+        public Object getValue() {
+            return value;
+        }
+
+        /**
+         * @return a collection of entities that will be affected by changed aggregation
+         */
+        public Collection<E> getScope() {
+            return scope;
+        }
+
+        /**
+         * @return true if the total aggregation is shown, false if group aggregation is shown
+         */
+        public boolean isTotalAggregation() {
+            return isTotalAggregation;
+        }
     }
 
     /**
-     * Registers a new selection listener
-     *
-     * @param listener the listener to register
+     * An event that is fired when a columns are reordered by the user.
      */
-    Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
+    class ColumnReorderEvent<E> extends EventObject {
+
+        public ColumnReorderEvent(Table<E> source) {
+            super(source);
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Table<E> getSource() {
+            return (Table<E>) super.getSource();
+        }
+    }
+
+    /**
+     * Event sent every time column collapse state changes.
+     *
+     * @param <E> type of a table
+     */
+    class ColumnCollapseEvent<E> extends EventObject {
+        protected final Column column;
+        protected final boolean collapsed;
+
+        public ColumnCollapseEvent(Table<E> source, Column column, boolean collapsed) {
+            super(source);
+            this.column = column;
+            this.collapsed = collapsed;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public Table<E> getSource() {
+            return (Table<E>) super.getSource();
+        }
+
+        /**
+         * @return a column
+         */
+        public Column getColumn() {
+            return column;
+        }
+
+        /**
+         * @return whether the column is collapsed
+         */
+        public boolean isCollapsed() {
+            return collapsed;
+        }
+    }
 
     /**
      * Event sent when the selection changes. It specifies what in a selection has changed, and where the
@@ -876,468 +1225,23 @@ public interface Table<E>
         }
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /**
+     * Describes empty state link click event.
+     *
+     * @param <E> entity class
+     * @see #setEmptyStateLinkMessage(String)
+     * @see #setEmptyStateLinkClickHandler(Consumer)
+     */
+    class EmptyStateClickEvent<E> extends EventObject {
 
-    class Column<T> implements HasXmlDescriptor, HasCaption, HasHtmlCaption, HasFormatter {
-
-        private static final Logger log = LoggerFactory.getLogger(Table.class);
-
-        protected Object id;
-        protected String caption;
-        protected String description;
-        protected String valueDescription;
-        protected boolean editable;
-        protected Formatter formatter;
-        protected Integer width;
-        protected boolean collapsed;
-        protected boolean groupAllowed = true;
-        protected boolean sortable = true;
-        protected AggregationInfo aggregation;
-        protected Integer maxTextLength;
-        protected ColumnAlignment alignment;
-        protected boolean captionAsHtml;
-        protected Float expandRatio;
-
-        protected Function<T, Object> valueProvider;
-
-        protected Class type;
-        protected Element element;
-
-        // vaadin8 add a separate interface for notifying parent
-        protected Table<T> owner;
-
-        private EventHub eventHub;
-
-        public Column(Object id) {
-            this.id = id;
+        public EmptyStateClickEvent(Table<E> source) {
+            super(source);
         }
 
-        public Column(String id) {
-            checkNotNullArgument(id);
-
-            this.id = id;
-        }
-
-        public Column(MetaPropertyPath propertyPath, String caption) {
-            checkNotNullArgument(propertyPath);
-
-            this.id = propertyPath;
-            this.caption = caption;
-            this.type = propertyPath.getRangeJavaClass();
-        }
-
-        public Column(String id, String caption) {
-            this.id = id;
-            this.caption = caption;
-        }
-
-        public Object getId() {
-            return id;
-        }
-
-        @Nullable
-        public MetaPropertyPath getBoundProperty() {
-            if (id instanceof MetaPropertyPath) {
-                return (MetaPropertyPath) id;
-            }
-            return null;
-        }
-
-        public MetaPropertyPath getBoundPropertyNN() {
-            return ((MetaPropertyPath) id);
-        }
-
-        public String getStringId() {
-            if (id instanceof MetaPropertyPath) {
-                return ((MetaPropertyPath) id).toPathString();
-            }
-            return String.valueOf(id);
-        }
-
-        public void setColumnGenerator(Function<T, Component> columnGenerator) {
-            if (owner != null) {
-                owner.addGeneratedColumn(getStringId(), columnGenerator::apply);
-            }
-        }
-
-        /**
-         * @return value provider function
-         */
-        @Nullable
-        public Function<T, Object> getValueProvider() {
-            return valueProvider;
-        }
-
-        /**
-         * Sets value provider for the column. Value provider can be called 0 or more times depending on visibility
-         * of a cell and value type. Return type must be the same as {@link #getType()} of the column.
-         *
-         * @param valueProvider a callback interface for providing column values from a given source
-         */
-        public void setValueProvider(@Nullable Function<T, Object> valueProvider) {
-            this.valueProvider = valueProvider;
-        }
-
-        @Nullable
-        public MetaPropertyPath getMetaPropertyPath() {
-            if (id instanceof MetaPropertyPath) {
-                return (MetaPropertyPath) id;
-            }
-            return null;
-        }
-
-        public MetaPropertyPath getMetaPropertyPathNN() {
-            if (id instanceof MetaPropertyPath) {
-                return (MetaPropertyPath) id;
-            }
-            throw new IllegalStateException("Column is not bound to meta property " + id);
-        }
-
-        public String getIdString() {
-            if (id instanceof MetaPropertyPath) {
-                return id.toString();
-            }
-            return String.valueOf(id);
-        }
-
-        @Nullable
+        @SuppressWarnings("unchecked")
         @Override
-        public String getCaption() {
-            return caption;
-        }
-
-        @Override
-        public void setCaption(@Nullable String caption) {
-            this.caption = caption;
-            if (owner != null) {
-                ((ColumnManager) owner).setColumnCaption(this, caption);
-            }
-        }
-
-        @Nullable
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public void setDescription(@Nullable String description) {
-            this.description = description;
-            if (owner != null) {
-                ((ColumnManager) owner).setColumnDescription(this, description);
-            }
-        }
-
-        public String getValueDescription() {
-            return valueDescription;
-        }
-
-        public void setValueDescription(String valueDescription) {
-            this.valueDescription = valueDescription;
-        }
-
-        public boolean isEditable() {
-            return editable;
-        }
-
-        public void setEditable(boolean editable) {
-            this.editable = editable;
-            if (owner != null) {
-                log.warn("Changing editable for column in runtime is not supported");
-            }
-        }
-
-        public Class getType() {
-            return type;
-        }
-
-        public void setType(Class type) {
-            this.type = type;
-        }
-
-        @Nullable
-        @Override
-        public Formatter getFormatter() {
-            return formatter;
-        }
-
-        @Override
-        public void setFormatter(@Nullable Formatter formatter) {
-            this.formatter = formatter;
-        }
-
-        @Nullable
-        public ColumnAlignment getAlignment() {
-            return alignment;
-        }
-
-        public void setAlignment(@Nullable ColumnAlignment alignment) {
-            this.alignment = alignment;
-            if (alignment != null && owner != null) {
-                ((ColumnManager) owner).setColumnAlignment(this, alignment);
-            }
-        }
-
-        @Nullable
-        public Integer getWidth() {
-            return width;
-        }
-
-        public void setWidth(@Nullable Integer width) {
-            this.width = width;
-            if (width != null && owner != null) {
-                ((ColumnManager) owner).setColumnWidth(this, width);
-            }
-        }
-
-        public boolean isCollapsed() {
-            return collapsed;
-        }
-
-        public void setCollapsed(boolean collapsed) {
-            this.collapsed = collapsed;
-            if (owner != null) {
-                ((ColumnManager) owner).setColumnCollapsed(this, collapsed);
-            }
-        }
-
-        public boolean isGroupAllowed() {
-            return groupAllowed;
-        }
-
-        public void setGroupAllowed(boolean groupAllowed) {
-            this.groupAllowed = groupAllowed;
-            if (owner instanceof GroupTable) {
-                ((GroupColumnManager) owner).setColumnGroupAllowed(this, groupAllowed);
-            }
-        }
-
-        public boolean isSortable() {
-            return sortable;
-        }
-
-        public void setSortable(boolean sortable) {
-            this.sortable = sortable;
-            if (owner != null) {
-                ((ColumnManager) owner).setColumnSortable(this, sortable);
-            }
-        }
-
-        @Nullable
-        public AggregationInfo getAggregation() {
-            return aggregation;
-        }
-
-        public void setAggregation(AggregationInfo aggregation) {
-            this.aggregation = aggregation;
-            if (owner != null) {
-                ((ColumnManager) owner).addAggregationProperty(this, aggregation.getType());
-            }
-        }
-
-        @Nullable
-        public Integer getMaxTextLength() {
-            return maxTextLength;
-        }
-
-        public void setMaxTextLength(Integer maxTextLength) {
-            this.maxTextLength = maxTextLength;
-        }
-
-        @Nullable
-        public Table getOwner() {
-            return owner;
-        }
-
-        public void setOwner(@Nullable Table owner) {
-            this.owner = owner;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Column column = (Column) o;
-
-            return id.equals(column.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return id.hashCode();
-        }
-
-        @Nullable
-        @Override
-        public Element getXmlDescriptor() {
-            return element;
-        }
-
-        @Override
-        public void setXmlDescriptor(@Nullable Element element) {
-            this.element = element;
-        }
-
-        public boolean isAggregationEditable() {
-            return aggregation != null && aggregation.isEditable();
-        }
-
-        @Override
-        public String toString() {
-            return id == null ? super.toString() : id.toString();
-        }
-
-        /**
-         * Sets whether column caption should be interpreted as HTML or not.
-         *
-         * @param captionAsHtml interpret caption as HTML
-         */
-        @Override
-        public void setCaptionAsHtml(boolean captionAsHtml) {
-            this.captionAsHtml = captionAsHtml;
-            if (owner != null) {
-                ((ColumnManager) owner).setColumnCaptionAsHtml(this, captionAsHtml);
-            }
-        }
-
-        /**
-         * @return whether column caption should be interpreted as HTML or not
-         * @deprecated Use {@link #isCaptionAsHtml()} instead
-         */
-        @Deprecated
-        public boolean getCaptionAsHtml() {
-            return isCaptionAsHtml();
-        }
-
-        @Override
-        public boolean isCaptionAsHtml() {
-            return captionAsHtml;
-        }
-
-        /**
-         * Removes the column from aggregation cells list.
-         */
-        public void removeAggregationProperty() {
-            ((ColumnManager) owner).removeAggregationProperty(getStringId());
-        }
-
-        /**
-         * Sets expand ration for the given column.
-         *
-         * @param ratio ratio
-         */
-        public void setExpandRatio(@Nullable Float ratio) {
-            this.expandRatio = ratio;
-            if (ratio != null && owner != null) {
-                ((ColumnManager) owner).setColumnExpandRatio(this, ratio);
-            }
-        }
-
-        /**
-         * @return expand ratio for the column
-         */
-        @Nullable
-        public Float getExpandRatio() {
-            return expandRatio;
-        }
-
-        /**
-         * Adds a click listener for column.
-         *
-         * @param listener a listener to add
-         * @return subscription
-         */
-        public Subscription addClickListener(Consumer<ClickEvent<T>> listener) {
-            getEventHub().subscribe(ClickEvent.class, (Consumer) listener);
-
-            if (owner != null) {
-                ((ColumnManager) owner).addCellClickListener(getStringId());
-            }
-
-            return () -> removeClickListener(listener);
-        }
-
-        /**
-         * INTERNAL.
-         * <p>
-         * Fires a {@link ClickEvent} for all click listeners.
-         *
-         * @param event event to be fired
-         */
-        @Internal
-        public void fireClickEvent(ClickEvent<T> event) {
-            getEventHub().publish(ClickEvent.class, event);
-        }
-
-        /**
-         * Removes a given click listener.
-         *
-         * @param listener a listener to remove
-         */
-        protected void removeClickListener(Consumer<ClickEvent<T>> listener) {
-            getEventHub().unsubscribe(ClickEvent.class, (Consumer) listener);
-
-            if (owner != null) {
-                ((ColumnManager) owner).removeCellClickListener(getStringId());
-            }
-        }
-
-        /**
-         * @return the EventHub for the column
-         */
-        protected EventHub getEventHub() {
-            if (eventHub == null) {
-                eventHub = new EventHub();
-            }
-            return eventHub;
-        }
-
-        /**
-         * An event is fired when the user clicks inside the table cell that belongs to the current column.
-         *
-         * @param <E> an entity class
-         */
-        public static class ClickEvent<E> extends EventObject {
-
-            protected final E item;
-            protected final boolean isText;
-
-            /**
-             * Constructor for a click event.
-             *
-             * @param source the Table column from which this event originates
-             * @param item   an entity instance represented by the clicked row
-             * @param isText {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
-             */
-            public ClickEvent(Table.Column<E> source, E item, boolean isText) {
-                super(source);
-                this.item = item;
-                this.isText = isText;
-            }
-
-            /**
-             * @return the Table column from which this event originates
-             */
-            @SuppressWarnings("unchecked")
-            @Override
-            public Table.Column<E> getSource() {
-                return (Table.Column<E>) super.getSource();
-            }
-
-            /**
-             * @return an entity instance represented by the clicked row
-             */
-            public E getItem() {
-                return item;
-            }
-
-            /**
-             * @return {@code true} if the user clicks on text inside the table cell, {@code false} otherwise
-             */
-            public boolean isText() {
-                return isText;
-            }
+        public Table<E> getSource() {
+            return (Table<E>) super.getSource();
         }
     }
 
@@ -1509,79 +1413,4 @@ public interface Table<E>
         public <X> void withUnwrappedComposition(Class<X> internalCompositionClass, Consumer<X> action) {
         }
     }
-
-    /**
-     * Allows to handle a group or total aggregation value changes.
-     */
-    interface AggregationDistributionProvider<E> {
-
-        /**
-         * Invoked when a group or total aggregation value is changed.
-         *
-         * @param context context
-         */
-        void onDistribution(AggregationDistributionContext<E> context);
-    }
-
-    /**
-     * Object that contains information about aggregation distribution.
-     *
-     * @param <E> entity type
-     */
-    class AggregationDistributionContext<E> {
-        protected Column column;
-        protected Object value;
-        protected Collection<E> scope;
-        protected boolean isTotalAggregation;
-
-        public AggregationDistributionContext(Column column, @Nullable Object value, Collection<E> scope,
-                                              boolean isTotalAggregation) {
-            this.column = column;
-            this.value = value;
-            this.scope = scope;
-            this.isTotalAggregation = isTotalAggregation;
-        }
-
-        public Column getColumn() {
-            return column;
-        }
-
-        public String getColumnId() {
-            return column.getIdString();
-        }
-
-        @Nullable
-        public Object getValue() {
-            return value;
-        }
-
-        public Collection<E> getScope() {
-            return scope;
-        }
-
-        public boolean isTotalAggregation() {
-            return isTotalAggregation;
-        }
-    }
-
-    /**
-     * Describes empty state link click event.
-     *
-     * @param <E> entity class
-     * @see #setEmptyStateLinkMessage(String)
-     * @see #setEmptyStateLinkClickHandler(Consumer)
-     */
-    class EmptyStateClickEvent<E> extends EventObject {
-
-        public EmptyStateClickEvent(Table<E> source) {
-            super(source);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public Table<E> getSource() {
-            return (Table<E>) super.getSource();
-        }
-    }
-
 }

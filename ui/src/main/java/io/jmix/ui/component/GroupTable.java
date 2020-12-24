@@ -34,7 +34,8 @@ public interface GroupTable<E> extends Table<E> {
     String NAME = "groupTable";
 
     static <T> ParameterizedTypeReference<GroupTable<T>> of(Class<T> itemClass) {
-        return new ParameterizedTypeReference<GroupTable<T>>() {};
+        return new ParameterizedTypeReference<GroupTable<T>>() {
+        };
     }
 
     /**
@@ -105,6 +106,26 @@ public interface GroupTable<E> extends Table<E> {
      * @return aggregation results for the given group info instance
      */
     Map<Object, Object> getAggregationResults(GroupInfo info);
+
+    /**
+     * GroupTable column.
+     *
+     * @param <E> row item type
+     */
+    interface GroupColumn<E> extends Column<E> {
+
+        /**
+         * @return whether a user can group by this column
+         */
+        boolean isGroupAllowed();
+
+        /**
+         * Sets whether a user can group by this column.
+         *
+         * @param groupAllowed whether a user can group by this column
+         */
+        void setGroupAllowed(boolean groupAllowed);
+    }
 
     /**
      * Allows to define different styles for table cells.

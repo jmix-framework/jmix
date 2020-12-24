@@ -42,7 +42,7 @@ class CollectionContainerUsageTest extends ScreenSpecification {
     void setup() {
         container = dataComponents.createCollectionContainer(Order)
         table = uiComponents.create(Table)
-        table.addColumn(new Table.Column(metadata.getClass(Order).getPropertyPath('number')))
+        table.addColumn(metadata.getClass(Order).getPropertyPath('number'))
         table.setItems(new ContainerTableItems(this.container))
     }
 

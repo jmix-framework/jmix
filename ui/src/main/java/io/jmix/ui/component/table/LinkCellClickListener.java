@@ -16,196 +16,143 @@
 
 package io.jmix.ui.component.table;
 
+import io.jmix.core.DataManager;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.Id;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.WindowConfig;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.EditorScreen;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenContext;
+import io.jmix.ui.screen.StandardOutcome;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.ApplicationContext;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Method;
+import java.util.function.Consumer;
 
 
-public class LinkCellClickListener implements Table.CellClickListener {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class LinkCellClickListener implements Consumer<Table.Column.ClickEvent> {
 
-    protected Table table;
-    protected Metadata metadata;
+    protected ApplicationContext applicationContext;
 
-    public LinkCellClickListener(Table table, ApplicationContext applicationContext) {
-        this.table = table;
-        this.metadata = applicationContext.getBean(Metadata.class);
+    public LinkCellClickListener(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     @Override
-    public void onClick(Object rowItem, String columnId) {
-        Table.Column column = table.getColumn(columnId);
-        if (column.getXmlDescriptor() != null) {
-            String invokeMethodName = column.getXmlDescriptor().attributeValue("linkInvoke");
-            if (StringUtils.isNotEmpty(invokeMethodName)) {
-                callControllerInvoke(rowItem, columnId, invokeMethodName);
-
-                return;
-            }
-        }
-        /*
-        JmixEntity entity;
-        Object value = EntityValues.getValueEx(rowItem, columnId);
-
-        if (value instanceof JmixEntity) {
-            entity = (JmixEntity) value;
-        } else {
-            entity = rowItem;
-        }
-
-        TODO: legacy-ui
-        WindowManager wm;
-        Window window = ComponentsHelper.getWindow(table);
-        if (window == null) {
-            throw new IllegalStateException("Please specify Frame for Table");
-        } else {
-            wm = window.getWindowManager();
-        }
-
-        Messages messages = applicationContext.get(Messages.NAME, Messages.class);
-
-        if (entity instanceof SoftDelete && ((SoftDelete) entity).isDeleted()) {
-            wm.showNotification(messages.getMessage("OpenAction.objectIsDeleted"),
-                    Frame.NotificationType.HUMANIZED);
+    public void accept(Table.Column.ClickEvent clickEvent) {
+        if (!clickEvent.isText()) {
             return;
         }
 
-        if (window.getFrameOwner() instanceof LegacyFrame) {
-            LegacyFrame frameOwner = (LegacyFrame) window.getFrameOwner();
+        Table.Column<?> column = clickEvent.getSource();
+        Table owner = column.getOwner();
+        if (owner == null || owner.getFrame() == null) {
+            return;
+        }
 
-            DataSupplier dataSupplier = frameOwner.getDsContext().getDataSupplier();
-            entity = dataSupplier.reload(entity, View.MINIMAL);
+        Object rowItem = clickEvent.getItem();
+        MetaPropertyPath mpp = column.getMetaPropertyPathNN();
+        Object item = EntityValues.getValueEx(rowItem, mpp);
+
+        Entity entity;
+        if (EntityValues.isEntity(item)) {
+            entity = (Entity) item;
         } else {
-            DataManager dataManager = applicationContext.get(DataManager.NAME, DataManager.class);
-            entity = dataManager.reload(entity, View.MINIMAL);
+            entity = (Entity) rowItem;
         }
 
-        WindowConfig windowConfig = applicationContext.get(WindowConfig.NAME, WindowConfig.class);
-
-        String windowAlias = null;
-        if (column.getXmlDescriptor() != null) {
-            windowAlias = column.getXmlDescriptor().attributeValue("linkScreen");
-        }
-        if (StringUtils.isEmpty(windowAlias)) {
-            windowAlias = windowConfig.getEditorScreenId(metadata.getClass(entity));
-        }
-
-        OpenType screenOpenType = OpenType.THIS_TAB;
-        if (column.getXmlDescriptor() != null) {
-            String openTypeAttribute = column.getXmlDescriptor().attributeValue("linkScreenOpenType");
-            if (StringUtils.isNotEmpty(openTypeAttribute)) {
-                screenOpenType = OpenType.valueOf(openTypeAttribute);
-            }
+        if (EntityValues.isSoftDeleted(entity)) {
+            ScreenContext context = ComponentsHelper.getScreenContext(owner);
+            context.getNotifications().create(Notifications.NotificationType.HUMANIZED)
+                    .withCaption(applicationContext.getBean(Messages.class)
+                            .getMessage("OpenAction.objectIsDeleted"))
+                    .show();
+            return;
         }
 
-        AbstractEditor editor = (AbstractEditor) wm.openEditor(
-                windowConfig.getWindowInfo(windowAlias),
-                entity,
-                screenOpenType
-        );
-        editor.addCloseListener(actionId -> {
+        entity = loadEntity(entity);
+
+        MetaClass metaClass = applicationContext.getBean(Metadata.class).getClass(entity);
+        String linkScreenId = loadLinkScreenId(column, metaClass);
+
+        OpenMode openMode = loadLinkScreenOpenMode(column);
+
+        Screen editor = applicationContext.getBean(ScreenBuilders.class)
+                .editor(metaClass.getJavaClass(), owner.getFrame().getFrameOwner())
+                .withScreenId(linkScreenId)
+                .editEntity(entity)
+                .withOpenMode(openMode)
+                .build();
+
+        editor.addAfterCloseListener(afterCloseEvent -> {
             // move focus to component
-            table.focus();
+            owner.focus();
 
-            if (Window.COMMIT_ACTION_ID.equals(actionId)) {
-                Entity editorItem = editor.getItem();
-
-                handleEditorCommit(editorItem, rowItem, columnId);
+            if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)
+                    && editor instanceof EditorScreen) {
+                onEditScreenAfterCommit(mpp, rowItem, (EditorScreen) editor, owner);
             }
-        });*/
+        });
+
+        editor.show();
     }
 
-    protected void handleEditorCommit(Object editorItem, Object rowItem, String columnId) {
-        MetaPropertyPath mpp = metadata.getClass(rowItem).getPropertyPath(columnId);
-        if (mpp == null) {
-            throw new IllegalStateException(String.format("Unable to find metaproperty %s for class %s",
-                    columnId, metadata.getClass(rowItem)));
+    protected Entity loadEntity(Entity entity) {
+        return applicationContext.getBean(DataManager.class).load(Id.of(entity))
+                .fetchPlan(applicationContext.getBean(FetchPlanRepository.class)
+                        .getFetchPlan(entity.getClass(), FetchPlan.INSTANCE_NAME))
+                .one();
+    }
+
+    protected String loadLinkScreenId(Table.Column column, MetaClass metaClass) {
+        String linkScreenId = null;
+        if (column.getXmlDescriptor() != null) {
+            linkScreenId = column.getXmlDescriptor().attributeValue("linkScreenId");
+        }
+        if (StringUtils.isEmpty(linkScreenId)) {
+            linkScreenId = applicationContext.getBean(WindowConfig.class).getEditorScreenId(metaClass);
         }
 
+        return linkScreenId;
+    }
+
+    protected OpenMode loadLinkScreenOpenMode(Table.Column column) {
+        OpenMode openMode = OpenMode.THIS_TAB;
+        if (column.getXmlDescriptor() != null) {
+            String linkScreenOpenMode = column.getXmlDescriptor().attributeValue("linkScreenOpenMode");
+            if (StringUtils.isNotEmpty(linkScreenOpenMode)) {
+                openMode = OpenMode.valueOf(linkScreenOpenMode);
+            }
+        }
+
+        return openMode;
+    }
+
+    protected void onEditScreenAfterCommit(MetaPropertyPath mpp, Object rowItem, EditorScreen editor, Table owner) {
+        Object rowEditedEntity;
         if (mpp.getRange().isClass()) {
-            boolean modifiedInTable = false;
-            boolean ownerDsModified = false;
-            /*
-            TODO: legacy-ui
-            DatasourceImplementation ds = ((DatasourceImplementation) table.getDatasource());
-            if (ds != null) {
-                modifiedInTable = ds.getItemsToUpdate().contains(rowItem);
-                ownerDsModified = ds.isModified();
-            }
-
-            rowItem.setValueEx(columnId, null);
-            rowItem.setValueEx(columnId, editorItem);
-
-            if (ds != null) {
-                // restore modified for owner datasource
-                // remove from items to update if it was not modified before setValue
-                if (!modifiedInTable) {
-                    ds.getItemsToUpdate().remove(rowItem);
-                }
-                ds.setModified(ownerDsModified);
-            }*/
+            rowEditedEntity = rowItem;
+            Object editedEntity = editor.getEditedEntity();
+            EntityValues.setValueEx(rowEditedEntity, mpp, editedEntity);
         } else {
-            table.getItems().updateItem(editorItem);
-        }
-    }
-
-    protected void callControllerInvoke(Object rowItem, String columnId, String invokeMethodName) {
-        FrameOwner controller = table.getFrame().getFrameOwner();
-        /* todo legacy-ui
-        if (controller instanceof LegacyFragmentAdapter) {
-            controller = ((LegacyFragmentAdapter) controller).getRealScreen();
-        }*/
-
-        Method method;
-        method = findLinkInvokeMethod(controller.getClass(), invokeMethodName);
-        if (method != null) {
-            try {
-                method.invoke(controller, rowItem, columnId);
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to cal linkInvoke method for table column", e);
-            }
-        } else {
-            try {
-                method = controller.getClass().getMethod(invokeMethodName);
-                try {
-                    method.invoke(controller);
-                } catch (Exception e1) {
-                    throw new RuntimeException("Unable to call linkInvoke method for table column", e1);
-                }
-            } catch (NoSuchMethodException e1) {
-                throw new IllegalStateException(String.format("No suitable methods named %s for invoke", invokeMethodName));
-            }
-        }
-    }
-
-    @Nullable
-    protected Method findLinkInvokeMethod(Class cls, String methodName) {
-        Method exactMethod = MethodUtils.getAccessibleMethod(cls, methodName, Entity.class, String.class);
-        if (exactMethod != null) {
-            return exactMethod;
+            rowEditedEntity = editor.getEditedEntity();
         }
 
-        // search through all methods
-        Method[] methods = cls.getMethods();
-        for (Method availableMethod : methods) {
-            if (availableMethod.getName().equals(methodName)) {
-                if (availableMethod.getParameterCount() == 2
-                        && Void.TYPE.equals(availableMethod.getReturnType())) {
-                    if (Entity.class.isAssignableFrom(availableMethod.getParameterTypes()[0]) &&
-                            String.class == availableMethod.getParameterTypes()[1]) {
-                        // get accessible version of method
-                        return MethodUtils.getAccessibleMethod(availableMethod);
-                    }
-                }
-            }
+        if (owner.getItems() != null) {
+            owner.getItems().updateItem(rowEditedEntity);
         }
-        return null;
     }
 }

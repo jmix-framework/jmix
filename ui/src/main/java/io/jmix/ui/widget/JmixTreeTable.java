@@ -18,9 +18,6 @@ package io.jmix.ui.widget;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import io.jmix.ui.widget.data.AggregationContainer;
-import io.jmix.ui.widget.data.TableSortableContainer;
-import io.jmix.ui.widget.data.util.NullTreeTableContainer;
 import com.vaadin.event.Action;
 import com.vaadin.event.ActionManager;
 import com.vaadin.event.ShortcutListener;
@@ -41,7 +38,10 @@ import com.vaadin.v7.ui.Field;
 import io.jmix.ui.widget.client.table.JmixTableClientRpc;
 import io.jmix.ui.widget.client.table.JmixTableServerRpc;
 import io.jmix.ui.widget.client.treetable.JmixTreeTableState;
+import io.jmix.ui.widget.data.AggregationContainer;
+import io.jmix.ui.widget.data.TableSortableContainer;
 import io.jmix.ui.widget.data.TreeTableContainer;
+import io.jmix.ui.widget.data.util.NullTreeTableContainer;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
@@ -69,8 +69,6 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     protected boolean showTotalAggregation = true;
 
     protected Set<Object> nonSortableProperties; // lazily initialized Set
-
-    protected Map<Object, CellClickListener> cellClickListeners; // lazily initialized map
 
     protected Map<Object, String> columnDescriptions; // lazily initialized map
 
@@ -108,13 +106,6 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
                 Object itemId = itemIdMapper.get(rowKey);
 
                 if (itemId != null) {
-                    if (cellClickListeners != null && isText) {
-                        CellClickListener cellClickListener = cellClickListeners.get(columnId);
-                        if (cellClickListener != null) {
-                            cellClickListener.onClick(itemId, columnId);
-                        }
-                    }
-
                     fireEvent(new TableCellClickEvent(JmixTreeTable.this, itemId, columnId, isText));
                 }
             }
@@ -499,7 +490,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
     public void expandItemRecursively(Object id) {
         setCollapsed(id, false);
-        for (Object childId: getChildren(id)) {
+        for (Object childId : getChildren(id)) {
             expandItemRecursively(childId);
         }
     }
@@ -515,7 +506,7 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
     public void collapseItemRecursively(Object id) {
         if (hasChildren(id)) {
-            for (Object childId: getChildren(id)) {
+            for (Object childId : getChildren(id)) {
                 collapseItemRecursively(childId);
             }
         }
@@ -753,21 +744,6 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     }
 
     @Override
-    public void setClickListener(Object propertyId, CellClickListener clickListener) {
-        if (cellClickListeners == null) {
-            cellClickListeners = new HashMap<>();
-        }
-        cellClickListeners.put(propertyId, clickListener);
-    }
-
-    @Override
-    public void removeClickListener(Object propertyId) {
-        if (cellClickListeners != null) {
-            cellClickListeners.remove(propertyId);
-        }
-    }
-
-    @Override
     public void addTableCellClickListener(Object propertyId, TableCellClickListener listener) {
         if (clickableTableColumnIds == null) {
             clickableTableColumnIds = new ArrayList<>();
@@ -865,7 +841,6 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     public void beforeClientResponse(boolean initial) {
         super.beforeClientResponse(initial);
 
-        updateClickableColumnKeys();
         updateClickableTableColumnKeys();
         updateColumnDescriptions();
         updateAggregatableTooltips();
@@ -906,12 +881,6 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
 
             String value = (String) aggregations.get(columnId);
             setColumnFooter(columnId, value);
-        }
-    }
-
-    protected void updateClickableColumnKeys() {
-        if (cellClickListeners != null) {
-            getState().clickableColumnKeys = getClickableColumnKeys(cellClickListeners.keySet());
         }
     }
 

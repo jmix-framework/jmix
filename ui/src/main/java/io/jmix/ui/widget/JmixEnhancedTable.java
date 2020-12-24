@@ -87,9 +87,6 @@ public interface JmixEnhancedTable extends AggregationContainer {
     boolean isShowTotalAggregation();
     void setShowTotalAggregation(boolean showTotalAggregation);
 
-    void setClickListener(Object propertyId, CellClickListener clickListener);
-    void removeClickListener(Object propertyId);
-
     void addTableCellClickListener(Object propertyId, TableCellClickListener listener);
 
     void removeTableCellClickListener(Object propertyId);

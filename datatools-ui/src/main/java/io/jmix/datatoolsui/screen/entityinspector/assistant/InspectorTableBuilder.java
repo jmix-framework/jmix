@@ -16,9 +16,11 @@
 
 package io.jmix.datatoolsui.screen.entityinspector.assistant;
 
-import io.jmix.core.*;
+import io.jmix.core.MessageTools;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.component.ButtonsPanel;
@@ -39,7 +41,7 @@ import java.util.function.Consumer;
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isEmbedded;
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
-@SuppressWarnings({"rawtypes","unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Component("datatools_EntityInspectorTableBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorTableBuilder {
@@ -87,8 +89,8 @@ public class InspectorTableBuilder {
         Table table = uiComponents.create(Table.NAME);
 
         //collect properties in order to add non-system columns first
-        List<Table.Column> nonSystemPropertyColumns = new ArrayList<>(10);
-        List<Table.Column> systemPropertyColumns = new ArrayList<>(10);
+        List<MetaProperty> nonSystemProperties = new ArrayList<>(10);
+        List<MetaProperty> systemProperties = new ArrayList<>(10);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             //don't show embedded, transient & multiple referred entities
             if (isEmbedded(metaProperty) || !metadataTools.isPersistent(metaProperty)) {
@@ -99,32 +101,25 @@ public class InspectorTableBuilder {
                 continue;
             }
 
-            Table.Column column = new Table.Column(metaClass.getPropertyPath(metaProperty.getName()));
-
-            if (metaProperty.getJavaType().equals(String.class) && maxTextLength > 0) {
-                column.setMaxTextLength(maxTextLength);
-            }
-
             if (!metadataTools.isSystem(metaProperty)) {
-                column.setCaption(getPropertyCaption(metaClass, metaProperty));
-                nonSystemPropertyColumns.add(column);
+                nonSystemProperties.add(metaProperty);
             } else if (withSystem) {
-                column.setCaption(getPropertyCaption(metaClass, metaProperty));
-                systemPropertyColumns.add(column);
+                systemProperties.add(metaProperty);
             }
         }
-        for (Table.Column column : nonSystemPropertyColumns) {
-            table.addColumn(column);
+        for (MetaProperty metaProperty : nonSystemProperties) {
+            addMetaPropertyToTable(table, metaProperty);
         }
 
-        for (Table.Column column : systemPropertyColumns) {
-            table.addColumn(column);
+        for (MetaProperty metaProperty : systemProperties) {
+            addMetaPropertyToTable(table, metaProperty);
         }
+
         table.setSizeFull();
 
         table.setItems(new ContainerTableItems(collectionContainer));
 
-        if (buttonsPanelInitializer!=null) {
+        if (buttonsPanelInitializer != null) {
             table.setButtonsPanel(uiComponents.create(ButtonsPanel.class));
             buttonsPanelInitializer.accept(table);
         }
@@ -140,6 +135,21 @@ public class InspectorTableBuilder {
 
         table.addStyleName("table-boolean-text");
         return table;
+    }
+
+    protected void addMetaPropertyToTable(Table table, MetaProperty metaProperty) {
+        MetaPropertyPath metaPropertyPath = metaClass.getPropertyPath(metaProperty.getName());
+        if (metaPropertyPath == null) {
+            return;
+        }
+
+        Table.Column column = table.addColumn(metaPropertyPath);
+
+        if (metaProperty.getJavaType().equals(String.class) && maxTextLength > 0) {
+            column.setMaxTextLength(maxTextLength);
+        }
+
+        column.setCaption(getPropertyCaption(metaClass, metaProperty));
     }
 
     protected String getPropertyCaption(MetaClass metaClass, MetaProperty metaProperty) {

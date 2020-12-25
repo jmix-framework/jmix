@@ -135,11 +135,11 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     public void execute() {
 
         if (target == null) {
-            throw new IllegalStateException("EditAction target is not set");
+            throw new IllegalStateException("ChangePassword target is not set");
         }
 
         if (!(target.getItems() instanceof EntityDataUnit)) {
-            throw new IllegalStateException("EditAction target dataSource is null or does not implement EntityDataUnit");
+            throw new IllegalStateException("ChangePassword target dataSource is null or does not implement EntityDataUnit");
         }
 
         MetaClass metaClass = ((EntityDataUnit) target.getItems()).getEntityMetaClass();
@@ -149,7 +149,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
 
         Object editedEntity = target.getSingleSelected();
         if (editedEntity == null) {
-            throw new IllegalStateException("There is not selected item in EditAction target");
+            throw new IllegalStateException("There is not selected item in ChangePassword target");
         }
 
         UserDetails user = (UserDetails) editedEntity;

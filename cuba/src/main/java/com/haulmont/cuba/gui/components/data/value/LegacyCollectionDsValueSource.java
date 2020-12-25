@@ -138,11 +138,6 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
     }
 
     protected void setPropertyDatasourceValue(Collection<V> value) {
-        if (!canUpdateMasterRefs()) {
-            setDatasourceValue(value);
-            return;
-        }
-
         Collection<V> itemValue = EntityValues.getValueEx(getMaster().getItem(), metaPropertyPath.toPathString());
         Collection<V> oldValue = copyPropertyCollection(itemValue);
 
@@ -151,6 +146,11 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
         }
 
         updateMasterCollection(metaPropertyPath.getMetaProperty(), value);
+
+        if (!canUpdateMasterRefs()) {
+            setDatasourceValue(value);
+            return;
+        }
 
         datasource.mute();
 

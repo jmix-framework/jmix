@@ -575,7 +575,11 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
                     value = new ArrayList<>();
                 }
 
-                value.addAll(reloadedSelected);
+                // Get rid of duplicates
+                Collection<V> itemsToAdd = new ArrayList<>(reloadedSelected);
+                itemsToAdd.removeAll(value);
+
+                value.addAll(itemsToAdd);
 
                 setValue(value);
             }

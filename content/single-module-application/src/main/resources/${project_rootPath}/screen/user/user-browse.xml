@@ -35,6 +35,7 @@
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
                 <action id="refresh" type="refresh"/>
+                <action id="changePassword" type="changePassword"/>
             </actions>
             <columns>
                 <column id="username"/>
@@ -50,9 +51,9 @@
                 <button id="editBtn" action="usersTable.edit"/>
                 <button id="removeBtn" action="usersTable.remove"/>
                 <popupButton id="additionalActionsBtn" caption="msg://additional" icon="GEARS">
-                    <actions>
-                        <action id="changePassword" type="changePassword"/>
-                    </actions>
+                    <popup>
+                        <button id="changePasswordBtn" action="usersTable.changePassword"/>
+                    </popup>
                 </popupButton>
                 <button id="refreshBtn" action="usersTable.refresh"/>
             </buttonsPanel>

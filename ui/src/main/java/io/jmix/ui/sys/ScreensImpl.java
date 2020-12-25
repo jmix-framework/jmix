@@ -475,6 +475,15 @@ public class ScreensImpl implements Screens {
     }
 
     protected void checkOpened(Screen screen) {
+        // In case of 'managedMainTabSheetMode = UNLOAD_TABS',
+        // inactive screens are detached, so we need to skip this check
+        AppWorkAreaImpl workArea = getConfiguredWorkArea();
+        HasTabSheetBehaviour behaviour = workArea.getTabbedWindowContainer();
+        if (behaviour instanceof JmixManagedTabSheet
+                && ((JmixManagedTabSheet) behaviour).getMode() == JmixManagedTabSheet.Mode.UNLOAD_TABS) {
+            return;
+        }
+
         com.vaadin.ui.Component uiComponent = screen.getWindow()
                 .unwrapComposition(com.vaadin.ui.Component.class);
         if (!uiComponent.isAttached()) {

@@ -20,12 +20,12 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
-import com.haulmont.cuba.gui.xml.layout.ComponentsFactory;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiComponents;
 
 import javax.annotation.Nullable;
 import java.sql.Time;
+import java.time.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,11 +56,15 @@ public class BulkEditorFieldFactory {
                 return createStringField(datasource, property);
             } else if (type.equals(Boolean.class)) {
                 return createBooleanField(datasource, property);
-            } else if (type.equals(java.time.LocalDate.class)) {
+            } else if (type.equals(java.sql.Date.class)
+                    || type.equals(Date.class)
+                    || type.equals(LocalDate.class)
+                    || type.equals(LocalDateTime.class)
+                    || type.equals(OffsetDateTime.class)) {
                 return createDateField(datasource, property);
-            } else if (type.equals(java.sql.Date.class) || type.equals(Date.class)) {
-                return createDateField(datasource, property);
-            } else if (type.equals(Time.class)) {
+            } else if (type.equals(Time.class)
+                    || type.equals(LocalTime.class)
+                    || type.equals(OffsetTime.class)) {
                 return createTimeField(datasource, property);
             } else if (Number.class.isAssignableFrom(type)) {
                 return createNumberField(datasource, property);
@@ -114,13 +118,13 @@ public class BulkEditorFieldFactory {
         DateField dateField = componentsFactory.create(DateField.class);
         dateField.setDatasource(datasource, property.getName());
 
-        if (type.equals(Date.class)) {
+        if (type.equals(Date.class)
+                || type.equals(LocalDateTime.class)
+                || type.equals(OffsetDateTime.class)) {
             dateField.setResolution(DateField.Resolution.MIN);
             dateField.setDateFormat(messages.getMainMessage("dateTimeFormat"));
-        } else if (type.equals(java.sql.Date.class)) {
-            dateField.setResolution(DateField.Resolution.SEC);
-            dateField.setDateFormat(messages.getMainMessage("dateFormat"));
-        } else if (type.equals(java.time.LocalDate.class)) {
+        } else if (type.equals(java.sql.Date.class)
+                || type.equals(java.time.LocalDate.class)) {
             dateField.setResolution(DateField.Resolution.DAY);
             dateField.setDateFormat(messages.getMainMessage("dateFormat"));
         } else {

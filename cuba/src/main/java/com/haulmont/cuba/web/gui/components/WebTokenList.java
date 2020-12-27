@@ -21,6 +21,8 @@ import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.TokenList;
 import com.haulmont.cuba.gui.components.data.value.LegacyCollectionDsValueSource;
+import com.haulmont.cuba.gui.data.CollectionDatasource;
+import com.haulmont.cuba.gui.data.NestedDatasource;
 import io.jmix.core.*;
 import com.haulmont.cuba.gui.components.CaptionMode;
 import io.jmix.core.common.util.Preconditions;
@@ -34,6 +36,7 @@ import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.meta.EntityOptions;
@@ -115,6 +118,8 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
 
     public WebTokenList() {
         component = new CubaTokenList<>(this);
+
+        attachValueChangeListener(component);
     }
 
     @Autowired
@@ -299,6 +304,10 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
 
     @Override
     public void setValue(@Nullable Collection<V> value) {
+        setValue(value, false);
+    }
+
+    protected void setValue(@Nullable Collection<V> value, boolean userOriginated) {
         Collection<V> oldValue = getOldValue(value);
 
         oldValue = new ArrayList<>(oldValue != null
@@ -312,7 +321,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
 
         this.internalValue = value;
 
-        fireValueChange(oldValue, value);
+        fireValueChange(oldValue, value, userOriginated);
     }
 
     @Nullable
@@ -322,10 +331,10 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
                 : internalValue;
     }
 
-    protected void fireValueChange(@Nullable Collection<V> oldValue, @Nullable Collection<V> value) {
+    protected void fireValueChange(Collection<V> oldValue, Collection<V> value, boolean userOriginated) {
         if (!equalCollections(oldValue, value)) {
             ValueChangeEvent<Collection<V>> event =
-                    new ValueChangeEvent<>(this, oldValue, value, false);
+                    new ValueChangeEvent<>(this, oldValue, value, userOriginated);
             publish(ValueChangeEvent.class, event);
         }
     }
@@ -343,6 +352,11 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
 
         //noinspection ConstantConditions
         return CollectionUtils.isEqualCollection(a, b);
+    }
+
+    @Override
+    protected boolean fieldValueEquals(Collection<V> value, Collection<V> oldValue) {
+        return equalCollections(value, oldValue);
     }
 
     @Override
@@ -559,30 +573,29 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
             reloadedSelected.forEach(itemChangeHandler::addItem);
         } else {
             ValueSource<Collection<V>> valueSource = getValueSource();
+            Collection<V> newValue = getValue();
             if (valueSource != null) {
                 Collection<V> modelValue = refreshValueIfNeeded();
-
                 for (V newItem : reloadedSelected) {
                     if (!modelValue.contains(newItem)) {
                         modelValue.add(newItem);
                     }
                 }
 
-                valueSource.setValue(modelValue);
+                newValue = modelValue;
             } else {
-                Collection<V> value = getValue();
-                if (value == null) {
-                    value = new ArrayList<>();
+                if (newValue == null) {
+                    newValue = new ArrayList<>();
                 }
 
                 // Get rid of duplicates
                 Collection<V> itemsToAdd = new ArrayList<>(reloadedSelected);
-                itemsToAdd.removeAll(value);
+                itemsToAdd.removeAll(newValue);
 
-                value.addAll(itemsToAdd);
-
-                setValue(value);
+                newValue.addAll(itemsToAdd);
             }
+
+            setValue(newValue, true);
         }
     }
 
@@ -890,6 +903,33 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     @Override
     public Supplier<Screen> getLookupProvider() {
         return lookupProvider;
+    }
+
+    @Override
+    protected Collection<V> convertToModel(Collection<V> componentRawValue) throws ConversionException {
+        ValueSource<Collection<V>> valueSource = getValueSource();
+        if (valueSource != null) {
+            Class<?> modelCollectionType = null;
+
+            if (valueSource instanceof EntityValueSource) {
+                MetaPropertyPath mpp = ((EntityValueSource) valueSource).getMetaPropertyPath();
+                modelCollectionType = mpp.getMetaProperty().getJavaType();
+            } else if (valueSource instanceof LegacyCollectionDsValueSource) {
+                CollectionDatasource datasource = ((LegacyCollectionDsValueSource) valueSource).getDatasource();
+                if (datasource instanceof NestedDatasource) {
+                    MetaProperty property = ((NestedDatasource) datasource).getProperty().getInverse();
+                    modelCollectionType = property == null ? null : property.getJavaType();
+                }
+            }
+
+            if (modelCollectionType != null) {
+                if (Set.class.isAssignableFrom(modelCollectionType)) {
+                    return new LinkedHashSet<>(componentRawValue);
+                }
+            }
+        }
+
+        return new ArrayList<>(componentRawValue);
     }
 
     /**

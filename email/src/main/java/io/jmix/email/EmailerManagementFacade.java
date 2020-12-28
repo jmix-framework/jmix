@@ -18,14 +18,12 @@ package io.jmix.email;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.security.Authenticated;
 import io.jmix.data.PersistenceHints;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
-import io.jmix.email.impl.EmailerImpl;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -117,7 +115,8 @@ public class EmailerManagementFacade {
         return javaMailProperties.getProperty("mail.smtp.connectiontimeout");
     }
 
-    //todo: @Authenticated
+    @Authenticated
+    @ManagedOperation(description = "Send a test email to the specified addresses")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "addresses", description = "")})
     public String sendTestEmail(String addresses) {
         try {
@@ -133,8 +132,7 @@ public class EmailerManagementFacade {
         }
     }
 
-    //todo: @Authenticated
-   // todo: @JmxRunAsync
+    @Authenticated
     @ManagedOperation(description = "Migrate existing email history to use file storage")
     public String migrateEmailsToFileStorage(String password) {
         if (!"do migration".equals(password)) {

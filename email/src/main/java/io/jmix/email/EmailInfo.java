@@ -32,6 +32,9 @@ public class EmailInfo implements Serializable {
 
     private static final long serialVersionUID = -382773435130109083L;
 
+    public static final String HTML_CONTENT_TYPE = "text/html; charset=UTF-8";
+    public static final String TEXT_CONTENT_TYPE = "text/plain; charset=UTF-8";
+
     /**
      * Recipient email addresses separated with "," or ";" symbol.
      * <p>

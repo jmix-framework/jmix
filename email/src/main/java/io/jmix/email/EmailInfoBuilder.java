@@ -135,7 +135,7 @@ public class EmailInfoBuilder {
     }
 
     /**
-     * @param from "from" address. If null, a default provided by {@code cuba.email.fromAddress} app property is used.
+     * @param from "from" address. If null, a default provided by {@code jmix.email.fromAddress} app property is used.
      */
     public EmailInfoBuilder setFrom(String from) {
         this.from = from;

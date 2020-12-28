@@ -61,6 +61,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Deprecated
 public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<V>, Collection<V>, Collection<V>>
@@ -583,6 +584,11 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
                 }
 
                 newValue = modelValue;
+
+                // Options after refresh reloads items without changes made in TokenList,
+                // so for values in nested container we need to set master-entity reference
+                // due to ContainerValueSource will ignore items if they were in previous value
+                updateMasterRefIfOptionsRefreshed(newValue);
             } else {
                 if (newValue == null) {
                     newValue = new ArrayList<>();
@@ -599,27 +605,91 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
         }
     }
 
+    protected boolean isRefreshOptionsEnabled() {
+        return getOptions() != null && isRefreshOptionsOnLookupClose();
+    }
+
     protected Collection<V> refreshValueIfNeeded() {
         EntityOptions<V> options = (EntityOptions<V>) getOptions();
         Collection<V> valueSourceValue = getValueSourceValue();
 
-        if (options == null || !isRefreshOptionsOnLookupClose()) {
+        if (options == null || !isRefreshOptionsEnabled()) {
             return valueSourceValue;
         }
 
         options.refresh();
 
-        for (V value : valueSourceValue) {
-            options.getOptions()
-                    .filter(option -> Objects.equals(EntityValues.getId(option), EntityValues.getId(value)))
-                    .findFirst()
-                    .ifPresent(option -> {
-                        valueSourceValue.remove(value);
-                        valueSourceValue.add(option);
-                    });
+        if (getValueSource() instanceof LegacyCollectionDsValueSource) {
+            List<V> optionItems = options.getOptions().collect(Collectors.toList());
+            List<V> copiedValue = new ArrayList<>(valueSourceValue);
+
+            // replace items with new for legacy datasource
+            for (V value : copiedValue) {
+                optionItems.stream()
+                        .filter(option -> Objects.equals(EntityValues.getId(value), EntityValues.getId(option)))
+                        .findFirst()
+                        .ifPresent(option -> {
+                            valueSourceValue.remove(value);
+                            valueSourceValue.add(option);
+                        });
+            }
         }
 
         return valueSourceValue;
+    }
+
+    /**
+     * Sets master-entity reference to the value and remove master-entity reference
+     * from options if they are not in nested container.
+     *
+     * @param value value items
+     */
+    protected void updateMasterRefIfOptionsRefreshed(Collection<V> value) {
+        if (!isRefreshOptionsEnabled()) {
+            return;
+        }
+
+        if (!(getValueSource() instanceof ContainerValueSource)) {
+            return;
+        }
+
+        EntityOptions<V> options = (EntityOptions<V>) getOptions();
+        if (options == null) {
+            return;
+        }
+
+        ContainerValueSource valueSource = (ContainerValueSource) getValueSource();
+        MetaPropertyPath mpp = valueSource.getMetaPropertyPath();
+
+        MetaProperty inverseProperty = mpp.getMetaProperty().getInverse();
+        Object masterEntity = valueSource.getItem();
+
+        if (inverseProperty == null || masterEntity == null) {
+            return;
+        }
+
+        List<V> optionItems = getOptions().getOptions().collect(Collectors.toList());
+        for (V option : optionItems) {
+            // skip all options that did not load master-reference
+            if (!entityStates.isLoaded(option, inverseProperty.getName())) {
+                continue;
+            }
+
+            if (value.contains(option)) {
+                // reset master-entity reference
+                EntityValues.setValue(option, inverseProperty.getName(), masterEntity);
+            } else {
+                Entity ref = EntityValues.getValue(option, inverseProperty.getName());
+                if (ref == null) {
+                    continue;
+                }
+
+                // remove ref to the master entity if option is not in value
+                if (Objects.equals(EntityValues.getId(ref), EntityValues.getId(masterEntity))) {
+                    EntityValues.setValue(option, inverseProperty.getName(), null);
+                }
+            }
+        }
     }
 
     protected Collection<V> getValueSourceValue() {

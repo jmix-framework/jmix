@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
+import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Entity;
 import io.jmix.core.MetadataTools;
@@ -154,11 +155,15 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
 
         datasource.mute();
 
+        boolean modified = false;
+
         MetaProperty inverseProperty = getInverseProperty();
         if (CollectionUtils.isNotEmpty(value)) {
             for (V v : value) {
                 if (CollectionUtils.isEmpty(oldValue) || !oldValue.contains(v)) {
                     EntityValues.setValue(v, inverseProperty.getName(), getMaster().getItem());
+                    ((AbstractDatasource) datasource).getItemsToUpdate().add(v);
+                    modified = true;
                 }
             }
         }
@@ -167,8 +172,14 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
             for (V v : oldValue) {
                 if (CollectionUtils.isEmpty(value) || !value.contains(v)) {
                     EntityValues.setValue(v, inverseProperty.getName(), null);
+                    ((AbstractDatasource) datasource).getItemsToUpdate().add(v);
+                    modified = true;
                 }
             }
+        }
+
+        if (modified) {
+            ((AbstractDatasource) datasource).setModified(true);
         }
 
         datasource.unmute(CollectionDatasource.UnmuteEventsMode.FIRE_REFRESH_EVENT);

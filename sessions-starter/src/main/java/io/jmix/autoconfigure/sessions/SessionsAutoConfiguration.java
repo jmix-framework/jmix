@@ -18,7 +18,9 @@ package io.jmix.autoconfigure.sessions;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.sessions.SessionsConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.session.SessionAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 
 @Configuration
 @Import({CoreConfiguration.class, SessionsConfiguration.class})
+@AutoConfigureAfter(SessionAutoConfiguration.class)
 public class SessionsAutoConfiguration {
 
     @Bean

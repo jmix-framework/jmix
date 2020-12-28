@@ -17,6 +17,7 @@
 package io.jmix.security.model;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +27,13 @@ import java.util.function.Predicate;
  * Defines a constraint that restricts data a user can read or modify. There are two row-level policy types: in-memory
  * and JPQL.
  */
-public class RowLevelPolicy {
+public class RowLevelPolicy implements Serializable {
 
     private String entityName;
 
     private RowLevelPolicyAction action;
 
-    private Predicate<Object> predicate;
+    private transient Predicate<Object> predicate;
 
     private String whereClause;
 

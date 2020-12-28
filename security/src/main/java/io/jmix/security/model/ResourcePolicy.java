@@ -16,6 +16,7 @@
 
 package io.jmix.security.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,8 @@ import java.util.Map;
  *     <li>effect = "allow"</li>
  * </ul>
  */
-public class ResourcePolicy {
+public class ResourcePolicy implements Serializable {
+    private static final long serialVersionUID = -6635135023832164413L;
 
     public static final String DEFAULT_EFFECT = ResourcePolicyEffect.ALLOW;
     public static final String DEFAULT_ACTION = "access";

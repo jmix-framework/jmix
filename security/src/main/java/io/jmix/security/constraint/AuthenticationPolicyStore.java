@@ -111,6 +111,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
     }
 
     public static class RowLevelPolicyByEntityIndex implements RowLevelPolicyIndex {
+        private static final long serialVersionUID = -783139963235923669L;
+
         protected Map<String, List<RowLevelPolicy>> policyByEntity;
 
         @Override
@@ -125,6 +127,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
     }
 
     public static class EntityResourcePolicyByEntityIndex implements ResourcePolicyIndex {
+        private static final long serialVersionUID = -8714429649726170927L;
+
         protected Map<String, List<ResourcePolicy>> policyByEntity;
 
         @Override
@@ -140,6 +144,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
     }
 
     public static class EntityResourcePolicyByAttributesIndex implements ResourcePolicyIndex {
+        private static final long serialVersionUID = 3834313189763360074L;
+
         protected Map<String, List<ResourcePolicy>> policyByAttributes;
 
         @Override
@@ -155,6 +161,8 @@ public class AuthenticationPolicyStore implements PolicyStore {
     }
 
     public static class SpecificResourcePolicyByNameIndex implements ResourcePolicyIndex {
+        private static final long serialVersionUID = 4454925194590197149L;
+
         protected Map<String, List<ResourcePolicy>> policyByName;
 
         @Override

@@ -69,6 +69,8 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     }
 
     public static class ScreenResourcePolicyByIdIndex implements ResourcePolicyIndex {
+        private static final long serialVersionUID = -2668694174861058682L;
+
         protected Map<String, List<ResourcePolicy>> policyById;
 
         @Override
@@ -84,6 +86,8 @@ public class AuthenticationUiPolicyStore implements UiPolicyStore {
     }
 
     public static class MenuResourcePolicyByIdIndex implements ResourcePolicyIndex {
+        private static final long serialVersionUID = 5018128694788321319L;
+
         protected Map<String, List<ResourcePolicy>> policyById;
 
         @Override

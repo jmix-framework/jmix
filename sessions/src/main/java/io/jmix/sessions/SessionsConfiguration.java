@@ -55,7 +55,8 @@ public class SessionsConfiguration<S extends Session> {
     }
 
     @Bean
-    public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> springSessionRepositoryFilter(
+    @Primary
+    public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> jmixSessionRepositoryFilter(
             @Autowired SessionRepository<S> sessionRepository,
             @Autowired ApplicationEventPublisher applicationEventPublisher) {
         SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> sessionRepositoryFilter

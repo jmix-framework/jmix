@@ -169,7 +169,11 @@ public class RichTextAreaImpl extends AbstractField<JmixRichTextArea, String, St
     @Nullable
     @Override
     protected String sanitize(@Nullable String html) {
-        String sanitizedValue = super.sanitize(html);
+        if (!isHtmlSanitizerEnabled() || component.isLastUserActionSanitized()) {
+            return html;
+        }
+
+        String sanitizedValue = getHtmlSanitizer().sanitize(html);
         return postSanitize(sanitizedValue);
     }
 

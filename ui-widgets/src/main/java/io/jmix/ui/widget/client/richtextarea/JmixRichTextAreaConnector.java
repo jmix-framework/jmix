@@ -16,10 +16,10 @@
 
 package io.jmix.ui.widget.client.richtextarea;
 
-import io.jmix.ui.widget.JmixRichTextArea;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.richtextarea.RichTextAreaConnector;
 import com.vaadin.shared.ui.Connect;
+import io.jmix.ui.widget.JmixRichTextArea;
 
 @Connect(value = JmixRichTextArea.class, loadStyle = Connect.LoadStyle.LAZY)
 public class JmixRichTextAreaConnector extends RichTextAreaConnector {
@@ -52,5 +52,17 @@ public class JmixRichTextAreaConnector extends RichTextAreaConnector {
         if (stateChangeEvent.hasPropertyChanged("tabIndex")) {
             getWidget().setTabIndex(getState().tabIndex);
         }
+    }
+
+    @Override
+    public void sendValueChange() {
+        String widgetValue = getWidget().getSanitizedValue();
+        if (!hasStateChanged(widgetValue)) {
+            return;
+        }
+
+        getRpcProxy(JmixRichTextAreaServerRpc.class)
+                .setText(widgetValue, ((JmixRichTextToolbarWidget) getWidget().formatter).isLastUserActionSanitized());
+        getState().value = widgetValue;
     }
 }

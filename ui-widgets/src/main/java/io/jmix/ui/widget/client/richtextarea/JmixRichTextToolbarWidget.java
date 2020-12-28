@@ -16,6 +16,9 @@
 
 package io.jmix.ui.widget.client.richtextarea;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.UIObject;
 import com.vaadin.client.ui.richtextarea.VRichTextToolbar;
@@ -23,12 +26,15 @@ import com.vaadin.client.ui.richtextarea.VRichTextToolbar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JmixRichTextToolbarWidget extends VRichTextToolbar{
+public class JmixRichTextToolbarWidget extends VRichTextToolbar {
+
+    protected boolean lastUserActionSanitized;
+
     public JmixRichTextToolbarWidget(RichTextArea richText) {
         super(richText);
     }
 
-    public void setLocaleMap(Map<String,String> localeMap) {
+    public void setLocaleMap(Map<String, String> localeMap) {
         Map<String, UIObject> locales = new HashMap<>();
         locales.put(JmixRichTextAreaState.RICH_TEXT_AREA_BOLD_LABEL, bold);
         locales.put(JmixRichTextAreaState.RICH_TEXT_AREA_ITALIC_LABEL, italic);
@@ -95,5 +101,55 @@ public class JmixRichTextToolbarWidget extends VRichTextToolbar{
         foreColors.addItem(localeMap.get(JmixRichTextAreaState.RICH_TEXT_AREA_BLUE_LABEL), "blue");
 
         foreColors.setTabIndex(-1);
+    }
+
+    public boolean isLastUserActionSanitized() {
+        return lastUserActionSanitized;
+    }
+
+    @Override
+    protected EventHandler createEventHandler() {
+        return new JmixEventHandler();
+    }
+
+    protected class JmixEventHandler extends EventHandler {
+
+        @Override
+        public void onChange(ChangeEvent event) {
+            Object sender = event.getSource();
+            lastUserActionSanitized = sender == backColors
+                    || sender == foreColors
+                    || sender == fonts
+                    || sender == fontSizes;
+
+            super.onChange(event);
+        }
+
+        @Override
+        public void onClick(ClickEvent event) {
+            Object sender = event.getSource();
+            lastUserActionSanitized = sender == bold
+                    || sender == italic
+                    || sender == underline
+                    || sender == subscript
+                    || sender == superscript
+                    || sender == strikethrough
+                    || sender == indent
+                    || sender == outdent
+                    || sender == justifyLeft
+                    || sender == justifyCenter
+                    || sender == justifyRight
+                    || sender == hr
+                    || sender == ol
+                    || sender == ul;
+
+            super.onClick(event);
+        }
+
+        @Override
+        public void onKeyUp(KeyUpEvent event) {
+            lastUserActionSanitized = false;
+            super.onKeyUp(event);
+        }
     }
 }

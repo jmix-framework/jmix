@@ -16,12 +16,35 @@
 
 package io.jmix.ui.widget;
 
-import io.jmix.ui.widget.client.richtextarea.JmixRichTextAreaState;
 import com.vaadin.ui.RichTextArea;
+import elemental.json.Json;
+import io.jmix.ui.widget.client.richtextarea.JmixRichTextAreaServerRpc;
+import io.jmix.ui.widget.client.richtextarea.JmixRichTextAreaState;
 
 import java.util.Map;
 
 public class JmixRichTextArea extends RichTextArea {
+
+    protected boolean lastUserActionSanitized;
+
+    protected JmixRichTextAreaServerRpc rpc = new JmixRichTextAreaServerRpc() {
+        @Override
+        public void setText(String text, boolean lastUserActionSanitized) {
+            setLastUserActionSanitized(lastUserActionSanitized);
+            updateDiffstate("value", Json.create(text));
+            if (!setValue(text, true)) {
+                // The value was not updated, this could happen if the field has
+                // been set to readonly on the server and the client does not
+                // know about it yet. Must re-send the correct state back.
+                markAsDirty();
+            }
+        }
+    };
+
+    public JmixRichTextArea() {
+        registerRpc(rpc);
+        setValue("");
+    }
 
     @Override
     public JmixRichTextAreaState getState() {
@@ -30,5 +53,13 @@ public class JmixRichTextArea extends RichTextArea {
 
     public void setLocaleMap(Map<String, String> localeMap) {
         getState().localeMap = localeMap;
+    }
+
+    public void setLastUserActionSanitized(boolean lastUserActionSanitized) {
+        this.lastUserActionSanitized = lastUserActionSanitized;
+    }
+
+    public boolean isLastUserActionSanitized() {
+        return lastUserActionSanitized;
     }
 }

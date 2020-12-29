@@ -44,12 +44,12 @@ public class RestTokenEnhancer implements TokenEnhancer {
         SessionData sessionData = sessionDataFactory.getObject();
         HttpSession session = sessionData.getHttpSession();
 
-        additionalInformation.put(OAuth2AccessTokenSessionIdResolver.SESSION_ID, session.getId());
+        additionalInformation.put("OAuth2.SESSION_ID", session.getId());
 
         DefaultOAuth2AccessToken mutableAccessToken = (DefaultOAuth2AccessToken) accessToken;
         mutableAccessToken.setAdditionalInformation(additionalInformation);
 
-        sessionData.setAttribute(OAuth2AccessTokenSessionIdResolver.ACCESS_TOKEN, accessToken.getValue());
+        sessionData.setAttribute("OAuth2.ACCESS_TOKEN", accessToken.getValue());
 
         return accessToken;
     }

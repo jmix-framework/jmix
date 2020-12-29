@@ -24,15 +24,12 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
-    //api 'io.jmix.data:jmix-data' // TODO should not depend on data
-    api 'io.jmix.sessions:jmix-sessions'
 
     api 'org.springframework.security:spring-security-core'
     api 'org.springframework.security:spring-security-config'
     api 'org.springframework.security:spring-security-web'
     api 'org.springframework:spring-webmvc'
     api 'org.springframework:spring-context'
-    api 'org.springframework.session:spring-session-core'
 
     implementation 'commons-fileupload:commons-fileupload'
 
@@ -40,11 +37,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-
-    implementation ('org.springframework.ldap:spring-ldap-core') {
-        // removed because it defines its own Log4j LogFactory via JDK services mechanism
-        exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
-    }
 
     implementation'com.google.code.gson:gson'
     implementation 'org.springframework.security.oauth:spring-security-oauth2'

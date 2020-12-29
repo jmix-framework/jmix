@@ -57,16 +57,10 @@ public class SessionsConfiguration<S extends Session> {
     @Bean
     @Primary
     public SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> jmixSessionRepositoryFilter(
-            @Autowired SessionRepository<S> sessionRepository,
-            @Autowired ApplicationEventPublisher applicationEventPublisher) {
+            @Autowired SessionRepository<S> sessionRepository) {
         SessionRepositoryFilter<SessionRepositoryWrapper<S>.SessionWrapper> sessionRepositoryFilter
                 = new SessionRepositoryFilter<>(sessionRepositoryWrapper(sessionRepository));
         sessionRepositoryFilter.setHttpSessionIdResolver(sessionIdResolver);
         return sessionRepositoryFilter;
-    }
-
-    @Bean("sessions_sessionIdResolver")
-    public HttpSessionIdResolver sessionIdResolver() {
-        return new CookieHttpSessionIdResolver();
     }
 }

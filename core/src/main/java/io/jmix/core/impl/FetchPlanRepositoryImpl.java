@@ -259,15 +259,16 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         } else if (FetchPlan.INSTANCE_NAME.equals(name)) {
             addAttributesToInstanceNameFetchPlan(metaClass, fetchPlanBuilder, info, visited);
         } else if (FetchPlan.BASE.equals(name)) {
-            addAttributesToInstanceNameFetchPlan(metaClass, fetchPlanBuilder, info, visited);
-            addAttributesToLocalFetchPlan(metaClass, fetchPlanBuilder);
+            addAttributesToBaseFetchPlan(metaClass, fetchPlanBuilder, info, visited);
         } else {
             throw new UnsupportedOperationException("Unsupported default fetch plan: " + name);
         }
 
-        storeFetchPlan(metaClass, fetchPlanBuilder.build());
+        FetchPlan fetchPlan = fetchPlanBuilder.build();
 
-        return fetchPlanBuilder.build();
+        storeFetchPlan(metaClass, fetchPlan);
+
+        return fetchPlan;
     }
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
@@ -278,44 +279,78 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
         }
     }
 
-    protected void addAttributesToInstanceNameFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder, FetchPlanLoader.FetchPlanInfo info, Set<FetchPlanLoader.FetchPlanInfo> visited) {
-        Collection<MetaProperty> metaProperties = metadataTools.getInstanceNameRelatedProperties(metaClass, true);
-        for (MetaProperty metaProperty : metaProperties) {
-            if (metadataTools.isPersistent(metaProperty)) {
-                addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlanBuilder, metaProperty);
+    protected void addAttributesToInstanceNameFetchPlan(MetaClass metaClass,
+                                                        FetchPlanBuilder fetchPlanBuilder,
+                                                        FetchPlanLoader.FetchPlanInfo info,
+                                                        Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
+            if (metaProperty.getRange().isClass()) {
+                addClassAttributeWithFetchPlan(metaProperty, FetchPlan.INSTANCE_NAME, fetchPlanBuilder, info, visited);
             } else {
-                List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
-                for (String dependsOnPropertyName : dependsOnProperties) {
-                    MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
-                    if (metadataTools.isPersistent(relatedProperty)) {
-                        addPersistentAttributeToInstanceNameFetchPlan(metaClass, visited, info, fetchPlanBuilder, relatedProperty);
-                    }
-                }
+                fetchPlanBuilder.add(metaProperty.getName());
             }
         }
     }
 
-    protected void addPersistentAttributeToInstanceNameFetchPlan(MetaClass metaClass, Set<FetchPlanLoader.FetchPlanInfo> visited,
-                                                                 FetchPlanLoader.FetchPlanInfo info, FetchPlanBuilder fetchPlanBuilder, MetaProperty metaProperty) {
-        if (metaProperty.getRange().isClass()
-                && !metaProperty.getRange().getCardinality().isMany()) {
+    protected void addAttributesToBaseFetchPlan(MetaClass metaClass,
+                                                FetchPlanBuilder fetchPlanBuilder,
+                                                FetchPlanLoader.FetchPlanInfo info,
+                                                Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        for (MetaProperty metaProperty : metaClass.getProperties()) {
+            if (metadataTools.isPersistent(metaProperty)) {
+                if (!metaProperty.getRange().isClass()) {
+                    fetchPlanBuilder.add(metaProperty.getName());
+                } else if (metadataTools.isEmbedded(metaProperty)) {
+                    addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
+                }
+            }
+        }
 
+        for (MetaProperty metaProperty : getInstanceNamePersistentProperties(metaClass)) {
+            if (metaProperty.getRange().isClass()) {
+                addClassAttributeWithFetchPlan(metaProperty, FetchPlan.BASE, fetchPlanBuilder, info, visited);
+            }
+        }
+    }
+
+    protected void addClassAttributeWithFetchPlan(MetaProperty metaProperty,
+                                                  String fetchPlanName,
+                                                  FetchPlanBuilder fetchPlanBuilder,
+                                                  FetchPlanLoader.FetchPlanInfo info,
+                                                  Set<FetchPlanLoader.FetchPlanInfo> visited) {
+        if (metaProperty.getRange().isClass()) {
             Map<String, FetchPlan> fetchPlans = storage.get(metaProperty.getRange().asClass());
-            FetchPlan refInstanceNameFetchPlan = (fetchPlans == null ? null : fetchPlans.get(FetchPlan.INSTANCE_NAME));
+            FetchPlan refInstanceNameFetchPlan = fetchPlans == null ? null : fetchPlans.get(fetchPlanName);
 
             if (refInstanceNameFetchPlan != null) {
                 fetchPlanBuilder.add(metaProperty.getName(), b -> b.addFetchPlan(refInstanceNameFetchPlan));
             } else {
                 visited.add(info);
                 FetchPlan referenceInstanceNameFetchPlan = deployDefaultFetchPlan(metaProperty.getRange().asClass(),
-                        FetchPlan.INSTANCE_NAME, visited);
+                        fetchPlanName, visited);
                 visited.remove(info);
 
                 fetchPlanBuilder.add(metaProperty.getName(), b -> b.addFetchPlan(referenceInstanceNameFetchPlan));
             }
-        } else {
-            fetchPlanBuilder.add(metaProperty.getName());
         }
+    }
+
+    protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {
+        Collection<MetaProperty> metaProperties = new ArrayList<>();
+        for (MetaProperty metaProperty : metadataTools.getInstanceNameRelatedProperties(metaClass, true)) {
+            if (metadataTools.isPersistent(metaProperty)) {
+                metaProperties.add(metaProperty);
+            } else {
+                List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
+                for (String dependsOnPropertyName : dependsOnProperties) {
+                    MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
+                    if (metadataTools.isPersistent(relatedProperty)) {
+                        metaProperties.add(relatedProperty);
+                    }
+                }
+            }
+        }
+        return metaProperties;
     }
 
     public void deployFetchPlans(String resourceUrl) {

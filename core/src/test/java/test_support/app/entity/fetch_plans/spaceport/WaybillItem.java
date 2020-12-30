@@ -18,11 +18,15 @@ package test_support.app.entity.fetch_plans.spaceport;
 
 import io.jmix.core.entity.annotation.EmbeddedParameters;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
+import org.apache.commons.lang3.LocaleUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.UUID;
 
 @Table(name = "ST_WAYBILL_ITEM")
@@ -60,6 +64,10 @@ public class WaybillItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WAYBILL_ID")
     private Waybill waybill;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "WAYBILL_CATEGORY_ID")
+    private WaybillCategory waybillCategory;
 
     public UUID getId() {
         return id;
@@ -115,5 +123,19 @@ public class WaybillItem {
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    public WaybillCategory getWaybillCategory() {
+        return waybillCategory;
+    }
+
+    public void setWaybillCategory(WaybillCategory waybillCategory) {
+        this.waybillCategory = waybillCategory;
+    }
+
+    @InstanceName
+    @DependsOnProperties({"waybillCategory", "number"})
+    public String getCaption() {
+        return "Item: " + number + ", category: " + (waybillCategory == null ? "" : waybillCategory.getName());
     }
 }

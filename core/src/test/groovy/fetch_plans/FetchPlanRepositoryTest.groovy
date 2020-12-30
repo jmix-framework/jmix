@@ -27,6 +27,7 @@ import test_support.app.entity.Pet
 import test_support.app.entity.fetch_plans.ChildTestEntity
 import test_support.app.entity.fetch_plans.ParentTestEntity
 import test_support.app.entity.fetch_plans.spaceport.Waybill
+import test_support.app.entity.fetch_plans.spaceport.WaybillItem
 
 @ContextConfiguration(classes = [CoreConfiguration, TestAddon1Configuration, TestAppConfiguration])
 class FetchPlanRepositoryTest extends Specification {
@@ -71,7 +72,7 @@ class FetchPlanRepositoryTest extends Specification {
         !parentPlan.getProperty("youngerChildren").fetchPlan.containsProperty("name")
     }
 
-    def "fetchplan correctly complemented by additional properties"() {
+    def "fetch plan correctly complemented by additional properties"() {
 
         setup:
 
@@ -80,7 +81,7 @@ class FetchPlanRepositoryTest extends Specification {
 
         expect:
 
-        plane.getProperty("items").getFetchPlan().getProperties().size() == 6;
+        plane.getProperty("items").getFetchPlan().getProperties().size() == 7;
         plane.getProperty("items").getFetchPlan().containsProperty("dim");
 
     }
@@ -103,4 +104,40 @@ class FetchPlanRepositoryTest extends Specification {
         localFetchPlan.containsProperty("deletedBy");
 
     }
+
+    def "base fetch plan contains embedded properties"() {
+        given:
+
+        def baseFetchPlan = repository.getFetchPlan(WaybillItem.class, FetchPlan.BASE)
+
+        expect:
+
+        baseFetchPlan.containsProperty("id")
+        baseFetchPlan.containsProperty("number")
+        baseFetchPlan.containsProperty("weight")
+        baseFetchPlan.containsProperty("dim")
+
+        def embeddedFetchPlan = baseFetchPlan.getProperty("dim").getFetchPlan()
+        embeddedFetchPlan.containsProperty("length")
+        embeddedFetchPlan.containsProperty("width")
+        embeddedFetchPlan.containsProperty("height")
+    }
+
+    def "base fetch plan contains references properties with base fetch plan"() {
+        given:
+
+        def baseFetchPlan = repository.getFetchPlan(WaybillItem.class, FetchPlan.BASE)
+
+        expect:
+
+        baseFetchPlan.containsProperty("id")
+        baseFetchPlan.containsProperty("number")
+        baseFetchPlan.containsProperty("weight")
+        baseFetchPlan.containsProperty("waybillCategory")
+
+        def referenceFetchPlan = baseFetchPlan.getProperty("waybillCategory").getFetchPlan()
+        referenceFetchPlan.containsProperty("name")
+        referenceFetchPlan.containsProperty("code")
+    }
 }
+

@@ -134,6 +134,6 @@ class GroupTableLoadColumnsByIncludeTest extends UiScreenSpec {
         def columnList = groupTable.getColumns()
 
         then:
-        columnList.size() == 11
+        columnList.size() == 12
     }
 }

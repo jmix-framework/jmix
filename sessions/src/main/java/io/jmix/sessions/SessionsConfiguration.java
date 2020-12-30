@@ -21,12 +21,14 @@ import io.jmix.core.annotation.JmixModule;
 import io.jmix.sessions.validators.VaadinSessionAttributesValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.session.Session;
 import org.springframework.session.SessionRepository;
-import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 

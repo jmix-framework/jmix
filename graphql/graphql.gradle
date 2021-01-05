@@ -24,6 +24,11 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
+    // todo remove after filter rework
+    api 'io.jmix.rest:jmix-rest'
+
+    // todo move to bom
+    implementation 'com.graphql-java-kickstart:graphql-java-servlet:9.1.0'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

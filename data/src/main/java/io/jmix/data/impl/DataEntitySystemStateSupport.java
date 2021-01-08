@@ -16,14 +16,12 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.Entity;
 import io.jmix.core.EntityStates;
 import io.jmix.core.EntitySystemStateSupport;
-import io.jmix.core.Entity;
 import io.jmix.core.Metadata;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetadataObject;
 import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
@@ -34,7 +32,7 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
 
 public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
 
@@ -59,57 +57,43 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
 
         if (src instanceof FetchGroupTracker && dst instanceof FetchGroupTracker) {
             FetchGroup srcFetchGroup = ((FetchGroupTracker) src)._persistence_getFetchGroup();
-            if (!entityStates.isNew(src) && srcFetchGroup == null) {
-                // case when merging entity returned from DataManager.commit
-                srcFetchGroup = suggestFetchGroup(src);
-            }
             FetchGroup dstFetchGroup = ((FetchGroupTracker) dst)._persistence_getFetchGroup();
-            if (dstFetchGroup == null) {
+            if (dstFetchGroup == null && entityStates.isNew(dst)) {
                 // dst is a new entity replaced by committed one
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(srcFetchGroup);
             } else {
                 ((FetchGroupTracker) dst)._persistence_setFetchGroup(mergeFetchGroups(srcFetchGroup, dstFetchGroup));
             }
         }
+    }
 
+    @Override
+    public void mergeLazyLoadingState(Entity src, Entity dst, BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
         boolean srcNew = entityStates.isNew(src);
         MetaClass metaClass = metadata.getClass(src.getClass());
+
         for (MetaProperty property : metaClass.getProperties()) {
-            //copy value holders to support lazy loading
             String propertyName = property.getName();
-            if (property.getRange().isClass() && (!(entityStates.isLoaded(src, propertyName) || srcNew))) {
-                if (entityStates.isLoaded(dst, propertyName)
-                        && EntityValues.getValue(dst, propertyName) != null) {
-                    continue;
-                }
-                try {
-                    Field declaredField = dst.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
-                    boolean accessible = declaredField.isAccessible();
-                    declaredField.setAccessible(true);
-                    declaredField.set(dst, declaredField.get(src));
-                    declaredField.setAccessible(accessible);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+            if (property.getRange().isClass()) {
+                if (!srcNew && !entityStates.isLoaded(src, propertyName)) {
+                    if (property.getRange().getCardinality().isMany()) {
+                        replaceCollectionField(src, dst, propertyName, collectionWrapper);
+                    } else {
+                        replaceValueHolderField(src, dst, propertyName);
+                    }
                 }
             }
         }
     }
 
-    protected FetchGroup suggestFetchGroup(Entity entity) {
-        Set<String> attributes = metadata.getClass(entity.getClass()).getProperties().stream()
-                .filter(metaProperty ->
-                        !metaProperty.getRange().isClass() || entityStates.isLoaded(entity, metaProperty.getName()))
-                .map(MetadataObject::getName)
-                .collect(Collectors.toSet());
-
-        return new JmixEntityFetchGroup(new EntityFetchGroup(attributes), entityStates);
-    }
-
+    @Nullable
     protected FetchGroup mergeFetchGroups(@Nullable FetchGroup first, @Nullable FetchGroup second) {
         Set<String> attributes = new HashSet<>();
-        if (first != null)
-            attributes.addAll(getFetchGroupAttributes(first));
-        if (second != null)
-            attributes.addAll(getFetchGroupAttributes(second));
+        if (first == null || second == null) {
+            return null;
+        }
+        attributes.addAll(getFetchGroupAttributes(first));
+        attributes.addAll(getFetchGroupAttributes(second));
         return new JmixEntityFetchGroup(new EntityFetchGroup(attributes), entityStates);
     }
 
@@ -127,6 +111,30 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
             } else {
                 set.add(prefix + attribute);
             }
+        }
+    }
+
+    protected void replaceValueHolderField(Entity src, Entity dst, String propertyName) {
+        try {
+            Field declaredField = dst.getClass().getDeclaredField(String.format("_persistence_%s_vh", propertyName));
+            boolean accessible = declaredField.isAccessible();
+            declaredField.setAccessible(true);
+            declaredField.set(dst, declaredField.get(src));
+            declaredField.setAccessible(accessible);
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+        }
+    }
+
+    protected void replaceCollectionField(Entity src, Entity dst, String propertyName,
+                                          BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
+        try {
+            Field declaredField = dst.getClass().getDeclaredField(propertyName);
+            boolean accessible = declaredField.isAccessible();
+            declaredField.setAccessible(true);
+            //noinspection unchecked
+            declaredField.set(dst, collectionWrapper.apply((Collection<Object>) declaredField.get(src), dst));
+            declaredField.setAccessible(accessible);
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
         }
     }
 }

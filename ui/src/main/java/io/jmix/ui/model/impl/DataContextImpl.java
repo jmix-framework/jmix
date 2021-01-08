@@ -328,6 +328,8 @@ public class DataContextImpl implements DataContext {
                 }
             }
         }
+
+        mergeLazyLoadingState(srcEntity, dstEntity, options);
     }
 
     protected void setPropertyValue(Object entity, MetaProperty property, @Nullable Object value) {
@@ -369,6 +371,18 @@ public class DataContextImpl implements DataContext {
         if (isRoot || options.isFresh()) {
             entitySystemStateSupport.mergeSystemState((Entity) srcEntity, (Entity) dstEntity);
         }
+    }
+
+    protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity, MergeOptions options) {
+        entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, (collection, entity) -> {
+                    if (collection instanceof List) {
+                        return createObservableList((List<Object>) collection, entity);
+                    } else if (collection instanceof Set) {
+                        return createObservableSet((Set<Object>) collection, entity);
+                    }
+                    return collection;
+                }
+        );
     }
 
     protected void mergeList(List<Object> list, Object managedEntity, MetaProperty property, boolean replace,

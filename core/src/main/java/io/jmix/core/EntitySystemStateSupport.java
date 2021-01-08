@@ -18,6 +18,9 @@ package io.jmix.core;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.function.BiFunction;
+
 @Component("core_EntitySystemStateSupport")
 public class EntitySystemStateSupport {
 
@@ -27,5 +30,8 @@ public class EntitySystemStateSupport {
 
     public void mergeSystemState(Entity src, Entity dst) {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
+    }
+
+    public void mergeLazyLoadingState(Entity src, Entity dst, BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
     }
 }

@@ -267,6 +267,11 @@ public class WebBackgroundWorker implements BackgroundWorker {
 
             unregister();
 
+            // As "handleDone()" can be processed under BackgroundTask thread or under UI thread from which
+            // the task starts, we should save previous security context (that can be null)
+            // to restore it when "done()" is finished.
+            Authentication previousAuth = SecurityContextHelper.getAuthentication();
+
             try {
                 SecurityContextHelper.setAuthentication(authentication);
 
@@ -297,7 +302,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
                     }
                 }
             } finally {
-                SecurityContextHelper.setAuthentication(null);
+                SecurityContextHelper.setAuthentication(previousAuth);
 
                 if (finalizer != null) {
                     finalizer.run();
@@ -401,7 +406,7 @@ public class WebBackgroundWorker implements BackgroundWorker {
             return finalizer;
         }
 
-        public void setTaskHandler(TaskHandlerImpl<T,V> taskHandler) {
+        public void setTaskHandler(TaskHandlerImpl<T, V> taskHandler) {
             this.taskHandler = taskHandler;
         }
 

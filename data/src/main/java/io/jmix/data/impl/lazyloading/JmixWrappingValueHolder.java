@@ -28,6 +28,7 @@ import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.UUID;
 
 public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
@@ -62,7 +63,7 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
             synchronized (this) {
                 MetaClass metaClass = metadata.getClass(valueClass);
                 LoadContext lc = new LoadContext(metaClass);
-                lc.setId(entityId);
+                lc.setId(convertId(entityId, metaClass));
                 PreservedLoadContext plc = getPreservedLoadContext();
                 lc.setSoftDeletion(false);
                 lc.setHints(plc.getHints());
@@ -127,6 +128,14 @@ public class JmixWrappingValueHolder extends JmixAbstractValueHolder {
             isInstantiated = true;
         }
         return value;
+    }
+
+    protected Object convertId(Object entityId, MetaClass metaClass) {
+        MetaProperty primaryKeyProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+        if (primaryKeyProperty != null && UUID.class.equals(primaryKeyProperty.getJavaType())) {
+            return entityId instanceof String ? UuidProvider.fromString((String) entityId) : entityId;
+        }
+        return entityId;
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {

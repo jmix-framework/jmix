@@ -23,6 +23,7 @@ import javassist.NotFoundException
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 
 import static io.jmix.gradle.DescriptorGenerationUtils.CONVERTERS_LIST_PROPERTY
@@ -76,7 +77,7 @@ class EnhancingAction implements Action<Task> {
             classesInfo.converters.add(it)
         }
 
-        collectEntitiesFromClasspath(project, sourceSet, classesInfo)
+        collectEntitiesFromClasspathes(project, sourceSet, classesInfo)
 
         project.logger.lifecycle("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
                 "Converters: ${classesInfo.getConverters()}")
@@ -109,28 +110,38 @@ class EnhancingAction implements Action<Task> {
         }
     }
 
-    protected void collectEntitiesFromClasspath(Project project, sourceSet, ClassesInfo classesInfo) {
-        def runtimeCP = sourceSet.runtimeClasspath.asList()
-        def jars = sourceSet.compileClasspath.asList().findAll { runtimeCP.contains(it) && it.name.endsWith('.jar') }
+    protected void collectEntitiesFromClasspathes(Project project, sourceSet, ClassesInfo classesInfo) {
+        ClassPool classPool = createClassPool(project, sourceSet)
+
+        ClassesInfo compileClasses = collectEntitiesFromClasspath(project, sourceSet.compileClasspath, classPool)
+        ClassesInfo runtimeClasses = collectEntitiesFromClasspath(project, sourceSet.runtimeClasspath, classPool)
+
+        classesInfo.addClassesIntersection(runtimeClasses, compileClasses)
+    }
+
+    protected ClassesInfo collectEntitiesFromClasspath(Project project, FileCollection currentClasspath, ClassPool classPool) {
+        ClassesInfo classesInfo = new ClassesInfo()
+
+        def jars = currentClasspath.asList().findAll { it.name.endsWith('.jar') }
         jars.each { lib ->
-            project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
-                Node doc = new XmlParser().parse(it)
-                def docPu = doc.'persistence-unit'[0]
-                List<String> currentEntities = docPu.'class'.collect { it.text() }
-                String storeName = docPu.@name
-                classesInfo.classesByStores[storeName ?: MAIN_STORE_NAME].addAll(currentEntities)
+            if (lib.exists()) {
+                project.zipTree(lib).matching { include "**/*persistence.xml" }.each {
+                    Node doc = new XmlParser().parse(it)
+                    def docPu = doc.'persistence-unit'[0]
+                    List<String> currentEntities = docPu.'class'.collect { it.text() }
+                    String storeName = docPu.@name
+                    classesInfo.classesByStores[storeName ?: MAIN_STORE_NAME].addAll(currentEntities)
 
-                String converters = docPu.'properties'.'*'.find { it.@name == CONVERTERS_LIST_PROPERTY }?.@value
+                    String converters = docPu.'properties'.'*'.find { it.@name == CONVERTERS_LIST_PROPERTY }?.@value
 
-                converters?.split(';')?.each { classesInfo.converters.add(it) }
+                    converters?.split(';')?.each { classesInfo.converters.add(it) }
 
-                project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+                    project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+                }
             }
         }
 
-        def folders = sourceSet.compileClasspath.asList().findAll { runtimeCP.contains(it) && it.isDirectory() }
-        ClassPool classPool = createClassPool(project, sourceSet)
-
+        def folders = currentClasspath.asList().findAll { it.isDirectory() }
         folders.each { File folder ->
             project.fileTree(folder).each {
                 if (it.name.endsWith('.class')) {
@@ -146,6 +157,7 @@ class EnhancingAction implements Action<Task> {
                 }
             }
         }
+        return classesInfo
     }
 
     protected void examineClass(CtClass ctClass, ClassesInfo classesInfo) {
@@ -292,6 +304,23 @@ class EnhancingAction implements Action<Task> {
             return classesByStores.size() > 0 ? classesByStores.keySet() :
                     converters.size() > 0 ? ['main'] : new HashSet<String>()
         }
+
+        /**
+         *  Adds classes that exists in both {@code first} and {@code second} ClassesInfos
+         */
+        void addClassesIntersection(ClassesInfo first, ClassesInfo second) {
+
+            for (String store : first.classesByStores.keySet()) {
+                classesByStores[store].addAll(first.classesByStores[store].intersect(second.classesByStores[store]))
+            }
+
+            for (String store : first.nonMappedClasses.keySet()) {
+                nonMappedClasses[store].addAll(first.nonMappedClasses[store].intersect(second.nonMappedClasses[store]))
+            }
+
+            converters.addAll(first.converters.intersect(second.converters))
+        }
+
     }
 
 }

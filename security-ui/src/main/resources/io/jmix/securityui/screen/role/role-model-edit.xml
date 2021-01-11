@@ -70,7 +70,6 @@
                         <action id="createEntityPolicy" caption="msg://RoleModelEdit.entityPolicy"/>
                         <action id="createEntityAttributePolicy" caption="msg://RoleModelEdit.entityAttributePolicy"/>
                         <action id="createSpecificPolicy" caption="msg://RoleModelEdit.specificPolicy"/>
-                        <action id="createCustomPolicy" caption="msg://RoleModelEdit.customPolicy"/>
                         <action id="edit" type="edit"/>
                         <action id="view" type="view"/>
                         <action id="remove" type="remove"/>
@@ -99,8 +98,6 @@
                                         caption="msg://RoleModelEdit.entityAttributePolicy"/>
                                 <action id="resourcePoliciesTable.createSpecificPolicy"
                                         caption="msg://RoleModelEdit.specificPolicy"/>
-                                <action id="resourcePoliciesTable.createCustomPolicy"
-                                        caption="msg://RoleModelEdit.customPolicy"/>
                             </actions>
                         </popupButton>
                         <button action="resourcePoliciesTable.edit"/>

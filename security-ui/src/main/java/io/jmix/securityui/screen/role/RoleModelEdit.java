@@ -333,19 +333,6 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
                 .show();
     }
 
-    @Subscribe("resourcePoliciesTable.createCustomPolicy")
-    public void onResourcePoliciesTableCreateCustomPolicy(Action.ActionPerformedEvent event) {
-        screenBuilders.editor(resourcePoliciesTable)
-                .withScreenClass(ResourcePolicyModelEdit.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
-                    resourcePolicyModel.setEffect(ResourcePolicy.DEFAULT_EFFECT);
-                })
-                .build()
-                .show();
-    }
-
     @Subscribe("resourcePoliciesTable.edit")
     public void onResourcePoliciesTableEdit(Action.ActionPerformedEvent event) {
         ResourcePolicyModel editedResourcePolicyModel = resourcePoliciesTable.getSingleSelected();

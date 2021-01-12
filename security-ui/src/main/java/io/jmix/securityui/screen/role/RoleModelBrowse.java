@@ -107,6 +107,11 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
                     roleModel.setSource(RoleSource.DATABASE);
                     roleModel.setRoleType(RoleType.RESOURCE);
                 })
+                .withAfterCloseListener(afterCloseEvent -> {
+                    if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+                        reloadRoles();
+                    }
+                })
                 .build();
         editor.setOpenedByCreateAction(true);
         editor.show();
@@ -121,6 +126,11 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
                     roleModel.setSource(RoleSource.DATABASE);
                     roleModel.setRoleType(RoleType.ROW_LEVEL);
                 })
+                .withAfterCloseListener(afterCloseEvent -> {
+                    if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+                        reloadRoles();
+                    }
+                })
                 .build();
         editor.setOpenedByCreateAction(true);
         editor.show();
@@ -134,6 +144,11 @@ public class RoleModelBrowse extends StandardLookup<RoleModel> {
                 .withInitializer(roleModel -> {
                     roleModel.setSource(RoleSource.DATABASE);
                     roleModel.setRoleType(RoleType.AGGREGATED);
+                })
+                .withAfterCloseListener(afterCloseEvent -> {
+                    if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+                        reloadRoles();
+                    }
                 })
                 .build();
         editor.setOpenedByCreateAction(true);

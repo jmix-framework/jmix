@@ -38,4 +38,12 @@ dependencies {
     api 'com.vaadin:vaadin-compatibility-client'
 }
 
+jar {
+    // pack client Java sources
+    with copySpec {
+        from sourceSets.main.allSource
+        include "io/jmix/ui/widget/**"
+    }
+}
+
 task compileWidgets(type: WidgetsCompile, dependsOn: classes)

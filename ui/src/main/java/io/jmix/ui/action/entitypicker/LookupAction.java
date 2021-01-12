@@ -130,7 +130,7 @@ public class LookupAction<E> extends AbstractLookupAction<E>
     public void execute() {
         MetaClass metaClass = entityPicker.getMetaClass();
         if (metaClass == null) {
-            throw new DevelopmentException("Neither metaClass nor datasource/property is specified " +
+            throw new DevelopmentException("Neither metaClass nor dataContainer/property is specified " +
                     "for the EntityPicker", "action ID", getId());
         }
 

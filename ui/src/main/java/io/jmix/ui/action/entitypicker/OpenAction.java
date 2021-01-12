@@ -324,7 +324,7 @@ public class OpenAction<E> extends BaseAction
 
         MetaClass metaClass = entityPicker.getMetaClass();
         if (metaClass == null) {
-            throw new DevelopmentException("Neither metaClass nor datasource/property is specified " +
+            throw new DevelopmentException("Neither metaClass nor dataContainer/property is specified " +
                     "for the EntityPicker", "action ID", getId());
         }
 

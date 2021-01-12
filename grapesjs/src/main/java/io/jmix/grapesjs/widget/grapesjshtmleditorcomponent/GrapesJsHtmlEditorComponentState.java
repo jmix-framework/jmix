@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.toolkit.ui.grapesjshtmleditorcomponent;
+package io.jmix.grapesjs.widget.grapesjshtmleditorcomponent;
 
 import com.vaadin.shared.ui.JavaScriptComponentState;
-import io.jmix.grapesjs.components.GjsBlock;
-import io.jmix.grapesjs.components.GjsPlugin;
+import io.jmix.grapesjs.component.GjsBlock;
+import io.jmix.grapesjs.component.GjsPlugin;
 
 import java.util.ArrayList;
 import java.util.Collection;

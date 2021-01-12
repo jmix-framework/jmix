@@ -1,4 +1,4 @@
-io_jmix_grapesjs_toolkit_ui_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent = function() {
+io_jmix_grapesjs_widget_grapesjshtmleditorcomponent_GrapesJsHtmlEditorComponent = function() {
     var connector = this;
     var element = connector.getElement();
     var state = connector.getState();

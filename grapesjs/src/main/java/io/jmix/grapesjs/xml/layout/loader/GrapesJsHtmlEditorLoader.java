@@ -17,7 +17,7 @@
 package io.jmix.grapesjs.xml.layout.loader;
 
 import io.jmix.core.Resources;
-import io.jmix.grapesjs.components.*;
+import io.jmix.grapesjs.component.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
 import org.apache.commons.lang3.StringUtils;

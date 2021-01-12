@@ -16,7 +16,7 @@
 
 package io.jmix.grapesjs.plugins;
 
-import io.jmix.grapesjs.components.GjsPlugin;
+import io.jmix.grapesjs.component.GjsPlugin;
 
 public class CustomCodeGjsPlugin extends GjsPlugin {
 

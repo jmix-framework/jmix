@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components.impl;
+package io.jmix.grapesjs.component;
 
+/**
+ * The GrapesJs HTML editor component with applied newsletter preset
+ */
+public interface GrapesJsNewsletterHtmlEditor extends GrapesJsHtmlEditor {
 
-import io.jmix.grapesjs.components.GrapesJsWebpageHtmlEditor;
+    String NAME = "grapesJsNewsletterHtmlEditor";
 
-public class GrapesJsWebpageHtmlEditorImpl extends GrapesJsHtmlEditorImpl implements GrapesJsWebpageHtmlEditor {
+    Boolean getInlineCss();
 
+    void setInlineCss(Boolean inlineCss);
 }

@@ -17,12 +17,12 @@
 package io.jmix.grapesjs;
 
 import io.jmix.core.annotation.JmixModule;
-import io.jmix.grapesjs.components.GrapesJsHtmlEditor;
-import io.jmix.grapesjs.components.GrapesJsNewsletterHtmlEditor;
-import io.jmix.grapesjs.components.GrapesJsWebpageHtmlEditor;
-import io.jmix.grapesjs.components.impl.GrapesJsHtmlEditorImpl;
-import io.jmix.grapesjs.components.impl.GrapesJsNewsletterHtmlEditorImpl;
-import io.jmix.grapesjs.components.impl.GrapesJsWebpageHtmlEditorImpl;
+import io.jmix.grapesjs.component.GrapesJsHtmlEditor;
+import io.jmix.grapesjs.component.GrapesJsNewsletterHtmlEditor;
+import io.jmix.grapesjs.component.GrapesJsWebpageHtmlEditor;
+import io.jmix.grapesjs.component.impl.GrapesJsHtmlEditorImpl;
+import io.jmix.grapesjs.component.impl.GrapesJsNewsletterHtmlEditorImpl;
+import io.jmix.grapesjs.component.impl.GrapesJsWebpageHtmlEditorImpl;
 import io.jmix.grapesjs.xml.layout.loader.GrapesJsHtmlEditorLoader;
 import io.jmix.grapesjs.xml.layout.loader.GrapesJsNewsletterHtmlEditorLoader;
 import io.jmix.grapesjs.xml.layout.loader.GrapesJsWebpageHtmlEditorLoader;

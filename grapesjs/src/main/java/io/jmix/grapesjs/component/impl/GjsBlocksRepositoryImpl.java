@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components.impl;
+package io.jmix.grapesjs.component.impl;
 
-import io.jmix.grapesjs.components.GjsBlock;
-import io.jmix.grapesjs.components.GjsBlocksRepository;
+import io.jmix.grapesjs.component.GjsBlock;
+import io.jmix.grapesjs.component.GjsBlocksRepository;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

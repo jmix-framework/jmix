@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components;
+package io.jmix.grapesjs.component;
 
 import java.io.Serializable;
 

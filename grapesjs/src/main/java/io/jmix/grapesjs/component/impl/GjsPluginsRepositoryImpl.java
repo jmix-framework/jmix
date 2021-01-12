@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components.impl;
+package io.jmix.grapesjs.component.impl;
 
 import io.jmix.core.Resources;
-import io.jmix.grapesjs.components.GjsPlugin;
-import io.jmix.grapesjs.components.GjsPluginsRepository;
+import io.jmix.grapesjs.component.GjsPlugin;
+import io.jmix.grapesjs.component.GjsPluginsRepository;
 import io.jmix.grapesjs.plugins.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

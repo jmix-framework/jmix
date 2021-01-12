@@ -83,15 +83,15 @@ To use the component you need to add HTML editor to the screen. Then add UI comp
 
 ## Adding HTML Editor to the Screen <a name="adding-html-editor-to-the-screen"></a>
 
-To use the `GrapesJS` component in your screen, you need to add the special scheme `http://jmix.io/schema/grapesjs/ui-component.xsd` in the XML descriptor of the screen and then add a namespace like `grapesjs` for the schema. The schema contains information about the `grapesJsHtmlEditor` tag.
+To use the `GrapesJS` component in your screen, you need to add the special scheme `http://jmix.io/schema/grapesjs/ui` in the XML descriptor of the screen and then add a namespace like `grapesjs` for the schema. The schema contains information about the `grapesJsHtmlEditor` tag.
 
 Look at the example of usage:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+<window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://caption"
-        xmlns:et="http://jmix.io/schema/grapesjs/ui-component.xsd">
+        xmlns:et="http://jmix.io/schema/grapesjs/ui">
     ...
         <et:grapesJsHtmlEditor id="htmlEditor">
             <et:disabledBlocks>
@@ -131,7 +131,7 @@ Default available plugins:
 - `tuiImageEditor` - add the [TOAST UI Image Editor](https://ui.toast.com/tui-image-editor/) on Image Components in GrapesJS ([documentation](https://github.com/artf/grapesjs-tui-image-editor)).
 - `webpage` - this preset configures GrapesJS to be used as a Webpage Builder ([plugin documentation](https://github.com/artf/grapesjs-preset-webpage)).
 
-Custom project plugins can be registered via `io.jmix.grapesjs.components.GjsBlocksRepository` class.
+Custom project plugins can be registered via `io.jmix.grapesjs.component.GjsBlocksRepository` class.
 
 Example:
 ```xml
@@ -208,7 +208,7 @@ Block example:
 </et:block>
 ```
 
-Custom project blocks can be registered via `io.jmix.grapesjs.components.GjsBlocksRepository` class.
+Custom project blocks can be registered via `io.jmix.grapesjs.component.GjsBlocksRepository` class.
 Registered blocks can be added to UI component by `name` attribute. Example `<et:block name="custom block name"/>`.
 
 Please use `class:'fa <fa-icon>'` in block attributes to use Font Awesome icon.

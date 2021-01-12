@@ -16,8 +16,8 @@
 
 package io.jmix.grapesjs.xml.layout.loader;
 
-import io.jmix.grapesjs.components.GjsPlugin;
-import io.jmix.grapesjs.components.GrapesJsNewsletterHtmlEditor;
+import io.jmix.grapesjs.component.GjsPlugin;
+import io.jmix.grapesjs.component.GrapesJsNewsletterHtmlEditor;
 import io.jmix.grapesjs.plugins.CustomCodeGjsPlugin;
 import io.jmix.grapesjs.plugins.NewsletterGjsPlugin;
 import org.dom4j.Element;

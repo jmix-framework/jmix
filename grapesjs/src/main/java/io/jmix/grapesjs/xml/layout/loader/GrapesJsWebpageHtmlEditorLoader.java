@@ -17,8 +17,8 @@
 package io.jmix.grapesjs.xml.layout.loader;
 
 
-import io.jmix.grapesjs.components.GjsPlugin;
-import io.jmix.grapesjs.components.GrapesJsWebpageHtmlEditor;
+import io.jmix.grapesjs.component.GjsPlugin;
+import io.jmix.grapesjs.component.GrapesJsWebpageHtmlEditor;
 import io.jmix.grapesjs.plugins.CustomCodeGjsPlugin;
 import io.jmix.grapesjs.plugins.WebpageGjsPlugin;
 

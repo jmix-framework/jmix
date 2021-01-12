@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components.impl;
+package io.jmix.grapesjs.component.impl;
 
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.grapesjs.components.GjsBlock;
-import io.jmix.grapesjs.components.GjsPlugin;
-import io.jmix.grapesjs.components.GrapesJsHtmlEditor;
-import io.jmix.grapesjs.toolkit.ui.grapesjshtmleditorcomponent.GrapesJsHtmlEditorComponent;
+import io.jmix.grapesjs.component.GjsBlock;
+import io.jmix.grapesjs.component.GjsPlugin;
+import io.jmix.grapesjs.component.GrapesJsHtmlEditor;
+import io.jmix.grapesjs.widget.grapesjshtmleditorcomponent.GrapesJsHtmlEditorComponent;
 import io.jmix.ui.component.impl.AbstractComponent;
 
 import java.util.ArrayList;

@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components;
+package io.jmix.grapesjs.component;
 
+/**
+ * The GrapesJs HTML editor component with applied webpage preset
+ */
+public interface GrapesJsWebpageHtmlEditor extends GrapesJsHtmlEditor{
 
-public interface GjsBlocksRepository {
-
-    /**
-     * Retrieve registered GrapesJs block
-     *
-     * @param name block name
-     * @return GrapesJs block descriptor
-     */
-    GjsBlock getBlock(String name);
-
-    /**
-     * Register custom GrapesJs block which can be used in xml configuration
-     *
-     * @param block GrapesJs block descriptor
-     */
-    void registerBlock(GjsBlock block);
+    String NAME = "grapesJsWebpageHtmlEditor";
 
 }

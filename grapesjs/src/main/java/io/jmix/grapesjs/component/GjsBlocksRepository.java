@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components.impl;
+package io.jmix.grapesjs.component;
 
 
-import io.jmix.grapesjs.components.GrapesJsNewsletterHtmlEditor;
+public interface GjsBlocksRepository {
 
-public class GrapesJsNewsletterHtmlEditorImpl extends GrapesJsHtmlEditorImpl implements GrapesJsNewsletterHtmlEditor {
+    /**
+     * Retrieve registered GrapesJs block
+     *
+     * @param name block name
+     * @return GrapesJs block descriptor
+     */
+    GjsBlock getBlock(String name);
 
-    protected Boolean inlineCss = false;
+    /**
+     * Register custom GrapesJs block which can be used in xml configuration
+     *
+     * @param block GrapesJs block descriptor
+     */
+    void registerBlock(GjsBlock block);
 
-    public Boolean getInlineCss() {
-        return inlineCss;
-    }
-
-    public void setInlineCss(Boolean inlineCss) {
-        this.inlineCss = inlineCss;
-        component.setInlineCss(inlineCss);
-    }
 }

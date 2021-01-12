@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.grapesjs.components;
+package io.jmix.grapesjs.component;
 
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;

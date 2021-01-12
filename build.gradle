@@ -76,6 +76,7 @@ dependencies {
     def dataVersion = baseVersion
     def dynattrVersion = baseVersion
     def emailVersion = baseVersion
+    def grapesJsVersion = baseVersion
     def graphqlVersion = baseVersion
     def localfsVersion = baseVersion
     def restVersion = baseVersion
@@ -109,6 +110,9 @@ dependencies {
         api "io.jmix.email:jmix-email-ui:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-starter:${snapshotOr(emailVersion)}"
         api "io.jmix.email:jmix-email-ui-starter:${snapshotOr(emailVersion)}"
+
+        api "io.jmix.grapesjs:jmix-grapesjs:${snapshotOr(grapesJsVersion)}"
+        api "io.jmix.grapesjs:jmix-grapesjs-starter:${snapshotOr(grapesJsVersion)}"
 
         api "io.jmix.graphql:jmix-graphql:${snapshotOr(graphqlVersion)}"
         api "io.jmix.graphql:jmix-graphql-starter:${snapshotOr(graphqlVersion)}"
@@ -180,6 +184,27 @@ dependencies {
         api 'org.webjars:jquery-ui:1.12.1'
         api 'org.webjars.bower:jquery-file-upload:9.22.0.cuba.0'
         api 'org.webjars.npm:object-fit-images:3.2.3'
+
+        api 'org.webjars.npm:grapesjs:0.16.2'
+        api 'org.webjars.bower:keymaster:1.6.3'
+        api 'org.webjars.npm:babel__runtime:7.9.2'
+        api 'org.webjars.npm:github-com-kenwheeler-cash:2.3.9'
+        api 'org.webjars.npm:grapesjs-plugin-ckeditor:0.0.9'
+        api 'org.webjars.npm:grapesjs-custom-code:0.1.1'
+        api 'org.webjars.npm:grapesjs-tabs:0.1.2'
+        api 'org.webjars.npm:grapesjs-touch:0.1.1'
+        api 'org.webjars.npm:grapesjs-parser-postcss:0.1.1'
+        api 'org.webjars.npm:grapesjs-preset-webpage:0.1.10'
+        api 'org.webjars.npm:github-com-artf-grapesjs-preset-newsletter:0.2.20'
+        api 'org.webjars.npm:grapesjs-blocks-basic:0.1.8'
+        api 'org.webjars.npm:grapesjs-blocks-flexbox:0.1.1'
+        api 'org.webjars.npm:grapesjs-tui-image-editor:0.1.2'
+        api 'org.webjars.npm:grapesjs-plugin-forms:1.0.5'
+        api 'org.webjars.npm:grapesjs-style-filter:0.1.1'
+        api 'org.webjars.npm:grapesjs-tooltip:0.1.5'
+
+        api 'org.webjars.bowergithub.mootools:slick:1.1.7'
+        api 'org.webjars:ckeditor:4.14.0'
 
         api 'org.spockframework:spock-core:1.3-groovy-2.5'
         api 'org.spockframework:spock-spring:1.3-groovy-2.5'

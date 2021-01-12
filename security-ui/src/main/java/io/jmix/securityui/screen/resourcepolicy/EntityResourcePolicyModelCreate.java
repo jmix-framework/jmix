@@ -18,6 +18,7 @@ package io.jmix.securityui.screen.resourcepolicy;
 
 import com.google.common.base.Strings;
 import io.jmix.core.Metadata;
+import io.jmix.security.model.ResourcePolicyEffect;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
@@ -127,6 +128,7 @@ public class EntityResourcePolicyModelCreate extends MultipleResourcePolicyModel
             policy.setResource(entityName);
             policy.setPolicyGroup(policyGroupField.getValue());
             policy.setAction(action);
+            policy.setEffect(ResourcePolicyEffect.ALLOW);
             policies.add(policy);
         }
         return policies;

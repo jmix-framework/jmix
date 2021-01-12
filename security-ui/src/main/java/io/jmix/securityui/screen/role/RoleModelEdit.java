@@ -313,7 +313,8 @@ public class RoleModelEdit extends StandardEditor<RoleModel> {
                                 resourcePolicyModel.getAction().equals(rpm.getAction()) &&
                                 resourcePolicyModel.getResource().equals(rpm.getResource()));
                 if (!policyExists) {
-                    resourcePoliciesDc.getMutableItems().add(resourcePolicyModel);
+                    ResourcePolicyModel mergedResourcePolicyModel = dataContext.merge(resourcePolicyModel);
+                    resourcePoliciesDc.getMutableItems().add(mergedResourcePolicyModel);
                 }
             }
         }

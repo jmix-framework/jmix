@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.data.datagrid.ContainerDataGridItems;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 
@@ -36,7 +37,7 @@ public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, Frame frame, List<AttributeDefinition> attributes) {
         DataGrid dataGrid = (DataGrid) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeColumn(dataGrid, attribute);

@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.AttributeType;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.component.data.table.ContainerTableItems;
@@ -39,7 +40,7 @@ public class TableEmbeddingStrategy extends ListEmbeddingStrategy {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void embed(Component component, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, Frame frame, List<AttributeDefinition> attributes) {
         Table table = (Table) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeColumn(table, attribute);

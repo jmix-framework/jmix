@@ -78,7 +78,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
                     setLoadDynamicAttributes(component);
                 }
 
-                embed(component, attributes);
+                embed(component, frame, attributes);
             }
         }
     }
@@ -87,7 +87,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
 
     protected abstract void setLoadDynamicAttributes(Component component);
 
-    protected abstract void embed(Component component, List<AttributeDefinition> attributes);
+    protected abstract void embed(Component component, Frame frame, List<AttributeDefinition> attributes);
 
     protected String getWindowId(Frame frame) {
         Screen screen = UiControllerUtils.getScreen(frame.getFrameOwner());

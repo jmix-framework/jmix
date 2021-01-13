@@ -18,6 +18,7 @@ package io.jmix.dynattrui.facet;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
+import io.jmix.dynattrui.impl.AttributeDefaultValues;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.xml.FacetProvider;
 import io.jmix.ui.xml.layout.ComponentLoader;
@@ -31,6 +32,9 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
     @Autowired
     protected DynAttrEmbeddingStrategies embeddingStrategies;
 
+    @Autowired
+    protected AttributeDefaultValues attributeDefaultValues;
+
     @Override
     public Class<DynAttrFacet> getFacetClass() {
         return DynAttrFacet.class;
@@ -38,7 +42,9 @@ public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Override
     public DynAttrFacet create() {
-        return new DynAttrFacetImpl();
+        DynAttrFacetImpl dynAttrFacet = new DynAttrFacetImpl();
+        dynAttrFacet.setAttributeDefaultValues(attributeDefaultValues);
+        return dynAttrFacet;
     }
 
     @Override

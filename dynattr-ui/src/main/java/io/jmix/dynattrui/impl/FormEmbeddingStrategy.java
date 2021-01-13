@@ -46,7 +46,7 @@ public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
     }
 
     @Override
-    protected void embed(Component component, List<AttributeDefinition> attributes) {
+    protected void embed(Component component, Frame frame, List<AttributeDefinition> attributes) {
         Form form = (Form) component;
         for (AttributeDefinition attribute : attributes) {
             addAttributeComponent(form, attribute);

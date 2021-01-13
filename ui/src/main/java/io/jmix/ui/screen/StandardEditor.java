@@ -177,15 +177,6 @@ public abstract class StandardEditor<T> extends Screen
 
             DataContext parentDc = getScreenData().getDataContext().getParent();
             if (parentDc == null || !parentDc.contains(mergedEntity)) {
-
-                //TODO: Dynamic attributes: move into facet
-//            if (instanceLoader != null
-//                    && instanceLoader.isLoadDynamicAttributes()
-//                    && getEntityStates().isNew(entityToEdit)) {
-//                // todo dynamic attributes
-//                // tools.initDefaultAttributeValues((BaseGenericIdEntity) mergedEntity, mergedEntity.getMetaClass());
-//            }
-
                 fireEvent(InitEntityEvent.class, new InitEntityEvent<>(this, mergedEntity));
             }
 

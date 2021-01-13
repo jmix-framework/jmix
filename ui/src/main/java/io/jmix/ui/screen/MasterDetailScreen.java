@@ -210,14 +210,6 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
         getBrowseContainer().addItemChangeListener(e -> {
             if (e.getItem() != null) {
                 InstanceLoader<T> editLoader = getEditLoader();
-
-                // todo dynamic attributes
-                /*DynamicAttributesGuiTools tools = getBeanLocator().get(DynamicAttributesGuiTools.NAME);
-                String screenId = getScreenContext().getWindowInfo().getId();
-                if (tools.screenContainsDynamicAttributes(getEditContainer().getView(), screenId)) {
-                    editLoader.setLoadDynamicAttributes(true);
-                }*/
-
                 editLoader.setEntityId(EntityValues.getId(e.getItem()));
                 editLoader.load();
             } else {
@@ -252,12 +244,7 @@ public abstract class MasterDetailScreen<T> extends StandardLookup<T> {
                     }
                 }
             }
-
-            if (instanceLoader != null
-                    && instanceLoader.isLoadDynamicAttributes()
-                    && trackedEntity instanceof BaseGenericIdEntity) {
-                tools.initDefaultAttributeValues((BaseGenericIdEntity) trackedEntity, trackedEntity.getMetaClass());
-            }*/
+*/
 
             fireEvent(InitEntityEvent.class, new InitEntityEvent<>(this, trackedEntity));
 

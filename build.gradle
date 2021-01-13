@@ -78,6 +78,7 @@ dependencies {
     def emailVersion = baseVersion
     def grapesJsVersion = baseVersion
     def graphqlVersion = baseVersion
+    def imapVersion = baseVersion
     def localfsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
@@ -116,6 +117,11 @@ dependencies {
 
         api "io.jmix.graphql:jmix-graphql:${snapshotOr(graphqlVersion)}"
         api "io.jmix.graphql:jmix-graphql-starter:${snapshotOr(graphqlVersion)}"
+
+        api "io.jmix.imap:jmix-imap:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-ui:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-starter:${snapshotOr(imapVersion)}"
+        api "io.jmix.imap:jmix-imap-ui-starter:${snapshotOr(imapVersion)}"
 
         api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
         api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
@@ -214,6 +220,8 @@ dependencies {
         api 'org.springframework.security.oauth:spring-security-oauth2:2.4.1.RELEASE'
 
         api 'javax.cache:cache-api:1.1.1'
+
+        api 'com.icegreen:greenmail:1.5.7'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

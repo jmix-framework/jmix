@@ -23,6 +23,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.Registration;
+import com.vaadin.shared.ui.ValueChangeMode;
 import com.vaadin.ui.*;
 import com.vaadin.util.ReflectTools;
 
@@ -107,6 +108,7 @@ public class JmixPickerField<T> extends com.vaadin.ui.CustomField<T> implements 
         JmixTextField field = new JmixTextField();
         field.setStyleName(TEXT_FIELD_STYLENAME);
         field.setReadOnlyFocusable(true);
+        field.setValueChangeMode(ValueChangeMode.BLUR);
 
         field.setReadOnly(fieldReadOnly);
 

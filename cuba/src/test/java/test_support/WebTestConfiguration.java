@@ -26,6 +26,7 @@ import com.haulmont.cuba.core.testsupport.TestUserSessionSource;
 import com.haulmont.cuba.web.testsupport.TestUiSecureOperations;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
@@ -89,8 +90,9 @@ public class WebTestConfiguration {
             DataSource dataSource,
             JpaVendorAdapter jpaVendorAdapter,
             DbmsSpecifics dbmsSpecifics,
-            JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+            JmixModules jmixModules,
+            Resources resources) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean

@@ -17,6 +17,7 @@
 package io.jmix.data.impl;
 
 import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -28,25 +29,37 @@ public class JmixEntityManagerFactoryBean extends LocalContainerEntityManagerFac
 
     private String storeName;
     private DbmsSpecifics dbmsSpecifics;
-
-
     protected JmixModules jmixModules;
+    protected Resources resources;
 
     public JmixEntityManagerFactoryBean(String storeName,
                                         DataSource dataSource,
                                         JpaVendorAdapter jpaVendorAdapter,
                                         DbmsSpecifics dbmsSpecifics,
-                                        JmixModules jmixModules) {
+                                        JmixModules jmixModules,
+                                        Resources resources) {
         this.storeName = storeName;
         this.dbmsSpecifics = dbmsSpecifics;
         this.jmixModules = jmixModules;
+        this.resources = resources;
 
-        String persistenceXmlPath = getPersistenceXmlPath(storeName);
-
-        setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
+        setupPersistenceUnit();
         setDataSource(dataSource);
         setJpaVendorAdapter(jpaVendorAdapter);
         setupJpaProperties();
+    }
+
+    protected void setupPersistenceUnit() {
+        String persistenceXmlPath = getPersistenceXmlPath(storeName);
+        if (resources.getResource("classpath:" + persistenceXmlPath).exists()) {
+            setPersistenceXmlLocation("classpath:" + persistenceXmlPath);
+        } else {
+            setPersistenceUnitName(storeName);
+            setPackagesToScan("");
+            logger.warn(String.format("Cannot find '%s'. Empty persistence unit with name '%s' will be created.",
+                    persistenceXmlPath,
+                    storeName));
+        }
     }
 
     protected String getPersistenceXmlPath(String storeName) {

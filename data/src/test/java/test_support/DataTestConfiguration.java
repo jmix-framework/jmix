@@ -74,8 +74,9 @@ public class DataTestConfiguration {
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 DbmsSpecifics dbmsSpecifics,
-                                                                JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+                                                                JmixModules jmixModules,
+                                                                Resources resources) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean
@@ -107,8 +108,9 @@ public class DataTestConfiguration {
     @Bean
     LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(JpaVendorAdapter jpaVendorAdapter,
                                                                    DbmsSpecifics dbmsSpecifics,
-                                                                   JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter, dbmsSpecifics, jmixModules);
+                                                                   JmixModules jmixModules,
+                                                                   Resources resources) {
+        return new JmixEntityManagerFactoryBean("db1", db1DataSource(), jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean

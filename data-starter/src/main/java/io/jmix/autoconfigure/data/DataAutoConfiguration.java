@@ -18,6 +18,7 @@ package io.jmix.autoconfigure.data;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
@@ -49,8 +50,9 @@ public class DataAutoConfiguration {
     protected LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                           JpaVendorAdapter jpaVendorAdapter,
                                                                           DbmsSpecifics dbmsSpecifics,
-                                                                          JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+                                                                          JmixModules jmixModules,
+                                                                          Resources resources) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean

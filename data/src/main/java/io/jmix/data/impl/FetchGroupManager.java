@@ -145,7 +145,8 @@ public class FetchGroupManager {
         for (FetchGroupField field : fetchGroupFields) {
             if (field.metaProperty.getRange().isClass()
                     && !metadataTools.isEmbedded(field.metaProperty)
-                    && !metadataTools.isEmbeddedId(field.metaProperty)) {
+                    && !metadataTools.isEmbeddedId(field.metaProperty)
+                    && metadataTools.isPersistent(field.metaProperty.getRange().asClass())) {
                 refFields.add(field);
             }
         }

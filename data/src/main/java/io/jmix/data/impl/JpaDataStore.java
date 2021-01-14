@@ -19,14 +19,12 @@ package io.jmix.data.impl;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
-import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.data.accesscontext.LoadValuesAccessContext;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.eclipse.persistence.exceptions.QueryException;
@@ -499,7 +497,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
                 return !property.getRange().isClass()
                         || metadataTools.isEmbedded(property)
                         || metadataTools.isEmbeddedId(property)
-                        || !metadataTools.isPersistent(property);
+                        || !metadataTools.isPersistent(property)
+                        || !metadataTools.isPersistent(property.getRange().asClass());
             }
         });
     }

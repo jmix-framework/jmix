@@ -196,17 +196,6 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="fieldGroupFieldInlineMode">
-        <xs:union>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="APPLY_DEFAULTS"/>
-                    <xs:enumeration value="CUSTOM"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:union>
-    </xs:simpleType>
-
     <xs:simpleType name="dialogSize">
         <xs:union>
             <xs:simpleType>
@@ -321,13 +310,6 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="visible"/>
             <xs:enumeration value="hidden"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="fieldGroupCaptionAlignment">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="TOP"/>
-            <xs:enumeration value="LEFT"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1188,21 +1170,12 @@
         <xs:attribute name="responsive" type="xs:boolean"/>
     </xs:attributeGroup>
 
-    <xs:attributeGroup name="hasDatasource">
-        <xs:attribute name="datasource" type="xs:string"/>
-        <xs:attribute name="property" type="xs:string"/>
-    </xs:attributeGroup>
-
     <xs:attributeGroup name="hasDataContainer">
         <xs:attribute name="dataContainer" type="xs:string"/>
         <xs:attribute name="property" type="xs:string"/>
     </xs:attributeGroup>
 
     <xs:attributeGroup name="requiresDatasource">
-        <xs:attribute name="datasource" type="xs:string" use="required"/>
-    </xs:attributeGroup>
-
-    <xs:attributeGroup name="hasDatasourceProp">
         <xs:attribute name="datasource" type="xs:string" use="required"/>
     </xs:attributeGroup>
 
@@ -1751,7 +1724,6 @@
         <xs:attributeGroup ref="hasVisibility"/>
         <xs:attributeGroup ref="hasSize"/>
         <xs:attributeGroup ref="hasAlign"/>
-        <xs:attributeGroup ref="hasDatasource"/>
         <xs:attributeGroup ref="hasDataContainer"/>
         <xs:attributeGroup ref="hasContextHelp"/>
         <xs:attributeGroup ref="hasHtmlDescription"/>
@@ -1783,7 +1755,6 @@
                 <xs:attributeGroup ref="hasBuffered"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasEditable"/>
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
             </xs:extension>
@@ -1827,7 +1798,6 @@
 
                 <xs:attributeGroup ref="hasTabIndex"/>
                 <xs:attributeGroup ref="hasEditable"/>
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
                 <xs:attributeGroup ref="hasBuffered"/>
@@ -1857,7 +1827,6 @@
             <xs:extension base="baseComponent">
                 <xs:attributeGroup ref="hasEditable"/>
                 <xs:attributeGroup ref="hasRequirements"/>
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasContextHelp"/>
             </xs:extension>
@@ -2255,7 +2224,7 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasCaptionSource"/> <!--TODO: remove-->
+                <xs:attributeGroup ref="hasCaptionSource"/>
                 <xs:attributeGroup ref="hasTabIndex"/>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
@@ -2339,7 +2308,6 @@
     <xs:complexType name="fileUploadComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasRequirements"/>
                 <xs:attributeGroup ref="hasEditable"/>
@@ -2490,7 +2458,6 @@
 
                 <xs:attributeGroup ref="hasEditable"/>
                 <xs:attributeGroup ref="hasRequirements"/>
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
             </xs:extension>
         </xs:complexContent>
@@ -2886,93 +2853,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <!-- FieldGroup.FieldConfig -->
-    <xs:complexType name="fieldGroupField">
-        <xs:sequence>
-            <xs:group ref="layoutOrComponent"/>
-
-            <xs:group ref="formatters" minOccurs="0"/>
-        </xs:sequence>
-
-        <xs:attributeGroup ref="hasId"/>
-        <xs:attribute name="property" type="xs:string"/>
-
-        <xs:attribute name="inlineAttachMode" type="fieldGroupFieldInlineMode"/>
-
-        <xs:attributeGroup ref="hasHtmlCaption"/>
-        <xs:attributeGroup ref="hasEditState"/>
-        <xs:attributeGroup ref="hasVisibility"/>
-        <xs:attributeGroup ref="hasTabIndex"/>
-        <xs:attributeGroup ref="hasContextHelp"/>
-        <xs:attributeGroup ref="hasHtmlSanitizer"/>
-
-        <xs:attribute name="width" type="componentSize"/>
-
-        <xs:attribute name="requiredMessage" type="resourceString"/>
-        <xs:attribute name="custom" type="xs:boolean"/>
-
-        <xs:attribute name="datasource" type="xs:string"/>
-
-        <xs:attribute name="resolution" type="dateFieldResolution"/>
-        <xs:attribute name="dateFormat" type="xs:string"/>
-        <xs:attribute name="maxLength" type="xs:int"/>
-
-        <xs:attribute name="cols" type="xs:int"/>
-        <xs:attribute name="rows" type="xs:int"/>
-
-        <xs:attribute name="stylename" type="xs:string"/>
-
-        <xs:attribute name="optionsDatasource" type="xs:string"/>
-        <xs:attribute name="captionProperty" type="xs:string"/>
-        <xs:attribute name="field" type="xs:string"/>
-        <xs:attribute name="required" type="xs:boolean"/>
-        <xs:attribute name="mask" type="xs:string"/>
-        <xs:attribute name="valueMode" type="maskedFieldValueMode"/>
-
-        <xs:attribute name="inputPrompt" type="resourceString"/>
-
-        <!-- Show entity reference as clickable link -->
-        <xs:attribute name="link" type="xs:boolean"/>
-        <xs:attribute name="linkScreenId" type="xs:string"/>
-        <xs:attribute name="linkScreenOpenMode" type="openMode"/>
-
-        <xs:attribute name="generator" type="xs:string"/>
-    </xs:complexType>
-
-    <!-- FieldGroup -->
-    <xs:complexType name="fieldGroupComponent">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:choice maxOccurs="unbounded" minOccurs="0">
-                    <xs:element name="field" type="fieldGroupField"/>
-                    <xs:element name="column">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="field" maxOccurs="unbounded" type="fieldGroupField"/>
-                            </xs:sequence>
-                            <xs:attributeGroup ref="hasId"/>
-
-                            <xs:attribute name="width" type="xs:string"/>
-                            <xs:attribute name="flex" type="xs:string"/>
-                            <xs:attribute name="fieldCaptionWidth" type="xs:string"/>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:choice>
-
-                <xs:attributeGroup ref="hasEditState"/>
-                <xs:attributeGroup ref="hasContextHelp"/>
-
-                <xs:attribute name="captionAlignment" type="fieldGroupCaptionAlignment"/>
-                <xs:attribute name="fieldCaptionWidth" type="xs:string"/>
-
-                <xs:attribute name="datasource" type="xs:string"/>
-                <xs:attribute name="border" type="borderMode"/>
-
-                <xs:attribute name="fieldFactoryBean" type="xs:string"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <!-- Form -->
     <xs:complexType name="formComponent">
         <xs:complexContent>
@@ -3067,7 +2947,6 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasEditable"/>
-                <xs:attributeGroup ref="hasDatasource"/>
                 <xs:attributeGroup ref="hasDataContainer"/>
                 <xs:attributeGroup ref="hasCaptionSource"/>
                 <xs:attributeGroup ref="hasRequirements"/>
@@ -3396,26 +3275,6 @@
                 <xs:attribute name="orientation" type="orientation"/>
                 <xs:attribute name="showAsPanel" type="xs:boolean"/>
                 <xs:attribute name="requiredIndicatorVisible" type="xs:boolean"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <!-- Frame -->
-    <xs:complexType name="frameContainer">
-        <xs:complexContent>
-            <xs:extension base="baseComponent">
-                <xs:sequence>
-                    <xs:element name="dsAlias" minOccurs="0" maxOccurs="unbounded">
-                        <xs:complexType>
-                            <xs:attributeGroup ref="hasDatasourceProp"/>
-                            <xs:attribute name="alias" type="xs:string" use="required"/>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-                <!-- src is here only for compatibility with the previous versions -->
-                <xs:attribute name="src" type="xs:string"/>
-
-                <xs:attribute name="screen" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3981,8 +3840,6 @@
                 <xs:element name="responsiveGridLayout" type="responsiveGridLayout"/>
 
                 <xs:element name="fragment" type="fragmentContainer"/>
-                <!-- frame is here for compatibility with the previous versions -->
-                <xs:element name="frame" type="frameContainer"/>
 
                 <xs:element name="runtimeProperties" type="runtimePropertiesContainer"/>
                 <xs:element name="dynamicAttributesPanel" type="dynamicAttributesPanel"/>
@@ -4044,7 +3901,6 @@
                 <xs:element name="simplePagination" type="simplePaginationComponent"/>
                 <xs:element name="calendar" type="calendarComponent"/>
 
-                <xs:element name="fieldGroup" type="fieldGroupComponent"/>
                 <xs:element name="tagPicker" type="tagPickerComponent"/>
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="relatedEntities" type="relatedComponent"/>

@@ -18,8 +18,6 @@
 package io.jmix.dynattr.model;
 
 import com.google.common.base.Strings;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
@@ -30,10 +28,9 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.data.entity.ReferenceToEntity;
 import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.ConfigurationExclusionStrategy;
+import io.jmix.dynattr.impl.CategoryAttributeConfigurationConvertor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -188,11 +185,8 @@ public class CategoryAttribute implements Serializable {
     @Column(name = "ENUMERATION_LOCALES")
     protected String enumerationLocales;
 
-    @Lob
     @Column(name = "ATTRIBUTE_CONFIGURATION_JSON")
-    protected String attributeConfigurationJson;
-
-    @Transient
+    @Convert(converter = CategoryAttributeConfigurationConvertor.class)
     protected CategoryAttributeConfiguration configuration;
 
     @PostConstruct
@@ -542,26 +536,15 @@ public class CategoryAttribute implements Serializable {
         return enumerationLocales;
     }
 
-    public void setAttributeConfigurationJson(String attributeConfigurationJson) {
-        this.attributeConfigurationJson = attributeConfigurationJson;
-    }
-
-    public String getAttributeConfigurationJson() {
-        return attributeConfigurationJson;
-    }
-
-    @Transient
-    @JmixProperty
     public CategoryAttributeConfiguration getConfiguration() {
         if (configuration == null) {
-            if (!Strings.isNullOrEmpty(getAttributeConfigurationJson())) {
-                Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                configuration = gson.fromJson(getAttributeConfigurationJson(), CategoryAttributeConfiguration.class);
-            } else {
-                configuration = new CategoryAttributeConfiguration();
-            }
+            configuration = new CategoryAttributeConfiguration();
         }
         return configuration;
+    }
+
+    public void setConfiguration(CategoryAttributeConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @PrePersist

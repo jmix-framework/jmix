@@ -20,8 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
@@ -29,7 +27,6 @@ import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.impl.AdaptiveNumberDatatype;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeType;
-import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.OptionsLoaderType;
 import io.jmix.dynattr.model.Category;
@@ -977,8 +974,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             }
         }
         if (getScreenData().getDataContext().isModified(attribute.getConfiguration())) {
-            Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-            attribute.setAttributeConfigurationJson(gson.toJson(configurationDc.getItemOrNull()));
+            attribute.setConfiguration(configurationDc.getItemOrNull());
         }
     }
 }

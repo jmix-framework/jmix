@@ -16,8 +16,6 @@
 
 package io.jmix.dynattrui.screen.location;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.vaadin.data.provider.DataProvider;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.server.SerializablePredicate;
@@ -33,23 +31,18 @@ import com.vaadin.ui.dnd.DragSourceExtension;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.dynattr.ConfigurationExclusionStrategy;
 import io.jmix.dynattr.model.CategoryAttribute;
 import io.jmix.dynattr.model.CategoryAttributeConfiguration;
 import io.jmix.dynattrui.DynAttrUiProperties;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.component.HBoxLayout;
-import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.*;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 import io.jmix.ui.widget.JmixGrid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,8 +119,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                     if (configuration != null) {
                         configuration.setColumnNumber(dataContainers.indexOf(currentList));
                         configuration.setRowNumber(currentList.indexOf(attribute));
-                        Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                        attribute.setAttributeConfigurationJson(gson.toJson(configuration));
+                        attribute.setConfiguration(configuration);
                     }
                 }
             }
@@ -139,8 +131,7 @@ public class AttributeLocationFragment extends ScreenFragment {
                 if (configuration != null) {
                     configuration.setColumnNumber(null);
                     configuration.setRowNumber(null);
-                    Gson gson = new GsonBuilder().setExclusionStrategies(new ConfigurationExclusionStrategy()).create();
-                    attribute.setAttributeConfigurationJson(gson.toJson(attribute.getConfiguration()));
+                    attribute.setConfiguration(attribute.getConfiguration());
                 }
             }
         }

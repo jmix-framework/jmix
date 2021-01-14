@@ -19,6 +19,7 @@ package test_support.annotated_role_builder;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
 import io.jmix.security.role.annotation.Role;
+import test_support.entity.Foo;
 import test_support.entity.TestOrder;
 
 import java.util.function.Predicate;
@@ -28,7 +29,13 @@ public interface TestPredicateRoleLevelPolicyRole {
 
     @PredicateRowLevelPolicy(entityClass = TestOrder.class,
             actions = {RowLevelPolicyAction.CREATE, RowLevelPolicyAction.UPDATE})
-    static Predicate<TestOrder> numberStartsWithA() {
+    default Predicate<TestOrder> numberStartsWithA() {
         return testOrder -> testOrder.getNumber().startsWith("a");
+    }
+
+    @PredicateRowLevelPolicy(entityClass = Foo.class,
+            actions = {RowLevelPolicyAction.CREATE, RowLevelPolicyAction.UPDATE})
+    static Predicate<Foo> nameStartsWithA() {
+        return foo -> foo.getName().startsWith("a");
     }
 }

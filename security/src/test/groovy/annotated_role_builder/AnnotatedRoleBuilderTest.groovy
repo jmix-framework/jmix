@@ -22,6 +22,7 @@ import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 import test_support.annotated_role_builder.*
+import test_support.entity.Foo
 import test_support.entity.TestOrder
 
 class AnnotatedRoleBuilderTest extends SecuritySpecification {
@@ -81,27 +82,36 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         when:
 
-        TestOrder order1 = new TestOrder();
+        TestOrder order1 = new TestOrder()
         order1.number = "aaa"
-        TestOrder order2 = new TestOrder();
+        TestOrder order2 = new TestOrder()
         order2.number = "bbb"
+
+        Foo foo1 = new Foo()
+        foo1.name = "aaa"
+        Foo foo2 = new Foo()
+        foo2.name = "bbb"
 
         Role role = annotatedRoleBuilder.createRole(TestPredicateRoleLevelPolicyRole.class.getCanonicalName())
         def policies = role.rowLevelPolicies
 
         then:
 
-        policies.size() == 2
+        policies.size() == 4
 
-        def createPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE }
-        createPolicy != null
-        createPolicy.entityName == 'test_Order'
+        def createOrderPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE  && it.entityName == 'test_Order'}
+        createOrderPolicy != null
 
         policies.find { it.action == RowLevelPolicyAction.UPDATE } != null
 
-        RowLevelPolicy policy = policies[0]
-        policy.predicate.test(order1) == true
-        policy.predicate.test(order2) == false
+        createOrderPolicy.predicate.test(order1) == true
+        createOrderPolicy.predicate.test(order2) == false
+
+        def createFooPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE  && it.entityName == 'test_Foo'}
+        createOrderPolicy != null
+
+        createFooPolicy.predicate.test(foo1) == true
+        createFooPolicy.predicate.test(foo2) == false
     }
 
     def "JPQL row-level policy"() {

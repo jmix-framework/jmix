@@ -17,22 +17,29 @@
 package io.jmix.security.impl.role.builder.extractor;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
+import org.apache.commons.lang3.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import javax.annotation.Nullable;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
 @Component("sec_InMemoryRowLevelPolicyExtractor")
 public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
 
     protected Metadata metadata;
+    protected ConcurrentMap<Class<?>, Object> proxyCache = new ConcurrentHashMap<>();
 
     @Autowired
     public PredicateRowLevelPolicyExtractor(Metadata metadata) {
@@ -50,8 +57,14 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
                 MetaClass metaClass = metadata.getClass(entityClass);
                 Predicate<Object> predicate;
                 try {
-                    //noinspection unchecked
-                    predicate = (Predicate<Object>) method.invoke(null);
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        //noinspection unchecked
+                        predicate = (Predicate<Object>) method.invoke(null);
+                    } else {
+                        Object proxyObject = proxyCache.computeIfAbsent(method.getDeclaringClass(), this::createProxy);
+                        //noinspection unchecked
+                        predicate = (Predicate<Object>) method.invoke(proxyObject);
+                    }
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }
@@ -63,5 +76,49 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
             }
         }
         return policies;
+    }
+
+    protected Object createProxy(Class<?> ownerClass) {
+        if (ownerClass.isInterface()) {
+            ClassLoader classLoader = ownerClass.getClassLoader();
+            return Proxy.newProxyInstance(classLoader, new Class[]{ownerClass},
+                    (proxy, method, args) -> invokeProxyMethod(ownerClass, proxy, method, args));
+        } else {
+            try {
+                return ReflectionHelper.newInstance(ownerClass);
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(String.format("Cannot create Role [%s] proxy", ownerClass), e);
+            }
+        }
+    }
+
+    @Nullable
+    protected Object invokeProxyMethod(Class<?> ownerClass, Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.isDefault()) {
+            try {
+                if (SystemUtils.IS_JAVA_1_8) {
+                    // hack to invoke default method of an interface reflectively
+                    Constructor<MethodHandles.Lookup> lookupConstructor =
+                            MethodHandles.Lookup.class.getDeclaredConstructor(Class.class, Integer.TYPE);
+                    if (!lookupConstructor.isAccessible()) {
+                        lookupConstructor.setAccessible(true);
+                    }
+                    return lookupConstructor.newInstance(ownerClass, MethodHandles.Lookup.PRIVATE)
+                            .unreflectSpecial(method, ownerClass)
+                            .bindTo(proxy)
+                            .invokeWithArguments(args);
+                } else {
+                    return MethodHandles.lookup()
+                            .findSpecial(ownerClass, method.getName(), MethodType.methodType(method.getReturnType(),
+                                    method.getParameterTypes()), ownerClass)
+                            .bindTo(proxy)
+                            .invokeWithArguments(args);
+                }
+            } catch (Throwable throwable) {
+                throw new RuntimeException("Error invoking default method of Role interface", throwable);
+            }
+        } else {
+            return null;
+        }
     }
 }

@@ -29,9 +29,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
-import static test_support.RestTestUtils.*;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.jupiter.api.Assertions.*;
+import static test_support.RestTestUtils.*;
 
 public class ServicesControllerFT extends AbstractRestControllerFT {
 
@@ -81,7 +81,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         String requestBody = getFileContent("serviceWithDateParameter.json", null);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testDateParam", oauthToken, requestBody, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("2015-01-02 00:00:00.000", responseToString(response));
+            assertEquals("2015-01-02T00:00:00", responseToString(response));
         }
     }
 
@@ -92,7 +92,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(baseUrl + "/services/" + RestTestService.NAME + "/testDateParam", oauthToken, params)) {
             assertEquals("text/plain;charset=UTF-8", responseContentType(response));
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("2015-01-02 00:00:00.000", responseToString(response));
+            assertEquals("2015-01-02T00:00:00", responseToString(response));
         }
     }
 
@@ -101,7 +101,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
         String requestBody = getFileContent("serviceWithDateTimeParameter.json", null);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testDateParam", oauthToken, requestBody, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
-            assertEquals("2015-01-02 01:02:03.004", responseToString(response));
+            assertEquals("2015-01-02T01:02:03.004", responseToString(response));
         }
     }
 
@@ -435,7 +435,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals("field1 value", ctx.read("$.field1"));
-            assertEquals("2017-01-15 17:56:00.000", ctx.read("$.dateField"));
+            assertEquals("2017-01-15T17:56:00", ctx.read("$.dateField"));
             assertEquals((Integer) 2, ctx.read("$.nestedPojo.nestedField", Integer.class));
         }
     }
@@ -447,7 +447,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals(2, ctx.<Collection>read("$").size());
             assertEquals("pojo1", ctx.read("$.[0].field1"));
-            assertEquals("2017-01-15 17:56:00.000", ctx.read("$.[0].dateField"));
+            assertEquals("2017-01-15T17:56:00", ctx.read("$.[0].dateField"));
             assertEquals((int) 1, (int) ctx.<Integer>read("$.[0].nestedPojo.nestedField"));
             assertEquals("pojo2", ctx.read("$.[1].field1"));
         }

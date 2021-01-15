@@ -20,8 +20,8 @@ import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.jmix.core.EntitySerialization;
 import io.jmix.core.Entity;
+import io.jmix.core.EntitySerialization;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -35,6 +35,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 /**
@@ -83,7 +84,7 @@ public class RestParseUtils {
         if (Date.class == clazz) {
             try {
                 return datatypeRegistry.get(Date.class).parse(value);
-            } catch (ParseException e) {
+            } catch (DateTimeParseException | ParseException e) {
                 try {
                     return datatypeRegistry.get(java.sql.Date.class).parse(value);
                 } catch (ParseException e1) {

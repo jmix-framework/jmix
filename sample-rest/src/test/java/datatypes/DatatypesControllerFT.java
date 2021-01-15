@@ -17,16 +17,16 @@
 package datatypes;
 
 import com.jayway.jsonpath.ReadContext;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Test;
+import test_support.AbstractRestControllerFT;
 
 import java.util.List;
 
-import static test_support.RestTestUtils.parseResponse;
-import static test_support.RestTestUtils.sendGet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static test_support.RestTestUtils.parseResponse;
+import static test_support.RestTestUtils.sendGet;
 
 public class DatatypesControllerFT extends AbstractRestControllerFT {
 
@@ -37,7 +37,7 @@ public class DatatypesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertTrue(ctx.read("$.length()", Integer.class) > 1);
 
-            assertEquals("yyyy-MM-dd HH:mm:ss.SSS", ctx.read("$[?(@.id == 'dateTime')].format", List.class).get(0));
+            assertEquals("yyyy-MM-dd'T'HH:mm:ss.SSS", ctx.read("$[?(@.id == 'dateTime')].format", List.class).get(0));
             assertEquals(0, ctx.read("$[?(@.id == 'string')].format", List.class).size());
 
             assertEquals("0.####", ctx.read("$[?(@.id == 'decimal')].format", List.class).get(0));

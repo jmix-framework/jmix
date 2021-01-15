@@ -1,7 +1,7 @@
 {
   "pojo": {
     "field1": "Field1 value",
-    "dateField": "2017-01-15 17:56:00.000",
+    "dateField": "2017-01-15T17:56:00.000",
     "nestedPojo": {
       "nestedField": 2
     }

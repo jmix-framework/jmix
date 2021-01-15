@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-
 public class DynAttrMetadataExtension implements MetadataExtension {
 
     private final DynAttrMetadata dynAttrMetadata;

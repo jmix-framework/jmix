@@ -16,21 +16,21 @@
 
 package io.jmix.core.metamodel.datatype.impl;
 
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.core.metamodel.datatype.ParameterizedDatatype;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQuery;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -39,12 +39,18 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
-    protected String formatPattern;
+    protected final DateTimeFormatter formatter;
+
+    public AbstractTemporalDatatype(DateTimeFormatter formatter) {
+        this.formatter = formatter;
+    }
 
     public AbstractTemporalDatatype() {
         DateTimeFormat dateTimeFormat = getClass().getAnnotation(DateTimeFormat.class);
         if (dateTimeFormat != null) {
-            formatPattern = dateTimeFormat.value();
+            formatter = DateTimeFormatter.ofPattern(dateTimeFormat.value());
+        } else {
+            formatter = getDateTimeFormatter();
         }
     }
 
@@ -54,12 +60,6 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
         if (value == null) {
             return "";
         } else {
-            DateTimeFormatter formatter;
-            if (formatPattern != null) {
-                formatter = DateTimeFormatter.ofPattern(formatPattern);
-            } else {
-                formatter = getDateTimeFormatter();
-            }
             return formatter.format((T) value);
         }
     }
@@ -85,13 +85,6 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
         if (StringUtils.isBlank(value)) {
             return null;
         }
-
-        DateTimeFormatter formatter;
-        if (formatPattern != null) {
-            formatter = DateTimeFormatter.ofPattern(formatPattern);
-        } else {
-            formatter = getDateTimeFormatter();
-        }
         return formatter.parse(value.trim(), newInstance());
     }
 
@@ -113,7 +106,7 @@ public abstract class AbstractTemporalDatatype<T extends Temporal> implements Da
 
     @Override
     public Map<String, Object> getParameters() {
-        return ParamsMap.of("format", formatPattern);
+        return Collections.emptyMap();
     }
 
     @Override

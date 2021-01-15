@@ -17,7 +17,6 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.TimeZoneAwareDatatype;
 
@@ -32,9 +31,12 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @DatatypeDef(id = "offsetDateTime", javaClass = OffsetDateTime.class, defaultForClass = true, value = "core_OffsetDateTimeDatatype")
-@DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS Z")
 public class OffsetDateTimeDatatype extends AbstractTemporalDatatype<OffsetDateTime>
         implements TimeZoneAwareDatatype {
+
+    public OffsetDateTimeDatatype() {
+        super(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    }
 
     @Override
     public String format(@Nullable Object value, Locale locale, @Nullable TimeZone timeZone) {

@@ -18,7 +18,6 @@ package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
@@ -29,6 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -39,34 +42,21 @@ import java.util.Map;
  * <code>java.<b>util</b>.Date</code> to avoid problems with casting.
  */
 @DatatypeDef(id = "date", javaClass = java.sql.Date.class, defaultForClass = true, value = "core_DateDatatype")
-@DateTimeFormat("yyyy-MM-dd")
 public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
 
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
-    protected String formatPattern;
-
-    public DateDatatype() {
-        DateTimeFormat dateTimeFormat = getClass().getAnnotation(DateTimeFormat.class);
-        if (dateTimeFormat != null) {
-            formatPattern = dateTimeFormat.value();
-        }
-    }
-
     @Override
     public String format(Object value) {
-        if (value == null) {
+        if (!(value instanceof Date)) {
             return "";
-        }
-
-        DateFormat format;
-        if (formatPattern != null) {
-            format = new SimpleDateFormat(formatPattern);
         } else {
-            format = DateFormat.getDateInstance();
+            Date date = (Date) value;
+            return Instant.ofEpochMilli(date.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate().format(DateTimeFormatter.ISO_DATE);
         }
-        return format.format((value));
     }
 
     @Override
@@ -99,15 +89,8 @@ public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
         if (StringUtils.isBlank(value)) {
             return null;
         }
-
-        DateFormat format;
-        if (formatPattern != null) {
-            format = new SimpleDateFormat(formatPattern);
-            format.setLenient(false);
-        } else {
-            format = DateFormat.getDateInstance();
-        }
-        return normalize(format.parse(value.trim()));
+        LocalDate localDateTime = DateTimeFormatter.ISO_DATE.parse(value.trim(), LocalDate::from);
+        return normalize(Date.from(localDateTime.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
     }
 
     @Override
@@ -129,7 +112,7 @@ public class DateDatatype implements Datatype<Date>, ParameterizedDatatype {
 
     @Override
     public Map<String, Object> getParameters() {
-        return ParamsMap.of("format", formatPattern);
+        return ParamsMap.of("format", "yyyy-MM-dd");
     }
 
     @Override

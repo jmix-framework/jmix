@@ -17,7 +17,6 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 
 import java.time.OffsetTime;
@@ -27,8 +26,11 @@ import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 
 @DatatypeDef(id = "offsetTime", javaClass = OffsetTime.class, defaultForClass = true, value = "core_OffsetTimeDatatype")
-@DateTimeFormat("HH:mm:ss Z")
 public class OffsetTimeDatatype extends AbstractTemporalDatatype<OffsetTime> {
+
+    public OffsetTimeDatatype() {
+        super(DateTimeFormatter.ISO_OFFSET_TIME);
+    }
 
     @Override
     protected DateTimeFormatter getDateTimeFormatter() {

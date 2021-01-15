@@ -18,7 +18,6 @@ package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,39 +26,34 @@ import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
 @DatatypeDef(id = "dateTime", javaClass = Date.class, defaultForClass = true, value = "core_DateTimeDatatype")
-@DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
 public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, TimeZoneAwareDatatype {
 
-    private String formatPattern;
-
-    @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
 
-    public DateTimeDatatype() {
-        DateTimeFormat dateTimeFormat = getClass().getAnnotation(DateTimeFormat.class);
-        if (dateTimeFormat != null) {
-            formatPattern = dateTimeFormat.value();
-        }
+    @Autowired
+    public void setFormatStringsRegistry(FormatStringsRegistry formatStringsRegistry) {
+        this.formatStringsRegistry = formatStringsRegistry;
     }
 
     @Override
     public String format(@Nullable Object value) {
-        if (value == null) {
+        if (!(value instanceof Date)) {
             return "";
         } else {
-            DateFormat format;
-            if (formatPattern != null) {
-                format = new SimpleDateFormat(formatPattern);
-            } else {
-                format = DateFormat.getDateInstance();
-            }
-            return format.format((value));
+            Date date = (Date) value;
+            return Instant.ofEpochMilli(date.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDateTime().format(DateTimeFormatter.ISO_DATE_TIME);
         }
     }
 
@@ -92,14 +86,9 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
         if (StringUtils.isBlank(value)) {
             return null;
         }
-
-        DateFormat format;
-        if (formatPattern != null) {
-            format = new SimpleDateFormat(formatPattern);
-        } else {
-            format = DateFormat.getDateInstance();
-        }
-        return format.parse(value.trim());
+        LocalDateTime localDateTime;
+        localDateTime = DateTimeFormatter.ISO_DATE_TIME.parse(value.trim(), LocalDateTime::from);
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
@@ -129,7 +118,7 @@ public class DateTimeDatatype implements Datatype<Date>, ParameterizedDatatype, 
 
     @Override
     public Map<String, Object> getParameters() {
-        return ParamsMap.of("format", formatPattern);
+        return ParamsMap.of("format", "yyyy-MM-dd'T'HH:mm:ss.SSS");
     }
 
     @Override

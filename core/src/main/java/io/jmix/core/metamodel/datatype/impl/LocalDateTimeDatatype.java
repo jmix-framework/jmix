@@ -17,7 +17,6 @@
 package io.jmix.core.metamodel.datatype.impl;
 
 import io.jmix.core.metamodel.annotation.DatatypeDef;
-import io.jmix.core.metamodel.annotation.DateTimeFormat;
 import io.jmix.core.metamodel.datatype.FormatStrings;
 
 import java.time.LocalDateTime;
@@ -27,8 +26,11 @@ import java.time.temporal.TemporalQuery;
 import java.util.Locale;
 
 @DatatypeDef(id = "localDateTime", javaClass = LocalDateTime.class, defaultForClass = true, value = "core_LocalDateTimeDatatype")
-@DateTimeFormat("yyyy-MM-dd HH:mm:ss.SSS")
 public class LocalDateTimeDatatype extends AbstractTemporalDatatype<LocalDateTime> {
+
+    public LocalDateTimeDatatype() {
+        super(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+    }
 
     @Override
     protected DateTimeFormatter getDateTimeFormatter() {

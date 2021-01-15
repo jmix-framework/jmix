@@ -22,10 +22,15 @@ import io.jmix.core.datastore.*;
 import io.jmix.data.impl.JpaDataStoreListener;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
+import io.jmix.dynattr.DynamicAttributes;
+import io.jmix.dynattr.DynamicAttributesState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static io.jmix.core.entity.EntitySystemAccess.addExtraState;
+import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
 @Component("dynattr_DynAttrLifecycleListener")
 public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStoreEventListener, DataStoreCustomizer {
@@ -39,6 +44,12 @@ public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStore
         Map<String, Object> hints = context.getHints();
         if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             dynAttrManager.loadValues(event.getResultEntities(), context.getFetchPlan(), context.getAccessConstraints());
+        } else {
+            for (Object entity : event.getResultEntities()) {
+                DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
+                state.setDynamicAttributes(new DynamicAttributes());
+                addExtraState(entity, state);
+            }
         }
     }
 

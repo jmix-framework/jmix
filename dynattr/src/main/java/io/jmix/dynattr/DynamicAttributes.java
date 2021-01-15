@@ -160,6 +160,9 @@ public class DynamicAttributes implements Serializable {
     }
 
     public void copy(DynamicAttributes dynamicAttributes) {
+        if (dynamicAttributes == null) {
+            return;
+        }
         for (Map.Entry<String, ValueHolder> entry : dynamicAttributes.values.entrySet()) {
             ValueHolder fromValueHolder = entry.getValue();
             ValueHolder valueHolder = new ValueHolder(fromValueHolder.getCode(), fromValueHolder.getValue());

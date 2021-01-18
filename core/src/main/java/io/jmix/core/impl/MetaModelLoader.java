@@ -422,7 +422,8 @@ public class MetaModelLoader {
 
         Map<String, Object> map = new HashMap<>();
         map.put("cardinality", Range.Cardinality.NONE);
-        map.put("mandatory", false);
+        boolean mandatory = isMandatory(method);
+        map.put("mandatory", mandatory);
         Datatype datatype = getAdaptiveDatatype(method);
         map.put("datatype", datatype);
 
@@ -433,7 +434,7 @@ public class MetaModelLoader {
         else
             type = method.getReturnType();
 
-        property.setMandatory(false);
+        property.setMandatory(mandatory);
         property.setReadOnly(!setterExists(method));
         property.setAnnotatedElement(method);
         property.setDeclaringClass(method.getDeclaringClass());
@@ -578,24 +579,28 @@ public class MetaModelLoader {
             return null;
     }
 
-    protected boolean isMandatory(Field field) {
-        OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
-        ManyToMany manyToManyAnnotation = field.getAnnotation(ManyToMany.class);
+    /**
+     * @param base field or method for field-based or property-based access type
+     * @return
+     */
+    protected boolean isMandatory(AccessibleObject base) {
+        OneToMany oneToManyAnnotation = base.getAnnotation(OneToMany.class);
+        ManyToMany manyToManyAnnotation = base.getAnnotation(ManyToMany.class);
 
         if (oneToManyAnnotation != null || manyToManyAnnotation != null) {
             return false;
         }
 
-        Column columnAnnotation = field.getAnnotation(Column.class);
-        OneToOne oneToOneAnnotation = field.getAnnotation(OneToOne.class);
-        ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
+        Column columnAnnotation = base.getAnnotation(Column.class);
+        OneToOne oneToOneAnnotation = base.getAnnotation(OneToOne.class);
+        ManyToOne manyToOneAnnotation = base.getAnnotation(ManyToOne.class);
 
         JmixProperty jmixPropertyAnnotation =
-                field.getAnnotation(JmixProperty.class);
+                base.getAnnotation(JmixProperty.class);
 
         boolean superMandatory = (jmixPropertyAnnotation != null && jmixPropertyAnnotation.mandatory())
-                || (field.getAnnotation(NotNull.class) != null
-                && isDefinedForDefaultValidationGroup(field.getAnnotation(NotNull.class)));  // @NotNull without groups
+                || (base.getAnnotation(NotNull.class) != null
+                && isDefinedForDefaultValidationGroup(base.getAnnotation(NotNull.class)));  // @NotNull without groups
 
         return (columnAnnotation != null && !columnAnnotation.nullable())
                 || (oneToOneAnnotation != null && !oneToOneAnnotation.optional())

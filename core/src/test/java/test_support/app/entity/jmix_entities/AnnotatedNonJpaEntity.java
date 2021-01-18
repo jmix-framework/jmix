@@ -36,6 +36,8 @@ public class AnnotatedNonJpaEntity {
 
     private String forbiddenProperty;
 
+    private String methodAnnotatedProperty;
+
     public UUID getId() {
         return id;
     }
@@ -58,5 +60,19 @@ public class AnnotatedNonJpaEntity {
 
     public void setForbiddenProperty(String forbiddenProperty) {
         this.forbiddenProperty = forbiddenProperty;
+    }
+
+    @JmixProperty(mandatory = true)
+    public String getMethodAnnotatedProperty() {
+        return methodAnnotatedProperty;
+    }
+
+    @JmixProperty
+    public String getMethodOnlyProperty() {
+        return "Hardcoded or generated value";
+    }
+
+    public void setMethodAnnotatedProperty(String methodAnnotatedProperty) {
+        this.methodAnnotatedProperty = methodAnnotatedProperty;
     }
 }

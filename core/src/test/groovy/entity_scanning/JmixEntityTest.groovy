@@ -17,7 +17,9 @@
 package entity_scanning
 
 import io.jmix.core.CoreConfiguration
+import io.jmix.core.Entity
 import io.jmix.core.Metadata
+import io.jmix.core.entity.EntityPropertyChangeEvent
 import io.jmix.core.metamodel.model.MetaClass
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -94,5 +96,30 @@ class JmixEntityTest extends Specification {
         annotatedEntityMClass.findProperty("id") != null
         annotatedEntityMClass.findProperty("allowedProperty") != null
         annotatedEntityMClass.findProperty("forbiddenProperty") == null
+    }
+
+    def "@JmixProperty on method enhanced"() {
+        setup:
+        AnnotatedNonJpaEntity testEntity = metadata.create(AnnotatedNonJpaEntity)
+        EntityPropertyChangeEvent changeEvent = null
+        ((Entity) testEntity).__getEntityEntry().addPropertyChangeListener({ e ->
+            changeEvent = e;
+        })
+
+        expect:
+        metadata.getClass(AnnotatedNonJpaEntity).findProperty('methodOnlyProperty') != null
+        metadata.getClass(AnnotatedNonJpaEntity).findProperty('methodAnnotatedProperty') != null
+
+        metadata.getClass(AnnotatedNonJpaEntity).findProperty('methodAnnotatedProperty').isMandatory()
+
+        when:
+        testEntity.setMethodAnnotatedProperty('1')
+        testEntity.setMethodAnnotatedProperty('2')
+
+        then:
+        changeEvent != null
+        changeEvent.getProperty() == 'methodAnnotatedProperty'
+        changeEvent.getPrevValue() == '1'
+        changeEvent.getValue() == '2'
     }
 }

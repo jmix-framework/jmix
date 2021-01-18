@@ -16,6 +16,8 @@
 
 package io.jmix.gradle.ui;
 
+import io.jmix.gradle.ClassPathUtil;
+import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedArtifact;
@@ -39,6 +41,8 @@ public class WidgetsDebug extends WidgetsTask {
     protected Map<String, Object> compilerArgs = new HashMap<>();
 
     protected boolean printCompilerClassPath = false;
+
+    protected boolean shortClassPath = true;
 
     protected String logLevel = "INFO";
 
@@ -73,12 +77,31 @@ public class WidgetsDebug extends WidgetsTask {
         List<String> gwtCompilerArgs = collectCompilerArgs();
         List<String> gwtCompilerJvmArgs = collectCompilerJvmArgs();
 
-        getProject().javaexec(javaExecSpec -> {
-            javaExecSpec.setMain("com.google.gwt.dev.codeserver.CodeServer");
-            javaExecSpec.setClasspath(getProject().files(compilerClassPath));
-            javaExecSpec.setArgs(gwtCompilerArgs);
-            javaExecSpec.setJvmArgs(gwtCompilerJvmArgs);
-        });
+        if (Os.isFamily(Os.FAMILY_WINDOWS) && shortClassPath) {
+            File javaTmp = getProject().file("build/tmp/");
+            if (javaTmp.exists()) {
+                FileUtils.deleteQuietly(javaTmp);
+            }
+            javaTmp.mkdirs();
+
+            File classPathFile = getProject().file("build/tmp/debug-widget-set-classpath.dat");
+            ClassPathUtil.createClassPathFile(classPathFile, compilerClassPath);
+
+            getProject().javaexec(spec -> {
+                spec.setMain("io.jmix.gradle.ClassPathCommandLine");
+                spec.setClasspath(getProject().files(ClassPathUtil.getCommandLineClassPath()));
+                spec.setArgs(ClassPathUtil.getExtendedCommandLineAgs(
+                        classPathFile.getAbsolutePath(), "com.google.gwt.dev.codeserver.CodeServer", gwtCompilerArgs));
+                spec.setJvmArgs(gwtCompilerJvmArgs);
+            });
+        } else {
+            getProject().javaexec(javaExecSpec -> {
+                javaExecSpec.setMain("com.google.gwt.dev.codeserver.CodeServer");
+                javaExecSpec.setClasspath(getProject().files(compilerClassPath));
+                javaExecSpec.setArgs(gwtCompilerArgs);
+                javaExecSpec.setJvmArgs(gwtCompilerJvmArgs);
+            });
+        }
     }
 
     @InputFiles
@@ -246,6 +269,14 @@ public class WidgetsDebug extends WidgetsTask {
 
     public boolean isPrintCompilerClassPath() {
         return printCompilerClassPath;
+    }
+
+    public boolean isShortClassPath() {
+        return shortClassPath;
+    }
+
+    public void setShortClassPath(boolean shortClassPath) {
+        this.shortClassPath = shortClassPath;
     }
 
     public void setLogLevel(String logLevel) {

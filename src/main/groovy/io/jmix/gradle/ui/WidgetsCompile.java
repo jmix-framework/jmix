@@ -17,8 +17,10 @@
 package io.jmix.gradle.ui;
 
 import com.google.common.base.Joiner;
+import io.jmix.gradle.ClassPathUtil;
 import io.jmix.gradle.JmixPlugin;
 import org.apache.commons.io.FileUtils;
+import org.apache.tools.ant.taskdefs.condition.Os;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
@@ -72,6 +74,8 @@ public class WidgetsCompile extends WidgetsTask {
     protected String xss = "-Xss8m";
 
     protected String logLevel = "ERROR";
+
+    protected boolean shortClassPath = true;
 
     protected int workers = Math.max(Runtime.getRuntime().availableProcessors() - 1, 1);
 
@@ -133,12 +137,25 @@ public class WidgetsCompile extends WidgetsTask {
             generateWidgetSetXml(compilerClassPath, gwtTemp, widgetSetClass);
         }
 
-        getProject().javaexec(spec -> {
-            spec.setMain("com.google.gwt.dev.Compiler");
-            spec.setClasspath(getProject().files(compilerClassPath));
-            spec.setArgs(gwtCompilerArgs);
-            spec.setJvmArgs(gwtCompilerJvmArgs);
-        });
+        if (Os.isFamily(Os.FAMILY_WINDOWS) && shortClassPath) {
+            File classPathFile = getProject().file("build/tmp/compile-widget-set-classpath.dat");
+            ClassPathUtil.createClassPathFile(classPathFile, compilerClassPath);
+
+            getProject().javaexec(spec -> {
+                spec.setMain("io.jmix.gradle.ClassPathCommandLine");
+                spec.setClasspath(getProject().files(ClassPathUtil.getCommandLineClassPath()));
+                spec.setArgs(ClassPathUtil.getExtendedCommandLineAgs(
+                        classPathFile.getAbsolutePath(), "com.google.gwt.dev.Compiler", gwtCompilerArgs));
+                spec.setJvmArgs(gwtCompilerJvmArgs);
+            });
+        } else {
+            getProject().javaexec(spec -> {
+                spec.setMain("com.google.gwt.dev.Compiler");
+                spec.setClasspath(getProject().files(compilerClassPath));
+                spec.setArgs(gwtCompilerArgs);
+                spec.setJvmArgs(gwtCompilerJvmArgs);
+            });
+        }
 
         deleteQuietly(new File(gwtWidgetSetTemp, "WEB-INF"));
 
@@ -499,6 +516,14 @@ public class WidgetsCompile extends WidgetsTask {
 
     public String getLogLevel() {
         return logLevel;
+    }
+
+    public boolean isShortClassPath() {
+        return shortClassPath;
+    }
+
+    public void setShortClassPath(boolean shortenClassPath) {
+        this.shortClassPath = shortenClassPath;
     }
 
     public void setWorkers(int workers) {

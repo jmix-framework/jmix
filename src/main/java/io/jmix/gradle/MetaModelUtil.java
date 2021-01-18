@@ -154,9 +154,11 @@ public class MetaModelUtil {
         return false;
     }
 
-    public static boolean isJmixPropertyField(CtClass ctClass, String fieldName) {
+    public static boolean isJmixProperty(CtClass ctClass, String fieldName) {
         CtField ctField = findDeclaredField(ctClass, fieldName);
-        return ctField != null && hasAnnotationOnField(ctField, JMIX_PROPERTY_ANNOTATION_TYPE);
+        CtMethod ctMethod = findDeclaredMethod(ctClass, "get" + StringUtils.capitalize(fieldName));
+        return ctField != null && hasAnnotationOnField(ctField, JMIX_PROPERTY_ANNOTATION_TYPE)
+                || ctMethod != null && hasAnnotationOnMethod(ctMethod, JMIX_PROPERTY_ANNOTATION_TYPE);
     }
 
     public static boolean isTransientField(CtClass ctClass, String fieldName) {
@@ -182,6 +184,16 @@ public class MetaModelUtil {
             }
         }
         return null;
+    }
+
+    public static CtMethod findDeclaredMethod(CtClass ctClass, String name) {
+        for (CtMethod method : ctClass.getDeclaredMethods()) {
+            if (method.getName().equals(name)) {
+                return method;
+            }
+        }
+        return null;
+
     }
 
     public static CtMethod findEqualsMethod(CtClass ctClass) throws NotFoundException {
@@ -235,6 +247,11 @@ public class MetaModelUtil {
 
     public static boolean hasAnnotationOnField(CtField ctField, String annotationType) {
         AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctField.getFieldInfo().getAttribute(AnnotationsAttribute.visibleTag);
+        return annotationsAttribute != null && annotationsAttribute.getAnnotation(annotationType) != null;
+    }
+
+    public static boolean hasAnnotationOnMethod(CtMethod ctMethod, String annotationType) {
+        AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctMethod.getMethodInfo().getAttribute(AnnotationsAttribute.visibleTag);
         return annotationsAttribute != null && annotationsAttribute.getAnnotation(annotationType) != null;
     }
 

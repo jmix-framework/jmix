@@ -70,7 +70,7 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
                 continue;
             }
 
-            if (isPersistentField(ctClass, fieldName) || isJmixPropertyField(ctClass, fieldName) || !jmixPropertiesAnnotatedOnly) {
+            if (isPersistentField(ctClass, fieldName) || isJmixProperty(ctClass, fieldName) || !jmixPropertiesAnnotatedOnly) {
                 CtClass paramType = ctMethod.getParameterTypes()[0];
 
                 if (paramType.isPrimitive()) {

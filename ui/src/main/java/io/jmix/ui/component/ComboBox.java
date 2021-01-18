@@ -60,6 +60,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @return true if text input allowed
      */
     boolean isTextInputAllowed();
+
     /**
      * Sets whether it is possible to input text into the field or whether the field area of the component is just used
      * to show what is selected.
@@ -93,6 +94,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @return the page length of the suggestion popup.
      */
     int getPageLength();
+
     /**
      * Sets the page length for the suggestion popup. Setting the page length to
      * 0 will disable suggestion popup paging (all items visible).
@@ -105,6 +107,7 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * Sets visibility for first null element in suggestion popup.
      */
     void setNullOptionVisible(boolean nullOptionVisible);
+
     /**
      * @return true if first null element is visible.
      */

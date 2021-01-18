@@ -102,7 +102,7 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
     public void afterPropertiesSet() {
         initComponent(component);
 
-        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getComboBoxPageLength());
     }
 
     protected void initComponent(JmixComboBox<V> component) {

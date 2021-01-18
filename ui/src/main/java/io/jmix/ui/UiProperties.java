@@ -16,6 +16,7 @@
 
 package io.jmix.ui;
 
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.navigation.UrlHandlingMode;
 import io.jmix.ui.sanitizer.HtmlSanitizer;
 import io.jmix.ui.widget.JmixMainTabSheet;
@@ -54,7 +55,7 @@ public class UiProperties {
     String appWindowMode;
     boolean useSaveConfirmation;
     boolean layoutAnalyzerEnabled;
-    int lookupFieldPageLength;
+    int comboBoxPageLength;
     String validationNotificationType;
     boolean reloadUnfetchedAttributesFromLookupScreens;
     int httpSessionExpirationTimeoutSec;
@@ -117,7 +118,7 @@ public class UiProperties {
             @DefaultValue("TABBED") String appWindowMode,
             @DefaultValue("true") boolean useSaveConfirmation,
             @DefaultValue("true") boolean layoutAnalyzerEnabled,
-            @DefaultValue("10") int lookupFieldPageLength,
+            @DefaultValue("10") int comboBoxPageLength,
             @DefaultValue("TRAY") String validationNotificationType,
             @DefaultValue("true") boolean reloadUnfetchedAttributesFromLookupScreens,
             @DefaultValue("1800") int httpSessionExpirationTimeoutSec,
@@ -178,7 +179,7 @@ public class UiProperties {
         this.appWindowMode = appWindowMode;
         this.useSaveConfirmation = useSaveConfirmation;
         this.layoutAnalyzerEnabled = layoutAnalyzerEnabled;
-        this.lookupFieldPageLength = lookupFieldPageLength;
+        this.comboBoxPageLength = comboBoxPageLength;
         this.validationNotificationType = validationNotificationType;
         this.reloadUnfetchedAttributesFromLookupScreens = reloadUnfetchedAttributesFromLookupScreens;
         this.httpSessionExpirationTimeoutSec = httpSessionExpirationTimeoutSec;
@@ -307,8 +308,12 @@ public class UiProperties {
         return layoutAnalyzerEnabled;
     }
 
-    public int getLookupFieldPageLength() {
-        return lookupFieldPageLength;
+    /**
+     * @return the page length for the suggestion popup of {@link ComboBox} component.
+     * Setting the page length to {@code 0} will disable suggestion popup paging (all items visible)
+     */
+    public int getComboBoxPageLength() {
+        return comboBoxPageLength;
     }
 
     /**

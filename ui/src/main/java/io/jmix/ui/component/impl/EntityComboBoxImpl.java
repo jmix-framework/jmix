@@ -89,7 +89,7 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getComboBoxPageLength());
     }
 
     @Override

@@ -71,7 +71,8 @@ class EnhancingAction implements Action<Task> {
             classesInfo.modulePaths.remove(0);
         }
 
-        project.logger.debug("Project entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}")
+        project.logger.lifecycle("Project entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()};\n" +
+                "Project converters: ${classesInfo.getConverters()}.")
 
         project.jmix.entitiesEnhancing.jpaConverters.each {
             classesInfo.converters.add(it)
@@ -79,7 +80,7 @@ class EnhancingAction implements Action<Task> {
 
         collectEntitiesFromClasspathes(project, sourceSet, classesInfo)
 
-        project.logger.lifecycle("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
+        project.logger.info("Found entities:\n    JPA: ${classesInfo.getJpaEntities()};\n    DTO: ${classesInfo.getDtoEntities()}.\n" +
                 "Converters: ${classesInfo.getConverters()}")
 
         return classesInfo
@@ -136,7 +137,7 @@ class EnhancingAction implements Action<Task> {
 
                     converters?.split(';')?.each { classesInfo.converters.add(it) }
 
-                    project.logger.info("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
+                    project.logger.debug("Found $it.name in $lib.name. Entities: $currentEntities.\n Converters: $converters")
                 }
             }
         }

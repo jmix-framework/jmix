@@ -127,6 +127,8 @@ class AuditingTest extends DataSpec {
         !currentAuthentication.user.username.equals(auditableEntity.creator)
         currentAuthentication.user.username.equals(auditableEntity.touchedBy)
 
+        auditableEntity.version == 2
+
         auditableEntityEntry.createdByClass.name.equals(String.class.name)
         auditableEntityEntry.createdDateClass.name.equals(Date.class.name)
         auditableEntityEntry.lastModifiedByClass.name.equals(String.class.name)

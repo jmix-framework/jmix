@@ -23,6 +23,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.util.Date;
 
 @Table(name = "TEST_AUDITABLE_SUBCLASS")
@@ -39,6 +40,10 @@ public class AuditableSubclass extends CreatableSubclass {
     @LastModifiedDate
     private Date touchDate;
 
+    @Column(name = "VERSION")
+    @Version
+    private Integer version;
+
 
     public String getTouchedBy() {
         return touchedBy;
@@ -54,5 +59,13 @@ public class AuditableSubclass extends CreatableSubclass {
 
     public void setTouchDate(Date touchDate) {
         this.touchDate = touchDate;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

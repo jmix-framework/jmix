@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.core.datatypes
 
 import com.haulmont.cuba.core.global.AppBeans
+import com.haulmont.cuba.core.metamodel.datatype.impl.*
 import com.haulmont.cuba.core.model.LocalDateTimeEntity
 import com.haulmont.cuba.core.model.TestNumberValuesEntity
 import io.jmix.core.Metadata
@@ -58,16 +59,16 @@ class DatatypeTest extends CoreTestSpecification {
         datatypes.find(Long.class).class == LongDatatype
         datatypes.find(Double.class).class == DoubleDatatype
         datatypes.find(BigDecimal.class).class == BigDecimalDatatype
-        datatypes.find(java.util.Date.class).class == DateTimeDatatype
-        datatypes.find(java.sql.Date.class).class == DateDatatype
-        datatypes.find(java.sql.Time.class).class == TimeDatatype
+        datatypes.find(java.util.Date.class).class == CubaDateTimeDatatype
+        datatypes.find(java.sql.Date.class).class == CubaDateDatatype
+        datatypes.find(java.sql.Time.class).class == CubaTimeDatatype
         datatypes.find(UUID.class).class == UuidDatatype
         datatypes.find(byte[].class).class == ByteArrayDatatype
-        datatypes.find(LocalDate.class).class == LocalDateDatatype
-        datatypes.find(LocalTime.class).class == LocalTimeDatatype
-        datatypes.find(LocalDateTime.class).class == LocalDateTimeDatatype
-        datatypes.find(OffsetDateTime.class).class == OffsetDateTimeDatatype
-        datatypes.find(OffsetTime.class).class == OffsetTimeDatatype
+        datatypes.find(LocalDate.class).class == CubaLocalDateDatatype
+        datatypes.find(LocalTime.class).class == CubaLocalTimeDatatype
+        datatypes.find(LocalDateTime.class).class == CubaLocalDateTimeDatatype
+        datatypes.find(OffsetDateTime.class).class == CubaOffsetDateTimeDatatype
+        datatypes.find(OffsetTime.class).class == CubaOffsetTimeDatatype
     }
 
     def "not supported types"() {

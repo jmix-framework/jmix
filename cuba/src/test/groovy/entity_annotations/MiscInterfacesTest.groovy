@@ -68,7 +68,7 @@ class MiscInterfacesTest extends CoreTestSpecification {
     def "System attributes determined correctly"() {
         setup:
         def actualAuditableSystem = metadataTools.getSystemProperties(metadata.getClass(LegacyAuditableEntity)) as Set
-        def expectedAuditableSystem = ["createTs", "createdBy", "updateTs", "updatedBy", "id", "version"] as Set
+        def expectedAuditableSystem = ["createTs", "createdBy", "updateTs", "updatedBy", "id"] as Set
 
         def actualSoftDeleteSystem = metadataTools.getSystemProperties(metadata.getClass(LegacySoftDeleteEntity)) as Set
         def expectedSoftDeleteSystem = ["deleteTs", "deletedBy", "id"] as Set
@@ -80,7 +80,6 @@ class MiscInterfacesTest extends CoreTestSpecification {
         metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("createdBy"))
         metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("updateTs"))
         metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("updatedBy"))
-        metadataTools.isSystem(metadata.getClass(LegacyAuditableEntity).getProperty("version"))
 
         metadataTools.isSystem(metadata.getClass(LegacySoftDeleteEntity).getProperty("id"))
         metadataTools.isSystem(metadata.getClass(LegacySoftDeleteEntity).getProperty("deleteTs"))

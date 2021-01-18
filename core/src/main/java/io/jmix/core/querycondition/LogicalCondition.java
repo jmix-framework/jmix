@@ -23,6 +23,8 @@ import java.util.*;
  * Logical condition (AND, OR) which contains other conditions.
  * <p>
  * {@link #getParameters()} returns parameters of nested conditions.
+ * <p>
+ * Use {@link #and(Condition...)} and {@link #or(Condition...)} static methods to create logical conditions.
  */
 public class LogicalCondition implements Condition {
 
@@ -34,12 +36,42 @@ public class LogicalCondition implements Condition {
 
     private Type type;
 
+    /**
+     * Creates empty AND condition.
+     * Use {@link #add(Condition)} method to add nested conditions.
+     */
     public static LogicalCondition and() {
         return new LogicalCondition(Type.AND);
     }
 
+    /**
+     * Creates AND condition with the given nested conditions.
+     */
+    public static LogicalCondition and(Condition... conditions) {
+        LogicalCondition andCondition = new LogicalCondition(Type.AND);
+        for (Condition condition : conditions) {
+            andCondition.add(condition);
+        }
+        return andCondition;
+    }
+
+    /**
+     * Creates empty OR condition.
+     * Use {@link #add(Condition)} method to add nested conditions.
+     */
     public static LogicalCondition or() {
         return new LogicalCondition(Type.OR);
+    }
+
+    /**
+     * Creates OR condition with the given nested conditions.
+     */
+    public static LogicalCondition or(Condition... conditions) {
+        LogicalCondition orCondition = new LogicalCondition(Type.OR);
+        for (Condition condition : conditions) {
+            orCondition.add(condition);
+        }
+        return orCondition;
     }
 
     public LogicalCondition(Type type) {

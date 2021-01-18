@@ -24,8 +24,10 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Condition for filtering by entity property. Property condition value may be taken from query parameters (the {@link
- * #parameterName} attribute) or taken from the {@link #parameterValue} property.
+ * Condition for filtering by entity property.
+ * <p>
+ * Use one of the static methods like {@link #equal(String, Object)}, {@link #greater(String, Object)} to create
+ * property conditions.
  */
 public class PropertyCondition implements Condition {
 
@@ -40,6 +42,14 @@ public class PropertyCondition implements Condition {
     public PropertyCondition() {
     }
 
+    /**
+     * Creates property condition with the specified parameter name. The parameter value must be provided by
+     * calling {@link #setParameterValue(Object)} method.
+     *
+     * @param property entity attribute name
+     * @param operation comparison operation
+     * @param parameterName parameter name
+     */
     public static PropertyCondition createWithParameterName(String property, String operation, String parameterName) {
         PropertyCondition pc = new PropertyCondition();
         pc.property = property;
@@ -48,6 +58,14 @@ public class PropertyCondition implements Condition {
         return pc;
     }
 
+    /**
+     * Creates a condition to compare the property with the provided value. A parameter name is generated based
+     * on the property name.
+     *
+     * @param property entity attribute name
+     * @param operation comparison operation
+     * @param parameterValue value to compare with
+     */
     public static PropertyCondition createWithValue(String property, String operation, Object parameterValue) {
         PropertyCondition pc = new PropertyCondition();
         pc.property = property;
@@ -57,54 +75,83 @@ public class PropertyCondition implements Condition {
         return pc;
     }
 
+    /**
+     * Creates a condition to compare the property with the given value.
+     *
+     * @param property entity attribute name
+     * @param operation comparison operation, see constants in {@link Operation}
+     * @param value value to compare with
+     */
     public static PropertyCondition create(String property, String operation, Object value) {
         return createWithValue(property, operation, value);
     }
 
+    /**
+     * Creates "=" condition.
+     */
     public static PropertyCondition equal(String property, Object value) {
         return createWithValue(property, Operation.EQUAL, value);
     }
 
+    /**
+     * Creates "!=" condition.
+     */
     public static PropertyCondition notEqual(String property, Object value) {
         return createWithValue(property, Operation.NOT_EQUAL, value);
     }
 
+    /**
+     * Creates ">" condition.
+     */
     public static PropertyCondition greater(String property, Object value) {
         return createWithValue(property, Operation.GREATER, value);
     }
 
+    /**
+     * Creates ">=" condition.
+     */
     public static PropertyCondition greaterOrEqual(String property, Object value) {
         return createWithValue(property, Operation.GREATER_OR_EQUAL, value);
     }
 
+    /**
+     * Creates "<" condition.
+     */
     public static PropertyCondition less(String property, Object value) {
         return createWithValue(property, Operation.LESS, value);
     }
 
+    /**
+     * Creates "<=" condition.
+     */
     public static PropertyCondition lessOrEqual(String property, Object value) {
         return createWithValue(property, Operation.LESS_OR_EQUAL, value);
     }
 
+    /**
+     * Creates a condition that is translated to "like %value%".
+     */
     public static PropertyCondition contains(String property, Object value) {
         return createWithValue(property, Operation.CONTAINS, value);
     }
 
+    /**
+     * Creates a condition that is translated to "like value%".
+     */
     public static PropertyCondition startsWith(String property, Object value) {
         return createWithValue(property, Operation.STARTS_WITH, value);
     }
 
+    /**
+     * Creates a condition that is translated to "like %value".
+     */
     public static PropertyCondition endsWith(String property, Object value) {
         return createWithValue(property, Operation.ENDS_WITH, value);
     }
 
-//    public static PropertyCondition inList(String property, Object value) {
-//        return createWithParameterValue(property, Operation.IN_LIST, value);
-//    }
-//
-//    public static PropertyCondition notInList(String property, Object value) {
-//        return createWithParameterValue(property, Operation.NOT_IN_LIST, value);
-//    }
-
+    /**
+     * Creates a condition that is translated to "is null".
+     */
     public static PropertyCondition isNull(String property, Object value) {
         return createWithValue(property, Operation.IS_NULL, value);
     }
@@ -189,7 +236,5 @@ public class PropertyCondition implements Condition {
         public static final String IS_NOT_NULL = "is_not_null";
         public static final String STARTS_WITH = "starts_with";
         public static final String ENDS_WITH = "ends_with";
-//        public static final String IN_LIST = "in_list";
-//        public static final String NOT_IN_LIST = "not_in_list";
     }
 }

@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 /**
  * Condition that represents parts of a JPQL query: "where" and optional "join".
  */
-public class JpqlCondition extends AbstractCondition {
+public class JpqlCondition extends AbstractQueryCondition {
 
     public static final Pattern PARAMETER_PATTERN = Pattern.compile(":([\\w.$]+)");
 

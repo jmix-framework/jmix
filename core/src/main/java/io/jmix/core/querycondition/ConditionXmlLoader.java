@@ -65,8 +65,8 @@ public class ConditionXmlLoader {
         factories.put("jpql",
                 element -> {
                     if (element.getName().equals("jpql")) {
-                        List<AbstractCondition.Entry> entries = element.elements().stream()
-                                .map(el -> new AbstractCondition.Entry(el.getName(), el.getText()))
+                        List<AbstractQueryCondition.Entry> entries = element.elements().stream()
+                                .map(el -> new AbstractQueryCondition.Entry(el.getName(), el.getText()))
                                 .collect(Collectors.toList());
                         return new JpqlCondition(entries);
                     }

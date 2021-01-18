@@ -30,7 +30,7 @@ import java.util.Set;
  * {@link #getParameters()} method returns parameters parsed from the query parts by the {@link #parseParameters()}
  * method.
  */
-public abstract class AbstractCondition implements Condition {
+public abstract class AbstractQueryCondition implements Condition {
 
     public static class Entry implements Serializable {
         public final String name;
@@ -51,7 +51,7 @@ public abstract class AbstractCondition implements Condition {
 
     protected List<String> parameters = new ArrayList<>();
 
-    public AbstractCondition(List<Entry> entries) {
+    public AbstractQueryCondition(List<Entry> entries) {
         this.entries = new ArrayList<>(entries);
         parseParameters();
     }

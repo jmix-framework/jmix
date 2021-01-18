@@ -48,7 +48,7 @@ publishing {
     if (rootProject.hasProperty('jmixUploadUrl')) {
         repositories {
             maven {
-                url = version.endsWith('SNAPSHOT') ? "$jmixUploadUrl/snapshots" : "$jmixUploadUrl/releases"
+                url = rootProject['jmixUploadUrl']
                 credentials {
                     username rootProject['jmixUploadUser']
                     password rootProject['jmixUploadPassword']

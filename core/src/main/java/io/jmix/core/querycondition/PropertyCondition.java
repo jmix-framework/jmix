@@ -101,28 +101,28 @@ public class PropertyCondition implements Condition {
     }
 
     /**
-     * Creates ">" condition.
+     * Creates "&gt;" condition.
      */
     public static PropertyCondition greater(String property, Object value) {
         return createWithValue(property, Operation.GREATER, value);
     }
 
     /**
-     * Creates ">=" condition.
+     * Creates "&gt;=" condition.
      */
     public static PropertyCondition greaterOrEqual(String property, Object value) {
         return createWithValue(property, Operation.GREATER_OR_EQUAL, value);
     }
 
     /**
-     * Creates "<" condition.
+     * Creates "&lt;" condition.
      */
     public static PropertyCondition less(String property, Object value) {
         return createWithValue(property, Operation.LESS, value);
     }
 
     /**
-     * Creates "<=" condition.
+     * Creates "&lt;=" condition.
      */
     public static PropertyCondition lessOrEqual(String property, Object value) {
         return createWithValue(property, Operation.LESS_OR_EQUAL, value);

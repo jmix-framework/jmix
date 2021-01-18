@@ -90,7 +90,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                         if (jmixUploadUrl) {
                             repositories {
                                 maven {
-                                    url = version.endsWith('SNAPSHOT') ? "$jmixUploadUrl/snapshots" : "$jmixUploadUrl/releases"
+                                    url = jmixUploadUrl
                                     credentials {
                                         username rootProject['jmixUploadUser']
                                         password rootProject['jmixUploadPassword']

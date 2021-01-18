@@ -96,7 +96,7 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
-        setPageLength(applicationContext.getBean(UiProperties.class).getLookupFieldPageLength());
+        setPageLength(applicationContext.getBean(UiProperties.class).getComboBoxPageLength());
     }
 
     @Override

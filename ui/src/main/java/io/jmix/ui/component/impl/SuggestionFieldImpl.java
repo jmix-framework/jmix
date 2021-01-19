@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Strings.nullToEmpty;
@@ -52,8 +53,8 @@ public class SuggestionFieldImpl<V> extends AbstractField<JmixSuggestionField<V>
 
     protected SearchExecutor<V> searchExecutor;
 
-    protected EnterActionHandler enterActionHandler;
-    protected ArrowDownActionHandler arrowDownActionHandler;
+    protected Consumer<String> enterActionHandler;
+    protected Consumer<String> arrowDownActionHandler;
 
     protected Formatter<? super V> formatter;
     protected Function<? super V, String> optionStyleProvider;
@@ -273,25 +274,25 @@ public class SuggestionFieldImpl<V> extends AbstractField<JmixSuggestionField<V>
     }
 
     @Override
-    public EnterActionHandler getEnterActionHandler() {
+    public Consumer<String> getEnterActionHandler() {
         return enterActionHandler;
     }
 
     @Override
-    public void setEnterActionHandler(EnterActionHandler enterActionHandler) {
+    public void setEnterActionHandler(Consumer<String> enterActionHandler) {
         this.enterActionHandler = enterActionHandler;
-        component.setEnterActionHandler(enterActionHandler::onEnterKeyPressed);
+        component.setEnterActionHandler(enterActionHandler);
     }
 
     @Override
-    public ArrowDownActionHandler getArrowDownActionHandler() {
+    public Consumer<String> getArrowDownActionHandler() {
         return arrowDownActionHandler;
     }
 
     @Override
-    public void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler) {
+    public void setArrowDownActionHandler(Consumer<String> arrowDownActionHandler) {
         this.arrowDownActionHandler = arrowDownActionHandler;
-        component.setArrowDownActionHandler(arrowDownActionHandler::onArrowDownKeyPressed);
+        component.setArrowDownActionHandler(arrowDownActionHandler);
     }
 
     @Override

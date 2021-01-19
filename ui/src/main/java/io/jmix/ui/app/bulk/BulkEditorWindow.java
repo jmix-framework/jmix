@@ -344,7 +344,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
         FieldSorter fieldSorter = context.getFieldSorter();
         Comparator<ManagedField> comparator;
         if (fieldSorter != null) {
-            Map<MetaProperty, Integer> sorted = fieldSorter.sort(editFields.stream()
+            Map<MetaProperty, Integer> sorted = fieldSorter.apply(editFields.stream()
                     .map(ManagedField::getMetaProperty)
                     .collect(Collectors.toList()));
             comparator = Comparator.comparingInt(item ->

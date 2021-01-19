@@ -750,7 +750,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      * Scrolls to a certain item, using {@link ScrollDestination#ANY}.
      *
      * @param item item to scroll to
-     * @see #scrollTo(Object, ScrollDestination) 
+     * @see #scrollTo(Object, ScrollDestination)
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -761,7 +761,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param item        item to scroll to
      * @param destination value specifying desired position of scrolled-to row
-     * @see #scrollTo(Object) 
+     * @see #scrollTo(Object)
      * @see #scrollToStart()
      * @see #scrollToEnd()
      */
@@ -770,8 +770,8 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     /**
      * Scrolls to the first data item.
      *
-     * @see #scrollTo(Object) 
-     * @see #scrollTo(Object, ScrollDestination) 
+     * @see #scrollTo(Object)
+     * @see #scrollTo(Object, ScrollDestination)
      * @see #scrollToEnd()
      */
     void scrollToStart();
@@ -997,28 +997,10 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     }
 
     /**
-     * A callback interface for generating details for a particular row in Grid.
-     *
-     * @param <E> DataGrid data type
-     */
-    @FunctionalInterface
-    interface DetailsGenerator<E> {
-
-        /**
-         * Returns the component which will be used as details for the given row.
-         *
-         * @param entity an entity instance represented by the current row
-         * @return the details for the given row, or {@code null} to leave the details empty.
-         */
-        @Nullable
-        Component getDetails(E entity);
-    }
-
-    /**
      * @return the current details generator for row details or {@code null} if not set
      */
     @Nullable
-    DetailsGenerator<E> getDetailsGenerator();
+    Function<E, Component> getDetailsGenerator();
 
     /**
      * Sets a new details generator for row details.
@@ -1027,7 +1009,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
      *
      * @param detailsGenerator the details generator to set
      */
-    void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator);
+    void setDetailsGenerator(@Nullable Function<E, Component> detailsGenerator);
 
     /**
      * Checks whether details are visible for the given item.
@@ -1175,7 +1157,6 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
     /**
      * Renderer has click listener.
      */
-    @FunctionalInterface
     interface HasRendererClickListener<T> {
         /**
          * Sets new renderer click listener.
@@ -2591,7 +2572,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * editable when the item editor is active.
          *
          * @return {@code true} if this column is editable, {@code false} otherwise
-         * @see DataGrid#edit(Object) 
+         * @see DataGrid#edit(Object)
          * @see #setEditable(boolean)
          */
         boolean isEditable();
@@ -2608,7 +2589,7 @@ public interface DataGrid<E> extends ListComponent<E>, HasButtonsPanel, Componen
          * not) be edited even in principle should be set non-editable.
          *
          * @param editable {@code true} if this column should be editable, {@code false} otherwise
-         * @see DataGrid#edit(Object) 
+         * @see DataGrid#edit(Object)
          * @see DataGrid#isEditorActive()
          */
         void setEditable(boolean editable);

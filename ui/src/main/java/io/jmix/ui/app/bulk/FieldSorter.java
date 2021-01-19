@@ -20,18 +20,11 @@ import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Field sorter for bulk editor window.
  */
 @FunctionalInterface
-public interface FieldSorter {
-
-    /**
-     * Sorts properties from bulk editor window.
-     *
-     * @param properties properties from bulk editor window to be sort
-     * @return map with metaProperties and their indexes
-     */
-    Map<MetaProperty, Integer> sort(List<MetaProperty> properties);
+public interface FieldSorter extends Function<List<MetaProperty>, Map<MetaProperty, Integer>> {
 }

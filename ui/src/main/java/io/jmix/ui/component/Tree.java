@@ -217,7 +217,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      * @return the current details generator for item details or {@code null} if not set
      */
     @Nullable
-    Tree.DetailsGenerator<E> getDetailsGenerator();
+    Function<E, Component> getDetailsGenerator();
 
     /**
      * Sets a new details generator for item details.
@@ -226,7 +226,7 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      *
      * @param generator the details generator to set
      */
-    void setDetailsGenerator(@Nullable Tree.DetailsGenerator<? super E> generator);
+    void setDetailsGenerator(@Nullable Function<E, Component> generator);
 
     /**
      * Checks whether details are visible for the given item.
@@ -286,24 +286,6 @@ public interface Tree<E> extends ListComponent<E>, HasButtonsPanel,
      * @param listener the listener to register
      */
     Subscription addSelectionListener(Consumer<SelectionEvent<E>> listener);
-
-    /**
-     * A callback interface for generating details for a particular item in Tree.
-     *
-     * @param <E> Tree data type
-     */
-    @FunctionalInterface
-    interface DetailsGenerator<E> {
-
-        /**
-         * Returns the component which will be used as details for the given item.
-         *
-         * @param entity an entity instance represented by the current item
-         * @return the details for the given item, or {@code null} to leave the details empty
-         */
-        @Nullable
-        Component getDetails(E entity);
-    }
 
     enum SelectionMode {
         /**

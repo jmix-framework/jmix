@@ -53,8 +53,8 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
 
     protected SearchExecutor<V> searchExecutor;
 
-    protected EnterActionHandler enterActionHandler;
-    protected ArrowDownActionHandler arrowDownActionHandler;
+    protected Consumer<String> enterActionHandler;
+    protected Consumer<String> arrowDownActionHandler;
 
     protected Function<? super V, String> optionStyleProvider;
 
@@ -233,25 +233,25 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
     }
 
     @Override
-    public EnterActionHandler getEnterActionHandler() {
+    public Consumer<String> getEnterActionHandler() {
         return enterActionHandler;
     }
 
     @Override
-    public void setEnterActionHandler(EnterActionHandler enterActionHandler) {
-        this.enterActionHandler = enterActionHandler;
-        getComponent().setEnterActionHandler(enterActionHandler::onEnterKeyPressed);
+    public void setEnterActionHandler(Consumer<String> handler) {
+        this.enterActionHandler = handler;
+        getComponent().setEnterActionHandler(handler);
     }
 
     @Override
-    public ArrowDownActionHandler getArrowDownActionHandler() {
+    public Consumer<String> getArrowDownActionHandler() {
         return arrowDownActionHandler;
     }
 
     @Override
-    public void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler) {
-        this.arrowDownActionHandler = arrowDownActionHandler;
-        getComponent().setArrowDownActionHandler(arrowDownActionHandler::onArrowDownKeyPressed);
+    public void setArrowDownActionHandler(Consumer<String> handler) {
+        this.arrowDownActionHandler = handler;
+        getComponent().setArrowDownActionHandler(handler);
     }
 
     @Override

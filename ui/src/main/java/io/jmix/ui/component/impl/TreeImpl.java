@@ -122,7 +122,7 @@ public class TreeImpl<E>
     protected TreeDataProvider<E> dataBinding;
     protected Function<? super E, String> itemCaptionProvider;
     protected Function<? super E, String> descriptionProvider;
-    protected Tree.DetailsGenerator<? super E> detailsGenerator;
+    protected Function<E, Component> detailsGenerator;
     protected Registration expandListener;
     protected Registration collapseListener;
 
@@ -1000,19 +1000,19 @@ public class TreeImpl<E>
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public Tree.DetailsGenerator<E> getDetailsGenerator() {
-        return (DetailsGenerator<E>) detailsGenerator;
+    public Function<E, Component> getDetailsGenerator() {
+        return detailsGenerator;
     }
 
     @Override
-    public void setDetailsGenerator(@Nullable Tree.DetailsGenerator<? super E> generator) {
+    public void setDetailsGenerator(@Nullable Function<E, Component> generator) {
         detailsGenerator = generator;
         component.getCompositionRoot().setDetailsGenerator(generator != null ? this::getItemDetails : null);
     }
 
     @Nullable
     protected com.vaadin.ui.Component getItemDetails(E entity) {
-        Component detailsComponent = detailsGenerator.getDetails(entity);
+        Component detailsComponent = detailsGenerator.apply(entity);
         return detailsComponent != null ? detailsComponent.unwrapComposition(com.vaadin.ui.Component.class) : null;
     }
 

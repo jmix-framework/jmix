@@ -168,7 +168,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     protected Function<? super E, String> rowDescriptionProvider;
 
-    protected DetailsGenerator<E> detailsGenerator = null;
+    protected Function<E, io.jmix.ui.component.Component> detailsGenerator = null;
 
     protected Registration columnCollapsingChangeListenerRegistration;
     protected Registration columnResizeListenerRegistration;
@@ -2678,19 +2678,19 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     @Nullable
     @Override
-    public DetailsGenerator<E> getDetailsGenerator() {
+    public Function<E, io.jmix.ui.component.Component> getDetailsGenerator() {
         return detailsGenerator;
     }
 
     @Override
-    public void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator) {
+    public void setDetailsGenerator(@Nullable Function<E, io.jmix.ui.component.Component> detailsGenerator) {
         this.detailsGenerator = detailsGenerator;
         component.setDetailsGenerator(detailsGenerator != null ? this::getRowDetails : null);
     }
 
     @Nullable
     protected Component getRowDetails(E item) {
-        io.jmix.ui.component.Component component = detailsGenerator.getDetails(item);
+        io.jmix.ui.component.Component component = detailsGenerator.apply(item);
         return component != null ? component.unwrapComposition(Component.class) : null;
     }
 

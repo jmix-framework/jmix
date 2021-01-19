@@ -22,6 +22,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * A filtering dropdown single-select. Items are filtered based on user input using asynchronous data loading.
@@ -32,6 +33,9 @@ public interface SuggestionField<V> extends Field<V>,
         Component.Focusable, HasInputPrompt, HasOptionStyleProvider<V>, HasFormatter<V> {
 
     String NAME = "suggestionField";
+
+    String POPUP_AUTO_WIDTH = "auto";
+    String POPUP_PARENT_WIDTH = "parent";
 
     static <T> ParameterizedTypeReference<SuggestionField<T>> of(Class<T> valueClass) {
         return new ParameterizedTypeReference<SuggestionField<T>>() {};
@@ -72,34 +76,6 @@ public interface SuggestionField<V> extends Field<V>,
     }
 
     /**
-     * ENTER key pressed listener.
-     */
-    @FunctionalInterface
-    interface EnterActionHandler {
-
-        /**
-         * Called by component if user entered a search string and pressed ENTER key without selection of a suggestion.
-         *
-         * @param searchString search string as is
-         */
-        void onEnterKeyPressed(String searchString);
-    }
-
-    /**
-     * ARROW_DOWN key pressed listener.
-     */
-    @FunctionalInterface
-    interface ArrowDownActionHandler {
-
-        /**
-         * Called by component if user pressed ARROW_DOWN key without search action.
-         *
-         * @param searchString search string as is
-         */
-        void onArrowDownKeyPressed(String searchString);
-    }
-
-    /**
      * @return delay between the last key press action and async search
      */
     int getAsyncSearchDelayMs();
@@ -125,28 +101,28 @@ public interface SuggestionField<V> extends Field<V>,
     void setSearchExecutor(@Nullable SearchExecutor<V> searchExecutor);
 
     /**
-     * @return {@link EnterActionHandler} which handles ENTER key pressing
+     * @return an ENTER press handler
      */
-    EnterActionHandler getEnterActionHandler();
+    Consumer<String> getEnterActionHandler();
 
     /**
-     * Sets {@link EnterActionHandler} which handles ENTER key pressing.
+     * Sets an ENTER press handler.
      *
-     * @param enterActionHandler EnterActionHandler instance
+     * @param handler an ENTER press handler to set
      */
-    void setEnterActionHandler(EnterActionHandler enterActionHandler);
+    void setEnterActionHandler(Consumer<String> handler);
 
     /**
-     * @return {@link ArrowDownActionHandler} which handles ARROW_DOWN key pressing
+     * @return an ARROW_DOWN press handler
      */
-    ArrowDownActionHandler getArrowDownActionHandler();
+    Consumer<String> getArrowDownActionHandler();
 
     /**
-     * Sets {@link ArrowDownActionHandler} which handles ARROW_DOWN key pressing.
+     * Sets an ARROW_DOWN press handler.
      *
-     * @param arrowDownActionHandler ArrowDownActionHandler instance
+     * @param handler an ARROW_DOWN press handler to set
      */
-    void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler);
+    void setArrowDownActionHandler(Consumer<String> handler);
 
     /**
      * @return min string length to perform suggestions search
@@ -186,9 +162,6 @@ public interface SuggestionField<V> extends Field<V>,
      * @param width width of the component popup
      */
     void setPopupWidth(String width);
-
-    String POPUP_AUTO_WIDTH = "auto";
-    String POPUP_PARENT_WIDTH = "parent";
 
     /**
      * @return component popup width

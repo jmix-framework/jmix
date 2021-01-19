@@ -2597,6 +2597,8 @@
     <!-- ListComponent's SimplePagination   -->
     <xs:complexType name="listComponentSimplePaginationComponent">
         <xs:attributeGroup ref="basePaginationAttributesGroup"/>
+
+        <xs:attribute name="autoLoad" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:attributeGroup name="basePaginationAttributesGroup">

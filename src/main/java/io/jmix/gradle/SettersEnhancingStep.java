@@ -33,7 +33,6 @@ import static io.jmix.gradle.MetaModelUtil.*;
  * Enhances entity classes: setters fire propertyChange events
  */
 public class SettersEnhancingStep extends BaseEnhancingStep {
-    private static final Pattern messagePattern = Pattern.compile("(\\{msg://)([\\p{L}\\w.]*})");
 
     @Override
     protected boolean isAlreadyEnhanced(CtClass ctClass) throws NotFoundException {
@@ -50,8 +49,6 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
         enhanceSetters(ctClass);
 
         enhanceProtectedForPersistentMethods(ctClass);
-
-        enhanceBeanValidationMessages(ctClass);
 
         ctClass.addInterface(classPool.get(SETTERS_ENHANCED_TYPE));
     }
@@ -101,44 +98,5 @@ public class SettersEnhancingStep extends BaseEnhancingStep {
                 method.setModifiers(Modifier.setProtected(method.getModifiers()));
             }
         }
-    }
-
-    protected void enhanceBeanValidationMessages(CtClass ctClass) {
-        for (CtField field : ctClass.getDeclaredFields()) {
-            byte[] annotationsValue = field.getAttribute(AnnotationsAttribute.visibleTag);
-            if (annotationsValue != null) {
-                AnnotationsAttribute attr = new AnnotationsAttribute(ctClass.getClassFile().getConstPool(),
-                        AnnotationsAttribute.visibleTag, annotationsValue);
-                for (Annotation annotation : attr.getAnnotations()) {
-                    if (annotation.getMemberNames() != null) {
-                        for (String name : new ArrayList<>(annotation.getMemberNames())) {
-                            if ("message".equals(name)) {
-                                if (annotation.getMemberValue(name) instanceof StringMemberValue) {
-                                    String messageValue = ((StringMemberValue) annotation.getMemberValue(name)).getValue();
-                                    String newMessage = convertMessageValue(messageValue, ctClass.getPackageName());
-
-                                    if (!StringUtils.equals(messageValue, newMessage)) {
-                                        annotation.addMemberValue("message", new StringMemberValue(newMessage,
-                                                ctClass.getClassFile().getConstPool()));
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-                field.setAttribute(AnnotationsAttribute.visibleTag, attr.get());
-            }
-        }
-    }
-
-    public String convertMessageValue(String value, String packageName) {
-        if (messagePattern.matcher(value).matches()) {
-            Matcher matcher = messagePattern.matcher(value);
-            if (matcher.find()) {
-                return matcher.group(1) + packageName + "/" + matcher.group(2);
-            }
-        }
-        return value;
     }
 }

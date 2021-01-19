@@ -132,4 +132,14 @@ public class WebSuggestionPickerField<V extends Entity> extends EntitySuggestion
     public Function<? super V, String> getFieldIconProvider() {
         return getOptionIconProvider();
     }
+
+    @Override
+    public void setEnterActionHandler(EnterActionHandler enterActionHandler) {
+        super.setEnterActionHandler(enterActionHandler);
+    }
+
+    @Override
+    public void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler) {
+        super.setArrowDownActionHandler(arrowDownActionHandler);
+    }
 }

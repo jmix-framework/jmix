@@ -32,4 +32,14 @@ public class WebSuggestionField<V> extends SuggestionFieldImpl<V> implements Sug
     public void removeValidator(Consumer<V> validator) {
         removeValidator(validator::accept);
     }
+
+    @Override
+    public void setEnterActionHandler(EnterActionHandler enterActionHandler) {
+        super.setEnterActionHandler(enterActionHandler);
+    }
+
+    @Override
+    public void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler) {
+        super.setArrowDownActionHandler(arrowDownActionHandler);
+    }
 }

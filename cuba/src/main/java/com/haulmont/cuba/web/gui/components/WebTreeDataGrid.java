@@ -209,6 +209,11 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     }
 
     @Override
+    public void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator) {
+        super.setDetailsGenerator(detailsGenerator);
+    }
+
+    @Override
     protected ValueProvider getDefaultPresentationValueProvider(io.jmix.ui.component.DataGrid.Column<E> column) {
         MetaProperty metaProperty = column.getPropertyPath() != null
                 ? column.getPropertyPath().getMetaProperty()

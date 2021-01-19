@@ -21,8 +21,10 @@ import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.HierarchicalDatasource;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.TreeItems;
 
+import javax.annotation.Nullable;
 import java.util.function.Function;
 
 /**
@@ -101,5 +103,26 @@ public interface Tree<E extends Entity> extends ListComponent<E>, io.jmix.ui.com
          * @return style name or null to apply the default
          */
         String getStyleName(E entity);
+    }
+
+    /**
+     * Sets a new details generator for item details.
+     * <p>
+     * The currently opened item details will be re-rendered.
+     *
+     * @param generator the details generator to set
+     * @deprecated Use {@link #setDetailsGenerator(Function)} instead
+     */
+    @Deprecated
+    void setDetailsGenerator(@Nullable DetailsGenerator<? super E> generator);
+
+    /**
+     * A callback interface for generating details for a particular item in Tree.
+     *
+     * @param <E> Tree data type
+     * @deprecated Use {@link #setDetailsGenerator(Function)} instead
+     */
+    @FunctionalInterface
+    interface DetailsGenerator<E> extends Function<E, Component> {
     }
 }

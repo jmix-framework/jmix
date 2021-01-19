@@ -552,6 +552,11 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
         unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
     }
 
+    @Override
+    public void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator) {
+        super.setDetailsGenerator(detailsGenerator);
+    }
+
     protected static class ColumnImpl<E extends Entity>
             extends AbstractDataGrid.ColumnImpl<E>
             implements DataGrid.Column<E> {

@@ -20,10 +20,13 @@ import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.Tree;
 import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import io.jmix.core.Entity;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.component.impl.TreeImpl;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Deprecated
 public class WebTree<E extends Entity>
@@ -51,5 +54,10 @@ public class WebTree<E extends Entity>
         if (treeItems instanceof DatasourceTreeItems) {
             ((DatasourceTreeItems) treeItems).getDatasource().refresh();
         }
+    }
+
+    @Override
+    public void setDetailsGenerator(@Nullable DetailsGenerator<? super E> generator) {
+        super.setDetailsGenerator((Function<E, Component>) generator);
     }
 }

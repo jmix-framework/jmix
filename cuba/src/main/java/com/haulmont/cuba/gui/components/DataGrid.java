@@ -25,6 +25,7 @@ import io.jmix.core.Entity;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasFormatter;
 import io.jmix.ui.component.data.DataGridItems;
 import io.jmix.ui.component.formatter.Formatter;
@@ -459,6 +460,28 @@ public interface DataGrid<E extends Entity> extends ListComponent<E>, io.jmix.ui
      * @return renderer instance with given type
      */
     <T extends Renderer> T createRenderer(Class<T> type);
+
+    /**
+     * A callback interface for generating details for a particular row in Grid.
+     *
+     * @param <E> DataGrid data type
+     * @deprecated Use {@link #setDetailsGenerator(Function)} instead
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface DetailsGenerator<E> extends Function<E, Component> {
+    }
+
+    /**
+     * Sets a new details generator for row details.
+     * <p>
+     * The currently opened row details will be re-rendered.
+     *
+     * @param detailsGenerator the details generator to set
+     * @deprecated Use {@link #setDetailsGenerator(Function)} instead
+     */
+    @Deprecated
+    void setDetailsGenerator(@Nullable DetailsGenerator<E> detailsGenerator);
 
     /**
      * A column in the DataGrid.

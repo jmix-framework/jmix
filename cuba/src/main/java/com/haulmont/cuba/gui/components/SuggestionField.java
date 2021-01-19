@@ -19,6 +19,8 @@ package com.haulmont.cuba.gui.components;
 import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
 
+import java.util.function.Consumer;
+
 /**
  * Component compatible with {@link Datasource}.
  *
@@ -31,5 +33,35 @@ public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.Sugge
 
     static <T> TypeToken<SuggestionField<T>> of(Class<T> valueClass) {
         return new TypeToken<SuggestionField<T>>() {};
+    }
+
+    /**
+     * Sets {@link EnterActionHandler} which handles ENTER key pressing.
+     *
+     * @param enterActionHandler EnterActionHandler instance
+     */
+    void setEnterActionHandler(EnterActionHandler enterActionHandler);
+
+    /**
+     * ENTER key pressed listener.
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface EnterActionHandler extends Consumer<String> {
+    }
+
+    /**
+     * Sets {@link ArrowDownActionHandler} which handles ARROW_DOWN key pressing.
+     *
+     * @param arrowDownActionHandler ArrowDownActionHandler instance
+     */
+    void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler);
+
+    /**
+     * ARROW_DOWN key pressed listener.
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface ArrowDownActionHandler extends Consumer<String> {
     }
 }

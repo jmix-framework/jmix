@@ -80,6 +80,7 @@ dependencies {
     def graphqlVersion = baseVersion
     def imapVersion = baseVersion
     def localfsVersion = baseVersion
+    def mapsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
     def securityVersion = baseVersion
@@ -125,6 +126,12 @@ dependencies {
 
         api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
         api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
+
+        api "io.jmix.maps:jmix-maps:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui-widgets:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-starter:${snapshotOr(mapsVersion)}"
+        api "io.jmix.maps:jmix-maps-ui-starter:${snapshotOr(mapsVersion)}"
 
         api "io.jmix.rest:jmix-rest:${snapshotOr(restVersion)}"
         api "io.jmix.rest:jmix-rest-starter:${snapshotOr(restVersion)}"
@@ -222,6 +229,15 @@ dependencies {
         api 'javax.cache:cache-api:1.1.1'
 
         api 'com.icegreen:greenmail:1.5.7'
+
+        def geoToolsVersion = '20.3'
+        api "org.geotools:gt-api:$geoToolsVersion"
+        api "org.geotools:gt-geojson:$geoToolsVersion"
+        api "org.geotools:gt-referencing:$geoToolsVersion"
+        api "org.geotools:gt-epsg-hsql:$geoToolsVersion"
+        api "org.geotools:gt-epsg-extension:$geoToolsVersion"
+        api "org.geotools:gt-shapefile:$geoToolsVersion"
+        api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

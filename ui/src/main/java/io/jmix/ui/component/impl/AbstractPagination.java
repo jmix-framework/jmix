@@ -208,7 +208,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
         getItemsPerPageComboBox().setEmptySelectionAllowed(true);
 
         component.getItemsPerPageLabel().setValue(
-                messages.getMessage("", "pagination.itemsPerPage.label.value"));
+                messages.getMessage("pagination.itemsPerPage.label.value"));
     }
 
     protected void initItemsPerPageOptions() {

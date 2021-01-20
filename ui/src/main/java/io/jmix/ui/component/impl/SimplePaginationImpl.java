@@ -352,7 +352,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
         if (autoLoad) {
             loadItemsCount();
         } else {
-            getCountButton().setCaption(messages.getMessage("", "pagination.msg3"));
+            getCountButton().setCaption(messages.getMessage("pagination.msg3"));
             getCountButton().removeStyleName(PAGINATION_COUNT_NUMBER_STYLENAME);
             getCountButton().setEnabled(true);
         }
@@ -416,28 +416,28 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
             case FIRST_COMPLETE:
                 getFirstButton().setEnabled(false);
                 getPrevButton().setEnabled(false);
-                getCountButton().setEnabled(false);
+                getCountButton().setVisible(false);
                 getNextButton().setEnabled(false);
                 getLastButton().setEnabled(false);
                 break;
             case FIRST_INCOMPLETE:
                 getFirstButton().setEnabled(false);
                 getPrevButton().setEnabled(false);
-                getCountButton().setEnabled(true);
+                getCountButton().setVisible(true);
                 getNextButton().setEnabled(true);
                 getLastButton().setEnabled(true);
                 break;
             case MIDDLE:
                 getFirstButton().setEnabled(true);
                 getPrevButton().setEnabled(true);
-                getCountButton().setEnabled(true);
+                getCountButton().setVisible(true);
                 getNextButton().setEnabled(true);
                 getLastButton().setEnabled(true);
                 break;
             case LAST:
                 getFirstButton().setEnabled(true);
                 getPrevButton().setEnabled(true);
-                getCountButton().setEnabled(false);
+                getCountButton().setVisible(false);
                 getNextButton().setEnabled(false);
                 getLastButton().setEnabled(false);
                 break;

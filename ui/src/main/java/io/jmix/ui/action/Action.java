@@ -181,27 +181,6 @@ public interface Action {
     }
 
     /**
-     * Callback interface which is invoked by the action before execution.
-     */
-    interface BeforeActionPerformedHandler {
-        /**
-         * Invoked by the action before execution.
-         *
-         * @return true to continue execution, false to abort
-         */
-        boolean beforeActionPerformed();
-    }
-
-    /**
-     * Interface defining methods for adding and removing {@link BeforeActionPerformedHandler}s
-     */
-    interface HasBeforeActionPerformedHandler extends Action {
-        BeforeActionPerformedHandler getBeforeActionPerformedHandler();
-
-        void setBeforeActionPerformedHandler(BeforeActionPerformedHandler handler);
-    }
-
-    /**
      * Interface defining constraintOperationType and constraintCode options.
      */
     interface HasSecurityConstraint {

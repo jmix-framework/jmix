@@ -17,6 +17,15 @@
 @mixin halo-responsivegridlayout($primary-stylename: jmix-responsivegridlayout) {
   .#{$primary-stylename} {
     display: block;
+
+    box-sizing: border-box;
+    -ms-overflow-style: scrollbar;
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit;
+    }
   }
 
   .v-align-middle > .#{$primary-stylename},

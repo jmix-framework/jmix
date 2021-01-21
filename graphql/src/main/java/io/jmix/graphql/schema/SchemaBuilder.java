@@ -112,6 +112,13 @@ public class SchemaBuilder {
             }
         });
 
+        GraphQLSchema graphQLSchema = new SchemaGenerator()
+                .makeExecutableSchema(typeDefinitionRegistry, buildRuntimeWiring(allPersistentMetaClasses).build());
+        log.debug("createSchema:\n9 {}", new SchemaPrinter().print(graphQLSchema));
+        return graphQLSchema;
+    }
+
+    protected RuntimeWiring.Builder buildRuntimeWiring(Collection<MetaClass> allPersistentMetaClasses) {
         RuntimeWiring.Builder rwBuilder = newRuntimeWiring()
                 .scalar(CustomScalars.GraphQLUUID)
                 .scalar(CustomScalars.GraphQLLong)
@@ -138,13 +145,7 @@ public class SchemaBuilder {
                             .dataFetcher(NamingUtils.composeDeleteMutationName(javaClass), entityMutationDataFetcher.deleteEntity(metaClass))
                     );
                 });
-
-
-        GraphQLSchema graphQLSchema = new SchemaGenerator()
-                .makeExecutableSchema(typeDefinitionRegistry, rwBuilder.build());
-
-        log.debug("createSchema:\n9 {}", new SchemaPrinter().print(graphQLSchema));
-        return graphQLSchema;
+        return rwBuilder;
     }
 
     protected ObjectTypeDefinition buildQuerySection(Collection<MetaClass> metaClasses) {

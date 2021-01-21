@@ -56,7 +56,7 @@ import java.util.Set;
 @org.springframework.stereotype.Component("cuba_RemoveAction")
 @Scope("prototype")
 public class RemoveAction extends ItemTrackingAction
-        implements Action.HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
+        implements HasBeforeActionPerformedHandler, Action.AdjustWhenScreenReadOnly {
 
     public static final String ACTION_ID = ListActionType.REMOVE.getId();
 

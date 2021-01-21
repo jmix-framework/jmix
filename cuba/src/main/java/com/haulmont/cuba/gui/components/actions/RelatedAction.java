@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Scope;
  */
 @org.springframework.stereotype.Component("cuba_RelatedAction")
 @Scope("prototype")
-public class RelatedAction extends ListAction implements Action.HasBeforeActionPerformedHandler {
+public class RelatedAction extends ListAction implements HasBeforeActionPerformedHandler {
 
     public static final String ACTION_ID = "related";
 

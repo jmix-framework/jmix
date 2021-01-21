@@ -59,7 +59,7 @@ import static io.jmix.ui.component.ComponentsHelper.getScreenContext;
 @org.springframework.stereotype.Component("cuba_BulkEditAction")
 @Scope("prototype")
 public class BulkEditAction extends ItemTrackingAction
-        implements Action.HasBeforeActionPerformedHandler {
+        implements HasBeforeActionPerformedHandler {
 
     protected OpenType openType = OpenType.DIALOG;
     protected String exclude;

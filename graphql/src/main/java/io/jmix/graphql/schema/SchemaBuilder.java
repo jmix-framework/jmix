@@ -6,6 +6,7 @@ import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaPrinter;
 import graphql.schema.idl.TypeDefinitionRegistry;
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -15,11 +16,11 @@ import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
@@ -31,6 +32,9 @@ public class SchemaBuilder {
     public static final String SCHEMA_QUERY = "Query";
     public static final String SCHEMA_MUTATION = "Mutation";
 
+    @Value("${io.jmix.graphql.additionalClasses:[]}")
+    private String[] additionalClasses;
+
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
@@ -41,14 +45,22 @@ public class SchemaBuilder {
     protected EntityMutationDataFetcher entityMutationDataFetcher;
     @Autowired
     protected EntityQueryDataFetcher entityQueryDataFetcher;
+    @Autowired
+    protected Metadata metadata;
 
     public GraphQLSchema createSchema() {
 
         Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllPersistentMetaClasses();
         TypeDefinitionRegistry typeDefinitionRegistry = new TypeDefinitionRegistry();
 
-        typeDefinitionRegistry.add(buildQuerySection(allPersistentMetaClasses));
-        typeDefinitionRegistry.add(buildMutationSection(allPersistentMetaClasses));
+        Collection<MetaClass> queryMetaClasses = new ArrayList<>(allPersistentMetaClasses);
+        queryMetaClasses.addAll(Arrays.stream(additionalClasses)
+                .map(entityName -> metadata.findClass(entityName))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
+
+        typeDefinitionRegistry.add(buildQuerySection(queryMetaClasses));
+        typeDefinitionRegistry.add(buildMutationSection(queryMetaClasses));
 
         // system types (filters, conditions e.t.c)
         typeDefinitionRegistry.add(Types.Condition);
@@ -86,6 +98,19 @@ public class SchemaBuilder {
         allPersistentMetaClasses.stream()
                 .filter(this::isNotIgnored)
                 .forEach(metaClass -> typeDefinitionRegistry.add(inpTypesBuilder.buildObjectTypeDef(metaClass)));
+
+        // todo need to be reimplemented more correctly
+        // additional (now it's non persistent) types
+        Arrays.stream(additionalClasses).forEach(entityName -> {
+            MetaClass metaClass = metadata.findClass(entityName);
+            if (metaClass != null) {
+                log.debug("createSchema: build additional types for entity name {}", entityName);
+                typeDefinitionRegistry.add(inpTypesBuilder.buildObjectTypeDef(metaClass));
+                typeDefinitionRegistry.add(outTypesBuilder.buildObjectTypeDef(metaClass));
+            } else {
+                log.warn("createSchema: can't find meta class for entity name {}", entityName);
+            }
+        });
 
         RuntimeWiring.Builder rwBuilder = newRuntimeWiring()
                 .scalar(CustomScalars.GraphQLUUID)

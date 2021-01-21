@@ -4,7 +4,6 @@ import graphql.Scalars;
 import graphql.language.EnumTypeDefinition;
 import graphql.language.EnumValueDefinition;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
@@ -29,87 +28,104 @@ public abstract class BaseTypesBuilder {
 
     public static EnumTypeDefinition buildEnumTypeDef(Class<?> javaType)  {
         String enumClassName = javaType.getSimpleName();
-        EnumClass<?>[] enumValues;
+        Enum<?>[] enumValues;
         try {
-            enumValues = (EnumClass<?>[]) javaType.getDeclaredMethod("values").invoke(null);
+            enumValues = (Enum<?>[]) javaType.getDeclaredMethod("values").invoke(null);
         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new UnsupportedOperationException("Can't build enum type definition for java type " + enumClassName, e);
         }
         log.debug("buildEnumTypeDef: for class {} values {}", enumClassName, enumValues);
         return EnumTypeDefinition.newEnumTypeDefinition()
-                .name(javaType.getSimpleName())
+                .name(enumClassName)
                 .enumValueDefinitions(Arrays.stream(enumValues)
                         .flatMap(BaseTypesBuilder::getEnumValueDef)
                         .collect(Collectors.toList()))
                 .build();
     }
 
-    protected static Stream<EnumValueDefinition> getEnumValueDef(EnumClass<?> enumClass) {
-        return Stream.of(EnumValueDefinition.newEnumValueDefinition().name(((Enum<?>) enumClass).name()).build());
+    protected static Stream<EnumValueDefinition> getEnumValueDef(Enum<?> enumClass) {
+        return Stream.of(EnumValueDefinition.newEnumValueDefinition().name(enumClass.name()).build());
     }
 
     protected abstract String normalizeName(String entityName);
 
     protected String getFieldTypeName(MetaProperty metaProperty) {
-
-        Class<?> javaType = metaProperty.getJavaType();
-
         if (metaProperty.getType() == MetaProperty.Type.DATATYPE) {
-
-            // scalars from graphql-java
-
-            if (String.class.isAssignableFrom(javaType))
-                return Scalars.GraphQLString.getName();
-            if (Integer.class.isAssignableFrom(javaType) || int.class.isAssignableFrom(javaType)) {
-                return Scalars.GraphQLInt.getName();
-            }
-            if (Short.class.isAssignableFrom(javaType) || short.class.isAssignableFrom(javaType)) {
-                return Scalars.GraphQLShort.getName();
-            }
-            if (Float.class.isAssignableFrom(javaType) || float.class.isAssignableFrom(javaType)
-                    || Double.class.isAssignableFrom(javaType) || double.class.isAssignableFrom(javaType)) {
-                return Scalars.GraphQLFloat.getName();
-            }
-            if (Boolean.class.isAssignableFrom(javaType) || boolean.class.isAssignableFrom(javaType)) {
-                return Scalars.GraphQLBoolean.getName();
-            }
-
-            // more scalars added in jmix-graphql
-
-            if (UUID.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLUUID.getName();
-            }
-            if (Long.class.isAssignableFrom(javaType) || long.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLLong.getName();
-            }
-            if (BigDecimal.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLBigDecimal.getName();
-            }
-            if (Date.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLDate.getName();
-            }
-            if (LocalDateTime.class.isAssignableFrom(javaType)) {
-                return CustomScalars.GraphQLLocalDateTime.getName();
-            }
+            return getDatatypeFieldTypeName(metaProperty);
         }
 
         if (metaProperty.getType() == MetaProperty.Type.ENUM) {
-            return javaType.getSimpleName();
+            return getEnumFieldTypeName(metaProperty.getJavaType());
         }
 
-        // todo non-persistent jmix entities
+        // todo no support for non-persistent jmix entities
         if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION || metaProperty.getType() == MetaProperty.Type.COMPOSITION)) {
-
-            if (metaProperty.getRange().getCardinality().isMany()) {
-                return normalizeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
-            }
-
-            if (metadataTools.isPersistent(metaProperty.getJavaType())) {
-                return normalizeName(metadataTools.getEntityName(javaType));
-            }
+            return getReferenceTypeName(metaProperty);
         }
 
+        throw new UnsupportedOperationException(String.format("Can't define field type name for metaProperty %s class %s", metaProperty, metaProperty.getJavaType()));
+    }
+
+    protected String getDatatypeFieldTypeName(MetaProperty metaProperty) {
+        Class<?> javaType = metaProperty.getRange().asDatatype().getJavaClass();
+
+        // scalars from graphql-java
+
+        if (String.class.isAssignableFrom(javaType))
+            return Scalars.GraphQLString.getName();
+        if (Integer.class.isAssignableFrom(javaType) || int.class.isAssignableFrom(javaType)) {
+            return Scalars.GraphQLInt.getName();
+        }
+        if (Short.class.isAssignableFrom(javaType) || short.class.isAssignableFrom(javaType)) {
+            return Scalars.GraphQLShort.getName();
+        }
+        if (Float.class.isAssignableFrom(javaType) || float.class.isAssignableFrom(javaType)
+                || Double.class.isAssignableFrom(javaType) || double.class.isAssignableFrom(javaType)) {
+            return Scalars.GraphQLFloat.getName();
+        }
+        if (Boolean.class.isAssignableFrom(javaType) || boolean.class.isAssignableFrom(javaType)) {
+            return Scalars.GraphQLBoolean.getName();
+        }
+
+        // more scalars added in jmix-graphql
+
+        if (UUID.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLUUID.getName();
+        }
+        if (Long.class.isAssignableFrom(javaType) || long.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLLong.getName();
+        }
+        if (BigDecimal.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLBigDecimal.getName();
+        }
+        if (Date.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLDate.getName();
+        }
+        if (LocalDateTime.class.isAssignableFrom(javaType)) {
+            return CustomScalars.GraphQLLocalDateTime.getName();
+        }
+
+        log.warn("getDatatypeFieldTypeName: can't resolve type for datatype meta property {} class {}", metaProperty, javaType);
+        // todo a couple of classes are not supported now
         return "String";
+//        throw new UnsupportedOperationException(String.format("Can't define field type name for datatype class %s", javaType));
+    }
+
+    protected String getReferenceTypeName(MetaProperty metaProperty) {
+        if (metaProperty.getRange().getCardinality().isMany()) {
+            return normalizeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
+        }
+
+        if (metadataTools.isPersistent(metaProperty.getJavaType())) {
+            return normalizeName(metadataTools.getEntityName(metaProperty.getJavaType()));
+        } else {
+            // todo non-persistent entities are not fully supported now
+            return "String";
+        }
+    }
+
+    protected String getEnumFieldTypeName(Class<?> javaType) {
+        return javaType.getSimpleName();
     }
 
 }

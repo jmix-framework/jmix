@@ -1,6 +1,8 @@
 package io.jmix.graphql.schema;
 
+import graphql.Scalars;
 import graphql.language.*;
+import graphql.schema.GraphQLScalarType;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +45,8 @@ public class SchemaBuilder {
     @Autowired
     protected InpTypesBuilder inpTypesBuilder;
     @Autowired
+    protected FilterTypesBuilder filterTypesBuilder;
+    @Autowired
     protected EntityMutationDataFetcher entityMutationDataFetcher;
     @Autowired
     protected EntityQueryDataFetcher entityQueryDataFetcher;
@@ -50,22 +55,24 @@ public class SchemaBuilder {
 
     public GraphQLSchema createSchema() {
 
-        Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllPersistentMetaClasses();
+        Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllPersistentMetaClasses()
+                // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
+                .stream()
+                .filter(metaClass -> !metaClass.getJavaClass().getSimpleName().equals("ReferenceToEntity"))
+                .collect(Collectors.toList());
+
         TypeDefinitionRegistry typeDefinitionRegistry = new TypeDefinitionRegistry();
 
         Collection<MetaClass> queryMetaClasses = new ArrayList<>(allPersistentMetaClasses);
-        queryMetaClasses.addAll(Arrays.stream(additionalClasses)
-                .map(entityName -> metadata.findClass(entityName))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+        // todo Dto classes temporary switched off for queries
+//        queryMetaClasses
+//                .addAll(Arrays.stream(additionalClasses)
+//                        .map(entityName -> metadata.findClass(entityName))
+//                        .filter(Objects::nonNull)
+//                        .collect(Collectors.toList()));
 
         typeDefinitionRegistry.add(buildQuerySection(queryMetaClasses));
         typeDefinitionRegistry.add(buildMutationSection(queryMetaClasses));
-
-        // system types (filters, conditions e.t.c)
-        typeDefinitionRegistry.add(Types.Condition);
-        typeDefinitionRegistry.add(Types.GroupCondition);
-        typeDefinitionRegistry.add(Types.GroupConditionType);
 
         // jmix custom scalars
         typeDefinitionRegistry.add(ScalarTypeDefinition.newScalarTypeDefinition()
@@ -99,6 +106,28 @@ public class SchemaBuilder {
                 .filter(this::isNotIgnored)
                 .forEach(metaClass -> typeDefinitionRegistry.add(inpTypesBuilder.buildObjectTypeDef(metaClass)));
 
+        /* Filter types */
+
+        // filter type definitions for jmix entities
+        allPersistentMetaClasses.stream()
+                .filter(this::isNotIgnored)
+                .forEach(metaClass -> typeDefinitionRegistry.add(filterTypesBuilder.buildFilterConditionType(metaClass)));
+
+        // scalar filter conditions
+        Map<String, InputObjectTypeDefinition> scalarFilterConditionTypesMap = Arrays.stream(Types.scalars)
+                    // todo byte type not supported now
+                    .filter(type -> !type.getName().equals(Scalars.GraphQLByte.getName()))
+                    .collect(Collectors.toMap(GraphQLScalarType::getName, type -> filterTypesBuilder.buildScalarFilterConditionType(type.getName())));
+        scalarFilterConditionTypesMap.values().forEach(typeDefinitionRegistry::add);
+
+        // order by
+        typeDefinitionRegistry.add(Types.enumSortOrder);
+
+        // filter order by types
+        allPersistentMetaClasses.stream()
+                .filter(this::isNotIgnored)
+                .forEach(metaClass -> typeDefinitionRegistry.add(filterTypesBuilder.buildFilterOrderByType(metaClass)));
+
         // todo need to be reimplemented more correctly
         // additional (now it's non persistent) types
         Arrays.stream(additionalClasses).forEach(entityName -> {
@@ -114,7 +143,8 @@ public class SchemaBuilder {
 
         GraphQLSchema graphQLSchema = new SchemaGenerator()
                 .makeExecutableSchema(typeDefinitionRegistry, buildRuntimeWiring(allPersistentMetaClasses).build());
-        log.debug("createSchema:\n9 {}", new SchemaPrinter().print(graphQLSchema));
+        // schema could be downloaded via 'graphqurl', not need in log
+        log.trace("createSchema:\n {}", new SchemaPrinter().print(graphQLSchema));
         return graphQLSchema;
     }
 
@@ -157,17 +187,22 @@ public class SchemaBuilder {
             Class<Object> javaClass = metaClass.getJavaClass();
             String typeName = NamingUtils.normalizeOutTypeName(metaClass.getName());
 
-            // query 'cars(filter, limit, offset, sortBy, sortOrder)'
+            // query 'cars(filter, limit, offset, orderBy)'
+            String filterDesc = String.format(
+                    "expressions to compare %s objects, all items are combined with logical 'AND'", typeName);
             fields.add(
                     FieldDefinition.newFieldDefinition()
                             .name(NamingUtils.composeListQueryName(javaClass))
                             .type(ListType.newListType(new TypeName(typeName)).build())
-
-                            .inputValueDefinition(new InputValueDefinition(
-                                    NamingUtils.FILTER, new TypeName(Types.GroupCondition.getName())))
-                            .inputValueDefinition(arg(NamingUtils.LIMIT, "Int"))
-                            .inputValueDefinition(arg(NamingUtils.OFFSET, "Int"))
-                            .inputValueDefinition(arg(NamingUtils.SORT, "String"))
+                            .inputValueDefinition(listArg(NamingUtils.FILTER,
+                                    filterTypesBuilder.composeFilterConditionTypeName(metaClass),
+                                    filterDesc))
+                            .inputValueDefinition(arg(NamingUtils.LIMIT, "Int", "limit the number of items returned"))
+                            .inputValueDefinition(arg(NamingUtils.OFFSET, "Int", "skip the first n items"))
+                            // todo array in order by, add ability to order by nested objects
+                            .inputValueDefinition(arg(NamingUtils.ORDER_BY,
+                                    filterTypesBuilder.composeFilterOrderByTypeName(metaClass),
+                                    "sort the items by one or more fields"))
                             .build());
 
             // query 'carById(id)'
@@ -235,11 +270,29 @@ public class SchemaBuilder {
      *
      * @param name argument name
      * @param type argument type
+     * @param description argument description
      * @return argument
      */
-    private static InputValueDefinition arg(String name, String type) {
+    protected static InputValueDefinition arg(String name, String type, @Nullable String description) {
         return InputValueDefinition.newInputValueDefinition()
-                .name(name).type(new TypeName(type)).build();
+                .name(name).type(new TypeName(type))
+                .description(new Description(description, null, false))
+                .build();
+    }
+
+    /**
+     * Shortcut for query argument builder (list type argument)
+     *
+     * @param name argument name
+     * @param type argument type
+     * @param description argument description
+     * @return argument
+     */
+    protected static InputValueDefinition listArg(String name, String type, @Nullable String description) {
+        return InputValueDefinition.newInputValueDefinition()
+                .name(name).type(new ListType(new TypeName(type)))
+                .description(new Description(description, null, false))
+                .build();
     }
 
     /**
@@ -249,7 +302,7 @@ public class SchemaBuilder {
      * @param type argument type
      * @return argument
      */
-    private static InputValueDefinition argNonNull(String name, String type) {
+    protected static InputValueDefinition argNonNull(String name, String type) {
         return InputValueDefinition.newInputValueDefinition()
                 .name(name).type(NonNullType.newNonNullType(new TypeName(type)).build())
                 .build();

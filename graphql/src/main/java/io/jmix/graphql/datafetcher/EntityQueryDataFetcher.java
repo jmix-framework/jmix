@@ -1,51 +1,48 @@
 package io.jmix.graphql.datafetcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.schema.NamingUtils;
-import io.jmix.rest.api.service.filter.RestFilterParseException;
-import io.jmix.rest.api.service.filter.RestFilterParseResult;
-import io.jmix.rest.api.service.filter.RestFilterParser;
+import io.jmix.graphql.schema.Types;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class EntityQueryDataFetcher {
+
+    public static final int DEFAULT_MAX_RESULTS = 100;
 
     private final Logger log = LoggerFactory.getLogger(EntityQueryDataFetcher.class);
 
     @Autowired
     protected DataManager dataManager;
     @Autowired
-    private MetadataTools metadataTools;
-    @Autowired
-    protected RestFilterParser restFilterParser;
-    @Autowired
     protected DataFetcherPlanBuilder dataFetcherPlanBuilder;
+    @Autowired
+    protected FilterConditionBuilder filterConditionBuilder;
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
         return environment -> {
-
             String id = environment.getArgument("id");
-            log.debug("id {}", id);
-
             LoadContext<?> lc = new LoadContext<>(metaClass);
             // todo support not only UUID types of id
             lc.setId(UUID.fromString(id));
             lc.setFetchPlan(dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment));
 
-            log.debug("loadEntity {}", lc);
+            log.debug("loadEntity: {}", lc);
             return dataManager.load(lc);
         };
     }
@@ -53,38 +50,69 @@ public class EntityQueryDataFetcher {
     public DataFetcher<List<Object>> loadEntities(MetaClass metaClass) {
         return environment -> {
 
-            String sort = environment.getArgument(NamingUtils.SORT);
-
+            Object filter = environment.getArgument(NamingUtils.FILTER);
+            Object orderBy = environment.getArgument(NamingUtils.ORDER_BY);
             Integer limit = environment.getArgument(NamingUtils.LIMIT);
             Integer offset = environment.getArgument(NamingUtils.OFFSET);
+            log.debug("loadEntities: metClass:{}, filter:{}, limit:{}, offset:{}, orderBy: {}",
+                    metaClass, filter, limit, offset, orderBy);
 
-            String queryString = "select e from " + metaClass.getName() + " e";
+            // build filter condition
 
-            Map<String, Object> queryParameters = new HashMap<>();
-            Object filterArg = environment.getArgument(NamingUtils.FILTER);
-            if (filterArg != null) {
-                RestFilterParseResult filterParseResult;
-                try {
-                    // todo converting to JSON not need here - rewrite parser to work with Map
-                    filterParseResult = restFilterParser.parse(new ObjectMapper().writeValueAsString(filterArg), metaClass);
-                } catch (RestFilterParseException e) {
-                    throw new UnsupportedOperationException("Cannot parse entities filter" + e.getMessage(), e);
-                }
-
-                String jpqlWhere = filterParseResult.getJpqlWhere();
-                queryParameters = filterParseResult.getQueryParameters();
-
-                if (jpqlWhere != null) {
-                    queryString += " where " + jpqlWhere.replace("{E}", "e");
-                }
+            LogicalCondition condition = null;
+            if (filter != null && Collection.class.isAssignableFrom(filter.getClass())) {
+                condition = filterConditionBuilder.buildCollectionOfConditions("", (Collection<?>) filter);
             }
 
+            // fetch plan
             FetchPlan fetchPan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
-            List<Object> objects = _loadEntitiesList(queryString, fetchPan, limit, offset, sort, metaClass, queryParameters);
+
+            LoadContext.Query query = new LoadContext.Query("select e from " + metaClass.getName() + " e");
+            if (condition != null) {
+                query.setCondition(condition);
+            }
+            query.setMaxResults(limit != null ? limit : DEFAULT_MAX_RESULTS);
+            query.setFirstResult(offset == null ? 0 : offset);
+
+            // orderBy and sort
+            Pair<String, Types.SortOrder> orderByPathAndOrder = buildOrderBy("", orderBy);
+            if (orderByPathAndOrder != null) {
+                String path = orderByPathAndOrder.getKey();
+                Types.SortOrder sortOrder = orderByPathAndOrder.getValue();
+                query.setSort(Sort.by(
+                        sortOrder == Types.SortOrder.ASC ? Sort.Order.asc(path) : Sort.Order.desc(path)));
+            }
+
+            LoadContext<Object> ctx = new LoadContext<>(metaClass);
+            ctx.setQuery(query);
+            ctx.setFetchPlan(fetchPan);
+            List<Object> objects = dataManager.loadList(ctx);
+
             log.debug("loadEntities return {} objects for {}", objects.size(), metaClass.getName());
             return objects;
         };
     }
+
+    /**
+     * Convert graphql orderBy object to jmix format.
+     *
+     * @param orderBy - graphql orderBy object
+     * @return pair that contains propertyPath as key ans SortOrder as value
+     */
+    @Nullable protected Pair<String, Types.SortOrder> buildOrderBy(String path, @Nullable Object orderBy) {
+        if (orderBy == null || !Map.class.isAssignableFrom(orderBy.getClass())) {
+            return null;
+        }
+
+        Map.Entry<String, Object> entry = ((Map<String, Object>) orderBy).entrySet().iterator().next();
+        if (Map.class.isAssignableFrom(entry.getValue().getClass())) {
+            return buildOrderBy(entry.getKey(), entry.getValue());
+        }
+
+        String propertyPath = StringUtils.isBlank(path) ? entry.getKey() : path + "." + entry.getKey();
+        return new ImmutablePair<>(propertyPath, Types.SortOrder.valueOf((String) entry.getValue()));
+    }
+
 
     public DataFetcher<?> countEntities(MetaClass metaClass) {
         return environment -> {
@@ -93,101 +121,6 @@ public class EntityQueryDataFetcher {
             log.debug("countEntities return {} for {}", count, metaClass.getName());
             return count;
         };
-    }
-
-    // todo code below (#_loadEntitiesList #addOrderBy #getEntityPropertySortExpression) is copypasted from EntitiesControllerManager
-
-    protected List<Object> _loadEntitiesList(String queryString,
-                                             @Nullable FetchPlan fetchPlan,
-                                             @Nullable Integer limit,
-                                             @Nullable Integer offset,
-                                             @Nullable String sort,
-                                             MetaClass metaClass,
-                                             Map<String, Object> queryParameters) {
-        LoadContext<Object> ctx = new LoadContext<>(metaClass);
-
-        String orderedQueryString = addOrderBy(queryString, sort, metaClass);
-        LoadContext.Query query = new LoadContext.Query(orderedQueryString);
-
-        if (limit != null) {
-            query.setMaxResults(limit);
-        } else {
-            query.setMaxResults(100);
-        }
-        if (offset != null) {
-            query.setFirstResult(offset);
-        }
-        if (queryParameters != null) {
-            query.setParameters(queryParameters);
-        }
-        ctx.setQuery(query);
-
-        if (fetchPlan != null) {
-            ctx.setFetchPlan(fetchPlan);
-        }
-
-        return dataManager.loadList(ctx);
-    }
-
-    protected String addOrderBy(String queryString, @Nullable String sort, MetaClass metaClass) {
-        if (Strings.isNullOrEmpty(sort)) {
-            return queryString;
-        }
-        StringBuilder orderBy = new StringBuilder(queryString).append(" order by ");
-        Iterable<String> iterableColumns = Splitter.on(",").trimResults().omitEmptyStrings().split(sort);
-        for (String column : iterableColumns) {
-            String order = "";
-            if (column.startsWith("-") || column.startsWith("+")) {
-                order = column.substring(0, 1);
-                column = column.substring(1);
-            }
-            MetaPropertyPath propertyPath = metaClass.getPropertyPath(column);
-            if (propertyPath != null) {
-                switch (order) {
-                    case "-":
-                        order = " desc, ";
-                        break;
-                    case "+":
-                    default:
-                        order = " asc, ";
-                        break;
-                }
-                MetaProperty metaProperty = propertyPath.getMetaProperty();
-                if (metaProperty.getRange().isClass()) {
-                    if (!metaProperty.getRange().getCardinality().isMany()) {
-                        for (String exp : getEntityPropertySortExpression(propertyPath)) {
-                            orderBy.append(exp).append(order);
-                        }
-                    }
-                } else {
-                    orderBy.append("e.").append(column).append(order);
-                }
-            }
-        }
-        return orderBy.substring(0, orderBy.length() - 2);
-    }
-
-    protected List<String> getEntityPropertySortExpression(MetaPropertyPath metaPropertyPath) {
-        Collection<MetaProperty> properties = metadataTools.getInstanceNameRelatedProperties(
-                metaPropertyPath.getMetaProperty().getRange().asClass());
-        if (!properties.isEmpty()) {
-            List<String> sortExpressions = new ArrayList<>(properties.size());
-            for (MetaProperty metaProperty : properties) {
-                if (metadataTools.isPersistent(metaProperty)) {
-                    MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath, metaProperty);
-                    if (metaProperty.getRange().isClass()) {
-                        if (!metaProperty.getRange().getCardinality().isMany()) {
-                            sortExpressions.addAll(getEntityPropertySortExpression(childPropertyPath));
-                        }
-                    } else {
-                        sortExpressions.add(String.format("e.%s", childPropertyPath.toString()));
-                    }
-                }
-            }
-            return sortExpressions;
-        } else {
-            return Collections.singletonList(String.format("e.%s", metaPropertyPath.toString()));
-        }
     }
 
 }

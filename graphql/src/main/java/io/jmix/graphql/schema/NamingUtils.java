@@ -9,10 +9,11 @@ public class NamingUtils {
     public static final String SYS_ATTR_TYPENAME = "__typename";
     public static final String SYS_ATTR_INSTANCE_NAME = "instanceName";
 
+    public static final String FILTER = "filter";
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
-    public static final String SORT = "sort";
-    public static final String FILTER = "filter";
+    public static final String SORT_ORDER = "sortOrder";
+    public static final String ORDER_BY = "orderBy";
 
 
     /**
@@ -62,5 +63,4 @@ public class NamingUtils {
     public static String uncapitalizedSimpleName(Class<?> aClass) {
         return StringUtils.uncapitalize(aClass.getSimpleName());
     }
-
 }

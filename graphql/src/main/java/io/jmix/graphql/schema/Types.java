@@ -1,35 +1,61 @@
 package io.jmix.graphql.schema;
 
+import graphql.Scalars;
 import graphql.language.*;
+import graphql.schema.GraphQLScalarType;
+import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.graphql.schema.scalar.CustomScalars;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.annotation.Nullable;
+
 
 // todo rename to FilterTypes ?
 public class Types {
 
-    public static final String CONDITION_AND = "AND";
-    public static final String CONDITION_OR = "OR";
+    public enum SortOrder {
+        ASC,
+        DESC
+    }
 
-    // use GroupConditionType.getName() if need outside
-    protected static final String GROUP_CONDITION_TYPE_NAME = "inp_GroupCondition";
+    public enum FilterOperation {
+        EQ(PropertyCondition.Operation.EQUAL),
+        NEQ(PropertyCondition.Operation.NOT_EQUAL),
+        GT(PropertyCondition.Operation.GREATER),
+        GTE(PropertyCondition.Operation.GREATER_OR_EQUAL),
+        LT(PropertyCondition.Operation.LESS),
+        LTE(PropertyCondition.Operation.LESS_OR_EQUAL);
 
-    public static InputObjectTypeDefinition Condition = InputObjectTypeDefinition.newInputObjectDefinition()
-            .name("inp_Condition")
-            .inputValueDefinition(valueDef("property", "String"))
-            .inputValueDefinition(valueDef("operator", "String"))
-            .inputValueDefinition(valueDef("value", "String"))
-            .build();
+        FilterOperation(String jmixOperation) {
+            this.jmixOperation = jmixOperation;
+        }
 
-    public static EnumTypeDefinition GroupConditionType = EnumTypeDefinition.newEnumTypeDefinition()
-            .name("GroupConditionType")
-            .enumValueDefinition(EnumValueDefinition.newEnumValueDefinition().name(CONDITION_AND).build())
-            .enumValueDefinition(EnumValueDefinition.newEnumValueDefinition().name(CONDITION_OR).build())
-            .build();
+        private final String jmixOperation;
 
-    public static InputObjectTypeDefinition GroupCondition = InputObjectTypeDefinition.newInputObjectDefinition()
-            .name(GROUP_CONDITION_TYPE_NAME)
-            .inputValueDefinition(listValueDef("conditions", Condition.getName()))
-            .inputValueDefinition(listValueDef("groupConditions", GROUP_CONDITION_TYPE_NAME))
-            .inputValueDefinition(valueDef("group", GroupConditionType.getName()))
-            .build();
+        public String getJmixOperation() {
+            return jmixOperation;
+        }
+
+    }
+
+    public static GraphQLScalarType[] scalars = {
+            Scalars.GraphQLInt,
+            Scalars.GraphQLBigInteger,
+            Scalars.GraphQLBoolean,
+            Scalars.GraphQLByte,
+            Scalars.GraphQLChar,
+            Scalars.GraphQLFloat,
+            Scalars.GraphQLShort,
+            Scalars.GraphQLString,
+            CustomScalars.GraphQLVoid,
+            CustomScalars.GraphQLLocalDateTime,
+            CustomScalars.GraphQLDate,
+            CustomScalars.GraphQLBigDecimal,
+            CustomScalars.GraphQLLong,
+            CustomScalars.GraphQLUUID,
+    };
+
+    public static EnumTypeDefinition enumSortOrder = BaseTypesBuilder.buildEnumTypeDef(SortOrder.class);
 
     /**
      * Shortcut for input value definition
@@ -37,9 +63,10 @@ public class Types {
      * @param fieldName field name
      * @return field
      */
-    public static InputValueDefinition valueDef(String fieldName, String type) {
+    public static InputValueDefinition valueDef(String fieldName, String type, @Nullable String description) {
         return InputValueDefinition.newInputValueDefinition()
                 .name(fieldName).type(new TypeName(type))
+                .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
                 .build();
     }
 
@@ -49,9 +76,10 @@ public class Types {
      * @param fieldName field name
      * @return field
      */
-    public static InputValueDefinition listValueDef(String fieldName, String type) {
+    public static InputValueDefinition listValueDef(String fieldName, String type, @Nullable String description) {
         return InputValueDefinition.newInputValueDefinition()
                 .name(fieldName).type(new ListType(new TypeName(type)))
+                .description(StringUtils.isBlank(description) ? null : new Description(description, null, false))
                 .build();
     }
 

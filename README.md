@@ -15,3 +15,10 @@ To make GraphiQL work add
 to `build.gradle` `dependencies` section in your app.
 
 GraphiQL will be available at [http://localhost:8080/graphiql]()
+
+## Schema download
+Schema could be downloaded using `graphqurl`
+```
+npm install -g graphqurl
+gq http://localhost:8080/graphql --introspect > schema.graphql
+```

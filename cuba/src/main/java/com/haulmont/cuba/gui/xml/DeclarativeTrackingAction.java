@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml;
 
+import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
 import io.jmix.core.Entity;
 import io.jmix.core.security.ConstraintOperationType;
 import io.jmix.ui.action.Action;
@@ -23,7 +24,6 @@ import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
-import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 
@@ -71,8 +71,8 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
         }
 
         FrameOwner controller = frame.getFrameOwner();
-        if (controller instanceof CubaFragmentAdapter) {
-            controller = ((CubaFragmentAdapter) controller).getRealScreen();
+        if (controller instanceof LegacyFragmentAdapter) {
+            controller = ((LegacyFragmentAdapter) controller).getRealScreen();
         }
 
         Method method;

@@ -20,7 +20,6 @@ import io.jmix.core.Entity;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.component.compatibility.CubaFragmentAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.annotation.Scope;
@@ -51,14 +50,7 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
             return null;
         }
 
-        Frame frame = table.getFrame();
-        if (frame == null) {
-            throw new IllegalStateException("Table should be attached to frame");
-        }
-        FrameOwner controller = frame.getFrameOwner();
-        if (controller instanceof CubaFragmentAdapter) {
-            controller = ((CubaFragmentAdapter) controller).getRealScreen();
-        }
+        FrameOwner controller = getFrameOwner();
 
         if (method == null) {
             method = findGeneratorMethod(controller.getClass(), methodName);
@@ -78,6 +70,14 @@ public class DeclarativeColumnGenerator implements Table.ColumnGenerator {
         } catch (Exception e) {
             throw new RuntimeException("Exception in declarative Table column generator " + methodName, e);
         }
+    }
+
+    protected FrameOwner getFrameOwner() {
+        Frame frame = table.getFrame();
+        if (frame == null) {
+            throw new IllegalStateException("Table should be attached to frame");
+        }
+        return frame.getFrameOwner();
     }
 
     // Find method with one parameter of type extends Entity and result extends Component

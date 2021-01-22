@@ -16,6 +16,7 @@
 
 package io.jmix.rest.api.swagger;
 
+import com.google.common.base.Strings;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -37,6 +38,7 @@ import io.swagger.models.parameters.*;
 import io.swagger.models.properties.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -73,6 +75,9 @@ public class SwaggerGeneratorImpl implements SwaggerGenerator {
 
     @Autowired
     protected CoreProperties globalConfig;
+
+    @Autowired
+    protected Environment environment;
 
     @Autowired
     protected Resources resources;
@@ -136,7 +141,11 @@ public class SwaggerGeneratorImpl implements SwaggerGenerator {
     }
 
     protected String getBasePath() {
-        return "/" + globalConfig.getWebContextName() + "/rest/v2";
+        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+
+        return Strings.isNullOrEmpty(contextPath)
+                ? "/rest/v2"
+                : contextPath + "/rest/v2";
     }
 
     protected Info generateInfo() {

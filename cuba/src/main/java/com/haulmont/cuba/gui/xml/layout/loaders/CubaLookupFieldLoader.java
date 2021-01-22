@@ -45,6 +45,7 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
         LookupField lookupField = (LookupField) resultComponent;
 
         loadNewOptionAllowed(lookupField, element);
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
@@ -72,10 +73,5 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
                 .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
-    }
-
-    @Override
-    protected void loadCaptionProperty(ComboBox resultComponent, Element element) {
-        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
     }
 }

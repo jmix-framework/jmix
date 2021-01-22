@@ -30,7 +30,8 @@ import java.util.Map;
 @ConstructorBinding
 public class CoreProperties {
 
-    String webContextName;
+    public static final String SERVER_SERVLET_CONTEXTPATH = "server.servlet.contextPath";
+
     String webHostName;
     String webPort;
     String confDir;
@@ -49,7 +50,6 @@ public class CoreProperties {
     String entitySerializationTokenEncryptionKey;
 
     public CoreProperties(
-            String webContextName,
             String webHostName,
             String webPort,
             String confDir,
@@ -68,7 +68,6 @@ public class CoreProperties {
             boolean entitySerializationTokenRequired,
             @DefaultValue("KEY")
             String entitySerializationTokenEncryptionKey) {
-        this.webContextName = webContextName;
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -95,13 +94,6 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
-    }
-
-    /**
-     * This web application context name.
-     */
-    public String getWebContextName() {
-        return webContextName;
     }
 
     /**

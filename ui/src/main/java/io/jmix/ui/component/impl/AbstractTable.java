@@ -20,11 +20,8 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
 import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.*;
 import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
 import com.vaadin.v7.data.Property;
 import com.vaadin.v7.data.util.converter.Converter;
 import com.vaadin.v7.data.util.converter.ConverterUtil;
@@ -209,7 +206,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     protected TableComposition componentComposition;
 
-    protected HorizontalLayout topPanel;
+    protected CssLayout topPanel;
 
     protected ButtonsPanel buttonsPanel;
     protected PaginationComponent pagination;
@@ -2560,7 +2557,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             }
             Component bp = panel.unwrap(Component.class);
             topPanel.addComponent(bp);
-            topPanel.setExpandRatio(bp, 1);
 
             if (panel instanceof VisibilityChangeNotifier) {
                 ((VisibilityChangeNotifier) panel).addVisibilityChangeListener(event ->
@@ -2573,10 +2569,8 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
         updateCompositionStylesTopPanelVisible();
     }
 
-    protected HorizontalLayout createTopPanel() {
-        HorizontalLayout topPanel = new HorizontalLayout();
-        topPanel.setMargin(false);
-        topPanel.setSpacing(false);
+    protected CssLayout createTopPanel() {
+        CssLayout topPanel = new CssLayout();
         topPanel.setStyleName("c-table-top");
         return topPanel;
     }

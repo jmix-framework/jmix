@@ -33,6 +33,7 @@ import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.Registration;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DescriptionGenerator;
 import com.vaadin.ui.*;
 import com.vaadin.ui.MenuBar.MenuItem;
@@ -160,7 +161,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     protected SelectionMode selectionMode;
 
     protected GridComposition componentComposition;
-    protected HorizontalLayout topPanel;
+    protected CssLayout topPanel;
     protected ButtonsPanel buttonsPanel;
     protected PaginationComponent pagination;
 
@@ -2073,7 +2074,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             }
             Component bp = panel.unwrap(Component.class);
             topPanel.addComponent(bp);
-            topPanel.setExpandRatio(bp, 1);
 
             if (panel instanceof VisibilityChangeNotifier) {
                 ((VisibilityChangeNotifier) panel).addVisibilityChangeListener(event ->
@@ -2154,10 +2154,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         pagination.setDataBinder(provider);
     }
 
-    protected HorizontalLayout createTopPanel() {
-        HorizontalLayout topPanel = new HorizontalLayout();
-        topPanel.setMargin(false);
-        topPanel.setSpacing(false);
+    protected CssLayout createTopPanel() {
+        CssLayout topPanel = new CssLayout();
         topPanel.setStyleName("c-data-grid-top");
         return topPanel;
     }

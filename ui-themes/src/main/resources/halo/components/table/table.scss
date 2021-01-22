@@ -267,6 +267,10 @@ $c-table-drag-indicator-color: $v-focus-color;
       flex-shrink: 0;
       overflow-x: hidden;
       min-height: $v-unit-size;
+
+      .c-buttons-panel {
+        flex-grow: 1;
+      }
     }
 
     // The caption of ButtonsPanel inside of Table will be ignored
@@ -276,7 +280,7 @@ $c-table-drag-indicator-color: $v-focus-color;
 
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
-      float: right;
+      margin-left: auto;
     }
 
     .v-ie11 &,

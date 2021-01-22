@@ -158,6 +158,10 @@ $cuba-datagrid-aggregation-background-color: $cuba-aggregation-background-color-
       flex-shrink: 0;
       overflow: hidden;
       min-height: $v-unit-size;
+
+      .c-buttons-panel {
+        flex-grow: 1;
+      }
     }
 
     // The caption of ButtonsPanel inside of DataGrid will be ignored
@@ -167,7 +171,7 @@ $cuba-datagrid-aggregation-background-color: $cuba-aggregation-background-color-
 
     .jmix-simplepagination {
       padding-left: round($v-layout-spacing-horizontal/2);
-      float: right;
+      margin-left: auto;
     }
 
     .v-ie11 &,

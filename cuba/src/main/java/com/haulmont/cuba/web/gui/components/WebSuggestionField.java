@@ -19,10 +19,23 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.gui.components.SuggestionField;
 import io.jmix.ui.component.impl.SuggestionFieldImpl;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 @Deprecated
 public class WebSuggestionField<V> extends SuggestionFieldImpl<V> implements SuggestionField<V> {
+
+    @Nullable
+    @Override
+    public V getValue() {
+        V value = super.getValue();
+
+        //noinspection unchecked
+        return value instanceof OptionWrapper
+                ? ((OptionWrapper<V>) value).getValue()
+                : value;
+    }
+
     @Override
     public void addValidator(Consumer<? super V> validator) {
         addValidator(validator::accept);

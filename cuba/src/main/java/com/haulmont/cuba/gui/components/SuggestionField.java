@@ -18,7 +18,11 @@ package com.haulmont.cuba.gui.components;
 
 import com.google.common.reflect.TypeToken;
 import com.haulmont.cuba.gui.data.Datasource;
+import io.jmix.core.common.util.Preconditions;
+import io.jmix.ui.component.formatter.Formatter;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -63,5 +67,99 @@ public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.Sugge
     @Deprecated
     @FunctionalInterface
     interface ArrowDownActionHandler extends Consumer<String> {
+    }
+
+    /**
+     * Custom suggestions search action interface.
+     *
+     * @param <E> items type
+     */
+    interface SearchExecutor<E> extends io.jmix.ui.component.SuggestionField.SearchExecutor<E> {
+
+        /**
+         * Executed on background thread.
+         *
+         * @param searchString search string as is
+         * @param searchParams additional parameters, empty if SearchExecutor is not instance of {@link io.jmix.ui.component.SuggestionField.ParametrizedSearchExecutor}
+         * @return list with found items. {@link OptionWrapper} instances can be used as items to provide
+         * different value for displaying purpose.
+         */
+        @Override
+        List search(String searchString, Map<String, Object> searchParams);
+    }
+
+    /**
+     * Extended version of {@link io.jmix.ui.component.SuggestionField.SearchExecutor} that allows to pass parameters.
+     *
+     * @param <E> items type
+     */
+    interface ParametrizedSearchExecutor<E> extends SearchExecutor<E> {
+
+        /**
+         * Called by the execution environment in UI thread to prepare execution parameters for
+         * {@link io.jmix.ui.component.SuggestionField.SearchExecutor#search(String, Map)}.
+         *
+         * @return map with parameters
+         */
+        Map<String, Object> getParams();
+    }
+
+    /**
+     * Represents a value and its string representation.
+     * @deprecated Use {@link #setFormatter(Formatter)} instead
+     */
+    @Deprecated
+    class OptionWrapper<V> {
+
+        protected String caption;
+        protected V value;
+
+        public OptionWrapper(String caption, V value) {
+            Preconditions.checkNotNullArgument(caption, "Caption should not be null");
+            Preconditions.checkNotNullArgument(value, "Value should not be null");
+
+            this.caption = caption;
+            this.value = value;
+        }
+
+        /**
+         * @return string representation
+         */
+        public String getCaption() {
+            return caption;
+        }
+
+        /**
+         * @return value
+         */
+        public V getValue() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            OptionWrapper<?> that = (OptionWrapper<?>) o;
+
+            return caption.equals(that.caption)
+                    && value.equals(that.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return 17 * caption.hashCode() + 31 * value.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return caption;
+        }
     }
 }

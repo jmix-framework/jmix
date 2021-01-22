@@ -35,6 +35,17 @@ public class WebSuggestionPickerField<V extends Entity> extends EntitySuggestion
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> iconProvider;
 
+    @Nullable
+    @Override
+    public V getValue() {
+        V value = super.getValue();
+
+        //noinspection unchecked
+        return value instanceof OptionWrapper
+                ? ((OptionWrapper<V>) value).getValue()
+                : value;
+    }
+
     @Deprecated
     @Override
     public PickerField.LookupAction addLookupAction() {

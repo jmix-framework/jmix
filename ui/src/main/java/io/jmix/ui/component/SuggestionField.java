@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.core.common.util.Preconditions;
 import org.springframework.core.ParameterizedTypeReference;
 
 import javax.annotation.Nullable;
@@ -53,7 +52,7 @@ public interface SuggestionField<V> extends Field<V>,
          *
          * @param searchString search string as is
          * @param searchParams additional parameters, empty if SearchExecutor is not instance of {@link ParametrizedSearchExecutor}
-         * @return list with found items. {@link OptionWrapper} instances can be used as items to provide
+         * @return list with found items.
          * different value for displaying purpose.
          */
         List<E> search(String searchString, Map<String, Object> searchParams);
@@ -167,61 +166,4 @@ public interface SuggestionField<V> extends Field<V>,
      * @return component popup width
      */
     String getPopupWidth();
-
-    /**
-     * Represents a value and its string representation.
-     */
-    class OptionWrapper<V> {
-
-        protected String caption;
-        protected V value;
-
-        public OptionWrapper(String caption, V value) {
-            Preconditions.checkNotNullArgument(caption, "Caption should not be null");
-            Preconditions.checkNotNullArgument(value, "Value should not be null");
-
-            this.caption = caption;
-            this.value = value;
-        }
-
-        /**
-         * @return string representation
-         */
-        public String getCaption() {
-            return caption;
-        }
-
-        /**
-         * @return value
-         */
-        public V getValue() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            OptionWrapper that = (OptionWrapper) o;
-
-            return caption.equals(that.caption)
-                    && value.equals(that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return 17 * caption.hashCode() + 31 * value.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return caption;
-        }
-    }
 }

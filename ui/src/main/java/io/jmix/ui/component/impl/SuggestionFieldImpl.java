@@ -104,18 +104,6 @@ public class SuggestionFieldImpl<V> extends AbstractField<JmixSuggestionField<V>
         component.setCancelSearchHandler(this::cancelSearch);
     }
 
-    @Nullable
-    @Override
-    public V getValue() {
-        V value = super.getValue();
-
-        // todo rework OptionWrapper compatibility
-        //noinspection unchecked
-        return value instanceof OptionWrapper
-                ? (V) ((OptionWrapper) value).getValue()
-                : value;
-    }
-
     @SuppressWarnings("unchecked")
     @Nullable
     protected String generateItemStylename(Object item) {
@@ -228,15 +216,7 @@ public class SuggestionFieldImpl<V> extends AbstractField<JmixSuggestionField<V>
 
         log.debug("Search '{}'", searchString);
 
-        List<V> searchResultItems;
-        if (searchExecutor instanceof ParametrizedSearchExecutor) {
-            ParametrizedSearchExecutor<V> pSearchExecutor = (ParametrizedSearchExecutor<V>) searchExecutor;
-            searchResultItems = pSearchExecutor.search(searchString, params);
-        } else {
-            searchResultItems = searchExecutor.search(searchString, Collections.emptyMap());
-        }
-
-        return searchResultItems;
+        return searchExecutor.search(searchString, params);
     }
 
     protected void handleSearchResult(List<V> results) {

@@ -16,6 +16,7 @@
 
 package io.jmix.ui;
 
+import com.google.common.base.Strings;
 import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.Notification;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -85,6 +87,8 @@ public abstract class App {
     @Autowired
     protected CoreProperties coreProperties;
     @Autowired
+    protected Environment environment;
+    @Autowired
     protected WindowConfig windowConfig;
     @Autowired
     protected ThemeConstantsRepository themeConstantsRepository;
@@ -110,7 +114,7 @@ public abstract class App {
 
     protected ThemeConstants loadTheme() {
         String appWindowTheme = uiProperties.getTheme();
-        String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + coreProperties.getWebContextName());
+        String userAppTheme = cookies.getCookieValue(APP_THEME_COOKIE_PREFIX + getContextPathName());
         if (userAppTheme != null) {
             if (!Objects.equals(userAppTheme, appWindowTheme)) {
                 // check theme support
@@ -417,7 +421,7 @@ public abstract class App {
     }
 
     public void setUserAppTheme(String themeName) {
-        addCookie(APP_THEME_COOKIE_PREFIX + coreProperties.getWebContextName(), themeName);
+        addCookie(APP_THEME_COOKIE_PREFIX + getContextPathName(), themeName);
     }
 
     public void addBackgroundTask(Future task) {
@@ -595,5 +599,15 @@ public abstract class App {
         }
 
         removeAllWindows();
+    }
+
+    @Nullable
+    protected String getContextPathName() {
+        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        if (!Strings.isNullOrEmpty(contextPath)) {
+            return contextPath.substring(1);
+        }
+        return contextPath;
+
     }
 }

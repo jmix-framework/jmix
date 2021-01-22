@@ -22,6 +22,7 @@ import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.sys.AppCookies;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -46,7 +47,7 @@ public class HeliumThemeVariantsManager {
     protected static final String THEME_SIZE_LIST_KEY = "helium.sizes";
 
     @Autowired
-    protected CoreProperties coreProperties;
+    protected Environment environment;
 
     @Autowired(required = false)
     protected UserSettingService userSettingService;
@@ -164,8 +165,8 @@ public class HeliumThemeVariantsManager {
     }
 
     protected String getFullCookieName(String prefix) {
-        String contextName = coreProperties.getWebContextName();
-        return prefix + (Strings.isNullOrEmpty(contextName) ? "ROOT" : contextName);
+        String contextName = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        return prefix + (Strings.isNullOrEmpty(contextName) ? "ROOT" : contextName.substring(1));
     }
 
     protected void saveUserSetting(String name, String value) {

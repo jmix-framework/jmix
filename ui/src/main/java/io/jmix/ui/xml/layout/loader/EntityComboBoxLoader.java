@@ -17,11 +17,13 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.EntityComboBox;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,7 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
     public void loadComponent() {
         super.loadComponent();
 
+        loadCaptionProperty(resultComponent, element);
         loadMetaClass(getResultComponent(), element);
         loadActions(getResultComponent(), element);
 
@@ -93,5 +96,16 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         return loadValuePickerDeclarativeAction(actionsHolder, element);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected void loadCaptionProperty(ComboBox resultComponent, Element element) {
+        loadString(element, "captionProperty", captionProperty -> {
+            resultComponent.setOptionCaptionProvider(
+                    new CaptionAdapter(
+                            captionProperty,
+                            applicationContext.getBean(Metadata.class),
+                            applicationContext.getBean(MetadataTools.class)));
+        });
     }
 }

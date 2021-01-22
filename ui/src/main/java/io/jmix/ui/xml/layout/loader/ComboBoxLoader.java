@@ -16,13 +16,10 @@
 package io.jmix.ui.xml.layout.loader;
 
 
-import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HasFilterMode;
-import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
@@ -45,8 +42,6 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
 
         loadTabIndex(resultComponent, element);
 
-        loadCaptionProperty(resultComponent, element);
-
         String nullName = element.attributeValue("nullName");
         if (StringUtils.isNotEmpty(nullName)) {
             resultComponent.setNullSelectionCaption(loadResourceString(nullName));
@@ -68,16 +63,6 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
         loadNullOptionVisible(resultComponent, element);
 
         loadOptionsEnum(resultComponent, element);
-    }
-
-
-    @SuppressWarnings("rawtypes")
-    protected void loadCaptionProperty(ComboBox resultComponent, Element element) {
-        String captionProperty = element.attributeValue("captionProperty");
-        if (!StringUtils.isEmpty(captionProperty)) {
-            resultComponent.setOptionCaptionProvider(
-                    new CaptionAdapter(captionProperty, applicationContext.getBean(Metadata.class), applicationContext.getBean(MetadataTools.class)));
-        }
     }
 
     @SuppressWarnings("unchecked")

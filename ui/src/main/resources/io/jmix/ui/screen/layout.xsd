@@ -2114,7 +2114,6 @@
                 </xs:sequence>
 
                 <xs:attributeGroup ref="hasBuffered"/>
-                <xs:attributeGroup ref="hasCaptionSource"/>
 
                 <xs:attribute name="stylename" type="comboBoxStylename"/>
                 <xs:attribute name="filterMode" type="filterMode"/>

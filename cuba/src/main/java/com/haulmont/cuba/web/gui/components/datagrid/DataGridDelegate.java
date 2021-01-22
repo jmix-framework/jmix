@@ -19,8 +19,9 @@ package com.haulmont.cuba.web.gui.components.datagrid;
 import com.haulmont.cuba.gui.components.HasRowsCount;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.vaadin.server.Sizeable;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
 import io.jmix.ui.component.VisibilityChangeNotifier;
+import io.jmix.ui.component.impl.AbstractDataGrid;
 import io.jmix.ui.widget.JmixCssActionsLayout;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -48,17 +49,18 @@ public class DataGridDelegate implements HasRowsCount {
     }
 
     public void setRowsCount(@Nullable RowsCount rowsCount,
-                             HorizontalLayout topPanel,
-                             Supplier<HorizontalLayout> topPanelCreator,
+                             Layout topPanel,
+                             Supplier<Layout> topPanelCreator,
                              JmixCssActionsLayout componentComposition,
-                             Runnable visibilityChangeHandler) {
+                             Runnable visibilityChangeHandler,
+                             AbstractDataGrid dataGrid) {
         if (this.rowsCount != null && topPanel != null) {
             topPanel.removeComponent(this.rowsCount.unwrap(com.vaadin.ui.Component.class));
             this.rowsCount.setParent(null);
         }
         setRowsCount(rowsCount);
         if (rowsCount != null) {
-            if (rowsCount.getParent() != null && rowsCount.getParent() != this) {
+            if (rowsCount.getParent() != null && rowsCount.getParent() != dataGrid) {
                 throw new IllegalStateException("Component already has parent");
             }
 

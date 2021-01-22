@@ -19,7 +19,7 @@ package com.haulmont.cuba.web.gui.components.table;
 import com.haulmont.cuba.gui.components.HasRowsCount;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.vaadin.server.Sizeable;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Layout;
 import io.jmix.ui.component.VisibilityChangeNotifier;
 import io.jmix.ui.component.table.TableComposition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -48,8 +48,8 @@ public class TableDelegate implements HasRowsCount {
     }
 
     public void setRowsCount(@Nullable RowsCount rowsCount,
-                             HorizontalLayout topPanel,
-                             Supplier<HorizontalLayout> topPanelCreator,
+                             Layout topPanel,
+                             Supplier<Layout> topPanelCreator,
                              TableComposition componentComposition,
                              Runnable visibilityChangeHandler) {
         if (this.rowsCount != null && topPanel != null) {

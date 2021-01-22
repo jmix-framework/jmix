@@ -314,7 +314,8 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
                 topPanel,
                 this::createTopPanel,
                 componentComposition,
-                this::updateCompositionStylesTopPanelVisible);
+                this::updateCompositionStylesTopPanelVisible,
+                this);
     }
 
     protected DataGridDelegate createDataGridDelegate() {

@@ -264,8 +264,13 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
 
     @Override
     public void setRowsCount(@Nullable RowsCount rowsCount) {
-        dataGridDelegate.setRowsCount(rowsCount, topPanel, this::createTopPanel, componentComposition,
-                this::updateCompositionStylesTopPanelVisible);
+        dataGridDelegate.setRowsCount(
+                rowsCount,
+                topPanel,
+                this::createTopPanel,
+                componentComposition,
+                this::updateCompositionStylesTopPanelVisible,
+                this);
     }
 
     protected DataGridDelegate createDataGridDelegate() {

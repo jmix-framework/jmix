@@ -197,8 +197,8 @@ public class SendingMessageBrowser extends Screen {
 
     protected List<SendingAttachment> getAttachments(SendingMessage message) {
         SendingMessage msg = dataManager.load(SendingMessage.class)
-                .fetchPlan("sendingMessage.loadFromQueue")
                 .id(message.getId())
+                .fetchPlan("sendingMessage.loadFromQueue")
                 .one();
         return msg.getAttachments();
     }

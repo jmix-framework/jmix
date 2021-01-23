@@ -76,7 +76,7 @@ public class QueryTest {
     @Transactional
     public void testUnwrap() {
         // given:
-        TypedQuery<Customer> query = entityManager.createQuery("select e from sales$Customer e where e.name = ?1", Customer.class);
+        TypedQuery<Customer> query = entityManager.createQuery("select e from sales_Customer e where e.name = ?1", Customer.class);
 
         // when:
         JmixQuery jmixQuery = query.unwrap(JmixQuery.class);
@@ -94,7 +94,7 @@ public class QueryTest {
 
         // when:
         List<Customer> customerList = tx.execute(status -> {
-            TypedQuery<Customer> query = entityManager.createQuery("select e from sales$Customer e where e.name = ?1", Customer.class);
+            TypedQuery<Customer> query = entityManager.createQuery("select e from sales_Customer e where e.name = ?1", Customer.class);
             return query.setParameter(1, "c1").getResultList();
         });
 
@@ -117,7 +117,7 @@ public class QueryTest {
 
         // when:
         List<Customer> list = tx.execute(status -> {
-            TypedQuery<Customer> query = entityManager.createQuery("select c from sales$Customer c where c.id = ?1", Customer.class);
+            TypedQuery<Customer> query = entityManager.createQuery("select c from sales_Customer c where c.id = ?1", Customer.class);
             query.setParameter(1, customer.getId());
             return query.getResultList();
         });
@@ -128,7 +128,7 @@ public class QueryTest {
         // when:
         list = tx.execute(status -> {
             entityManager.setProperty(PersistenceHints.SOFT_DELETION, false);
-            TypedQuery<Customer> query = entityManager.createQuery("select c from sales$Customer c where c.id = ?1", Customer.class);
+            TypedQuery<Customer> query = entityManager.createQuery("select c from sales_Customer c where c.id = ?1", Customer.class);
             query.setParameter(1, customer.getId());
             return query.getResultList();
         });

@@ -76,7 +76,7 @@ class MultiDbDataManagerTest extends DataSpec {
         customer == c
 
         and:
-        List<Db1Customer> customers = dataManager.load(Db1Customer.class).list()
+        List<Db1Customer> customers = dataManager.load(Db1Customer.class).all().list()
         customers.size() == 1
         customers.get(0) == customer
     }
@@ -127,7 +127,7 @@ class MultiDbDataManagerTest extends DataSpec {
         loaded == customer
 
         when:
-        List<Mem1Customer> list = dataManager.load(Mem1Customer.class).list()
+        List<Mem1Customer> list = dataManager.load(Mem1Customer.class).all().list()
 
         then:
         !list.isEmpty()

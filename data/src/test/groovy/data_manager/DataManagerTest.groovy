@@ -17,11 +17,13 @@
 package data_manager
 
 import io.jmix.core.*
+import io.jmix.core.querycondition.PropertyCondition
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestCompositeKeyEntity
 import test_support.entity.TestEntityKey
+import test_support.entity.sales.OrderLineA
 import test_support.entity.sales.Product
 import test_support.entity.sec.User
 
@@ -227,4 +229,145 @@ class DataManagerTest extends DataSpec {
         then:
         !dataManager.load(Id.of(entity1)).optional().isPresent()
     }
+
+    def "load with sort"() {
+
+        def product1 = dataManager.create(Product)
+        product1.name = 'p1'
+        product1.quantity = 100
+
+        def product2 = dataManager.create(Product)
+        product2.name = 'p2'
+        product2.quantity = 200
+
+        def line1 = dataManager.create(OrderLineA)
+        line1.product = product1
+
+        def line2 = dataManager.create(OrderLineA)
+        line2.product = product2
+
+        dataManager.save(product1, product2, line1, line2)
+
+        when:
+
+        def list = dataManager.load(Product)
+                .query("0=0")
+                .sort(Sort.by(Sort.Direction.DESC, "name"))
+                .list()
+
+        then:
+
+        list == [product2, product1]
+
+        when:
+
+        def list1 = dataManager.load(Product)
+                .all()
+                .sort(Sort.by(Sort.Direction.DESC, "name"))
+                .list()
+
+        then:
+
+        list1 == [product2, product1]
+
+        when:
+
+        def list2 = dataManager.load(OrderLineA)
+                .all()
+                .sort(Sort.by(Sort.Direction.DESC, "product.name"))
+                .list()
+
+        then:
+
+        list2 == [line2, line1]
+    }
+
+    def "load by condition"() {
+
+        def product1 = dataManager.create(Product)
+        product1.name = 'p1'
+        product1.quantity = 100
+
+        def product2 = dataManager.create(Product)
+        product2.name = 'p2'
+        product2.quantity = 200
+
+        def product3 = dataManager.create(Product)
+        product3.name = 'p3'
+        product3.quantity = 100
+
+        dataManager.save(product1, product2, product3)
+
+        when:
+
+        def list = dataManager.load(Product)
+                .condition(PropertyCondition.equal("quantity", 100))
+                .list()
+
+        then:
+
+        list.toSet() == [product1, product3].toSet()
+
+        when:
+
+        def list1 = dataManager.load(Product)
+                .query("e.quantity = ?1", 100)
+                .condition(PropertyCondition.equal("name", "p1"))
+                .list()
+
+        then:
+
+        list1 == [product1]
+    }
+
+    def "load by condition with reference"() {
+
+        def product1 = dataManager.create(Product)
+        product1.name = 'p1'
+        product1.quantity = 100
+
+        def product2 = dataManager.create(Product)
+        product2.name = 'p2'
+        product2.quantity = 200
+
+        def product3 = dataManager.create(Product)
+        product3.name = 'p3'
+        product3.quantity = 100
+
+        def line1 = dataManager.create(OrderLineA)
+        line1.quantity = 100
+        line1.product = product1
+
+        def line2 = dataManager.create(OrderLineA)
+        line2.quantity = 200
+        line2.product = product2
+
+        def line3 = dataManager.create(OrderLineA)
+        line3.quantity = 100
+        line3.product = product3
+
+        dataManager.save(product1, product2, product3, line1, line2, line3)
+
+        when:
+
+        def list = dataManager.load(OrderLineA)
+                .condition(PropertyCondition.equal("product.quantity", 100))
+                .list()
+
+        then:
+
+        list.toSet() == [line1, line3].toSet()
+
+        when:
+
+        def list1 = dataManager.load(OrderLineA)
+                .query("e.quantity = ?1", 100)
+                .condition(PropertyCondition.equal("product.name", "p1"))
+                .list()
+
+        then:
+
+        list1 == [line1]
+    }
+
 }

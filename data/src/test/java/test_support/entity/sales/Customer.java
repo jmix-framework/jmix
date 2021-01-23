@@ -28,7 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @JmixEntity
-@Entity(name = "sales$Customer")
+@Entity(name = "sales_Customer")
 @Table(name = "SALES_CUSTOMER")
 @Listeners("test_TestCustomerListener")
 public class Customer extends BaseEntity {

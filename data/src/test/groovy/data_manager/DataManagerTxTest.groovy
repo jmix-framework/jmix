@@ -101,7 +101,7 @@ class DataManagerTxTest extends DataSpec {
         txDef.setName('test-load')
         def txStatus = txManager.getTransaction(txDef)
 
-        dataManager.load(Customer).one()
+        dataManager.load(Customer).all().one()
 
         txManager.commit(txStatus)
 
@@ -126,7 +126,7 @@ class DataManagerTxTest extends DataSpec {
         txDef.setName('test-load')
         def txStatus = txManager.getTransaction(txDef)
 
-        dataManager.load(Customer).joinTransaction(false).one()
+        dataManager.load(Customer).all().joinTransaction(false).one()
 
         txManager.commit(txStatus)
 

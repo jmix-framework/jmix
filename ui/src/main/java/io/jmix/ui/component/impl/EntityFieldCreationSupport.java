@@ -16,8 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlan;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -41,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Helps to create and configure {@link EntityPicker} and {@link EntityComboBox} components
@@ -60,6 +60,8 @@ public class EntityFieldCreationSupport {
     protected UiComponents uiComponents;
     @Autowired
     protected Actions actions;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     public EntityPicker createEntityField(MetaClass metaclass, @Nullable Options options) {
         EntityPicker field = createFieldComponent(metaclass, options);
@@ -85,9 +87,20 @@ public class EntityFieldCreationSupport {
 
     public CollectionContainer createCollectionContainer(MetaClass metaClass) {
         CollectionContainer container = dataComponents.createCollectionContainer(metaClass.getJavaClass());
-        List list = dataManager.load(metaClass.getJavaClass()).fetchPlan(FetchPlan.INSTANCE_NAME).list(); // todo sorting
+        List list = dataManager.load(metaClass.getJavaClass())
+                .all()
+                .fetchPlan(FetchPlan.INSTANCE_NAME)
+                .sort(Sort.by(getInstanceNameSortOrders(metaClass)))
+                .list();
         container.setItems(list);
         return container;
+    }
+
+    private List<Sort.Order> getInstanceNameSortOrders(MetaClass metaClass) {
+        return metadataTools.getInstanceNameRelatedProperties(metaClass, true).stream()
+                .filter(metaProperty -> !metaProperty.getRange().isClass())
+                .map(metaProperty -> Sort.Order.asc(metaProperty.getName()))
+                .collect(Collectors.toList());
     }
 
     public boolean addDefaultActions(EntityPicker entityPicker) {

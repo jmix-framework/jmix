@@ -60,14 +60,14 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
                     }
                     searchString = applySearchFormat(searchString, searchFormat);
 
-                    FluentLoader<?> loader = dataManager.load(entityClass);
+                    FluentLoader.ByQuery<?> loader = dataManager.load(entityClass)
+                            .query(stringQuery)
+                            .parameter("searchString", searchString);
                     if (!Strings.isNullOrEmpty(fetchPlan)) {
                         FetchPlanRepository fetchPlanRepository = applicationContext.getBean(FetchPlanRepository.class);
                         loader.fetchPlan(fetchPlanRepository.getFetchPlan(entityClass, fetchPlan));
                     }
-                    return loader.query(stringQuery)
-                            .parameter("searchString", searchString)
-                            .list();
+                    return loader.list();
                 });
             } else {
                 throw new GuiDevelopmentException(String.format("Field 'entityClass' is empty in component %s.",

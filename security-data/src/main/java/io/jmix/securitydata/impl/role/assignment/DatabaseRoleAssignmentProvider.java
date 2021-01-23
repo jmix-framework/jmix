@@ -39,6 +39,7 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
     @Override
     public Collection<RoleAssignment> getAllAssignments() {
         return dataManager.load(RoleAssignmentEntity.class)
+                .all()
                 .fetchPlan(FetchPlan.BASE)
                 .list()
                 .stream()

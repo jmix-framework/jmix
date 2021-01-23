@@ -65,6 +65,7 @@ public class DatabaseRoleProvider implements RoleProvider {
     public Collection<Role> getAllRoles() {
         return dataManager.load(RoleEntity.class)
 //                .query("select r from sec_RoleEntity r")
+                .all()
                 .fetchPlan(fetchPlanBuilder -> {
                     fetchPlanBuilder
                             .addAll("name", "code", "scope", "roleType", "childRoles")

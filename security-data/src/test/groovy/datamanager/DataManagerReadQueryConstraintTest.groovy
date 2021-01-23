@@ -104,7 +104,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
 
         when:
 
-        def result = dataManager.load(TestOrder.class).list()
+        def result = dataManager.load(TestOrder.class).all().list()
 
         then:
 
@@ -124,6 +124,7 @@ class DataManagerReadQueryConstraintTest extends SecurityDataSpecification {
         when:
 
         def result = dataManager.load(TestOrder.class)
+                .all()
                 .accessConstraints(accessConstraintsRegistry.getConstraints())
                 .list()
 

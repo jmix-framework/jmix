@@ -207,8 +207,8 @@ public class RestTestServiceBean implements RestTestService {
     @Override
     public List<PojoWithNestedEntity> getPojosWithNestedEntity() {
         List<Car> cars = dataManager.load(Car.class)
-                .fetchPlan(FetchPlan.LOCAL)
                 .query("select c from ref_Car c order by c.vin")
+                .fetchPlan(FetchPlan.LOCAL)
                 .list();
         final int[] counter = {1};
         return cars.stream()
@@ -219,8 +219,8 @@ public class RestTestServiceBean implements RestTestService {
     @Override
     public List<PojoWithNestedEntity> getPojosWithNestedEntityWithView() {
         List<Car> cars = dataManager.load(Car.class)
-                .fetchPlan("car-with-colour")
                 .query("select c from ref_Car c order by c.vin")
+                .fetchPlan("car-with-colour")
                 .list();
         final int[] counter = {1};
         return cars.stream()

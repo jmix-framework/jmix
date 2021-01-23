@@ -21,6 +21,7 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.core.querycondition.LogicalCondition;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -68,7 +69,6 @@ public class FluentLoader<E> {
         this.dataManager = dataManager;
     }
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     public FluentLoader(Class<E> entityClass) {
         this.entityClass = entityClass;
     }
@@ -118,150 +118,53 @@ public class FluentLoader<E> {
     }
 
     /**
-     * Loads a list of entities.
-     */
-    public List<E> list() {
-        LoadContext<E> loadContext = createLoadContext();
-        return dataManager.loadList(loadContext);
-    }
-
-    /**
-     * Loads a single instance and wraps it in Optional.
-     */
-    public Optional<E> optional() {
-        LoadContext<E> loadContext = createLoadContext();
-        loadContext.getQuery().setMaxResults(1);
-        return Optional.ofNullable(dataManager.load(loadContext));
-    }
-
-    /**
-     * Loads a single instance.
-     *
-     * @throws IllegalStateException if nothing was loaded
-     */
-    public E one() {
-        LoadContext<E> loadContext = createLoadContext();
-        loadContext.getQuery().setMaxResults(1);
-        E entity = dataManager.load(loadContext);
-        if (entity != null)
-            return entity;
-        else
-            throw new IllegalStateException("No results");
-    }
-
-    public FluentLoader<E> joinTransaction(boolean join) {
-        this.joinTransaction = join;
-        return this;
-    }
-
-    /**
-     * Sets a fetch plan.
-     */
-    public FluentLoader<E> fetchPlan(FetchPlan fetchPlan) {
-        this.fetchPlan = fetchPlan;
-        return this;
-    }
-
-    /**
-     * Sets a fetch plan by name.
-     */
-    public FluentLoader<E> fetchPlan(String fetchPlanName) {
-        this.fetchPlanName = fetchPlanName;
-        return this;
-    }
-
-    public FluentLoader<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-        createFetchPlanBuilder();
-        fetchPlanBuilderConfigurer.accept(fetchPlanBuilder);
-        return this;
-    }
-
-    public FluentLoader<E> fetchPlanProperties(String... properties) {
-        createFetchPlanBuilder();
-        fetchPlanBuilder.addAll(properties);
-        return this;
-    }
-
-    /**
-     * Sets soft deletion. The soft deletion is true by default.
-     */
-    public FluentLoader<E> softDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
-        return this;
-    }
-
-    /**
-     * Sets custom hint that should be used by the query.
-     */
-    public FluentLoader<E> hint(String hintName, Serializable value) {
-        if (hints == null) {
-            hints = new HashMap<>();
-        }
-        hints.put(hintName, value);
-        return this;
-    }
-
-    /**
-     * Sets custom hints that should be used by the query.
-     */
-    public FluentLoader<E> hints(Map<String, Serializable> hints) {
-        this.hints = hints;
-        return this;
-    }
-
-    /**
-     * Sets access constraints.
-     */
-    public FluentLoader<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
-        this.accessConstraints = accessConstraints;
-        return this;
-    }
-
-    /**
-     * Sets the entity identifier.
+     * Load by entity identifier.
      */
     public ById<E> id(Object id) {
         return new ById<>(this, id);
     }
 
     /**
-     * Sets array of entity identifiers.
+     * Load by array of entity identifiers.
      */
     public ByIds<E> ids(Object... ids) {
         return new ByIds<>(this, Arrays.asList(ids));
     }
 
     /**
-     * Sets collection of entity identifiers.
+     * Load by collection of entity identifiers.
      */
     public ByIds<E> ids(Collection ids) {
         return new ByIds<>(this, ids);
     }
 
     /**
-     * Sets the query text.
+     * Load by query.
      */
     public ByQuery<E> query(String queryString) {
         return new ByQuery<>(this, queryString, applicationContext);
     }
 
     /**
-     * Sets the query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
+     * Load by query with positional parameters (e.g. {@code "e.name = ?1 and e.status = ?2"}).
      */
     public ByQuery<E> query(String queryString, Object... parameters) {
         return new ByQuery<>(this, queryString, parameters, applicationContext);
     }
 
     /**
-     * Sets additional query condition.
+     * Load by condition.
      */
-    public ByQuery<E> condition(Condition condition) {
+    public ByCondition<E> condition(Condition condition) {
         MetaClass metaClass = metadata.getClass(entityClass);
-        String entityName = metaClass.getName();
-        String queryString = String.format("select e from %s e", entityName);
-        ByQuery<E> byQuery = new ByQuery<>(this, queryString, applicationContext);
-        byQuery.condition(condition);
-        return byQuery;
+        return new ByCondition<>(this, metaClass.getName(), condition);
+    }
+
+    /**
+     * Load all instances.
+     */
+    public ByCondition<E> all() {
+        return condition(LogicalCondition.and());
     }
 
     public static class ById<E> {
@@ -324,12 +227,28 @@ public class FluentLoader<E> {
             return this;
         }
 
+        /**
+         * Configure the fetch plan.
+         */
         public ById<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
             loader.createFetchPlanBuilder();
             fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
         }
 
+        /**
+         * Sets a fetch plan containing the given properties. A property can be designated by a path in the entity graph.
+         * For example:
+         * <pre>
+         *     dataManager.load(Pet.class)
+         *         .id(petId)
+         *         .fetchPlanProperties(
+         *                 "name",
+         *                 "owner.name",
+         *                 "owner.address.city")
+         *         .list();
+         * </pre>
+         */
         public ById<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
@@ -371,6 +290,9 @@ public class FluentLoader<E> {
             return this;
         }
 
+        /**
+         * Indicates that the operation must be performed in an existing transaction if it exists. True by default.
+         */
         public ById<E> joinTransaction(boolean join) {
             loader.joinTransaction = join;
             return this;
@@ -491,6 +413,9 @@ public class FluentLoader<E> {
             return this;
         }
 
+        /**
+         * Indicates that the operation must be performed in an existing transaction if it exists. True by default.
+         */
         public ByIds<E> joinTransaction(boolean join) {
             loader.joinTransaction = join;
             return this;
@@ -505,12 +430,10 @@ public class FluentLoader<E> {
         private Map<String, Object> parameters = new HashMap<>();
         private int firstResult;
         private int maxResults;
+        private Sort sort;
         private boolean cacheable;
-        private Condition condition;
-        private ApplicationContext applicationContext;
 
         protected ByQuery(FluentLoader<E> loader, String queryString, ApplicationContext applicationContext) {
-            this.applicationContext = applicationContext;
             Preconditions.checkNotEmptyString(queryString, "queryString is empty");
             this.loader = loader;
             this.queryString = queryString;
@@ -535,10 +458,10 @@ public class FluentLoader<E> {
         LoadContext<E> createLoadContext() {
             Preconditions.checkNotEmptyString(queryString, "query is empty");
 
-            LoadContext<E> loadContext = new LoadContext(loader.metaClass);
+            LoadContext<E> loadContext = new LoadContext<>(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
-            Collection<QueryStringProcessor> processors = applicationContext.getBeansOfType(QueryStringProcessor.class).values();
+            Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
             String processedQuery = QueryUtils.applyQueryStringProcessors(processors, queryString, loader.entityClass);
 
             LoadContext.Query query = new LoadContext.Query(processedQuery);
@@ -547,9 +470,10 @@ public class FluentLoader<E> {
             }
             loadContext.setQuery(query);
 
-            loadContext.getQuery().setCondition(condition);
+            assert loadContext.getQuery() != null;
             loadContext.getQuery().setFirstResult(firstResult);
             loadContext.getQuery().setMaxResults(maxResults);
+            loadContext.getQuery().setSort(sort);
             loadContext.getQuery().setCacheable(cacheable);
 
             return loadContext;
@@ -601,12 +525,28 @@ public class FluentLoader<E> {
             return this;
         }
 
+        /**
+         * Configure the fetch plan.
+         */
         public ByQuery<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
             loader.createFetchPlanBuilder();
             fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
             return this;
         }
 
+        /**
+         * Sets a fetch plan containing the given properties. A property can be designated by a path in the entity graph.
+         * For example:
+         * <pre>
+         *     dataManager.load(Pet.class)
+         *         .query("...")
+         *         .fetchPlanProperties(
+         *                 "name",
+         *                 "owner.name",
+         *                 "owner.address.city")
+         *         .list();
+         * </pre>
+         */
         public ByQuery<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
@@ -643,9 +583,8 @@ public class FluentLoader<E> {
         /**
          * Sets additional query condition.
          */
-        public ByQuery<E> condition(Condition condition) {
-            this.condition = condition;
-            return this;
+        public ByCondition<E> condition(Condition condition) {
+            return new ByCondition<>(this, condition);
         }
 
         /**
@@ -696,6 +635,14 @@ public class FluentLoader<E> {
         }
 
         /**
+         * Sets sorting, for example {@code sort(Sort.by("name"))}
+         */
+        public ByQuery<E> sort(Sort sort) {
+            this.sort = sort;
+            return this;
+        }
+
+        /**
          * Indicates that the query results should be cached.
          * By default, queries are not cached.
          */
@@ -712,7 +659,246 @@ public class FluentLoader<E> {
             return this;
         }
 
+        /**
+         * Indicates that the operation must be performed in an existing transaction if it exists. True by default.
+         */
         public ByQuery<E> joinTransaction(boolean join) {
+            loader.joinTransaction = join;
+            return this;
+        }
+    }
+
+    public static class ByCondition<E> {
+
+        private FluentLoader<E> loader;
+
+        private String queryString;
+        private Map<String, Object> parameters = new HashMap<>();
+        private int firstResult;
+        private int maxResults;
+        private Sort sort;
+        private boolean cacheable;
+        private Condition condition;
+
+        protected ByCondition(FluentLoader<E> loader, String entityName, Condition condition) {
+            this.loader = loader;
+            this.queryString = String.format("select e from %s e", entityName);
+            this.condition = condition;
+        }
+
+        protected ByCondition(ByQuery<E> byQuery, Condition condition) {
+            this.loader = byQuery.loader;
+            this.condition = condition;
+            this.queryString = byQuery.queryString;
+            this.parameters = byQuery.parameters;
+            this.firstResult = byQuery.firstResult;
+            this.maxResults = byQuery.maxResults;
+            this.sort = byQuery.sort;
+            this.cacheable = byQuery.cacheable;
+        }
+
+        LoadContext<E> createLoadContext() {
+            Preconditions.checkNotEmptyString(queryString, "query is empty");
+
+            LoadContext<E> loadContext = new LoadContext<>(loader.metaClass);
+            loader.initCommonLoadContextParameters(loadContext);
+
+            Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
+            String processedQuery = QueryUtils.applyQueryStringProcessors(processors, queryString, loader.entityClass);
+
+            LoadContext.Query query = new LoadContext.Query(processedQuery);
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+            loadContext.setQuery(query);
+
+            assert loadContext.getQuery() != null;
+            loadContext.getQuery().setCondition(condition);
+            loadContext.getQuery().setFirstResult(firstResult);
+            loadContext.getQuery().setMaxResults(maxResults);
+            loadContext.getQuery().setSort(sort);
+            loadContext.getQuery().setCacheable(cacheable);
+
+            return loadContext;
+        }
+
+        /**
+         * Loads a list of entities.
+         */
+        public List<E> list() {
+            LoadContext<E> loadContext = createLoadContext();
+            return loader.dataManager.loadList(loadContext);
+        }
+
+        /**
+         * Loads a single instance and wraps it in Optional.
+         */
+        public Optional<E> optional() {
+            LoadContext<E> loadContext = createLoadContext();
+            return Optional.ofNullable(loader.dataManager.load(loadContext));
+        }
+
+        /**
+         * Loads a single instance.
+         *
+         * @throws IllegalStateException if nothing was loaded
+         */
+        public E one() {
+            LoadContext<E> loadContext = createLoadContext();
+            E entity = loader.dataManager.load(loadContext);
+            if (entity != null)
+                return entity;
+            else
+                throw new IllegalStateException("No results");
+        }
+
+        /**
+         * Sets a fetch plan.
+         */
+        public ByCondition<E> fetchPlan(FetchPlan fetchPlan) {
+            loader.fetchPlan = fetchPlan;
+            return this;
+        }
+
+        /**
+         * Sets a fetchPlan by name.
+         */
+        public ByCondition<E> fetchPlan(String fetchPlanName) {
+            loader.fetchPlanName = fetchPlanName;
+            return this;
+        }
+
+        /**
+         * Configure the fetch plan.
+         */
+        public ByCondition<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
+            loader.createFetchPlanBuilder();
+            fetchPlanBuilderConfigurer.accept(loader.fetchPlanBuilder);
+            return this;
+        }
+
+        /**
+         * Sets a fetch plan containing the given properties. A property can be designated by a path in the entity graph.
+         * For example:
+         * <pre>
+         *     dataManager.load(Pet.class)
+         *         .condition(...)
+         *         .fetchPlanProperties(
+         *                 "name",
+         *                 "owner.name",
+         *                 "owner.address.city")
+         *         .list();
+         * </pre>
+         */
+        public ByCondition<E> fetchPlanProperties(String... properties) {
+            loader.createFetchPlanBuilder();
+            loader.fetchPlanBuilder.addAll(properties);
+            return this;
+        }
+
+        /**
+         * Sets soft deletion. The soft deletion is true by default.
+         */
+        public ByCondition<E> softDeletion(boolean softDeletion) {
+            loader.softDeletion = softDeletion;
+            return this;
+        }
+
+        /**
+         * Sets custom hint that should be used by the query.
+         */
+        public ByCondition<E> hint(String hintName, Serializable value) {
+            if (loader.hints == null) {
+                loader.hints = new HashMap<>();
+            }
+            loader.hints.put(hintName, value);
+            return this;
+        }
+
+        /**
+         * Sets custom hints that should be used by the query.
+         */
+        public ByCondition<E> hints(Map<String, Serializable> hints) {
+            loader.hints = hints;
+            return this;
+        }
+
+        /**
+         * Sets value for a query parameter.
+         *
+         * @param name  parameter name
+         * @param value parameter value
+         */
+        public ByCondition<E> parameter(String name, Object value) {
+            parameters.put(name, value);
+            return this;
+        }
+
+        /**
+         * Sets value for a parameter of {@code java.util.Date} type.
+         *
+         * @param name         parameter name
+         * @param value        parameter value
+         * @param temporalType how to interpret the value
+         */
+        public ByCondition<E> parameter(String name, Date value, TemporalType temporalType) {
+            parameters.put(name, new TemporalValue(value, temporalType));
+            return this;
+        }
+
+        /**
+         * Sets the map of query parameters.
+         */
+        public ByCondition<E> setParameters(Map<String, Object> parameters) {
+            this.parameters.putAll(parameters);
+            return this;
+        }
+
+        /**
+         * Sets results offset.
+         */
+        public ByCondition<E> firstResult(int firstResult) {
+            this.firstResult = firstResult;
+            return this;
+        }
+
+        /**
+         * Sets results limit.
+         */
+        public ByCondition<E> maxResults(int maxResults) {
+            this.maxResults = maxResults;
+            return this;
+        }
+
+        /**
+         * Sets sorting, for example {@code sort(Sort.by("name"))}
+         */
+        public ByCondition<E> sort(Sort sort) {
+            this.sort = sort;
+            return this;
+        }
+
+        /**
+         * Indicates that the query results should be cached.
+         * By default, queries are not cached.
+         */
+        public ByCondition<E> cacheable(boolean cacheable) {
+            this.cacheable = cacheable;
+            return this;
+        }
+
+        /**
+         * Sets access constraints.
+         */
+        public ByCondition<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
+            loader.accessConstraints = accessConstraints;
+            return this;
+        }
+
+        /**
+         * Indicates that the operation must be performed in an existing transaction if it exists. True by default.
+         */
+        public ByCondition<E> joinTransaction(boolean join) {
             loader.joinTransaction = join;
             return this;
         }

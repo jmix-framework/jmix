@@ -91,8 +91,8 @@ public class AttributeDefaultValues {
         MetaClass metaClass = metadata.getClass(Objects.requireNonNull(attribute.getJavaType()));
         String pkName = referenceToEntitySupport.getPrimaryKeyForLoadingEntity(metaClass);
         return dataManager.load(attribute.getJavaType())
-                .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .query(String.format("e.%s = ?1", pkName), entityId)
+                .fetchPlan(FetchPlan.INSTANCE_NAME)
                 .optional()
                 .orElse(null);
     }

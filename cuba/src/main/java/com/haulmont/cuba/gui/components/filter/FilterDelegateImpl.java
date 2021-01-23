@@ -1243,11 +1243,11 @@ public class FilterDelegateImpl implements FilterDelegate {
      */
     protected void loadFilterEntities() {
         filterEntities = new ArrayList<>(dataService.load(FilterEntity.class)
-                .fetchPlan("app")
                 .query("select f from sec$Filter f " +  /*"left join f.user u " +*/
                         "where f.componentId = :component and (f.username = :username or f.username is null) " +
                         /*+ "and (u.id = :userId or u is null)*/ "order by f.name")
                 .parameter("component", CubaComponentsHelper.getFilterComponentPath(filter))
+                .fetchPlan("app")
                 // todo user substitution
                 //.parameter("userId", userSessionSource.getUserSession().getCurrentOrSubstitutedUser().getId())
                 .parameter("username", userSessionSource.getUserSession().getUser().getUsername())

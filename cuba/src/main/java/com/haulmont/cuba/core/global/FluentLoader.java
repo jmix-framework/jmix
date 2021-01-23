@@ -16,9 +16,9 @@
 
 package com.haulmont.cuba.core.global;
 
+import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.Entity;
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.querycondition.Condition;
 import org.springframework.context.ApplicationContext;
@@ -36,49 +36,72 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         super(entityClass);
     }
 
-    @Override
+    /**
+     * Loads a list of entities.
+     */
+    public List<E> list() {
+        return all().list();
+    }
+
+    /**
+     * Loads a single instance and wraps it in Optional.
+     */
+    public Optional<E> optional() {
+        return all().optional();
+    }
+
+    /**
+     * Loads a single instance.
+     *
+     * @throws IllegalStateException if nothing was loaded
+     */
+    public E one() {
+        return all().one();
+    }
+
     public FluentLoader<E> joinTransaction(boolean join) {
-        return (FluentLoader<E>) super.joinTransaction(join);
+        all().joinTransaction(join);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> fetchPlan(FetchPlan fetchPlan) {
-        return (FluentLoader<E>) super.fetchPlan(fetchPlan);
+        all().fetchPlan(fetchPlan);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> fetchPlan(String fetchPlanName) {
-        return (FluentLoader<E>) super.fetchPlan(fetchPlanName);
+        all().fetchPlan(fetchPlanName);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> fetchPlan(Consumer<FetchPlanBuilder> fetchPlanBuilderConfigurer) {
-        return (FluentLoader<E>) super.fetchPlan(fetchPlanBuilderConfigurer);
+        all().fetchPlan(fetchPlanBuilderConfigurer);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> fetchPlanProperties(String... properties) {
-        return (FluentLoader<E>) super.fetchPlanProperties(properties);
+        all().fetchPlanProperties(properties);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> softDeletion(boolean softDeletion) {
-        return (FluentLoader<E>) super.softDeletion(softDeletion);
+        all().softDeletion(softDeletion);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> hint(String hintName, Serializable value) {
-        return (FluentLoader<E>) super.hint(hintName, value);
+        all().hint(hintName, value);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> hints(Map<String, Serializable> hints) {
-        return (FluentLoader<E>) super.hints(hints);
+        all().hints(hints);
+        return this;
     }
 
-    @Override
     public FluentLoader<E> accessConstraints(List<AccessConstraint<?>> accessConstraints) {
-        return (FluentLoader<E>) super.accessConstraints(accessConstraints);
+        all().accessConstraints(accessConstraints);
+        return this;
     }
 
     /**
@@ -387,8 +410,8 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         }
 
         @Override
-        public FluentLoader.ByQuery condition(Condition condition) {
-            return (ByQuery) super.condition(condition);
+        public ByCondition condition(Condition condition) {
+            return super.condition(condition);
         }
 
         @Override

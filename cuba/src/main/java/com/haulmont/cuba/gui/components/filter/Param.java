@@ -137,7 +137,7 @@ public class Param {
     @Autowired
     protected MetadataTools metadataTools;
     @Autowired
-    protected DataManager dataManager;
+    protected com.haulmont.cuba.core.global.DataManager dataManager;
     @Autowired
     protected CubaProperties properties;
     @Autowired

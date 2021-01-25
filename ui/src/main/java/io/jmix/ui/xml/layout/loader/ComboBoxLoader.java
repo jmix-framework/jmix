@@ -16,17 +16,10 @@
 package io.jmix.ui.xml.layout.loader;
 
 
-import io.jmix.core.common.util.ParamsMap;
-import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HasFilterMode;
-import io.jmix.ui.screen.FrameOwner;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
 
@@ -58,7 +51,6 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
         loadInputPrompt(resultComponent, element);
 
         loadFilterMode(resultComponent, element);
-        loadNewOptionHandler(resultComponent, element);
 
         loadNullOptionVisible(resultComponent, element);
 
@@ -84,35 +76,6 @@ public class ComboBoxLoader extends AbstractFieldLoader<ComboBox> {
         String textInputAllowed = element.attributeValue("textInputAllowed");
         if (StringUtils.isNotEmpty(textInputAllowed)) {
             resultComponent.setTextInputAllowed(Boolean.parseBoolean(textInputAllowed));
-        }
-    }
-
-    protected void loadNewOptionHandler(ComboBox component, Element element) {
-        String newOptionHandlerMethod = element.attributeValue("newOptionHandler");
-        if (StringUtils.isNotEmpty(newOptionHandlerMethod)) {
-            FrameOwner controller = getComponentContext().getFrame().getFrameOwner();
-            Class<? extends FrameOwner> windowClass = controller.getClass();
-
-            Method newOptionHandler;
-            try {
-                newOptionHandler = windowClass.getMethod(newOptionHandlerMethod, ComboBox.class, String.class);
-            } catch (NoSuchMethodException e) {
-                Map<String, Object> params = ParamsMap.of(
-                        "LookupField Id", component.getId(),
-                        "Method name", newOptionHandlerMethod
-                );
-
-                throw new GuiDevelopmentException("Unable to find new option handler method for lookup field",
-                        context, params);
-            }
-
-            component.setNewOptionHandler(caption -> {
-                try {
-                    newOptionHandler.invoke(controller, component, caption);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException("Unable to invoke new option handler", e);
-                }
-            });
         }
     }
 

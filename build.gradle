@@ -87,6 +87,7 @@ dependencies {
     def sessionsVersion = baseVersion
     def translationsVersion = baseVersion
     def uiVersion = baseVersion
+    def reportsVersion = baseVersion
 
     constraints {
         api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
@@ -166,6 +167,13 @@ dependencies {
         api "io.jmix.ui:jmix-ui-starter:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
 
+        api "io.jmix.reports:jmix-reports:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-ui:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-rest:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-starter:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-ui-starter:${snapshotOr(reportsVersion)}"
+        api "io.jmix.reports:jmix-reports-rest-starter:${snapshotOr(reportsVersion)}"
+
         api 'com.google.guava:guava:27.0.1-jre'
         api 'commons-io:commons-io:2.6'
         api 'commons-fileupload:commons-fileupload:1.4'
@@ -238,6 +246,11 @@ dependencies {
         api "org.geotools:gt-epsg-extension:$geoToolsVersion"
         api "org.geotools:gt-shapefile:$geoToolsVersion"
         api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
+
+        api 'com.thoughtworks.xstream:xstream:1.4.13'
+
+        api 'com.haulmont.yarg:yarg-api:2.2.5'
+        api 'com.haulmont.yarg:yarg:2.2.5'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

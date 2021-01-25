@@ -23,11 +23,18 @@ import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
+import io.jmix.core.common.util.ParamsMap;
+import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.data.options.ContainerOptions;
+import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.xml.layout.loader.ComboBoxLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
 
 public class CubaLookupFieldLoader extends ComboBoxLoader {
 
@@ -45,6 +52,7 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
         LookupField lookupField = (LookupField) resultComponent;
 
         loadNewOptionAllowed(lookupField, element);
+        loadNewOptionHandler(lookupField, element);
         ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) resultComponent, element);
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
@@ -73,5 +81,34 @@ public class CubaLookupFieldLoader extends ComboBoxLoader {
                 .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
                         (ComponentLoaderContext) getComponentContext())
                 .ifPresent(component::setOptions);
+    }
+
+    protected void loadNewOptionHandler(LookupField component, Element element) {
+        String newOptionHandlerMethod = element.attributeValue("newOptionHandler");
+        if (StringUtils.isNotEmpty(newOptionHandlerMethod)) {
+            FrameOwner controller = getComponentContext().getFrame().getFrameOwner();
+            Class<? extends FrameOwner> windowClass = controller.getClass();
+
+            Method newOptionHandler;
+            try {
+                newOptionHandler = windowClass.getMethod(newOptionHandlerMethod, ComboBox.class, String.class);
+            } catch (NoSuchMethodException e) {
+                Map<String, Object> params = ParamsMap.of(
+                        "LookupField Id", component.getId(),
+                        "Method name", newOptionHandlerMethod
+                );
+
+                throw new GuiDevelopmentException("Unable to find new option handler method for lookup field",
+                        context, params);
+            }
+
+            component.setNewOptionHandler(caption -> {
+                try {
+                    newOptionHandler.invoke(controller, component, caption);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Unable to invoke new option handler", e);
+                }
+            });
+        }
     }
 }

@@ -18,7 +18,6 @@ package component.composite.component;
 
 import com.google.common.base.Strings;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.CompositeComponent;
 import io.jmix.ui.component.CompositeDescriptor;
@@ -120,7 +119,6 @@ public class TestCommentaryPanel extends CompositeComponent<VBoxLayout> implemen
         commentsDataGrid.setItems(new ContainerDataGridItems<>(container));
         commentsDataGrid.getColumnNN("comment")
                 .setRenderer(htmlRendererProvider.getObject());
-        commentsDataGrid.removeAction(ShowInfoAction.ACTION_ID);
 
         container.addCollectionChangeListener(event -> commentsDataGrid.scrollToEnd());
     }

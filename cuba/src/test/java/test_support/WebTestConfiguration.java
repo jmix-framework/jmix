@@ -35,6 +35,8 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.datatools.DatatoolsConfiguration;
+import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
@@ -67,6 +69,7 @@ import javax.sql.DataSource;
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class,
         LocalFileStorageConfiguration.class,
+        DatatoolsConfiguration.class, DatatoolsUiConfiguration.class,
         CubaConfiguration.class
 })
 @PropertySource("classpath:/com/haulmont/cuba/core/test-web-app.properties")

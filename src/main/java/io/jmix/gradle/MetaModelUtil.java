@@ -55,6 +55,7 @@ public class MetaModelUtil {
     public static final String GET_ENTITY_ENTRY_METHOD_NAME = "__getEntityEntry";
     public static final String COPY_ENTITY_ENTRY_METHOD_NAME = "__copyEntityEntry";
     public static final String WRITE_OBJECT_METHOD_NAME = "writeObject";
+    public static final String READ_OBJECT_METHOD_NAME = "readObject";
 
     public static final String GEN_ENTITY_ENTRY_VAR_NAME = "_jmixEntityEntry";
     public static final String GEN_ENTITY_ENTRY_CLASS_NAME = "JmixEntityEntry";
@@ -236,6 +237,18 @@ public class MetaModelUtil {
     public static CtMethod findWriteObjectMethod(CtClass ctClass) throws NotFoundException {
         for (CtMethod method : ctClass.getDeclaredMethods()) {
             if (WRITE_OBJECT_METHOD_NAME.equals(method.getName())) {
+                if (CtClass.voidType.equals(method.getReturnType())
+                        && method.getParameterTypes().length == 1) {
+                    return method;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static CtMethod findReadObjectMethod(CtClass ctClass) throws NotFoundException {
+        for (CtMethod method : ctClass.getDeclaredMethods()) {
+            if (READ_OBJECT_METHOD_NAME.equals(method.getName())) {
                 if (CtClass.voidType.equals(method.getReturnType())
                         && method.getParameterTypes().length == 1) {
                     return method;

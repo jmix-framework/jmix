@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Objects;
@@ -61,12 +62,13 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
 
                 makeEntityEntryMethods(ctClass, entryClassName);
 
-                if (findGeneratedIdField(info) == null) {
+                CtField generatedIdField = findGeneratedIdField(info);
+                if (generatedIdField == null) {
                     initEntityEntry(ctClass, entryClassName);
                 }
 
                 if (!embeddable) {
-                    makeJavaSystemMethods(ctClass);
+                    makeJavaSystemMethods(ctClass, generatedIdField);
                 }
             } else if (embeddable) {
                 makeEntityEntryField(ctClass);
@@ -77,7 +79,7 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
 
                 makeEntityEntryMethods(ctClass, NO_ID_ENTITY_ENTRY_TYPE);
 
-                makeJavaSystemMethods(ctClass);
+                makeJavaSystemMethods(ctClass, null);
             }
         }
         ctClass.addInterface(classPool.get(ENTITY_ENTRY_ENHANCED_TYPE));
@@ -361,14 +363,17 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         constructor.insertAfter(String.format("%s = new %s(this);", GEN_ENTITY_ENTRY_VAR_NAME, entryClassName));
     }
 
-    protected void makeJavaSystemMethods(CtClass ctClass) throws NotFoundException, CannotCompileException {
+    protected void makeJavaSystemMethods(CtClass ctClass, CtField serializeFirstField) throws NotFoundException, CannotCompileException {
         makeEqualsMethod(ctClass);
 
         makeHashCodeMethod(ctClass);
 
         makeToStringMethod(ctClass);
 
-        makeWriteObjectMethod(ctClass);
+        if (findWriteObjectMethod(ctClass) == null && findReadObjectMethod(ctClass) == null) {
+            makeWriteObjectMethod(ctClass, serializeFirstField);
+            makeReadObjectMethod(ctClass, serializeFirstField);
+        }
     }
 
     protected void makeEqualsMethod(CtClass ctClass) throws NotFoundException, CannotCompileException {
@@ -396,17 +401,25 @@ public class EntityEntryEnhancingStep extends BaseEnhancingStep {
         }
     }
 
-    protected void makeWriteObjectMethod(CtClass ctClass) throws NotFoundException, CannotCompileException {
-        CtMethod ctMethod = findWriteObjectMethod(ctClass);
-        if (ctMethod != null) {
-            ctMethod.insertBefore("io.jmix.core.impl.EntityInternals.writeObject(this, $1)");
-        } else {
-            CtMethod entryMethod = CtNewMethod.make(Modifier.PRIVATE,
-                    CtClass.voidType, WRITE_OBJECT_METHOD_NAME,
-                    new CtClass[]{classPool.get(ObjectOutputStream.class.getName())},
-                    new CtClass[]{classPool.get(IOException.class.getName())},
-                    "{ io.jmix.core.impl.EntityInternals.writeObject(this, $1); $1.defaultWriteObject(); }", ctClass);
-            ctClass.addMethod(entryMethod);
-        }
+
+    protected void makeReadObjectMethod(CtClass ctClass, CtField generatedIdField) throws NotFoundException, CannotCompileException {
+        CtMethod entryMethod = CtNewMethod.make(Modifier.PRIVATE,
+                CtClass.voidType, READ_OBJECT_METHOD_NAME,
+                new CtClass[]{classPool.get(ObjectInputStream.class.getName())},
+                new CtClass[]{classPool.get(IOException.class.getName()), classPool.get(ClassNotFoundException.class.getName())},
+                String.format("{ io.jmix.core.impl.EntityInternals.beforeReadObject(this, $1, %s); $1.defaultReadObject(); }",
+                        generatedIdField != null ? ('"' + generatedIdField.getName() + '"') : "null"), ctClass);
+        ctClass.addMethod(entryMethod);
+    }
+
+    protected void makeWriteObjectMethod(CtClass ctClass, CtField generatedIdField) throws NotFoundException, CannotCompileException {
+        CtMethod entryMethod = CtNewMethod.make(Modifier.PRIVATE,
+                CtClass.voidType, WRITE_OBJECT_METHOD_NAME,
+                new CtClass[]{classPool.get(ObjectOutputStream.class.getName())},
+                new CtClass[]{classPool.get(IOException.class.getName())},
+                String.format("{ io.jmix.core.impl.EntityInternals.beforeWriteObject(this, $1, %s); $1.defaultWriteObject(); }",
+                        generatedIdField != null ? ('"' + generatedIdField.getName() + '"') : "null"),
+                ctClass);
+        ctClass.addMethod(entryMethod);
     }
 }

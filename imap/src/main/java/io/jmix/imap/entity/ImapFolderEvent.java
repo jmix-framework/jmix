@@ -91,6 +91,9 @@ public class ImapFolderEvent {
     @OrderColumn(name = "HANDLING_ORDER")
     protected List<ImapEventHandler> eventHandlers;
 
+    @Column(name = "ENABLED")
+    protected Boolean enabled;
+
     public UUID getId() {
         return id;
     }
@@ -177,5 +180,13 @@ public class ImapFolderEvent {
 
     public void setEventHandlers(List<ImapEventHandler> eventHandlers) {
         this.eventHandlers = eventHandlers;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

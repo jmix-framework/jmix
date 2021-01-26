@@ -22,11 +22,9 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.Role;
-import io.jmix.securityui.role.annotation.MenuPolicy;
-import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@Role(code = "imap-admin-role", name = "IMAP Admin Role")
-public interface ImapAdminRole {
+@Role(code = "imap-admin-core-role", name = "IMAP Admin Core Role")
+public interface ImapAdminCoreRole {
 
     @EntityPolicy(entityClass = ImapSimpleAuthentication.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ImapProxy.class, actions = {EntityPolicyAction.ALL})
@@ -50,19 +48,4 @@ public interface ImapAdminRole {
     @EntityAttributePolicy(entityClass = ImapEventHandler.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     void entityAttributes();
-
-   @ScreenPolicy(screenIds = {
-            "imap_Folder.lookup",
-            "imap_MailBox.edit",
-            "imap_MailBox.browse",
-            "imap_Message.browse",
-            "imap_Message.edit",
-            "imap_FolderEvent.edit"})
-    void screens();
-
-    @MenuPolicy(menuIds = {"administration",
-            "imap-component", 
-            "imap_MailBox.browse", 
-            "imap_Message.browse"})
-    void menus();
 }

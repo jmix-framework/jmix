@@ -15,38 +15,18 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://editorCaption">
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
-        <instance id="imapFolderEventDc"
+        <instance id="eventsDc"
                   class="io.jmix.imap.entity.ImapFolderEvent"
-                  fetchPlan="imap-folder-event-edit">
-            <loader/>
-            <collection id="handlersDc" property="eventHandlers"/>
+                  fetchPlan="imap-folder-event-edit" provided="true">
+            <collection id="handlersDc" property="eventHandlers" provided="true"/>
         </instance>
     </data>
-
-    <dialogMode height="600"
-                width="800"/>
-
-    <facets>
-        <dataLoadCoordinator auto="true"/>
-    </facets>
-
-    <layout expand="groupBox"
-            spacing="true">
-        <form id="fieldGroup"
-              dataContainer="imapFolderEventDc">
-            <column width="300px">
-                <field property="folder" editable="false"/>
-                <field property="event" editable="false"/>
-            </column>
-        </form>
-        <groupBox id="groupBox"
-                  caption="msg://eventHandlersCaption">
+    <layout >
+        <groupBox id="handlersGroupBox" width="100%" height="100%" caption="msg://eventHandlersCaption" expand="handlersTable">
             <table id="handlersTable"
                    editable="true"
-                   height="100%"
                    sortable="false"
                    width="100%"
                    dataContainer="handlersDc">
@@ -69,9 +49,5 @@
                 </buttonsPanel>
             </table>
         </groupBox>
-        <hbox id="editActions" spacing="true">
-            <button action="windowCommitAndClose"/>
-            <button action="windowClose"/>
-        </hbox>
     </layout>
-</window>
+</fragment>

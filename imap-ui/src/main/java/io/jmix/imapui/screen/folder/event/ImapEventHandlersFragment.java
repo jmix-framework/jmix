@@ -17,7 +17,6 @@
 package io.jmix.imapui.screen.folder.event;
 
 import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
 import io.jmix.imap.AvailableBeansProvider;
 import io.jmix.imap.entity.ImapEventHandler;
 import io.jmix.imap.entity.ImapEventType;
@@ -28,10 +27,12 @@ import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,10 +43,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@UiController("imap_FolderEvent.edit")
-@UiDescriptor("imap-folder-event-edit.xml")
-@EditedEntityContainer("imapFolderEventDc")
-public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
+@UiController("imap_EventHandlersFragment")
+@UiDescriptor("imap-event-handlers-fragment.xml")
+public class ImapEventHandlersFragment extends ScreenFragment {
+
+    @Autowired
+    protected InstanceContainer<ImapFolderEvent> eventsDc;
 
     @Autowired
     protected CollectionContainer<ImapEventHandler> handlersDc;
@@ -73,7 +76,7 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
     protected UiComponents componentsFactory;
 
     @Autowired
-    protected Metadata metadata;
+    protected DataContext dataContext;
 
     @Autowired
     protected Notifications notifications;
@@ -81,31 +84,34 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
     @Autowired
     protected Messages messages;
 
-    protected Map<ImapEventHandler, ComboBox> handlerMethodComboBoxFields;
+    protected Map<ImapEventHandler, ComboBox> handlerMethodComboBoxFields = Collections.emptyMap();
 
-    protected Map<String, List<String>> availableHandlers;
+    protected Map<String, List<String>> availableHandlers = new HashMap<>();
 
     protected long maxHandlersCount;
 
-    @Subscribe
-    protected void beforeShow(BeforeShowEvent event) {
-        ImapFolderEvent folderEvent = getEditedEntity();
+    @Autowired
+    protected GroupBoxLayout handlersGroupBox;
 
-        ImapEventType eventType = folderEvent.getEvent();
-        availableHandlers = eventType != null ? availableBeansProvider.getEventHandlers(eventType.getEventClass()) : Collections.emptyMap();
-        maxHandlersCount = availableHandlers.values().stream().mapToLong(Collection::size).sum();
+    public void refresh() {
+        ImapFolderEvent folderEvent = eventsDc.getItemOrNull();
+        if (folderEvent != null) {
+            ImapEventType eventType = folderEvent.getEvent();
+            availableHandlers = eventType != null ? availableBeansProvider.getEventHandlers(eventType.getEventClass()) : Collections.emptyMap();
+            maxHandlersCount = availableHandlers.values().stream().mapToLong(Collection::size).sum();
 
-        removeMissedHandlers(availableHandlers);
-        enableAddButton();
+            removeMissedHandlers(availableHandlers);
+            enableAddButton();
 
-        handlerMethodComboBoxFields = new HashMap<>();
-        List<ImapEventHandler> eventHandlers = folderEvent.getEventHandlers();
-        if (eventHandlers != null) {
-            eventHandlers.forEach(eventHandler -> handlerMethodComboBoxFields.put(eventHandler, makeBeanMethodLookup(availableHandlers, eventHandler)));
+            handlerMethodComboBoxFields = new HashMap<>();
+            List<ImapEventHandler> eventHandlers = folderEvent.getEventHandlers();
+            if (eventHandlers != null) {
+                eventHandlers.forEach(eventHandler -> handlerMethodComboBoxFields.put(eventHandler, makeBeanMethodLookup(availableHandlers, eventHandler)));
+            }
+
+            removeAction.setConfirmation(false);
+            removeAction.setAfterActionPerformedHandler(e -> updateHandlingOrders());
         }
-
-        removeAction.setConfirmation(false);
-        removeAction.setAfterActionPerformedHandler(e -> updateHandlingOrders());
     }
 
     @Install(to = "handlersTable.beanName", subject = "columnGenerator")
@@ -190,7 +196,8 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
     protected void removeMissedHandlers(Map<String, List<String>> availableBeans) {
         List<ImapEventHandler> missedHandlers = handlersDc.getItems().stream()
                 .filter(eventHandler ->
-                        !availableBeans.containsKey(eventHandler.getBeanName()) || !availableBeans.get(eventHandler.getBeanName()).contains(eventHandler.getMethodName())
+                        !availableBeans.containsKey(eventHandler.getBeanName()) ||
+                                !availableBeans.get(eventHandler.getBeanName()).contains(eventHandler.getMethodName())
                 ).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(missedHandlers)) {
             List<String> beanMethods = missedHandlers.stream()
@@ -208,7 +215,7 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
         lookup.setValueSource(new ContainerValueSource(handlersTable.getInstanceContainer(eventHandler), "methodName"));
         lookup.setWidth("250px");
         String beanName = eventHandler.getBeanName();
-        lookup.setFrame(getWindow());
+        lookup.setFrame(getHostScreen().getWindow());
         lookup.setOptionsList(methodNames(availableBeans, beanName));
         return lookup;
     }
@@ -221,8 +228,8 @@ public class ImapFolderEventEdit extends StandardEditor<ImapFolderEvent> {
 
     @Subscribe("handlersTable.add")
     public void addHandler(Action.ActionPerformedEvent event) {
-        ImapEventHandler handler = metadata.create(ImapEventHandler.class);
-        handler.setEvent(getEditedEntity());
+        ImapEventHandler handler = dataContext.create(ImapEventHandler.class);
+        handler.setEvent(eventsDc.getItem());
         handler.setHandlingOrder(getMaxHandlingOrder());
         handlersDc.getMutableItems().add(handler);
     }

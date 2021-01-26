@@ -18,6 +18,7 @@ package test_support;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixModules;
+import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.DataConfiguration;
@@ -58,8 +59,9 @@ public class ImapTestConfiguration extends CoreSecurityConfiguration {
     LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                 JpaVendorAdapter jpaVendorAdapter,
                                                                 DbmsSpecifics dbmsSpecifics,
-                                                                JmixModules jmixModules) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules);
+                                                                JmixModules jmixModules,
+                                                                Resources resources) {
+        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
     }
 
     @Bean

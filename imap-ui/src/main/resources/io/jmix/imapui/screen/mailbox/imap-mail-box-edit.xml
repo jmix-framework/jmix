@@ -22,7 +22,7 @@
         <instance id="mailBoxDc"
                   class="io.jmix.imap.entity.ImapMailBox"
                   fetchPlan="imap-mailbox-edit">
-            <loader id="mailBoxLoader"/>
+            <loader id="mailBoxDl"/>
             <instance id="authenticationDc" property="authentication"/>
             <instance id="proxyDc" property="proxy"/>
             <collection id="foldersDc" property="folders">
@@ -114,61 +114,55 @@
             <split id="foldersPane"
                    height="100%"
                    orientation="horizontal"
-                   pos="80"
+                   pos="25"
                    width="100%">
                 <vbox id="tablePane"
-                      height="300px"
+                      height="400px"
                       margin="false,true,false,false">
-                    <treeTable id="foldersTable"
-                               editable="true"
-                               height="100%"
-                               sortable="false"
-                               width="100%" dataContainer="foldersDc" hierarchyProperty="parent">
-                        <actions>
-                            <action id="refresh" type="refresh"/>
-                            <action id="enableSingle"
-                                    caption="msg://enableSingleCaption"/>
-                            <action id="enableWithChildren"
-                                    caption="msg://enableWithChildrenCaption"/>
-                            <action id="disableSingle"
-                                    caption="msg://disableSingleCaption"/>
-                            <action id="disableWithChildren"
-                                    caption="msg://disableWithChildrenCaption"/>
-                        </actions>
-                        <columns>
-                            <column id="name"/>
-                            <column id="selected" caption="" editable="true"/>
-                        </columns>
-                        <rows/>
-                        <buttonsPanel>
-                            <button action="foldersTable.refresh"/>
-                        </buttonsPanel>
-                    </treeTable>
-                </vbox>
-                <vbox height="100%"
-                      margin="false,false,false,true">
-                    <groupBox caption="msg://eventsCaption"
-                              height="100%">
-                        <vbox id="selectedFolderPanel"
-                              height="100%"
-                              visible="false">
-                            <scrollBox id="editEventsContainer"
-                                       height="100%">
-                                <gridLayout id="editEventsGrid"
-                                            margin="true"
-                                            width="100%">
-                                    <columns count="2"/>
-                                    <rows>
-                                        <row>
-                                            <label value="msg://allEvents"/>
-                                            <checkBox id="allEventsChkBox" align="MIDDLE_CENTER"/>
-                                        </row>
-                                    </rows>
-                                </gridLayout>
-                            </scrollBox>
-                        </vbox>
+                    <groupBox caption="msg://foldersCaption" height="100%" width="100%">
+                        <treeTable id="foldersTable"
+                                   editable="true"
+                                   height="100%"
+                                   sortable="false"
+                                   width="100%" dataContainer="foldersDc" hierarchyProperty="parent">
+                            <actions>
+                                <action id="refresh" type="refresh"/>
+                                <action id="enableSingle"
+                                        caption="msg://enableSingleCaption"/>
+                                <action id="enableWithChildren"
+                                        caption="msg://enableWithChildrenCaption"/>
+                                <action id="disableSingle"
+                                        caption="msg://disableSingleCaption"/>
+                                <action id="disableWithChildren"
+                                        caption="msg://disableWithChildrenCaption"/>
+                            </actions>
+                            <columns>
+                                <column id="name"/>
+                                <column id="enabled" editable="true"/>
+                            </columns>
+                            <rows/>
+                            <buttonsPanel>
+                                <button action="foldersTable.refresh"/>
+                            </buttonsPanel>
+                        </treeTable>
                     </groupBox>
                 </vbox>
+                <hbox height="400px" id="handlersAndEvents" width="100%" expand="handlersFragment" spacing="true" margin="false,false,false,true">
+                    <groupBox id="events" width="300px" caption="msg://eventsCaption" height="100%">
+                        <table id="eventsTable" dataContainer="eventsDc" width="100%" editable="true">
+                            <actions>
+                                <action id="enableAll" caption="msg://enableAll"/>
+                                <action id="disableAll" caption="msg://disableAll"/>
+                            </actions>
+                            <columns>
+                                <column id="event"/>
+                                <column id="enabled" editable="true"/>
+                            </columns>
+                            <rows/>
+                        </table>
+                    </groupBox>
+                    <fragment id="handlersFragment" screen="imap_EventHandlersFragment" height="100%"/>
+                </hbox>
             </split>
         </scrollBox>
         <hbox id="editActions" spacing="true">

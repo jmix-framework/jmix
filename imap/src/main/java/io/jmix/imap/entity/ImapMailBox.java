@@ -114,7 +114,7 @@ public class ImapMailBox {
     @JmixProperty
     protected ImapFolder trashFolder;
 
-    @OrderBy("selected DESC, name")
+    @OrderBy("enabled DESC, name")
     @OnDelete(DeletePolicy.CASCADE)
     @Composition
     @OneToMany(mappedBy = "mailBox")
@@ -229,7 +229,7 @@ public class ImapMailBox {
 
     public List<ImapFolder> getProcessableFolders() {
         return folders.stream()
-                .filter(f -> Boolean.TRUE.equals(f.getSelected()) && !Boolean.TRUE.equals(f.getDeleted()))
+                .filter(f -> Boolean.TRUE.equals(f.getEnabled()) && !Boolean.TRUE.equals(f.getDeleted()))
                 .collect(Collectors.toList());
     }
 

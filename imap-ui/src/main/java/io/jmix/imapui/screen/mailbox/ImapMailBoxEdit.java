@@ -23,15 +23,13 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.imap.AvailableBeansProvider;
 import io.jmix.imap.entity.*;
 import io.jmix.imap.exception.ImapException;
+import io.jmix.imapui.screen.folder.event.ImapEventHandlersFragment;
 import io.jmix.imapui.screen.mailbox.helper.FolderRefresher;
 import io.jmix.ui.Notifications;
-import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
@@ -42,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static jdk.nashorn.internal.runtime.ECMAErrors.getMessage;
 
@@ -78,7 +75,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected TextField<String> proxyHostField;
 
     @Autowired
-    protected TextField<String> proxyPortField;
+    protected TextField<Integer> proxyPortField;
 
     @Autowired
     protected CheckBox webProxyChkBox;
@@ -125,35 +122,23 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected UiComponents componentsFactory;
 
     @Autowired
-    protected BoxLayout selectedFolderPanel;
-
-    @Autowired
-    protected GridLayout editEventsGrid;
-
-    @Autowired
-    protected CheckBox allEventsChkBox;
-
-    @Autowired
-    protected ScreenBuilders screenBuilders;
-
-    @Autowired
     protected CollectionContainer<ImapEventHandler> handlersDc;
 
     @Autowired
     protected SplitPanel foldersPane;
 
     @Autowired
-    protected DataLoader mailBoxLoader;
+    protected DataLoader mailBoxDl;
 
     @Autowired
     protected DataContext dataContext;
 
-    @Subscribe
-    protected void beforeShow(BeforeShowEvent event) {
-        mailBoxLoader.load();
+    @Autowired
+    protected ImapEventHandlersFragment handlersFragment;
 
-        makeEventsInfoColumn();
-        setupEvents();
+    @Subscribe
+    protected void onBeforeShow(BeforeShowEvent event) {
+        mailBoxDl.load();
 
         ImapMailBox mailBox = getEditedEntity();
 
@@ -170,11 +155,10 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
             checkConnectionBtn.setVisible(false);
             setEnableForButtons(true);
         }
-
     }
 
     @Subscribe
-    protected void afterShow(AfterShowEvent event) {
+    protected void onAfterShow(AfterShowEvent event) {
         setTrashFolderControls();
     }
 
@@ -200,19 +184,15 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         return new MapScreenOptions(ParamsMap.of("mailBox", getEditedEntity()));
     }
 
-    @Override
-    public void setEntityToEdit(ImapMailBox item) {
-        if (entityStates.isNew(item)) {
-            item.setAuthenticationMethod(ImapAuthenticationMethod.SIMPLE);
-            item.setAuthentication(metadata.create(ImapSimpleAuthentication.class));
-        }
-
-        super.setEntityToEdit(item);
+    @Subscribe
+    protected void onInitEntity(InitEntityEvent<ImapMailBox> event) {
+        ImapMailBox item = event.getEntity();
+        item.setAuthenticationMethod(ImapAuthenticationMethod.SIMPLE);
+        item.setAuthentication(dataContext.create(ImapSimpleAuthentication.class));
     }
 
-
     @Subscribe
-    protected void beforeCommit(BeforeCommitChangesEvent event) {
+    protected void onBeforeCommit(BeforeCommitChangesEvent event) {
         if (!connectionEstablished) {
             notifications.create(Notifications.NotificationType.TRAY)
                     .withCaption(getMessage("saveWithoutConnectionWarning"))
@@ -222,10 +202,15 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     }
 
     @Subscribe(id = "mailBoxDc", target = Target.DATA_CONTAINER)
-    protected void onOrderDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ImapMailBox> event) {
+    protected void onMailBoxDcItemPropertyChange(InstanceContainer.ItemPropertyChangeEvent<ImapMailBox> event) {
         if (Objects.equals("secureMode", event.getProperty())) {
             mailBoxRootCertificateField.setVisible(event.getValue() != null);
         }
+    }
+
+    @Subscribe(id = "eventsDc", target = Target.DATA_CONTAINER)
+    protected void onEventsDcItemChangeEvent(InstanceContainer.ItemChangeEvent<ImapFolderEvent> event) {
+        handlersFragment.refresh();
     }
 
     @Subscribe("useTrashFolderChkBox")
@@ -321,14 +306,30 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         }
     }
 
-    @Install(to = "foldersTable.selected", subject = "columnGenerator")
-    public CheckBox foldersTableSelectedColumnGenerator(ImapFolder folder) {
+    @Install(to = "foldersTable.enabled", subject = "columnGenerator")
+    public CheckBox foldersTableEnabledColumnGenerator(ImapFolder folder) {
         CheckBox checkBox = componentsFactory.create(CheckBox.class);
-        checkBox.setValueSource(new ContainerValueSource(foldersTable.getInstanceContainer(folder), "selected"));
+        checkBox.setValueSource(new ContainerValueSource(foldersTable.getInstanceContainer(folder), "enabled"));
         checkBox.setEditable(Boolean.TRUE.equals(folder.getCanHoldMessages() && !Boolean.TRUE.equals(folder.getDeleted())));
         checkBox.setFrame(getWindow().getFrame());
         checkBox.setWidth("20");
         return checkBox;
+    }
+
+    @Install(to = "foldersTable.name", subject = "columnGenerator")
+    public Label<String> foldersTableNameColumnGenerator(ImapFolder folder) {
+        Label<String> label = componentsFactory.create(Label.NAME);
+        label.setHtmlEnabled(true);
+
+        if (Boolean.TRUE.equals(folder.getDeleted())) {
+            label.setValue("<strike>" + folder.getName() + "</strike>");
+        } else if (Boolean.TRUE.equals(folder.getUnregistered())) {
+            label.setValue("<span>* " + folder.getName() + "</span>");
+        } else {
+            label.setValue("<span>" + folder.getName() + "</span>");
+        }
+
+        return label;
     }
 
     @Subscribe("foldersTable.refresh")
@@ -399,20 +400,14 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
         changeSelectionWithChildren(folder, false);
     }
 
-    @Install(to = "foldersTable.name", subject = "columnGenerator")
-    public Label<String> foldersTableNameColumnGenerator(ImapFolder folder) {
-        Label<String> label = componentsFactory.create(Label.NAME);
-        label.setHtmlEnabled(true);
+    @Subscribe("eventsTable.enableAll")
+    public void enableAllEvents(Action.ActionPerformedEvent event) {
+        eventsDc.getMutableItems().forEach(imapFolderEvent -> imapFolderEvent.setEnabled(true));
+    }
 
-        if (Boolean.TRUE.equals(folder.getDeleted())) {
-            label.setValue("<strike>" + folder.getName() + "</strike>");
-        } else if (Boolean.TRUE.equals(folder.getUnregistered())) {
-            label.setValue("<span>* " + folder.getName() + "</span>");
-        } else {
-            label.setValue("<span>" + folder.getName() + "</span>");
-        }
-
-        return label;
+    @Subscribe("eventsTable.disableAll")
+    public void disableAllEvents(Action.ActionPerformedEvent event) {
+        eventsDc.getMutableItems().forEach(imapFolderEvent -> imapFolderEvent.setEnabled(false));
     }
 
     protected void changeSelectionWithChildren(ImapFolder folder, boolean selection) {
@@ -429,168 +424,10 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected void changeSelection(ImapFolder folder, boolean selection) {
         if (folder != null
                 && Boolean.TRUE.equals(folder.getCanHoldMessages())
-                && Boolean.TRUE.equals(folder.getSelected()) != selection) {
+                && Boolean.TRUE.equals(folder.getEnabled()) != selection) {
 
-            folder.setSelected(selection);
+            folder.setEnabled(selection);
             foldersDc.replaceItem(folder);
-        }
-    }
-
-    protected void setupEvents() {
-        ImapEventType[] eventTypes = ImapEventType.values();
-        Map<CheckBox, ImapEventType> eventCheckBoxes = new HashMap<>(eventTypes.length);
-        AtomicBoolean eventsChanging = new AtomicBoolean(false);
-        editEventsGrid.setRows(eventTypes.length + 1);
-        for (int i = 0; i < eventTypes.length; i++) {
-            ImapEventType eventType = eventTypes[i];
-            String eventName = messages.getMessage(eventType);
-
-            Label<String> label = componentsFactory.create(Label.NAME);
-            label.setValue(eventName);
-            editEventsGrid.add(label, 0, i + 1);
-
-            CheckBox checkBox = componentsFactory.create(CheckBox.class);
-            checkBox.setAlignment(Component.Alignment.MIDDLE_CENTER);
-            checkBox.setFrame(getWindow().getFrame());
-            checkBox.setDescription(eventName);
-            checkBox.setId(eventName + "_chkBox");
-            checkBox.addValueChangeListener(e -> {
-                if (eventsChanging.get()) {
-                    return;
-                }
-
-                ImapFolder selectedFolder = foldersTable.getSingleSelected();
-
-                if (selectedFolder == null) {
-                    return;
-                }
-
-                eventsChanging.set(true);
-                toggleEvent(Boolean.TRUE.equals(e.getValue()), selectedFolder, eventType);
-
-                allEventsChkBox.setValue(eventCheckBoxes.keySet().stream().allMatch(CheckBox::isChecked));
-
-                eventsChanging.set(false);
-            });
-            eventCheckBoxes.put(checkBox, eventType);
-            editEventsGrid.add(checkBox, 1, i + 1);
-        }
-
-        allEventsChkBox.addValueChangeListener(e -> {
-            if (eventsChanging.get()) {
-                return;
-            }
-
-            ImapFolder selectedFolder = foldersTable.getSingleSelected();
-
-            if (selectedFolder == null) {
-                return;
-            }
-
-            eventsChanging.set(true);
-            eventCheckBoxes.forEach((checkbox, eventType) -> {
-                Boolean value = e.getValue();
-                checkbox.setValue(value);
-                toggleEvent(Boolean.TRUE.equals(e.getValue()), selectedFolder, eventType);
-            });
-
-            eventsChanging.set(false);
-        });
-
-        foldersDc.addItemChangeListener(e -> {
-            ImapFolder folder = e.getItem();
-            if (!selectedFolderPanel.isVisible() && folder != null) {
-                selectedFolderPanel.setVisible(true);
-            }
-            if (selectedFolderPanel.isVisible() && (folder == null)) {
-                selectedFolderPanel.setVisible(false);
-            }
-
-            eventsChanging.set(true);
-
-            if (folder != null) {
-                eventCheckBoxes.forEach((checkBox, eventType) -> checkBox.setValue(folder.hasEvent(eventType)));
-                allEventsChkBox.setValue(eventCheckBoxes.keySet().stream().allMatch(CheckBox::isChecked));
-            }
-
-            eventsChanging.set(false);
-        });
-    }
-
-    protected void toggleEvent(boolean value, ImapFolder imapFolder, ImapEventType eventType) {
-        if (value && !imapFolder.hasEvent(eventType)) {
-            ImapFolderEvent imapEvent = metadata.create(ImapFolderEvent.class);
-            imapEvent.setEvent(eventType);
-            imapEvent.setFolder(imapFolder);
-            List<ImapFolderEvent> events = imapFolder.getEvents();
-            if (events == null) {
-                events = new ArrayList<>(ImapEventType.values().length);
-                imapFolder.setEvents(events);
-            }
-            events.add(imapEvent);
-            eventsDc.getMutableItems().add(imapEvent);
-            foldersDc.replaceItem(imapFolder);
-        } else if (!value && imapFolder.hasEvent(eventType)) {
-            ImapFolderEvent event = imapFolder.getEvent(eventType);
-            imapFolder.getEvents().remove(event);
-            eventsDc.getMutableItems().remove(event);
-            foldersDc.replaceItem(imapFolder);
-        }
-    }
-
-    protected void makeEventsInfoColumn() {
-        for (ImapEventType eventType : ImapEventType.values()) {
-            String message = messages.getMessage(eventType);
-
-            foldersTable.addGeneratedColumn(message, folder -> {
-                HBoxLayout hbox = componentsFactory.create(HBoxLayout.class);
-                hbox.setWidthFull();
-                hbox.setFrame(getWindow().getFrame());
-                if (folder.hasEvent(eventType)) {
-                    LinkButton button = componentsFactory.create(LinkButton.class);
-                    button.setAction(new ImapEventTypeConfigurationAction(eventType));
-                    button.setCaption("");
-                    button.setIconFromSet(JmixIcon.GEAR);
-                    button.setAlignment(Component.Alignment.MIDDLE_LEFT);
-                    hbox.add(button);
-                }
-                return hbox;
-            });
-        }
-    }
-
-    protected class ImapEventTypeConfigurationAction extends BaseAction {
-
-        protected ImapEventType eventType;
-
-        public ImapEventTypeConfigurationAction(ImapEventType eventType) {
-            super("event-" + eventType.getId());
-            this.eventType = eventType;
-        }
-
-        @Override
-        public void actionPerform(Component component) {
-            ImapFolder selectedFolder = foldersTable.getSingleSelected();
-            if (selectedFolder == null) {
-                return;
-            }
-
-            ImapFolderEvent event = selectedFolder.getEvent(eventType);
-            if (event == null) {
-                return;
-            }
-
-            eventsDc.setItem(event);
-            if (event.getEventHandlers() == null) {
-                event.setEventHandlers(new ArrayList<>());
-            }
-
-           screenBuilders.editor(ImapFolderEvent.class, getWindow().getFrameOwner())
-                    .editEntity(event)
-                    .withOpenMode(OpenMode.DIALOG)
-                    .withContainer(eventsDc)
-                    .build()
-                    .show();
         }
     }
 }

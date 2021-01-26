@@ -24,6 +24,7 @@ import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.entity.annotation.OnDeleteInverse;
 import io.jmix.core.metamodel.annotation.*;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -79,6 +80,7 @@ public class ImapFolder {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "folder")
     @Composition
+    @OrderBy("event")
     protected List<ImapFolderEvent> events;
 
     @OnDeleteInverse(DeletePolicy.CASCADE)
@@ -86,8 +88,8 @@ public class ImapFolder {
     @JoinColumn(name = "MAIL_BOX_ID")
     protected ImapMailBox mailBox;
 
-    @Column(name = "SELECTED", nullable = false)
-    protected Boolean selected = false;
+    @Column(name = "ENABLED", nullable = false)
+    protected Boolean enabled = false;
 
     @Column(name = "CAN_HOLD_MESSAGES", nullable = false)
     protected Boolean canHoldMessages = false;
@@ -203,15 +205,16 @@ public class ImapFolder {
     }
 
     public boolean hasEvent(ImapEventType eventType) {
-        return getEvent(eventType) != null;
+        ImapFolderEvent event = getEvent(eventType);
+        return event != null && BooleanUtils.isTrue(event.getEnabled());
     }
 
-    public Boolean getSelected() {
-        return selected;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Boolean getCanHoldMessages() {

@@ -95,17 +95,21 @@ lookup field becomes available. To learn how to register a custom event generato
 * *Proxy Port*: provide a port to connect to a proxy server.
 * *Use web proxy*: if checked, web proxy is used.
 
-**Table of Folders**
+**Folders Configuration**
 
-Once connection to the provided email server is successfully established, the table of folders becomes available.
+Once a connection to the provided email server is successfully established, the table of folders becomes available. The tables containing the events and their handlers become available as well. 
 
 ![Table of Folders](img/folders.png)
 
 The table shows a list of folders from the email server you are connected to. In order to enable/disable some folders,
-use the checkboxes in the second column. If some folder is disabled, then messages from it are not retrieved.
+use the checkboxes in the "Enabled" column. If some folder is disabled, then messages from it are not retrieved.
 
-For each folder you can select a set of IMAP events by using the *Events* table and register custom logic for them
-(for more details, please refer to [Configuration](#imap-configuration)).
+For each folder you can enable/disable the IMAP events. There are two ways to enable/disable the IMAP events for the selected folder: 
+1. Using the checkboxes in the "Enabled" column
+2. Using the "Enable/Disable all events" action from the table actions list.
+   
+For each folder and for each event it is possible to register a custom logic by creating the custom event handlers.
+(for more details, please refer to [Creating Handlers for IMAP Events](#creating-handlers-for-imap-events)).
 
 ### IMAP Message Browser
 
@@ -161,13 +165,12 @@ After that, the method will be invoked every time, when the configured event occ
 ## Creating Handlers for IMAP Events
 
 After registering EventListeners, it is required to create handlers for IMAP events related to a particular folder and
-mailbox (for more information see [IMAP Connection](#imap-configuration)). The table of folders comprises several columns,
-each representing a certain event type (e.g. New, Seen, Replied, etc.). Clicking gear icons opens *IMAP Folder Event Editor*.
+mailbox (for more information see [IMAP Connection](#imap-configuration)). To configure the handlers for the IMAP event it is required:
+1. Select a particular folder in the Folders table
+2. Select a particular event in the Events table
 
-![IMAP Folder Event Editor](img/imap-folder-event-editor.png)
-
-There you can specify required beans and methods for them.
-
+After that the Handlers table is updated then there is an ability to add, remove and reorder handlers in the Handlers group.
+The handlers added for a particular folder and event are invoked only if the folder and event are enabled.
 ### Event types
 
 All events contain the `ImapMessage` object that can be used to determine where an event occurs (mailbox, folder, message).

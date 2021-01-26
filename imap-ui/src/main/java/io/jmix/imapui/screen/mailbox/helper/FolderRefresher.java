@@ -156,13 +156,14 @@ public class FolderRefresher {
 
     protected void enableCompletely(ImapFolder imapFolder) {
         log.trace("Set {} selected and enable all events", imapFolder);
-        imapFolder.setSelected(true);
+        imapFolder.setEnabled(true);
 
         imapFolder.setEvents(
                 Arrays.stream(ImapEventType.values()).map(eventType -> {
                     ImapFolderEvent imapEvent = metadata.create(ImapFolderEvent.class);
                     imapEvent.setEvent(eventType);
                     imapEvent.setFolder(imapFolder);
+                    imapEvent.setEnabled(true);
 
                     return imapEvent;
                 }).collect(Collectors.toList())

@@ -125,6 +125,34 @@ class ImapEventsTest extends Specification {
         imapEvents.count { it.message.folder == INBOX && it.message.msgUid == START_EMAIL_UID + 2 } == 1
     }
 
+    def "folder events are not generated"() {
+        given: "3 messages in INBOX, one of which contains our preconfigured custom flag"
+        deliverDefaultMessage(EMAIL_SUBJECT + 0, START_EMAIL_UID)
+        deliverDefaultMessage(EMAIL_SUBJECT + 1, START_EMAIL_UID + 1, new Flags(JMIX_FLAG))
+        deliverDefaultMessage(EMAIL_SUBJECT + 2, START_EMAIL_UID + 2)
+        and: "INBOX is configured not to handle new message events"
+        INBOX = inbox(mailBoxConfig, [ImapEventType.NEW_EMAIL], false, false)
+        imapEvents.init(mailBoxConfig)
+        imapSynchronizer.synchronize(mailBoxConfig)
+
+        when: "check for new messages"
+        eventListener.events.clear()
+        imapEvents.handleNewMessages(INBOX)
+
+        then: "2 new messages are in database"
+        ImapMessage newMessage1 = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID)
+        newMessage1 != null
+        newMessage1.getImapFlags().contains(JMIX_FLAG)
+        imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 1) == null
+        ImapMessage newMessage2 = imapDataProvider.findMessageByUid(INBOX, START_EMAIL_UID + 2)
+        newMessage2 != null
+        newMessage2.getImapFlags().contains(JMIX_FLAG)
+
+        and: "2 events with type 'NEW_EMAIL' are not fired"
+        def imapEvents = eventListener.events
+        imapEvents.size() == 0
+    }
+
     def "message has been read"() {
         given: "3 messages in INBOX, two of which are seen"
         deliverDefaultMessage(EMAIL_SUBJECT + 0, START_EMAIL_UID, new Flags(Flags.Flag.SEEN))
@@ -459,7 +487,7 @@ class ImapEventsTest extends Specification {
     }
 
     @SuppressWarnings(["GroovyAssignabilityCheck", "GroovyAccessibility"])
-    ImapFolder inbox(ImapMailBox mailBox, eventTypes, deleted = false) {
+    ImapFolder inbox(ImapMailBox mailBox, eventTypes, deleted = false, enabled = true) {
         ImapFolder imapFolder = imapFolder(mailBox, "INBOX", deleted)
 
         def events = eventTypes.collect {
@@ -467,6 +495,7 @@ class ImapEventsTest extends Specification {
             event.folder = imapFolder
             event.event = it
             event.eventHandlers = Collections.emptyList()
+            event.enabled = enabled
 
             return event
         }
@@ -483,7 +512,7 @@ class ImapEventsTest extends Specification {
         ImapFolder imapFolder = metadata.create(ImapFolder)
         imapFolder.name = folderName
         imapFolder.mailBox = mailBox
-        imapFolder.selected = true
+        imapFolder.enabled = true
         imapFolder.deleted = deleted
 
         dataManager.save(imapFolder)

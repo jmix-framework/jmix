@@ -23,6 +23,7 @@ import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.entity.*;
 import io.jmix.imap.events.BaseImapEvent;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,7 @@ public class ImapEvents {
                 List<ImapEventHandler> eventHandlers = ImapEventType.getByEventType(event.getClass()).stream()
                         .map(freshFolder::getEvent)
                         .filter(Objects::nonNull)
+                        .filter(folderEvent -> BooleanUtils.isTrue(folderEvent.getEnabled()))
                         .map(ImapFolderEvent::getEventHandlers)
                         .filter(handlers -> !CollectionUtils.isEmpty(handlers))
                         .flatMap(Collection::stream)

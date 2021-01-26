@@ -17,6 +17,7 @@
 package io.jmix.core.metamodel.datatype;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -57,6 +58,12 @@ public interface DatatypeRegistry {
      * @throws IllegalArgumentException if the datatype is not registered
      */
     String getId(Datatype<?> datatype);
+
+    /**
+     * @return the ID of the given datatype wrapped in {@link Optional} if it found in the registry,
+     * otherwise an empty {@link Optional}.
+     */
+    Optional<String> getIdOptional(Datatype<?> datatype);
 
     /**
      * Returns an ID of a first datatype handling the given Java class.

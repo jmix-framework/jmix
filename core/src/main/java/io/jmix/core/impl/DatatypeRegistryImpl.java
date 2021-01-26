@@ -102,11 +102,18 @@ public class DatatypeRegistryImpl implements DatatypeRegistry {
 
     @Override
     public String getId(Datatype<?> datatype) {
+        return getIdOptional(datatype)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Datatype not registered: " + datatype));
+    }
+
+    @Override
+    public Optional<String> getIdOptional(Datatype<?> datatype) {
         for (Map.Entry<String, Datatype> entry : datatypeById.entrySet()) {
             if (entry.getValue().equals(datatype))
-                return entry.getKey();
+                return Optional.of(entry.getKey());
         }
-        throw new IllegalArgumentException("Datatype not registered: " + datatype);
+        return Optional.empty();
     }
 
     @Override

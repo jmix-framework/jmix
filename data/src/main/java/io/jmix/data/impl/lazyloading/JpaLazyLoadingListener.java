@@ -116,7 +116,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
                     boolean accessible = declaredField.isAccessible();
                     declaredField.setAccessible(true);
                     Object fieldInstance = declaredField.get(instance);
-                    if (fieldInstance instanceof JmixAbstractValueHolder) {
+                    if (fieldInstance instanceof JmixAbstractValueHolder || fieldInstance == null) {
                         declaredField.setAccessible(accessible);
                         return;
                     }

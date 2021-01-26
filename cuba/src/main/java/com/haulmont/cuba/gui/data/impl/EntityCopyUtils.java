@@ -28,7 +28,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.Set;
 
 public class EntityCopyUtils {
 
@@ -77,7 +77,7 @@ public class EntityCopyUtils {
                         }
 
                         Collection<Entity> dstCollection;
-                        if (value instanceof List)
+                        if (!(value instanceof Set))
                             dstCollection = new ArrayList<>(tmpCollection);
                         else
                             dstCollection = tmpCollection;

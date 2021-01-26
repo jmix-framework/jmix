@@ -21,8 +21,8 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.NestedDatasource;
 import com.haulmont.cuba.gui.data.impl.AbstractDatasource;
-import io.jmix.core.ExtendedEntities;
 import io.jmix.core.Entity;
+import io.jmix.core.ExtendedEntities;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -286,10 +286,10 @@ public class LegacyCollectionDsValueSource<V extends Entity> implements ValueSou
             EntityValues.setValue(getMaster().getItem(), metaProperty.getName(), null);
         } else {
             Collection<V> masterCollection;
-            if (List.class.isAssignableFrom(metaProperty.getJavaType())) {
-                masterCollection = new ArrayList(newCollection);
-            } else {
+            if (Set.class.isAssignableFrom(metaProperty.getJavaType())) {
                 masterCollection = new LinkedHashSet(newCollection);
+            } else {
+                masterCollection = new ArrayList(newCollection);
             }
             EntityValues.setValue(getMaster().getItem(), metaProperty.getName(), masterCollection);
         }

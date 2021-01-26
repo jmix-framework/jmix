@@ -31,20 +31,20 @@ public class EntityMutationDataFetcher {
 
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
-    public DataFetcher<?> createEntity(MetaClass metaClass) {
+    public DataFetcher<?> upsertEntity(MetaClass metaClass) {
         return environment -> {
 
             Class<Object> javaClass = metaClass.getJavaClass();
             Map<String, String> input = environment.getArgument(NamingUtils.uncapitalizedSimpleName(javaClass));
-            log.debug("createEntity: input {}", input);
+            log.debug("upsertEntity: input {}", input);
 
             String entityJson =  new ObjectMapper().writeValueAsString(input);
-            log.debug("createEntity: json {}", entityJson);
+            log.debug("upsertEntity: json {}", entityJson);
 
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
-            log.debug("createEntity: entityImportPlan {}", entityImportPlan);
+            log.debug("upsertEntity: entityImportPlan {}", entityImportPlan);
             Collection<Object> objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan);
             return getMainEntity(objects, metaClass);
         };

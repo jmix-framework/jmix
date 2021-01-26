@@ -49,8 +49,8 @@ public class NamingUtils {
     }
 
     @NotNull
-    public static String composeCreateMutationName(Class<?> aClass) {
-        return "create" + aClass.getSimpleName();
+    public static String composeUpsertMutationName(Class<?> aClass) {
+        return "upsert" + aClass.getSimpleName();
     }
 
     @NotNull

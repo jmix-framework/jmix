@@ -138,7 +138,7 @@ public class SchemaBuilder {
                             .dataFetcher(NamingUtils.composeCountQueryName(javaClass), entityQueryDataFetcher.countEntities(metaClass)));
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
-                            .dataFetcher(NamingUtils.composeCreateMutationName(javaClass), entityMutationDataFetcher.createEntity(metaClass))
+                            .dataFetcher(NamingUtils.composeUpsertMutationName(javaClass), entityMutationDataFetcher.upsertEntity(metaClass))
                     );
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
@@ -203,10 +203,10 @@ public class SchemaBuilder {
             String outTypeName = NamingUtils.normalizeOutTypeName(metaClass.getName());
             String inpTypeName = NamingUtils.normalizeInpTypeName(metaClass.getName());
 
-            // mutation createCar(car: scr_Car)
+            // mutation upsertCar(car: scr_Car)
             fields.add(
                     FieldDefinition.newFieldDefinition()
-                            .name(NamingUtils.composeCreateMutationName(javaClass))
+                            .name(NamingUtils.composeUpsertMutationName(javaClass))
                             .type(new TypeName(outTypeName))
                             .inputValueDefinition(argNonNull(NamingUtils.uncapitalizedSimpleName(javaClass), inpTypeName))
                             .build());

@@ -72,6 +72,12 @@ public interface DatatypeRegistry {
     String getIdByJavaClass(Class<?> javaClass);
 
     /**
+     * @return the ID of a first datatype handling the given Java class wrapped in
+     * {@link Optional} if it found, otherwise an empty {@link Optional}.
+     */
+    Optional<String> getIdByJavaClassOptional(Class<?> javaClass);
+
+    /**
      * @return all registered datatype identifiers.
      */
     Set<String> getIds();

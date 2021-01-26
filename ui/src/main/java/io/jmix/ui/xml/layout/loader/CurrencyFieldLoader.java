@@ -62,32 +62,6 @@ public class CurrencyFieldLoader extends AbstractFieldLoader<CurrencyField> {
         }
     }
 
-    /*
-    TODO: legacy-ui
-    @Override
-    protected void loadDatasource(DatasourceComponent component, Element element) {
-        super.loadDatasource(component, element);
-
-        if (component.getDatasource() == null)
-            return;
-
-        Map<String, Object> annotations = component.getMetaPropertyPath().getMetaProperty().getAnnotations();
-        Object currencyValueAnnotation = annotations.get(CurrencyValue.class.getName());
-        if (currencyValueAnnotation == null)
-            return;
-
-        //noinspection unchecked
-        Map<String, Object> annotationProperties = (Map<String, Object>) currencyValueAnnotation;
-
-        String currencyName = (String) annotationProperties.get("currency");
-        if (StringUtils.isNotEmpty(currencyName)) {
-            ((CurrencyField) component).setCurrency(currencyName);
-        }
-
-        String labelPosition = ((CurrencyLabelPosition) annotationProperties.get("labelPosition")).name();
-        ((CurrencyField) component).setCurrencyLabelPosition(CurrencyField.CurrencyLabelPosition.valueOf(labelPosition));
-    }*/
-
     protected void loadConversionErrorMessage(HasConversionErrorMessage component, Element element) {
         String conversionErrorMessage = element.attributeValue("conversionErrorMessage");
         if (StringUtils.isNotEmpty(conversionErrorMessage)) {

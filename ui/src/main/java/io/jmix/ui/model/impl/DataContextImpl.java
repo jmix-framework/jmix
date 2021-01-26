@@ -397,7 +397,15 @@ public class DataContextImpl implements DataContext {
             setPropertyValue(managedEntity, property, dstList);
 
         } else {
-            List<Object> dstList = EntityValues.getValue(managedEntity, property.getName());
+            Object managedValue = EntityValues.getValue(managedEntity, property.getName());
+
+            List<Object> dstList = null;
+            if (managedValue instanceof List) {
+                dstList = (List<Object>) managedValue;
+            } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
+                dstList = new ArrayList<Object>((Collection) managedValue);
+            }
+
             if (dstList == null) {
                 dstList = createObservableList(managedEntity);
                 setPropertyValue(managedEntity, property, dstList);
@@ -429,7 +437,16 @@ public class DataContextImpl implements DataContext {
             setPropertyValue(managedEntity, property, dstSet);
 
         } else {
-            Set<Object> dstSet = EntityValues.getValue(managedEntity, property.getName());
+            Object managedValue = EntityValues.getValue(managedEntity, property.getName());
+
+            Set<Object> dstSet = null;
+            if (managedValue instanceof Set) {
+                dstSet = (Set<Object>) managedValue;
+            } else if (managedValue != null) {//any proxy Collection can be returned in case of Collection entity attribute (see Haulmont/jmix-ui#243)
+                dstSet = new LinkedHashSet<Object>((Collection) managedValue);
+            }
+
+
             if (dstSet == null) {
                 dstSet = createObservableSet(managedEntity);
                 setPropertyValue(managedEntity, property, dstSet);

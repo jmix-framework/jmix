@@ -123,10 +123,10 @@ public class CollectionPropertyContainerImpl<E>
 
     protected Collection<E> initMasterCollection(MetaProperty metaProperty, Collection<E> newCollection) {
         Collection<E> masterCollection;
-        if (List.class.isAssignableFrom(metaProperty.getJavaType())) {
-            masterCollection = new ArrayList<>(newCollection);
-        } else {
+        if (Set.class.isAssignableFrom(metaProperty.getJavaType())) {
             masterCollection = new LinkedHashSet<>(newCollection);
+        } else {
+            masterCollection = new ArrayList<>(newCollection);
         }
         EntityValues.setValue(master.getItem(), metaProperty.getName(), masterCollection);
         return masterCollection;

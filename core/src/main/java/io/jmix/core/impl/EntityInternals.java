@@ -23,6 +23,8 @@ import io.jmix.core.entity.BaseEntityEntry;
 import io.jmix.core.entity.EntityValues;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
@@ -83,12 +85,23 @@ public class EntityInternals {
         }
     }
 
+    /**
+     * Hook to be invoked before entity serialization
+     */
     @SuppressWarnings("unused")
-    public static void writeObject(Entity entity, ObjectOutputStream outputStream) {
-        EntityEntry entityEntry = entity.__getEntityEntry();
-        if (entityEntry.isManaged()) {
-            entityEntry.setManaged(false);
-            entityEntry.setDetached(true);
+    public static void beforeWriteObject(Entity entity, ObjectOutputStream outputStream, @Nullable String generatedIdFieldName) throws IOException {
+        if (generatedIdFieldName != null) {
+            outputStream.writeObject(EntityValues.getValue(entity, generatedIdFieldName));
+        }
+    }
+
+    /**
+     * Hook to be invoked before entity deserialization
+     */
+    @SuppressWarnings("unused")
+    public static void beforeReadObject(Entity entity, ObjectInputStream inputStream, @Nullable String generatedIdFieldName) throws IOException, ClassNotFoundException {
+        if (generatedIdFieldName != null) {
+            EntityValues.setValue(entity, generatedIdFieldName, inputStream.readObject());
         }
     }
 }

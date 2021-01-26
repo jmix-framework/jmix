@@ -16,16 +16,17 @@
 
 package io.jmix.core.entity;
 
+import io.jmix.core.Entity;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
-import io.jmix.core.Entity;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.model.utils.MethodsCache;
 import io.jmix.core.metamodel.model.utils.RelatedPropertiesCache;
 import org.springframework.lang.NonNull;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -244,5 +245,13 @@ public abstract class BaseEntityEntry implements EntityEntry, Cloneable {
     @Override
     public Collection<EntityEntryExtraState> getAllExtraState() {
         return extraStateMap == null ? Collections.emptyList() : Collections.unmodifiableCollection(extraStateMap.values());
+    }
+
+    private void writeObject(java.io.ObjectOutputStream oos) throws IOException {
+        if (isManaged()) {
+            setManaged(false);
+            setDetached(true);
+        }
+        oos.defaultWriteObject();
     }
 }

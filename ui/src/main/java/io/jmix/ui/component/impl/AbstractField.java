@@ -26,7 +26,6 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.component.validation.Validator;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
@@ -246,12 +245,11 @@ public abstract class AbstractField<T extends com.vaadin.ui.Component & com.vaad
         DatatypeRegistry datatypeRegistry = applicationContext.getBean(DatatypeRegistry.class);
 
         String datatypeId = datatypeRegistry
-//                .getIdOrNull(datatype); TODO VM
-            .getId(datatype);
-
-        if (StringUtils.isEmpty(datatypeId)) {
-            datatypeId = datatypeRegistry.getIdByJavaClass(datatype.getJavaClass());
-        }
+                .getIdOptional(datatype)
+                .orElse(datatypeRegistry
+                        .getIdByJavaClassOptional(datatype.getJavaClass())
+                        .orElse(null)
+                );
 
         if (Strings.isNullOrEmpty(datatypeId)) {
             return null;

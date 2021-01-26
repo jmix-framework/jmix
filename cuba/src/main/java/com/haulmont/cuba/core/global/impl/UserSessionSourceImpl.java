@@ -23,6 +23,7 @@ import io.jmix.core.security.ClientDetails;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import io.jmix.core.security.UserRepository;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +38,7 @@ import java.util.UUID;
 public class UserSessionSourceImpl implements UserSessionSource {
 
     @Autowired
-    protected UserRepository userRepository;
+    protected BeanFactory beanFactory;
 
     @Override
     public boolean checkCurrentUserSession() {
@@ -57,6 +58,7 @@ public class UserSessionSourceImpl implements UserSessionSource {
     @Override
     public UserSession getUserSession() throws NoUserSessionException {
         Authentication authentication = SecurityContextHelper.getAuthentication();
+        UserRepository userRepository = beanFactory.getBean(UserRepository.class);
 
         UserSession session = new UserSession();
         if (authentication instanceof UsernamePasswordAuthenticationToken) {

@@ -117,14 +117,6 @@ public abstract class AbstractValueComponent<T extends com.vaadin.ui.Component &
         return getEventHub().subscribe(ValueChangeEvent.class, (Consumer) listener);
     }
 
-    //todo VM
-
-//    @SuppressWarnings("unchecked")
-//    @Override
-//    public void removeValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
-//        unsubscribe(ValueChangeEvent.class, (Consumer) listener);
-//    }
-
     protected void setValueToPresentation(@Nullable P value) {
         if (hasValidationError()) {
             setValidationError(null);

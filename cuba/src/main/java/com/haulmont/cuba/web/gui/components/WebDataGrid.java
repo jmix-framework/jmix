@@ -38,6 +38,8 @@ import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.datatoolsui.accesscontext.UiShowEntityInfoContext;
+import io.jmix.datatoolsui.action.ShowEntityInfoAction;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.ContentMode;
 import io.jmix.ui.component.DataGridEditorFieldFactory;
@@ -253,6 +255,19 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
 
         if (getRowsCount() != null) {
             getRowsCount().setRowsCountTarget(this);
+        }
+
+        initShowEntityInfoAction();
+    }
+
+    protected void initShowEntityInfoAction() {
+        UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
+        accessManager.applyRegisteredConstraints(showInfoContext);
+
+        if (showInfoContext.isPermitted()) {
+            if (getAction(ShowEntityInfoAction.ID) == null) {
+                addAction(actions.create(ShowEntityInfoAction.ID));
+            }
         }
     }
 

@@ -20,6 +20,8 @@ import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.Tree;
 import com.haulmont.cuba.gui.components.data.tree.DatasourceTreeItems;
 import io.jmix.core.Entity;
+import io.jmix.datatoolsui.accesscontext.UiShowEntityInfoContext;
+import io.jmix.datatoolsui.action.ShowEntityInfoAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.data.TreeItems;
 import io.jmix.ui.component.impl.TreeImpl;
@@ -53,6 +55,24 @@ public class WebTree<E extends Entity>
 
         if (treeItems instanceof DatasourceTreeItems) {
             ((DatasourceTreeItems) treeItems).getDatasource().refresh();
+        }
+    }
+
+    @Override
+    public void setItems(@Nullable TreeItems<E> treeItems) {
+        super.setItems(treeItems);
+
+        initShowEntityInfoAction();
+    }
+
+    protected void initShowEntityInfoAction() {
+        UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
+        accessManager.applyRegisteredConstraints(showInfoContext);
+
+        if (showInfoContext.isPermitted()) {
+            if (getAction(ShowEntityInfoAction.ID) == null) {
+                addAction(actions.create(ShowEntityInfoAction.ID));
+            }
         }
     }
 

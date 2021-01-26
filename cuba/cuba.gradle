@@ -32,6 +32,8 @@ dependencies {
     api 'io.jmix.dynattr:jmix-dynattr'
     api 'io.jmix.dynattr:jmix-dynattr-ui'
     api 'io.jmix.localfs:jmix-localfs'
+    api 'io.jmix.datatools:jmix-datatools'
+    api 'io.jmix.datatools:jmix-datatools-ui'
 
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'

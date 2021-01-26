@@ -14,20 +14,7 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+@NonNullApi
+package io.jmix.search.index;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
-
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
-
-    api 'io.jmix.data:jmix-data'
-
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
-}
+import org.springframework.lang.NonNullApi;

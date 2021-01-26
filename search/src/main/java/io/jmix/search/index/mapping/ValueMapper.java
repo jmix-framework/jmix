@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.mapping;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import com.fasterxml.jackson.databind.JsonNode;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+import java.util.Map;
 
-    api 'io.jmix.data:jmix-data'
+public interface ValueMapper {
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters);
 }

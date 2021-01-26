@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.annotation;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import java.lang.annotation.*;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(FullTextField.Container.class)
+public @interface FullTextField {
 
-    api 'io.jmix.data:jmix-data'
+    String[] include() default "";
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    String[] exclude() default "";
+
+    String analyzer() default "";
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Container {
+
+        FullTextField[] value();
+    }
 }

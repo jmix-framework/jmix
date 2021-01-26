@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.mapping;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+public class NativeFieldConfiguration implements FieldConfiguration {
 
-    api 'io.jmix.data:jmix-data'
+    protected ObjectNode config;
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    public NativeFieldConfiguration(ObjectNode config) {
+        this.config = config;
+    }
+
+    @Override
+    public ObjectNode asJson() {
+        return config;
+    }
 }

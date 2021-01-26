@@ -19,7 +19,14 @@ package io.jmix.search;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -30,4 +37,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @EnableTransactionManagement
 public class SearchConfiguration {
+
+    private static final Logger log = LoggerFactory.getLogger(SearchConfiguration.class);
+
+    @Value("${jmix.search.elasticsearch.host}")
+    protected String elasticsearchHost;
+    @Value("${jmix.search.elasticsearch.port}")
+    protected int elasticsearchPort;
+
+    @Bean("search_RestHighLevelClient")
+    public RestHighLevelClient elasticSearchClient() { //todo credentials
+        log.info("[IVGA] Build ES Client for '{}:{}'", elasticsearchHost, elasticsearchPort);
+        return new RestHighLevelClient(RestClient.builder(new HttpHost(elasticsearchHost, elasticsearchPort)));
+    }
 }

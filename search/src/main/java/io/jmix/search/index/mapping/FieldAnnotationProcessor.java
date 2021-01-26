@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.mapping;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import io.jmix.core.metamodel.model.MetaClass;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+import java.lang.annotation.Annotation;
 
-    api 'io.jmix.data:jmix-data'
+public interface FieldAnnotationProcessor<T extends Annotation> {
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    IndexMappingConfigTemplate process(MetaClass rootEntityMetaClass, Annotation annotation);
+
+    Class<T> getAnnotationClass();
 }

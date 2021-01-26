@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.mapping;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+import java.util.Map;
 
-    api 'io.jmix.data:jmix-data'
+public abstract class SimpleFieldMapper extends BaseFieldMapper {
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    @Override
+    public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
+        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+        effectiveParameters.put("type", getElasticsearchDatatype());
+
+        return objectMapper.convertValue(effectiveParameters, ObjectNode.class);
+    }
+
+    protected abstract String getElasticsearchDatatype();
 }

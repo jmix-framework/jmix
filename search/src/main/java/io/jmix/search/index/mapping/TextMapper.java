@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-apply plugin: 'groovy'
-apply plugin: 'io.jmix'
+package io.jmix.search.index.mapping;
 
-group = 'io.jmix.search'
-archivesBaseName = 'jmix-search'
+import com.google.common.collect.Sets;
 
-dependencies {
-    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+import java.util.Set;
 
-    api 'io.jmix.data:jmix-data'
+public class TextMapper extends SimpleFieldMapper {
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.core:jackson-annotations'
-    implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
-    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+    protected static final Set<String> supportedParameters = Sets.newHashSet("analyzer");
+
+    @Override
+    public Set<String> getSupportedParameters() {
+        return supportedParameters;
+    }
+
+    @Override
+    public String getElasticsearchDatatype() {
+        return "text";
+    }
 }

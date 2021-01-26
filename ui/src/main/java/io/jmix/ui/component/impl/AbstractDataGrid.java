@@ -50,10 +50,8 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.App;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.BindingState;
 import io.jmix.ui.component.data.DataGridItems;
@@ -920,8 +918,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
             component.setColumnOrder(getColumnOrder());
 
-            initShowInfoAction();
-
             setupPaginationDataSourceProvider();
 
             if (!canBeSorted(dataGridItems)) {
@@ -1086,17 +1082,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                 .filter(Column::isVisible)
                 .map(Column::getId)
                 .toArray(String[]::new);
-    }
-
-    protected void initShowInfoAction() {
-        UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
-        accessManager.applyRegisteredConstraints(showInfoContext);
-
-        if (showInfoContext.isPermitted()) {
-            if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                addAction(actions.create(ShowInfoAction.ACTION_ID));
-            }
-        }
     }
 
     @Nullable

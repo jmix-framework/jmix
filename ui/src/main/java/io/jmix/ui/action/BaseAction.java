@@ -142,9 +142,9 @@ public class BaseAction extends AbstractAction implements Action.SecuredAction {
     public void refreshState() {
         super.refreshState();
 
-        setVisibleInternal(visibleExplicitly && visibleByUiPermissions);
+        setVisibleInternal(visibleExplicitly && isVisibleByUiPermissions());
 
-        setEnabledInternal(enabledExplicitly && enabledByUiPermissions && visibleByUiPermissions
+        setEnabledInternal(enabledExplicitly && isEnabledByUiPermissions() && isVisibleByUiPermissions()
                 && isPermitted() && isApplicable() && isEnabledByRule());
     }
 

@@ -38,10 +38,8 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.Actions;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.LookupComponent.LookupSelectionChangeNotifier;
 import io.jmix.ui.component.data.BindingState;
@@ -298,7 +296,6 @@ public class TreeImpl<E>
 
             this.component.setDataProvider(this.dataBinding);
 
-            initShowInfoAction();
             refreshActionsState();
 
             setUiTestId(treeItems);
@@ -412,16 +409,6 @@ public class TreeImpl<E>
     @Override
     public Function<? super E, String> getItemCaptionProvider() {
         return itemCaptionProvider;
-    }
-
-    protected void initShowInfoAction() {
-        UiShowEntityInfoContext showEntityInfoContext = new UiShowEntityInfoContext();
-        accessManager.applyRegisteredConstraints(showEntityInfoContext);
-        if (showEntityInfoContext.isPermitted()) {
-            if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                addAction(actions.create(ShowInfoAction.ACTION_ID));
-            }
-        }
     }
 
     protected void refreshActionsState() {

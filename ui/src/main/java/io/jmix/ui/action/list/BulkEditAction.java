@@ -60,8 +60,8 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
 
     public static final String ID = "bulkEdit";
 
-    protected Messages messages;
 
+    protected Messages messages;
     protected BulkEditors bulkEditors;
 
     protected ColumnsMode columnsMode;
@@ -71,6 +71,8 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
     protected OpenMode openMode;
     protected Boolean loadDynamicAttributes;
     protected Boolean useConfirmDialog;
+
+    protected boolean visibleBySpecificUiPermission = true;
 
     public BulkEditAction() {
         this(ID);
@@ -214,10 +216,14 @@ public class BulkEditAction extends SecuredListAction implements Action.Executab
 
         UiBulkEditContext context = new UiBulkEditContext();
         accessManager.applyRegisteredConstraints(context);
-        if (!context.isPermitted()) {
-            setVisible(false);
-            setEnabled(false);
-        }
+
+        visibleBySpecificUiPermission = context.isPermitted();
+    }
+
+    @Override
+    public boolean isVisibleByUiPermissions() {
+        return visibleBySpecificUiPermission
+                && super.isVisibleByUiPermissions();
     }
 
     @Autowired

@@ -55,10 +55,8 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
-import io.jmix.ui.accesscontext.UiShowEntityInfoContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.action.ShowInfoAction;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.ButtonsPanel;
 import io.jmix.ui.component.HasInnerComponents;
@@ -1516,15 +1514,6 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             createStubsForGeneratedColumns();
 
             setVisibleColumns(getInitialVisibleColumnIds(entityTableSource));
-
-            UiShowEntityInfoContext showInfoContext = new UiShowEntityInfoContext();
-            accessManager.applyRegisteredConstraints(showInfoContext);
-
-            if (showInfoContext.isPermitted()) {
-                if (getAction(ShowInfoAction.ACTION_ID) == null) {
-                    addAction(actions.create(ShowInfoAction.ACTION_ID));
-                }
-            }
 
             setupPaginationDataSourceProvider();
 

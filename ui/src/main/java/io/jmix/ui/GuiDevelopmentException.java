@@ -18,6 +18,7 @@ package io.jmix.ui;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.xml.layout.ComponentLoader.ComponentContext;
+import io.jmix.ui.xml.layout.ComponentLoader.CompositeComponentContext;
 import io.jmix.ui.xml.layout.ComponentLoader.Context;
 
 import javax.annotation.Nullable;
@@ -69,9 +70,8 @@ public class GuiDevelopmentException extends DevelopmentException {
         return super.toString() +
                 (getFrameId() != null
                         ? ", frameId=" + getFrameId()
-                        // todo implement
-                        /*: context instanceof CompositeComponentContext
-                        ? "componentClass=" + ((CompositeComponentContext) context).getComponentClass()*/
+                        : context instanceof CompositeComponentContext
+                        ? "componentClass=" + ((CompositeComponentContext) context).getComponentClass()
                         : "");
     }
 }

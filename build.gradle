@@ -249,8 +249,9 @@ dependencies {
 
         api 'com.thoughtworks.xstream:xstream:1.4.13'
 
-        api 'com.haulmont.yarg:yarg-api:2.2.5'
-        api 'com.haulmont.yarg:yarg:2.2.5'
+        def yargVersion = '2.2.9'
+        api "com.haulmont.yarg:yarg-api:$yargVersion"
+        api "com.haulmont.yarg:yarg:$yargVersion"
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

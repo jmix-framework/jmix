@@ -35,6 +35,8 @@ dependencies {
     implementation 'io.jmix.security:jmix-security-data-starter'
     implementation 'io.jmix.localfs:jmix-localfs-starter'
     implementation 'io.jmix.sessions:jmix-sessions-starter'
+    implementation "io.jmix.dynattr:jmix-dynattr-starter"
+    implementation "io.jmix.dynattr:jmix-dynattr-ui-starter"
 
     implementation project(':rest-starter')
 

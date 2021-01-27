@@ -21,20 +21,20 @@ import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.core.Id;
 import io.jmix.samples.rest.entity.driver.Model;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import test_support.AbstractRestControllerFT;
 
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static test_support.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static test_support.RestTestUtils.*;
 
 
 class EntitiesControllerFT extends AbstractRestControllerFT {
@@ -95,8 +95,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
             assertEquals("VWV000", ctx.read("$._instanceName"));
-            //TODO Dynamic attribute
-//            assertEquals("10", ctx.read("$.+numberOfSeatsAttr"));
+            assertEquals("10", ctx.read("$.+numberOfSeatsAttr"));
         }
     }
 
@@ -1341,8 +1340,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            //TODO Dynamic attribute
-//            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
+            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
@@ -1365,8 +1363,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            //TODO Dynamic attribute
-//            assertNull(ctx.read("$.+numberOfSeatsAttr"));
+            assertNull(ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
@@ -1391,8 +1388,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(secondCarUuidString, ctx.read("$.id"));
-            //TODO Dynamic attribute
-//            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
+            assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from SYS_ATTR_VALUE where ENTITY_ID = ?")) {
@@ -2461,30 +2457,32 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         );
 
         UUID carCategoryId = dirtyData.createCategoryId();
-//        executePrepared("insert into sys_category (id, name, entity_type, discriminator, version) values (?, ?, ?, 0, 1)",
-//                carCategoryId,
-//                "carCategory",
-//                "ref_Car"
-//        );
+        executePrepared("insert into sys_category (id, name, entity_type, discriminator, version) values (?, ?, ?, 0, 1)",
+                carCategoryId,
+                "carCategory",
+                "ref_Car"
+        );
 
         UUID seatsNumberCategoryAttrId = dirtyData.createCategoryAttributeId();
-//        executePrepared("insert into sys_category_attr (id, name, code, category_entity_type, category_id, data_type, " +
-//                        "is_collection, version) values (?,?,?, ?, ?, ?,false, 1)",
-//                seatsNumberCategoryAttrId,
-//                "numberOfSeats",
-//                "numberOfSeatsAttr",
-//                "ref_Car",
-//                carCategoryId,
-//                "STRING"
-//        );
+        executePrepared("insert into sys_category_attr (id, name, code, category_entity_type, category_id, data_type, " +
+                        "is_collection, version) values (?,?,?, ?, ?, ?,false, 1)",
+                seatsNumberCategoryAttrId,
+                "numberOfSeats",
+                "numberOfSeatsAttr",
+                "ref_Car",
+                carCategoryId,
+                "STRING"
+        );
 
         numberOfSeatsCategoryAttrValueId = dirtyData.createCategoryAttributeValueId();
-//        executePrepared("insert into sys_attr_value (id, category_attr_id, code, entity_id, string_value, version) values (?, ?, ?, ?, ?, 1)",
-//                numberOfSeatsCategoryAttrValueId,
-//                seatsNumberCategoryAttrId,
-//                "numberOfSeatsAttr",
-//                carUuid,
-//                "10"
-//        );
+        executePrepared("insert into sys_attr_value (id, category_attr_id, code, entity_id, string_value, version) values (?, ?, ?, ?, ?, 1)",
+                numberOfSeatsCategoryAttrValueId,
+                seatsNumberCategoryAttrId,
+                "numberOfSeatsAttr",
+                carUuid,
+                "10"
+        );
+
+        dynAttrMetadata.reload();
     }
 }

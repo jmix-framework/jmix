@@ -20,6 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
+import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
@@ -66,6 +67,9 @@ public abstract class AbstractRestControllerFT {
 
     @Autowired
     protected DataManager dataManager;
+
+    @Autowired
+    protected DynAttrMetadata dynAttrMetadata;
 
     protected UserDetails admin;
 

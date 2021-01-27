@@ -1,195 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="blob_type" value="bytea" dbms="postgresql"/>
-    <property name="blob_type" value="blob" dbms="oracle"/>
-    <property name="blob_type" value="mediumblob" dbms="mysql"/>
-    <property name="blob_type" value="image" dbms="mssql"/>
-    <property name="blob_type" value="longvarbinary" dbms="hsql"/>
-
-    <property name="text_type" value="text" dbms="postgresql"/>
-    <property name="text_type" value="clob" dbms="oracle"/>
-    <property name="text_type" value="text" dbms="mysql"/>
-    <property name="text_type" value="varchar(max)" dbms="mssql"/>
-    <property name="text_type" value="longvarchar" dbms="hsql"/>
-
-    <property name="uuid_type" value="uuid" dbms="postgresql"/>
-    <property name="uuid_type" value="varchar2(32)" dbms="oracle"/>
-    <property name="uuid_type" value="varchar(32)" dbms="mysql"/>
-    <property name="uuid_type" value="uniqueidentifier" dbms="mssql"/>
-    <property name="uuid_type" value="varchar(36)" dbms="hsql"/>
-
-    <property name="default_group_id" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94" dbms="postgresql"/>
-    <property name="default_group_id" value="4e0835300b9c11e19b416bdaa41bff94" dbms="oracle"/>
-    <property name="default_group_id" value="4e0835300b9c11e19b416bdaa41bff94" dbms="mysql"/>
-    <property name="default_group_id" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94" dbms="mssql"/>
-    <property name="default_group_id" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94" dbms="hsql"/>
-
-    <changeSet author="reports" id="1.0">
-
-        <createTable tableName="REPORT_GROUP">
-            <column name="ID" type="${uuid_type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="VERSION" type="integer" defaultValue="1">
-                <constraints nullable="false"/>
-            </column>
-            <column name="UPDATE_TS" type="datetime"/>
-            <column name="UPDATED_BY" type="varchar(50)"/>
-            <column name="DELETE_TS" type="datetime"/>
-            <column name="DELETED_BY" type="varchar(50)"/>
-            <column name="SYS_TENANT_ID" type="varchar(255)"/>
-            <column name="TITLE" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CODE" type="varchar(255)"/>
-            <column name="LOCALE_NAMES" type="${text_type}"/>
-        </createTable>
-
-        <addUniqueConstraint
-                columnNames="TITLE, SYS_TENANT_ID, DELETE_TS"
-                constraintName="REPORT_GROUP_UNIQ_TITLE"
-                tableName="REPORT_GROUP"
-        />
-
-        <createTable tableName="REPORT_REPORT">
-            <column name="ID" type="${uuid_type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="VERSION" type="integer" defaultValue="1">
-                <constraints nullable="false"/>
-            </column>
-            <column name="UPDATE_TS" type="datetime"/>
-            <column name="UPDATED_BY" type="varchar(50)"/>
-            <column name="DELETE_TS" type="datetime"/>
-            <column name="DELETED_BY" type="varchar(50)"/>
-
-            <column name="NAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="CODE" type="varchar(255)"/>
-            <column name="DESCRIPTION" type="varchar(500)"/>
-            <column name="LOCALE_NAMES" type="${text_type}"/>
-            <column name="GROUP_ID" type="${uuid_type}">
-                <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_REPORT_TO_REPORT_GROUP"
-                             references="REPORT_GROUP(ID)"/>
-            </column>
-            <column name="REPORT_TYPE" type="integer"/>
-            <column name="DEFAULT_TEMPLATE_ID" type="${uuid_type}"/>
-            <column name="XML" type="${text_type}"/>
-            <column name="ROLES_IDX" type="varchar(1000)"/>
-            <column name="SCREENS_IDX" type="varchar(1000)"/>
-            <column name="INPUT_ENTITY_TYPES_IDX" type="varchar(1000)"/>
-            <column name="REST_ACCESS" type="boolean" defaultValue="false"/>
-            <column name="IS_SYSTEM" type="boolean" defaultValue="false"/>
-            <column name="SYS_TENANT_ID" type="varchar(255)"/>
-        </createTable>
-
-        <addUniqueConstraint
-                columnNames="NAME, SYS_TENANT_ID, DELETE_TS"
-                constraintName="IDX_REPORT_REPORT_UNIQ_NAME_SYS_TENANT_ID_NN"
-                tableName="REPORT_REPORT"
-        />
-
-        <createTable tableName="REPORT_TEMPLATE">
-            <column name="ID" type="${uuid_type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="VERSION" type="integer" defaultValue="1">
-                <constraints nullable="false"/>
-            </column>
-            <column name="UPDATE_TS" type="datetime"/>
-            <column name="UPDATED_BY" type="varchar(50)"/>
-            <column name="DELETE_TS" type="datetime"/>
-            <column name="DELETED_BY" type="varchar(50)"/>
-
-            <column name="REPORT_ID" type="${uuid_type}">
-                <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_TEMPLATE_TO_REPORT"
-                             references="REPORT_REPORT(ID)"/>
-            </column>
-            <column name="CODE" type="varchar(50)"/>
-            <column name="OUTPUT_TYPE" type="integer" defaultValue="0">
-                <constraints nullable="false"/>
-            </column>
-            <column name="IS_DEFAULT" type="boolean" defaultValue="false"/>
-            <column name="IS_CUSTOM" type="boolean" defaultValue="false"/>
-            <column name="IS_ALTERABLE_OUTPUT" type="boolean" defaultValue="false"/>
-            <column name="IS_GROOVY" type="boolean" defaultValue="false"/>
-            <column name="CUSTOM_DEFINED_BY" type="integer" defaultValue="100"/>
-            <column name="CUSTOM_CLASS" type="varchar"/>
-            <column name="OUTPUT_NAME_PATTERN" type="varchar(255)"/>
-            <column name="NAME" type="varchar(500)"/>
-            <column name="CONTENT" type="${blob_type}"/>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="REPORT_REPORT"
-                                 baseColumnNames="DEFAULT_TEMPLATE_ID"
-                                 constraintName="FK_REPORT_REPORT_TO_DEF_TEMPLATE"
-                                 referencedTableName="REPORT_TEMPLATE"
-                                 referencedColumnNames="ID"/>
-
-        <createTable tableName="REPORT_EXECUTION">
-            <column name="ID" type="${uuid_type}">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-
-            <column name="REPORT_ID" type="${uuid_type}">
-                <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_EXECUTION_TO_REPORT"
-                             references="REPORT_REPORT(ID)"/>
-            </column>
-            <column name="REPORT_NAME" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REPORT_CODE" type="varchar(255)"/>
-            <column name="PRINCIPAL" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="START_TIME" type="datetime">
-                <constraints nullable="false"/>
-            </column>
-            <column name="FINISH_TIME" type="datetime"/>
-            <column name="IS_SUCCESS" type="boolean" defaultValue="false"/>
-            <column name="CANCELLED" type="boolean" defaultValue="false"/>
-            <column name="PARAMS" type="${text_type}"/>
-            <column name="ERROR_MESSAGE" type="${text_type}"/>
-            <column name="SERVER_ID" type="varchar(50)"/>
-            <column name="FILE_URI" type="varchar(255)"/>
-        </createTable>
-
-        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXECUTION_REPORT_ID">
-            <column>REPORT_ID</column>
-        </createIndex>
-
-        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXECUTION_START_TIME">
-            <column>START_TIME</column>
-        </createIndex>
-
-        <insert tableName="REPORT_GROUP">
-            <column name="ID" value="${default_group_id}"/>
-            <column name="CREATE_TS" value="current_timestamp"/>
-            <column name="CREATED_BY" value="admin"/>
-            <column name="VERSION" value="0"/>
-            <column name="VERSION" value="0"/>
-            <column name="TITLE" value="General"/>
-            <column name="CODE" value="ReportGroup.default"/>
-            <column name="LOCALE_NAMES" value="'en=General\nru=Общие'"/>
-        </insert>
-
-    </changeSet>
+    <includeAll path="/io/jmix/reports/liquibase/changelog"/>
 
 </databaseChangeLog>

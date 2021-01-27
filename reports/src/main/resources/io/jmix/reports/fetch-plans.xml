@@ -17,7 +17,13 @@
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <fetchPlan entity="report$ReportTemplate" name="template.edit" extends="_local">
+    <fetchPlan entity="report_Report" name="report.edit" extends="_local">
+        <property name="templates" fetchPlan="template.edit"/>
+        <property name="defaultTemplate" fetchPlan="template.edit"/>
+        <property name="group" fetchPlan="_local"/>
+    </fetchPlan>
+
+    <fetchPlan entity="report_ReportTemplate" name="template.edit" extends="_local">
         <property name="report">
             <property name="xml"/>
             <property name="name"/>
@@ -25,27 +31,7 @@
         </property>
     </fetchPlan>
 
-    <fetchPlan entity="report$Report" name="report.edit" extends="_local">
-        <property name="templates" fetchPlan="template.edit"/>
-        <property name="defaultTemplate" fetchPlan="template.edit"/>
-        <property name="group" fetchPlan="_local"/>
-    </fetchPlan>
-
-    <fetchPlan entity="report$Report" name="report.fetchPlan">
-        <property name="name"/>
-        <property name="localeNames"/>
-        <property name="code"/>
-        <property name="description"/>
-        <property name="reportType"/>
-        <property name="group" fetchPlan="_minimal"/>
-    </fetchPlan>
-
-    <fetchPlan entity="report$Report" name="report.withTemplates" extends="_minimal">
-        <property name="templates" fetchPlan="_minimal"/>
-    </fetchPlan>
-
-    <fetchPlan entity="report$ReportExecution" name="reportExecution.browse" extends="_local">
-        <property name="user" fetchPlan="_minimal"/>
-        <property name="outputDocument" fetchPlan="_minimal"/>
+    <fetchPlan entity="report_Report" name="report.withTemplates" extends="_instance_name">
+        <property name="templates" fetchPlan="_instance_name"/>
     </fetchPlan>
 </fetchPlans>

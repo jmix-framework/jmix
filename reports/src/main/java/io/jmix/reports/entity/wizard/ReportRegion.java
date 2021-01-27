@@ -16,43 +16,47 @@
 
 package io.jmix.reports.entity.wizard;
 
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
+import io.jmix.core.metamodel.model.MetaClass;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@ModelObject(name = "report$WizardReportRegion")
+@JmixEntity(name = "report_WizardReportRegion")
 @SystemLevel
-public class ReportRegion extends BaseUuidEntity implements OrderableEntity {
+public class ReportRegion implements OrderableEntity {
 
     private static final long serialVersionUID = -3122228074679382191L;
     public static final String HEADER_BAND_PREFIX = "header";
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+    @JmixProperty
     @Transient
     protected ReportData reportData;
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Boolean isTabulatedRegion;
-    @ModelProperty
+    @JmixProperty
     @Composition
     @Transient
     protected List<RegionProperty> regionProperties = new ArrayList<>();
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected EntityTreeNode regionPropertiesRootNode;
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Long orderNum = Long.MAX_VALUE;
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected String bandNameFromReport;
 
@@ -101,27 +105,29 @@ public class ReportRegion extends BaseUuidEntity implements OrderableEntity {
         this.regionProperties = regionProperties;
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getName() {
-        Messages messages = AppBeans.get(Messages.NAME);
-        if (isTabulatedRegion()) {
-            return messages.formatMessage(getClass(), "ReportRegion.tabulatedName", getOrderNum());
-        } else {
-            return messages.formatMessage(getClass(), "ReportRegion.simpleName", getOrderNum());
-        }
-
+        //todo
+//        Messages messages = AppBeans.get(Messages.NAME);
+//        if (isTabulatedRegion()) {
+//            return messages.formatMessage(getClass(), "ReportRegion.tabulatedName", getOrderNum());
+//        } else {
+//            return messages.formatMessage(getClass(), "ReportRegion.simpleName", getOrderNum());
+//        }
+        return "";
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getNameForBand() {
-        return StringUtils.isEmpty(bandNameFromReport) ? getRegionPropertiesRootNode().getWrappedMetaClass().getJavaClass().getSimpleName() +
+        MetaClass wrapperMetaClass = getRegionPropertiesRootNode().getWrappedMetaClass();
+        return StringUtils.isEmpty(bandNameFromReport) ? wrapperMetaClass.getJavaClass().getSimpleName() +
                 (isTabulatedRegion() ? "s" : "") +
                 (getReportData().getReportRegions().size() == 1 ? "" : getOrderNum().toString()) : bandNameFromReport;
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getNameForHeaderBand() {
         return HEADER_BAND_PREFIX + getNameForBand();
@@ -137,5 +143,13 @@ public class ReportRegion extends BaseUuidEntity implements OrderableEntity {
 
     public String getBandNameFromReport() {
         return bandNameFromReport;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

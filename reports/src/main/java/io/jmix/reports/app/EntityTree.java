@@ -20,7 +20,7 @@ import io.jmix.reports.entity.wizard.EntityTreeNode;
 
 import java.io.Serializable;
 
-public class EntityTree implements Serializable{
+public class EntityTree implements Serializable {
 
     private static final long serialVersionUID = -7639009888440026734L;
     protected EntityTreeNode entityTreeRootNode;

@@ -16,16 +16,15 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.cuba.core.global.Configuration;
-import io.jmix.reports.ReportingConfig;
 import com.haulmont.yarg.loaders.factory.ReportLoaderFactory;
 import com.haulmont.yarg.reporting.DataExtractorImpl;
-
+import io.jmix.reports.ReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class JmixDataExtractor extends DataExtractorImpl {
+
     @Autowired
-    protected ReportingConfig reportingConfig;
+    protected ReportsProperties reportsProperties;
 
     public JmixDataExtractor(ReportLoaderFactory loaderFactory) {
         super(loaderFactory);
@@ -33,6 +32,6 @@ public class JmixDataExtractor extends DataExtractorImpl {
 
     @Override
     public boolean getPutEmptyRowIfNoDataSelected() {
-        return Boolean.TRUE.equals(reportingConfig.getPutEmptyRowIfNoDataSelected());
+        return Boolean.TRUE.equals(reportsProperties.getPutEmptyRowIfNoDataSelected());
     }
 }

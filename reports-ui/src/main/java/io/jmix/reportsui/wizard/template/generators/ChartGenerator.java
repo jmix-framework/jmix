@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template.generators;
+package io.jmix.reportsui.wizard.template.generators;
 
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.entity.charts.*;
@@ -22,7 +22,7 @@ import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
 import io.jmix.reports.exception.TemplateGenerationException;
-import io.jmix.reports.wizard.template.Generator;
+import io.jmix.reportsui.wizard.template.Generator;
 import freemarker.template.TemplateException;
 import org.apache.commons.collections4.CollectionUtils;
 

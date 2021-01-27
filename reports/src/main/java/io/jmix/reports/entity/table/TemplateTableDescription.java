@@ -19,15 +19,18 @@ package io.jmix.reports.entity.table;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
+import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-@ModelObject(name = "report$TemplateTableDescription")
-public class TemplateTableDescription extends BaseUuidEntity {
+@JmixEntity(name = "report_TemplateTableDescription")
+public class TemplateTableDescription implements Serializable {
 
     protected final static Gson gson;
 
@@ -36,8 +39,20 @@ public class TemplateTableDescription extends BaseUuidEntity {
                 .create();
     }
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     protected List<TemplateTableBand> templateTableBands = new LinkedList<>();
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public List<TemplateTableBand> getTemplateTableBands() {
         return templateTableBands;

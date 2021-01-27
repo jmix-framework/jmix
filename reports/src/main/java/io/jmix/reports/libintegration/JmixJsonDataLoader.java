@@ -16,13 +16,13 @@
 
 package io.jmix.reports.libintegration;
 
-import io.jmix.core.Resources;
-import io.jmix.reports.entity.JsonSourceType;
-import io.jmix.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.loaders.impl.JsonDataLoader;
 import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ReportQuery;
 import com.haulmont.yarg.util.groovy.Scripting;
+import io.jmix.core.Resources;
+import io.jmix.reports.entity.JsonSourceType;
+import io.jmix.reports.entity.ReportInputParameter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -33,8 +33,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

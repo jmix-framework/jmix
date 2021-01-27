@@ -16,33 +16,33 @@
 
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.persistence.OrderBy;
 import java.util.ArrayList;
 import java.util.List;
 
-@ModelObject(name = "report$SerialChartDescription")
+@JmixEntity(name = "report_SerialChartDescription")
 @SystemLevel
 public class SerialChartDescription extends AbstractChartDescription {
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String bandName;
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String categoryField;
-    @ModelProperty
+    @JmixProperty
     protected String categoryAxisCaption;
-    @ModelProperty
+    @JmixProperty
     protected String valueAxisCaption;
-    @ModelProperty
+    @JmixProperty
     protected String valueAxisUnits;
-    @ModelProperty
+    @JmixProperty
     protected String valueStackType;
     @OrderBy("order")
-    @ModelProperty
+    @JmixProperty
     protected List<ChartSeries> series = new ArrayList<>();
-    @ModelProperty
+    @JmixProperty
     protected Integer categoryAxisLabelRotation = 0;
 
     public SerialChartDescription() {

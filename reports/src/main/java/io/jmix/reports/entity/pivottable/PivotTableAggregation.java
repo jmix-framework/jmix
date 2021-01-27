@@ -17,26 +17,31 @@
 package io.jmix.reports.entity.pivottable;
 
 import io.jmix.core.UuidProvider;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.io.Serializable;
+import java.util.UUID;
 
-@ModelObject(name = "report$PivotTableAggregation")
-public class PivotTableAggregation extends BaseUuidEntity {
+@JmixEntity(name = "report_PivotTableAggregation")
+public class PivotTableAggregation implements Serializable {
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     protected AggregationMode mode;
 
-    @ModelProperty
+    @JmixProperty
     protected String caption;
 
     @Lob
-    @ModelProperty
+    @JmixProperty
     protected String function;
 
     public PivotTableAggregation() {
@@ -48,6 +53,14 @@ public class PivotTableAggregation extends BaseUuidEntity {
         setMode(mode);
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public AggregationMode getMode() {
         return mode;
     }
@@ -55,7 +68,8 @@ public class PivotTableAggregation extends BaseUuidEntity {
     public void setMode(AggregationMode mode) {
         this.mode = mode;
         if (StringUtils.isEmpty(caption)) {
-            setCaption(AppBeans.get(Messages.class).getMessage(getClass(), "AggregationMode." + mode.toString()));
+            //todo
+            //setCaption(AppBeans.get(Messages.class).getMessage(getClass(), "AggregationMode." + mode.toString()));
         }
     }
 

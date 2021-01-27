@@ -15,19 +15,21 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
-import com.haulmont.cuba.core.global.View;
 import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
+import javax.persistence.Id;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-@ModelObject(name = "report$DataSet")
+@JmixEntity(name = "report_DataSet", annotatedPropertiesOnly = true)
 @SystemLevel
-public class DataSet extends BaseUuidEntity implements ReportQuery {
+public class DataSet implements ReportQuery {
 
     public static final String ENTITY_PARAM_NAME = "entityParamName";
     public static final String LIST_ENTITIES_PARAM_NAME = "listEntitiesParamName";
@@ -39,44 +41,56 @@ public class DataSet extends BaseUuidEntity implements ReportQuery {
 
     private static final long serialVersionUID = -3706206933129963303L;
 
-    protected View view;
-    @ModelProperty
+    protected FetchPlan fetchPlan;
+    @Id
+    @JmixProperty
+    @JmixGeneratedValue
+    protected UUID id;
+    @JmixProperty
     protected String name;
-    @ModelProperty
+    @JmixProperty
     protected Boolean useExistingView = false;
-    @ModelProperty
+    @JmixProperty
     protected String viewName;
-    @ModelProperty
+    @JmixProperty
     protected String text;
-    @ModelProperty
+    @JmixProperty
     protected Integer type;
-    @ModelProperty
+    @JmixProperty
     protected Integer jsonSourceType = JsonSourceType.GROOVY_SCRIPT.getId();
-    @ModelProperty
+    @JmixProperty
     protected String jsonSourceText;
-    @ModelProperty
+    @JmixProperty
     protected String jsonPathQuery;
-    @ModelProperty
+    @JmixProperty
     protected ReportInputParameter jsonSourceInputParameter;
-    @ModelProperty
+    @JmixProperty
     protected String entityParamName;
-    @ModelProperty
+    @JmixProperty
     protected String listEntitiesParamName;
-    @ModelProperty
+    @JmixProperty
     protected BandDefinition bandDefinition;
-    @ModelProperty
+    @JmixProperty
     protected String linkParameterName;
-    @ModelProperty
+    @JmixProperty
     protected String dataStore;
-    @ModelProperty
+    @JmixProperty
     protected Boolean processTemplate;
 
-    public View getView() {
-        return view;
+    public UUID getId() {
+        return id;
     }
 
-    public void setView(View view) {
-        this.view = view;
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public FetchPlan getFetchPlan() {
+        return fetchPlan;
+    }
+
+    public void setFetchPlan(FetchPlan fetchPlan) {
+        this.fetchPlan = fetchPlan;
     }
 
     public Boolean getUseExistingView() {

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template;
+package io.jmix.reportsui.wizard.template;
 
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
+import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
@@ -25,10 +24,13 @@ import io.jmix.reports.entity.wizard.ReportRegion;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Temporal;
 import java.util.Date;
 
+@Component("report_ReportTemplatePlaceholder")
 public class ReportTemplatePlaceholder {
     protected static final String HAS_CONTENT = "?has_content";
     protected static final String AND = " && ";
@@ -39,6 +41,9 @@ public class ReportTemplatePlaceholder {
     protected static final String HTML_DATE_MASK = "<#if %5$s %1$s.fields('%2$s')%4$s?has_content>${%1$s.fields('%2$s')%4$s?string(\"%3$s\")}</#if>";// /like <#if Task[0].fields('updateTs')?has_content>${Task[0].fields('updateTs')?string("dd.MM.yyyy hh:mm")}</#if>
 
     private static final Logger log = LoggerFactory.getLogger(ReportTemplatePlaceholder.class);
+
+    @Autowired
+    protected Messages messages;
 
     /**
      * used in doc table fields and sheet reports
@@ -71,20 +76,19 @@ public class ReportTemplatePlaceholder {
                 log.warn("Temporal annotated class property " + reportRegion.getNameForBand() + "." + wrappedMetaProperty.getName() + " is not assignable from java.util.Date class");
             }
             String dateMask;
-            Messages messages = AppBeans.get(Messages.NAME);
             if (temporal != null) {
                 switch (temporal.value()) {
                     case DATE:
-                        dateMask = messages.getMainMessage("dateFormat");
+                        dateMask = messages.getMessage("dateFormat");
                         break;
                     case TIME:
-                        dateMask = messages.getMainMessage("timeFormat");
+                        dateMask = messages.getMessage("timeFormat");
                         break;
                     default:
-                        dateMask = messages.getMainMessage("dateTimeFormat");
+                        dateMask = messages.getMessage("dateTimeFormat");
                 }
             } else {
-                dateMask = messages.getMainMessage("dateTimeFormat");
+                dateMask = messages.getMessage("dateTimeFormat");
             }
             String[] partsFieldName = fieldName.split("\\.");
             if (partsFieldName.length > 1) {

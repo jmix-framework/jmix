@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template.generators;
+package io.jmix.reportsui.wizard.template.generators;
 
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportRegion;

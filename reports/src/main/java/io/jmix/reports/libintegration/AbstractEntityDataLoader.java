@@ -20,8 +20,8 @@ import com.haulmont.yarg.loaders.ReportDataLoader;
 import com.haulmont.yarg.structure.ReportQuery;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.JmixEntity;
-import io.jmix.reports.ReportingApi;
+import io.jmix.core.Entity;
+import io.jmix.reports.Reports;
 import io.jmix.reports.entity.DataSet;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,31 +32,31 @@ public abstract class AbstractEntityDataLoader implements ReportDataLoader {
     protected BeanFactory beanFactory;
 
     @Autowired
-    protected ReportingApi reportingApi;
+    protected Reports reports;
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
-    protected JmixEntity reloadEntityByDataSetView(ReportQuery reportQuery, Object inputObject) {
-        JmixEntity entity = null;
-        if (inputObject instanceof JmixEntity && reportQuery instanceof DataSet) {
-            entity = (JmixEntity) inputObject;
+    protected Entity reloadEntityByDataSetView(ReportQuery reportQuery, Object inputObject) {
+        Entity entity = null;
+        if (inputObject instanceof Entity && reportQuery instanceof DataSet) {
+            entity = (Entity) inputObject;
             DataSet dataSet = (DataSet) reportQuery;
             FetchPlan view = getView(entity, dataSet);
             if (view != null) {
-                entity = reportingApi.reloadEntity(entity, view);
+                entity = reports.reloadEntity(entity, view);
             }
         }
 
         return entity;
     }
 
-    protected FetchPlan getView(JmixEntity entity, DataSet dataSet) {
+    protected FetchPlan getView(Entity entity, DataSet dataSet) {
         FetchPlan view;
         if (Boolean.TRUE.equals(dataSet.getUseExistingView())) {
             view = fetchPlanRepository.getFetchPlan(entity.getClass(), dataSet.getViewName());
         } else {
-            view = dataSet.getView();
+            view = dataSet.getFetchPlan();
         }
         return view;
     }

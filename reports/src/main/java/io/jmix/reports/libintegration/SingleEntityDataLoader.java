@@ -16,15 +16,13 @@
 
 package io.jmix.reports.libintegration;
 
-import io.jmix.core.JmixEntity;
-import io.jmix.reports.app.EntityMap;
-import io.jmix.reports.entity.DataSet;
 import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.ProxyWrapper;
 import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.core.Entity;
+import io.jmix.reports.app.EntityMap;
+import io.jmix.reports.entity.DataSet;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,9 +54,9 @@ public class SingleEntityDataLoader extends AbstractEntityDataLoader {
 
         EntityMap result;
         if (dataSet instanceof DataSet) {
-            result = new EntityMap((JmixEntity) entity, getView((JmixEntity)entity, (DataSet) dataSet),beanFactory);
+            result = new EntityMap((Entity) entity, getView((Entity) entity, (DataSet) dataSet), beanFactory);
         } else {
-            result = new EntityMap((JmixEntity) entity,beanFactory);
+            result = new EntityMap((Entity) entity, beanFactory);
         }
         return Collections.singletonList(result);
     }

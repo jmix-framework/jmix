@@ -1,29 +1,51 @@
 /*
- * Copyright (c) 2008-2019 Haulmont. All rights reserved.
- * Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
+ * Copyright (c) 2008-2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package io.jmix.reports.entity;
 
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import com.haulmont.cuba.core.entity.Creatable;
-import com.haulmont.cuba.core.entity.FileDescriptor;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
+import java.net.URI;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity(name = "report_ReportExecution")
 @Table(name = "REPORT_EXECUTION")
-public class ReportExecution extends BaseUuidEntity implements Creatable {
+@JmixEntity
+public class ReportExecution {
     private static final long serialVersionUID = -1714474379895234441L;
 
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
     @Column(name = "CREATE_TS")
+    @CreatedDate
     private Date createTs;
 
     @Column(name = "CREATED_BY", length = 50)
+    @CreatedBy
     private String createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,9 +79,8 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
     @Column(name = "CANCELLED")
     private Boolean cancelled;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OUTPUT_DOCUMENT_ID")
-    private FileDescriptor outputDocument;
+    @Column(name = "FILE_URI")
+    private URI fileUri;
 
     @Column(name = "PARAMS")
     @Lob
@@ -78,22 +99,26 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
         cancelled = false;
     }
 
-    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public Date getCreateTs() {
         return createTs;
     }
 
-    @Override
     public void setCreateTs(Date createTs) {
         this.createTs = createTs;
     }
 
-    @Override
     public String getCreatedBy() {
         return createdBy;
     }
 
-    @Override
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
@@ -162,12 +187,12 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
         this.cancelled = cancelled;
     }
 
-    public FileDescriptor getOutputDocument() {
-        return outputDocument;
+    public URI getFileUri() {
+        return fileUri;
     }
 
-    public void setOutputDocument(FileDescriptor outputDocument) {
-        this.outputDocument = outputDocument;
+    public void setFileUri(URI fileUri) {
+        this.fileUri = fileUri;
     }
 
     public String getParams() {
@@ -194,7 +219,7 @@ public class ReportExecution extends BaseUuidEntity implements Creatable {
         this.serverId = serverId;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties({"finishTime", "startTime"})
     public Long getExecutionTimeSec() {
         if (finishTime == null || startTime == null)

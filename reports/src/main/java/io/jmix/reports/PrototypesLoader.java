@@ -16,14 +16,12 @@
 
 package io.jmix.reports;
 
-import com.haulmont.cuba.core.global.*;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
+import io.jmix.core.*;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.exception.ReportingException;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,11 +33,12 @@ public class PrototypesLoader {
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
 
+    @Secure
     @Autowired
     protected DataManager dataManager;
 
     @Autowired
-    protected ReportingConfig reportingConfig;
+    protected ReportsProperties reportsProperties;
 
     @Autowired
     protected Metadata metadata;
@@ -52,10 +51,10 @@ public class PrototypesLoader {
      */
     public List loadData(ParameterPrototype parameterPrototype) {
 
-        MetaClass metaClass = metadata.getSession().getClassNN(parameterPrototype.getMetaClassName());
+        MetaClass metaClass = metadata.getSession().getClass(parameterPrototype.getMetaClassName());
         FetchPlan queryView = fetchPlanRepository.getFetchPlan(metaClass, parameterPrototype.getViewName());
 
-        LoadContext loadContext = LoadContext.create(metaClass.getJavaClass());
+        LoadContext loadContext = new LoadContext(metaClass);
 
         LoadContext.Query query = new LoadContext.Query(parameterPrototype.getQueryString());
 
@@ -67,14 +66,14 @@ public class PrototypesLoader {
         if (parameterPrototype.getMaxResults() != null && !parameterPrototype.getMaxResults().equals(0)) {
             query.setMaxResults(parameterPrototype.getMaxResults());
         } else {
-            query.setMaxResults(reportingConfig.getParameterPrototypeQueryLimit());
+            query.setMaxResults(reportsProperties.getParameterPrototypeQueryLimit());
         }
 
-        loadContext.setView(queryView);
+        loadContext.setFetchPlan(queryView);
         loadContext.setQuery(query);
         List queryResult;
         try {
-            queryResult = dataManager.secure().loadList(loadContext);
+            queryResult = dataManager.loadList(loadContext);
         } catch (Exception e) {
             throw new ReportingException(e);
         }

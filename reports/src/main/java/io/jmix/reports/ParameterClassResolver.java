@@ -17,17 +17,17 @@
 package io.jmix.reports;
 
 import com.google.common.collect.ImmutableMap;
+import io.jmix.core.ClassManager;
+import io.jmix.core.Entity;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.JmixEntity;
-import com.haulmont.cuba.core.global.Metadata;
-import com.haulmont.cuba.core.global.Scripting;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.time.*;
 import java.util.Collection;
@@ -65,7 +65,7 @@ public class ParameterClassResolver {
             .build();
 
     @Autowired
-    protected Scripting scripting;
+    protected ClassManager classManager;
 
     @Autowired
     protected Metadata metadata;
@@ -75,7 +75,7 @@ public class ParameterClassResolver {
         Class aClass = primitiveParameterTypeMapping.get(parameter.getType());
         if (aClass == null) {
             if (parameter.getType() == ParameterType.ENTITY || parameter.getType() == ParameterType.ENTITY_LIST) {
-                MetaClass metaClass = metadata.getSession().getClass(parameter.getEntityMetaClass());
+                MetaClass metaClass = metadata.findClass(parameter.getEntityMetaClass());
                 if (metaClass != null) {
                     return metaClass.getJavaClass();
                 } else {
@@ -83,7 +83,7 @@ public class ParameterClassResolver {
                 }
             } else if (parameter.getType() == ParameterType.ENUMERATION) {
                 if (StringUtils.isNotBlank(parameter.getEnumerationClass())) {
-                    return scripting.loadClass(parameter.getEnumerationClass());
+                    return classManager.loadClass(parameter.getEnumerationClass());
                 }
             }
         }
@@ -101,7 +101,7 @@ public class ParameterClassResolver {
         if (parameterType != null) {
             return parameterType;
         } else {
-            if (JmixEntity.class.isAssignableFrom(parameterClass)) {
+            if (Entity.class.isAssignableFrom(parameterClass)) {
                 return ParameterType.ENTITY;
             } else if (Collection.class.isAssignableFrom(parameterClass)) {
                 return ParameterType.ENTITY_LIST;

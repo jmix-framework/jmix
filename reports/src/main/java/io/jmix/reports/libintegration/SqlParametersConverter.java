@@ -16,11 +16,11 @@
 
 package io.jmix.reports.libintegration;
 
-import com.haulmont.cuba.core.Persistence;
 import com.haulmont.yarg.loaders.ReportParametersConverter;
+import io.jmix.core.Entity;
 import io.jmix.core.Id;
-import io.jmix.core.JmixEntity;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
+import io.jmix.data.persistence.DbmsSpecifics;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.List;
 public class SqlParametersConverter implements ReportParametersConverter {
 
     @Autowired
-    protected Persistence persistence;
+    protected DbmsSpecifics dbmsSpecifics;
 
     @Override
     public <T> T convert(Object input) {
@@ -42,10 +42,10 @@ public class SqlParametersConverter implements ReportParametersConverter {
             Collection collection = (Collection) input;
             if (CollectionUtils.isNotEmpty(collection)) {
                 Object firstObject = collection.iterator().next();
-                if (firstObject instanceof JmixEntity) {
+                if (firstObject instanceof Entity) {
                     List<Object> entityIds = new ArrayList<>();
                     for (Object object : collection) {
-                        Object id = Id.of((JmixEntity) object).getValue();
+                        Object id = Id.of((Entity) object).getValue();
                         entityIds.add(dbSpecificConvert(id));
                     }
 
@@ -56,18 +56,18 @@ public class SqlParametersConverter implements ReportParametersConverter {
             Object[] objects = (Object[]) input;
             if (ArrayUtils.isNotEmpty(objects)) {
                 Object firstObject = objects[0];
-                if (firstObject instanceof JmixEntity) {
+                if (firstObject instanceof Entity) {
                     List<Object> entityIds = new ArrayList<>();
                     for (Object object : objects) {
-                        Object id = Id.of((JmixEntity) object).getValue();
+                        Object id = Id.of((Entity) object).getValue();
                         entityIds.add(dbSpecificConvert(id));
                     }
 
                     return (T) entityIds;
                 }
             }
-        } else if (input instanceof JmixEntity) {
-            Object id = Id.of((JmixEntity) input).getValue();
+        } else if (input instanceof Entity) {
+            Object id = Id.of((Entity) input).getValue();
             return (T) dbSpecificConvert(id);
         }
 
@@ -75,6 +75,6 @@ public class SqlParametersConverter implements ReportParametersConverter {
     }
 
     private Object dbSpecificConvert(Object object) {
-        return persistence.getDbTypeConverter().getSqlObject(object);
+        return dbmsSpecifics.getDbTypeConverter().getSqlObject(object);
     }
 }

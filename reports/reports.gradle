@@ -25,32 +25,33 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
-    api 'io.jmix.cuba:jmix-cuba'
-    api 'io.jmix.rest:jmix-rest'
     api 'io.jmix.security:jmix-security'
-    api 'io.jmix.dynattr:jmix-dynattr'
-    api 'io.jmix.fsfilestorage:jmix-fsfilestorage'
+    api 'io.jmix.security:jmix-security-data'
+    api 'io.jmix.security:jmix-security-ui'
+//    api 'io.jmix.dynattr:jmix-dynattr'
 
-    implementation 'com.google.code.gson:gson'
-    implementation ('com.haulmont.yarg:yarg-api:2.2.5') {
+    api 'com.thoughtworks.xstream:xstream'
+
+    api ('com.haulmont.yarg:yarg-api') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
-    implementation ('com.haulmont.yarg:yarg:2.2.5') {
+    api ('com.haulmont.yarg:yarg') {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
         exclude group: 'commons-dbcp', module: 'commons-dbcp'
     }
+
+    implementation 'org.codehaus.groovy:groovy-templates'
+
+    implementation 'com.google.code.gson:gson'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
-
-    implementation 'com.thoughtworks.xstream:xstream:1.4.11.1'
 
     testImplementation 'io.jmix.ui:jmix-ui-test-assist'
 
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'ch.qos.logback:logback-classic'
-    testImplementation 'commons-codec:commons-codec:1.13'
 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

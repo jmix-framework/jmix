@@ -16,16 +16,18 @@
 
 package io.jmix.reports;
 
-import com.haulmont.cuba.gui.export.ExportFormat;
 import com.haulmont.yarg.structure.ReportOutputType;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static io.jmix.reports.entity.ReportOutputType.*;
 
 public class ReportPrintHelper {
 
-    private static HashMap<ReportOutputType, ExportFormat> exportFormats = new HashMap<>();
+    private static HashMap<ReportOutputType, String> mimeTypes = new HashMap<>();
 
     private static Map<String, List<io.jmix.reports.entity.ReportOutputType>> inputOutputTypesMapping = new HashMap<>();
 
@@ -41,17 +43,18 @@ public class ReportPrintHelper {
         inputOutputTypesMapping.put("csv", Arrays.asList(CSV));
         inputOutputTypesMapping.put("jrxml", Arrays.asList(XLS, DOC, PDF, HTML, DOCX, XLSX, CSV));
         inputOutputTypesMapping.put("jasper", Arrays.asList(XLS, DOC, PDF, HTML, DOCX, XLSX, CSV));
-        exportFormats.put(ReportOutputType.xls, ExportFormat.XLS);
-        exportFormats.put(ReportOutputType.xlsx, ExportFormat.XLSX);
-        exportFormats.put(ReportOutputType.doc, ExportFormat.DOC);
-        exportFormats.put(ReportOutputType.docx, ExportFormat.DOCX);
-        exportFormats.put(ReportOutputType.pdf, ExportFormat.PDF);
-        exportFormats.put(ReportOutputType.html, ExportFormat.HTML);
-        exportFormats.put(ReportOutputType.csv, ExportFormat.CSV);
+
+        mimeTypes.put(ReportOutputType.xls, "application/vnd.ms-excel");
+        mimeTypes.put(ReportOutputType.xlsx, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        mimeTypes.put(ReportOutputType.doc, "application/doc");
+        mimeTypes.put(ReportOutputType.docx, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        mimeTypes.put(ReportOutputType.pdf, "application/pdf");
+        mimeTypes.put(ReportOutputType.html, "text/html");
+        mimeTypes.put(ReportOutputType.csv, "application/csv");
     }
 
-    public static ExportFormat getExportFormat(ReportOutputType outputType) {
-        return exportFormats.get(outputType);
+    public static String getMimeType(ReportOutputType outputType) {
+        return mimeTypes.get(outputType);
     }
 
     public static Map<String, List<io.jmix.reports.entity.ReportOutputType>> getInputOutputTypesMapping() {

@@ -15,11 +15,7 @@
  */
 package io.jmix.reports.app;
 
-import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.FetchPlan;
-import io.jmix.core.InstanceNameProvider;
-import io.jmix.core.JmixEntity;
-import io.jmix.core.MetadataTools;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -40,13 +36,13 @@ public class EntityMap implements Map<String, Object> {
     protected MetadataTools metadataTools;
     protected InstanceNameProvider instanceNameProvider;
 
-    protected JmixEntity instance;
+    protected Entity instance;
     protected FetchPlan view;
     protected HashMap<String, Object> explicitData;
 
     protected boolean loaded = false;
 
-    public EntityMap(JmixEntity entity, BeanFactory beanFactory) {
+    public EntityMap(Entity entity, BeanFactory beanFactory) {
         this.instance = entity;
         this.explicitData = new HashMap<>();
         this.metadata = beanFactory.getBean(Metadata.class);
@@ -54,7 +50,7 @@ public class EntityMap implements Map<String, Object> {
         this.instanceNameProvider = beanFactory.getBean(InstanceNameProvider.class);
     }
 
-    public EntityMap(JmixEntity entity, FetchPlan loadedAttributes, BeanFactory beanFactory) {
+    public EntityMap(Entity entity, FetchPlan loadedAttributes, BeanFactory beanFactory) {
         this(entity, beanFactory);
         view = loadedAttributes;
     }
@@ -83,7 +79,7 @@ public class EntityMap implements Map<String, Object> {
         return false;
     }
 
-    private MetaClass getMetaClass(JmixEntity entity) {
+    private MetaClass getMetaClass(Entity entity) {
         return metadata.getClass(instance.getClass());
     }
 
@@ -163,7 +159,7 @@ public class EntityMap implements Map<String, Object> {
         }
     }
 
-    protected Object getValue(JmixEntity instance, Object key) {
+    protected Object getValue(Entity instance, Object key) {
         if (key == null) {
             return null;
         }
@@ -172,8 +168,8 @@ public class EntityMap implements Map<String, Object> {
         if (path.endsWith(INSTANCE_NAME_KEY)) {
             if (StringUtils.isNotBlank(path.replace(INSTANCE_NAME_KEY, ""))) {
                 Object value = getValue(instance, path.replace("." + INSTANCE_NAME_KEY, ""));
-                if (value instanceof JmixEntity) {
-                    return instanceNameProvider.getInstanceName((JmixEntity) value);
+                if (value instanceof Entity) {
+                    return instanceNameProvider.getInstanceName((Entity) value);
                 }
             } else {
                 try {
@@ -202,7 +198,7 @@ public class EntityMap implements Map<String, Object> {
         return value;
     }
 
-    public JmixEntity getInstance() {
+    public Entity getInstance() {
         return instance;
     }
 

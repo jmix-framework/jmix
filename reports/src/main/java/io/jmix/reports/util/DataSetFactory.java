@@ -16,7 +16,7 @@
 
 package io.jmix.reports.util;
 
-import com.haulmont.cuba.core.global.Metadata;
+import io.jmix.core.Metadata;
 import io.jmix.reports.entity.BandDefinition;
 import io.jmix.reports.entity.DataSet;
 import io.jmix.reports.entity.DataSetType;
@@ -30,7 +30,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Class presents factory bean for create {@link DataSet} instance with basic filled attributes
  */
-@Component("report_DataSetFactory")
 public class DataSetFactory {
 
     @Autowired

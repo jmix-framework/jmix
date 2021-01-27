@@ -16,21 +16,37 @@
 
 package io.jmix.reports.entity.table;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "report$TemplateTableColumn")
-public class TemplateTableColumn extends BaseUuidEntity {
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.UUID;
 
-    @ModelProperty
+@JmixEntity(name = "report_TemplateTableColumn")
+public class TemplateTableColumn implements Serializable {
+
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     protected String key;
 
-    @ModelProperty
+    @JmixProperty
     protected String caption;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer position;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Integer getPosition() {
         return position;

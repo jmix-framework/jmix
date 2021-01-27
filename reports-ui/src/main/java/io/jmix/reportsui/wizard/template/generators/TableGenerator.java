@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template.generators;
+package io.jmix.reportsui.wizard.template.generators;
 
 import io.jmix.reports.entity.table.TemplateTableBand;
 import io.jmix.reports.entity.table.TemplateTableColumn;
@@ -22,7 +22,7 @@ import io.jmix.reports.entity.table.TemplateTableDescription;
 import io.jmix.reports.entity.wizard.RegionProperty;
 import io.jmix.reports.entity.wizard.ReportData;
 import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reports.wizard.template.Generator;
+import io.jmix.reportsui.wizard.template.Generator;
 
 import java.util.LinkedList;
 import java.util.List;

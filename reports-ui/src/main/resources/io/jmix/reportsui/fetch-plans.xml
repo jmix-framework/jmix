@@ -17,18 +17,9 @@
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
 
-    <fetchPlan entity="report_ReportTemplate" name="template.edit" extends="_local">
-        <property name="report">
-            <property name="xml"/>
-            <property name="name"/>
-            <property name="localeNames"/>
-        </property>
-    </fetchPlan>
-
-    <fetchPlan entity="report_Report" name="report.edit" extends="_local">
-        <property name="templates" fetchPlan="template.edit"/>
-        <property name="defaultTemplate" fetchPlan="template.edit"/>
-        <property name="group" fetchPlan="_local"/>
+    <fetchPlan entity="report_Report" name="report.browse" extends="_local">
+        <property name="group"/>
+        <property name="updateTs"/>
     </fetchPlan>
 
     <fetchPlan entity="report_Report" name="report.view">
@@ -37,7 +28,9 @@
         <property name="code"/>
         <property name="description"/>
         <property name="reportType"/>
-        <property name="group" fetchPlan="_minimal"/>
+        <property name="group" fetchPlan="_instance_name">
+            <property name="title"/>
+        </property>
     </fetchPlan>
 
     <fetchPlan entity="report_Report" name="report.print">
@@ -50,11 +43,7 @@
         <property name="xml"/>
     </fetchPlan>
 
-    <fetchPlan entity="report_Report" name="report.withTemplates" extends="_minimal">
-        <property name="templates" fetchPlan="_minimal"/>
-    </fetchPlan>
-
     <fetchPlan entity="report_ReportExecution" name="reportExecution.browse" extends="_local">
-        <property name="outputDocument" fetchPlan="_minimal"/>
+        <!--        <property name="fileUri" fetchPlan="_instance_name"/>-->
     </fetchPlan>
 </fetchPlans>

@@ -16,27 +16,42 @@
 
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "report$ChartSeries")
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.UUID;
+
+@JmixEntity(name = "report_ChartSeries")
 @SystemLevel
-public class ChartSeries extends BaseUuidEntity {
+public class ChartSeries implements Serializable {
 
     private static final long serialVersionUID = -3205550424620740535L;
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+    @JmixProperty
     protected String name;
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String type;
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String valueField;
-    @ModelProperty
+    @JmixProperty
     protected String colorField;
-    @ModelProperty
+    @JmixProperty
     protected Integer order;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

@@ -17,44 +17,41 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.core.Persistence;
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.QueryUtils;
-import io.jmix.core.Resources;
-import io.jmix.reports.ReportingApi;
-import io.jmix.reports.entity.ParameterType;
-import io.jmix.reports.entity.PredefinedTransformation;
-import io.jmix.reports.entity.ReportInputParameter;
 import com.haulmont.yarg.exception.ReportingException;
-import com.haulmont.yarg.reporting.Reporting;
 import com.haulmont.yarg.reporting.RunParams;
 import com.haulmont.yarg.structure.BandData;
 import com.haulmont.yarg.structure.Report;
 import com.haulmont.yarg.structure.ReportParameter;
 import com.haulmont.yarg.util.groovy.Scripting;
-import io.jmix.ui.filter.ParametersHelper;
+import io.jmix.core.DataManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.QueryUtils;
+import io.jmix.core.Resources;
+import io.jmix.reports.Reports;
+import io.jmix.reports.entity.ParameterType;
+import io.jmix.reports.entity.PredefinedTransformation;
+import io.jmix.reports.entity.ReportInputParameter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class JmixReporting extends Reporting {
+public class JmixReporting extends com.haulmont.yarg.reporting.Reporting {
+
     public static final String REPORT_FILE_NAME_KEY = "__REPORT_FILE_NAME";
 
     protected Scripting scripting;
 
-    protected ReportingApi reportingApi;
+    protected Reports reports;
 
     @Autowired
     protected Resources resources;
 
     @Autowired
-    protected Persistence persistence;
+    protected DataManager dataManager;
 
     @Autowired
     protected Metadata metadata;
@@ -63,8 +60,8 @@ public class JmixReporting extends Reporting {
         this.scripting = scripting;
     }
 
-    public void setReportingApi(ReportingApi reportingApi) {
-        this.reportingApi = reportingApi;
+    public void setReports(Reports reports) {
+        this.reports = reports;
     }
 
     @Override
@@ -106,7 +103,7 @@ public class JmixReporting extends Reporting {
     protected void handleDateTimeRelatedParameterAsNow(String paramName, Object paramValue, ParameterType parameterType,
                                                        Map<String, Object> handledParams) {
         if (Objects.isNull(paramValue)) {
-            paramValue = reportingApi.currentDateOrTime(parameterType);
+            paramValue = reports.currentDateOrTime(parameterType);
             handledParams.put(paramName, paramValue);
         }
     }
@@ -127,7 +124,9 @@ public class JmixReporting extends Reporting {
         Map<String, Object> scriptParams = new HashMap<>();
         scriptParams.put("params", params);
         scriptParams.put("paramValue", paramValue);
-        scriptParams.put("persistence", persistence);
+        //todo
+        //scriptParams.put("persistence", persistence);
+        scriptParams.put("dataManager", dataManager);
         scriptParams.put("metadata", metadata);
         script = StringUtils.trim(script);
         if (script.endsWith(".groovy")) {
@@ -137,7 +136,7 @@ public class JmixReporting extends Reporting {
     }
 
     protected String wrapValueForLike(Object value, boolean before, boolean after) {
-        return ParametersHelper.CASE_INSENSITIVE_MARKER + (before ? "%" : "") + value + (after ? "%" : "");
+        return "(?i)" + (before ? "%" : "") + value + (after ? "%" : "");
     }
 
     @Override
@@ -146,7 +145,7 @@ public class JmixReporting extends Reporting {
 //        if (ExceptionUtils.getRootCause(e) instanceof ResourceCanceledException) {
 //            logger.info("Report is canceled by user request");
 //        } else {
-            super.logException(e);
+        super.logException(e);
 //        }
     }
 }

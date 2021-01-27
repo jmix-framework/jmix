@@ -16,12 +16,11 @@
 package io.jmix.reports.libintegration;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.haulmont.cuba.core.global.Configuration;
-import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.yarg.formatters.CustomReport;
 import com.haulmont.yarg.structure.BandData;
+import io.jmix.core.ClassManager;
 import io.jmix.core.CoreProperties;
-import io.jmix.reports.ReportingConfig;
+import io.jmix.reports.ReportsProperties;
 import io.jmix.reports.entity.CustomTemplateDefinedBy;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportTemplate;
@@ -33,6 +32,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.ResourceScriptSource;
+import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -47,17 +52,18 @@ import java.util.regex.Pattern;
 import static java.lang.String.format;
 
 @Component("report_CustomFormatter")
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CustomFormatter implements CustomReport {
     private static final Logger log = LoggerFactory.getLogger(CustomFormatter.class);
 
     @Autowired
-    protected Scripting scripting;
+    protected ScriptEvaluator scriptEvaluator;
 
     @Autowired
-    protected Configuration configuration;
+    protected ClassManager classManager;
 
     @Autowired
-    protected ReportingConfig reportingConfig;
+    protected ReportsProperties reportsProperties;
 
     @Autowired
     protected CoreProperties coreProperties;
@@ -105,7 +111,7 @@ public class CustomFormatter implements CustomReport {
     }
 
     protected byte[] generateReportWithClass(BandData rootBand, String customDefinition) {
-        Class clazz = scripting.loadClassNN(customDefinition);
+        Class clazz = classManager.loadClass(customDefinition);
         try {
             CustomReport customReport = (CustomReport) clazz.newInstance();
             return customReport.createReport(report, rootBand, params);
@@ -128,9 +134,9 @@ public class CustomFormatter implements CustomReport {
         scriptParams.put(ROOT_BAND, rootBand);
 
         if (Pattern.matches(PATH_GROOVY_FILE, customDefinition)) {
-            result = scripting.runGroovyScript(customDefinition, scriptParams);
+            result = scriptEvaluator.evaluate(new ResourceScriptSource(new ClassPathResource(customDefinition)), scriptParams);
         } else {
-            result = scripting.evaluateGroovy(customDefinition, scriptParams);
+            result = scriptEvaluator.evaluate(new StaticScriptSource(customDefinition), scriptParams);
         }
 
         if (result instanceof byte[]) {
@@ -156,14 +162,14 @@ public class CustomFormatter implements CustomReport {
 
         convertedParams.put(ROOT_BAND, rootBand);
 
-        String url = scripting.evaluateGroovy("return \"" + customDefinition + "\"", convertedParams).toString();
+        String url = scriptEvaluator.evaluate(new StaticScriptSource("return \"" + customDefinition + "\""), convertedParams).toString();
 
         try {
             Future<byte[]> future = executor.submit(() ->
                     doReadBytesFromUrl(url)
             );
 
-            byte[] bytes = future.get(reportingConfig.getCurlTimeout(), TimeUnit.SECONDS);
+            byte[] bytes = future.get(reportsProperties.getCurlTimeout(), TimeUnit.SECONDS);
 
             return bytes;
         } catch (InterruptedException e) {
@@ -195,8 +201,8 @@ public class CustomFormatter implements CustomReport {
         Process proc = null;
         try {
             Runtime runtime = Runtime.getRuntime();
-            String curlToolPath = reportingConfig.getCurlPath();
-            String curlToolParams = reportingConfig.getCurlParams();
+            String curlToolPath = reportsProperties.getCurlPath();
+            String curlToolParams = reportsProperties.getCurlParams();
             String command = format("%s %s %s", curlToolPath, curlToolParams, url);
             log.info("Reporting::CustomFormatter::Trying to load report from URL: [{}]", url);
             proc = runtime.exec(command);

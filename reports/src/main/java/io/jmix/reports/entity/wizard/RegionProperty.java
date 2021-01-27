@@ -16,27 +16,31 @@
 
 package io.jmix.reports.entity.wizard;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
+import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.util.UUID;
 
 /**
  * Immutable property class
- *
  */
-@ModelObject(name = "report$WizardReportRegionProperty")
+@JmixEntity(name = "report_WizardReportRegionProperty")
 @SystemLevel
-public class RegionProperty extends BaseUuidEntity implements OrderableEntity {
+public class RegionProperty implements OrderableEntity {
 
     private static final long serialVersionUID = 8528946767216568803L;
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+    @JmixProperty
     @Transient
     protected EntityTreeNode entityTreeNode;
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Long orderNum;
 
@@ -58,40 +62,48 @@ public class RegionProperty extends BaseUuidEntity implements OrderableEntity {
         this.orderNum = orderNum;
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getName() {
         return entityTreeNode.getName();
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getLocalizedName() {
         return entityTreeNode.getLocalizedName();
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getHierarchicalName() {
         return entityTreeNode.getHierarchicalName();
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getHierarchicalNameExceptRoot() {
         return entityTreeNode.getHierarchicalNameExceptRoot();
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getHierarchicalLocalizedName() {
         return entityTreeNode.getHierarchicalLocalizedName();
     }
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     public String getHierarchicalLocalizedNameExceptRoot() {
         return entityTreeNode.getHierarchicalLocalizedNameExceptRoot();
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }
 

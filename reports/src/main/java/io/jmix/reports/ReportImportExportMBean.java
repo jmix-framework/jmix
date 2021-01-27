@@ -16,11 +16,9 @@
 
 package io.jmix.reports;
 
-import com.haulmont.cuba.core.global.FileStorageException;
-
 import java.io.IOException;
 
 public interface ReportImportExportMBean {
 
-    String deployAllReportsFromPath(String path) throws IOException, FileStorageException;
+    String deployAllReportsFromPath(String path) throws IOException;
 }

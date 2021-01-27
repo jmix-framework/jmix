@@ -15,22 +15,36 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "report$ReportScreen")
-@SystemLevel
-public class ReportScreen extends BaseUuidEntity {
+import javax.persistence.Id;
+import java.util.UUID;
+
+@JmixEntity(name = "report_ReportScreen")
+public class ReportScreen {
 
     private static final long serialVersionUID = -7416940515333599470L;
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     protected Report report;
 
-    @ModelProperty
+    @JmixProperty
     protected String screenId;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Report getReport() {
         return report;

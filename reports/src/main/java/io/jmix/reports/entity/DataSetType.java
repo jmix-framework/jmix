@@ -37,7 +37,7 @@ public enum DataSetType implements EnumClass<Integer> {
     GROOVY(30, "groovy"),
 
     /**
-     * JmixEntity
+     * Entity
      */
     SINGLE(40, "single"),
 

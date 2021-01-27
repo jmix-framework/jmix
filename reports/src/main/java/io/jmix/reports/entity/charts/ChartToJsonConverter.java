@@ -19,7 +19,7 @@ package io.jmix.reports.entity.charts;
 import com.google.common.base.Strings;
 import com.google.gson.*;
 import io.jmix.core.InstanceNameProvider;
-import io.jmix.core.JmixEntity;
+import io.jmix.core.Entity;
 import io.jmix.reports.app.EntityMap;
 import io.jmix.reports.entity.charts.serialization.DateSerializer;
 import org.apache.commons.collections4.CollectionUtils;
@@ -280,8 +280,8 @@ public class ChartToJsonConverter {
     }
 
     protected void addProperty(JsonObject jsonObject, String property, Object value) {
-        if (value instanceof JmixEntity) {
-            value = instanceNameProvider.getInstanceName((JmixEntity) value);
+        if (value instanceof Entity) {
+            value = instanceNameProvider.getInstanceName((Entity) value);
         }
 
         jsonObject.add(property, gson.toJsonTree(value));

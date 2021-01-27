@@ -20,25 +20,31 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSyntaxException;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import io.jmix.core.common.util.Preconditions;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import javax.annotation.Nullable;
+import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.UUID;
 
-@ModelObject(name = "report$AbstractChartDescription")
+@JmixEntity(name = "report_AbstractChartDescription")
 @SystemLevel
-public abstract class AbstractChartDescription extends BaseUuidEntity {
+public abstract class AbstractChartDescription implements Serializable {
 
     private static final long serialVersionUID = 3418759346397067914L;
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+    @JmixProperty
     protected final String type;
-    @ModelProperty
+    @JmixProperty
     protected Boolean showLegend;
-    @ModelProperty
+    @JmixProperty
     protected String customJsonConfig;
 
     @Nullable
@@ -79,6 +85,14 @@ public abstract class AbstractChartDescription extends BaseUuidEntity {
 
     public AbstractChartDescription(String type) {
         this.type = type;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public ChartType getType() {

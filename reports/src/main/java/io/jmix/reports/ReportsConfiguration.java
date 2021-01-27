@@ -13,13 +13,12 @@ import com.haulmont.yarg.structure.BandOrientation;
 import com.haulmont.yarg.util.groovy.Scripting;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.CoreProperties;
-import io.jmix.core.Resources;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.data.DataConfiguration;
 import io.jmix.reports.libintegration.*;
-import io.jmix.reports.util.DataSetFactory;
-import io.jmix.ui.UiConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.*;
 
 import javax.sql.DataSource;
@@ -29,7 +28,8 @@ import java.util.Map;
 
 @Configuration
 @ComponentScan
-@JmixModule(dependsOn = {CoreConfiguration.class, UiConfiguration.class})
+@ConfigurationPropertiesScan
+@JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @PropertySource(name = "io.jmix.reports", value = "classpath:/io/jmix/reports/module.properties")
 public class ReportsConfiguration {
 
@@ -37,13 +37,13 @@ public class ReportsConfiguration {
     protected DataSource dataSource;
 
     @Autowired
-    protected ReportingConfig reportingConfig;
+    protected ReportsProperties reportsProperties;
 
     @Autowired
     protected CoreProperties coreProperties;
 
     @Autowired
-    protected ReportingApi reportingApi;
+    protected Reports reports;
 
     @Bean("reporting_lib_Scripting")
     public Scripting scripting() {
@@ -96,11 +96,11 @@ public class ReportsConfiguration {
 
     @Bean("reporting_lib_OfficeIntegration")
     public JmixOfficeIntegration officeIntegration() {
-        JmixOfficeIntegration officeIntegration = new JmixOfficeIntegration(reportingConfig.getOfficePath(), reportingConfig.getOfficePorts());
-        officeIntegration.setDisplayDeviceAvailable(reportingConfig.getDisplayDeviceAvailable());
-        officeIntegration.setTimeoutInSeconds(reportingConfig.getDocFormatterTimeout());
+        JmixOfficeIntegration officeIntegration = new JmixOfficeIntegration(reportsProperties.getOfficePath(), reportsProperties.getOfficePorts());
+        officeIntegration.setDisplayDeviceAvailable(reportsProperties.getDisplayDeviceAvailable());
+        officeIntegration.setTimeoutInSeconds(reportsProperties.getDocFormatterTimeout());
         officeIntegration.setTemporaryDirPath(Paths.get(coreProperties.getTempDir(), "reporting").toString());
-        officeIntegration.setCountOfRetry(reportingConfig.getCountOfRetry());
+        officeIntegration.setCountOfRetry(reportsProperties.getCountOfRetry());
         return officeIntegration;
     }
 
@@ -117,7 +117,7 @@ public class ReportsConfiguration {
     @Bean("reporting_lib_FormatterFactory")
     public JmixFormatterFactory formatterFactory() {
         JmixFormatterFactory formatterFactory = new JmixFormatterFactory();
-        formatterFactory.setUseOfficeForDocumentConversion(reportingConfig.isUseOfficeForDocumentConversion());
+        formatterFactory.setUseOfficeForDocumentConversion(reportsProperties.isUseOfficeForDocumentConversion());
         formatterFactory.setInlinersProvider(inlinersProvider());
         formatterFactory.setDefaultFormatProvider(fieldFormatProvider());
         formatterFactory.setOfficeIntegration(officeIntegration());
@@ -173,30 +173,28 @@ public class ReportsConfiguration {
     }
 
     @Bean("reporting_lib_DataExtractor")
-    public JmixDataExtractor dataExtractor(){
+    public JmixDataExtractor dataExtractor() {
         JmixDataExtractor jmixDataExtractor = new JmixDataExtractor(loaderFactory());
         jmixDataExtractor.setExtractionControllerFactory(extractionControllerFactory());
         return jmixDataExtractor;
     }
 
     @Bean("reporting_lib_StringConverter")
-    public JmixObjectToStringConverter objectToStringConverter(){
+    public JmixObjectToStringConverter objectToStringConverter() {
         return new JmixObjectToStringConverter();
     }
 
     @Bean("reporting_lib_Reporting")
-    public JmixReporting reporting(){
+    public JmixReporting reporting() {
         JmixReporting jmixReporting = new JmixReporting();
         jmixReporting.setLoaderFactory(loaderFactory());
         jmixReporting.setFormatterFactory(formatterFactory());
         jmixReporting.setDataExtractor(dataExtractor());
         jmixReporting.setObjectToStringConverter(objectToStringConverter());
         jmixReporting.setScripting(scripting());
-        jmixReporting.setReportingApi(reportingApi);
+        jmixReporting.setReports(reports);
         return jmixReporting;
     }
-
-
 
 
     //TODO ReportExceptionHandler

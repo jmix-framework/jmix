@@ -16,25 +16,64 @@
 
 package io.jmix.reports.entity;
 
-import com.haulmont.chile.core.annotations.NamePattern;
-import com.haulmont.cuba.core.entity.StandardEntity;
+import io.jmix.core.annotation.DeletedBy;
+import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import java.util.Date;
+import java.util.UUID;
 
-@Entity(name = "report$ReportGroup")
+@Entity(name = "report_ReportGroup")
 @Table(name = "REPORT_GROUP")
-@NamePattern("#getLocName|title,localeNames")
+@JmixEntity
 @SuppressWarnings("unused")
-public class ReportGroup extends StandardEntity {
+public class ReportGroup implements io.jmix.core.Entity {
 
     private static final long serialVersionUID = 5399528790289039413L;
+
+    @JmixGeneratedValue
+    @Id
+    @Column(name = "ID", nullable = false)
+    private UUID id;
+
+    @Version
+    @Column(name = "VERSION", nullable = false)
+    private Integer version;
+
+    @CreatedDate
+    @Column(name = "CREATE_TS")
+    private Date createTs;
+
+    @CreatedBy
+    @Column(name = "CREATED_BY", length = 50)
+    private String createdBy;
+
+    @LastModifiedDate
+    @Column(name = "UPDATE_TS")
+    private Date updateTs;
+
+    @LastModifiedBy
+    @Column(name = "UPDATED_BY", length = 50)
+    private String updatedBy;
+
+    @DeletedDate
+    @Column(name = "DELETE_TS")
+    private Date deleteTs;
+
+    @DeletedBy
+    @Column(name = "DELETED_BY", length = 50)
+    private String deletedBy;
 
     @Column(name = "TITLE", unique = true, nullable = false)
     private String title;
@@ -51,6 +90,70 @@ public class ReportGroup extends StandardEntity {
 
     @Transient
     private String localeName;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Date getCreateTs() {
+        return createTs;
+    }
+
+    public void setCreateTs(Date createTs) {
+        this.createTs = createTs;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getUpdateTs() {
+        return updateTs;
+    }
+
+    public void setUpdateTs(Date updateTs) {
+        this.updateTs = updateTs;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getDeleteTs() {
+        return deleteTs;
+    }
+
+    public void setDeleteTs(Date deleteTs) {
+        this.deleteTs = deleteTs;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
+    }
 
     public String getTitle() {
         return title;
@@ -84,7 +187,7 @@ public class ReportGroup extends StandardEntity {
         this.sysTenantId = sysTenantId;
     }
 
-    @ModelProperty
+    @JmixProperty
     public String getLocName() {
         if (localeName == null) {
             //TODO Locale helper
@@ -95,9 +198,15 @@ public class ReportGroup extends StandardEntity {
         return localeName;
     }
 
-    @ModelProperty
+    @JmixProperty
     @DependsOnProperties("code")
     public Boolean getSystemFlag() {
         return StringUtils.isNotEmpty(code);
+    }
+
+    @InstanceName
+    @DependsOnProperties({"title", "localeNames"})
+    public String getCaption() {
+        return String.format("%s [%s]", getTitle(), getLocName());
     }
 }

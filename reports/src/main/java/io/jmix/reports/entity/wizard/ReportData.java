@@ -16,23 +16,25 @@
 
 package io.jmix.reports.entity.wizard;
 
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.Composition;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.reports.entity.*;
 import io.jmix.reports.entity.charts.ChartType;
 
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@ModelObject(name = "report$WizardReportData")
+@JmixEntity(name = "report_WizardReportData", annotatedPropertiesOnly = true)
 @SystemLevel
-public class ReportData extends BaseUuidEntity {
+public class ReportData implements Serializable {
 
     private static final long serialVersionUID = -1649648403032678085L;
 
@@ -81,39 +83,43 @@ public class ReportData extends BaseUuidEntity {
         }
     }
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     @Transient
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected EntityTreeNode entityTreeRootNode;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected Report generatedReport;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected ReportGroup group;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected ReportType reportType;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected String templateFileName;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected String outputNamePattern;
 
-    @ModelProperty
+    @JmixProperty
     @Transient
     protected ReportOutputType outputFileType;
 
-    @ModelProperty
+    @JmixProperty
     @Composition
     @Transient
     @OneToMany(targetEntity = RegionProperty.class)
@@ -136,6 +142,14 @@ public class ReportData extends BaseUuidEntity {
 
     @Transient
     protected ChartType chartType = ChartType.SERIAL;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Report getGeneratedReport() {
         return generatedReport;

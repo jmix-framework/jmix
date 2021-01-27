@@ -14,63 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template;
+package io.jmix.reportsui.wizard.template;
 
-import io.jmix.reports.entity.wizard.ReportData;
-import io.jmix.reports.entity.wizard.TemplateFileType;
 import io.jmix.reports.exception.TemplateGenerationException;
-import io.jmix.reports.wizard.template.generators.*;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Component(TemplateGeneratorApi.NAME)
-@Scope("prototype")
-public class TemplateGenerator implements TemplateGeneratorApi {
+public interface TemplateGenerator {
+    String NAME = "report_TemplateGenerator";
 
-    protected final ReportData reportData;
-    protected final TemplateFileType templateFileType;
-
-    public TemplateGenerator(ReportData reportData, TemplateFileType templateFileType) {
-        this.reportData = reportData;
-        this.templateFileType = templateFileType;
-    }
-
-    @Override
-    public byte[] generateTemplate() throws TemplateGenerationException {
-        byte[] template;
-        try {
-            template = createGenerator(templateFileType).generate(reportData);
-        } catch (Exception e) {
-            throw new TemplateGenerationException(e);
-        }
-        return template;
-
-    }
-
-    protected Generator createGenerator(TemplateFileType templateFileType) throws TemplateGenerationException {
-        Generator generator;
-        switch (templateFileType) {
-            case DOCX:
-                generator = new DocxGenerator();
-                break;
-            case XLSX:
-                generator = new XlsxGenerator();
-                break;
-            case HTML:
-                generator = new HtmlGenerator();
-                break;
-            case CHART:
-                generator = new ChartGenerator();
-                break;
-            case CSV:
-                generator = new CsvGenerator();
-                break;
-            case TABLE:
-                generator = new TableGenerator();
-                break;
-            default:
-                throw new TemplateGenerationException(templateFileType + " format is unsupported yet");
-        }
-        return generator;
-    }
+    byte[] generateTemplate() throws TemplateGenerationException;
 }

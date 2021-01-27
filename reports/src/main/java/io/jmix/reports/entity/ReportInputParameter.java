@@ -15,90 +15,105 @@
  */
 package io.jmix.reports.entity;
 
-import com.haulmont.chile.core.annotations.NamePattern;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
 import com.haulmont.yarg.structure.ReportParameterWithDefaultValue;
+import io.jmix.core.Messages;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.util.UUID;
 
-@ModelObject(name = "report$ReportInputParameter")
+@JmixEntity(name = "report_ReportInputParameter")
 @SystemLevel
-@NamePattern("%s|locName")
 @SuppressWarnings("unused")
-public class ReportInputParameter extends BaseUuidEntity implements ReportParameterWithDefaultValue {
+public class ReportInputParameter implements ReportParameterWithDefaultValue {
 
     private static final long serialVersionUID = 6231014880104406246L;
 
-    @ModelProperty
+    @Id
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @JmixProperty
     protected Report report;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer type = ParameterType.TEXT.getId();
 
-    @ModelProperty
+    @JmixProperty
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected String localeNames;
 
-    @ModelProperty
+    @JmixProperty
     protected String alias;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer position;
 
-    @ModelProperty
+    @JmixProperty
     protected String entityMetaClass;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean lookup = false;
 
-    @ModelProperty
+    @JmixProperty
     protected String lookupJoin;
 
-    @ModelProperty
+    @JmixProperty
     protected String lookupWhere;
 
-    @ModelProperty
+    @JmixProperty
     protected String enumerationClass;
 
-    @ModelProperty
+    @JmixProperty
     protected String screen;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean required = false;
 
-    @ModelProperty
+    @JmixProperty
     protected String defaultValue;
 
-    @ModelProperty
+    @JmixProperty
     protected String parameterClassName;
 
-    @ModelProperty
+    @JmixProperty
     protected String transformationScript;
 
-    @ModelProperty
+    @JmixProperty
     protected String validationScript;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean validationOn = false;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer predefinedTransformation;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean hidden;
 
-    @ModelProperty
+    @JmixProperty
     protected Boolean defaultDateIsCurrent = false;
 
     @Transient
     protected String localeName;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public Report getReport() {
         return report;
@@ -213,7 +228,8 @@ public class ReportInputParameter extends BaseUuidEntity implements ReportParame
         this.localeNames = localeNames;
     }
 
-    @ModelProperty
+    @JmixProperty
+    @InstanceName
     public String getLocName() {
         if (localeName == null) {
             //TODO Locale helper

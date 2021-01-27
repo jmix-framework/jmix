@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.reports.wizard.template.generators;
+package io.jmix.reportsui.wizard.template.generators;
 
-import com.haulmont.cuba.core.global.AppBeans;
-import com.haulmont.cuba.core.global.Messages;
-import io.jmix.reports.entity.wizard.RegionProperty;
-import io.jmix.reports.entity.wizard.ReportData;
-import io.jmix.reports.entity.wizard.ReportRegion;
-import io.jmix.reports.wizard.ReportingWizardBean;
-import io.jmix.reports.wizard.template.Generator;
-import io.jmix.reports.wizard.template.ReportTemplatePlaceholder;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import io.jmix.reports.entity.wizard.RegionProperty;
+import io.jmix.reports.entity.wizard.ReportData;
+import io.jmix.reports.entity.wizard.ReportRegion;
+import io.jmix.reportsui.wizard.ReportingWizardImpl;
+import io.jmix.reportsui.wizard.template.Generator;
+import io.jmix.reportsui.wizard.template.ReportTemplatePlaceholder;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -114,19 +112,20 @@ public class HtmlGenerator implements Generator {
     }
 
     protected void appendFreeMarkerSettings(StringBuilder templateBody) {
-        Messages messages = AppBeans.get(Messages.NAME);
-        templateBody.append("\n<#setting boolean_format=\"").
-                append(messages.getMainMessage( "trueString")).
-                append(",").
-                append(messages.getMainMessage( "falseString")).
-                append("\">");
+        //todo
+//        Messages messages = AppBeans.get(Messages.NAME);
+//        templateBody.append("\n<#setting boolean_format=\"").
+//                append(messages.getMainMessage( "trueString")).
+//                append(",").
+//                append(messages.getMainMessage( "falseString")).
+//                append("\">");
     }
 
     protected void appendHtmlFreeMarkerAssignments(StringBuilder stringBuilder, String bandName) {
         stringBuilder.append("\n<#assign ").
                 append(bandName).
                 append(" = ").
-                append(ReportingWizardBean.ROOT_BAND_DEFINITION_NAME).
+                append(ReportingWizardImpl.ROOT_BAND_DEFINITION_NAME).
                 append(".bands.").
                 append(bandName).
                 append("><br/>");

@@ -15,45 +15,59 @@
  */
 package io.jmix.reports.entity;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
-import com.haulmont.chile.core.annotations.NamePattern;
-import com.haulmont.cuba.core.entity.BaseUuidEntity;
-import io.jmix.core.entity.annotation.SystemLevel;
 import com.haulmont.yarg.structure.BandOrientation;
 import com.haulmont.yarg.structure.ReportBand;
 import com.haulmont.yarg.structure.ReportQuery;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.entity.annotation.JmixId;
+import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-@ModelObject(name = "report$BandDefinition")
-@NamePattern("%s|name")
+@JmixEntity(name = "report_BandDefinition")
 @SystemLevel
-public class BandDefinition extends BaseUuidEntity implements ReportBand {
+public class BandDefinition implements ReportBand {
 
     private static final long serialVersionUID = 8658220979738705511L;
 
-    @ModelProperty
+    @JmixId
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @InstanceName
+    @JmixProperty
     protected String name;
 
-    @ModelProperty
+    @JmixProperty
     protected BandDefinition parentBandDefinition;
 
-    @ModelProperty
+    @JmixProperty
     protected Report report;
 
-    @ModelProperty
+    @JmixProperty
     protected List<BandDefinition> childrenBandDefinitions = new ArrayList<>();
 
-    @ModelProperty
+    @JmixProperty
     protected List<DataSet> dataSets = new ArrayList<>();
 
-    @ModelProperty
+    @JmixProperty
     protected Integer orientation;
 
-    @ModelProperty
+    @JmixProperty
     protected Integer position;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     public BandDefinition getParentBandDefinition() {
         return parentBandDefinition;
@@ -128,7 +142,7 @@ public class BandDefinition extends BaseUuidEntity implements ReportBand {
     }
 
     @Override
-    public BandOrientation  getBandOrientation() {
-        return BandOrientation.defaultIfNull(getOrientation() != null ? getOrientation().getBandOrientation(): null);
+    public BandOrientation getBandOrientation() {
+        return BandOrientation.defaultIfNull(getOrientation() != null ? getOrientation().getBandOrientation() : null);
     }
 }

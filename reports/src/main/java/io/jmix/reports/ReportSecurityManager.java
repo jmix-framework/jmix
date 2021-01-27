@@ -16,55 +16,57 @@
 
 package io.jmix.reports;
 
-import com.haulmont.cuba.core.global.LoadContext;
+import io.jmix.core.LoadContext;
 import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.security.model.Role;
+import io.jmix.security.role.RoleRepository;
+import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Component("cuba_ReportSecurityManager")
+@Component("report_ReportSecurityManager")
 public class ReportSecurityManager {
     @Autowired
     protected QueryTransformerFactory queryTransformerFactory;
-    //TODO roles service
-//    @Autowired
-//    protected RolesService rolesService;
+
+    @Autowired
+    protected RoleRepository roleRepository;
+
+    @Autowired
+    protected RoleAssignmentRepository roleAssignmentRepository;
 
     /**
      * Apply security constraints for query to select reports available by roles and screen restrictions
      */
-    public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable Object user) {
+    public void applySecurityPolicies(LoadContext lc, @Nullable String screen, @Nullable UserDetails userDetails) {
         QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
         if (screen != null) {
             transformer.addWhereAsIs("r.screensIdx like :screen escape '\\'");
-            lc.getQuery().setParameter("screen", wrapIdxParameterForSearch(screen));
+            lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
         }
-        if (user != null) {
-            //TODO roles
-//            List<UserRole> userRoles = user.getUserRoles();
-//            Collection<RoleDefinition> roles = rolesService.getRoleDefinitionsForUser(user);
-//            boolean superRole = roles.stream().anyMatch(RoleDefinition::isSuper);
-//            if (!superRole) {
-//                StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");
-//                for (int i = 0; i < userRoles.size(); i++) {
-//                    UserRole ur = userRoles.get(i);
-//                    String paramName = "role" + (i + 1);
-//                    roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
-//                    if (ur.getRole() != null) {
-//                        lc.getQuery().setParameter(paramName, wrapIdxParameterForSearch(ur.getRole().getId().toString()));
-//                    } else {
-//                        lc.getQuery().setParameter(paramName, wrapIdxParameterForSearch(ur.getRoleName()));
-//                    }
-//                }
-//                transformer.addWhereAsIs(roleCondition.toString());
-//            }
+        if (userDetails != null) {
+            List<Role> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
+                    .map(roleAssignment -> roleRepository.findRoleByCode(roleAssignment.getUsername()))
+                    .collect(Collectors.toList());
+
+            StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");
+            for (int i = 0; i < roles.size(); i++) {
+                Role role = roles.get(i);
+                String paramName = "role" + (i + 1);
+                roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
+                lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));
+                transformer.addWhereAsIs(roleCondition.toString());
+            }
+            lc.getQuery().setQueryString(transformer.getResult());
         }
-        lc.getQuery().setQueryString(transformer.getResult());
     }
 
     /**
@@ -74,20 +76,20 @@ public class ReportSecurityManager {
         if (inputValueMetaClass != null) {
             QueryTransformer transformer = queryTransformerFactory.transformer(lc.getQuery().getQueryString());
             StringBuilder parameterTypeCondition = new StringBuilder("r.inputEntityTypesIdx like :type escape '\\'");
-            lc.getQuery().setParameter("type", wrapIdxParameterForSearch(inputValueMetaClass.getName()));
+            lc.getQuery().setParameter("type", wrapCodeParameterForSearch(inputValueMetaClass.getName()));
             List<MetaClass> ancestors = inputValueMetaClass.getAncestors();
             for (int i = 0; i < ancestors.size(); i++) {
                 MetaClass metaClass = ancestors.get(i);
                 String paramName = "type" + (i + 1);
                 parameterTypeCondition.append(" or r.inputEntityTypesIdx like :").append(paramName).append(" escape '\\'");
-                lc.getQuery().setParameter(paramName, wrapIdxParameterForSearch(metaClass.getName()));
+                lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(metaClass.getName()));
             }
             transformer.addWhereAsIs(String.format("(%s)", parameterTypeCondition.toString()));
             lc.getQuery().setQueryString(transformer.getResult());
         }
     }
 
-    protected String wrapIdxParameterForSearch(String value) {
+    protected String wrapCodeParameterForSearch(String value) {
         return "%," + QueryUtils.escapeForLike(value) + ",%";
     }
 }

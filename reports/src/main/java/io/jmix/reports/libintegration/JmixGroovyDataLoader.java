@@ -24,12 +24,13 @@ import com.haulmont.yarg.structure.ReportQuery;
 import com.haulmont.yarg.util.groovy.Scripting;
 import io.jmix.core.Resources;
 import org.apache.commons.lang3.StringUtils;
-
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.Map;
 
 public class JmixGroovyDataLoader implements ReportDataLoader {
+
     protected Scripting scripting;
 
     @Autowired

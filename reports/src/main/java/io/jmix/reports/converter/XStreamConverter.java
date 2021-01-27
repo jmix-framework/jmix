@@ -16,7 +16,7 @@
 
 package io.jmix.reports.converter;
 
-import com.haulmont.cuba.core.global.View;
+import io.jmix.core.FetchPlan;
 import io.jmix.reports.entity.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
@@ -85,7 +85,7 @@ public class XStreamConverter {
         xStream.omitField(ReportTemplate.class, "detached");
         xStream.omitField(ReportInputParameter.class, "localeName");
         xStream.omitField(ReportGroup.class, "detached");
-        xStream.omitField(View.class, "includeSystemProperties");
+        xStream.omitField(FetchPlan.class, "includeSystemProperties");
         xStream.omitField(Role.class, "detached");
         xStream.omitField(ReportScreen.class, "detached");
 

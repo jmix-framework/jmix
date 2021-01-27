@@ -21,17 +21,17 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 
 public enum ReportOutputType implements EnumClass<Integer> {
-    XLS(0, CubaReportOutputType.xls),
-    DOC(10, CubaReportOutputType.doc),
-    PDF(20, CubaReportOutputType.pdf),
-    HTML(30, CubaReportOutputType.html),
-    DOCX(40, CubaReportOutputType.docx),
-    XLSX(50, CubaReportOutputType.xlsx),
-    CUSTOM(60, CubaReportOutputType.custom),
-    CHART(70, CubaReportOutputType.chart),
-    CSV(80, CubaReportOutputType.csv),
-    TABLE(90, CubaReportOutputType.table),
-    PIVOT_TABLE(100, CubaReportOutputType.pivot);
+    XLS(0, JmixReportOutputType.xls),
+    DOC(10, JmixReportOutputType.doc),
+    PDF(20, JmixReportOutputType.pdf),
+    HTML(30, JmixReportOutputType.html),
+    DOCX(40, JmixReportOutputType.docx),
+    XLSX(50, JmixReportOutputType.xlsx),
+    CUSTOM(60, JmixReportOutputType.custom),
+    CHART(70, JmixReportOutputType.chart),
+    CSV(80, JmixReportOutputType.csv),
+    TABLE(90, JmixReportOutputType.table),
+    PIVOT_TABLE(100, JmixReportOutputType.pivot);
 
     private Integer id;
 

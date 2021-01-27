@@ -1,0 +1,60 @@
+<!--
+  ~ Copyright (c) 2008-2019 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window">
+
+    <data>
+        <instance id="reportDataDc" class="io.jmix.reports.entity.wizard.ReportData">
+            <collection id="reportRegionsDc" property="reportRegions">
+                <collection id="regionPropertiesDc" property="regionProperties"/>
+            </collection>
+        </instance>
+
+        <collection id="groupsDc" class="io.jmix.reports.entity.ReportGroup" fetchPlan="_local">
+            <loader id="groupsDl">
+                <![CDATA[ select rg from report_ReportGroup rg order by rg.createTs asc ]]>
+            </loader>
+        </collection>
+    </data>
+
+    <dialogMode width="800"/>
+
+    <layout expand="editAreaVbox" spacing="true">
+        <label id="tipLabel"
+               stylename="report-wizard-tip-label"
+               width="100%"/>
+
+        <vbox id="editAreaVbox">
+            <groupBox id="editAreaGroupBox" width="100%" height="100%">
+                <frame src="/io/jmix/reportsui/screen/report/wizard/step/first-details-fragment.xml" id="detailsStep"
+                       width="100%" height="100%"
+                       visible="false"/>
+                <frame src="/io/jmix/reportsui/screen/report/wizard/step/last-save-frame.xml" id="saveStep"
+                       width="100%" height="100%"
+                       visible="false"/>
+            </groupBox>
+            <frame src="/io/jmix/reportsui/screen/report/wizard/step/intermediate-regions-frame.xml"
+                   id="regionsStep"
+                   width="100%" height="100%"
+                   visible="false"/>
+        </vbox>
+        <buttonsPanel id="navBtnsPanel">
+            <button id="bwd" caption="msg://backward" icon="icons/report-wizard-previous.png"/>
+            <button id="fwd" caption="msg://forward" icon="icons/report-wizard-next.png"/>
+            <button id="save" caption="msg://save" visible="false" icon="EDITOR_OK"/>
+        </buttonsPanel>
+    </layout>
+</window>

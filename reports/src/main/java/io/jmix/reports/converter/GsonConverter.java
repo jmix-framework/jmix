@@ -22,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ *
  */
-//todo support versions
-@Component("report_gsonConverter")
+@Component("report_GsonConverter")
 public class GsonConverter {
 
     @Autowired

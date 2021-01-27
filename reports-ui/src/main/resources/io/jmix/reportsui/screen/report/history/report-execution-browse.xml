@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://report.executionHistory.caption"
+        focusComponent="executionsTable">
+    <data>
+        <collection id="executionsDc"
+                    class="io.jmix.reports.entity.ReportExecution"
+                    fetchPlan="reportExecution.browse">
+            <loader id="executionsDl"/>
+        </collection>
+    </data>
+    <layout spacing="true" expand="executionsTable">
+        <filter id="filter" dataLoader="executionsDl" applyTo="executionsTable">
+            <properties include=".*"/>
+        </filter>
+        <table id="executionsTable" dataContainer="executionsDc" width="100%"
+               presentations="true" multiselect="true">
+            <actions>
+                <action id="excel" type="excelExport"/>
+            </actions>
+            <buttonsPanel>
+                <button id="excel" action="executionsTable.excel"/>
+                <button id="download" action="executionsTable.download"/>
+            </buttonsPanel>
+            <rowsCount/>
+            <columns>
+                <column id="startTime">
+                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
+                               format="msg://dateTimeWithSeconds"/>
+                </column>
+                <column id="finishTime">
+                    <formatter class="io.jmix.ui.component.formatter.DateFormatter"
+                               format="msg://dateTimeWithSeconds"/>
+                </column>
+                <column id="executionTimeSec"/>
+                <column id="reportName"/>
+                <column id="reportCode"/>
+                <column id="user"/>
+                <column id="success"/>
+                <column id="cancelled"/>
+                <column id="outputDocument.name"
+                        caption="msg://io.jmix.reports.entity/ReportExecution.outputDocument"/>
+                <column id="params" maxTextLength="100"/>
+                <column id="errorMessage" maxTextLength="100"/>
+                <column id="serverId"/>
+            </columns>
+        </table>
+    </layout>
+</window>

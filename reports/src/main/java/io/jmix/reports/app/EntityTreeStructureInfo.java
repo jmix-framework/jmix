@@ -20,9 +20,8 @@ import java.io.Serializable;
 
 /**
  * That class is used in report wizard creator cause that wizard need info about entity attributes
- *
  */
-public class EntityTreeStructureInfo implements Serializable{
+public class EntityTreeStructureInfo implements Serializable {
     private static final long serialVersionUID = -7636338880001636048L;
     protected boolean entityTreeHasSimpleAttrs;
     protected boolean entityTreeRootHasCollections;

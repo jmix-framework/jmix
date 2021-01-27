@@ -17,17 +17,19 @@
 package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.util.groovy.Scripting;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scripting.ScriptEvaluator;
+import org.springframework.scripting.support.StaticScriptSource;
+
 import java.util.Map;
 
 public class JmixReportingScripting implements Scripting {
 
     @Autowired
-    private com.haulmont.cuba.core.global.Scripting  scripting;
+    private ScriptEvaluator scriptEvaluator;
 
     @Override
     public <T> T evaluateGroovy(String s, Map<String, Object> stringObjectMap) {
-        return scripting.evaluateGroovy(s, stringObjectMap);
+        return (T) scriptEvaluator.evaluate(new StaticScriptSource(s), stringObjectMap);
     }
 }

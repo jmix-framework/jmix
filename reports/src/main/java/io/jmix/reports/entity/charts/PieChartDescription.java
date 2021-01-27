@@ -16,22 +16,22 @@
 
 package io.jmix.reports.entity.charts;
 
-import io.jmix.core.metamodel.annotation.ModelObject;
-import io.jmix.core.metamodel.annotation.ModelProperty;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@ModelObject(name = "report$PieChartDescriptor")
+@JmixEntity(name = "report_PieChartDescriptor")
 @SystemLevel
 public class PieChartDescription extends AbstractChartDescription {
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String bandName;
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String titleField;
-    @ModelProperty(mandatory = true)
+    @JmixProperty(mandatory = true)
     protected String valueField;
-    @ModelProperty
+    @JmixProperty
     protected String colorField;
-    @ModelProperty
+    @JmixProperty
     protected String units;
 
     public PieChartDescription() {

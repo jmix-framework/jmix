@@ -129,7 +129,7 @@ public abstract class WidgetsTask extends DefaultTask {
             if (sourceDir.exists()) {
                 getProject()
                         .fileTree(sourceDir, f ->
-                                f.setExcludes(Collections.singleton("**/.*")))
+                                f.setExcludes(Arrays.asList("**/.*", "**/META-INF/build-info.properties")))
                         .forEach(files::add);
             }
         });

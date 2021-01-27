@@ -340,19 +340,12 @@ public class EntityImportExportImpl implements EntityImportExport {
                 }
             }
         }
-        //todo dynamic attribute
-//        if (entityHasDynamicAttributes(srcEntity)) {
-//            if (entityStates.isNew(dstEntity) && ((BaseGenericIdEntity) dstEntity).getDynamicAttributes() == null) {
-//                ((BaseGenericIdEntity) dstEntity).setDynamicAttributes(new HashMap<>());
-//            }
-//            Map<String, CategoryAttributeValue> srcDynamicAttributes = ((BaseGenericIdEntity) srcEntity).getDynamicAttributes();
-//            for (Map.Entry<String, CategoryAttributeValue> entry : srcDynamicAttributes.entrySet()) {
-//                String dynamicAttributeCode = entry.getKey();
-//                CategoryAttributeValue srcDynamicAttribute = entry.getValue();
-//                EntityValues.setValue(dstEntity, DynamicAttributesUtils.encodeAttributeCode(dynamicAttributeCode), srcDynamicAttribute.getValue());
-////                dstEntity.setValue(DynamicAttributesUtils.encodeAttributeCode(dynamicAttributeCode), srcDynamicAttribute.getValue());
-//            }
-//        }
+        Set<MetaProperty> additionalMetaProperties = metadataTools.getAdditionalProperties(metaClass);
+        if (!additionalMetaProperties.isEmpty()) {
+            for (MetaProperty dynAttr : additionalMetaProperties) {
+                EntityValues.setValue(dstEntity, dynAttr.getName(), EntityValues.getValue(srcEntity, dynAttr.getName()));
+            }
+        }
         return dstEntity;
     }
 

@@ -91,6 +91,9 @@ public class MetadataTools {
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
 
+    @Autowired(required = false)
+    protected List<MetadataExtension> metadataExtensions;
+
     @Autowired
     protected CurrentAuthentication currentAuthentication;
 
@@ -1250,5 +1253,21 @@ public class MetadataTools {
         return e instanceof IllegalStateException
                 || e.getClass().getName().equals("org.eclipse.persistence.exceptions.ValidationException") && e.getMessage() != null
                 && e.getMessage().contains("An attempt was made to traverse a relationship using indirection that had a null Session");
+    }
+
+    /**
+     * Returns all additional properties which are providing classes implement MetadataExtension interface
+     *
+     * @param metaClass instance MetaClass for getting additional properties
+     * @return all additional properties
+     */
+    public Set<MetaProperty> getAdditionalProperties(MetaClass metaClass) {
+        if (metadataExtensions == null) {
+            return Collections.emptySet();
+        }
+        return metadataExtensions.stream()
+                .filter(Objects::nonNull)
+                .flatMap(metadataExtension -> metadataExtension.getAdditionalProperties(metaClass).stream())
+                .collect(Collectors.toSet());
     }
 }

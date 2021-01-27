@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Component("core_PersistentAttributesLoadChecker")
 public class CorePersistentAttributesLoadChecker implements PersistentAttributesLoadChecker {
@@ -38,9 +39,6 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 
     @Autowired
     protected Metadata metadata;
-
-//    @Autowired
-//    protected DynamicAttributes dynamicAttributes;
 
     protected enum PropertyLoadedState {
         YES,
@@ -56,20 +54,10 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
         }
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
-        // todo dynamic attributes
-//        if (isDynamicAttribute(property)) {
-//            @SuppressWarnings("unchecked")
-//            Map<String, CategoryAttributeValue> entityDynamicAttributes =
-//                    ((BaseGenericIdEntity) entity).getDynamicAttributes();
-//
-//            if (entityDynamicAttributes == null) {
-//                return false;
-//            }
-//
-//            String attributeCode = decodeAttributeCode(property);
-//            return entityDynamicAttributes.containsKey(attributeCode) ||
-//                    dynamicAttributes.getAttributeForMetaClass(metaClass, property) != null;
-//        }
+        if (property.startsWith("+")) {
+            Set<MetaProperty> dynAttr = metadataTools.getAdditionalProperties(metaClass);
+            return dynAttr.stream().anyMatch(metaProperty -> metaProperty.getName().equals(property));
+        }
 
         MetaProperty metaProperty = metaClass.getProperty(property);
 

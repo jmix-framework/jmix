@@ -21,12 +21,15 @@ import io.jmix.core.metamodel.model.MetaProperty;
 
 import java.util.Set;
 
+/**
+ * Interface to provide additional properties of MetaClass, e.g. dynamic attributes.
+ */
 public interface MetadataExtension {
 
     /**
-     * Get additional properties - interface providing access to additional properties, e.g. dynamic properties.
-     *
-     * @return set of additional properties
+     * Returns set additional properties of the given MetaClass.
+     *      @param metaClass MetaClass instance
+     *      @return Set of MetaProperties
      */
     Set<MetaProperty> getAdditionalProperties(MetaClass metaClass);
 

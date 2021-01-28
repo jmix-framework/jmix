@@ -19,7 +19,6 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.security.GrantedAuthorityContainer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,7 +35,7 @@ import java.util.UUID;
 @JmixEntity
 @Entity(name = "sample_User")
 @Table(name = "SAMPLE_USER")
-public class SampleUser implements UserDetails, GrantedAuthorityContainer {
+public class SampleUser implements UserDetails {
 
     private static final long serialVersionUID = 5007187642916030394L;
 
@@ -86,12 +85,7 @@ public class SampleUser implements UserDetails, GrantedAuthorityContainer {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities != null ? authorities : Collections.emptyList();
-    }
-
-    @Override
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        this.authorities = authorities;
+        return Collections.emptyList();
     }
 
     public String getPassword() {

@@ -130,19 +130,19 @@ public class EntityChangedEventManager {
                 type = EntityChangedEvent.Type.CREATED;
                 attributeChanges = getEntityAttributeChanges(entity, false);
             } else {
-                    AttributeChangeListener changeListener =
-                            (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
-                    if (changeListener == null) {
-                        log.debug("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
-                        continue;
-                    }
-                    if (persistenceSupport.isDeleted(entity, changeListener)) {
-                        type = EntityChangedEvent.Type.DELETED;
-                        attributeChanges = getEntityAttributeChanges(entity, true);
-                    } else if (changeListener.hasChanges()) {
-                        type = EntityChangedEvent.Type.UPDATED;
-                        attributeChanges = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
-                    }
+                AttributeChangeListener changeListener =
+                        (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
+                if (changeListener == null) {
+                    log.debug("Cannot publish EntityChangedEvent for {} because its AttributeChangeListener is null", entity);
+                    continue;
+                }
+                if (persistenceSupport.isDeleted(entity, changeListener)) {
+                    type = EntityChangedEvent.Type.DELETED;
+                    attributeChanges = getEntityAttributeChanges(entity, true);
+                } else if (changeListener.hasChanges()) {
+                    type = EntityChangedEvent.Type.UPDATED;
+                    attributeChanges = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
+                }
             }
             if (type != null && attributeChanges != null) {
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity));
@@ -181,9 +181,13 @@ public class EntityChangedEventManager {
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of(oldValue)));
                 } else if (oldValue instanceof Collection) {
                     Collection<Object> coll = (Collection<Object>) oldValue;
-                    Collection<Id> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
+                    Collection<Object> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
                     for (Object item : coll) {
-                        idColl.add(Id.of(item));
+                        if (item instanceof Entity) {
+                            idColl.add(Id.of(item));
+                        } else {
+                            idColl.add(item);
+                        }
                     }
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), idColl));
                 } else {

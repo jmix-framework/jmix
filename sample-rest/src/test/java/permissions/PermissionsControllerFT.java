@@ -19,6 +19,7 @@ package permissions;
 
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.security.PermissionRole;
+import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -31,10 +32,8 @@ import test_support.AbstractRestControllerFT;
 import java.util.Collection;
 import java.util.List;
 
-import static test_support.RestTestUtils.getAuthToken;
-import static test_support.RestTestUtils.*;
-import static io.jmix.security.authentication.RoleGrantedAuthority.ofRoles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test_support.RestTestUtils.*;
 
 
 /**
@@ -53,7 +52,10 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(ofRoles(roleRepository::getRoleByCode, PermissionRole.NAME))
+                .authorities(
+                        RoleGrantedAuthority.withResourceRoleProvider(resourceRoleRepository::getRoleByCode)
+                                .withResourceRoles(PermissionRole.NAME)
+                                .build())
                 .build();
 
         userRepository.addUser(user);

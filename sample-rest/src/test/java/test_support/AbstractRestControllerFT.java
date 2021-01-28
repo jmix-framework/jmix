@@ -25,7 +25,9 @@ import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.security.role.RoleRepository;
+import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,6 @@ import org.springframework.test.context.ContextConfiguration;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import static io.jmix.security.authentication.RoleGrantedAuthority.ofRole;
 import static test_support.RestTestUtils.getAuthToken;
 
 @ContextConfiguration(classes = {
@@ -63,7 +64,10 @@ public abstract class AbstractRestControllerFT {
     protected InMemoryUserRepository userRepository;
 
     @Autowired
-    protected RoleRepository roleRepository;
+    protected ResourceRoleRepository resourceRoleRepository;
+
+    @Autowired
+    protected RowLevelRoleRepository rowLevelRoleRepository;
 
     @Autowired
     protected DataManager dataManager;
@@ -83,7 +87,7 @@ public abstract class AbstractRestControllerFT {
         admin = User.builder()
                 .username("admin")
                 .password("{noop}admin123")
-                .authorities(ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(FullAccessRole.NAME)))
                 .build();
 
         userRepository.addUser(admin);

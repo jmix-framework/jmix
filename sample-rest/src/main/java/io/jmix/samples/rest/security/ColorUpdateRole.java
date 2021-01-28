@@ -18,7 +18,7 @@ package io.jmix.samples.rest.security;
 
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 
 import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
@@ -26,7 +26,7 @@ import static io.jmix.security.model.EntityAttributePolicyAction.VIEW;
 import static io.jmix.security.model.EntityPolicyAction.READ;
 import static io.jmix.security.model.EntityPolicyAction.UPDATE;
 
-@Role(name = ColorUpdateRole.NAME, code = ColorUpdateRole.NAME)
+@ResourceRole(name = ColorUpdateRole.NAME, code = ColorUpdateRole.NAME)
 public interface ColorUpdateRole {
 
     String NAME = "color-update-access";

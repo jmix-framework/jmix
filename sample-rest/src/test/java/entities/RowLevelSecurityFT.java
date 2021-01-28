@@ -19,6 +19,7 @@ package entities;
 import com.jayway.jsonpath.ReadContext;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.samples.rest.security.InMemoryRowLevelRole;
+import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static io.jmix.security.authentication.RoleGrantedAuthority.ofRoles;
 import static junit.framework.TestCase.assertNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static test_support.RestTestUtils.*;
@@ -266,7 +266,11 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(ofRoles(roleRepository::getRoleByCode, InMemoryRowLevelRole.NAME, FullAccessRole.NAME))
+                .authorities(RoleGrantedAuthority.withResourceRoleProvider(resourceRoleRepository::getRoleByCode)
+                        .withRowLevelRoleProvider(rowLevelRoleRepository::getRoleByCode)
+                        .withResourceRoles(FullAccessRole.NAME)
+                        .withRowLevelRoles(InMemoryRowLevelRole.NAME)
+                        .build())
                 .build();
 
         userRepository.addUser(user);

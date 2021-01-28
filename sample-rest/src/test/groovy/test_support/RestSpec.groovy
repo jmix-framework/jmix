@@ -18,7 +18,6 @@ package test_support
 
 import groovy.sql.Sql
 import io.jmix.core.CoreConfiguration
-import io.jmix.core.Metadata
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.data.DataConfiguration
 import io.jmix.rest.RestConfiguration
@@ -26,7 +25,8 @@ import io.jmix.samples.rest.SampleRestApplication
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.security.SecurityConfiguration
 import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.RoleRepository
+import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -54,10 +54,10 @@ class RestSpec extends Specification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    Metadata metadata
+    ResourceRoleRepository resourceRoleRepository
 
     @Autowired
-    RoleRepository roleRepository
+    RowLevelRoleRepository rowLevelRoleRepository
 
     public DataSet dirtyData = new DataSet()
     public Sql sql
@@ -72,7 +72,7 @@ class RestSpec extends Specification {
         admin = User.builder()
                 .username(userLogin)
                 .password("{noop}$userPassword")
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(FullAccessRole.NAME)))
                 .build()
 
         userRepository.addUser(admin)

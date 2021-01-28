@@ -16,15 +16,13 @@
 
 package entities
 
-import test_support.RestSpec
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryOneToManyRowLevelRole
 import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.RoleRepository
 import org.apache.http.HttpStatus
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import test_support.RestSpec
 
 import static test_support.DataUtils.createCar
 import static test_support.DataUtils.createInsuranceCase
@@ -43,15 +41,15 @@ class RLS_OneToManyTest extends RestSpec {
     private String userToken
     private UserDetails user
 
-    @Autowired
-    private RoleRepository roleRepository
-
     void setup() {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.ofRoles({ roleRepository.getRoleByCode(it) },
-                        InMemoryOneToManyRowLevelRole.NAME, FullAccessRole.NAME))
+                .authorities(RoleGrantedAuthority.withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
+                        .withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
+                        .withResourceRoles(FullAccessRole.NAME)
+                        .withRowLevelRoles(InMemoryOneToManyRowLevelRole.NAME)
+                        .build())
                 .build()
         userRepository.addUser(user)
         carId = createCar(dirtyData, sql, '001')

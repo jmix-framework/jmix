@@ -24,7 +24,8 @@ import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
 import io.jmix.security.SecurityConfiguration;
-import io.jmix.security.role.RoleRepository;
+import io.jmix.security.authentication.RoleGrantedAuthority;
+import io.jmix.security.role.ResourceRoleRepository;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -48,7 +49,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-import static io.jmix.security.authentication.RoleGrantedAuthority.ofRole;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,7 +73,7 @@ public class OAuthTokenFT {
     protected InMemoryUserRepository userRepository;
 
     @Autowired
-    protected RoleRepository roleRepository;
+    protected ResourceRoleRepository roleRepository;
 
     protected UserDetails admin;
 
@@ -82,7 +82,7 @@ public class OAuthTokenFT {
         admin = User.builder()
                 .username("admin")
                 .password("{noop}admin123")
-                .authorities(ofRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(FullAccessRole.NAME)))
                 .build();
 
         userRepository.addUser(admin);

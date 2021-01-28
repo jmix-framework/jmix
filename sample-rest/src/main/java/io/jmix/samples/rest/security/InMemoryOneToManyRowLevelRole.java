@@ -19,11 +19,11 @@ package io.jmix.samples.rest.security;
 import io.jmix.samples.rest.entity.driver.InsuranceCase;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.RowLevelRole;
 
 import java.util.function.Predicate;
 
-@Role(name = InMemoryOneToManyRowLevelRole.NAME, code = InMemoryOneToManyRowLevelRole.NAME)
+@RowLevelRole(name = InMemoryOneToManyRowLevelRole.NAME, code = InMemoryOneToManyRowLevelRole.NAME)
 public interface InMemoryOneToManyRowLevelRole {
 
     String NAME = "row-level-one-to-many";

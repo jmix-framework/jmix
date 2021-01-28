@@ -24,7 +24,6 @@ import io.jmix.samples.rest.entity.driver.Colour;
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.samples.rest.security.*;
 import io.jmix.samples.rest.service.RestTestService;
-import test_support.AbstractRestControllerFT;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -33,15 +32,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import test_support.AbstractRestControllerFT;
 
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
-import static test_support.RestTestUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static test_support.RestTestUtils.*;
 
 /**
  *
@@ -287,35 +290,35 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
         colorRead = User.builder()
                 .username(colorReadUserLogin)
                 .password("{noop}" + colorReadUserPassword)
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorReadRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(ColorReadRole.NAME)))
                 .build();
         userRepository.addUser(colorRead);
 
         colorUpdate = User.builder()
                 .username(colorUpdateUserLogin)
                 .password("{noop}" + colorUpdateUserPassword)
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorUpdateRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(ColorUpdateRole.NAME)))
                 .build();
         userRepository.addUser(colorUpdate);
 
         colorCreate = User.builder()
                 .username(colorCreateUserLogin)
                 .password("{noop}" + colorCreateUserPassword)
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorCreateRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(ColorCreateRole.NAME)))
                 .build();
         userRepository.addUser(colorCreate);
 
         colorDelete = User.builder()
                 .username(colorDeleteUserLogin)
                 .password("{noop}" + colorDeleteUserPassword)
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(ColorDeleteRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(ColorDeleteRole.NAME)))
                 .build();
         userRepository.addUser(colorDelete);
 
         carRead = User.builder()
                 .username(carReadUserLogin)
                 .password("{noop}" + carReadUserPassword)
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(CarReadRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(resourceRoleRepository.getRoleByCode(CarReadRole.NAME)))
                 .build();
         userRepository.addUser(carRead);
     }

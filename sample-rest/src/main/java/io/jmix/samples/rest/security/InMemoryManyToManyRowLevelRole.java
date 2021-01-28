@@ -19,11 +19,11 @@ package io.jmix.samples.rest.security;
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.RowLevelRole;
 
 import java.util.function.Predicate;
 
-@Role(name = InMemoryManyToManyRowLevelRole.NAME, code = InMemoryManyToManyRowLevelRole.NAME)
+@RowLevelRole(name = InMemoryManyToManyRowLevelRole.NAME, code = InMemoryManyToManyRowLevelRole.NAME)
 public interface InMemoryManyToManyRowLevelRole {
 
     String NAME = "row-level-many-to-many";

@@ -16,22 +16,20 @@
 
 package entities
 
-import test_support.RestSpec
 import io.jmix.samples.rest.security.FullAccessRole
 import io.jmix.samples.rest.security.InMemoryManyToManyRowLevelRole
 import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.RoleRepository
 import org.apache.http.HttpStatus
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.test.context.TestPropertySource
+import test_support.RestSpec
 
+import static org.hamcrest.CoreMatchers.notNullValue
 import static test_support.DataUtils.*
 import static test_support.DbUtils.getSql
 import static test_support.RestSpecsUtils.createRequest
 import static test_support.RestSpecsUtils.getAuthToken
-import static org.hamcrest.CoreMatchers.notNullValue
 
 @TestPropertySource(properties =
         ["jmix.core.entitySerializationTokenRequired = true"])
@@ -47,15 +45,15 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
     private String userToken
     private UserDetails user
 
-    @Autowired
-    private RoleRepository roleRepository
-
     void setup() {
         user = User.builder()
                 .username(userLogin)
                 .password("{noop}" + userPassword)
-                .authorities(RoleGrantedAuthority.ofRoles({ roleRepository.getRoleByCode(it) },
-                        InMemoryManyToManyRowLevelRole.NAME, FullAccessRole.NAME))
+                .authorities(RoleGrantedAuthority.withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
+                        .withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
+                        .withResourceRoles(FullAccessRole.NAME)
+                        .withRowLevelRoles(InMemoryManyToManyRowLevelRole.NAME)
+                        .build())
                 .build()
 
         userRepository.addUser(user)

@@ -20,15 +20,14 @@ import io.jmix.samples.rest.entity.driver.InsuranceCase;
 import io.jmix.samples.rest.entity.driver.Model;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.RowLevelRole;
 
 import java.util.function.Predicate;
 
-@Role(name = InMemoryRowLevelRole.NAME, code = InMemoryRowLevelRole.NAME)
+@RowLevelRole(name = InMemoryRowLevelRole.NAME, code = InMemoryRowLevelRole.NAME)
 public interface InMemoryRowLevelRole {
 
     String NAME = "row-level";
-
 
     @PredicateRowLevelPolicy(entityClass = InsuranceCase.class,
             actions = RowLevelPolicyAction.READ)

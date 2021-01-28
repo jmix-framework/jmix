@@ -40,33 +40,69 @@ public interface SuggestionField<V> extends Field<V>, io.jmix.ui.component.Sugge
     }
 
     /**
+     * @return {@link EnterActionHandler} which handles ENTER key pressing
+     * @deprecated Use {@link #getEnterPressHandler()} and {@link #setEnterPressHandler(Consumer)} instead
+     */
+    @Deprecated
+    EnterActionHandler getEnterActionHandler();
+
+    /**
      * Sets {@link EnterActionHandler} which handles ENTER key pressing.
      *
      * @param enterActionHandler EnterActionHandler instance
+     * @deprecated Use {@link #setEnterPressHandler(Consumer)} instead
      */
+    @Deprecated
     void setEnterActionHandler(EnterActionHandler enterActionHandler);
 
     /**
-     * ENTER key pressed listener.
+     * @return {@link ArrowDownActionHandler} which handles ARROW_DOWN key pressing
+     * @deprecated Use {@link #getArrowDownHandler()} and {@link #setArrowDownHandler(Consumer)} instead
      */
     @Deprecated
-    @FunctionalInterface
-    interface EnterActionHandler extends Consumer<String> {
-    }
+    ArrowDownActionHandler getArrowDownActionHandler();
 
     /**
      * Sets {@link ArrowDownActionHandler} which handles ARROW_DOWN key pressing.
      *
      * @param arrowDownActionHandler ArrowDownActionHandler instance
+     * @deprecated Use {@link #setArrowDownHandler(Consumer)} instead
      */
+    @Deprecated
     void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler);
 
     /**
-     * ARROW_DOWN key pressed listener.
+     * ENTER key pressed listener.
+     *
+     * @deprecated Use {@link #setEnterPressHandler(Consumer)} instead
      */
     @Deprecated
     @FunctionalInterface
-    interface ArrowDownActionHandler extends Consumer<String> {
+    interface EnterActionHandler {
+
+        /**
+         * Called by component if user entered a search string and pressed ENTER key without selection of a suggestion.
+         *
+         * @param searchString search string as is
+         */
+        void onEnterKeyPressed(String searchString);
+    }
+
+    /**
+     * ARROW_DOWN key pressed listener.
+     *
+     * @deprecated Use {@link #setArrowDownHandler(Consumer)} instead
+     */
+    @Deprecated
+    @FunctionalInterface
+    interface ArrowDownActionHandler {
+
+        /**
+         * Called by component if user pressed ARROW_DOWN key without search action.
+         *
+         * @param searchString search string as is
+         */
+        void onArrowDownKeyPressed(String searchString);
     }
 
     /**

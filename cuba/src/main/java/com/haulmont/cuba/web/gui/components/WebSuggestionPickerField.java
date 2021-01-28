@@ -35,6 +35,9 @@ public class WebSuggestionPickerField<V extends Entity> extends EntitySuggestion
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> iconProvider;
 
+    protected EnterActionHandler enterActionHandler;
+    protected ArrowDownActionHandler arrowDownActionHandler;
+
     @Nullable
     @Override
     public V getValue() {
@@ -145,12 +148,50 @@ public class WebSuggestionPickerField<V extends Entity> extends EntitySuggestion
     }
 
     @Override
+    public EnterActionHandler getEnterActionHandler() {
+        return enterActionHandler;
+    }
+
+    @Override
     public void setEnterActionHandler(EnterActionHandler enterActionHandler) {
-        super.setEnterActionHandler(enterActionHandler);
+        this.enterActionHandler = enterActionHandler;
+
+        if (enterActionHandler != null) {
+            if (getEnterPressHandler() == null) {
+                setEnterPressHandler(this::onEnterPressHandler);
+            }
+        } else {
+            setEnterPressHandler(null);
+        }
+    }
+
+    @Override
+    public ArrowDownActionHandler getArrowDownActionHandler() {
+        return arrowDownActionHandler;
     }
 
     @Override
     public void setArrowDownActionHandler(ArrowDownActionHandler arrowDownActionHandler) {
-        super.setArrowDownActionHandler(arrowDownActionHandler);
+        this.arrowDownActionHandler = arrowDownActionHandler;
+
+        if (arrowDownActionHandler != null) {
+            if (getArrowDownHandler() == null) {
+                setArrowDownHandler(this::onArrowDownHandler);
+            }
+        } else {
+            setArrowDownHandler(null);
+        }
+    }
+
+    protected void onEnterPressHandler(EnterPressEvent event) {
+        if (enterActionHandler != null) {
+            enterActionHandler.onEnterKeyPressed(event.getText());
+        }
+    }
+
+    protected void onArrowDownHandler(ArrowDownEvent event) {
+        if (arrowDownActionHandler != null) {
+            arrowDownActionHandler.onArrowDownKeyPressed(event.getText());
+        }
     }
 }

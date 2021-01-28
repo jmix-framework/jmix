@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,108 +16,18 @@
 
 package io.jmix.ui.widget;
 
-import com.google.common.base.Strings;
-import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldClientRpc;
-import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldServerRpc;
-import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldState;
-import com.vaadin.server.KeyMapper;
-import com.vaadin.server.SizeWithUnit;
-import com.vaadin.ui.AbstractField;
-import elemental.json.Json;
-import elemental.json.JsonArray;
-import elemental.json.JsonObject;
-import org.apache.commons.collections4.CollectionUtils;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import java.util.StringTokenizer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
-public class JmixSuggestionField<T> extends AbstractField<T> {
-    protected static final String SUGGESTION_ID = "id";
-    protected static final String SUGGESTION_CAPTION = "caption";
-    protected static final String SUGGESTION_STYLE_NAME = "styleName";
-
-    protected Consumer<String> searchExecutor;
-    protected Consumer<String> enterActionHandler;
-    protected Consumer<String> arrowDownActionHandler;
-    protected Runnable cancelSearchHandler;
-
-    protected KeyMapper<T> keyMapper = new KeyMapper<>();
-
-    protected com.vaadin.event.FieldEvents.FocusAndBlurServerRpcImpl focusBlurRpc;
-    protected JmixSuggestionFieldServerRpc serverRpc;
-
-    protected Function<T, String> textViewConverter;
-    protected int suggestionsLimit = 10;
-    protected Function<Object, String> optionsStyleProvider;
-
-    protected T internalValue;
-
-    public JmixSuggestionField() {
-        serverRpc = new JmixSuggestionFieldServerRpc() {
-            @Override
-            public void searchSuggestions(String query) {
-                if (searchExecutor != null) {
-                    searchExecutor.accept(query);
-                }
-            }
-
-            @Override
-            public void selectSuggestion(String suggestionId) {
-                T suggestion = keyMapper.get(suggestionId);
-                setValue(suggestion, true);
-
-                updateTextPresentation(getValue());
-            }
-
-            @Override
-            public void onEnterKeyPressed(String currentSearchString) {
-                if (enterActionHandler != null) {
-                    enterActionHandler.accept(currentSearchString);
-                }
-            }
-
-            @Override
-            public void onArrowDownKeyPressed(String currentSearchString) {
-                if (arrowDownActionHandler != null) {
-                    arrowDownActionHandler.accept(currentSearchString);
-                }
-            }
-
-            @Override
-            public void cancelSearch() {
-                cancelSearchHandler.run();
-            }
-        };
-        registerRpc(serverRpc);
-
-        focusBlurRpc = new com.vaadin.event.FieldEvents.FocusAndBlurServerRpcImpl(this) {
-            private static final long serialVersionUID = -780524775769549747L;
-
-            @Override
-            protected void fireEvent(Event event) {
-                JmixSuggestionField.this.fireEvent(event);
-            }
-        };
-        registerRpc(focusBlurRpc);
-    }
+public class JmixSuggestionField<V> extends JmixAbstractSuggestionField<V, V> {
 
     @Override
-    protected void doSetValue(T value) {
-        this.internalValue = value;
+    protected void doSetValue(V value) {
+        super.doSetValue(value);
+
         updateTextPresentation(value);
     }
 
-    @Override
-    public T getValue() {
-        return internalValue;
-    }
-
-    public void updateTextPresentation(T value) {
+    public void updateTextPresentation(V value) {
         String stringValue = textViewConverter.apply(value);
 
         if (!Objects.equals(getState(false).text, stringValue)) {
@@ -125,191 +35,11 @@ public class JmixSuggestionField<T> extends AbstractField<T> {
         }
     }
 
-    public void setTextViewConverter(Function<T, String> converter) {
-        this.textViewConverter = converter;
-    }
-
-    public int getAsyncSearchDelayMs() {
-        return getState(false).asyncSearchDelayMs;
-    }
-
-    public void setAsyncSearchDelayMs(int asyncSearchDelayMs) {
-        if (getState(false).asyncSearchDelayMs != asyncSearchDelayMs) {
-            getState().asyncSearchDelayMs = asyncSearchDelayMs;
-        }
-    }
-
-    public void setEnterActionHandler(Consumer<String> enterActionHandler) {
-        this.enterActionHandler = enterActionHandler;
-    }
-
-    public void setArrowDownActionHandler(Consumer<String> arrowDownActionHandler) {
-        this.arrowDownActionHandler = arrowDownActionHandler;
-    }
-
-    public int getMinSearchStringLength() {
-        return getState(false).minSearchStringLength;
-    }
-
-    public void setMinSearchStringLength(int minSearchStringLength) {
-        if (getState(false).minSearchStringLength != minSearchStringLength) {
-            getState().minSearchStringLength = minSearchStringLength;
-        }
-    }
-
-    public void setSearchExecutor(Consumer<String> searchExecutor) {
-        this.searchExecutor = searchExecutor;
-    }
-
-    public void showSuggestions(List<T> suggestions, boolean userOriginated) {
-        final JsonArray jsonArray = Json.createArray();
-        for (int i = 0; i < suggestions.size() && i < suggestionsLimit; i++) {
-            jsonArray.set(i, getJsonObject(suggestions.get(i)));
-        }
-        getRpcProxy(JmixSuggestionFieldClientRpc.class).showSuggestions(jsonArray, userOriginated);
-    }
-
-    public void setCancelSearchHandler(Runnable cancelSearchHandler) {
-        this.cancelSearchHandler = cancelSearchHandler;
-    }
-
     @Override
-    protected JmixSuggestionFieldState getState() {
-        return (JmixSuggestionFieldState) super.getState();
-    }
+    protected void onSelectSuggestion(String suggestionId) {
+        V suggestion = keyMapper.get(suggestionId);
+        setValue(suggestion, true);
 
-    @Override
-    protected JmixSuggestionFieldState getState(boolean markAsDirty) {
-        return (JmixSuggestionFieldState) super.getState(markAsDirty);
-    }
-
-    private JsonObject getJsonObject(T suggestion) {
-        final JsonObject object = Json.createObject();
-
-        //noinspection unchecked
-        object.put(SUGGESTION_ID, Json.create(keyMapper.key(suggestion)));
-
-        String caption = textViewConverter.apply(suggestion);
-        object.put(SUGGESTION_CAPTION, Json.create(caption));
-
-        if (optionsStyleProvider != null) {
-            String styleName = optionsStyleProvider.apply(suggestion);
-            object.put(SUGGESTION_STYLE_NAME, Json.create(styleName));
-        }
-
-        return object;
-    }
-
-    public void setSuggestionsLimit(int suggestionsLimit) {
-        this.suggestionsLimit = suggestionsLimit;
-    }
-
-    public int getSuggestionsLimit() {
-        return suggestionsLimit;
-    }
-
-    @Nullable
-    public String getInputPrompt() {
-        return getState(false).inputPrompt;
-    }
-
-    public void setInputPrompt(@Nullable String inputPrompt) {
-        if (!Objects.equals(inputPrompt, getState(false).inputPrompt)) {
-            getState().inputPrompt = inputPrompt;
-        }
-    }
-
-    // copied from com.vaadin.ui.AbstractComponent#setStyleName
-    public void setPopupStyleName(@Nullable String styleName) {
-        if (Strings.isNullOrEmpty(styleName)) {
-            getState().popupStylename = null;
-            return;
-        }
-
-        if (getState().popupStylename == null) {
-            getState().popupStylename = new ArrayList<>();
-        }
-
-        List<String> styles = getState().popupStylename;
-        styles.clear();
-
-        StringTokenizer tokenizer = new StringTokenizer(styleName, " ");
-        while (tokenizer.hasMoreTokens()) {
-            styles.add(tokenizer.nextToken());
-        }
-    }
-
-    // copied from com.vaadin.ui.AbstractComponent#addStyleName
-    public void addPopupStyleName(String styleName) {
-        if (Strings.isNullOrEmpty(styleName)) {
-            return;
-        }
-        if (styleName.contains(" ")) {
-            // Split space separated stylename names and add them one by one.
-            StringTokenizer tokenizer = new StringTokenizer(styleName, " ");
-            while (tokenizer.hasMoreTokens()) {
-                addPopupStyleName(tokenizer.nextToken());
-            }
-            return;
-        }
-
-        if (getState(false).popupStylename == null) {
-            getState().popupStylename = new ArrayList<>();
-        }
-        List<String> styleNames = getState().popupStylename;
-        if (!styleNames.contains(styleName)) {
-            styleNames.add(styleName);
-        }
-    }
-
-    // copied from com.vaadin.ui.AbstractComponent#removeStyleName
-    public void removePopupStyleName(String styleName) {
-        if (CollectionUtils.isNotEmpty(getState(false).popupStylename)) {
-            StringTokenizer tokenizer = new StringTokenizer(styleName, " ");
-            while (tokenizer.hasMoreTokens()) {
-                getState().popupStylename.remove(tokenizer.nextToken());
-            }
-        }
-    }
-
-    public void setPopupWidth(@Nullable String popupWidth) {
-        if (popupWidth == null || popupWidth.isEmpty()) {
-            throw new IllegalArgumentException("Popup width cannot be empty");
-        }
-
-        if (Objects.equals(getState(false).popupWidth, popupWidth))
-            return;
-
-        if (isPredefinedPopupWidth(popupWidth)) {
-            getState().popupWidth = popupWidth;
-            return;
-        }
-
-        // try to parse to be sure that string is correct
-        SizeWithUnit.parseStringSize(popupWidth);
-
-        getState().popupWidth = popupWidth;
-    }
-
-    public boolean isSelectFirstSuggestionOnShow() {
-        return getState(false).selectFirstSuggestionOnShow;
-    }
-
-    public void setSelectFirstSuggestionOnShow(boolean selectFirstSuggestionOnShow) {
-        if (getState(false).selectFirstSuggestionOnShow != selectFirstSuggestionOnShow) {
-            getState().selectFirstSuggestionOnShow = selectFirstSuggestionOnShow;
-        }
-    }
-
-    protected boolean isPredefinedPopupWidth(String popupWidth) {
-        return "auto".equals(popupWidth) || "parent".equals(popupWidth);
-    }
-
-    public String getPopupWidth() {
-        return getState(false).popupWidth;
-    }
-
-    public void setOptionsStyleProvider(@Nullable Function<Object, String> optionsStyleProvider) {
-        this.optionsStyleProvider = optionsStyleProvider;
+        updateTextPresentation(getValue());
     }
 }

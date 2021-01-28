@@ -26,10 +26,61 @@ $jmix-tagpicker-tags-sides-fieldlayout-min-width: $v-unit-size * 6 !default;
  */
 $jmix-tagpicker-tags-sides-fieldlayout-max-width: $v-default-field-width !default;
 
+/*
+ * TagLabel configuration in the TagPicker.
+ */
+
+/**
+ * The default background color of tag-label in the tag-picker.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-background-color: $jmix-taglabel-background-color !default;
+
+/**
+ * The default font color of tag-label in the tag-picker. It is calculated from $jmix-tagpicker-tag-background-color.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-color: valo-font-color($jmix-tagpicker-tag-background-color, 0.9) !default;
+
+/**
+ * The background color while tag-label is hovered in the tag-picker.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-hover-background-color: $jmix-taglabel-hover-background-color !default;
+
+/**
+ * The font color while tag-label is hovered in the tag-picker. By default it is equal to $jmix-tagpicker-tag-color.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-hover-color: $jmix-tagpicker-tag-color !default;
+
+/**
+ * The left and right padding of tag-label in the tag-picker.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-padding-width: $jmix-taglabel-padding-width !default;
+
+/**
+ * The border radius of tag-label in the tag-picker.
+ * @group tagpicker
+ */
+$jmix-tagpicker-tag-border-radius: $jmix-taglabel-border-radius !default;
+
 @mixin halo-tagpicker($primary-stylename: jmix-tagpicker) {
 
   .#{$primary-stylename} {
     width: $v-default-field-width;
+
+    .jmix-taglabel {
+      @include halo-tag($jmix-tagpicker-tag-background-color,
+                        $jmix-tagpicker-tag-hover-background-color,
+                        $jmix-tagpicker-tag-color,
+                        $jmix-tagpicker-tag-hover-color,
+                        halo-taglabel-font-size(),
+                        halo-taglabel-height(),
+                        $jmix-tagpicker-tag-border-radius,
+                        $jmix-tagpicker-tag-padding-width);
+    }
   }
 
   .#{$primary-stylename}:not(.v-readonly).tags-top {

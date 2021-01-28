@@ -46,6 +46,11 @@ $jmix-tagcontainer-max-height: 8 * $v-unit-size !default;
       margin-bottom: 0;
     }
 
+    .#{$taglabel-stylename}-close {
+      text-align: right;
+      width: halo-tagcontainer-tag-close-btn-width;
+    }
+
     .#{$taglabel-stylename}-close,
     .#{$taglabel-stylename}-content {
       display: table-cell;
@@ -65,4 +70,8 @@ $jmix-tagcontainer-max-height: 8 * $v-unit-size !default;
       padding-right: 0;
     }
   }
+}
+
+@function halo-tagcontainer-tag-close-btn-width($font-size: $v-font-size) {
+  @return floor($font-size * 0.8);
 }

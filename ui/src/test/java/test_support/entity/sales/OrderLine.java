@@ -47,6 +47,9 @@ public class OrderLine extends TestBaseEntity {
     @OneToMany(mappedBy = "orderLine")
     protected List<OrderLineParam> params;
 
+    @Column(name = "DESCRIPTION")
+    protected String description;
+
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -77,6 +80,14 @@ public class OrderLine extends TestBaseEntity {
 
     public void setParams(List<OrderLineParam> params) {
         this.params = params;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

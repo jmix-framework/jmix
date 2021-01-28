@@ -15,18 +15,6 @@
  */
 
 /**
- * The height of tag-label.
- * @group taglabel
- */
-$jmix-taglabel-height: ceil($v-unit-size - $v-unit-size / 4) !default;
-
-/**
- * The font size of tag-label.
- * @group taglabel
- */
-$jmix-taglabel-font-size: $v-font-size - 1 !default;
-
-/**
  * The default background color of tag-label.
  * @group taglabel
  */
@@ -51,28 +39,21 @@ $jmix-taglabel-hover-background-color: darken($v-selection-color, 5%) !default;
 $jmix-taglabel-hover-color: $jmix-taglabel-color !default;
 
 /**
- * The left padding of tag-label.
+ * Defines tag-label padding: left and right.
  * @group taglabel
  */
-$jmix-taglabel-padding-left: round($v-unit-size / 6) !default;
+$jmix-taglabel-padding-width: round($v-unit-size / 6) !default;
 
 /**
- * The right padding of tag-label.
+ * The border radius of tag-label.
  * @group taglabel
  */
-$jmix-taglabel-padding-right: round($v-unit-size / 6) !default;
+$jmix-taglabel-border-radius: $v-border-radius !default;
 
 @mixin halo-taglabel($primary-stylename: jmix-taglabel) {
 
   .#{$primary-stylename} {
-    background-color: $jmix-taglabel-background-color;
-    border-radius: $v-border-radius;
-    color: $jmix-taglabel-color;
-    font-size: $jmix-taglabel-font-size;
-    height: $jmix-taglabel-height;
-    padding-left: $jmix-taglabel-padding-left;
-    padding-right: $jmix-taglabel-padding-right;
-    white-space: nowrap;
+    @include halo-tag;
 
     &.noedit {
       .#{$primary-stylename}-close {
@@ -84,40 +65,67 @@ $jmix-taglabel-padding-right: round($v-unit-size / 6) !default;
       cursor: pointer;
     }
 
-    &:hover {
-      background-color: $jmix-taglabel-hover-background-color;
-      color: $jmix-taglabel-hover-color;
-    }
-
     &.v-disabled {
-      @include opacity($v-disabled-opacity);
-
-      &:hover {
-        background-color: $jmix-taglabel-background-color;
-        color: $jmix-taglabel-color;
+      .#{$primary-stylename}-close {
+        cursor: default;
       }
     }
   }
 
-  .#{$primary-stylename}-content,
-  .#{$primary-stylename}-close {
+  .jmix-taglabel-content,
+  .jmix-taglabel-close {
     display: inline-block;
-    line-height: $jmix-taglabel-height;
-  }
-
-  .#{$primary-stylename}-content {
-    height: 100%;
   }
 
   .#{$primary-stylename}-close {
     cursor: pointer;
-    height: 100%;
     text-align: center;
-    width: $v-unit-size - $v-unit-size / 4;
+    margin-left: $jmix-taglabel-padding-width;
 
     &:after {
       content: "\f00d";
       font-family: FontAwesome;
     }
   }
+}
+
+@mixin halo-tag($bcg-color      : $jmix-taglabel-background-color,
+                $hover-bcg-color: $jmix-taglabel-hover-background-color,
+                $color          : $jmix-taglabel-color,
+                $hover-color    : $jmix-taglabel-hover-color,
+                $font-size      : halo-taglabel-font-size(),
+                $height         : halo-taglabel-height(),
+                $border-radius  : $jmix-taglabel-border-radius,
+                $padding-width   : $jmix-taglabel-padding-width) {
+  background-color: $bcg-color;
+  border-radius: $border-radius;
+  color: $color;
+  font-size: $font-size;
+  height: $height;
+  line-height: $height;
+  padding-left: $padding-width;
+  padding-right: $padding-width;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $hover-bcg-color;
+    color: $hover-color;
+  }
+
+  &.v-disabled {
+    @include opacity($v-disabled-opacity);
+
+    &:hover {
+      background-color: $bcg-color;
+      color: $color;
+    }
+  }
+}
+
+@function halo-taglabel-height($unit-size: $v-unit-size) {
+  @return ceil($unit-size - $unit-size / 4);
+}
+
+@function halo-taglabel-font-size($font-size: $v-font-size) {
+  @return $font-size - 1;
 }

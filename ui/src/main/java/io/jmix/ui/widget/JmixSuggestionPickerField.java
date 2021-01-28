@@ -86,11 +86,21 @@ public class JmixSuggestionPickerField<T> extends JmixPickerField<T> {
         getFieldInternal().setAsyncSearchDelayMs(asyncSearchDelayMs);
     }
 
-    public void setEnterActionHandler(Consumer<String> enterActionHandler) {
+    @Nullable
+    public Consumer<String> getEnterActionHandler() {
+        return getFieldInternal().getEnterActionHandler();
+    }
+
+    public void setEnterActionHandler(@Nullable Consumer<String> enterActionHandler) {
         getFieldInternal().setEnterActionHandler(enterActionHandler);
     }
 
-    public void setArrowDownActionHandler(Consumer<String> arrowDownActionHandler) {
+    @Nullable
+    public Consumer<String> getArrowDownActionHandler() {
+        return getFieldInternal().getArrowDownActionHandler();
+    }
+
+    public void setArrowDownActionHandler(@Nullable Consumer<String> arrowDownActionHandler) {
         getFieldInternal().setArrowDownActionHandler(arrowDownActionHandler);
     }
 

@@ -91,6 +91,7 @@
 @import "components/tagpicker/tagpicker";
 @import "components/taglabel/taglabel";
 @import "components/tagcontainer/tagcontainer";
+@import "components/tagfield/tagfield";
 
 // Application specific
 @import "app/log-control";
@@ -184,6 +185,7 @@
   @include halo-tagpicker;
   @include halo-taglabel;
   @include halo-tagcontainer;
+  @include halo-tagfield;
 
   @include halo-cuba-groupbox;
   @include halo-cuba-tokenlist;

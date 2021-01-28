@@ -2543,6 +2543,7 @@
                 <xs:attribute name="showActionIcons" type="xs:boolean"/>
                 <xs:attribute name="focusable" type="xs:boolean"/>
 
+
                 <xs:attribute name="menuWidth" type="componentSize"/>
                 <xs:attribute name="autoClose" type="xs:boolean"/>
                 <xs:attribute name="closePopupOnOutsideClick" type="xs:boolean"/>
@@ -2577,9 +2578,10 @@
         <xs:complexContent>
             <xs:extension base="basePaginationDataBinding">
                 <xs:attribute name="maxVisiblePages" type="xs:integer"/>
+
+                <xs:attributeGroup ref="basePaginationAttributesGroup"/>
             </xs:extension>
         </xs:complexContent>
-        <xs:attributeGroup ref="basePaginationAttributesGroup"/>
     </xs:complexType>
 
     <!-- SimplePagination -->
@@ -2587,9 +2589,10 @@
         <xs:complexContent>
             <xs:extension base="basePaginationDataBinding">
                 <xs:attribute name="autoLoad" type="xs:boolean"/>
+
+                <xs:attributeGroup ref="basePaginationAttributesGroup"/>
             </xs:extension>
         </xs:complexContent>
-        <xs:attributeGroup ref="basePaginationAttributesGroup"/>
     </xs:complexType>
 
     <!-- ListComponent's SimplePagination   -->
@@ -2907,6 +2910,14 @@
         <xs:attributeGroup ref="hasResponsiveProp"/>
         <xs:attributeGroup ref="hasStyle"/>
         <xs:attributeGroup ref="hasCss"/>
+    </xs:complexType>
+
+    <xs:complexType name="tagFieldComponent">
+        <xs:complexContent>
+            <xs:extension base="suggestionFieldComponent">
+                <xs:attribute name="clearAllVisible" type="xs:boolean"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <!-- TagPicker   -->
@@ -3902,6 +3913,7 @@
                 <xs:element name="calendar" type="calendarComponent"/>
 
                 <xs:element name="tagPicker" type="tagPickerComponent"/>
+                <xs:element name="tagField" type="tagFieldComponent"/>
                 <xs:element name="twinColumn" type="twinColumnComponent"/>
                 <xs:element name="relatedEntities" type="relatedComponent"/>
                 <xs:element name="bulkEditor" type="bulkEditorComponent"/>

@@ -17,22 +17,19 @@
 package io.jmix.ui.xml.layout.loader;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.FluentLoader;
-import io.jmix.core.QueryUtils;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.Field;
-import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.SuggestionFieldComponent;
+import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.substitutor.StringSubstitutor;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public abstract class SuggestionFieldQueryLoader<T extends Field> extends AbstractFieldLoader<T> {
+public abstract class AbstractSuggestionFieldLoader<T extends SuggestionFieldComponent> extends AbstractFieldLoader<T> {
 
-    protected void loadQuery(SuggestionField suggestionField, Element element) {
+    protected void loadQuery(T suggestionField, Element element) {
         Element queryElement = element.element("query");
         if (queryElement != null) {
             final boolean escapeValue;
@@ -86,5 +83,44 @@ public abstract class SuggestionFieldQueryLoader<T extends Field> extends Abstra
 
     protected String loadFetchPlan(Element queryElement) {
         return queryElement.attributeValue("fetchPlan");
+    }
+
+    protected void loadPopupWidth(T suggestionField, Element element) {
+        String popupWidth = element.attributeValue("popupWidth");
+        if (StringUtils.isNotEmpty(popupWidth)) {
+            suggestionField.setPopupWidth(popupWidth);
+        }
+    }
+
+    protected void loadAsyncSearchDelayMs(T suggestionField, Element element) {
+        String asyncSearchDelayMs = element.attributeValue("asyncSearchDelayMs");
+        if (StringUtils.isNotEmpty(asyncSearchDelayMs)) {
+            suggestionField.setAsyncSearchDelayMs(Integer.parseInt(asyncSearchDelayMs));
+        }
+    }
+
+    protected void loadMinSearchStringLength(T suggestionField, Element element) {
+        String minSearchStringLength = element.attributeValue("minSearchStringLength");
+        if (StringUtils.isNotEmpty(minSearchStringLength)) {
+            suggestionField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
+        }
+    }
+
+    protected void loadSuggestionsLimit(T suggestionField, Element element) {
+        String suggestionsLimit = element.attributeValue("suggestionsLimit");
+        if (StringUtils.isNotEmpty(suggestionsLimit)) {
+            suggestionField.setSuggestionsLimit(Integer.parseInt(suggestionsLimit));
+        }
+    }
+
+    protected void loadCaptionProperty(T suggestionField, Element element) {
+        String captionProperty = element.attributeValue("captionProperty");
+        if (StringUtils.isNotEmpty(captionProperty)) {
+            suggestionField.setFormatter(
+                    new CaptionAdapter(captionProperty,
+                            applicationContext.getBean(Metadata.class),
+                            applicationContext.getBean(MetadataTools.class))
+            );
+        }
     }
 }

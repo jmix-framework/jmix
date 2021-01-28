@@ -16,12 +16,12 @@
 
 package io.jmix.ui.widget.client.suggestionfield;
 
-import io.jmix.ui.widget.JmixSuggestionField;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractFieldConnector;
 import com.vaadin.shared.ui.Connect;
 import elemental.json.JsonArray;
+import io.jmix.ui.widget.JmixSuggestionField;
 
 @Connect(JmixSuggestionField.class)
 public class JmixSuggestionFieldConnector extends AbstractFieldConnector {

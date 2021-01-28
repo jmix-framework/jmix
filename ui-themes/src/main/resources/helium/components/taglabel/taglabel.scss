@@ -17,20 +17,8 @@
 @mixin he-taglabel($primary-stylename: jmix-taglabel) {
 
   .#{$primary-stylename} {
-    background-color: var(--taglabel-background-color);
-    color: var(--taglabel-text-color);
-
-    &:hover {
-      background-color: var(--taglabel-hover-background-color);
-      color: var(--taglabel-hover-text-color);
-    }
-
-    &.v-disabled:hover {
-      background-color: var(--taglabel-background-color);
-      color: var(--taglabel-text-color);
-    }
+    @include he-taglabel-color-style;
   }
-
 
   /* Global size */
 
@@ -77,7 +65,7 @@
 }
 
 @mixin he-taglabel-size-style--medium($primary-stylename : jmix-taglabel) {
-  @include he-taglabel-size-style();
+  @include he-taglabel-size-style($primary-stylename);
 }
 
 @mixin he-taglabel-size-style--large($primary-stylename : jmix-taglabel) {
@@ -85,16 +73,45 @@
 }
 
 @mixin he-taglabel-size-style($primary-stylename : jmix-taglabel,
-                              $height            : $v-unit-size,
-                              $font              : $v-font-size) {
-  $unit-size: ceil($height - $height / 4);
-  $font-size: $font - 1;
+                              $unit-size         : $v-unit-size,
+                              $font-size         : $v-font-size,
+                              $tag-height        : null,
+                              $tag-font-size     : null) {
 
-  height: $unit-size;
-  font-size: $font-size;
+  $height: halo-taglabel-height($unit-size);
+  @if ($tag-height) {
+    $height: $tag-height;
+  }
 
-  .#{$primary-stylename}-content,
-  .#{$primary-stylename}-close {
-    line-height: $unit-size;
+  $font: halo-taglabel-font-size($font-size);
+  @if ($tag-font-size) {
+    $font: $tag-font-size;
+  }
+
+  font-size: $font;
+  height: $height;
+  line-height: $height;
+}
+
+@mixin he-taglabel-color-style($background-color         : var(--taglabel-background-color),
+                               $color                    : var(--taglabel-text-color),
+                               $hover-background-color   : var(--taglabel-hover-background-color),
+                               $hover-color              : var(--taglabel-hover-text-color),
+                               $disabled-background-color: var(--taglabel-disabled-background-color)) {
+  background-color: $background-color;
+  color: $color;
+
+  &:hover {
+    background-color: $hover-background-color;
+    color: $hover-color;
+  }
+
+  &.v-disabled {
+    background-color: $disabled-background-color;
+  }
+
+  &.v-disabled:hover {
+    background-color: $disabled-background-color;
+    color: $color;
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.SuggestionField;
+import io.jmix.ui.component.TagField;
 
-public class SuggestionFieldLoader extends AbstractSuggestionFieldLoader<SuggestionField> {
+public class TagFieldLoader extends AbstractSuggestionFieldLoader<TagField> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(SuggestionField.NAME);
+        resultComponent = factory.create(TagField.NAME);
         loadId(resultComponent, element);
     }
 
@@ -42,5 +42,8 @@ public class SuggestionFieldLoader extends AbstractSuggestionFieldLoader<Suggest
         loadPopupWidth(resultComponent, element);
 
         loadQuery(resultComponent, element);
+
+        loadBoolean(element, "clearAllVisible",
+                resultComponent::setClearAllVisible);
     }
 }

@@ -1,5 +1,5 @@
-/*
- * Copyright 2019 Haulmont.
+/*!
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component;
+@mixin he-tagpicker($primary-stylename: jmix-tagpicker) {
 
-import org.springframework.core.ParameterizedTypeReference;
+  .#{$primary-stylename} {
 
-/**
- * A filtering dropdown single-select. Items are filtered based on user input using asynchronous data loading.
- *
- * @param <V> type of value
- */
-public interface SuggestionField<V> extends SuggestionFieldComponent<V, V> {
-
-    String NAME = "suggestionField";
-
-    static <T> ParameterizedTypeReference<SuggestionField<T>> of(Class<T> valueClass) {
-        return new ParameterizedTypeReference<SuggestionField<T>>() {};
+    .jmix-taglabel {
+      @include he-taglabel-color-style(var(--tagpicker-tag-background-color),
+                                       var(--tagpicker-tag-text-color),
+                                       var(--tagpicker-tag-hover-background-color),
+                                       var(--tagpicker-tag-hover-text-color));
     }
+  }
 }

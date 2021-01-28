@@ -82,17 +82,20 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
 
     public JmixSuggestionFieldWidget() {
         textField = GWT.create(VTextField.class);
+        setupComposition();
         initTextField();
 
         suggestionsContainer = new SuggestionsContainer(this);
-        suggestionsPopup = new JmixSuggestionFieldWidget.SuggestionPopup(suggestionsContainer);
+        suggestionsPopup = createSuggestionPopup(suggestionsContainer);
 
         suggestionTimer = new JmixSuggestionFieldWidget.SuggestionTimer();
     }
 
-    protected void initTextField() {
+    protected void setupComposition() {
         initWidget(textField);
+    }
 
+    protected void initTextField() {
         JmixTextFieldEvents events = new JmixTextFieldEvents();
         textField.addKeyDownHandler(events);
         textField.addKeyUpHandler(events);
@@ -101,6 +104,10 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
         textField.addFocusHandler(events);
 
         disableAutocompletion();
+    }
+
+    protected SuggestionPopup createSuggestionPopup(SuggestionsContainer suggestionsContainer) {
+        return new SuggestionPopup(suggestionsContainer);
     }
 
     protected void disableAutocompletion() {
@@ -360,6 +367,9 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
         }
     }
 
+    protected void handleOnFocus(FocusEvent event) {
+    }
+
     protected void handleEscKeyPressed(KeyCodeEvent event) {
         if (suggestionsPopup.isShowing()) {
             suggestionsPopup.hide();
@@ -450,8 +460,8 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
         }
 
         public void showPopup() {
-            int x = textField.getAbsoluteLeft();
-            topPosition = textField.getAbsoluteTop() + textField.getOffsetHeight();
+            int x = getRelativeWidget().getAbsoluteLeft();
+            topPosition = getRelativeWidget().getAbsoluteTop() + getRelativeWidget().getOffsetHeight();
 
             setPopupPosition(x, topPosition);
             setPopupPositionAndShow(this);
@@ -473,7 +483,7 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
             int left;
 
             if (offsetHeight + getPopupTop() > Window.getClientHeight() + Window.getScrollTop()) {
-                top = getPopupTop() - offsetHeight - textField.getOffsetHeight();
+                top = getPopupTop() - offsetHeight - getRelativeWidget().getOffsetHeight();
                 if (top < 0) {
                     top = 0;
                 }
@@ -485,11 +495,11 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
 
             Widget popup = getWidget();
             Element containerFirstChild = popup.getElement().getFirstChild().cast();
-            final int textFieldWidth = textField.getOffsetWidth();
+            final int textFieldWidth = getRelativeWidget().getOffsetWidth();
 
             offsetWidth = containerFirstChild.getOffsetWidth();
             if (offsetWidth + getPopupLeft() > Window.getClientWidth() + Window.getScrollLeft()) {
-                left = textField.getAbsoluteLeft() + textFieldWidth + Window.getScrollLeft() - offsetWidth;
+                left = getRelativeWidget().getAbsoluteLeft() + textFieldWidth + Window.getScrollLeft() - offsetWidth;
                 if (left < 0) {
                     left = 0;
                 }
@@ -544,6 +554,13 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
             setWidth(newPopupWidth);
             suggestionsContainer.addStyleName(C_HAS_WIDTH);
         }
+
+        /**
+         * @return widget for which is shown popup
+         */
+        protected Widget getRelativeWidget() {
+            return textField;
+        }
     }
 
     protected static double getMarginBorderPaddingWidth(Element element) {
@@ -588,6 +605,7 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
 
         @Override
         public void onFocus(FocusEvent event) {
+            handleOnFocus(event);
             focused = true;
         }
     }

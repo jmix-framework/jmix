@@ -17,18 +17,16 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.LookupAction;
 import io.jmix.ui.action.entitypicker.OpenAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.EntitySuggestionField;
-import io.jmix.ui.component.compatibility.CaptionAdapter;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<EntitySuggestionField> {
+public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<EntitySuggestionField> {
 
     @Override
     public void createComponent() {
@@ -63,24 +61,6 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
         return applicationContext.getBean(Metadata.class);
     }
 
-    protected void loadPopupWidth(EntitySuggestionField suggestionField, Element element) {
-        String popupWidth = element.attributeValue("popupWidth");
-        if (StringUtils.isNotEmpty(popupWidth)) {
-            suggestionField.setPopupWidth(popupWidth);
-        }
-    }
-
-    protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
-        String captionProperty = element.attributeValue("captionProperty");
-        if (!StringUtils.isEmpty(captionProperty)) {
-            suggestionField.setFormatter(
-                    new CaptionAdapter(captionProperty,
-                            applicationContext.getBean(Metadata.class),
-                            applicationContext.getBean(MetadataTools.class))
-            );
-        }
-    }
-
     protected void loadActions(EntitySuggestionField suggestionField) {
         loadActions(suggestionField, element);
         if (suggestionField.getActions().isEmpty()) {
@@ -101,7 +81,7 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
 
     protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {
         String metaClass = element.attributeValue("metaClass");
-        if (!StringUtils.isEmpty(metaClass)) {
+        if (StringUtils.isNotEmpty(metaClass)) {
             suggestionField.setMetaClass(getMetadata().findClass(metaClass));
         }
     }
@@ -109,26 +89,5 @@ public class EntitySuggestionFieldLoader extends SuggestionFieldQueryLoader<Enti
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         return loadValuePickerDeclarativeAction(actionsHolder, element);
-    }
-
-    protected void loadSuggestionsLimit(EntitySuggestionField suggestionField, Element element) {
-        String suggestionsLimit = element.attributeValue("suggestionsLimit");
-        if (StringUtils.isNotEmpty(suggestionsLimit)) {
-            suggestionField.setSuggestionsLimit(Integer.parseInt(suggestionsLimit));
-        }
-    }
-
-    protected void loadMinSearchStringLength(EntitySuggestionField suggestionField, Element element) {
-        String minSearchStringLength = element.attributeValue("minSearchStringLength");
-        if (StringUtils.isNotEmpty(minSearchStringLength)) {
-            suggestionField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
-        }
-    }
-
-    protected void loadAsyncSearchDelayMs(EntitySuggestionField suggestionField, Element element) {
-        String asyncSearchDelayMs = element.attributeValue("asyncSearchDelayMs");
-        if (StringUtils.isNotEmpty(asyncSearchDelayMs)) {
-            suggestionField.setAsyncSearchDelayMs(Integer.parseInt(asyncSearchDelayMs));
-        }
     }
 }

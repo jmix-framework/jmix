@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.ui.component;
+package io.jmix.ui.widget.client.tagfield;
 
-import org.springframework.core.ParameterizedTypeReference;
+import com.vaadin.shared.communication.ClientRpc;
 
-/**
- * A filtering dropdown single-select. Items are filtered based on user input using asynchronous data loading.
- *
- * @param <V> type of value
- */
-public interface SuggestionField<V> extends SuggestionFieldComponent<V, V> {
+public interface JmixTagFieldClientRpc extends ClientRpc {
 
-    String NAME = "suggestionField";
-
-    static <T> ParameterizedTypeReference<SuggestionField<T>> of(Class<T> valueClass) {
-        return new ParameterizedTypeReference<SuggestionField<T>>() {};
-    }
+    void clearText();
 }

@@ -53,10 +53,10 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
 
     protected SearchExecutor<V> searchExecutor;
 
-    protected Consumer<String> enterActionHandler;
-    protected Consumer<String> arrowDownActionHandler;
-
     protected Function<? super V, String> optionStyleProvider;
+
+    protected Consumer<EnterPressEvent> enterPressHandler;
+    protected Consumer<ArrowDownEvent> arrowDownHandler;
 
     protected Locale locale;
 
@@ -232,26 +232,42 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
         this.searchExecutor = searchExecutor;
     }
 
+    @Nullable
     @Override
-    public Consumer<String> getEnterActionHandler() {
-        return enterActionHandler;
+    public Consumer<EnterPressEvent> getEnterPressHandler() {
+        return enterPressHandler;
     }
 
     @Override
-    public void setEnterActionHandler(Consumer<String> handler) {
-        this.enterActionHandler = handler;
-        getComponent().setEnterActionHandler(handler);
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent> handler) {
+        enterPressHandler = handler;
+
+        if (handler != null) {
+            if (getComponent().getEnterActionHandler() == null) {
+                getComponent().setEnterActionHandler(this::onEnterPressHandler);
+            }
+        } else {
+            getComponent().setEnterActionHandler(null);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Consumer<ArrowDownEvent> getArrowDownHandler() {
+        return arrowDownHandler;
     }
 
     @Override
-    public Consumer<String> getArrowDownActionHandler() {
-        return arrowDownActionHandler;
-    }
+    public void setArrowDownHandler(@Nullable Consumer<ArrowDownEvent> handler) {
+        arrowDownHandler = handler;
 
-    @Override
-    public void setArrowDownActionHandler(Consumer<String> handler) {
-        this.arrowDownActionHandler = handler;
-        getComponent().setArrowDownActionHandler(handler);
+        if (handler != null) {
+            if (getComponent().getArrowDownActionHandler() == null) {
+                getComponent().setArrowDownActionHandler(this::onArrowDownHandler);
+            }
+        } else {
+            getComponent().setArrowDownActionHandler(null);
+        }
     }
 
     @Override
@@ -365,5 +381,17 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
     @Override
     protected void checkValueType(@Nullable V value) {
         // do not check
+    }
+
+    protected void onEnterPressHandler(String currentSearchString) {
+        if (enterPressHandler != null) {
+            enterPressHandler.accept(new EnterPressEvent(this, currentSearchString));
+        }
+    }
+
+    protected void onArrowDownHandler(String currentSearchString) {
+        if (arrowDownHandler != null) {
+            arrowDownHandler.accept(new ArrowDownEvent(this, currentSearchString));
+        }
     }
 }

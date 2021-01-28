@@ -95,6 +95,7 @@ public abstract class BaseLoaderConfig {
         loaders.put(PopupButton.NAME, PopupButtonLoader.class);
         loaders.put(PopupView.NAME, PopupViewLoader.class);
         loaders.put(TagPicker.NAME, TagPickerLoader.class);
+        loaders.put(TagField.NAME, TagFieldLoader.class);
         loaders.put(TwinColumn.NAME, TwinColumnLoader.class);
         loaders.put(ProgressBar.NAME, ProgressBarLoader.class);
         loaders.put(RelatedEntities.NAME, RelatedEntitiesLoader.class);

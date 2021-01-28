@@ -73,6 +73,9 @@
 @import "components/resizabletextarea/resizabletextarea";
 @import "components/tokenlist/tokenlist";
 @import "components/taglabel/taglabel";
+@import "components/tagpicker/tagpicker";
+@import "components/tagfield/tagfield";
+@import "components/tagcontainer/tagcontainer";
 @import "components/treedatagrid/treedatagrid";
 @import "components/tree/tree";
 @import "components/twincolumn/twincolumn";
@@ -148,7 +151,10 @@
   @include he-searchselect;
   @include he-pagination;
   @include he-simplepagination;
+  @include he-tagpicker;
+  @include he-tagfield;
 
+  @include he-tagcontainer;
   @include he-taglabel;
 
   @include he-login-window;
@@ -523,6 +529,27 @@
 
   --taglabel-hover-text-color: var(--taglabel-text-color);
   --taglabel-hover-background-color: var(--primary-color-shade-1);
+
+  --taglabel-disabled-background-color: var(--primary-dim-color);
+
+  /* TagPicker */
+
+  --tagpicker-tag-text-color: var(--taglabel-text-color);
+  --tagpicker-tag-background-color: var(--taglabel-background-color);
+
+  --tagpicker-tag-hover-text-color: var(--taglabel-hover-text-color);
+  --tagpicker-tag-hover-background-color: var(--taglabel-hover-background-color);
+
+  /* TagField */
+
+  --tagfield-tag-text-color: var(--taglabel-text-color);
+  --tagfield-tag-background-color: var(--taglabel-background-color);
+
+  --tagfield-tag-hover-text-color: var(--taglabel-hover-text-color);
+  --tagfield-tag-hover-background-color: var(--taglabel-hover-background-color);
+
+  --tagfield-clear-all-color: var(--text-main-color);
+  --tagfield-clear-all-hover-color: var(--text-secondary-color);
 
   /* Table */
 

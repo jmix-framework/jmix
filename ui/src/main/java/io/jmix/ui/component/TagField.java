@@ -156,7 +156,7 @@ public interface TagField<V> extends SuggestionFieldComponent<Collection<V>, V>,
      * <p>
      * For instance:
      * <pre>
-     * tagField.setEnterActionHandler(new TagField.NewTagProvider<ServiceType>() {
+     * tagField.setEnterActionHandler(new TagField.NewTagProvider&lt;ServiceType&gt;() {
      *     &#64;Nullable
      *     &#64;Override
      *     public ServiceType create(String text) {

@@ -26,7 +26,9 @@ import com.haulmont.cuba.core.sys.AppContext;
 import com.haulmont.cuba.core.sys.CubaMetaModelLoader;
 import com.haulmont.cuba.core.sys.CubaNumberIdCache;
 import com.haulmont.cuba.gui.components.CubaUiTestIdsSupport;
+import com.haulmont.cuba.gui.components.presentation.CubaPresentationActionsBuilder;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
+import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
@@ -47,6 +49,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.NumberIdCache;
+import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
@@ -56,15 +59,17 @@ import io.jmix.securityui.SecurityUiConfiguration;
 import io.jmix.ui.*;
 import io.jmix.ui.bulk.BulkEditors;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.Table;
 import io.jmix.ui.component.impl.UiTestIdsSupport;
+import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.navigation.UrlChangeHandler;
-import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.UserSettingsTools;
+import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllerDependencyInjector;
 import io.jmix.ui.sys.UiControllerReflectionInspector;
@@ -87,7 +92,7 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class, UiConfiguration.class, UiDataConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
-        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class, DatatoolsUiConfiguration.class
 })
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
 public class CubaConfiguration {
@@ -250,8 +255,15 @@ public class CubaConfiguration {
     @Bean("cuba_Presentations")
     @Primary
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-    protected TablePresentations tablePresentations(Component component) {
+    protected Presentations presentations(Component component) {
         return new PresentationsImpl(component);
+    }
+
+    @Bean("cuba_CubaPresentationActionsBuilder")
+    @Primary
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    protected PresentationActionsBuilder presentationActionsBuilder(Table component, ComponentSettingsBinder settingsBinder) {
+        return new CubaPresentationActionsBuilder(component, settingsBinder);
     }
 
     @Bean("cuba_WindowConfig")

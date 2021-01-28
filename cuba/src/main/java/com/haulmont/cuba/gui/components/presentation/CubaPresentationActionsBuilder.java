@@ -22,15 +22,8 @@ import io.jmix.ui.component.presentation.action.EditPresentationAction;
 import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.component.presentation.action.SaveAsPresentationAction;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Component(CubaPresentationActionsBuilder.NAME)
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CubaPresentationActionsBuilder extends PresentationActionsBuilder {
-
-    public static final String NAME = "cuba_CubaPresentationActionsBuilder";
 
     public CubaPresentationActionsBuilder(Table component, ComponentSettingsBinder settingsBinder) {
         super(component, settingsBinder);

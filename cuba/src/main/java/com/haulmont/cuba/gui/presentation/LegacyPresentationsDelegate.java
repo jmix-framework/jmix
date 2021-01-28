@@ -17,7 +17,6 @@
 package com.haulmont.cuba.gui.presentation;
 
 import com.haulmont.cuba.gui.components.HasSettings;
-import com.haulmont.cuba.gui.components.presentation.CubaPresentationActionsBuilder;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
 import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -58,7 +57,7 @@ public class LegacyPresentationsDelegate {
 
     public TablePresentationsLayout createTablePresentationsLayout(TablePresentationsLayout layout) {
         layout.setPresentationActionsBuilder(
-                (PresentationActionsBuilder) applicationContext.getBean(CubaPresentationActionsBuilder.NAME, component, settingsBinder));
+                applicationContext.getBean(PresentationActionsBuilder.class, component, settingsBinder));
         layout.build();
         return layout;
     }

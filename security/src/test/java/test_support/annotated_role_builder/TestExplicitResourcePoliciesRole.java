@@ -20,13 +20,13 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.ExplicitResourcePolicies;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Role(name = "Test role", code = "TestExplicitResourcePoliciesRole")
+@ResourceRole(name = "Test role", code = "TestExplicitResourcePoliciesRole")
 public interface TestExplicitResourcePoliciesRole {
 
     @ExplicitResourcePolicies

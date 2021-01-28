@@ -16,25 +16,24 @@
 
 package annotated_role_provider
 
-
-import io.jmix.security.model.Role
-import io.jmix.security.impl.role.provider.AnnotatedRoleProvider
+import io.jmix.security.impl.role.provider.AnnotatedResourceRoleProvider
+import io.jmix.security.model.ResourceRole
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 
 class AnnotatedRoleProviderTest extends SecuritySpecification {
 
     @Autowired
-    AnnotatedRoleProvider annotatedRoleProvider
+    AnnotatedResourceRoleProvider annotatedRoleProvider
 
     def "scan classpath for roles with annotation"() {
 
         when:
-        Role[] roles = annotatedRoleProvider.getAllRoles()
+        ResourceRole[] roles = annotatedRoleProvider.getAllRoles()
 
         then: //find multiple roles including the ones from test_support/annotated_role_provider package
         roles.size() > 0
 
-        roles.find {it.name = 'TestAnnotatedRoleProviderRole'} != null
+        roles.find { it.name = 'TestAnnotatedRoleProviderRole' } != null
     }
 }

@@ -20,16 +20,15 @@ import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import test_support.entity.TestOrder;
 
-@Role(name = "TestDifferentResourcePoliciesOnMethodRole", code = "TestDifferentResourcePoliciesOnMethodRole")
+@ResourceRole(name = "TestDifferentResourcePoliciesOnMethodRole", code = "TestDifferentResourcePoliciesOnMethodRole")
 public interface TestDifferentResourcePoliciesOnMethodRole {
 
     @EntityPolicy(entityClass = TestOrder.class,
-            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ},
-            scope = "rest")
+            actions = {EntityPolicyAction.CREATE, EntityPolicyAction.READ})
     @EntityAttributePolicy(entityClass = TestOrder.class,
             attributes = {"number", "date"},
             action = EntityAttributePolicyAction.MODIFY)

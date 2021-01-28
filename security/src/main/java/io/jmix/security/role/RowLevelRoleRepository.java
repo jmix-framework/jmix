@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.security.impl.role.provider;
+package io.jmix.security.role;
 
-import io.jmix.core.impl.scanning.ClasspathScanCandidateDetector;
-import io.jmix.security.role.annotation.Role;
-import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.stereotype.Component;
+import io.jmix.security.model.RowLevelRole;
 
-@Component("sec_RoleDetector")
-public class RoleDetector implements ClasspathScanCandidateDetector {
+import java.util.Objects;
 
-    @Override
-    public boolean isCandidate(MetadataReader metadataReader) {
-        return (metadataReader.getAnnotationMetadata().hasAnnotation(Role.class.getName()));
+public interface RowLevelRoleRepository extends RoleRepository<RowLevelRole> {
+
+    default RowLevelRole getRoleByCode(String code) {
+        return Objects.requireNonNull(findRoleByCode(code), String.format("RowLevelRole not found by code: %s", code));
     }
 }

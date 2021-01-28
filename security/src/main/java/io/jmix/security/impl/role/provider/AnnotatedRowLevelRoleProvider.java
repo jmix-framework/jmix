@@ -17,9 +17,9 @@
 package io.jmix.security.impl.role.provider;
 
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
-import io.jmix.security.model.Role;
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder;
-import io.jmix.security.role.RoleProvider;
+import io.jmix.security.model.RowLevelRole;
+import io.jmix.security.role.RowLevelRoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,35 +31,36 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Role provider that gets roles from classes annotated with {@link io.jmix.security.role.annotation.Role}.
+ * Role provider that gets row level roles from classes annotated with
+ * {@link io.jmix.security.role.annotation.RowLevelRole}.
  */
-@Component("sec_AnnotatedRoleProvider")
-public class AnnotatedRoleProvider implements RoleProvider {
+@Component("sec_AnnotatedRowLevelRoleProvider")
+public class AnnotatedRowLevelRoleProvider implements RowLevelRoleProvider {
 
-    protected Map<String, Role> roles;
+    protected Map<String, RowLevelRole> roles;
 
     @Autowired
-    public AnnotatedRoleProvider(JmixModulesClasspathScanner classpathScanner,
-                                 AnnotatedRoleBuilder annotatedRoleBuilder) {
-        Set<String> classNames = classpathScanner.getClassNames(RoleDetector.class);
+    public AnnotatedRowLevelRoleProvider(JmixModulesClasspathScanner classpathScanner,
+                                         AnnotatedRoleBuilder annotatedRoleBuilder) {
+        Set<String> classNames = classpathScanner.getClassNames(RowLevelRoleDetector.class);
         roles = classNames.stream()
-                .map(annotatedRoleBuilder::createRole)
-                .collect(Collectors.toMap(Role::getCode, Function.identity()));
+                .map(annotatedRoleBuilder::createRowLevelRole)
+                .collect(Collectors.toMap(RowLevelRole::getCode, Function.identity()));
     }
 
     @Override
-    public Collection<Role> getAllRoles() {
+    public Collection<RowLevelRole> getAllRoles() {
         return roles.values();
     }
 
     @Override
     @Nullable
-    public Role getRoleByCode(String code) {
+    public RowLevelRole findRoleByCode(String code) {
         return roles.get(code);
     }
 
     @Override
-    public boolean deleteRole(Role role) {
-        throw new UnsupportedOperationException("Annotated role cannot be deleted");
+    public boolean deleteRole(RowLevelRole role) {
+        throw new UnsupportedOperationException("Annotated RowLevelRole cannot be deleted");
     }
 }

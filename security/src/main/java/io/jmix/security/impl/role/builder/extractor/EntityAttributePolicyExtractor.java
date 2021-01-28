@@ -29,7 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component("sec_EntityAttributePolicyExtractor")
 public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
@@ -58,15 +60,11 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
                         "Class: {}, method: {}", method.getClass().getName(), method.getName());
                 continue;
             }
-            String scope = policyAnnotation.scope();
-
             for (String attribute : policyAnnotation.attributes()) {
                 String resource = entityName + "." + attribute;
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY_ATTRIBUTE, resource)
                         .withAction(policyAnnotation.action().getId())
-                        .withScope(scope)
                         .withPolicyGroup(method.getName())
-                        .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
                         .build();
                 resourcePolicies.add(resourcePolicy);
             }

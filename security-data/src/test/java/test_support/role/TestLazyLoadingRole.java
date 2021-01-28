@@ -20,7 +20,8 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.PredicateRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.security.role.annotation.RowLevelRole;
 import test_support.entity.ManyToManyFirstEntity;
 import test_support.entity.ManyToManySecondEntity;
 import test_support.entity.ManyToOneEntity;
@@ -28,7 +29,8 @@ import test_support.entity.OneToManyEntity;
 
 import java.util.function.Predicate;
 
-@Role(name = TestLazyLoadingRole.NAME, code = TestLazyLoadingRole.NAME)
+@ResourceRole(name = TestLazyLoadingRole.NAME, code = TestLazyLoadingRole.NAME)
+@RowLevelRole(name = TestLazyLoadingRole.NAME, code = TestLazyLoadingRole.NAME)
 public interface TestLazyLoadingRole {
     String NAME = "TestLazyLoadingRole";
 

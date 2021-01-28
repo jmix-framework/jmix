@@ -17,31 +17,14 @@
 package io.jmix.security.model;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-/**
- * Class is a container for security policies.
- * <p>
- * Resource policies define permissions for resources. A resource may be a screen, entity CRUD operation, entity
- * attribute, etc.
- * <p>
- * Row-level policy restrict which data a user can read or modify.
- * <p>
- * Role objects may be created from different sources:
- * <ul>
- *     <li>from interfaces annotated with {@link io.jmix.security.role.annotation.Role}</li>
- *     <li>from database Role entities</li>
- *     <li>created explicitly by the application</li>
- * </ul>
- */
-public class Role {
-
+public abstract class BaseRole {
     private String name;
     private String code;
     private String source;
-    private RoleType roleType;
-    private Collection<ResourcePolicy> resourcePolicies = new ArrayList<>();
-    private Collection<RowLevelPolicy> rowLevelPolicies = new ArrayList<>();
     private Set<String> childRoles;
     private Map<String, String> customProperties = new HashMap<>();
 
@@ -69,28 +52,8 @@ public class Role {
         this.source = source;
     }
 
-    public RoleType getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
-    }
-
-    public Collection<ResourcePolicy> getResourcePolicies() {
-        return resourcePolicies;
-    }
-
-    public void setResourcePolicies(Collection<ResourcePolicy> resourcePolicies) {
-        this.resourcePolicies = resourcePolicies;
-    }
-
-    public Collection<RowLevelPolicy> getRowLevelPolicies() {
-        return rowLevelPolicies;
-    }
-
-    public void setRowLevelPolicies(Collection<RowLevelPolicy> rowLevelPolicies) {
-        this.rowLevelPolicies = rowLevelPolicies;
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
     }
 
     @Nullable
@@ -100,10 +63,6 @@ public class Role {
 
     public void setChildRoles(Set<String> childRoles) {
         this.childRoles = childRoles;
-    }
-
-    public Map<String, String> getCustomProperties() {
-        return customProperties;
     }
 
     public void setCustomProperties(Map<String, String> customProperties) {

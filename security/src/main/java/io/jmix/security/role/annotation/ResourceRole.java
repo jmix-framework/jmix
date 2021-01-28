@@ -16,7 +16,7 @@
 
 package io.jmix.security.role.annotation;
 
-import io.jmix.security.impl.role.provider.AnnotatedRoleProvider;
+import io.jmix.security.impl.role.provider.AnnotatedResourceRoleProvider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -24,21 +24,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that annotated interface is a "Role". Role is a container that holds resource and row-level policies.
+ * Indicates that annotated interface is a "Resource Role". Resource role is a container that holds resource policies.
  * <p>
  * Resource policies define permissions for any system resource: screen, entity read or create operation, entity
  * attribute, etc.
  * <p>
- * Row-level policies restrict which data should be return to the user (e.g. a user should only see contracts created by
- * user's department) or which data the user can create, update or delete.
- * <p>
- * Annotated interfaces are parsed by the {@link AnnotatedRoleProvider} and {@link
- * io.jmix.security.model.Role} objects are created using the information from the annotated interface.
+ * Annotated interfaces are parsed by the {@link AnnotatedResourceRoleProvider} and {@link
+ * io.jmix.security.model.ResourceRole} objects are created using the information from the annotated interface.
  * <p>
  * Role definition example:
- * {@code
  * <pre>
- * &#064;Role(code = "orderView", name = "Order view")
+ * &#064;ResourceRole(code = "orderView", name = "Order view")
  * public interface OrderViewRole {
  *
  *     &#064;MenuPolicy(menuIds = {"application", "application-orders"})
@@ -48,9 +44,6 @@ import java.lang.annotation.Target;
  *     &#064;EntityAttributePolicy(entityClass = Order.class,
  *         attributes = {"number", "date"},
  *         actions = {EntityAttributePolicyAction.UPDATE})
- *     &#064;JpqlRowLevelPolicy(entityClass = TestOrder.class,
- *             join = "join e.customer c",
- *             where = "c.status = 'active'")
  *     void order();
  *
  *     &#064;ScreenPolicy(screenClasses = {CustomerBrowse.class, CustomerEdit.class})
@@ -60,20 +53,14 @@ import java.lang.annotation.Target;
  *         attributes = {"*"},
  *         actions = {EntityAttributePolicyAction.UPDATE})
  *     void customer();
- *
- *     &#064;PredicateRowLevelPolicy(entityClass = Order.class,
- *         actions = {RowLevelPolicyAction.READ})
- *     static Predicate<Order> readZeroOrdersOnly() {
- *         return order -> order.getNumber().startsWith("0");
- *     }
  * }
- * </pre>}
+ * </pre>
  * <p>
  * Role interface may have any number of methods. Methods can have any names, methods are used only to group policies
  * logically. Policies may be grouped by entity they relate (as in the example above) or by type (one method will have
  * annotations for screen policies, another one for entity policies, etc.).
  * <p>
- * Method return type matters only for methods with {@link PredicateRowLevelPolicy} and {@link ExplicitResourcePolicies}
+ * Method return type matters only for methods with {@link ExplicitResourcePolicies}
  * annotations.
  *
  * @see EntityPolicy
@@ -85,7 +72,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Role {
+public @interface ResourceRole {
 
     /**
      * Role name.

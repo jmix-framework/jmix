@@ -16,23 +16,28 @@
 
 package io.jmix.security.role;
 
-import io.jmix.security.model.Role;
+import io.jmix.security.model.BaseRole;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
- * Interface must be implemented by classes that provide roles from a particular source type. A source type may be a
+ * Interface must be implemented by classes that provide resource/row level roles from a particular source type. A source type may be a
  * database, annotated interfaces, etc.
  * <p>
- * Role providers are used by {@link io.jmix.security.role.RoleRepository}
+ * Role providers are used by {@link ResourceRoleRepository}/{@link RowLevelRoleRepository}
  */
-public interface RoleProvider {
+public interface RoleProvider<T extends BaseRole> {
 
-    Collection<Role> getAllRoles();
+    default T getRoleByCode(String code) {
+        return Objects.requireNonNull(findRoleByCode(code), String.format("Role not found by code: %s", code));
+    }
 
     @Nullable
-    Role getRoleByCode(String code);
+    T findRoleByCode(String code);
 
-    boolean deleteRole(Role role);
+    boolean deleteRole(T role);
+
+    Collection<T> getAllRoles();
 }

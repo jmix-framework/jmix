@@ -16,10 +16,10 @@
 
 package annotated_role_builder
 
+import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
 import io.jmix.security.model.ResourcePolicy
 import io.jmix.security.model.ResourcePolicyType
-import io.jmix.security.model.Role
-import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
+import io.jmix.security.model.ResourceRole
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityUiSpecification
 import test_support.annotated_role_builder.TestMultipleMenuPoliciesOnMethodRole
@@ -34,7 +34,7 @@ class UiAnnotatedRoleBuilderTest extends SecurityUiSpecification {
 
     def "multiple @ScreenPolicy on single method"() {
         when:
-        Role role = annotatedRoleBuilder.createRole(TestMultipleScreenPoliciesOnMethodRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestMultipleScreenPoliciesOnMethodRole.class.getCanonicalName())
 
         then:
 
@@ -44,32 +44,32 @@ class UiAnnotatedRoleBuilderTest extends SecurityUiSpecification {
         resourcePolicies.size() == 4
 
         def testScreen1Policy = resourcePolicies.find { it.resource == TestScreen1.ID }
-        with (testScreen1Policy) {
+        with(testScreen1Policy) {
             type == ResourcePolicyType.SCREEN
             action == ResourcePolicy.DEFAULT_ACTION
             effect == ResourcePolicy.DEFAULT_EFFECT
         }
-        resourcePolicies.find {it.resource == TestScreen2.ID} != null
-        resourcePolicies.find {it.resource == 'screen1'} != null
-        resourcePolicies.find {it.resource == 'screen2'} != null
+        resourcePolicies.find { it.resource == TestScreen2.ID } != null
+        resourcePolicies.find { it.resource == 'screen1' } != null
+        resourcePolicies.find { it.resource == 'screen2' } != null
     }
 
     def "multiple @Menu on single method"() {
         when:
-        Role role = annotatedRoleBuilder.createRole(TestMultipleMenuPoliciesOnMethodRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestMultipleMenuPoliciesOnMethodRole.class.getCanonicalName())
 
         then:
         def resourcePolicies = role.resourcePolicies
         resourcePolicies.size() == 3
 
         def menu1Policy = resourcePolicies.find { it.resource == 'menu1' }
-        with (menu1Policy) {
+        with(menu1Policy) {
             type == ResourcePolicyType.MENU
             action == ResourcePolicy.DEFAULT_ACTION
             effect == ResourcePolicy.DEFAULT_EFFECT
         }
-        resourcePolicies.find {it.resource == 'menu2'} != null
-        resourcePolicies.find {it.resource == 'menu3'} != null
+        resourcePolicies.find { it.resource == 'menu2' } != null
+        resourcePolicies.find { it.resource == 'menu3' } != null
     }
 
 }

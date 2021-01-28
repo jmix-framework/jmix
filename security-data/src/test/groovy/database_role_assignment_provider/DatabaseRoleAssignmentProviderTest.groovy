@@ -19,6 +19,7 @@ package database_role_assignment_provider
 import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.core.SaveContext
+import io.jmix.security.role.assignment.RoleAssignmentRoleType
 import io.jmix.securitydata.entity.RoleAssignmentEntity
 import io.jmix.securitydata.impl.role.assignment.DatabaseRoleAssignmentProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,6 +53,7 @@ class DatabaseRoleAssignmentProviderTest extends SecurityDataSpecification {
         def roleAssignment = metadata.create(RoleAssignmentEntity)
         roleAssignment.roleCode = roleCode
         roleAssignment.username = username
+        roleAssignment.roleType = RoleAssignmentRoleType.RESOURCE
         return roleAssignment
     }
 
@@ -69,14 +71,14 @@ class DatabaseRoleAssignmentProviderTest extends SecurityDataSpecification {
 
         then:
         assignments1.size() == 1
-        assignments1.find {it.roleCode == 'role1'} != null
+        assignments1.find { it.roleCode == 'role1' } != null
 
         when:
         def assignments2 = databaseRoleAssignmentProvider.getAssignmentsByUsername("user2")
 
         then:
         assignments2.size() == 2
-        assignments2.find {it.roleCode == 'role2'} != null
-        assignments2.find {it.roleCode == 'role3'} != null
+        assignments2.find { it.roleCode == 'role2' } != null
+        assignments2.find { it.roleCode == 'role3' } != null
     }
 }

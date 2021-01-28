@@ -20,9 +20,9 @@ import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 
-@Role(name = "TestStringEntityNameRole", code = "TestStringEntityNameRole")
+@ResourceRole(name = "TestStringEntityNameRole", code = "TestStringEntityNameRole")
 public interface TestStringEntityNameRole {
 
     @EntityPolicy(entityName = "test_Order",

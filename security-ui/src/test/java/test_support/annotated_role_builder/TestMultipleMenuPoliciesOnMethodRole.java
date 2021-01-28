@@ -16,10 +16,10 @@
 
 package test_support.annotated_role_builder;
 
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 
-@Role(name = "TestMultipleMenuPoliciesOnMethodRole", code = "testMultipleMenuPoliciesOnMethodRole")
+@ResourceRole(name = "TestMultipleMenuPoliciesOnMethodRole", code = "testMultipleMenuPoliciesOnMethodRole")
 public interface TestMultipleMenuPoliciesOnMethodRole {
 
     @MenuPolicy(menuIds = {"menu1", "menu2"})

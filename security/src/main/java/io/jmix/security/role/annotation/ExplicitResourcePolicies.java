@@ -22,15 +22,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation must be put on a method of an interface that defines a role (see {@link Role}).
- *
+ * Annotation must be put on a method of an interface that defines a resource role (see {@link ResourceRole}).
+ * <p>
  * Method annotated with {code @ExplicitResourcePolicies} must be a static method should return a collection of
  * {@link io.jmix.security.model.ResourcePolicy}.
- *
+ * <p>
  * Example:
- *
- * {@code <pre>
- * &#064;Role(name = "Test role", code = "testRole")
+ * <p>
+ * <pre>
+ * &#064;ResourceRole(name = "Test role", code = "testRole")
  * public interface TestExplicitResourcePoliciesRole {
  *
  *     &#064;ExplicitResourcePolicies
@@ -43,7 +43,7 @@ import java.lang.annotation.Target;
  *         return resourcePolicies;
  *     }
  * }
- * </pre>}
+ * </pre>
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

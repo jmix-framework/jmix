@@ -16,16 +16,18 @@
 
 package io.jmix.securityui.role.annotation;
 
+import io.jmix.security.role.annotation.ResourceRole;
+
 import java.lang.annotation.*;
 
 /**
- * Defines screen resource policy in annotated role. Multiple {@code ScreenPolicy} annotations may be placed on a single
+ * Defines screen resource policy in annotated resource role. Multiple {@code ScreenPolicy} annotations may be placed on a single
  * method. {@code ScreenPolicy} annotation may present on multiple methods of the same class. Annotated method may have
  * any name and return type.
  * <p>
  * Example:
  * <pre>
- * &#064;Role(name = "My Role", code = "myRole")
+ * &#064;ResourceRole(name = "My Role", code = "myRole")
  * public interface MyRole {
  *
  *     &#064;ScreenPolicy(screenIds = {"screen1", "screen2"})
@@ -34,7 +36,7 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
- * @see io.jmix.security.role.annotation.Role
+ * @see ResourceRole
  * @see io.jmix.security.model.ResourcePolicy
  */
 @Target({ElementType.METHOD})

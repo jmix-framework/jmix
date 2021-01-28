@@ -21,7 +21,7 @@ import io.jmix.security.model.EntityPolicyAction;
 import java.lang.annotation.*;
 
 /**
- * Defines entity resource policy in annotated role. Multiple {@code EntityPolicy} annotations may be placed on a single
+ * Defines entity resource policy in annotated resource role (see {@link ResourceRole}). Multiple {@code EntityPolicy} annotations may be placed on a single
  * method. {@code EntityPolicy} annotation may present on multiple methods of the same class. Annotated method may have
  * any name and return type.
  * <p>
@@ -30,7 +30,7 @@ import java.lang.annotation.*;
  * <p>
  * Example:
  * <pre>
- * &#064;Role(name = "My Role", code = "myRole")
+ * &#064;ResourceRole(name = "My Role", code = "myRole")
  * public interface MyRole {
  *
  *     &#064;EntityPolicy(entityClass = Order.class,
@@ -41,7 +41,7 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
- * @see io.jmix.security.role.annotation.Role
+ * @see ResourceRole
  * @see io.jmix.security.model.ResourcePolicy
  */
 @Target({ElementType.METHOD})
@@ -54,7 +54,4 @@ public @interface EntityPolicy {
     String entityName() default "";
 
     EntityPolicyAction[] actions();
-
-    String scope() default "";
-
 }

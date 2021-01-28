@@ -16,19 +16,23 @@
 
 package io.jmix.security.role.assignment;
 
-import io.jmix.security.model.Role;
+import io.jmix.security.model.ResourceRole;
+import io.jmix.security.model.RowLevelRole;
 
 /**
- * Class stores a link between {@link org.springframework.security.core.userdetails.UserDetails} and {@link Role}
+ * Class stores a link between {@link org.springframework.security.core.userdetails.UserDetails}
+ * and {@link ResourceRole}/{@link RowLevelRole}
  */
 public class RoleAssignment {
 
     private final String username;
     private final String roleCode;
+    private final String roleType;
 
-    public RoleAssignment(String username, String roleCode) {
+    public RoleAssignment(String username, String roleCode, String roleType) {
         this.username = username;
         this.roleCode = roleCode;
+        this.roleType = roleType;
     }
 
     public String getUsername() {
@@ -37,5 +41,9 @@ public class RoleAssignment {
 
     public String getRoleCode() {
         return roleCode;
+    }
+
+    public String getRoleType() {
+        return roleType;
     }
 }

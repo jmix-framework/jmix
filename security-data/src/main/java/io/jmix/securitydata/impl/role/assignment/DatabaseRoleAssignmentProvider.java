@@ -59,6 +59,6 @@ public class DatabaseRoleAssignmentProvider implements RoleAssignmentProvider {
     }
 
     protected RoleAssignment buildRoleAssignment(RoleAssignmentEntity roleAssignmentEntity) {
-        return new RoleAssignment(roleAssignmentEntity.getUsername(), roleAssignmentEntity.getRoleCode());
+        return new RoleAssignment(roleAssignmentEntity.getUsername(), roleAssignmentEntity.getRoleCode(), roleAssignmentEntity.getRoleType());
     }
 }

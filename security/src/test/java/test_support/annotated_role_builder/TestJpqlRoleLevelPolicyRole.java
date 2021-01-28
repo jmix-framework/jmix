@@ -17,10 +17,10 @@
 package test_support.annotated_role_builder;
 
 import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.RowLevelRole;
 import test_support.entity.TestOrder;
 
-@Role(name = "TestAnnotatedRoleBuilderRole 5", code = "TestJpqlRoleLevelPolicyRole")
+@RowLevelRole(name = "TestAnnotatedRoleBuilderRole 5", code = "TestJpqlRoleLevelPolicyRole")
 public interface TestJpqlRoleLevelPolicyRole {
 
     @JpqlRowLevelPolicy(entityClass = TestOrder.class, where = "where1")

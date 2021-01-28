@@ -19,10 +19,12 @@ package test_support.role;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
+import io.jmix.security.role.annotation.RowLevelRole;
 import test_support.entity.TestOrder;
 
-@Role(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
+@ResourceRole(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
+@RowLevelRole(name = TestDataManagerReadQueryRole.NAME, code = TestDataManagerReadQueryRole.NAME)
 public interface TestDataManagerReadQueryRole {
     String NAME = "TestDataManagerReadQueryRole";
 

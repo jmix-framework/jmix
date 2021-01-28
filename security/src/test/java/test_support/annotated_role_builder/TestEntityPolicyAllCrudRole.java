@@ -18,10 +18,10 @@ package test_support.annotated_role_builder;
 
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import test_support.entity.TestOrder;
 
-@Role(name = "Test role", code = "TestEntityPolicyAllCrudRole")
+@ResourceRole(name = "Test role", code = "TestEntityPolicyAllCrudRole")
 public interface TestEntityPolicyAllCrudRole {
 
     @EntityPolicy(entityClass = TestOrder.class,

@@ -38,7 +38,6 @@ public class ExplicitResourcePolicyExtractor implements ResourcePolicyExtractor 
                         for (ResourcePolicy definedPolicy : definedPolicies) {
                             ResourcePolicy resourcePolicy = ResourcePolicy.builder(definedPolicy.getType(), definedPolicy.getResource())
                                     .withAction(definedPolicy.getAction())
-                                    .withScope(definedPolicy.getScope())
                                     .withEffect(definedPolicy.getEffect())
                                     .withPolicyGroup(definedPolicy.getPolicyGroup())
                                     .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))

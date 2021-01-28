@@ -18,17 +18,19 @@ package io.jmix.securityui.screen.roleassignment;
 
 import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.security.model.Role;
-import io.jmix.security.role.RoleRepository;
+import io.jmix.security.model.BaseRole;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import io.jmix.securitydata.entity.RoleAssignmentEntity;
-import io.jmix.securityui.model.RoleModel;
+import io.jmix.securityui.model.ResourceRoleModel;
+import io.jmix.securityui.model.RowLevelRoleModel;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.DataContext;
-import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,83 +43,104 @@ import java.util.stream.Collectors;
 public class RoleAssignmentFragment extends ScreenFragment {
 
     @Autowired
-    private CollectionLoader<RoleAssignmentEntity> roleAssignmentEntitiesDl;
+    private CollectionContainer<RoleAssignmentEntity> rowLevelRoleAssignmentEntitiesDc;
 
     @Autowired
-    private CollectionContainer<RoleAssignmentEntity> roleAssignmentEntitiesDc;
+    private CollectionContainer<RoleAssignmentEntity> resourceRoleAssignmentEntitiesDc;
+
+    @Autowired
+    private CollectionLoader<RoleAssignmentEntity> rowLevelRoleAssignmentEntitiesDl;
+
+    @Autowired
+    private CollectionLoader<RoleAssignmentEntity> resourceRoleAssignmentEntitiesDl;
 
     @Autowired
     private Metadata metadata;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private ResourceRoleRepository resourceRoleRepository;
+
+    @Autowired
+    private RowLevelRoleRepository rowLevelRoleRepository;
 
     @Autowired
     private UiComponents uiComponents;
 
     @Autowired
-    private GroupTable<RoleAssignmentEntity> roleAssignmentsTable;
-
-    @Autowired
     private EntityStates entityStates;
 
-    private InstanceContainer<? extends UserDetails> userDc;
+    private UserDetails user;
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        roleAssignmentsTable.addGeneratedColumn("roleName", roleAssignmentEntity -> {
-            Role role = roleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
-            Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
-            if (role != null) {
-                label.setValue(role.getName());
-            }
-            return label;
-        });
+    @Install(to = "resourceRoleAssignmentsTable.roleName", subject = "columnGenerator")
+    private Component resourceRoleAssignmentsTableRoleNameColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
+        BaseRole role = resourceRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+        Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
+        if (role != null) {
+            label.setValue(role.getName());
+        }
+        return label;
+    }
+
+    @Install(to = "rowLevelRoleAssignmentsTable.roleName", subject = "columnGenerator")
+    private Component rowLevelRoleAssignmentsTableRoleNameColumnGenerator(RoleAssignmentEntity roleAssignmentEntity) {
+        BaseRole role = rowLevelRoleRepository.findRoleByCode(roleAssignmentEntity.getRoleCode());
+        Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
+        if (role != null) {
+            label.setValue(role.getName());
+        }
+        return label;
     }
 
     @Subscribe(target = Target.PARENT_CONTROLLER)
     public void onAfterShow(Screen.AfterShowEvent event) {
-        UserDetails user = userDc.getItem();
         if (!entityStates.isNew(user)) {
-            roleAssignmentEntitiesDl.setParameter("username", user.getUsername());
-            roleAssignmentEntitiesDl.load();
+            resourceRoleAssignmentEntitiesDl.setParameter("username", user.getUsername());
+            resourceRoleAssignmentEntitiesDl.setParameter("roleType", RoleAssignmentRoleType.RESOURCE);
+            resourceRoleAssignmentEntitiesDl.load();
+
+            rowLevelRoleAssignmentEntitiesDl.setParameter("username", user.getUsername());
+            rowLevelRoleAssignmentEntitiesDl.setParameter("roleType", RoleAssignmentRoleType.ROW_LEVEL);
+            rowLevelRoleAssignmentEntitiesDl.load();
         }
     }
 
-    public void setUserDc(InstanceContainer<? extends UserDetails> userDc) {
-        this.userDc = userDc;
+    public void setUser(UserDetails user) {
+        this.user = user;
     }
 
-    @Install(to = "roleAssignmentsTable.add", subject = "transformation")
-    private Collection<RoleAssignmentEntity> roleAssignmentsTableAddTransformation(Collection<RoleModel> roleModels) {
-        UserDetails user = userDc.getItem();
-        Collection<String> assignedRoleCodes = getAssignedRoleCodes();
+    @Install(to = "resourceRoleAssignmentsTable.addResourceRole", subject = "transformation")
+    private Collection<RoleAssignmentEntity> resourceRoleAssignmentsTableAddResourceRoleTransformation(Collection<ResourceRoleModel> roleModels) {
+        Collection<String> assignedRoleCodes = resourceRoleAssignmentEntitiesDc.getItems().stream()
+                .map(RoleAssignmentEntity::getRoleCode)
+                .collect(Collectors.toSet());
+
         return roleModels.stream()
                 .filter(roleModel -> !assignedRoleCodes.contains(roleModel.getCode()))
                 .map(roleModel -> {
                     RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
                     roleAssignmentEntity.setRoleCode(roleModel.getCode());
                     roleAssignmentEntity.setUsername(user.getUsername());
+                    roleAssignmentEntity.setRoleType(RoleAssignmentRoleType.RESOURCE);
                     return roleAssignmentEntity;
                 })
                 .collect(Collectors.toList());
     }
 
-    private Collection<String> getAssignedRoleCodes() {
-        return roleAssignmentEntitiesDc.getItems().stream()
+    @Install(to = "rowLevelRoleAssignmentsTable.addRowLevelRole", subject = "transformation")
+    private Collection<RoleAssignmentEntity> rowLevelRoleAssignmentsTableAddRowLevelRoleTransformation(Collection<RowLevelRoleModel> roleModels) {
+        Collection<String> assignedRoleCodes = rowLevelRoleAssignmentEntitiesDc.getItems().stream()
                 .map(RoleAssignmentEntity::getRoleCode)
-                .collect(Collectors.toList());
-    }
+                .collect(Collectors.toSet());
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    public void onPreCommit(DataContext.PreCommitEvent event) {
-        //we don't know the username when a new user is created, so in this case we set username for role assignment
-        //when the user is saved
-        UserDetails user = userDc.getItem();
-        if (entityStates.isNew(user)) {
-            event.getModifiedInstances().stream()
-                    .filter(entity -> entity instanceof RoleAssignmentEntity)
-                    .forEach(roleAssEntity -> ((RoleAssignmentEntity) roleAssEntity).setUsername(user.getUsername()));
-        }
+        return roleModels.stream()
+                .filter(roleModel -> !assignedRoleCodes.contains(roleModel.getCode()))
+                .map(roleModel -> {
+                    RoleAssignmentEntity roleAssignmentEntity = metadata.create(RoleAssignmentEntity.class);
+                    roleAssignmentEntity.setRoleCode(roleModel.getCode());
+                    roleAssignmentEntity.setUsername(user.getUsername());
+                    roleAssignmentEntity.setRoleType(RoleAssignmentRoleType.ROW_LEVEL);
+                    return roleAssignmentEntity;
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -30,7 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component("sec_EntityPolicyExtractor")
 public class EntityPolicyExtractor implements ResourcePolicyExtractor {
@@ -70,13 +73,10 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
             if (Arrays.asList(actions).contains(EntityPolicyAction.ALL)) {
                 actions = ALL_CRUD_ACTIONS;
             }
-            String scope = entityPolicyAnnotation.scope();
             for (EntityPolicyAction action : actions) {
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY, entityName)
                         .withAction(action.getId())
-                        .withScope(scope)
                         .withPolicyGroup(method.getName())
-                        .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))
                         .build();
                 resourcePolicies.add(resourcePolicy);
             }

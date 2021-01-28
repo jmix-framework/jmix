@@ -78,6 +78,10 @@ public class RoleAssignmentEntity implements Serializable {
     @Column(name = "ROLE_CODE", nullable = false)
     private String roleCode;
 
+    @NotNull
+    @Column(name = "ROLE_TYPE", nullable = false)
+    private String roleType;
+
     public UUID getId() {
         return id;
     }
@@ -156,5 +160,13 @@ public class RoleAssignmentEntity implements Serializable {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(String roleType) {
+        this.roleType = roleType;
     }
 }

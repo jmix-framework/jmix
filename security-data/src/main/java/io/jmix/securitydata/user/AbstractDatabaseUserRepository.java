@@ -25,9 +25,13 @@ import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
 import io.jmix.security.authentication.RoleGrantedAuthority;
-import io.jmix.security.role.RoleRepository;
+import io.jmix.security.model.ResourceRole;
+import io.jmix.security.model.RowLevelRole;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignment;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
+import io.jmix.security.role.assignment.RoleAssignmentRoleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -54,7 +58,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
 
     protected DataManager dataManager;
     protected Metadata metadata;
-    protected RoleRepository roleRepository;
+    protected ResourceRoleRepository resourceRoleRepository;
+    protected RowLevelRoleRepository rowLevelRoleRepository;
     protected RoleAssignmentRepository roleAssignmentRepository;
 
     @Autowired
@@ -73,8 +78,13 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public void setResourceRoleRepository(ResourceRoleRepository resourceRoleRepository) {
+        this.resourceRoleRepository = resourceRoleRepository;
+    }
+
+    @Autowired
+    public void setRowLevelRoleRepository(RowLevelRoleRepository rowLevelRoleRepository) {
+        this.rowLevelRoleRepository = rowLevelRoleRepository;
     }
 
     @PostConstruct
@@ -154,10 +164,24 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
 
     protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
         return roleAssignmentRepository.getAssignmentsByUsername(username).stream()
-                .map(RoleAssignment::getRoleCode)
-                .map(role -> roleRepository.findRoleByCode(role))
+                .map(this::createAuthority)
                 .filter(Objects::nonNull)
-                .map(RoleGrantedAuthority::ofRole)
                 .collect(Collectors.toList());
+    }
+
+    protected GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
+        GrantedAuthority authority = null;
+        if (RoleAssignmentRoleType.RESOURCE.equals(roleAssignment.getRoleType())) {
+            ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode());
+            if (role != null) {
+                authority = RoleGrantedAuthority.ofResourceRole(role);
+            }
+        } else if (RoleAssignmentRoleType.ROW_LEVEL.equals(roleAssignment.getRoleType())) {
+            RowLevelRole role = rowLevelRoleRepository.findRoleByCode(roleAssignment.getRoleCode());
+            if (role != null) {
+                authority = RoleGrantedAuthority.ofRowLevelRole(role);
+            }
+        }
+        return authority;
     }
 }

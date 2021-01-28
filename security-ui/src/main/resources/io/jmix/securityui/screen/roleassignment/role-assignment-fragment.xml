@@ -17,40 +17,84 @@
 
 <fragment xmlns="http://jmix.io/schema/ui/fragment">
     <data>
-        <collection id="roleAssignmentEntitiesDc"
+        <collection id="resourceRoleAssignmentEntitiesDc"
                     class="io.jmix.securitydata.entity.RoleAssignmentEntity">
-            <loader id="roleAssignmentEntitiesDl">
+            <loader id="resourceRoleAssignmentEntitiesDl">
                 <query>
-                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username]]>
+                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
+                </query>
+            </loader>
+        </collection>
+        <collection id="rowLevelRoleAssignmentEntitiesDc"
+                    class="io.jmix.securitydata.entity.RoleAssignmentEntity">
+            <loader id="rowLevelRoleAssignmentEntitiesDl">
+                <query>
+                    <![CDATA[select e from sec_RoleAssignmentEntity e where e.username = :username and e.roleType = :roleType]]>
                 </query>
             </loader>
         </collection>
     </data>
-    <layout spacing="true" expand="roleAssignmentsTable">
-        <groupTable id="roleAssignmentsTable"
-                    width="100%"
-                    dataContainer="roleAssignmentEntitiesDc"
-                    multiselect="true">
-            <actions>
-                <action id="add" type="add">
-                    <properties>
-                        <property name="openMode" value="DIALOG"/>
-                        <property name="screenClass" value="io.jmix.securityui.screen.role.RoleModelLookup"/>
-                    </properties>
-                </action>
-                <action id="remove" type="remove"/>
-            </actions>
-            <columns>
-                <column id="roleName" caption="msg://roleName"/>
-                <column id="roleCode"/>
-<!--                <column id="source"/>-->
-            </columns>
-            <simplePagination/>
-            <buttonsPanel id="buttonsPanel"
-                          alwaysVisible="true">
-                <button id="addBtn" action="roleAssignmentsTable.add"/>
-                <button id="removeBtn" action="roleAssignmentsTable.remove"/>
-            </buttonsPanel>
-        </groupTable>
+    <layout spacing="true" expand="rolesBox">
+        <hbox id="rolesBox" width="100%" spacing="true">
+            <groupBox spacing="true"
+                      caption="msg://resourceRoles"
+                      height="100%"
+                      expand="resourceRoleAssignmentsTable">
+                <groupTable id="resourceRoleAssignmentsTable"
+                            width="100%"
+                            dataContainer="resourceRoleAssignmentEntitiesDc"
+                            multiselect="true">
+                    <actions>
+                        <action id="addResourceRole" type="add">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                                <property name="screenClass"
+                                          value="io.jmix.securityui.screen.resourcerole.ResourceRoleModelLookup"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="roleName" caption="msg://roleName"/>
+                        <column id="roleCode"/>
+                    </columns>
+                    <simplePagination/>
+                    <buttonsPanel alwaysVisible="true">
+                        <button id="addResourceRoleBtn" action="resourceRoleAssignmentsTable.addResourceRole"/>
+                        <button id="removeResourceRoleBtn" action="resourceRoleAssignmentsTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </groupBox>
+            <groupBox spacing="true"
+                      caption="msg://rowLevelRoles"
+                      height="100%"
+                      expand="rowLevelRoleAssignmentsTable">
+                <groupTable id="rowLevelRoleAssignmentsTable"
+                            width="100%"
+                            dataContainer="rowLevelRoleAssignmentEntitiesDc"
+                            multiselect="true">
+                    <actions>
+                        <action id="addRowLevelRole" type="add">
+                            <properties>
+                                <property name="openMode" value="DIALOG"/>
+                                <property name="screenClass"
+                                          value="io.jmix.securityui.screen.rowlevelrole.RowLevelRoleModelLookup"/>
+                            </properties>
+                        </action>
+                        <action id="remove" type="remove"/>
+                    </actions>
+                    <columns>
+                        <column id="roleName" caption="msg://roleName"/>
+                        <column id="roleCode"/>
+                    </columns>
+                    <simplePagination/>
+                    <buttonsPanel id="buttonsPanel"
+                                  alwaysVisible="true">
+                        <button id="addRowLevelRoleBtn" action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
+                        <button id="removeRowLevelRoleBtn" action="rowLevelRoleAssignmentsTable.remove"/>
+                    </buttonsPanel>
+                </groupTable>
+            </groupBox>
+        </hbox>
     </layout>
 </fragment>

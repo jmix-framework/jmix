@@ -84,16 +84,13 @@ public class ResourcePolicyEntity implements Serializable {
     @Column(name = "EFFECT", nullable = false)
     private String effect;
 
-    @Column(name = "SCOPE_")
-    private String scope;
-
     @Column(name = "POLICY_GROUP")
     private String policyGroup;
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
-    private RoleEntity role;
+    private ResourceRoleEntity role;
 
     public UUID getId() {
         return id;
@@ -159,11 +156,11 @@ public class ResourcePolicyEntity implements Serializable {
         this.deletedBy = deletedBy;
     }
 
-    public RoleEntity getRole() {
+    public ResourceRoleEntity getRole() {
         return role;
     }
 
-    public void setRole(RoleEntity role) {
+    public void setRole(ResourceRoleEntity role) {
         this.role = role;
     }
 
@@ -197,14 +194,6 @@ public class ResourcePolicyEntity implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     public String getPolicyGroup() {

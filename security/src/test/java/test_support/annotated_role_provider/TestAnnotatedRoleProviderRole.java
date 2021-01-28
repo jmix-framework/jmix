@@ -16,8 +16,8 @@
 
 package test_support.annotated_role_provider;
 
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 
-@Role(name = "TestAnnotatedRoleProviderRole", code = "testAnnotatedRoleProviderRole")
+@ResourceRole(name = "TestAnnotatedRoleProviderRole", code = "testAnnotatedRoleProviderRole")
 public interface TestAnnotatedRoleProviderRole {
 }

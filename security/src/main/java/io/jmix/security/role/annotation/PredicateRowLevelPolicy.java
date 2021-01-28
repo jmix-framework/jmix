@@ -24,15 +24,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation must be put on a method of an interface that defines a role (see {@link Role}).
+ * Annotation must be put on a method of an interface that defines a row level role (see {@link RowLevelRole}).
  * <p>
  * Method annotated with {code @PredicateRowLevelPolicy} must be a static method should return a {@link
  * java.util.function.Predicate}. The input parameter of the predicate must be an instance of the class defined in the
  * {@link #entityClass()}.
  * <p>
  * Example:
- * {@code <pre>
- * &#064;Role(name = "TestPredicateRoleLevelPolicyRole", code = "TestPredicateRoleLevelPolicyRole")
+ * <pre>
+ * &#064;RowLevelRole(name = "TestPredicateRoleLevelPolicyRole", code = "TestPredicateRoleLevelPolicyRole")
  * public interface TestPredicateRoleLevelPolicyRole {
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
@@ -40,8 +40,17 @@ import java.lang.annotation.Target;
  *     static Predicate<TestOrder> numberStartsWithA() {
  *         return testOrder -> testOrder.getNumber().startsWith("a");
  *     }
+ *
+ *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
+ *             actions = {RowLevelPolicyAction.READ})
+ *     default Predicate<TestOrder> numberStartsWithB() {
+ *         return testOrder -> testOrder.getNumber().startsWith("B");
+ *     }
  * }
- * </pre>}
+ * </pre>
+ *
+ *  @see RowLevelRole
+ *  @see io.jmix.security.model.RowLevelPolicy
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

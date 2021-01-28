@@ -17,15 +17,17 @@
 package io.jmix.securityui.model;
 
 import io.jmix.core.Metadata;
-import io.jmix.security.model.Role;
+import io.jmix.security.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Class is used for converting {@link Role} objects into non-persistent {@link RoleModel} entities which may be
+ * Class is used for converting {@link ResourceRole}, {@link RowLevelRole} objects
+ * into non-persistent {@link ResourceRoleModel}, {@link RowLevelRoleModel} entities which may be
  * displayed in UI
  */
 @Component("sec_RoleModelConverter")
@@ -34,31 +36,52 @@ public class RoleModelConverter {
     @Autowired
     protected Metadata metadata;
 
-    public RoleModel createRoleModel(Role role) {
-        RoleModel roleModel = metadata.create(RoleModel.class);
+    public ResourceRoleModel createResourceRoleModel(ResourceRole role) {
+        ResourceRoleModel roleModel = metadata.create(ResourceRoleModel.class);
+
+        initBaseParameters(roleModel, role);
+
+        roleModel.setResourcePolicies(createResourcePolicyModels(role.getResourcePolicies()));
+
+        return roleModel;
+    }
+
+
+    public RowLevelRoleModel createRowLevelRoleModel(RowLevelRole role) {
+        RowLevelRoleModel roleModel = metadata.create(RowLevelRoleModel.class);
+
+        initBaseParameters(roleModel, role);
+
+        roleModel.setRowLevelPolicies(createRowLevelPolicyModels(role.getRowLevelPolicies()));
+
+        return roleModel;
+    }
+
+    protected void initBaseParameters(BaseRoleModel roleModel, BaseRole role) {
         roleModel.setCode(role.getCode());
         roleModel.setName(role.getName());
         roleModel.setSource(role.getSource());
-        roleModel.setRoleType(role.getRoleType());
         roleModel.setChildRoles(role.getChildRoles());
         roleModel.setCustomProperties(role.getCustomProperties());
+    }
 
-        List<ResourcePolicyModel> resourcePolicyModels = role.getResourcePolicies().stream()
+    protected List<ResourcePolicyModel> createResourcePolicyModels(Collection<ResourcePolicy> resourcePolicies) {
+        return resourcePolicies.stream()
                 .map(resourcePolicy -> {
                     ResourcePolicyModel model = metadata.create(ResourcePolicyModel.class);
                     model.setType(resourcePolicy.getType());
                     model.setResource(resourcePolicy.getResource());
                     model.setAction(resourcePolicy.getAction());
                     model.setEffect(resourcePolicy.getEffect());
-                    model.setScope(resourcePolicy.getScope());
                     model.setPolicyGroup(resourcePolicy.getPolicyGroup());
                     model.setCustomProperties(resourcePolicy.getCustomProperties());
                     return model;
                 })
                 .collect(Collectors.toList());
-        roleModel.setResourcePolicies(resourcePolicyModels);
+    }
 
-        List<RowLevelPolicyModel> rowLevelPolicyModels = role.getRowLevelPolicies().stream()
+    protected List<RowLevelPolicyModel> createRowLevelPolicyModels(Collection<RowLevelPolicy> resourcePolicies) {
+        return resourcePolicies.stream()
                 .map(rowLevelPolicy -> {
                     RowLevelPolicyModel model = metadata.create(RowLevelPolicyModel.class);
                     model.setType(rowLevelPolicy.getType());
@@ -70,8 +93,5 @@ public class RoleModelConverter {
                     return model;
                 })
                 .collect(Collectors.toList());
-        roleModel.setRowLevelPolicies(rowLevelPolicyModels);
-
-        return roleModel;
     }
 }

@@ -18,12 +18,12 @@ package io.jmix.security.authentication;
 
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.security.model.ResourcePolicy;
-import io.jmix.security.model.Role;
+import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelPolicy;
+import io.jmix.security.model.RowLevelRole;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
@@ -35,21 +35,75 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new HashMap<>();
     protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes = new HashMap<>();
 
-    public static RoleGrantedAuthority ofRole(Role role) {
+    public static class Builder {
+        protected Function<String, ResourceRole> resourceRoleProvider;
+        protected Function<String, RowLevelRole> rowLevelRoleProvider;
+        protected List<String> resourceRoleCodes = new ArrayList<>();
+        protected List<String> rowLevelRoleCodes = new ArrayList<>();
+
+        private Builder() {
+        }
+
+        public Builder withResourceRoleProvider(Function<String, ResourceRole> resourceRoleProvider) {
+            this.resourceRoleProvider = resourceRoleProvider;
+            return this;
+        }
+
+        public Builder withRowLevelRoleProvider(Function<String, RowLevelRole> rowLevelRoleProvider) {
+            this.rowLevelRoleProvider = rowLevelRoleProvider;
+            return this;
+        }
+
+        public Builder withResourceRoles(String... codes) {
+            resourceRoleCodes.addAll(Arrays.asList(codes));
+            return this;
+        }
+
+        public Builder withRowLevelRoles(String... codes) {
+            rowLevelRoleCodes.addAll(Arrays.asList(codes));
+            return this;
+        }
+
+        public Collection<RoleGrantedAuthority> build() {
+            List<RoleGrantedAuthority> authorities = new ArrayList<>();
+            for (String code : resourceRoleCodes) {
+                authorities.add(ofResourceRole(resourceRoleProvider.apply(code)));
+            }
+            for (String code : rowLevelRoleCodes) {
+                authorities.add(ofRowLevelRole(rowLevelRoleProvider.apply(code)));
+            }
+            return authorities;
+        }
+    }
+
+    public static RoleGrantedAuthority ofResourceRole(ResourceRole role) {
         return new RoleGrantedAuthority(role);
     }
 
-    public static Collection<RoleGrantedAuthority> ofRoles(Function<String, Role> roleBuilder, String... codes) {
-        return Stream.of(codes)
-                .map(roleBuilder)
-                .map(RoleGrantedAuthority::ofRole)
-                .collect(Collectors.toList());
+    public static RoleGrantedAuthority ofRowLevelRole(RowLevelRole role) {
+        return new RoleGrantedAuthority(role);
     }
 
-    private RoleGrantedAuthority(Role role) {
+    public static Builder withResourceRoleProvider(Function<String, ResourceRole> roleProvider) {
+        Builder builder = new Builder();
+        return builder.withResourceRoleProvider(roleProvider);
+    }
+
+    public static Builder withRowLevelRoleProvider(Function<String, RowLevelRole> roleProvider) {
+        Builder builder = new Builder();
+        return builder.withRowLevelRoleProvider(roleProvider);
+    }
+
+    private RoleGrantedAuthority(ResourceRole role) {
         this.code = role.getCode();
-        this.resourcePolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getResourcePolicies()));
-        this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getRowLevelPolicies()));
+        this.resourcePolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getAllResourcePolicies()));
+        this.rowLevelPolicies = Collections.emptyList();
+    }
+
+    private RoleGrantedAuthority(RowLevelRole role) {
+        this.code = "";
+        this.resourcePolicies = Collections.emptyList();
+        this.rowLevelPolicies = Collections.unmodifiableCollection(new ArrayList<>(role.getAllRowLevelPolicies()));
     }
 
     @Override

@@ -39,14 +39,12 @@ public class ResourcePolicy implements Serializable {
 
     public static final String DEFAULT_EFFECT = ResourcePolicyEffect.ALLOW;
     public static final String DEFAULT_ACTION = "access";
-    public static final String DEFAULT_SCOPE = "";
     public static final String DEFAULT_POLICY_GROUP = "";
 
-    private String type;
-    private String resource;
+    private final String type;
+    private final String resource;
     private String action = DEFAULT_ACTION;
     private String effect = DEFAULT_EFFECT;
-    private String scope = DEFAULT_SCOPE;
     private String policyGroup = DEFAULT_POLICY_GROUP;
 
     private Map<String, String> customProperties;
@@ -61,7 +59,6 @@ public class ResourcePolicy implements Serializable {
         this.resource = builder.resource;
         this.action = builder.action;
         this.effect = builder.effect;
-        this.scope = builder.scope;
         this.policyGroup = builder.policyGroup;
         this.customProperties = builder.customProperties;
     }
@@ -131,17 +128,12 @@ public class ResourcePolicy implements Serializable {
         return customProperties;
     }
 
-    public String getScope() {
-        return scope;
-    }
-
     public static class Builder {
 
-        private String type;
-        private String resource;
+        private final String type;
+        private final String resource;
         private String action = DEFAULT_ACTION;
         private String effect = DEFAULT_EFFECT;
-        private String scope = DEFAULT_SCOPE;
         private String policyGroup = DEFAULT_POLICY_GROUP;
         private Map<String, String> customProperties = new HashMap<>();
 
@@ -158,11 +150,6 @@ public class ResourcePolicy implements Serializable {
 
         public Builder withEffect(String effect) {
             this.effect = effect;
-            return this;
-        }
-
-        public Builder withScope(String scope) {
-            this.scope = scope;
             return this;
         }
 

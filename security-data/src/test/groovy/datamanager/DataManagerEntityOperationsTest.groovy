@@ -22,7 +22,7 @@ import io.jmix.core.security.AccessDeniedException
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.RoleRepository
+import io.jmix.security.role.ResourceRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -51,7 +51,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    RoleRepository roleRepository
+    ResourceRoleRepository roleRepository
 
     @Autowired
     Metadata metadata
@@ -81,7 +81,7 @@ class DataManagerEntityOperationsTest extends SecurityDataSpecification {
         user2 = User.builder()
                 .username("user2")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME)))
+                .authorities(RoleGrantedAuthority.ofResourceRole(roleRepository.getRoleByCode(TestDataManagerEntityOperationsRole.NAME)))
                 .build()
         userRepository.addUser(user2)
 

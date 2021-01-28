@@ -18,10 +18,10 @@ package test_support.role;
 
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityPolicy;
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import test_support.entity.TestOrder;
 
-@Role(name = TestDataManagerEntityOperationsRole.NAME, code = TestDataManagerEntityOperationsRole.NAME)
+@ResourceRole(name = TestDataManagerEntityOperationsRole.NAME, code = TestDataManagerEntityOperationsRole.NAME)
 public interface TestDataManagerEntityOperationsRole {
     String NAME = "TestDataManagerEntityOperationsRole";
 

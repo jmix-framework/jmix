@@ -23,7 +23,7 @@
 
     <changeSet author="security-data" id="1">
 
-        <createTable tableName="SEC_ROLE_ENTITY">
+        <createTable tableName="SEC_RESOURCE_ROLE_ENTITY">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -43,9 +43,32 @@
             <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="SCOPE" type="varchar(255)"/>
-            <column name="ROLE_TYPE" type="varchar(50)"/>
             <column name="CHILD_ROLES" type="clob"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+        </createTable>
+
+        <createTable tableName="SEC_ROW_LEVEL_ROLE_ENTITY">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CHILD_ROLES" type="clob"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
         </createTable>
 
         <createTable tableName="SEC_RESOURCE_POLICY_ENTITY">
@@ -65,6 +88,7 @@
             <column name="TYPE_" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="POLICY_GROUP" type="varchar(255)"/>
             <column name="RESOURCE_" type="varchar(1000)">
                 <constraints nullable="false"/>
             </column>
@@ -75,11 +99,9 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="SCOPE_" type="varchar(255)"/>
-
             <column name="ROLE_ENTITY_ID" type="uuid">
                 <constraints foreignKeyName="FK_SEC_RESOURCE_POLICY_ROLE"
-                             references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
+                             references="SEC_RESOURCE_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
 
         </createTable>
@@ -113,9 +135,8 @@
 
             <column name="ROLE_ENTITY_ID" type="uuid">
                 <constraints foreignKeyName="FK_SEC_ROW_LEVEL_POLICY_ROLE"
-                             references="SEC_ROLE_ENTITY(ID)" nullable="false"/>
+                             references="SEC_ROW_LEVEL_ROLE_ENTITY(ID)" nullable="false"/>
             </column>
-
         </createTable>
 
         <createTable tableName="SEC_ROLE_ASSIGNMENT_ENTITY">
@@ -132,31 +153,21 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="USER_KEY" type="varchar(255)">
+            <column name="USERNAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="ROLE_CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_TYPE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
     </changeSet>
 
-    <changeSet author="security-data" id="2">
-        <renameColumn tableName="SEC_ROLE_ASSIGNMENT_ENTITY"
-                      oldColumnName="USER_KEY"
-                      newColumnName="USERNAME"
-                      columnDataType="VARCHAR(255)"/>
-    </changeSet>
-
-    <changeSet author="security-data" id="3">
-        <addColumn tableName="SEC_RESOURCE_POLICY_ENTITY">
-            <column name="POLICY_GROUP" type="varchar(255)"/>
-        </addColumn>
-    </changeSet>
-
-    <changeSet id="4-postgresql" author="security-data" dbms="postgresql">
-        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+    <changeSet id="2-postgresql" author="security-data" dbms="postgresql">
+        <createIndex tableName="SEC_RESOURCE_ROLE_ENTITY" indexName="IDX_SEC_RES_ROLE_UNIQ_NAME">
             <column name="CODE"/>
         </createIndex>
         <modifySql>
@@ -164,19 +175,19 @@
         </modifySql>
     </changeSet>
 
-    <changeSet id="4-mysql" author="security-data" dbms="mysql">
-        <addColumn tableName="SEC_ROLE_ENTITY">
+    <changeSet id="2-mysql" author="security-data" dbms="mysql">
+        <addColumn tableName="SEC_RESOURCE_ROLE_ENTITY">
             <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
-        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+        <createIndex tableName="SEC_RESOURCE_ROLE_ENTITY" indexName="IDX_SEC_RES_ROLE_UNIQ_NAME">
             <column name="CODE"/>
             <column name="DELETE_TS_NN"/>
         </createIndex>
         <sql endDelimiter=";\ndelimiter $$">
             <![CDATA[
-            create trigger SEC_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_ROLE_ENTITY
+            create trigger SEC_RESOURCE_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_RESOURCE_ROLE_ENTITY
             for each row
             begin
 	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
@@ -187,24 +198,63 @@
         </sql>
         <rollback>
             <sql>
-                DROP TRIGGER SEC_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER
+                DROP TRIGGER SEC_RESOURCE_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER
             </sql>
-            <dropIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME"/>
-            <dropColumn tableName="SEC_ROLE_ENTITY" columnName="DELETE_TS_NN"/>
+            <dropIndex tableName="SEC_RESOURCE_ROLE_ENTITY" indexName="IDX_SEC_RES_ROLE_UNIQ_NAME"/>
+            <dropColumn tableName="SEC_RESOURCE_ROLE_ENTITY" columnName="DELETE_TS_NN"/>
         </rollback>
     </changeSet>
 
-    <changeSet id="4-another-db" author="security-data" dbms="!postgresql, !mysql">
-        <createIndex tableName="SEC_ROLE_ENTITY" indexName="IDX_SEC_ROLE_UNIQ_NAME">
+    <changeSet id="2-another-db" author="security-data" dbms="!postgresql, !mysql">
+        <createIndex tableName="SEC_RESOURCE_ROLE_ENTITY" indexName="IDX_SEC_RES_ROLE_UNIQ_NAME">
             <column name="CODE"/>
             <column name="DELETE_TS"/>
         </createIndex>
     </changeSet>
 
-    <changeSet author="security-data" id="5">
-        <addColumn tableName="SEC_ROLE_ENTITY">
-            <column name="SYS_TENANT_ID" type="varchar(255)"/>
-        </addColumn>
+    <changeSet id="3-postgresql" author="security-data" dbms="postgresql">
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE_ENTITY" indexName="IDX_SEC_RL_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+        </createIndex>
+        <modifySql>
+            <append value="where DELETE_TS is null"/>
+        </modifySql>
     </changeSet>
 
+    <changeSet id="3-mysql" author="security-data" dbms="mysql">
+        <addColumn tableName="SEC_ROW_LEVEL_ROLE_ENTITY">
+            <column name="DELETE_TS_NN" type="datetime" defaultValueDate="1000-01-01 00:00:00.000">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE_ENTITY" indexName="IDX_SEC_RL_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+            <column name="DELETE_TS_NN"/>
+        </createIndex>
+        <sql endDelimiter=";\ndelimiter $$">
+            <![CDATA[
+            create trigger SEC_ROW_LEVEL_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER before update on SEC_ROW_LEVEL_ROLE_ENTITY
+            for each row
+            begin
+	            if not(NEW.DELETE_TS <=> OLD.DELETE_TS) then
+		            set NEW.DELETE_TS_NN = if (NEW.DELETE_TS is null, '1000-01-01 00:00:00.000', NEW.DELETE_TS);
+	            end if;
+            end;
+            ]]>
+        </sql>
+        <rollback>
+            <sql>
+                DROP TRIGGER SEC_ROW_LEVEL_ROLE_ENTITY_DELETE_TS_NN_UPDATE_TRIGGER
+            </sql>
+            <dropIndex tableName="SEC_ROW_LEVEL_ROLE_ENTITY" indexName="IDX_SEC_RL_ROLE_UNIQ_NAME"/>
+            <dropColumn tableName="SEC_ROW_LEVEL_ROLE_ENTITY" columnName="DELETE_TS_NN"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="3-another-db" author="security-data" dbms="!postgresql, !mysql">
+        <createIndex tableName="SEC_ROW_LEVEL_ROLE_ENTITY" indexName="IDX_SEC_RL_ROLE_UNIQ_NAME">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+    </changeSet>
 </databaseChangeLog>

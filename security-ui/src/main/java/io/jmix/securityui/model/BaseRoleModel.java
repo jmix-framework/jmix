@@ -17,20 +17,18 @@
 package io.jmix.securityui.model;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
-import io.jmix.core.metamodel.annotation.Composition;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
-import io.jmix.security.model.RoleType;
 
 import javax.persistence.Id;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
-/**
- * Non-persistent entity used to display roles in UI
- */
-@JmixEntity(name = "sec_RoleModel")
-public class RoleModel {
-
+@JmixEntity(name = "sec_BaseRoleModel")
+public abstract class BaseRoleModel {
     @Id
     @JmixGeneratedValue
     protected UUID id;
@@ -38,22 +36,12 @@ public class RoleModel {
     @JmixProperty(mandatory = true)
     protected String code;
 
+    @InstanceName
     @JmixProperty(mandatory = true)
     protected String name;
 
     @JmixProperty
     private String source;
-
-    @JmixProperty
-    private RoleType roleType;
-
-    @Composition
-    @JmixProperty
-    private Collection<ResourcePolicyModel> resourcePolicies;
-
-    @Composition
-    @JmixProperty
-    private Collection<RowLevelPolicyModel> rowLevelPolicies;
 
     @JmixProperty
     private Map<String, String> customProperties = new HashMap<>();
@@ -91,30 +79,6 @@ public class RoleModel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public RoleType getRoleType() {
-        return roleType;
-    }
-
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType;
-    }
-
-    public Collection<ResourcePolicyModel> getResourcePolicies() {
-        return resourcePolicies;
-    }
-
-    public void setResourcePolicies(Collection<ResourcePolicyModel> resourcePolicies) {
-        this.resourcePolicies = resourcePolicies;
-    }
-
-    public Collection<RowLevelPolicyModel> getRowLevelPolicies() {
-        return rowLevelPolicies;
-    }
-
-    public void setRowLevelPolicies(Collection<RowLevelPolicyModel> rowLevelPolicies) {
-        this.rowLevelPolicies = rowLevelPolicies;
     }
 
     public Set<String> getChildRoles() {

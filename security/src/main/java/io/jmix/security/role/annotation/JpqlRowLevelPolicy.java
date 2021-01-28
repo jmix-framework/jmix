@@ -19,13 +19,13 @@ package io.jmix.security.role.annotation;
 import java.lang.annotation.*;
 
 /**
- * Defines JPQL row-level policy in annotated role. Multiple {@code JpqlRowLevelPolicy} annotations may be placed on a
+ * Defines JPQL row-level policy in annotated row level role (see {@link RowLevelRole}). Multiple {@code JpqlRowLevelPolicy} annotations may be placed on a
  * single method. {@code JpqlRowLevelPolicy} annotation may present on multiple methods of the same class. Annotated
  * method may have any name and return type.
  * <p>
  * Example:
  * <pre>
- * &#064;Role(name = "My Role", code = "myRole")
+ * &#064;RowLevelRole(name = "My Role", code = "myRole")
  * public interface MyRole {
  *
  *     &#064;JpqlRowLevelPolicy(entityClass = TestOrder.class,
@@ -35,7 +35,7 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
- * @see io.jmix.security.role.annotation.Role
+ * @see RowLevelRole
  * @see io.jmix.security.model.RowLevelPolicy
  */
 @Retention(RetentionPolicy.RUNTIME)

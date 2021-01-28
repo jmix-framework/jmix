@@ -16,10 +16,12 @@
 
 package io.jmix.security.impl.role.builder;
 
-import io.jmix.security.model.Role;
+import io.jmix.security.model.ResourceRole;
+import io.jmix.security.model.RowLevelRole;
 
 public interface AnnotatedRoleBuilder {
 
-    Role createRole(String className);
+    ResourceRole createResourceRole(String className);
 
+    RowLevelRole createRowLevelRole(String className);
 }

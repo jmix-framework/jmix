@@ -16,24 +16,23 @@
 
 package io.jmix.security.impl.role.builder;
 
+import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.impl.role.builder.extractor.RowLevelPolicyExtractor;
-import io.jmix.security.model.ResourcePolicy;
-import io.jmix.security.model.Role;
-import io.jmix.security.model.RoleSource;
-import io.jmix.security.model.RowLevelPolicy;
-import io.jmix.security.role.annotation.ImportRoles;
+import io.jmix.security.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Component("sec_AnnotatedRoleBuilder")
 public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
 
-    protected Collection<ResourcePolicyExtractor> resourcePolicyExtractors;
-    private Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors;
+    private final Collection<ResourcePolicyExtractor> resourcePolicyExtractors;
+    private final Collection<RowLevelPolicyExtractor> rowLevelPolicyExtractors;
 
     @Autowired
     public AnnotatedRoleBuilderImpl(Collection<ResourcePolicyExtractor> resourcePolicyExtractors,
@@ -43,42 +42,66 @@ public class AnnotatedRoleBuilderImpl implements AnnotatedRoleBuilder {
     }
 
     @Override
-    public Role createRole(String className) {
-        Class<?> roleClass;
-        try {
-            roleClass = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Cannot find role class: " + className);
-        }
+    public ResourceRole createResourceRole(String className) {
+        Class<?> roleClass = loadClass(className);
 
-        io.jmix.security.role.annotation.Role roleAnnotation = roleClass.getAnnotation(io.jmix.security.role.annotation.Role.class);
-        Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        Set<RowLevelPolicy> rowLevelPolicies = new HashSet<>();
-        Set<String> childRoles = new HashSet<>();
+        io.jmix.security.role.annotation.ResourceRole roleAnnotation =
+                roleClass.getAnnotation(io.jmix.security.role.annotation.ResourceRole.class);
 
-        ImportRoles[] aggregateAnnotations = roleClass.getAnnotationsByType(ImportRoles.class);
-        for (ImportRoles aggregateAnnotation : aggregateAnnotations) {
-            childRoles.addAll(Arrays.asList(aggregateAnnotation.roleCodes()));
-        }
+        ResourceRole role = new ResourceRole();
+        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code());
+        role.setResourcePolicies(extractResourcePolicies(roleClass));
 
-        Method[] methods = roleClass.getMethods();
-        for (Method method : methods) {
-            for (ResourcePolicyExtractor policyExtractor : resourcePolicyExtractors) {
-                resourcePolicies.addAll(policyExtractor.extractResourcePolicies(method));
-            }
-
-            for (RowLevelPolicyExtractor policyExtractor : rowLevelPolicyExtractors) {
-                rowLevelPolicies.addAll(policyExtractor.extractRowLevelPolicies(method));
-            }
-        }
-
-        Role role = new Role();
-        role.setName(roleAnnotation.name());
-        role.setCode(roleAnnotation.code());
-        role.setResourcePolicies(resourcePolicies);
-        role.setRowLevelPolicies(rowLevelPolicies);
-        role.setChildRoles(childRoles);
-        role.setSource(RoleSource.ANNOTATED_CLASS);
         return role;
+    }
+
+    @Override
+    public RowLevelRole createRowLevelRole(String className) {
+        Class<?> roleClass = loadClass(className);
+
+        io.jmix.security.role.annotation.RowLevelRole roleAnnotation =
+                roleClass.getAnnotation(io.jmix.security.role.annotation.RowLevelRole.class);
+
+        RowLevelRole role = new RowLevelRole();
+        initBaseParameters(role, roleAnnotation.name(), roleAnnotation.code());
+        role.setRowLevelPolicies(extractRowLevelPolicies(roleClass));
+
+        return role;
+    }
+
+    protected Class<?> loadClass(String className) {
+        Class<?> clazz;
+        try {
+            clazz = ReflectionHelper.loadClass(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(String.format("Cannot find role class: %s", className));
+        }
+        return clazz;
+    }
+
+    protected void initBaseParameters(BaseRole role, String name, String code) {
+        role.setName(name);
+        role.setCode(code);
+        role.setSource(RoleSource.ANNOTATED_CLASS);
+    }
+
+    protected Collection<ResourcePolicy> extractResourcePolicies(Class<?> roleClass) {
+        List<ResourcePolicy> policies = new ArrayList<>();
+        for (Method method : roleClass.getMethods()) {
+            for (ResourcePolicyExtractor policyExtractor : resourcePolicyExtractors) {
+                policies.addAll(policyExtractor.extractResourcePolicies(method));
+            }
+        }
+        return policies;
+    }
+
+    protected Collection<RowLevelPolicy> extractRowLevelPolicies(Class<?> roleClass) {
+        List<RowLevelPolicy> policies = new ArrayList<>();
+        for (Method method : roleClass.getMethods()) {
+            for (RowLevelPolicyExtractor policyExtractor : rowLevelPolicyExtractors) {
+                policies.addAll(policyExtractor.extractRowLevelPolicies(method));
+            }
+        }
+        return policies;
     }
 }

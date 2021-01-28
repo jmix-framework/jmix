@@ -14,41 +14,38 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.screen.role;
+package io.jmix.securityui.screen.resourcerole;
 
-import io.jmix.security.model.Role;
-import io.jmix.security.role.RoleRepository;
-import io.jmix.securityui.model.RoleModel;
+import io.jmix.security.role.ResourceRoleRepository;
+import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UiController("sec_RoleModel.lookup")
-@UiDescriptor("role-model-lookup.xml")
+@UiController("sec_ResourceRoleModel.lookup")
+@UiDescriptor("resource-role-model-lookup.xml")
 @LookupComponent("roleModelsTable")
-public class RoleModelLookup extends StandardLookup<RoleModel> {
+public class ResourceRoleModelLookup extends StandardLookup<ResourceRoleModel> {
 
     @Autowired
-    private CollectionContainer<RoleModel> roleModelsDc;
+    private CollectionContainer<ResourceRoleModel> roleModelsDc;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private ResourceRoleRepository roleRepository;
 
     @Autowired
     private RoleModelConverter roleModelConverter;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        Collection<Role> roles = roleRepository.getAllRoles();
-        List<RoleModel> roleModels = roles.stream()
-                .map(roleModelConverter::createRoleModel)
-                .sorted(Comparator.comparing(RoleModel::getName))
+        List<ResourceRoleModel> roleModels = roleRepository.getAllRoles().stream()
+                .map(roleModelConverter::createResourceRoleModel)
+                .sorted(Comparator.comparing(ResourceRoleModel::getName))
                 .collect(Collectors.toList());
         roleModelsDc.getMutableItems().addAll(roleModels);
     }

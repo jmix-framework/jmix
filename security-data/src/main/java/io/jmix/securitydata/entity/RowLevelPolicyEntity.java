@@ -99,7 +99,7 @@ public class RowLevelPolicyEntity implements Serializable {
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ROLE_ENTITY_ID")
-    private RoleEntity role;
+    private RowLevelRoleEntity role;
 
     public UUID getId() {
         return id;
@@ -181,11 +181,11 @@ public class RowLevelPolicyEntity implements Serializable {
         this.action = action != null ? action.getId() : null;
     }
 
-    public RoleEntity getRole() {
+    public RowLevelRoleEntity getRole() {
         return role;
     }
 
-    public void setRole(RoleEntity role) {
+    public void setRole(RowLevelRoleEntity role) {
         this.role = role;
     }
 

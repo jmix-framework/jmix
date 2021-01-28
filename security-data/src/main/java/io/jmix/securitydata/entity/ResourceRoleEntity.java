@@ -25,7 +25,6 @@ import io.jmix.core.entity.annotation.OnDelete;
 import io.jmix.core.metamodel.annotation.Composition;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.security.model.RoleType;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -39,10 +38,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Table(name = "SEC_ROLE_ENTITY")
-@Entity(name = "sec_RoleEntity")
+@Table(name = "SEC_RESOURCE_ROLE_ENTITY")
+@Entity(name = "sec_ResourceRoleEntity")
 @JmixEntity
-public class RoleEntity implements Serializable {
+public class ResourceRoleEntity implements Serializable {
     private static final long serialVersionUID = -1587602133446436634L;
 
     @Id
@@ -85,21 +84,10 @@ public class RoleEntity implements Serializable {
     @Column(name = "CODE", nullable = false)
     private @NotNull String code;
 
-    @Column(name = "SCOPE")
-    private @NotNull String scope;
-
-    @Column(name = "ROLE_TYPE", length = 50)
-    private @NotNull String roleType;
-
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "role")
     private List<ResourcePolicyEntity> resourcePolicies;
-
-    @Composition
-    @OnDelete(DeletePolicy.CASCADE)
-    @OneToMany(mappedBy = "role")
-    private List<RowLevelPolicyEntity> rowLevelPolicies;
 
     @Lob
     @Column(name = "CHILD_ROLES")
@@ -182,14 +170,6 @@ public class RoleEntity implements Serializable {
         this.resourcePolicies = resourcePolicies;
     }
 
-    public List<RowLevelPolicyEntity> getRowLevelPolicies() {
-        return rowLevelPolicies;
-    }
-
-    public void setRowLevelPolicies(List<RowLevelPolicyEntity> rowLevelPolicies) {
-        this.rowLevelPolicies = rowLevelPolicies;
-    }
-
     public Set<String> getChildRoles() {
         return childRoles;
     }
@@ -212,22 +192,6 @@ public class RoleEntity implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    public RoleType getRoleType() {
-        return roleType == null ? null : RoleType.fromId(roleType);
-    }
-
-    public void setRoleType(RoleType roleType) {
-        this.roleType = roleType == null ? null : roleType.getId();
     }
 
     public String getSysTenantId() {

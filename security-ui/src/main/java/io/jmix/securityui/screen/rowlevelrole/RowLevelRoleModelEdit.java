@@ -1,0 +1,235 @@
+/*
+ * Copyright 2020 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.securityui.screen.rowlevelrole;
+
+import com.google.common.base.Strings;
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
+import io.jmix.security.model.RoleSource;
+import io.jmix.security.model.RowLevelPolicyAction;
+import io.jmix.security.model.RowLevelPolicyType;
+import io.jmix.security.model.RowLevelRole;
+import io.jmix.security.role.RowLevelRoleRepository;
+import io.jmix.securitydata.entity.RowLevelPolicyEntity;
+import io.jmix.securitydata.entity.RowLevelRoleEntity;
+import io.jmix.securityui.model.*;
+import io.jmix.ui.action.list.*;
+import io.jmix.ui.component.GroupTable;
+import io.jmix.ui.component.TextField;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.DataContext;
+import io.jmix.ui.navigation.Route;
+import io.jmix.ui.screen.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@UiController("sec_RowLevelRoleModel.edit")
+@UiDescriptor("row-level-role-model-edit.xml")
+@EditedEntityContainer("roleModelDc")
+@Route(value = "rowLevelRoles/edit", parentPrefix = "rowLevelRoles")
+public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
+    private static final Logger log = LoggerFactory.getLogger(RowLevelRoleModelEdit.class);
+
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.create")
+    private CreateAction<RowLevelPolicyModel> rowLevelPoliciesTableCreate;
+
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.view")
+    private ViewAction<RowLevelPolicyModel> rowLevelPoliciesTableView;
+
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.edit")
+    private EditAction<RowLevelPolicyModel> rowLevelPoliciesTableEdit;
+
+    @Autowired
+    @Qualifier("rowLevelPoliciesTable.remove")
+    private RemoveAction<RowLevelPolicyModel> rowLevelPoliciesTableRemove;
+
+    @Autowired
+    @Qualifier("childRolesTable.add")
+    private AddAction<RowLevelRoleModel> childRolesTableAdd;
+
+    @Autowired
+    @Qualifier("childRolesTable.remove")
+    private RemoveAction<RowLevelRoleModel> childRolesTableRemove;
+
+    @Autowired
+    private CollectionContainer<RowLevelRoleModel> childRolesDc;
+
+    @Autowired
+    private GroupTable<RowLevelPolicyModel> rowLevelPoliciesTable;
+
+    @Autowired
+    private TextField<String> sourceField;
+
+    @Autowired
+    private RowLevelRoleRepository roleRepository;
+
+    @Autowired
+    private RoleModelConverter roleModelConverter;
+
+    @Autowired
+    private DataManager dataManager;
+
+    @Autowired
+    private DataContext dataContext;
+
+    @Autowired
+    private Metadata metadata;
+
+    @Autowired
+    private Messages messages;
+
+    private boolean openedByCreateAction;
+
+    public void setOpenedByCreateAction(boolean openedByCreateAction) {
+        this.openedByCreateAction = openedByCreateAction;
+    }
+
+    @Install(to = "childRolesDl", target = Target.DATA_LOADER)
+    private List<RowLevelRoleModel> childRolesDlLoadDelegate(LoadContext<RowLevelRoleModel> loadContext) {
+        RowLevelRoleModel editedRoleModel = getEditedEntity();
+        if (editedRoleModel.getChildRoles() == null || editedRoleModel.getChildRoles().isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<RowLevelRoleModel> childRoleModels = new ArrayList<>();
+        for (String code : editedRoleModel.getChildRoles()) {
+            RowLevelRole child = roleRepository.findRoleByCode(code);
+            if (child != null) {
+                childRoleModels.add(roleModelConverter.createRowLevelRoleModel(child));
+            } else {
+                log.warn("Role {} was not found while collecting child roles for aggregated role {}",
+                        editedRoleModel.getCode(), code);
+            }
+        }
+        return childRoleModels;
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        //non-persistent entities are automatically marked as modified. If isNew is not set, we must remove
+        //all entities from dataContext.modifiedInstances collection
+        if (!openedByCreateAction) {
+            Set<Object> modified = new HashSet<>(dataContext.getModified());
+            for (Object entity : modified) {
+                dataContext.setModified(entity, false);
+            }
+        }
+
+        setupRoleViewMode();
+        childRolesTableRemove.setConfirmation(false);
+        sourceField.setValue(messages.getMessage("io.jmix.securityui.model/roleSource." + getEditedEntity().getSource()));
+    }
+
+    @Install(to = "rowLevelPoliciesTable.create", subject = "initializer")
+    private void rowLevelPoliciesTableCreateInitializer(RowLevelPolicyModel rowLevelPolicyModel) {
+        rowLevelPolicyModel.setType(RowLevelPolicyType.JPQL);
+        rowLevelPolicyModel.setAction(RowLevelPolicyAction.READ);
+    }
+
+    @Subscribe(target = Target.DATA_CONTEXT)
+    public void onPreCommit(DataContext.PreCommitEvent event) {
+        if (isDatabaseSource()) {
+            saveRoleEntityToDatabase(event.getModifiedInstances());
+        }
+    }
+
+    private void setupRoleViewMode() {
+        boolean isDatabaseSource = isDatabaseSource();
+        setReadOnly(!isDatabaseSource);
+
+        childRolesTableAdd.setVisible(isDatabaseSource);
+        childRolesTableRemove.setVisible(isDatabaseSource);
+
+        rowLevelPoliciesTableCreate.setVisible(isDatabaseSource);
+        rowLevelPoliciesTableRemove.setVisible(isDatabaseSource);
+        rowLevelPoliciesTableEdit.setVisible(isDatabaseSource);
+        rowLevelPoliciesTableView.setVisible(!isDatabaseSource);
+
+        if (!isDatabaseSource) {
+            rowLevelPoliciesTable.setItemClickAction(rowLevelPoliciesTableView);
+        }
+    }
+
+    private void saveRoleEntityToDatabase(Collection<Object> modifiedInstances) {
+        RowLevelRoleModel roleModel = getEditedEntity();
+        String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");
+
+        RowLevelRoleEntity roleEntity;
+        if (!Strings.isNullOrEmpty(roleDatabaseId)) {
+            UUID roleEntityId = UUID.fromString(roleDatabaseId);
+            roleEntity = dataManager.load(RowLevelRoleEntity.class).id(roleEntityId).one();
+        } else {
+            roleEntity = metadata.create(RowLevelRoleEntity.class);
+        }
+
+        roleEntity = dataContext.merge(roleEntity);
+        roleEntity.setName(roleModel.getName());
+        roleEntity.setCode(roleModel.getCode());
+
+        boolean roleModelModified = modifiedInstances.stream()
+                .anyMatch(entity -> entity instanceof ResourceRoleModel);
+
+        if (roleModelModified) {
+            roleEntity = dataContext.merge(roleEntity);
+        }
+
+        List<RowLevelPolicyModel> rowLevelPolicyModels = modifiedInstances.stream()
+                .filter(entity -> entity instanceof RowLevelPolicyModel)
+                .map(entity -> (RowLevelPolicyModel) entity)
+                .collect(Collectors.toList());
+
+        for (RowLevelPolicyModel policyModel : rowLevelPolicyModels) {
+            String databaseId = policyModel.getCustomProperties().get("databaseId");
+            RowLevelPolicyEntity policyEntity;
+            if (!Strings.isNullOrEmpty(databaseId)) {
+                UUID entityId = UUID.fromString(databaseId);
+                policyEntity = dataManager.load(RowLevelPolicyEntity.class)
+                        .id(entityId)
+                        .one();
+            } else {
+                policyEntity = metadata.create(RowLevelPolicyEntity.class);
+                policyEntity.setRole(roleEntity);
+            }
+            policyEntity = dataContext.merge(policyEntity);
+            policyEntity.setEntityName(policyModel.getEntityName());
+            policyEntity.setAction(policyModel.getAction());
+            policyEntity.setType(policyModel.getType());
+            policyEntity.setWhereClause(policyModel.getWhereClause());
+            policyEntity.setJoinClause(policyModel.getJoinClause());
+        }
+
+        Set<String> childRoles = childRolesDc.getItems().stream()
+                .map(BaseRoleModel::getCode)
+                .collect(Collectors.toSet());
+
+        roleModel.setChildRoles(childRoles);
+        roleEntity.setChildRoles(childRoles);
+    }
+
+    private boolean isDatabaseSource() {
+        return RoleSource.DATABASE.equals(getEditedEntity().getSource());
+    }
+}

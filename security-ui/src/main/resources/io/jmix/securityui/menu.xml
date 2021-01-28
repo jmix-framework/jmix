@@ -17,6 +17,9 @@
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
     <menu id="administration">
-        <item screen="sec_RoleModel.browse" caption="msg://io.jmix.securityui/menu.sec_RoleModel.browse"/>
+        <item screen="sec_ResourceRoleModel.browse"
+              caption="msg://io.jmix.securityui/menu.sec_ResourceRoleModel.browse"/>
+        <item screen="sec_RowLevelRoleModel.browse"
+              caption="msg://io.jmix.securityui/menu.sec_RowLevelRoleModel.browse"/>
     </menu>
 </menu-config>

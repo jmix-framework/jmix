@@ -16,9 +16,8 @@
 
 package annotated_role_builder
 
-
-import io.jmix.security.model.*
 import io.jmix.security.impl.role.builder.AnnotatedRoleBuilder
+import io.jmix.security.model.*
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecuritySpecification
 import test_support.annotated_role_builder.*
@@ -34,7 +33,7 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         when:
 
-        Role role = annotatedRoleBuilder.createRole(TestDifferentResourcePoliciesOnMethodRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestDifferentResourcePoliciesOnMethodRole.class.getCanonicalName())
         def policies = role.resourcePolicies
         def entityPolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY }
         def entityAttributePolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY_ATTRIBUTE }
@@ -45,15 +44,13 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         entityPolicies.size() == 2
         entityAttributePolicies.size() == 2
         specificPolicies.size() == 2
-
-        entityPolicies[0].scope == 'rest'
     }
 
     def "string entityName attribute on annotation"() {
 
         when:
 
-        Role role = annotatedRoleBuilder.createRole(TestStringEntityNameRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestStringEntityNameRole.class.getCanonicalName())
         def policies = role.resourcePolicies
         def entityPolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY }
         def entityAttributePolicies = policies.findAll { it.type == ResourcePolicyType.ENTITY_ATTRIBUTE }
@@ -70,7 +67,7 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
     def "resource policies created in static method with @ExplicitResourcePolicies"() {
         when:
 
-        Role role = annotatedRoleBuilder.createRole(TestExplicitResourcePoliciesRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestExplicitResourcePoliciesRole.class.getCanonicalName())
         def policies = role.resourcePolicies
 
         then:
@@ -92,14 +89,14 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         Foo foo2 = new Foo()
         foo2.name = "bbb"
 
-        Role role = annotatedRoleBuilder.createRole(TestPredicateRoleLevelPolicyRole.class.getCanonicalName())
+        RowLevelRole role = annotatedRoleBuilder.createRowLevelRole(TestPredicateRoleLevelPolicyRole.class.getCanonicalName())
         def policies = role.rowLevelPolicies
 
         then:
 
         policies.size() == 4
 
-        def createOrderPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE  && it.entityName == 'test_Order'}
+        def createOrderPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE && it.entityName == 'test_Order' }
         createOrderPolicy != null
 
         policies.find { it.action == RowLevelPolicyAction.UPDATE } != null
@@ -107,7 +104,7 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         createOrderPolicy.predicate.test(order1) == true
         createOrderPolicy.predicate.test(order2) == false
 
-        def createFooPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE  && it.entityName == 'test_Foo'}
+        def createFooPolicy = policies.find { it.action == RowLevelPolicyAction.CREATE && it.entityName == 'test_Foo' }
         createOrderPolicy != null
 
         createFooPolicy.predicate.test(foo1) == true
@@ -118,7 +115,7 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
 
         when:
 
-        Role role = annotatedRoleBuilder.createRole(TestJpqlRoleLevelPolicyRole.class.getCanonicalName())
+        RowLevelRole role = annotatedRoleBuilder.createRowLevelRole(TestJpqlRoleLevelPolicyRole.class.getCanonicalName())
         def policies = role.rowLevelPolicies
 
         then:
@@ -142,15 +139,15 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
     def "EntityPolicyAction.ALL"() {
         when:
 
-        Role role = annotatedRoleBuilder.createRole(TestEntityPolicyAllCrudRole.class.getCanonicalName())
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestEntityPolicyAllCrudRole.class.getCanonicalName())
         def resourcePolicies = role.resourcePolicies
 
         then:
 
         resourcePolicies.size() == 4
-        resourcePolicies.find {it.action == EntityPolicyAction.CREATE.id}
-        resourcePolicies.find {it.action == EntityPolicyAction.READ.id}
-        resourcePolicies.find {it.action == EntityPolicyAction.UPDATE.id}
-        resourcePolicies.find {it.action == EntityPolicyAction.DELETE.id}
+        resourcePolicies.find { it.action == EntityPolicyAction.CREATE.id }
+        resourcePolicies.find { it.action == EntityPolicyAction.READ.id }
+        resourcePolicies.find { it.action == EntityPolicyAction.UPDATE.id }
+        resourcePolicies.find { it.action == EntityPolicyAction.DELETE.id }
     }
 }

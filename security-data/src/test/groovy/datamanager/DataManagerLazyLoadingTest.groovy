@@ -6,7 +6,8 @@ import io.jmix.core.Metadata
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.security.authentication.RoleGrantedAuthority
-import io.jmix.security.role.RoleRepository
+import io.jmix.security.role.ResourceRoleRepository
+import io.jmix.security.role.RowLevelRoleRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.authentication.AuthenticationManager
@@ -34,7 +35,10 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
     InMemoryUserRepository userRepository
 
     @Autowired
-    RoleRepository roleRepository
+    ResourceRoleRepository resourceRoleRepository
+
+    @Autowired
+    RowLevelRoleRepository rowLevelRoleRepository
 
     @Autowired
     Metadata metadata
@@ -57,7 +61,12 @@ class DataManagerLazyLoadingTest extends SecurityDataSpecification {
         user1 = User.builder()
                 .username("user1")
                 .password("{noop}$PASSWORD")
-                .authorities(RoleGrantedAuthority.ofRole(roleRepository.getRoleByCode(TestLazyLoadingRole.NAME)))
+                .authorities(RoleGrantedAuthority.
+                        withRowLevelRoleProvider({ rowLevelRoleRepository.getRoleByCode(it) })
+                        .withResourceRoleProvider({ resourceRoleRepository.getRoleByCode(it) })
+                        .withRowLevelRoles(TestLazyLoadingRole.NAME)
+                        .withResourceRoles(TestLazyLoadingRole.NAME)
+                        .build())
                 .build()
         userRepository.addUser(user1)
 

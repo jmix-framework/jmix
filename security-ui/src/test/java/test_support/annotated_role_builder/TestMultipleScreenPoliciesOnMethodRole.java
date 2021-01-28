@@ -16,10 +16,10 @@
 
 package test_support.annotated_role_builder;
 
-import io.jmix.security.role.annotation.Role;
+import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@Role(name = "Test My Role 1", code = "testMyRole1")
+@ResourceRole(name = "Test My Role 1", code = "testMyRole1")
 public interface TestMultipleScreenPoliciesOnMethodRole {
 
     @ScreenPolicy(screenIds = {"screen1", "screen2"})

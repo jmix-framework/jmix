@@ -23,7 +23,6 @@ import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.Listeners;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.*;
-import io.jmix.securityui.model.RoleModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.CreatedBy;
@@ -153,7 +152,7 @@ public class Report implements com.haulmont.yarg.structure.Report, io.jmix.core.
 
     @Transient
     @JmixProperty
-    protected Set<RoleModel> roles = new HashSet<>();
+    protected Set<ReportRole> reportRoles = new HashSet<>();
 
     @Transient
     protected String localeName;
@@ -285,13 +284,13 @@ public class Report implements com.haulmont.yarg.structure.Report, io.jmix.core.
         this.reportType = reportType != null ? reportType.getId() : null;
     }
 
-    public Set<RoleModel> getRoles() {
-        return roles;
+    public Set<ReportRole> getReportRoles() {
+        return reportRoles;
     }
 
-    public void setRoles(Set<RoleModel> roles) {
-        if (roles == null) roles = Collections.emptySet();
-        this.roles = roles;
+    public void setReportRoles(Set<ReportRole> reportRoles) {
+        if (reportRoles == null) reportRoles = Collections.emptySet();
+        this.reportRoles = reportRoles;
     }
 
     public List<ReportScreen> getReportScreens() {

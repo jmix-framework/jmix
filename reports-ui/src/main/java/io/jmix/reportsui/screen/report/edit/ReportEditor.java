@@ -29,10 +29,12 @@ import io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import io.jmix.securitydata.entity.RoleEntity;
 import io.jmix.ui.*;
 import io.jmix.ui.component.*;
-import io.jmix.ui.model.*;
+import io.jmix.ui.model.CollectionContainer;
+import io.jmix.ui.model.CollectionLoader;
+import io.jmix.ui.model.DataContext;
+import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -41,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
@@ -81,12 +82,6 @@ public class ReportEditor extends StandardEditor<Report> {
 
     @Autowired
     protected CollectionContainer<ReportScreen> reportScreensDc;
-
-    @Autowired
-    protected CollectionPropertyContainer<RoleEntity> rolesDc;
-
-    @Autowired
-    protected CollectionContainer<RoleEntity> lookupRolesDc;
 
     @Autowired
     protected CollectionContainer<DataSet> dataSetsDc;

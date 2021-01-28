@@ -45,7 +45,7 @@ public class ReportDetachListener implements BeforeDetachEntityListener<Report> 
             entity.setBands(reportFromXml.getBands());
             entity.setInputParameters(reportFromXml.getInputParameters());
             entity.setReportScreens(reportFromXml.getReportScreens());
-            entity.setRoles(reportFromXml.getRoles());
+            entity.setReportRoles(reportFromXml.getReportRoles());
             entity.setValuesFormats(reportFromXml.getValuesFormats());
             entity.setValidationOn(reportFromXml.getValidationOn());
             entity.setValidationScript(reportFromXml.getValidationScript());

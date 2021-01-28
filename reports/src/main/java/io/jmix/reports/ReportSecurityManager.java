@@ -21,8 +21,8 @@ import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.security.model.Role;
-import io.jmix.security.role.RoleRepository;
+import io.jmix.security.model.BaseRole;
+import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.security.role.assignment.RoleAssignmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +38,7 @@ public class ReportSecurityManager {
     protected QueryTransformerFactory queryTransformerFactory;
 
     @Autowired
-    protected RoleRepository roleRepository;
+    protected ResourceRoleRepository resourceRoleRepository;
 
     @Autowired
     protected RoleAssignmentRepository roleAssignmentRepository;
@@ -53,13 +53,13 @@ public class ReportSecurityManager {
             lc.getQuery().setParameter("screen", wrapCodeParameterForSearch(screen));
         }
         if (userDetails != null) {
-            List<Role> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
-                    .map(roleAssignment -> roleRepository.findRoleByCode(roleAssignment.getUsername()))
+            List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
+                    .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getUsername()))
                     .collect(Collectors.toList());
 
             StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");
             for (int i = 0; i < roles.size(); i++) {
-                Role role = roles.get(i);
+                BaseRole role = roles.get(i);
                 String paramName = "role" + (i + 1);
                 roleCondition.append(" or r.rolesIdx like :").append(paramName).append(" escape '\\'");
                 lc.getQuery().setParameter(paramName, wrapCodeParameterForSearch(role.getCode()));

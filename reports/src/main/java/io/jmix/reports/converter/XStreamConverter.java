@@ -16,14 +16,13 @@
 
 package io.jmix.reports.converter;
 
-import io.jmix.core.FetchPlan;
-import io.jmix.reports.entity.*;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.basic.DateConverter;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.converters.reflection.SerializableConverter;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
-import io.jmix.security.model.Role;
+import io.jmix.core.FetchPlan;
+import io.jmix.reports.entity.*;
 
 import java.util.*;
 
@@ -86,7 +85,7 @@ public class XStreamConverter {
         xStream.omitField(ReportInputParameter.class, "localeName");
         xStream.omitField(ReportGroup.class, "detached");
         xStream.omitField(FetchPlan.class, "includeSystemProperties");
-        xStream.omitField(Role.class, "detached");
+        xStream.omitField(ReportRole.class, "detached");
         xStream.omitField(ReportScreen.class, "detached");
 
         xStream.aliasField("customFlag", ReportTemplate.class, "custom");

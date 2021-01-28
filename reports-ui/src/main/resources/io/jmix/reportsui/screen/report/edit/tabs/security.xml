@@ -21,13 +21,8 @@
                   class="io.jmix.reports.entity.Report"
                   provided="true">
             <collection id="reportScreensDc" property="reportScreens" provided="true"/>
-            <collection id="rolesDc" property="roles" provided="true"/>
+            <collection id="reportRolesDc" property="reportRoles" provided="true"/>
         </instance>
-
-        <collection id="roleModelsDc"
-                    class="io.jmix.securityui.model.RoleModel">
-            <loader id="roleModelsDl"/>
-        </collection>
     </data>
 
     <layout>
@@ -36,11 +31,11 @@
                 <label value="msg://securityFrame.roles" stylename="h2"/>
                 <groupBox id="addRoleGroupBox" width="100%" caption="msg://roles.addRole">
                     <hbox expand="rolesField" spacing="true" width="100%">
-                        <entityComboBox id="rolesField" optionsContainer="roleModelsDc"/>
+                        <comboBox id="rolesField"/>
                         <button id="addRoleBtn" caption="msg://roles.add" action="rolesTable.add"/>
                     </hbox>
                 </groupBox>
-                <table id="rolesTable" width="100%" multiselect="true" dataContainer="rolesDc"
+                <table id="rolesTable" width="100%" multiselect="true" dataContainer="reportRolesDc"
                        reorderingAllowed="false" columnControlVisible="false">
                     <actions>
                         <action id="add" type="add"/>
@@ -51,7 +46,8 @@
                                 icon="font-icon:REMOVE"/>
                     </buttonsPanel>
                     <columns>
-                        <column id="name" caption="msg://roles.roleName"/>
+                        <column id="roleName" caption="msg://roles.roleName"/>
+                        <column id="roleCode" caption="msg://roles.roleName"/>
                     </columns>
                 </table>
             </vbox>

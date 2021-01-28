@@ -1,31 +1,29 @@
 package io.jmix.reportsui.screen.report.edit.tabs;
 
-import io.jmix.core.LoadContext;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.reports.entity.Report;
+import io.jmix.reports.entity.ReportRole;
 import io.jmix.reports.entity.ReportScreen;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import io.jmix.security.model.Role;
-import io.jmix.security.role.RoleRepository;
-import io.jmix.securityui.model.RoleModel;
-import io.jmix.securityui.model.RoleModelConverter;
+import io.jmix.security.model.BaseRole;
+import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @UiController("report_ReportEditSecurity.fragment")
 @UiDescriptor("security.xml")
@@ -35,22 +33,19 @@ public class SecurityFragment extends ScreenFragment {
     protected InstanceContainer<Report> reportDc;
 
     @Autowired
-    protected CollectionPropertyContainer<RoleModel> rolesDc;
+    protected CollectionPropertyContainer<ReportRole> reportRolesDc;
 
     @Autowired
     protected CollectionPropertyContainer<ReportScreen> reportScreensDc;
 
     @Autowired
-    protected CollectionContainer<RoleModel> roleModelsDc;
-
-    @Autowired
-    protected Table<RoleModel> rolesTable;
+    protected Table<ReportRole> rolesTable;
 
     @Autowired
     protected Table<ReportScreen> screenTable;
 
     @Autowired
-    protected EntityComboBox<RoleModel> rolesField;
+    protected ComboBox<BaseRole> rolesField;
 
     @Autowired
     protected ComboBox<String> screenIdField;
@@ -74,20 +69,7 @@ public class SecurityFragment extends ScreenFragment {
     protected Messages messages;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    protected RoleModelConverter roleModelConverter;
-
-    @Install(to = "roleModelsDl", target = Target.DATA_LOADER)
-    protected List<RoleModel> roleModelsDlLoadDelegate(LoadContext<RoleModel> loadContext) {
-        Collection<Role> roles = roleRepository.getAllRoles();
-        return roles.stream()
-                .map(roleModelConverter::createRoleModel)
-                .sorted(Comparator.comparing(RoleModel::getName))
-                .collect(Collectors.toList());
-
-    }
+    protected ResourceRoleRepository resourceRoleRepository;
 
     @Subscribe
     protected void onInit(InitEvent event) {
@@ -95,6 +77,11 @@ public class SecurityFragment extends ScreenFragment {
         // sort by screenId
         screensHelper.sortWindowInfos(windowInfoCollection);
 
+        initScreenIdField(windowInfoCollection);
+        initRoleField();
+    }
+
+    protected void initScreenIdField(List<WindowInfo> windowInfoCollection) {
         Map<String, String> screens = new LinkedHashMap<>();
         for (WindowInfo windowInfo : windowInfoCollection) {
             String id = windowInfo.getId();
@@ -106,19 +93,12 @@ public class SecurityFragment extends ScreenFragment {
         screenIdField.setOptionsMap(screens);
     }
 
-    @Subscribe
-    protected void onAfterInit(AfterInitEvent event) {
-        reloadRoles();
-    }
-
-    private void reloadRoles() {
-        Collection<Role> roles = roleRepository.getAllRoles();
-        List<RoleModel> roleModels = roles.stream()
-                .map(roleModelConverter::createRoleModel)
-                .sorted(Comparator.comparing(RoleModel::getName))
-                .collect(Collectors.toList());
-        roleModelsDc.getMutableItems().clear();
-        roleModelsDc.getMutableItems().addAll(roleModels);
+    protected void initRoleField() {
+        Map<String, BaseRole> roles = new LinkedHashMap<>();
+        for (BaseRole baseRole : resourceRoleRepository.getAllRoles()) {
+            roles.put(baseRole.getName(), baseRole);
+        }
+        rolesField.setOptionsMap(roles);
     }
 
     @Install(to = "rolesTable.exclude", subject = "enabledRule")
@@ -133,8 +113,24 @@ public class SecurityFragment extends ScreenFragment {
 
     @Subscribe("rolesTable.add")
     protected void onRolesTableAdd(Action.ActionPerformedEvent event) {
-        if (rolesField.getValue() != null && !rolesDc.containsItem(roleModelsDc.getItem())) {
-            rolesDc.getMutableItems().add(rolesField.getValue());
+        if (rolesField.getValue() != null) {
+            BaseRole role = rolesField.getValue();
+
+            boolean exists = false;
+            for (ReportRole item : reportRolesDc.getItems()) {
+                if (role.getCode().equalsIgnoreCase(item.getRoleCode())) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                ReportRole reportRole = metadata.create(ReportRole.class);
+                reportRole.setReport(reportDc.getItem());
+                reportRole.setRoleName(role.getName());
+                reportRole.setRoleCode(role.getCode());
+                reportRolesDc.getMutableItems().add(reportRole);
+            }
         }
     }
 

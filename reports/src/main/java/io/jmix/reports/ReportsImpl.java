@@ -36,7 +36,6 @@ import io.jmix.reports.exception.*;
 import io.jmix.reports.libintegration.CustomFormatter;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
-import io.jmix.securityui.model.RoleModel;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -613,7 +612,7 @@ public class ReportsImpl implements Reports {
             return entity;
         }
         return (T) dataManager.load(entity.getClass())
-                .all()
+                .id(Id.of(entity))
                 .fetchPlan(view)
                 .one();
     }
@@ -767,9 +766,9 @@ public class ReportsImpl implements Reports {
             report.setScreensIdx(screens.length() > 1 ? screens.toString() : null);
 
             StringBuilder roles = new StringBuilder(IDX_SEPARATOR);
-            if (report.getRoles() != null) {
-                for (RoleModel role : report.getRoles()) {
-                    roles.append(role.getCode()).append(IDX_SEPARATOR);
+            if (report.getReportRoles() != null) {
+                for (ReportRole reportRole : report.getReportRoles()) {
+                    roles.append(reportRole.getRoleCode()).append(IDX_SEPARATOR);
                 }
             }
             report.setRolesIdx(roles.length() > 1 ? roles.toString() : null);

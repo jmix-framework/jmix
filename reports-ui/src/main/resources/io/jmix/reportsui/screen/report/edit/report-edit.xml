@@ -25,7 +25,7 @@
             <loader id="reportDl"/>
             <collection id="parametersDc" property="inputParameters"/>
             <collection id="valuesFormatsDc" property="valuesFormats"/>
-            <collection id="rolesDc" property="roles"/>
+            <collection id="reportRolesDc" property="reportRoles"/>
             <collection id="reportScreensDc" property="reportScreens"/>
             <collection id="templatesDc" property="templates"/>
             <collection id="bandsDc" property="bands">
@@ -41,10 +41,6 @@
                     select rg from report_ReportGroup rg order by rg.createTs asc
                 </query>
             </loader>
-        </collection>
-        <collection id="lookupRolesDc"
-                    class="io.jmix.securitydata.entity.RoleEntity"
-                    fetchPlan="_local">
         </collection>
     </data>
     <facets>

@@ -14,7 +14,7 @@
     </facets>
     <dialogMode height="600"
                 width="800"/>
-    <layout spacing="true" expand="roleAssignmentGroupBox">
+    <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="userDc">
             <column width="350px">
                 <textField id="usernameField" property="username"/>
@@ -32,13 +32,6 @@
                 <checkBox id="enabledField" property="enabled"/>
             </column>
         </form>
-        <groupBox id="roleAssignmentGroupBox" spacing="true" caption="msg://roleAssignments">
-            <fragment id="roleAssignmentFragment" screen="sec_RoleAssignmentFragment" width="100%" height="100%">
-                <properties>
-                    <property name="userDc" ref="userDc"/>
-                </properties>
-            </fragment>
-        </groupBox>
         <hbox id="editActions" spacing="true">
             <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
             <button id="closeBtn" action="windowClose"/>

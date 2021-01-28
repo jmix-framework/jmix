@@ -27,7 +27,8 @@
     </changeSet>
 
     <changeSet id="2" author="${project_name}">
-        <createIndex indexName="IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME" tableName="${project_idPrefix.toUpperCase()}_USER" unique="true">
+        <createIndex indexName="IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME"
+                     tableName="${project_idPrefix.toUpperCase()}_USER" unique="true">
             <column name="USERNAME"/>
         </createIndex>
     </changeSet>
@@ -51,6 +52,7 @@
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="ROLE_CODE" value="system-full-access"/>
+            <column name="ROLE_TYPE" value="resource"/>
         </insert>
 
     </changeSet>

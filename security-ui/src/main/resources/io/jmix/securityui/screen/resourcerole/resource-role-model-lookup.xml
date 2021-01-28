@@ -16,11 +16,11 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://RoleModelLookup.caption"
+        caption="msg://ResourceRoleModelLookup.caption"
         focusComponent="roleModelsTable">
     <data readOnly="true">
         <collection id="roleModelsDc"
-                    class="io.jmix.securityui.model.RoleModel">
+                    class="io.jmix.securityui.model.ResourceRoleModel">
         </collection>
     </data>
     <dialogMode height="600"

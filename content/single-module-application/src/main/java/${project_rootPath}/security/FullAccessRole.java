@@ -1,6 +1,4 @@
-package $
-
-{project_rootPackage}.security;
+package ${project_rootPackage}.security;
 
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;

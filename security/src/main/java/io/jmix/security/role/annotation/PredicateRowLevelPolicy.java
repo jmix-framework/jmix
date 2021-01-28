@@ -37,14 +37,14 @@ import java.lang.annotation.Target;
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
  *             actions = {RowLevelPolicyAction.CREATE, RowLevelPolicyAction.UPDATE})
- *     static Predicate<TestOrder> numberStartsWithA() {
- *         return testOrder -> testOrder.getNumber().startsWith("a");
+ *     static Predicate&lt;TestOrder&gt; numberStartsWithA() {
+ *         return testOrder -&gt; testOrder.getNumber().startsWith("a");
  *     }
  *
  *     &#064;PredicateRowLevelPolicy(entityClass = TestOrder.class,
  *             actions = {RowLevelPolicyAction.READ})
- *     default Predicate<TestOrder> numberStartsWithB() {
- *         return testOrder -> testOrder.getNumber().startsWith("B");
+ *     default Predicate&lt;TestOrder&gt; numberStartsWithB() {
+ *         return testOrder -&gt; testOrder.getNumber().startsWith("B");
  *     }
  * }
  * </pre>

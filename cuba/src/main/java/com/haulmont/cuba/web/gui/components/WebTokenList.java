@@ -950,12 +950,6 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     }
 
     @Override
-    protected boolean isEmpty(Object value) {
-        return super.isEmpty(value)
-                || (value instanceof Collection && ((Collection) value).isEmpty());
-    }
-
-    @Override
     public void focus() {
         if (simple) {
             addButton.focus();

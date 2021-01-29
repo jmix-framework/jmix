@@ -54,7 +54,7 @@ public class ReportSecurityManager {
         }
         if (userDetails != null) {
             List<BaseRole> roles = roleAssignmentRepository.getAssignmentsByUsername(userDetails.getUsername()).stream()
-                    .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getUsername()))
+                    .map(roleAssignment -> resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode()))
                     .collect(Collectors.toList());
 
             StringBuilder roleCondition = new StringBuilder("r.rolesIdx is null");

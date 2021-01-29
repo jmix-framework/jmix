@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 public class WebJarResourceResolver {
 
     public static final String VAADIN_PREFIX = "VAADIN/webjars/";
+    public static final String WEBJAR_PREFIX = "webjars/";
     public static final String CLASSPATH_WEBJAR_PREFIX = "META-INF/resources/webjars/";
 
     private static final Logger log = LoggerFactory.getLogger(WebJarResourceResolver.class);
@@ -49,7 +50,7 @@ public class WebJarResourceResolver {
      * Get WebJAR path by resource name and JAR name.
      *
      * @param partialPath partial WebJAR path
-     * @param webjar jar name
+     * @param webjar      jar name
      * @return full WebJAR path
      */
     public String getWebJarPath(String webjar, String partialPath) {
@@ -77,17 +78,18 @@ public class WebJarResourceResolver {
     }
 
     /**
-     * Converts /VAADIN/webjars/... path to WebJAR path.
+     * Converts /webjars/... path to WebJAR path.
      *
      * @param fullVaadinPath Vaadin path
      * @return WebJAR path
      */
     public String translateToWebJarPath(String fullVaadinPath) {
         String path = fullVaadinPath;
-        if (path.startsWith("/"))
+        if (path.startsWith("/")) {
             path = path.substring(1);
+        }
 
-        return StringUtils.replace(path, VAADIN_PREFIX, "");
+        return StringUtils.replace(path, WEBJAR_PREFIX, "");
     }
 
     @Nullable

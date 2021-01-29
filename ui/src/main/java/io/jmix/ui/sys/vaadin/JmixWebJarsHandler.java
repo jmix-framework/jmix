@@ -40,7 +40,7 @@ import static org.apache.commons.io.IOUtils.copy;
 public class JmixWebJarsHandler implements RequestHandler {
 
     public static final String VAADIN_WEBJARS_PATH_PREFIX = "/" + WebJarResourceResolver.VAADIN_PREFIX;
-    public static final String WEBJARS_PATH_PREFIX = "/webjars/";
+    public static final String WEBJARS_PATH_PREFIX = "/" + WebJarResourceResolver.WEBJAR_PREFIX;
 
     private final Logger log = LoggerFactory.getLogger(JmixWebJarsHandler.class);
 

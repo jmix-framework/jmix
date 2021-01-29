@@ -117,4 +117,10 @@ public class MultiSelectListImpl<V> extends AbstractSelectList<Collection<V>, V,
             publish(ValueChangeEvent.class, event);
         }
     }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty()
+                || CollectionUtils.isEmpty(getValue());
+    }
 }

@@ -232,10 +232,6 @@ public abstract class AbstractField<T extends com.vaadin.ui.Component & com.vaad
         }
     }
 
-    protected boolean isEmpty(@Nullable Object value) {
-        return value == null;
-    }
-
     @Nullable
     protected String getDatatypeConversionErrorMsg(@Nullable Datatype<V> datatype) {
         if (datatype == null) {

@@ -274,4 +274,10 @@ public class TwinColumnImpl<V> extends AbstractField<JmixTwinColSelect<V>, Set<V
     public void setTabIndex(int tabIndex) {
         component.setTabIndex(tabIndex);
     }
+
+    @Override
+    public boolean isEmpty() {
+        return super.isEmpty()
+                || CollectionUtils.isEmpty(getValue());
+    }
 }

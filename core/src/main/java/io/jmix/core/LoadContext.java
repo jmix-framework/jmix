@@ -200,7 +200,6 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     /**
      * @return custom hints which are used by the query
      */
-    @Nullable
     public Map<String, Object> getHints() {
         return hints == null ? Collections.emptyMap() : Collections.unmodifiableMap(hints);
     }

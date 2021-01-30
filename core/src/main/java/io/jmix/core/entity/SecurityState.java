@@ -59,7 +59,9 @@ public class SecurityState implements Serializable {
         if (erasedData == null) {
             erasedData = HashMultimap.create();
         }
-        erasedData.putAll(attrName, erasedIds);
+        if (erasedIds != null) {
+            erasedData.putAll(attrName, erasedIds);
+        }
     }
 
     public void addErasedId(String attrName, Object erasedId) {

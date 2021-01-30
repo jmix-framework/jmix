@@ -17,21 +17,14 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.*;
-import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.core.constraint.InMemoryConstraint;
 import io.jmix.core.datastore.DataStoreAfterEntityLoadEvent;
 import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.eclipse.persistence.expressions.Expression;
-import org.eclipse.persistence.indirection.IndirectCollection;
-import org.eclipse.persistence.internal.expressions.ExpressionIterator;
-import org.eclipse.persistence.internal.expressions.ParameterExpression;
+import io.jmix.core.metamodel.model.Range;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
-import org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,16 +33,13 @@ import javax.persistence.Basic;
 import javax.persistence.FetchType;
 import java.io.Serializable;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static io.jmix.data.impl.lazyloading.ValueHoldersSupport.*;
 
 @Component("data_JpaLazyLoadingInterceptor")
 public class JpaLazyLoadingListener implements DataStoreEventListener {
-
-    private static final Logger log = LoggerFactory.getLogger(JpaLazyLoadingListener.class);
-
     @Autowired
     protected Metadata metadata;
     @Autowired
@@ -76,165 +66,109 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             fetchPlan = fetchPlanRepository.getFetchPlan(metaClass, FetchPlan.LOCAL);
         }
         for (Object entity : event.getResultEntities()) {
-            replaceValueHolders(entity, context, fetchPlan);
+            processValueHolders(entity, context, fetchPlan);
         }
     }
 
-    public void replaceValueHolders(Object instance, LoadContext loadContext, FetchPlan fetchPlan) {
+    public void processValueHolders(Object entity, LoadContext<?> loadContext, FetchPlan fetchPlan) {
         Map<Object, Set<FetchPlan>> collectedFetchPlans = new HashMap<>();
 
         if (fetchPlan != null) {
-            collectFetchPlans(instance, fetchPlan, collectedFetchPlans);
+            collectFetchPlans(entity, fetchPlan, collectedFetchPlans);
         }
 
-        boolean softDeletion = loadContext.isSoftDeletion();
-        Map<String, Serializable> hints = loadContext.getHints();
-        List<AccessConstraint<?>> constraints = (List<AccessConstraint<?>>) loadContext.getAccessConstraints().stream()
-                .filter(ac -> ac instanceof InMemoryConstraint)
-                .collect(Collectors.toList());
+        Map<String, Object> hints = loadContext.getHints();
+        Map<String, Serializable> serializableHints = new HashMap<>();
+
+        for (Map.Entry<String, Object> entry : hints.entrySet()) {
+            if (entry.getValue() instanceof Serializable) {
+                serializableHints.put(entry.getKey(), (Serializable) entry.getValue());
+            }
+        }
+
+        LoadOptions loadOptions = LoadOptions.with()
+                .setSoftDeletion(loadContext.isSoftDeletion())
+                .setAccessConstraints(loadContext.getAccessConstraints().stream()
+                        .filter(c -> c instanceof InMemoryConstraint)
+                        .collect(Collectors.toList()))
+                .setHints(serializableHints);
 
         for (Map.Entry<Object, Set<FetchPlan>> entry : collectedFetchPlans.entrySet()) {
             MetaClass metaClass = metadata.getClass(entry.getKey().getClass());
             for (MetaProperty property : metaClass.getProperties()) {
-                if (property.getRange().isClass() && !isPropertyContainedInFetchPlans(property, entry.getValue())) {
-                    replaceValueHoldersInternal(entry.getKey(), property, softDeletion, hints, constraints);
+                if (property.getRange().isClass() && !metadataTools.isEmbedded(property) &&
+                        !isPropertyContainedInFetchPlans(property, entry.getValue())) {
+                    if (!entityStates.isLoaded(entry.getKey(), property.getName())) {
+                        if (property.getRange().getCardinality().isMany()) {
+                            processCollectionValueHolder(entry.getKey(), property, loadOptions);
+                        } else if (property.getRange().getCardinality() == Range.Cardinality.ONE_TO_ONE) {
+                            processOneToOneValueHolder(entry.getKey(), property, loadOptions);
+                        } else if (property.getRange().getCardinality() == Range.Cardinality.MANY_TO_ONE) {
+                            processManyToOneValueHolder(entry.getKey(), property, loadOptions);
+                        }
+                    }
                 }
             }
         }
     }
 
-    protected void replaceValueHoldersInternal(Object instance, MetaProperty property, boolean softDeletion,
-                                               Map<String, Serializable> hints, List<AccessConstraint<?>> constraints) {
-        if (entityStates.isLoaded(instance, property.getName())) {
-            return;
+    protected void processCollectionValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
+        Object valueHolder = getCollectionValueHolder(owner, property.getName());
+        if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
+            AbstractValueHolder wrappedValueHolder =
+                    new CollectionValuePropertyHolder(beanFactory, owner, property.getName());
+
+            wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
+
+            setCollectionValueHolder(owner, property.getName(), wrappedValueHolder);
         }
-        JmixAbstractValueHolder vh;
-        switch (property.getRange().getCardinality()) {
-            case ONE_TO_ONE:
-                try {
-                    Field declaredField = instance.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
-                    boolean accessible = declaredField.isAccessible();
-                    declaredField.setAccessible(true);
-                    Object fieldInstance = declaredField.get(instance);
-                    if (fieldInstance instanceof JmixAbstractValueHolder || fieldInstance == null) {
-                        declaredField.setAccessible(accessible);
-                        return;
-                    }
-                    if (metadataTools.isOwningSide(property)) {
-                        UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
-                        if (originalValueHolder.getWrappedValueHolder().isInstantiated()
-                                || !(originalValueHolder.getWrappedValueHolder() instanceof QueryBasedValueHolder)) {
-                            declaredField.setAccessible(accessible);
-                            return;
-                        }
-                        QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
-                        AtomicReference<String> fieldName = new AtomicReference<>();
-                        ExpressionIterator iterator = new ExpressionIterator() {
-                            @Override
-                            public void iterate(Expression each) {
-                                if (each instanceof ParameterExpression) {
-                                    fieldName.set(((ParameterExpression) each).getField().getQualifiedName());
-                                }
-                            }
-                        };
-                        MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
-                        iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
-                        Object id = wrappedValueHolder.getRow().get(fieldName.get());
-                        // Since UUID is stored as String in some cases
-                        if (idProperty.getJavaType() == UUID.class && id instanceof String) {
-                            id = UUID.fromString((String) id);
-                        }
-                        vh = new JmixWrappingValueHolder(
-                                instance,
-                                property.getName(),
-                                property.getJavaType(),
-                                id,
-                                dataManager,
-                                metadata,
-                                metadataTools);
-                    } else {
-                        MetaProperty inverseProperty = property.getInverse();
-                        vh = new JmixSingleValueHolder(
-                                instance,
-                                property.getName(),
-                                inverseProperty.getName(),
-                                property.getJavaType(),
-                                dataManager,
-                                beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
-                                metadata,
-                                metadataTools);
-                    }
-                    vh.setPreservedLoadContext(softDeletion, hints, constraints);
-                    declaredField.set(instance, vh);
-                    declaredField.setAccessible(accessible);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
+    }
+
+    protected void processOneToOneValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
+        Object valueHolder = getSingleValueHolder(owner, property.getName());
+
+        if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
+            AbstractValueHolder wrappedValueHolder = null;
+
+            if (metadataTools.isOwningSide(property)) {
+                QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(valueHolder);
+                if (queryBasedValueHolder != null) {
+                    Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+
+                    wrappedValueHolder =
+                            new SingleValueOwningPropertyHolder(beanFactory, owner, property.getJavaType(),
+                                    property.getName(), entityId);
+
+                    wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                 }
-                break;
-            case MANY_TO_ONE:
-                try {
-                    Field declaredField = instance.getClass().getDeclaredField("_persistence_" + property.getName() + "_vh");
-                    boolean accessible = declaredField.isAccessible();
-                    declaredField.setAccessible(true);
-                    Object fieldInstance = declaredField.get(instance);
-                    if (fieldInstance instanceof JmixAbstractValueHolder) {
-                        declaredField.setAccessible(accessible);
-                        return;
-                    }
-                    UnitOfWorkQueryValueHolder originalValueHolder = (UnitOfWorkQueryValueHolder) fieldInstance;
-                    if (originalValueHolder.getWrappedValueHolder().isInstantiated()
-                            || !(originalValueHolder.getWrappedValueHolder() instanceof QueryBasedValueHolder)) {
-                        declaredField.setAccessible(accessible);
-                        return;
-                    }
-                    QueryBasedValueHolder wrappedValueHolder = (QueryBasedValueHolder) originalValueHolder.getWrappedValueHolder();
-                    AtomicReference<String> fieldName = new AtomicReference<>();
-                    ExpressionIterator iterator = new ExpressionIterator() {
-                        @Override
-                        public void iterate(Expression each) {
-                            if (each instanceof ParameterExpression) {
-                                fieldName.set(((ParameterExpression) each).getField().getQualifiedName());
-                            }
-                        }
-                    };
-                    MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(instance.getClass());
-                    iterator.iterateOn(wrappedValueHolder.getQuery().getSelectionCriteria());
-                    Object id = wrappedValueHolder.getRow().get(fieldName.get());
-                    // Since UUID is stored as String in some cases
-                    if (idProperty.getJavaType() == UUID.class && id instanceof String) {
-                        id = UUID.fromString((String) id);
-                    }
-                    vh = new JmixWrappingValueHolder(
-                            instance,
-                            property.getName(),
-                            property.getJavaType(),
-                            id,
-                            dataManager,
-                            metadata,
-                            metadataTools);
-                    vh.setPreservedLoadContext(softDeletion, hints, constraints);
-                    declaredField.set(instance, vh);
-                    declaredField.setAccessible(accessible);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                }
-                break;
-            case ONE_TO_MANY:
-            case MANY_TO_MANY:
-                IndirectCollection fieldValue = EntityValues.getValue(instance, property.getName());
-                if (fieldValue == null || fieldValue.getValueHolder() instanceof JmixAbstractValueHolder) {
-                    return;
-                }
-                vh = new JmixCollectionValueHolder(
-                        property.getName(),
-                        instance,
-                        dataManager,
-                        beanFactory.getBean(FetchPlanBuilder.class, instance.getClass()),
-                        metadata,
-                        metadataTools);
-                vh.setPreservedLoadContext(softDeletion, hints, constraints);
-                fieldValue.setValueHolder(vh);
-                break;
-            default:
-                break;
+            } else {
+                //noinspection ConstantConditions
+                wrappedValueHolder = new SingleValueMappedByPropertyHolder(beanFactory, owner, property.getJavaType(),
+                        property.getName(), property.getInverse().getName());
+
+                wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
+            }
+
+            setSingleValueHolder(owner, property.getName(), wrappedValueHolder);
+        }
+    }
+
+    protected void processManyToOneValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
+        Object valueHolder = getSingleValueHolder(owner, property.getName());
+
+        if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
+            QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(valueHolder);
+            if (queryBasedValueHolder != null) {
+                Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
+
+                AbstractValueHolder wrappedValueHolder =
+                        new SingleValueOwningPropertyHolder(beanFactory, owner, property.getJavaType(),
+                                property.getName(), entityId);
+
+                wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
+
+                setSingleValueHolder(owner, property.getName(), wrappedValueHolder);
+            }
         }
     }
 
@@ -265,7 +199,8 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
             FetchPlan propertyFetchPlan = property.getFetchPlan();
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
-                    for (Object item : new ArrayList(((Collection) value))) {
+                    //noinspection unchecked
+                    for (Object item : new ArrayList<>((Collection<Object>) value)) {
                         if (item instanceof Entity) {
                             collectFetchPlans(item, propertyFetchPlan, collectedFetchPlans);
                         }

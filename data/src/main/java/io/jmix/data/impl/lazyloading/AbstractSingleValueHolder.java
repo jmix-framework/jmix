@@ -18,13 +18,17 @@ package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.EntityAttributeVisitor;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
 public abstract class AbstractSingleValueHolder extends AbstractValueHolder {
     private static final long serialVersionUID = -6300542559295657659L;
 
-    public AbstractSingleValueHolder(BeanFactory beanFactory, Object owner) {
-        super(beanFactory, owner);
+    public AbstractSingleValueHolder(BeanFactory beanFactory,
+                                     ValueHolderInterface originalValueHolder,
+                                     Object owner,
+                                     MetaProperty metaProperty) {
+        super(beanFactory, originalValueHolder, owner, metaProperty);
     }
 
     @Override

@@ -21,6 +21,7 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
@@ -31,29 +32,23 @@ import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
 public class SingleValueOwningPropertyHolder extends AbstractSingleValueHolder {
     private static final long serialVersionUID = 8740384435315015951L;
 
-    protected Object owner;
-    protected String propertyName;
-    protected Class<?> propertyClass;
-    protected Object entityId;
+    protected final Object entityId;
 
     public SingleValueOwningPropertyHolder(BeanFactory beanFactory,
+                                           ValueHolderInterface originalValueHolder,
                                            Object owner,
-                                           Class<?> propertyClass,
-                                           String propertyName,
+                                           MetaProperty metaProperty,
                                            Object entityId) {
-        super(beanFactory, owner);
-        this.owner = owner;
-        this.propertyName = propertyName;
-        this.propertyClass = propertyClass;
+        super(beanFactory, originalValueHolder, owner, metaProperty);
         this.entityId = entityId;
     }
 
     public Object getEntityId() {
-        return convertId(entityId, getMetadata().getClass(propertyClass));
+        return convertId(entityId, getMetadata().getClass(getPropertyInfo().getJavaType()));
     }
 
     protected Object loadValue() {
-        MetaClass metaClass = getMetadata().getClass(propertyClass);
+        MetaClass metaClass = getMetadata().getClass(getPropertyInfo().getJavaType());
         LoadOptions loadOptions = getLoadOptions();
 
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
@@ -65,7 +60,7 @@ public class SingleValueOwningPropertyHolder extends AbstractSingleValueHolder {
         Object value = getDataManager().load(loadContext);
 
         if (value == null) {
-            getSecurityState(owner).addErasedId(propertyName, getEntityId());
+            getSecurityState(getOwner()).addErasedId(getPropertyInfo().getName(), getEntityId());
         }
 
         return value;

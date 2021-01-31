@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.eclipse.persistence.internal.indirection.QueryBasedValueHolder;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +117,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         Object valueHolder = getCollectionValueHolder(owner, property.getName());
         if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
             AbstractValueHolder wrappedValueHolder =
-                    new CollectionValuePropertyHolder(beanFactory, owner, property.getName());
+                    new CollectionValuePropertyHolder(beanFactory, (ValueHolderInterface) valueHolder, owner, property);
 
             wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
 
@@ -125,26 +126,26 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     }
 
     protected void processOneToOneValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
-        Object valueHolder = getSingleValueHolder(owner, property.getName());
+        Object originalValueHolder = getSingleValueHolder(owner, property.getName());
 
-        if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
+        if (originalValueHolder != null && !(originalValueHolder instanceof AbstractValueHolder)) {
             AbstractValueHolder wrappedValueHolder = null;
 
             if (metadataTools.isOwningSide(property)) {
-                QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(valueHolder);
+                QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
                 if (queryBasedValueHolder != null) {
                     Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
 
                     wrappedValueHolder =
-                            new SingleValueOwningPropertyHolder(beanFactory, owner, property.getJavaType(),
-                                    property.getName(), entityId);
+                            new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                                    owner, property, entityId);
 
                     wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
                 }
             } else {
                 //noinspection ConstantConditions
-                wrappedValueHolder = new SingleValueMappedByPropertyHolder(beanFactory, owner, property.getJavaType(),
-                        property.getName(), property.getInverse().getName());
+                wrappedValueHolder = new SingleValueMappedByPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                        owner, property);
 
                 wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
             }
@@ -154,16 +155,16 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
     }
 
     protected void processManyToOneValueHolder(Object owner, MetaProperty property, LoadOptions loadOptions) {
-        Object valueHolder = getSingleValueHolder(owner, property.getName());
+        Object originalValueHolder = getSingleValueHolder(owner, property.getName());
 
-        if (valueHolder != null && !(valueHolder instanceof AbstractValueHolder)) {
-            QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(valueHolder);
+        if (originalValueHolder != null && !(originalValueHolder instanceof AbstractValueHolder)) {
+            QueryBasedValueHolder queryBasedValueHolder = unwrapToQueryBasedValueHolder(originalValueHolder);
             if (queryBasedValueHolder != null) {
                 Object entityId = getEntityIdFromValueHolder(queryBasedValueHolder);
 
                 AbstractValueHolder wrappedValueHolder =
-                        new SingleValueOwningPropertyHolder(beanFactory, owner, property.getJavaType(),
-                                property.getName(), entityId);
+                        new SingleValueOwningPropertyHolder(beanFactory, (ValueHolderInterface) originalValueHolder,
+                                owner, property, entityId);
 
                 wrappedValueHolder.setLoadOptions(LoadOptions.with(loadOptions));
 

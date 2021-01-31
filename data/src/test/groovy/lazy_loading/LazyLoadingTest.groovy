@@ -146,7 +146,6 @@ class LazyLoadingTest extends DataSpec {
         oneToManyEntity.getManyToOneEntities().size() == 2
     }
 
-    @Ignore
     def "OneToMany traverse from ManyToOne"() {
         setup:
 

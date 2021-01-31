@@ -17,11 +17,13 @@
 package io.jmix.data.impl.lazyloading;
 
 import io.jmix.core.EntityAttributeVisitor;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
@@ -32,14 +34,13 @@ import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
 public class CollectionValuePropertyHolder extends AbstractValueHolder {
     private static final long serialVersionUID = -8280038568067316785L;
 
-    protected String propertyName;
     protected Object rootEntity;
 
     public CollectionValuePropertyHolder(BeanFactory beanFactory,
+                                         ValueHolderInterface originalValueHolder,
                                          Object owner,
-                                         String propertyName) {
-        super(beanFactory, owner);
-        this.propertyName = propertyName;
+                                         MetaProperty metaProperty) {
+        super(beanFactory, originalValueHolder, owner, metaProperty);
     }
 
     public void setRootEntity(Object rootEntity) {
@@ -57,10 +58,10 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
         LoadContext<?> loadContext = createLoadContextByOwner(metaClass);
 
         Object reloadedOwner = getDataManager().load(loadContext);
-        Collection<Object> value = EntityValues.getValue(reloadedOwner, propertyName);
+        Collection<Object> value = EntityValues.getValue(reloadedOwner, getPropertyInfo().getName());
 
-        getSecurityState(getOwner()).addErasedIds(propertyName,
-                getSecurityState(reloadedOwner).getErasedIds(propertyName));
+        getSecurityState(getOwner()).addErasedIds(getPropertyInfo().getName(),
+                getSecurityState(reloadedOwner).getErasedIds(getPropertyInfo().getName()));
 
         if (getRootEntity() != null) {
             replaceCollectionExistingReferences(value, getRootEntity());
@@ -82,7 +83,7 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
                 .setId(Objects.requireNonNull(EntityValues.getId(getOwner())))
                 .setFetchPlan(
                         getFetchPlans().builder(metaClass.getJavaClass())
-                                .add(propertyName)
+                                .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
                 .setSoftDeletion(getLoadOptions().isSoftDeletion())
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())

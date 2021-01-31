@@ -33,15 +33,22 @@ public abstract class AbstractValueHolder implements ValueHolderInterface, Weave
         Cloneable, Serializable {
     private static final long serialVersionUID = 7624285533412298485L;
 
+    protected transient BeanFactory beanFactory;
+    private final ValueHolderInterface originalValueHolder;
+    private final Object owner;
+    private final MetaPropertyInfo propertyInfo;
     protected volatile boolean isInstantiated;
     protected volatile Object value;
     private LoadOptions loadOptions;
-    private Object owner;
-    protected transient BeanFactory beanFactory;
 
-    public AbstractValueHolder(BeanFactory beanFactory, Object owner) {
+    public AbstractValueHolder(BeanFactory beanFactory,
+                               ValueHolderInterface originalValueHolder,
+                               Object owner,
+                               MetaProperty metaProperty) {
         this.beanFactory = beanFactory;
+        this.originalValueHolder = originalValueHolder;
         this.owner = owner;
+        this.propertyInfo = new MetaPropertyInfo(metaProperty);
     }
 
     @Override
@@ -115,6 +122,10 @@ public abstract class AbstractValueHolder implements ValueHolderInterface, Weave
 
     public Object getOwner() {
         return owner;
+    }
+
+    public MetaPropertyInfo getPropertyInfo() {
+        return propertyInfo;
     }
 
     protected void replaceToExistingReferences(Object entity, MetaProperty property, Object owner) {

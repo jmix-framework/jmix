@@ -16,11 +16,13 @@
 
 package io.jmix.data.impl.lazyloading;
 
-import io.jmix.core.FetchPlanBuilder;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.LoadContext;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.io.IOException;
@@ -31,21 +33,11 @@ import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
 public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder {
     private static final long serialVersionUID = -9161805285177725933L;
 
-    protected String propertyName;
-    protected String inversePropertyName;
-    protected Class<?> propertyClass;
-
-    protected transient FetchPlanBuilder fetchPlanBuilder;
-
     public SingleValueMappedByPropertyHolder(BeanFactory beanFactory,
+                                             ValueHolderInterface originalValueHolder,
                                              Object owner,
-                                             Class<?> propertyClass,
-                                             String propertyName,
-                                             String inversePropertyName) {
-        super(beanFactory, owner);
-        this.propertyName = propertyName;
-        this.inversePropertyName = inversePropertyName;
-        this.propertyClass = propertyClass;
+                                             MetaProperty metaProperty) {
+        super(beanFactory, originalValueHolder, owner, metaProperty);
     }
 
     @Override
@@ -56,16 +48,16 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
             LoadContext<?> loadContext = createLoadContextByOwner(metaClass);
 
             Object reloadedOwner = getDataManager().load(loadContext);
-            Object value = EntityValues.getValue(reloadedOwner, propertyName);
+            Object value = EntityValues.getValue(reloadedOwner, getPropertyInfo().getName());
 
             if (value == null) {
-                getSecurityState(getOwner()).addErasedIds(propertyName,
-                        getSecurityState(reloadedOwner).getErasedIds(propertyName));
+                getSecurityState(getOwner()).addErasedIds(getPropertyInfo().getName(),
+                        getSecurityState(reloadedOwner).getErasedIds(getPropertyInfo().getName()));
             }
 
             return value;
         } else {
-            MetaClass metaClass = getMetadata().getClass(propertyClass);
+            MetaClass metaClass = getMetadata().getClass(getPropertyInfo().getJavaType());
             String primaryKeyName = getMetadataTools().getPrimaryKeyName(metaClass);
 
             LoadContext<?> loadContext = createLoadContextByInverseProperty(metaClass, primaryKeyName);
@@ -79,7 +71,7 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
                 .setId(Objects.requireNonNull(EntityValues.getId(getOwner())))
                 .setFetchPlan(
                         getFetchPlans().builder(metaClass.getJavaClass())
-                                .add(propertyName)
+                                .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
                 .setSoftDeletion(false)
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())
@@ -91,7 +83,7 @@ public class SingleValueMappedByPropertyHolder extends AbstractSingleValueHolder
                 .setSoftDeletion(false)
                 .setHints(getLoadOptions().getHints());
         loadContext.setQueryString(String.format("select e from %s e where e.%s.%s = :entityId", metaClass.getName(),
-                inversePropertyName, primaryKeyName))
+                getPropertyInfo().getInversePropertyName(), primaryKeyName))
                 .setParameter("entityId", Objects.requireNonNull(EntityValues.getId(getOwner())));
         return loadContext;
     }

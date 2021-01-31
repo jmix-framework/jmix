@@ -232,6 +232,22 @@ public class JpqlQueryBuilder {
                         resultParameters.put(parameterName, parameterValue);
                     }
                 }
+
+                List<SingleJpqlCondition> singleJpqlConditions = collectNestedSingleJpqlConditions(actualized);
+                for (SingleJpqlCondition singleJpqlCondition : singleJpqlConditions) {
+                    singleJpqlCondition.getParameters().stream()
+                            .findFirst()
+                            .ifPresent(parameterName -> {
+                                Object parameterValue;
+                                if (!nonNullParamNames.contains(parameterName)) {
+                                    parameterValue = singleJpqlCondition.getParameterValue();
+                                } else {
+                                    parameterValue = queryParameters.get(parameterName);
+                                }
+
+                                resultParameters.put(parameterName, parameterValue);
+                            });
+                }
             }
             resultQuery = conditionJpqlGenerator.processQuery(resultQuery, actualized);
         }
@@ -262,6 +278,17 @@ public class JpqlQueryBuilder {
             propertyConditions.add((PropertyCondition) rootCondition);
         }
         return propertyConditions;
+    }
+
+    private List<SingleJpqlCondition> collectNestedSingleJpqlConditions(Condition rootCondition) {
+        List<SingleJpqlCondition> singleJpqlConditions = new ArrayList<>();
+        if (rootCondition instanceof LogicalCondition) {
+            ((LogicalCondition) rootCondition).getConditions().forEach(c ->
+                    singleJpqlConditions.addAll(collectNestedSingleJpqlConditions(c)));
+        } else if (rootCondition instanceof SingleJpqlCondition) {
+            singleJpqlConditions.add((SingleJpqlCondition) rootCondition);
+        }
+        return singleJpqlConditions;
     }
 
     protected void applyCount() {

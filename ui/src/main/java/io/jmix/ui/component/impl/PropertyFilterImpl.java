@@ -18,14 +18,15 @@ package io.jmix.ui.component.impl;
 
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.AbstractAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.PopupButton;
+import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
-import io.jmix.ui.icon.Icons;
+import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.ui.model.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,94 +37,44 @@ import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 import static io.jmix.ui.theme.ThemeClassNames.POPUP_BUTTON_NO_POPUP_INDICATOR;
 
-public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implements PropertyFilter<V>,
-        CompositeWithHtmlCaption, CompositeWithHtmlDescription {
+public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> implements PropertyFilter<V> {
 
     protected static final String PROPERTY_FILTER_STYLENAME = "jmix-property-filter";
 
-    protected UiComponents uiComponents;
     protected PropertyFilterSupport propertyFilterSupport;
+    protected SingleFilterSupport singleFilterSupport;
 
-    protected Label<String> captionLabel;
     protected PopupButton operationSelector;
-    protected HasValue<V> valueComponent;
-
-    protected DataLoader dataLoader;
-
-    protected String caption;
-    protected String captionWidth;
-    protected String icon;
-
-    protected CaptionPosition captionPosition = CaptionPosition.LEFT;
-    protected PropertyCondition queryCondition = new PropertyCondition();
-
-    protected boolean autoApply = true;
 
     protected Operation operation;
     protected boolean operationEditable = false;
-
-    public PropertyFilterImpl() {
-        addCreateListener(this::onCreate);
-    }
-
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
-    }
 
     @Autowired
     public void setPropertyFilterSupport(PropertyFilterSupport propertyFilterSupport) {
         this.propertyFilterSupport = propertyFilterSupport;
     }
 
-    protected void onCreate(CreateEvent createEvent) {
-        root = createRootComponent();
-        initRootComponent(root);
-        updateCaptionLayout();
+    @Autowired
+    public void setSingleFilterSupport(SingleFilterSupport singleFilterSupport) {
+        this.singleFilterSupport = singleFilterSupport;
     }
 
-    protected HBoxLayout createRootComponent() {
-        return uiComponents.create(HBoxLayout.class);
-    }
-
+    @Override
     protected void initRootComponent(HBoxLayout root) {
+        super.initRootComponent(root);
+
         root.unwrap(com.vaadin.ui.Component.class)
                 .setPrimaryStyleName(PROPERTY_FILTER_STYLENAME);
-        root.setSpacing(true);
     }
 
-    protected void updateCaptionLayout() {
-        if (captionPosition == CaptionPosition.LEFT) {
-            root.setCaption(null);
-            root.setIcon(null);
-
-            captionLabel = createCaptionLabel();
-            root.add(captionLabel, 0);
-        } else {
-            root.remove(captionLabel);
-            captionLabel = null;
-            root.setCaption(caption);
-            root.setIcon(icon);
-        }
-    }
-
-    protected Label<String> createCaptionLabel() {
-        Label<String> label = uiComponents.create(Label.TYPE_DEFAULT);
-        String prefix = propertyFilterSupport.getPropertyFilterPrefix(getId(), getProperty());
-        label.setId(prefix + "captionLabel");
-        label.setAlignment(Alignment.MIDDLE_LEFT);
-        label.setWidth(captionWidth);
-        label.setValue(caption);
-        label.setIcon(icon);
-        label.setHtmlEnabled(isCaptionAsHtml());
-
-        return label;
+    @Override
+    public String getInnerComponentPrefix() {
+        return propertyFilterSupport.getPropertyFilterPrefix(getId(), getProperty());
     }
 
     protected PopupButton createOperationSelector() {
         PopupButton operationSelector = uiComponents.create(PopupButton.class);
-        String prefix = propertyFilterSupport.getPropertyFilterPrefix(getId(), getProperty());
-        operationSelector.setId(prefix + "operationSelector");
+        operationSelector.setId(getInnerComponentPrefix() + "operationSelector");
         operationSelector.addStyleName(POPUP_BUTTON_NO_POPUP_INDICATOR);
         operationSelector.setAlignment(getChildAlignment());
 
@@ -157,42 +108,28 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
     }
 
     @Override
-    public DataLoader getDataLoader() {
-        return dataLoader;
-    }
-
-    @Override
     public void setDataLoader(DataLoader dataLoader) {
-        checkState(this.dataLoader == null, "DataLoader has already been initialized");
-        checkNotNullArgument(dataLoader);
-
-        this.dataLoader = dataLoader;
-
-        Condition rootCondition = dataLoader.getCondition();
-        if (rootCondition == null) {
-            rootCondition = new LogicalCondition(LogicalCondition.Type.AND);
-            dataLoader.setCondition(rootCondition);
-        }
-
-        if (rootCondition instanceof LogicalCondition) {
-            ((LogicalCondition) rootCondition).add(queryCondition);
-        }
+        super.setDataLoader(dataLoader);
 
         initOperationSelectorActions(operationSelector);
     }
 
     @Override
     public String getProperty() {
-        return queryCondition.getProperty();
+        return getQueryCondition().getProperty();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setProperty(String property) {
-        //noinspection ConstantConditions
-        checkState(this.queryCondition.getProperty() == null, "Property has already been initialized");
+        checkState(getProperty() == null, "Property has already been initialized");
         checkNotNullArgument(property);
 
-        this.queryCondition.setProperty(property);
+        getQueryCondition().setProperty(property);
+
+        if (captionLabel != null) {
+            captionLabel.setId(getInnerComponentPrefix() + "captionLabel");
+        }
 
         initOperationSelectorActions(operationSelector);
     }
@@ -211,8 +148,9 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked", "ConstantConditions"})
     protected void setOperationInternal(Operation operation) {
-        queryCondition.setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));
+        getQueryCondition().setOperation(propertyFilterSupport.toPropertyConditionOperation(operation));
 
         if (operationSelector != null) {
             operationSelector.setCaption(getOperationCaption(operation));
@@ -224,11 +162,10 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
         if (this.operation == null
                 || this.operation.getType() != operation.getType()) {
-            //noinspection ConstantConditions
             if (dataLoader != null && getProperty() != null) {
                 MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
-                HasValue newValueComponent = propertyFilterSupport.generateValueComponent(metaClass,
-                        getProperty(), operation, getId());
+                HasValue newValueComponent = singleFilterSupport.generateValueComponent(metaClass,
+                        getProperty(), operation);
                 setValueComponent(newValueComponent);
             }
         }
@@ -242,113 +179,40 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
 
     @Override
     public String getParameterName() {
-        return this.queryCondition.getParameterName();
+        return getQueryCondition().getParameterName();
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void setParameterName(String parameterName) {
-        //noinspection ConstantConditions
-        checkState(this.queryCondition.getParameterName() == null,
-                "Parameter name has already been initialized");
+        checkState(getParameterName() == null, "Parameter name has already been initialized");
         checkNotNullArgument(parameterName);
 
-        this.queryCondition.setParameterName(parameterName);
+        getQueryCondition().setParameterName(parameterName);
     }
 
     @Override
-    public CaptionPosition getCaptionPosition() {
-        return captionPosition;
-    }
-
-    @Override
-    public void setCaptionPosition(CaptionPosition captionPosition) {
-        if (this.captionPosition != captionPosition) {
-            this.captionPosition = captionPosition;
-            updateCaptionLayout();
-            updateChildAlignment();
-        }
-    }
-
     protected void updateChildAlignment() {
-        if (valueComponent != null) {
-            valueComponent.setAlignment(getChildAlignment());
-        }
+        super.updateChildAlignment();
 
         if (operationSelector != null) {
             operationSelector.setAlignment(getChildAlignment());
         }
     }
 
-    protected Alignment getChildAlignment() {
-        return captionPosition == CaptionPosition.LEFT
-                ? Alignment.MIDDLE_LEFT
-                : Alignment.TOP_LEFT;
+    @Override
+    protected PropertyCondition createQueryCondition() {
+        return new PropertyCondition();
     }
 
     @Override
     public PropertyCondition getQueryCondition() {
-        return queryCondition;
-    }
-
-    @Nullable
-    @Override
-    public V getValue() {
-        checkValueComponentState();
-        return valueComponent.getValue();
+        return (PropertyCondition) queryCondition;
     }
 
     @Override
-    public void setValue(@Nullable V value) {
-        checkValueComponentState();
-        valueComponent.setValue(value);
-    }
-
-    @Override
-    public HasValue<V> getValueComponent() {
-        return valueComponent;
-    }
-
-    @Override
-    public void setValueComponent(HasValue<V> valueComponent) {
-        checkNotNullArgument(valueComponent);
-
-        if (this.valueComponent != null) {
-            root.remove(this.valueComponent);
-        }
-
-        this.valueComponent = valueComponent;
-        root.add(valueComponent);
-
-        initValueComponent(valueComponent);
-    }
-
-    protected void initValueComponent(HasValue<V> valueComponent) {
-        valueComponent.addValueChangeListener(this::onValueChanged);
-        valueComponent.setAlignment(getChildAlignment());
-
-        if (getWidth() > 0) {
-            root.expand(valueComponent);
-        }
-    }
-
-    protected void onValueChanged(ValueChangeEvent<V> valueChangeEvent) {
-        V value = valueChangeEvent.getValue();
-        queryCondition.setParameterValue(value);
-
-        if (autoApply) {
-            dataLoader.load();
-        }
-
-        ValueChangeEvent<V> event = new ValueChangeEvent<>(this,
-                valueChangeEvent.getPrevValue(),
-                valueChangeEvent.getValue(),
-                valueChangeEvent.isUserOriginated());
-        publish(ValueChangeEvent.class, event);
-    }
-
-    @Override
-    public Subscription addValueChangeListener(Consumer<ValueChangeEvent<V>> listener) {
-        return getEventHub().subscribe(ValueChangeEvent.class, (Consumer) listener);
+    protected void updateQueryCondition(@Nullable V newValue) {
+        getQueryCondition().setParameterValue(newValue);
     }
 
     @Override
@@ -382,237 +246,13 @@ public class PropertyFilterImpl<V> extends CompositeComponent<HBoxLayout> implem
         }
     }
 
-    @Nullable
-    @Override
-    public String getCaption() {
-        return caption;
-    }
-
-    @Override
-    public void setCaption(@Nullable String caption) {
-        this.caption = caption;
-        updateCaption();
-    }
-
-    protected void updateCaption() {
-        if (captionPosition == CaptionPosition.TOP) {
-            root.setCaption(caption);
-        } else {
-            captionLabel.setValue(caption);
-        }
-    }
-
-    @Override
-    public void setCaptionAsHtml(boolean captionAsHtml) {
-        root.setCaptionAsHtml(captionAsHtml);
-
-        if (captionLabel != null) {
-            captionLabel.setHtmlEnabled(captionAsHtml);
-        }
-    }
-
-    @Override
-    public float getCaptionWidth() {
-        return captionLabel != null ? captionLabel.getWidth() : AUTO_SIZE_PX;
-    }
-
-    @Override
-    public SizeUnit getCaptionWidthSizeUnit() {
-        return captionLabel != null ? captionLabel.getWidthSizeUnit() : SizeUnit.PIXELS;
-    }
-
-    @Override
-    public void setCaptionWidth(String captionWidth) {
-        this.captionWidth = captionWidth;
-
-        if (captionLabel != null) {
-            captionLabel.setWidth(captionWidth);
-        }
-    }
-
-    @Override
-    public boolean isAutoApply() {
-        return autoApply;
-    }
-
-    @Override
-    public void setAutoApply(boolean autoApply) {
-        this.autoApply = autoApply;
-    }
-
-    @Override
-    public void setWidth(@Nullable String width) {
-        super.setWidth(width);
-
-        if (valueComponent != null) {
-            if (Component.AUTO_SIZE.equals(width) || width == null) {
-                root.resetExpanded();
-                valueComponent.setWidthAuto();
-            } else {
-                root.expand(valueComponent);
-            }
-        }
-    }
-
-    @Nullable
-    @Override
-    public String getIcon() {
-        return icon;
-    }
-
-    @Override
-    public void setIcon(@Nullable String icon) {
-        this.icon = icon;
-        updateIcon();
-    }
-
-    protected void updateIcon() {
-        if (captionPosition == CaptionPosition.TOP) {
-            root.setIcon(icon);
-        } else {
-            captionLabel.setIcon(icon);
-        }
-    }
-
-    @Override
-    public void setIconFromSet(@Nullable Icons.Icon icon) {
-        String iconName = getIconName(icon);
-        setIcon(iconName);
-    }
-
-    @Nullable
-    protected String getIconName(@Nullable Icons.Icon icon) {
-        return applicationContext.getBean(Icons.class).get(icon);
-    }
-
-    @Override
-    public boolean isEditable() {
-        return valueComponent instanceof Editable
-                && ((Editable) valueComponent).isEditable();
-    }
-
-    @Override
-    public void setEditable(boolean editable) {
-        if (valueComponent instanceof Editable) {
-            ((Editable) valueComponent).setEditable(editable);
-        }
-
-        if (operationSelector != null) {
-            operationSelector.setEnabled(editable);
-        }
-    }
-
-    @Override
-    public void focus() {
-        if (valueComponent instanceof Focusable) {
-            ((Focusable) valueComponent).focus();
-        }
-    }
-
-    @Override
-    public int getTabIndex() {
-        return valueComponent instanceof Focusable
-                ? ((Focusable) valueComponent).getTabIndex()
-                : 0;
-    }
-
     @Override
     public void setTabIndex(int tabIndex) {
-        if (valueComponent instanceof Focusable) {
-            ((Focusable) valueComponent).setTabIndex(tabIndex);
-        }
+        super.setTabIndex(tabIndex);
 
         if (operationSelector != null) {
             operationSelector.setTabIndex(tabIndex);
         }
-    }
-
-    @Override
-    public boolean isRequired() {
-        return valueComponent instanceof Requirable
-                && ((Requirable) valueComponent).isRequired();
-    }
-
-    @Override
-    public void setRequired(boolean required) {
-        if (valueComponent instanceof Requirable) {
-            ((Requirable) valueComponent).setRequired(required);
-        }
-    }
-
-    @Nullable
-    @Override
-    public String getRequiredMessage() {
-        return valueComponent instanceof Requirable
-                ? ((Requirable) valueComponent).getRequiredMessage()
-                : null;
-    }
-
-    @Override
-    public void setRequiredMessage(@Nullable String msg) {
-        if (valueComponent instanceof Requirable) {
-            ((Requirable) valueComponent).setRequiredMessage(msg);
-        }
-    }
-
-    @Nullable
-    @Override
-    public String getContextHelpText() {
-        return valueComponent instanceof HasContextHelp
-                ? ((HasContextHelp) valueComponent).getContextHelpText()
-                : null;
-    }
-
-    @Override
-    public void setContextHelpText(@Nullable String contextHelpText) {
-        if (valueComponent instanceof HasContextHelp) {
-            ((HasContextHelp) valueComponent).setContextHelpText(contextHelpText);
-        }
-    }
-
-    @Override
-    public boolean isContextHelpTextHtmlEnabled() {
-        return valueComponent instanceof HasContextHelp
-                && ((HasContextHelp) valueComponent).isContextHelpTextHtmlEnabled();
-    }
-
-    @Override
-    public void setContextHelpTextHtmlEnabled(boolean enabled) {
-        if (valueComponent instanceof HasContextHelp) {
-            ((HasContextHelp) valueComponent).setContextHelpTextHtmlEnabled(enabled);
-        }
-    }
-
-    @Nullable
-    @Override
-    public Consumer<ContextHelpIconClickEvent> getContextHelpIconClickHandler() {
-        return valueComponent instanceof HasContextHelp
-                ? ((HasContextHelp) valueComponent).getContextHelpIconClickHandler()
-                : null;
-    }
-
-    @Override
-    public void setContextHelpIconClickHandler(@Nullable Consumer<ContextHelpIconClickEvent> handler) {
-        if (valueComponent instanceof HasContextHelp) {
-            ((HasContextHelp) valueComponent).setContextHelpIconClickHandler(handler);
-        }
-    }
-
-    @Override
-    public boolean isValid() {
-        return valueComponent instanceof Validatable
-                && ((Validatable) valueComponent).isValid();
-    }
-
-    @Override
-    public void validate() throws ValidationException {
-        if (valueComponent instanceof Validatable) {
-            ((Validatable) valueComponent).validate();
-        }
-    }
-
-    protected void checkValueComponentState() {
-        checkState(valueComponent != null, "Value component isn't set");
     }
 
     protected static class OperationChangeAction extends AbstractAction {

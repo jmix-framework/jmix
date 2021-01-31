@@ -16,27 +16,32 @@
 
 package io.jmix.ui.component.filter.configuration;
 
+import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SingleFilterComponent;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DesignTimeConfiguration implements Filter.Configuration {
 
-    protected final String code;
-    protected final String caption;
+    protected final String id;
+    protected final String name;
     protected final LogicalFilterComponent rootLogicalFilterComponent;
     protected final Filter owner;
 
+    protected Map<String, Object> defaultValuesMap = new HashMap<>();
 
-    public DesignTimeConfiguration(String code,
-                                   @Nullable String caption,
+    public DesignTimeConfiguration(String id,
+                                   @Nullable String name,
                                    LogicalFilterComponent rootLogicalFilterComponent,
                                    Filter owner) {
-        this.code = code;
-        this.caption = caption;
+        this.id = id;
+        this.name = name;
         this.rootLogicalFilterComponent = rootLogicalFilterComponent;
         this.owner = owner;
     }
@@ -47,20 +52,19 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public String getCode() {
-        return code;
+    public String getId() {
+        return id;
+    }
+
+    @Nullable
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String getCaption() {
-        return caption != null
-                ? caption
-                : code;
-    }
-
-    @Override
-    public void setCaption(@Nullable String caption) {
-        throw new UnsupportedOperationException("You cannot set caption attribute for design-time configuration. " +
+    public void setName(@Nullable String name) {
+        throw new UnsupportedOperationException("You cannot set name attribute for design-time configuration. " +
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
@@ -100,5 +104,64 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     public void setModified(FilterComponent filterComponent, boolean modified) {
         throw new UnsupportedOperationException("You cannot set modified attribute for design-time configuration. " +
                 "Use FilterCopyAction to create a modifiable copy of configuration");
+    }
+
+    @Override
+    public void setDefaultValue(String parameterName, @Nullable Object defaultValue) {
+        Preconditions.checkNotNullArgument(parameterName);
+        if (isFilterComponentExist(parameterName)) {
+            defaultValuesMap.put(parameterName, defaultValue);
+        }
+    }
+
+    @Override
+    public void removeDefaultValue(String parameterName) {
+        throw new UnsupportedOperationException("You cannot remove default value for design-time configuration. " +
+                "Use FilterCopyAction to create a modifiable copy of configuration");
+    }
+
+    @Nullable
+    @Override
+    public Object getDefaultValue(String parameterName) {
+        Preconditions.checkNotNullArgument(parameterName);
+        if (isFilterComponentExist(parameterName)) {
+            return defaultValuesMap.get(parameterName);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void removeAllDefaultValues() {
+        throw new UnsupportedOperationException("You cannot remove default values for design-time configuration. " +
+                "Use FilterCopyAction to create a modifiable copy of configuration");
+    }
+
+    protected boolean isFilterComponentExist(String parameterName) {
+        return rootLogicalFilterComponent.getFilterComponents().stream()
+                .anyMatch(filterComponent -> filterComponent instanceof SingleFilterComponent
+                        && parameterName.equals(((SingleFilterComponent<?>) filterComponent).getParameterName()));
+    }
+
+    @Override
+    public int compareTo(Filter.Configuration other) {
+        return id.compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof DesignTimeConfiguration)) {
+            return false;
+        }
+
+        return id.equals(((DesignTimeConfiguration) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

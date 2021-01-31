@@ -28,8 +28,8 @@
 
     <dialogMode forceDialog="true"
                 resizable="true"
-                width="400"
-                height="600"/>
+                width="theme://jmix.ui.filter.addConditionScreen.dialog.width"
+                height="theme://jmix.ui.filter.addConditionScreen.dialog.height"/>
 
     <facets>
         <dataLoadCoordinator auto="true"/>

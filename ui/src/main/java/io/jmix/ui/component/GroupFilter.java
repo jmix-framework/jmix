@@ -16,8 +16,56 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.ui.UiProperties;
+import io.jmix.ui.model.DataLoader;
+
+/**
+ * GroupFilter is a UI component that has a {@link GroupBoxLayout} with a {@link ResponsiveGridLayout}
+ * as its root element. This component can contain {@link FilterComponent}s and can be used for filtering entities
+ * returned by the {@link DataLoader}.
+ */
 public interface GroupFilter extends LogicalFilterComponent, Component.BelongToFrame, CompositeWithHtmlCaption,
-        CompositeWithHtmlDescription, CompositeWithIcon, CompositeWithContextHelp, HasHtmlSanitizer {
+        CompositeWithHtmlDescription, CompositeWithIcon, CompositeWithContextHelp, HasHtmlSanitizer,
+        SupportsCaptionPosition, SupportsColumnsCount {
 
     String NAME = "groupFilter";
+
+    /**
+     * @return caption position of logical filter child components
+     */
+    @Override
+    CaptionPosition getCaptionPosition();
+
+    /**
+     * Sets caption position of logical filter child components.
+     *
+     * <ul>
+     *     <li>{@link CaptionPosition#LEFT} - component captions will be placed
+     *     in a separate column on the left side of the components</li>
+     *     <li>{@link CaptionPosition#TOP} - component captions will be placed
+     *     above the components</li>
+     * </ul>
+     *
+     * @param position caption position of logical filter child components
+     */
+    @Override
+    void setCaptionPosition(CaptionPosition position);
+
+    /**
+     * Returns the number of columns to be displayed on one row.
+     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     *
+     * @return the number of columns to be displayed on one row
+     */
+    @Override
+    int getColumnsCount();
+
+    /**
+     * Sets the number of columns to be displayed on one row.
+     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     *
+     * @param columnsCount the number of columns to be displayed on one row
+     */
+    @Override
+    void setColumnsCount(int columnsCount);
 }

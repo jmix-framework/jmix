@@ -18,6 +18,7 @@ package io.jmix.ui.screen;
 
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.Window;
@@ -173,5 +174,14 @@ public final class UiControllerUtils {
 
     public static boolean isAlreadyOpened(Screen newScreen, Screen openedScreen) {
         return newScreen.isSameScreen(openedScreen);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static <T extends Facet> T getFacet(Frame frame, Class<T> facetClass) {
+        return (T) frame.getFacets()
+                .filter(facet -> facetClass.isAssignableFrom(facet.getClass()))
+                .findFirst()
+                .orElse(null);
     }
 }

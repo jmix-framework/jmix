@@ -16,9 +16,8 @@
 
 package io.jmix.ui.app.filter.condition.validation;
 
+import io.jmix.core.ClassManager;
 import io.jmix.core.Messages;
-import io.jmix.core.annotation.Internal;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.component.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +25,16 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component("ui_ValueComponentNameValidator")
+@Component("ui_FilterParameterClassValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-@Internal
-public class ValueComponentNameValidator implements Validator<String> {
+public class FilterParameterClassValidator implements Validator<String> {
 
-    protected UiComponents uiComponents;
+    protected ClassManager classManager;
     protected Messages messages;
 
     @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
+    public void setClassManager(ClassManager classManager) {
+        this.classManager = classManager;
     }
 
     @Autowired
@@ -45,10 +43,10 @@ public class ValueComponentNameValidator implements Validator<String> {
     }
 
     @Override
-    public void accept(String valueComponentName) throws ValidationException {
-        if (!uiComponents.isComponentRegistered(valueComponentName)) {
-            throw new ValidationException(messages.formatMessage(ValueComponentNameValidator.class,
-                    "valueComponentNameValidator.validationMessage", valueComponentName));
+    public void accept(String parameterClass) throws ValidationException {
+        if (classManager.findClass(parameterClass) == null) {
+            throw new ValidationException(messages.formatMessage(FilterParameterClassValidator.class,
+                    "filterParameterClassValidator.validationMessage", parameterClass));
         }
     }
 }

@@ -22,6 +22,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.GroupFilter;
+import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.entity.FilterCondition;
@@ -34,10 +35,11 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 @Internal
 @Component("ui_GroupFilterConverter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class GroupFilterConverter implements FilterConverter<GroupFilter, GroupFilterCondition> {
+public class GroupFilterConverter extends AbstractFilterComponentConverter<GroupFilter, GroupFilterCondition> {
 
     @Autowired
     protected Metadata metadata;
@@ -46,20 +48,14 @@ public class GroupFilterConverter implements FilterConverter<GroupFilter, GroupF
     @Autowired
     protected FilterComponents filterComponents;
 
-    protected final Filter filter;
-
-    public GroupFilterConverter(Filter filter) {
-        this.filter = filter;
+    protected GroupFilterConverter(Filter filter) {
+        super(filter);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public GroupFilter convertToComponent(GroupFilterCondition model) {
-        GroupFilter groupFilter = uiComponents.create(GroupFilter.NAME);
-        groupFilter.setDataLoader(filter.getDataLoader());
-        groupFilter.setVisible(model.getVisible());
-        groupFilter.setEnabled(model.getEnabled());
-        groupFilter.setStyleName(model.getStyleName());
+        GroupFilter groupFilter = super.convertToComponent(model);
+
         groupFilter.setOperation(model.getOperation());
         groupFilter.setCaption(model.getCaption());
 
@@ -71,18 +67,14 @@ public class GroupFilterConverter implements FilterConverter<GroupFilter, GroupF
             }
         }
 
-        groupFilter.setAutoApply(filter.isAutoApply());
         return groupFilter;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public GroupFilterCondition convertToModel(GroupFilter groupFilter) {
-        GroupFilterCondition groupFilterCondition = metadata.create(GroupFilterCondition.class);
-        groupFilterCondition.setVisible(groupFilter.isVisible());
-        groupFilterCondition.setEnabled(groupFilter.isEnabled());
-        groupFilterCondition.setComponentId(groupFilter.getId());
-        groupFilterCondition.setStyleName(groupFilter.getStyleName());
+        GroupFilterCondition groupFilterCondition = super.convertToModel(groupFilter);
+
         groupFilterCondition.setOperation(groupFilter.getOperation());
         groupFilterCondition.setCaption(groupFilter.getCaption());
 
@@ -100,5 +92,15 @@ public class GroupFilterConverter implements FilterConverter<GroupFilter, GroupF
         }
 
         return groupFilterCondition;
+    }
+
+    @Override
+    protected GroupFilter createComponent() {
+        return uiComponents.create(GroupFilter.NAME);
+    }
+
+    @Override
+    protected GroupFilterCondition createModel() {
+        return metadata.create(GroupFilterCondition.class);
     }
 }

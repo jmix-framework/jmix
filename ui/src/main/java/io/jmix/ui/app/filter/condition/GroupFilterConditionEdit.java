@@ -27,7 +27,6 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
-import io.jmix.ui.component.filter.FilterConditionsBuilder;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
@@ -50,9 +49,6 @@ import java.util.List;
 @UiDescriptor("group-filter-condition-edit.xml")
 @EditedEntityContainer("filterConditionDc")
 public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFilterCondition> {
-
-    @Autowired
-    protected FilterConditionsBuilder builder;
 
     @Autowired
     protected InstanceContainer<GroupFilterCondition> filterConditionDc;

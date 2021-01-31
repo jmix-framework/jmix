@@ -19,12 +19,15 @@ package io.jmix.ui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.ui.component.JpqlFilter;
 import io.jmix.ui.component.GroupFilter;
 import io.jmix.ui.component.PropertyFilter;
+import io.jmix.ui.component.jpqlfilter.JpqlFilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponentRegistration;
 import io.jmix.ui.component.filter.registration.FilterComponentRegistrationBuilder;
 import io.jmix.ui.component.groupfilter.GroupFilterConverter;
 import io.jmix.ui.component.propertyfilter.PropertyFilterConverter;
+import io.jmix.ui.entity.JpqlFilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.sys.ActionsConfiguration;
@@ -62,16 +65,24 @@ public class UiConfiguration {
         return actionsConfiguration;
     }
 
-    @Bean
-    public FilterComponentRegistration registerPropertyFilterComponent() {
+    @Bean("ui_PropertyFilterRegistration")
+    public FilterComponentRegistration registerPropertyFilter() {
         return FilterComponentRegistrationBuilder.create(PropertyFilter.class,
                 PropertyFilterCondition.class,
                 PropertyFilterConverter.class)
                 .build();
     }
 
-    @Bean
-    public FilterComponentRegistration registerGroupFilterComponent() {
+    @Bean("ui_JpqlFilterRegistration")
+    public FilterComponentRegistration registerJpqlFilter() {
+        return FilterComponentRegistrationBuilder.create(JpqlFilter.class,
+                JpqlFilterCondition.class,
+                JpqlFilterConverter.class)
+                .build();
+    }
+
+    @Bean("ui_GroupFilterRegistration")
+    public FilterComponentRegistration registerGroupFilter() {
         return FilterComponentRegistrationBuilder.create(GroupFilter.class,
                 GroupFilterCondition.class,
                 GroupFilterConverter.class)

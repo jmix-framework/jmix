@@ -16,7 +16,7 @@
 
 <window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://propertyFilterConditionEdit.caption"
-        focusComponent="tabSheet">
+        focusComponent="form">
     <data>
         <instance id="filterConditionDc"
                   class="io.jmix.ui.entity.PropertyFilterCondition">
@@ -32,40 +32,18 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout spacing="true" expand="editActions">
-        <tabSheet id="tabSheet" width="100%" height="100%">
-            <tab id="propertyConditionTab" caption="msg://propertyFilterConditionEdit.propertyConditionTab"
-                 spacing="true" margin="true,false,false,false">
-                <form id="propertyConditionForm" dataContainer="filterConditionDc" width="100%" height="100%">
-                    <column>
-                        <checkBox id="visibleField" property="visible"/>
-                        <checkBox id="enabledField" property="enabled"/>
-                        <checkBox id="requiredField" property="required"/>
-                        <textField id="propertyField" property="property" required="true"/>
-                        <textField id="captionField" property="caption"/>
-                        <comboBox id="captionPositionField" property="captionPosition" nullOptionVisible="false"/>
-                        <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
-                        <checkBox id="operationEditableField" property="operationEditable"/>
-                        <textField id="parameterNameField" property="parameterName"/>
-                        <textField id="styleNameField" property="styleName"/>
-                        <textField id="componentIdField" property="componentId"/>
-                    </column>
-                </form>
-            </tab>
-            <tab id="valueComponentTab" caption="msg://propertyFilterConditionEdit.valueComponentTab" spacing="true"
-                 margin="true,false,false,false">
-                <form id="valueComponentForm" dataContainer="valueComponentDc" width="100%" height="100%">
-                    <column width="100%">
-                        <textField id="valueComponentIdField" property="componentId"/>
-                        <textField id="valueComponentName" property="componentName" required="true">
-                            <validators>
-                                <custom bean="ui_ValueComponentNameValidator"/>
-                            </validators>
-                        </textField>
-                        <textField id="valueComponentStyleNameField" property="styleName"/>
-                    </column>
-                </form>
-            </tab>
-        </tabSheet>
+        <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
+            <column width="100%">
+                <checkBox id="visibleField" property="visible"/>
+                <checkBox id="requiredField" property="required"/>
+                <textField id="propertyField" property="property" required="true"/>
+                <textField id="captionField" property="caption"/>
+                <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                <checkBox id="operationEditableField" property="operationEditable"/>
+                <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
+                <textField id="parameterNameField" property="parameterName" required="true"/>
+            </column>
+        </form>
         <hbox id="editActions" spacing="true">
             <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
             <button id="closeBtn" action="windowClose"/>

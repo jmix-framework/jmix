@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiProperties;
@@ -25,7 +26,9 @@ import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.model.DataLoader;
 
 import javax.annotation.Nullable;
+import java.util.EventObject;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -33,24 +36,26 @@ import java.util.function.Predicate;
  */
 public interface Filter extends Component, Component.BelongToFrame, Component.HasDescription, Component.HasCaption,
         Component.HasIcon, HasHtmlCaption, HasHtmlDescription, HasContextHelp, HasHtmlSanitizer, Collapsable,
-        ActionsHolder {
+        ActionsHolder, SupportsCaptionPosition, SupportsColumnsCount {
 
     String NAME = "filter";
 
     /**
      * Returns the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getGenericFilterColumnsCount()}.
+     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
      *
      * @return the number of columns to be displayed on one row
      */
+    @Override
     int getColumnsCount();
 
     /**
      * Sets the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getGenericFilterColumnsCount()}.
+     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
      *
      * @param columnsCount the number of columns to be displayed on one row
      */
+    @Override
     void setColumnsCount(int columnsCount);
 
     /**
@@ -105,7 +110,33 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     void setAutoApply(boolean autoApply);
 
     /**
-     * Adds design-time configuration with given code and caption. A configuration is a set
+     * Applies the current configuration.
+     */
+    void apply();
+
+    /**
+     * @return caption position of filter child components
+     */
+    @Override
+    CaptionPosition getCaptionPosition();
+
+    /**
+     * Sets caption position of filter child components.
+     *
+     * <ul>
+     *     <li>{@link CaptionPosition#LEFT} - component captions will be placed
+     *     in a separate column on the left side of the components</li>
+     *     <li>{@link CaptionPosition#TOP} - component captions will be placed
+     *     above the components</li>
+     * </ul>
+     *
+     * @param position caption position of filter child components
+     */
+    @Override
+    void setCaptionPosition(CaptionPosition position);
+
+    /**
+     * Adds design-time configuration with given id and name. A configuration is a set
      * of {@link FilterComponent}s. The configuration does not store a reference to all
      * components, but stores a reference only to the root element {@link LogicalFilterComponent}
      * from which the rest {@link FilterComponent}s can be obtained. The root
@@ -114,16 +145,16 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * <p>
      * The configuration defined in XML is a {@link DesignTimeConfiguration}.
      *
-     * @param code    a code. Must be unique within this filter
-     * @param caption a caption of configuration
+     * @param id   a configuration id. Must be unique within this filter
+     * @param name a configuration name
      * @return {@link DesignTimeConfiguration}
      * @see DesignTimeConfiguration
      * @see LogicalFilterComponent
      */
-    Configuration addConfiguration(String code, @Nullable String caption);
+    Configuration addConfiguration(String id, @Nullable String name);
 
     /**
-     * Adds design-time configuration with given code and caption. A configuration is a set
+     * Adds design-time configuration with given id and name. A configuration is a set
      * of {@link FilterComponent}s. The configuration does not store a reference to all
      * components, but stores a reference only to the root element {@link LogicalFilterComponent}
      * from which the rest {@link FilterComponent}s can be obtained. The root
@@ -131,14 +162,13 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * <p>
      * The configuration defined in XML is a {@link DesignTimeConfiguration}.
      *
-     * @param code          a code. Must be unique within this filter
-     * @param caption       a caption of configuration
+     * @param id            a configuration id. Must be unique within this filter
+     * @param name          a configuration name
      * @param rootOperation an operation of root {@link LogicalFilterComponent}
      * @return {@link DesignTimeConfiguration}
      * @see DesignTimeConfiguration
-     * @see LogicalFilterComponent
      */
-    Configuration addConfiguration(String code, @Nullable String caption,
+    Configuration addConfiguration(String id, @Nullable String name,
                                    LogicalFilterComponent.Operation rootOperation);
 
     /**
@@ -173,13 +203,13 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     Configuration getCurrentConfiguration();
 
     /**
-     * Gets a configuration by code.
+     * Gets a configuration by id.
      *
-     * @param code the configuration code
+     * @param id the configuration id
      * @return the configuration of {@code null} if not found
      */
     @Nullable
-    Configuration getConfiguration(String code);
+    Configuration getConfiguration(String id);
 
     /**
      * Gets an empty configuration that is used when the user has not selected any of the existing
@@ -220,9 +250,17 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     void removeCondition(FilterComponent filterComponent);
 
     /**
-     * A configuration is a set of filter components that has a caption and code.
+     * Adds a listener that is invoked when the {@link Configuration} changes.
+     *
+     * @param listener a listener to add
+     * @return a registration object for removing an event listener
      */
-    interface Configuration {
+    Subscription addConfigurationChangeListener(Consumer<ConfigurationChangeEvent> listener);
+
+    /**
+     * A configuration is a set of filter components.
+     */
+    interface Configuration extends Comparable<Configuration> {
 
         /**
          * @return a {@link Filter} owning the configuration
@@ -230,23 +268,24 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
         Filter getOwner();
 
         /**
-         * @return a configuration code
+         * @return a configuration id
          */
-        String getCode();
+        String getId();
 
         /**
-         * @return a configuration caption
+         * @return a configuration name
          */
-        String getCaption();
+        @Nullable
+        String getName();
 
         /**
-         * Sets the caption of configuration. This method is only available for
+         * Sets the name of configuration. This method is only available for
          * the {@link RunTimeConfiguration}.
          *
-         * @param caption a caption
+         * @param name a configuration name
          * @see RunTimeConfiguration
          */
-        void setCaption(@Nullable String caption);
+        void setName(@Nullable String name);
 
         /**
          * @return a root element of configuration
@@ -299,5 +338,50 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
          * @param modified        whether the filter component of configuration is modified
          */
         void setModified(FilterComponent filterComponent, boolean modified);
+
+        void setDefaultValue(String parameterName, @Nullable Object defaultValue);
+
+        void removeDefaultValue(String parameterName);
+
+        @Nullable
+        Object getDefaultValue(String parameterName);
+
+        void removeAllDefaultValues();
+    }
+
+    /**
+     * Event sent when the {@link Configuration} is changed.
+     */
+    class ConfigurationChangeEvent extends EventObject {
+
+        protected final Configuration newConfiguration;
+        protected final Configuration previousConfiguration;
+
+        public ConfigurationChangeEvent(Filter source,
+                                        Configuration newConfiguration,
+                                        Configuration previousConfiguration) {
+            super(source);
+            this.newConfiguration = newConfiguration;
+            this.previousConfiguration = previousConfiguration;
+        }
+
+        @Override
+        public Filter getSource() {
+            return (Filter) super.getSource();
+        }
+
+        /**
+         * @return new configuration value
+         */
+        public Configuration getNewConfiguration() {
+            return newConfiguration;
+        }
+
+        /**
+         * @return previous configuration value
+         */
+        public Configuration getPreviousConfiguration() {
+            return previousConfiguration;
+        }
     }
 }

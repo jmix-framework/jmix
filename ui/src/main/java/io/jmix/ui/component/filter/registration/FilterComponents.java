@@ -23,6 +23,7 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
+import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.entity.FilterCondition;
 import org.slf4j.Logger;
@@ -133,10 +134,12 @@ public class FilterComponents implements InitializingBean {
         }
 
         ObjectProvider<?> converterProvider = applicationContext.getBeanProvider(converterClass);
-        try {
-            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>) converterProvider.getObject(filter);
-        } catch (BeansException e) {
-            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>) converterProvider.getObject();
+        if (AbstractFilterComponentConverter.class.isAssignableFrom(converterClass)) {
+            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>)
+                    converterProvider.getObject(filter);
+        } else {
+            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>)
+                    converterProvider.getObject();
         }
     }
 
@@ -157,10 +160,12 @@ public class FilterComponents implements InitializingBean {
         }
 
         ObjectProvider<?> converterProvider = applicationContext.getBeanProvider(converterClass);
-        try {
-            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>) converterProvider.getObject(filter);
-        } catch (BeansException e) {
-            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>) converterProvider.getObject();
+        if (AbstractFilterComponentConverter.class.isAssignableFrom(converterClass)) {
+            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>)
+                    converterProvider.getObject(filter);
+        } else {
+            return (FilterConverter<? extends FilterComponent, ? extends FilterCondition>)
+                    converterProvider.getObject();
         }
     }
 

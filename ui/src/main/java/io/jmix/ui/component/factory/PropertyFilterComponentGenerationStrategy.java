@@ -29,7 +29,15 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.component.*;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.Component;
+import io.jmix.ui.component.ComponentGenerationContext;
+import io.jmix.ui.component.ComponentGenerationStrategy;
+import io.jmix.ui.component.DateField;
+import io.jmix.ui.component.EntityPicker;
+import io.jmix.ui.component.Field;
+import io.jmix.ui.component.HasDatatype;
+import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -42,7 +50,7 @@ import javax.annotation.Nullable;
 /**
  * A {@link ComponentGenerationStrategy} used by {@link PropertyFilter} UI component
  */
-@org.springframework.stereotype.Component
+@org.springframework.stereotype.Component("ui_PropertyFilterComponentGenerationStrategy")
 public class PropertyFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
     protected static final String UNARY_FIELD_STYLENAME = "unary-field";

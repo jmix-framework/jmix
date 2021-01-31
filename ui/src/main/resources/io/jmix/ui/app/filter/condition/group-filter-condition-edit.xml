@@ -16,7 +16,7 @@
 
 <window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://groupFilterConditionEdit.caption"
-        focusComponent="form">
+        focusComponent="groupConditionForm">
     <data>
         <instance id="filterConditionDc"
                   class="io.jmix.ui.entity.GroupFilterCondition">
@@ -30,46 +30,50 @@
             </fetchPlan>
         </collection>
     </data>
-    <dialogMode resizable="true" forceDialog="true" width="800" height="600"/>
+    <dialogMode resizable="true" forceDialog="true"
+                width="theme://jmix.ui.dialogSize.width.large"
+                height="theme://jmix.ui.dialogSize.height.large"/>
     <facets>
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout spacing="true" expand="editBox">
-        <vbox id="editBox" spacing="true" expand="conditionsTree" width="100%">
-            <form id="form" dataContainer="filterConditionDc" width="100%">
-                <column width="100%">
-                    <checkBox id="visibleField" property="visible"/>
-                    <checkBox id="enabledField" property="enabled"/>
-                    <textField id="captionField" property="caption"/>
-                </column>
-                <column width="100%">
-                    <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
-                    <textField id="componentIdField" property="componentId"/>
-                    <textField id="styleNameField" property="styleName"/>
-                </column>
-            </form>
-            <tree id="conditionsTree"
-                  dataContainer="filterConditionsDc"
-                  hierarchyProperty="parent"
-                  captionProperty="caption"
-                  multiselect="false"
-                  width="100%">
-                <actions>
-                    <action id="addCondition" type="filter_add_condition"/>
-                    <action id="edit" type="edit"/>
-                    <action id="remove" type="remove"/>
-                    <action id="moveUp" icon="ARROW_UP" trackSelection="true"/>
-                    <action id="moveDown" icon="ARROW_DOWN" trackSelection="true"/>
-                </actions>
-                <buttonsPanel id="buttonsPanel" alwaysVisible="true">
-                    <button id="addConditionButton" action="conditionsTree.addCondition"/>
-                    <button id="editButton" action="conditionsTree.edit"/>
-                    <button id="removeButton" action="conditionsTree.remove"/>
-                    <button id="moveUpButton" action="conditionsTree.moveUp"/>
-                    <button id="moveDownButton" action="conditionsTree.moveDown"/>
-                </buttonsPanel>
-            </tree>
-        </vbox>
+        <hbox id="editBox" spacing="true" width="100%">
+            <groupBox id="groupConditionBox" width="100%" height="100%"
+                      caption="msg://groupFilterConditionEdit.groupConditionBox">
+                <form id="groupConditionForm" dataContainer="filterConditionDc" width="100%">
+                    <column width="100%">
+                        <checkBox id="visibleField" property="visible"/>
+                        <textField id="captionField" property="caption"/>
+                        <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                    </column>
+                </form>
+            </groupBox>
+            <groupBox id="conditionsBox" width="theme://jmix.ui.filter.groupFilterConditionEdit.conditionsBox.width"
+                      height="100%" caption="msg://groupFilterConditionEdit.conditionsBox">
+                <tree id="conditionsTree"
+                      dataContainer="filterConditionsDc"
+                      hierarchyProperty="parent"
+                      captionProperty="caption"
+                      multiselect="false"
+                      width="100%"
+                      height="100%">
+                    <actions>
+                        <action id="addCondition" type="filter_addCondition"/>
+                        <action id="edit" type="edit"/>
+                        <action id="remove" type="remove"/>
+                        <action id="moveUp" icon="ARROW_UP" trackSelection="true"/>
+                        <action id="moveDown" icon="ARROW_DOWN" trackSelection="true"/>
+                    </actions>
+                    <buttonsPanel id="buttonsPanel" alwaysVisible="true">
+                        <button id="addConditionButton" action="conditionsTree.addCondition"/>
+                        <button id="editButton" action="conditionsTree.edit"/>
+                        <button id="removeButton" action="conditionsTree.remove"/>
+                        <button id="moveUpButton" action="conditionsTree.moveUp"/>
+                        <button id="moveDownButton" action="conditionsTree.moveDown"/>
+                    </buttonsPanel>
+                </tree>
+            </groupBox>
+        </hbox>
         <hbox id="editActions" spacing="true">
             <button id="commitAndCloseBtn" action="windowCommitAndClose"/>
             <button id="closeBtn" action="windowClose"/>

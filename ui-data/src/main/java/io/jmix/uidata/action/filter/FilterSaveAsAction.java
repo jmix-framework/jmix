@@ -19,13 +19,20 @@ package io.jmix.uidata.action.filter;
 import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.ui.Dialogs;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.filter.FilterAction;
+import io.jmix.ui.app.filter.condition.LogicalFilterConditionEdit;
 import io.jmix.ui.app.inputdialog.DialogActions;
 import io.jmix.ui.app.inputdialog.DialogOutcome;
+import io.jmix.ui.app.inputdialog.InputDialog;
 import io.jmix.ui.app.inputdialog.InputParameter;
+import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.Form;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
@@ -36,20 +43,32 @@ import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.uidata.filter.DataFilterSupport;
+import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFragment;
+import io.jmix.uidata.entity.FilterConfiguration;
+import io.jmix.uidata.filter.UiDataFilterSupport;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Map;
+import java.util.function.Consumer;
+
+import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
+
 @StudioAction(category = "Filter Actions",
-        description = "Saves current filter configuration under a new code and caption")
+        description = "Saves current filter configuration under a new id and name")
 @ActionType(FilterSaveAsAction.ID)
 public class FilterSaveAsAction extends FilterAction {
 
-    public static final String ID = "filter_save_as";
+    public static final String ID = "filter_saveAs";
 
     protected Messages messages;
     protected Dialogs dialogs;
     protected FilterSupport filterSupport;
     protected FilterComponents filterComponents;
+    protected UiComponents uiComponents;
+    protected UiProperties uiProperties;
+
+    protected Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener;
 
     public FilterSaveAsAction() {
         this(ID);
@@ -57,6 +76,8 @@ public class FilterSaveAsAction extends FilterAction {
 
     public FilterSaveAsAction(String id) {
         super(id);
+
+        initDefaultInputDialogCloseListener();
     }
 
     @Autowired
@@ -85,6 +106,20 @@ public class FilterSaveAsAction extends FilterAction {
         this.filterComponents = filterComponents;
     }
 
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
+    }
+
+    @Autowired
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
+    }
+
+    public void setInputDialogCloseListener(Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener) {
+        this.inputDialogCloseListener = inputDialogCloseListener;
+    }
+
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
@@ -96,70 +131,116 @@ public class FilterSaveAsAction extends FilterAction {
         openInputDialog();
     }
 
+    protected void initDefaultInputDialogCloseListener() {
+        inputDialogCloseListener = inputDialogCloseEvent -> {
+            if (inputDialogCloseEvent.closedWith(DialogOutcome.OK)) {
+                applyDefaultInputDialogOkAction(inputDialogCloseEvent);
+            }
+        };
+    }
+
+    protected void applyDefaultInputDialogOkAction(InputDialog.InputDialogCloseEvent inputDialogCloseEvent) {
+        String id = inputDialogCloseEvent.getValue("idField");
+        if (id != null) {
+            Filter.Configuration configuration = filter.getCurrentConfiguration();
+            Filter.Configuration copy = copyConfiguration(id, configuration);
+            copy.setName(inputDialogCloseEvent.getValue("nameField"));
+            saveNewConfigurationModel(copy);
+        }
+    }
+
     protected void openInputDialog() {
         if (filter.getFrame() == null) {
             throw new IllegalStateException("Filter component is not attached to the Frame");
         }
 
         Filter.Configuration configuration = filter.getCurrentConfiguration();
-        dialogs.createInputDialog(filter.getFrame().getFrameOwner())
+        InputDialog inputDialog = dialogs.createInputDialog(filter.getFrame().getFrameOwner())
                 .withCaption(messages.getMessage(FilterSaveAction.class,
                         "saveFilterConfigurationInputDialog.caption"))
                 .withParameters(
-                        InputParameter.stringParameter("codeField")
+                        InputParameter.stringParameter("nameField")
+                                .withCaption(messages.getMessage(FilterConfiguration.class,
+                                        "FilterConfiguration.name"))
                                 .withRequired(true)
-                                .withCaption(messages.getMessage(FilterSaveAction.class,
-                                        "saveFilterConfigurationInputDialog.codeField")),
-                        InputParameter.stringParameter("captionField")
-                                .withCaption(messages.getMessage(FilterSaveAction.class,
-                                        "saveFilterConfigurationInputDialog.captionField"))
-                                .withDefaultValue(configuration.getCaption())
+                                .withDefaultValue(configuration.getName()),
+                        InputParameter.booleanParameter("generatedIdField")
+                                .withCaption(messages.getMessage(UiDataFilterConfigurationModelFragment.class,
+                                        "uiDataFilterConfigurationModelFragment.generatedIdField"))
+                                .withDefaultValue(true),
+                        InputParameter.stringParameter("idField")
+                                .withRequired(true)
+                                .withDefaultValue(generateConfigurationId(configuration.getName()))
+                                .withCaption(messages.getMessage(FilterConfiguration.class,
+                                        "FilterConfiguration.configurationId"))
                 )
                 .withActions(DialogActions.OK_CANCEL)
                 .withValidator(validationContext -> {
-                    String code = validationContext.getValue("codeField");
-                    if (Strings.isNullOrEmpty(code)) {
-                        return ValidationErrors.of(messages.getMessage(FilterSaveAction.class,
-                                "saveFilterConfigurationInputDialog.codeField.emptyValue"));
+                    String id = validationContext.getValue("idField");
+                    if (Strings.isNullOrEmpty(id)) {
+                        return ValidationErrors.of(messages.getMessage(FilterSaveAsAction.class,
+                                "saveFilterConfigurationInputDialog.idField.emptyValue"));
                     }
 
-                    if (filterSupport.filterConfigurationExists(code, filter)) {
-                        return ValidationErrors.of(messages.getMessage(
-                                "saveFilterConfigurationInputDialog.codeField.uniqueValue"));
+                    if (filter.getConfiguration(id) != null) {
+                        return ValidationErrors.of(messages.getMessage(LogicalFilterConditionEdit.class,
+                                "logicalFilterConditionEdit.uniqueConfigurationId"));
                     }
 
                     return ValidationErrors.none();
                 })
-                .withCloseListener(inputDialogCloseEvent -> {
-                    if (inputDialogCloseEvent.closedWith(DialogOutcome.OK)) {
-                        String code = inputDialogCloseEvent.getValue("codeField");
-                        if (code != null) {
-                            Filter.Configuration copy = copyConfiguration(code, configuration);
-                            copy.setCaption(inputDialogCloseEvent.getValue("captionField"));
-                            collectConfiguration(copy);
-                        }
-                    }
-                })
+                .withCloseListener(inputDialogCloseListener)
                 .show();
+
+        Form form = (Form) inputDialog.getWindow().getComponentNN("form");
+        initInputDialogFormFields(form);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void initInputDialogFormFields(Form form) {
+        CheckBox generatedIdField = (CheckBox) form.getComponentNN("generatedIdField");
+        TextField<String> idField = (TextField<String>) form.getComponentNN("idField");
+        idField.setEnabled(!generatedIdField.isChecked());
+
+        generatedIdField.addValueChangeListener(valueChangeEvent -> {
+            boolean checked = BooleanUtils.isTrue(valueChangeEvent.getValue());
+            idField.setEnabled(!checked);
+        });
+
+        TextField<String> nameField = (TextField<String>) form.getComponentNN("nameField");
+        nameField.addValueChangeListener(valueChangeEvent -> {
+            if (generatedIdField.isChecked()) {
+                idField.setValue(generateConfigurationId(valueChangeEvent.getValue()));
+            }
+        });
+
+        generatedIdField.setVisible(uiProperties.isShowFilterConfigurationIdField());
+        idField.setVisible(uiProperties.isShowFilterConfigurationIdField());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected Filter.Configuration copyConfiguration(String newCode, Filter.Configuration existingConfiguration) {
+    protected Filter.Configuration copyConfiguration(String newId, Filter.Configuration existingConfiguration) {
         LogicalFilterComponent rootLogicalFilterComponent = existingConfiguration.getRootLogicalFilterComponent();
         FilterConverter converter =
                 filterComponents.getConverterByComponentClass(rootLogicalFilterComponent.getClass(), filter);
+        Map<String, Object> valuesMap = filterSupport.initConfigurationValuesMap(existingConfiguration);
         LogicalFilterCondition logicalFilterCondition =
                 (LogicalFilterCondition) converter.convertToModel(rootLogicalFilterComponent);
-        Filter owner = existingConfiguration.getOwner();
+        filterSupport.resetConfigurationValuesMap(existingConfiguration, valuesMap);
 
         LogicalFilterComponent logicalFilterComponent =
                 (LogicalFilterComponent) converter.convertToComponent(logicalFilterCondition);
-
-        return new RunTimeConfiguration(newCode, logicalFilterComponent, owner);
+        Filter.Configuration newConfiguration = new RunTimeConfiguration(newId, logicalFilterComponent,
+                existingConfiguration.getOwner());
+        filterSupport.refreshConfigurationDefaultValues(newConfiguration);
+        filterSupport.resetConfigurationValuesMap(newConfiguration, valuesMap);
+        return newConfiguration;
     }
 
-    protected void collectConfiguration(Filter.Configuration configuration) {
-        ((DataFilterSupport) filterSupport).saveFilterConfiguration(configuration);
+    protected void saveNewConfigurationModel(Filter.Configuration configuration) {
+        Map<String, Object> valuesMap = filterSupport.initConfigurationValuesMap(configuration);
+        ((UiDataFilterSupport) filterSupport).saveConfigurationModel(configuration, null);
+        filterSupport.resetConfigurationValuesMap(configuration, valuesMap);
         filter.addConfiguration(configuration);
         setCurrentFilterConfiguration(configuration);
         filter.getEmptyConfiguration().getRootLogicalFilterComponent().removeAll();

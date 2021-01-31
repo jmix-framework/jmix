@@ -137,6 +137,7 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(Filter.NAME, FilterImpl.class);
         classes.put(GroupFilter.NAME, GroupFilterImpl.class);
         classes.put(PropertyFilter.NAME, PropertyFilterImpl.class);
+        classes.put(JpqlFilter.NAME, JpqlFilterImpl.class);
 
         /* Main window components */
 

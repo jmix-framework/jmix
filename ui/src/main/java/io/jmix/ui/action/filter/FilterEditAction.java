@@ -21,14 +21,14 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.FilterConditionEdit;
+import io.jmix.ui.app.filter.condition.GroupFilterConditionEdit;
 import io.jmix.ui.app.filter.condition.LogicalFilterConditionEdit;
-import io.jmix.ui.app.filter.configuration.FilterConfigurationFormFragment;
+import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
-import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
@@ -44,6 +44,8 @@ import io.jmix.ui.screen.StandardOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @StudioAction(category = "Filter Actions", description = "Edits current run-time filter configuration")
 @ActionType(FilterEditAction.ID)
@@ -56,6 +58,7 @@ public class FilterEditAction extends FilterAction {
     protected ScreenBuilders screenBuilders;
     protected Fragments fragments;
     protected LogicalFilterSupport logicalFilterSupport;
+    protected Messages messages;
 
     public FilterEditAction() {
         this(ID);
@@ -68,6 +71,7 @@ public class FilterEditAction extends FilterAction {
     @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Filter.Edit");
+        this.messages = messages;
     }
 
     @Autowired
@@ -114,11 +118,13 @@ public class FilterEditAction extends FilterAction {
         }
 
         Filter.Configuration currentConfiguration = filter.getCurrentConfiguration();
-        boolean isNewConfiguration = currentConfiguration == filter.getEmptyConfiguration();
+        boolean isNewConfiguration = Objects.equals(currentConfiguration.getId(),
+                filter.getEmptyConfiguration().getId());
 
         LogicalFilterComponent rootComponent = currentConfiguration.getRootLogicalFilterComponent();
         Class modelClass = filterComponents.getModelClass(rootComponent.getClass());
         FilterConverter converter = filterComponents.getConverterByComponentClass(rootComponent.getClass(), filter);
+        Map<String, Object> valuesMap = filterSupport.initConfigurationValuesMap(currentConfiguration);
         LogicalFilterCondition model = (LogicalFilterCondition) converter.convertToModel(rootComponent);
 
         Screen editScreen = createEditScreen(modelClass, model);
@@ -129,10 +135,19 @@ public class FilterEditAction extends FilterAction {
             ((LogicalFilterConditionEdit<?>) editScreen).setFilterConditions(filterConditions);
         }
 
-        ScreenFragment screenFragment = createConfigurationFormFragment(isNewConfiguration, currentConfiguration);
+        ScreenFragment screenFragment = filterSupport.createFilterConfigurationFragment(
+                editScreen.getWindow().getFrameOwner(), isNewConfiguration, currentConfiguration);
         Fragment fragment = screenFragment.getFragment();
         fragment.setWidthFull();
         editScreen.getWindow().add(fragment, 0);
+        editScreen.getWindow().setCaption(messages.getMessage(FilterEditAction.class, "configurationEdit.caption"));
+        if (editScreen instanceof GroupFilterConditionEdit) {
+            Component groupConditionBox = editScreen.getWindow().getComponent("groupConditionBox");
+            if (groupConditionBox instanceof Component.HasCaption) {
+                ((Component.HasCaption) groupConditionBox).setCaption(
+                        messages.getMessage(FilterEditAction.class, "configurationEdit.rootGroupCondition"));
+            }
+        }
 
         editScreen.addAfterCloseListener(afterCloseEvent -> {
             if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
@@ -142,7 +157,9 @@ public class FilterEditAction extends FilterAction {
                                 .getItem();
 
                 onEditScreenAfterCommit(screenFragment, filterCondition, converter, isNewConfiguration,
-                        currentConfiguration);
+                        currentConfiguration, valuesMap);
+            } else {
+                filterSupport.resetConfigurationValuesMap(currentConfiguration, valuesMap);
             }
         });
 
@@ -158,51 +175,28 @@ public class FilterEditAction extends FilterAction {
                 .build();
     }
 
-    protected ScreenFragment createConfigurationFormFragment(boolean isNewConfiguration,
-                                                             Filter.Configuration currentConfiguration) {
-        Class<? extends ScreenFragment> formFragmentClass = filterSupport.getConfigurationFormFragmentClass();
-        ScreenFragment screenFragment = fragments.create(filter.getFrame().getFrameOwner(), formFragmentClass);
-        if (screenFragment instanceof FilterConfigurationFormFragment) {
-            if (!isNewConfiguration) {
-                ((FilterConfigurationFormFragment) screenFragment)
-                        .setConfigurationCode(currentConfiguration.getCode());
-            }
-
-            ((FilterConfigurationFormFragment) screenFragment)
-                    .setConfigurationCaption(currentConfiguration.getCaption());
-        }
-        return screenFragment;
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void onEditScreenAfterCommit(ScreenFragment configurationFormFragment,
                                            LogicalFilterCondition filterCondition,
                                            FilterConverter converter,
                                            boolean isNewConfiguration,
-                                           Filter.Configuration currentConfiguration) {
-        String caption = "";
-        String code = "";
-        if (configurationFormFragment instanceof FilterConfigurationFormFragment) {
-            caption = ((FilterConfigurationFormFragment) configurationFormFragment).getConfigurationCaption();
-            code = ((FilterConfigurationFormFragment) configurationFormFragment).getConfigurationCode();
-        }
-
+                                           Filter.Configuration currentConfiguration,
+                                           Map<String, Object> valuesMap) {
         LogicalFilterComponent rootFilterComponent =
                 (LogicalFilterComponent) converter.convertToComponent(filterCondition);
+        Filter.Configuration resultConfiguration = filterSupport.saveCurrentFilterConfiguration(
+                currentConfiguration, isNewConfiguration, rootFilterComponent, configurationFormFragment);
+
+        filterSupport.refreshConfigurationDefaultValues(resultConfiguration);
+        resultConfiguration.setModified(false);
+        filterSupport.resetConfigurationValuesMap(resultConfiguration, valuesMap);
 
         if (isNewConfiguration) {
-            Filter.Configuration newConfiguration = new RunTimeConfiguration(code,
-                    rootFilterComponent, filter);
-            newConfiguration.setCaption(caption);
-            newConfiguration.setModified(true);
-            filter.addConfiguration(newConfiguration);
-            filter.setCurrentConfiguration(newConfiguration);
+            filter.addConfiguration(resultConfiguration);
+            filter.setCurrentConfiguration(resultConfiguration);
             filter.getEmptyConfiguration().getRootLogicalFilterComponent().removeAll();
         } else {
-            currentConfiguration.setCaption(caption);
-            currentConfiguration.setRootLogicalFilterComponent(rootFilterComponent);
-            currentConfiguration.setModified(true);
-            filter.setCurrentConfiguration(currentConfiguration);
+            filter.setCurrentConfiguration(resultConfiguration);
         }
     }
 }

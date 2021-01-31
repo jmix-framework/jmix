@@ -20,6 +20,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.GroupFilter;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SupportsCaptionPosition;
 import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
@@ -39,19 +40,34 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
     public void loadComponent() {
         assignFrame(resultComponent);
 
+        loadVisible(resultComponent, element);
+        loadEnable(resultComponent, element);
+
+        loadStyleName(resultComponent, element);
         loadHtmlSanitizerEnabled(resultComponent, element);
 
-        loadDescription(resultComponent, element);
         loadContextHelp(resultComponent, element);
         loadIcon(resultComponent, element);
+        loadCss(resultComponent, element);
+        loadAlign(resultComponent, element);
+        loadResponsive(resultComponent, element);
+        loadEditable(resultComponent, element);
+
+        loadWidth(resultComponent, element);
+        loadHeight(resultComponent, element);
 
         loadDataLoader(resultComponent, element);
         loadBoolean(element, "autoApply", resultComponent::setAutoApply);
 
-        loadEnum(element, LogicalFilterComponent.Operation.class, "operation", resultComponent::setOperation);
+        loadEnum(element, LogicalFilterComponent.Operation.class, "operation",
+                resultComponent::setOperation);
+
         loadInteger(element, "columnsCount", resultComponent::setColumnsCount);
+        loadEnum(element, SupportsCaptionPosition.CaptionPosition.class, "captionPosition",
+                resultComponent::setCaptionPosition);
 
         loadCaption(resultComponent, element);
+        loadDescription(resultComponent, element);
 
         loadSubFilterComponents(resultComponent, element);
     }
@@ -69,7 +85,10 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
     protected void loadSubFilterComponents(GroupFilter component, Element element) {
         for (Element filterElement : element.elements()) {
             ComponentLoader<?> filterComponentLoader = getLayoutLoader().createComponent(filterElement);
-            ((FilterComponent) filterComponentLoader.getResultComponent()).setDataLoader(resultComponent.getDataLoader());
+            ((FilterComponent) filterComponentLoader.getResultComponent())
+                    .setConditionModificationDelegated(true);
+            ((FilterComponent) filterComponentLoader.getResultComponent())
+                    .setDataLoader(resultComponent.getDataLoader());
             filterComponentLoader.loadComponent();
 
             component.add((FilterComponent) filterComponentLoader.getResultComponent());

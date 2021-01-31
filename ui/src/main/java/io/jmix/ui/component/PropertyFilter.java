@@ -17,6 +17,7 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.model.DataLoader;
 
 import java.util.EventObject;
@@ -27,13 +28,18 @@ import java.util.function.Consumer;
  * related to entity property and can automatically render proper layout for setting a condition value. In general case
  * a PropertyFilter layout contains a label with entity property caption, operation label or selector (=, contains,
  * &#62;, etc.) and a field for editing a property value.
+ *
+ * @param <V> value type
  */
-public interface PropertyFilter<V> extends FilterComponent, Component.BelongToFrame, HasValue<V>,
-        Component.HasCaption, Component.HasIcon, Component.Focusable, Component.Editable,
-        HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer, SupportsCaptionPosition, Requirable,
-        Validatable, HasContextHelp {
+public interface PropertyFilter<V> extends SingleFilterComponent<V> {
 
     String NAME = "propertyFilter";
+
+    /**
+     * @return a {@link PropertyCondition} related to the current property filter
+     */
+    @Override
+    PropertyCondition getQueryCondition();
 
     /**
      * @return related entity property name
@@ -60,30 +66,6 @@ public interface PropertyFilter<V> extends FilterComponent, Component.BelongToFr
     void setOperation(Operation operation);
 
     /**
-     * @return the name of the associated query parameter name
-     */
-    String getParameterName();
-
-    /**
-     * Sets the name of the associated query parameter name.
-     *
-     * @param parameterName a name of the associated query parameter name
-     */
-    void setParameterName(String parameterName);
-
-    /**
-     * @return a field for editing a property value
-     */
-    HasValue<V> getValueComponent();
-
-    /**
-     * Sets the field for editing a property value.
-     *
-     * @param valueComponent a field for editing a property value
-     */
-    void setValueComponent(HasValue<V> valueComponent);
-
-    /**
      * @return whether an operation selector is visible.
      */
     boolean isOperationEditable();
@@ -94,23 +76,6 @@ public interface PropertyFilter<V> extends FilterComponent, Component.BelongToFr
      * @param operationEditable whether an operation selector is visible
      */
     void setOperationEditable(boolean operationEditable);
-
-    /**
-     * @return a caption width value in {@link #getWidthSizeUnit()}
-     */
-    float getCaptionWidth();
-
-    /**
-     * @return units used in the caption width property
-     */
-    SizeUnit getCaptionWidthSizeUnit();
-
-    /**
-     * Sets the caption width.
-     *
-     * @param captionWidth a string width representation
-     */
-    void setCaptionWidth(String captionWidth);
 
     /**
      * Adds a listener that is invoked when the {@code operation} property changes.

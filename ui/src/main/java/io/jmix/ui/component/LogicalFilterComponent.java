@@ -18,7 +18,6 @@ package io.jmix.ui.component;
 
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.model.DataLoader;
 
 import java.util.List;
@@ -29,6 +28,12 @@ import java.util.List;
  * will be used together with query when loading entities into the {@link DataLoader}.
  */
 public interface LogicalFilterComponent extends FilterComponent {
+
+    /**
+     * @return a {@link LogicalCondition} related to the current component
+     */
+    @Override
+    LogicalCondition getQueryCondition();
 
     /**
      * Adds a {@link FilterComponent} to the component. Updates the current {@link LogicalCondition}
@@ -52,6 +57,17 @@ public interface LogicalFilterComponent extends FilterComponent {
     void removeAll();
 
     /**
+     * @return the list of filter components directly owned by the current component
+     */
+    List<FilterComponent> getOwnFilterComponents();
+
+    /**
+     * @return the list of filter components belonging to the whole components tree below
+     * this component
+     */
+    List<FilterComponent> getFilterComponents();
+
+    /**
      * @return a filtering operation
      */
     Operation getOperation();
@@ -62,38 +78,6 @@ public interface LogicalFilterComponent extends FilterComponent {
      * @param operation a filtering operation
      */
     void setOperation(Operation operation);
-
-    /**
-     * Returns the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getGenericFilterColumnsCount()}.
-     *
-     * @return the number of columns to be displayed on one row
-     */
-    int getColumnsCount();
-
-    /**
-     * Sets the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getGenericFilterColumnsCount()}.
-     *
-     * @param columnsCount the number of columns to be displayed on one row
-     */
-    void setColumnsCount(int columnsCount);
-
-    /**
-     * @return a {@link LogicalCondition} related to the current component
-     */
-    LogicalCondition getQueryCondition();
-
-    /**
-     * @return the list of filter components directly owned by the current component
-     */
-    List<FilterComponent> getOwnFilterComponents();
-
-    /**
-     * @return the list of filter components belonging to the whole components tree below
-     * this component
-     */
-    List<FilterComponent> getFilterComponents();
 
     /**
      * Operation representing corresponding logical filtering condition.

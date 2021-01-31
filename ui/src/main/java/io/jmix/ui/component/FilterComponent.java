@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.ui.model.DataLoader;
 
@@ -53,6 +54,28 @@ public interface FilterComponent extends Component {
      *                  value is changed
      */
     void setAutoApply(boolean autoApply);
+
+    /**
+     * @return {@code true} if the filter component is located inside the {@link Filter}
+     * or {@link LogicalFilterComponent} and the modification of {@link DataLoader}
+     * condition is delegated to the owner {@link FilterComponent} or {@link Filter},
+     * {@code false} otherwise
+     */
+    @Internal
+    boolean isConditionModificationDelegated();
+
+    /**
+     * Sets whether the modification of {@link DataLoader} condition is delegated to the owner
+     * {@link FilterComponent} or {@link Filter}.
+     *
+     * @param conditionModificationDelegated {@code true} if the filter component is located inside
+     *                                       the {@link Filter} or {@link LogicalFilterComponent}
+     *                                       and the modification of {@link DataLoader} condition
+     *                                       is delegated to the owner {@link FilterComponent} or {@link Filter},
+     *                                       {@code false} otherwise
+     */
+    @Internal
+    void setConditionModificationDelegated(boolean conditionModificationDelegated);
 
     /**
      * @return a {@link Condition} related to the current filter component

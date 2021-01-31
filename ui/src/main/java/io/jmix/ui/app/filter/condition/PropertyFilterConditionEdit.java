@@ -18,16 +18,29 @@ package io.jmix.ui.app.filter.condition;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.querycondition.PropertyConditionUtils;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.HBoxLayout;
+import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
+import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.Install;
+import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
 
 @UiController("ui_PropertyFilterCondition.edit")
 @UiDescriptor("property-filter-condition-edit.xml")
@@ -36,6 +49,11 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
 
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
+    @Autowired
+    protected SingleFilterSupport singleFilterSupport;
+    @Autowired
+    protected UiComponents uiComponents;
+
     @Autowired
     protected InstanceContainer<PropertyFilterCondition> filterConditionDc;
 
@@ -49,14 +67,108 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     protected MessageTools messageTools;
     @Autowired
     protected TextField<String> parameterNameField;
+    @Autowired
+    protected ComboBox<PropertyFilter.Operation> operationField;
+    @Autowired
+    protected HBoxLayout defaultValueBox;
+
+    protected MetaClass filterMetaClass = null;
+    protected HasValue defaultValueField;
 
     @Override
     public InstanceContainer<PropertyFilterCondition> getInstanceContainer() {
         return filterConditionDc;
     }
 
+    @Subscribe
+    protected void onAfterShow(AfterShowEvent event) {
+        initFilterMetaClass();
+        initOperationField();
+        initDefaultValueField();
+    }
+
+    protected void initFilterMetaClass() {
+        if (getEditedEntity().getMetaClass() != null) {
+            filterMetaClass = metadata.getClass(getEditedEntity().getMetaClass());
+        }
+    }
+
+    protected void initOperationField() {
+        if (getEditedEntity().getProperty() != null && getEditedEntity().getMetaClass() != null) {
+            EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
+                    .getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
+            operationField.setOptionsList(new ArrayList<>(availableOperations));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void initDefaultValueField() {
+        if (filterMetaClass != null
+                && getEditedEntity().getProperty() != null
+                && getEditedEntity().getOperation() != null) {
+            defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass,
+                    getEditedEntity().getProperty(), getEditedEntity().getOperation());
+
+            if (getEditedEntity().getValueComponent() != null
+                    && getEditedEntity().getValueComponent().getDefaultValue() != null) {
+                String modelDefaultValue = getEditedEntity().getValueComponent().getDefaultValue();
+                MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
+                if (metaProperty != null) {
+                    Object defaultValue = propertyFilterSupport.parseDefaultValue(metaProperty, modelDefaultValue);
+                    defaultValueField.setValue(defaultValue);
+                }
+            }
+        } else {
+            defaultValueField = uiComponents.create(TextField.TYPE_STRING);
+        }
+
+        defaultValueBox.removeAll();
+        defaultValueBox.add(defaultValueField);
+        defaultValueField.setWidthFull();
+    }
+
     @Install(to = "operationField", subject = "optionCaptionProvider")
     protected String operationFieldOptionCaptionProvider(PropertyFilter.Operation operation) {
         return propertyFilterSupport.getOperationCaption(operation);
+    }
+
+    @Subscribe("propertyField")
+    protected void onPropertyFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        String property = event.getValue();
+        if (StringUtils.isNotEmpty(property) && event.isUserOriginated()) {
+            String parameterName = PropertyConditionUtils.generateParameterName(property);
+            getEditedEntity().setParameterName(parameterName);
+
+            String caption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass, property);
+            getEditedEntity().setCaption(caption);
+
+            EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
+                    .getAvailableOperations(filterMetaClass, property);
+            operationField.setOptionsList(new ArrayList<>(availableOperations));
+
+            initDefaultValueField();
+        }
+    }
+
+    @Subscribe("operationField")
+    protected void onOperationFieldValueChange(HasValue.ValueChangeEvent<PropertyFilter.Operation> event) {
+        PropertyFilter.Operation operation = event.getValue();
+        if (operation != null && event.isUserOriginated()) {
+            initDefaultValueField();
+        }
+    }
+
+    @Subscribe
+    protected void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
+        if (defaultValueField != null
+                && getEditedEntity().getProperty() != null) {
+            MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
+
+            String modelDefaultValue = null;
+            if (metaProperty != null) {
+                modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty, defaultValueField.getValue());
+            }
+            getEditedEntity().getValueComponent().setDefaultValue(modelDefaultValue);
+        }
     }
 }

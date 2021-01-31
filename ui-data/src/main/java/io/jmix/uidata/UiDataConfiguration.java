@@ -26,7 +26,8 @@ import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ActionsConfiguration;
-import io.jmix.uidata.filter.DataFilterSupport;
+import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.uidata.filter.UiDataFilterSupport;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -54,6 +55,15 @@ public class UiDataConfiguration {
         return actionsConfiguration;
     }
 
+    @Bean("ui_UiDataControllers")
+    public UiControllersConfiguration screens(ApplicationContext applicationContext,
+                                              AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        UiControllersConfiguration uiControllers
+                = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
+        uiControllers.setBasePackages(Collections.singletonList("io.jmix.uidata.app"));
+        return uiControllers;
+    }
+
     @Bean("ui_UserSettingService")
     public UserSettingService userSettingService() {
         return new UserSettingServiceImpl();
@@ -70,10 +80,10 @@ public class UiDataConfiguration {
         return new UserSettingsToolsImpl();
     }
 
-    @Bean("ui_DataFilterSupport")
+    @Bean("ui_UiDataFilterSupport")
     @Primary
-    public DataFilterSupport filterSupport() {
-        return new DataFilterSupport();
+    public UiDataFilterSupport filterSupport() {
+        return new UiDataFilterSupport();
     }
 }
 

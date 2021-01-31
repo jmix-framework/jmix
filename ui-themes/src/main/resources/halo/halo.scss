@@ -87,7 +87,10 @@
 @import "components/responsivegridlayout/responsivegridlayout";
 @import "components/pagination/pagination";
 @import "components/simplepagination/simplepagination";
+@import "components/filter/filter";
 @import "components/propertyfilter/propertyfilter";
+@import "components/jpqlfilter/jpqlfilter";
+@import "components/groupfilter/groupfilter";
 @import "components/tagpicker/tagpicker";
 @import "components/taglabel/taglabel";
 @import "components/tagcontainer/tagcontainer";
@@ -181,7 +184,10 @@
   @include halo-responsivegridlayout;
   @include halo-pagination;
   @include halo-simplepagination;
+  @include halo-filter;
   @include halo-property-filter;
+  @include halo-jpql-filter;
+  @include halo-group-filter;
   @include halo-tagpicker;
   @include halo-taglabel;
   @include halo-tagcontainer;

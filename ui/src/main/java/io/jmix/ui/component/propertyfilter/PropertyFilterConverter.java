@@ -19,111 +19,152 @@ package io.jmix.ui.component.propertyfilter;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
-import io.jmix.ui.component.filter.converter.FilterConverter;
+import io.jmix.ui.component.filter.converter.AbstractFilterComponentConverter;
+import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.PropertyFilterCondition;
-import io.jmix.ui.entity.PropertyFilterValueComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
+@SuppressWarnings("rawtypes")
 @Internal
 @Component("ui_PropertyFilterConverter")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class PropertyFilterConverter implements FilterConverter<PropertyFilter, PropertyFilterCondition> {
+public class PropertyFilterConverter
+        extends AbstractFilterComponentConverter<PropertyFilter, PropertyFilterCondition> {
 
-    @Autowired
-    protected UiComponents uiComponents;
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
     @Autowired
+    protected SingleFilterSupport singleFilterSupport;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
     protected Metadata metadata;
 
-    protected final Filter filter;
-
-    public PropertyFilterConverter(Filter filter) {
-        this.filter = filter;
+    protected PropertyFilterConverter(Filter filter) {
+        super(filter);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("unchecked")
     @Override
     public PropertyFilter<?> convertToComponent(PropertyFilterCondition model) {
-        PropertyFilter propertyFilter = uiComponents.create(PropertyFilter.NAME);
-        propertyFilter.setAutoApply(filter.isAutoApply());
-        propertyFilter.setDataLoader(filter.getDataLoader());
-
-        propertyFilter.setVisible(model.getVisible());
-        propertyFilter.setEnabled(model.getEnabled());
-        propertyFilter.setProperty(model.getProperty());
+        PropertyFilter propertyFilter = super.convertToComponent(model);
         propertyFilter.setCaption(model.getCaption());
+        propertyFilter.setCaptionPosition(model.getCaptionPosition());
+        propertyFilter.setRequired(model.getRequired());
+        propertyFilter.setProperty(model.getProperty());
         propertyFilter.setOperation(model.getOperation());
         propertyFilter.setOperationEditable(model.getOperationEditable());
         propertyFilter.setParameterName(model.getParameterName());
-        propertyFilter.setCaptionPosition(model.getCaptionPosition());
-        propertyFilter.setId(model.getComponentId());
-        propertyFilter.setStyleName(model.getStyleName());
-        propertyFilter.setRequired(model.getRequired());
 
-        MetaClass componentMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-        HasValue<?> valueComponent = propertyFilterSupport.generateValueComponent(componentMetaClass,
-                model.getProperty(), model.getOperation(), propertyFilter.getId());
-
-        PropertyFilterValueComponent propertyFilterValueComponent = model.getValueComponent();
-        if (propertyFilterValueComponent != null) {
-            String componentName = propertyFilterValueComponent.getComponentName();
-            if (componentName != null) {
-                String defaultName = propertyFilterSupport.getValueComponentName(valueComponent);
-                if (!Objects.equals(defaultName, componentName)) {
-                    valueComponent = uiComponents.create(componentName);
-                }
-            }
-
-            valueComponent.setId(propertyFilterValueComponent.getComponentId());
-            valueComponent.setStyleName(propertyFilterValueComponent.getStyleName());
-        }
-
+        HasValue valueComponent = convertValueComponentToComponent(model);
         propertyFilter.setValueComponent(valueComponent);
-        propertyFilter.setValue(model.getParameterValue());
-
-        propertyFilter.setWidthFull();
-
-        propertyFilter.addValueChangeListener(valueChangeEvent ->
-                model.setParameterValue(((HasValue.ValueChangeEvent<?>) valueChangeEvent).getValue()));
-
-        propertyFilter.addOperationChangeListener(operationChangeEvent -> model
-                .setOperation(((PropertyFilter.OperationChangeEvent) operationChangeEvent).getNewOperation()));
+        Object defaultValue = convertDefaultValueToComponent(model);
+        propertyFilter.setValue(defaultValue);
 
         return propertyFilter;
     }
 
     @Override
     public PropertyFilterCondition convertToModel(PropertyFilter propertyFilter) {
-        PropertyFilterCondition condition = metadata.create(PropertyFilterCondition.class);
-        condition.setVisible(propertyFilter.isVisible());
-        condition.setEnabled(propertyFilter.isEnabled());
-        condition.setProperty(propertyFilter.getProperty());
+        PropertyFilterCondition condition = super.convertToModel(propertyFilter);
         condition.setCaption(propertyFilter.getCaption());
+        condition.setCaptionPosition(propertyFilter.getCaptionPosition());
+        condition.setRequired(propertyFilter.isRequired());
+        condition.setProperty(propertyFilter.getProperty());
         condition.setOperation(propertyFilter.getOperation());
         condition.setOperationEditable(propertyFilter.isOperationEditable());
         condition.setParameterName(propertyFilter.getParameterName());
-        condition.setCaptionPosition(propertyFilter.getCaptionPosition());
-        condition.setComponentId(propertyFilter.getId());
-        condition.setStyleName(propertyFilter.getStyleName());
-        condition.setRequired(propertyFilter.isRequired());
 
-        HasValue<?> valueField = propertyFilter.getValueComponent();
-        PropertyFilterValueComponent valueComponent = metadata.create(PropertyFilterValueComponent.class);
-        valueComponent.setComponentId(valueField.getId());
-        valueComponent.setStyleName(valueField.getStyleName());
-        valueComponent.setComponentName(propertyFilterSupport.getValueComponentName(valueField));
+        FilterValueComponent valueComponent = convertValueComponentToModel(propertyFilter);
+        String modelDefaultValue = convertDefaultValueToModel(propertyFilter);
+        valueComponent.setDefaultValue(modelDefaultValue);
         condition.setValueComponent(valueComponent);
 
         return condition;
+    }
+
+    @Override
+    protected PropertyFilter createComponent() {
+        return uiComponents.create(PropertyFilter.NAME);
+    }
+
+    @Override
+    protected PropertyFilterCondition createModel() {
+        return metadata.create(PropertyFilterCondition.class);
+    }
+
+    protected HasValue generateValueComponent(PropertyFilterCondition model) {
+        return singleFilterSupport.generateValueComponent(metadata.getClass(model.getMetaClass()),
+                model.getProperty(), model.getOperation());
+    }
+
+    protected HasValue convertValueComponentToComponent(PropertyFilterCondition model) {
+        HasValue valueComponent = generateValueComponent(model);
+        FilterValueComponent filterValueComponent = model.getValueComponent();
+        if (filterValueComponent != null) {
+            String componentName = filterValueComponent.getComponentName();
+            if (componentName != null) {
+                String defaultName = singleFilterSupport.getValueComponentName(valueComponent);
+                if (!Objects.equals(defaultName, componentName)) {
+                    valueComponent = uiComponents.create(componentName);
+                }
+            }
+
+            valueComponent.setId(filterValueComponent.getComponentId());
+            valueComponent.setStyleName(filterValueComponent.getStyleName());
+        }
+
+        return valueComponent;
+    }
+
+    @Nullable
+    protected Object convertDefaultValueToComponent(PropertyFilterCondition model) {
+        String modelDefaultValue = model.getValueComponent().getDefaultValue();
+        Object value = null;
+        if (model.getProperty() != null) {
+            MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+            MetaProperty metaProperty = metaClass.findProperty(model.getProperty());
+            if (metaProperty != null) {
+                value = propertyFilterSupport.parseDefaultValue(metaProperty, modelDefaultValue);
+            }
+        }
+
+        return value;
+    }
+
+    protected FilterValueComponent convertValueComponentToModel(PropertyFilter component) {
+        HasValue<?> valueField = component.getValueComponent();
+
+        FilterValueComponent valueComponent = metadata.create(FilterValueComponent.class);
+        valueComponent.setComponentId(valueField.getId());
+        valueComponent.setStyleName(valueField.getStyleName());
+        valueComponent.setComponentName(singleFilterSupport.getValueComponentName(valueField));
+
+        return valueComponent;
+    }
+
+    @Nullable
+    protected String convertDefaultValueToModel(PropertyFilter component) {
+        Object defaultValue = component.getValue();
+        MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+        MetaProperty metaProperty = metaClass.findProperty(component.getProperty());
+
+        String modelDefaultValue = null;
+        if (metaProperty != null) {
+            modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty, defaultValue);
+        }
+
+        return modelDefaultValue;
     }
 }

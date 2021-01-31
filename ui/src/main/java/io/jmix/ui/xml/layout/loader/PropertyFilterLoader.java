@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,17 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiProperties;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
-import io.jmix.ui.component.SupportsCaptionPosition.CaptionPosition;
-import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
-import io.jmix.ui.model.DataLoader;
-import io.jmix.ui.model.ScreenData;
-import io.jmix.ui.screen.FrameOwner;
-import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.ui.xml.layout.ComponentLoader;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import static io.jmix.core.querycondition.PropertyConditionUtils.generateParameterName;
 
-public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter<?>> {
+public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<PropertyFilter<?>> {
 
     @Override
     public void createComponent() {
@@ -44,21 +35,8 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
     }
 
     @Override
-    public void loadComponent() {
-        assignFrame(resultComponent);
-        assignXmlDescriptor(resultComponent, element);
-
-        loadVisible(resultComponent, element);
-        loadEnable(resultComponent, element);
-
-        loadStyleName(resultComponent, element);
-        loadHtmlSanitizerEnabled(resultComponent, element);
-
-        loadDescription(resultComponent, element);
-        loadIcon(resultComponent, element);
-        loadCss(resultComponent, element);
-        loadAlign(resultComponent, element);
-        loadResponsive(resultComponent, element);
+    protected void loadAttributesBeforeValueComponent() {
+        super.loadAttributesBeforeValueComponent();
 
         loadString(element, "property", resultComponent::setProperty);
         loadEnum(element, Operation.class, "operation", resultComponent::setOperation);
@@ -66,33 +44,13 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
 
         resultComponent.setParameterName(loadString(element, "parameterName")
                 .orElse(generateParameterName(resultComponent.getProperty())));
-
-        loadEnum(element, CaptionPosition.class, "captionPosition", resultComponent::setCaptionPosition);
-        loadString(element, "captionWidth", resultComponent::setCaptionWidth);
-
-        loadDataLoader(resultComponent, element);
-        loadBoolean(element, "autoApply", resultComponent::setAutoApply);
-        loadValueComponent(resultComponent, element);
-
-        loadCaption(resultComponent, element);
-        loadContextHelp(resultComponent, element);
-        loadRequired(resultComponent, element);
-        loadEditable(resultComponent, element);
-        loadTabIndex(resultComponent, element);
-
-        loadWidth(resultComponent, element);
-        loadHeight(resultComponent, element);
     }
 
-    protected void loadDataLoader(PropertyFilter<?> resultComponent, Element element) {
-        String dataLoaderId = element.attributeValue("dataLoader");
-        if (StringUtils.isNotBlank(dataLoaderId)) {
-            FrameOwner frameOwner = getComponentContext().getFrame().getFrameOwner();
-            ScreenData screenData = UiControllerUtils.getScreenData(frameOwner);
-            DataLoader dataLoader = screenData.getLoader(dataLoaderId);
+    @Override
+    public void loadComponent() {
+        super.loadComponent();
 
-            resultComponent.setDataLoader(dataLoader);
-        }
+        loadDefaultValue(resultComponent, element);
     }
 
     @Override
@@ -116,38 +74,27 @@ public class PropertyFilterLoader extends AbstractComponentLoader<PropertyFilter
         return loadBoolean(element, "operationCaptionVisible").orElse(true);
     }
 
-    protected void loadValueComponent(PropertyFilter<?> resultComponent, Element element) {
-        Component valueComponent;
-
-        if (!element.elements().isEmpty()) {
-            Element valueComponentElement = element.elements().get(0);
-
-            ComponentLoader<?> valueComponentLoader = getLayoutLoader().createComponent(valueComponentElement);
-            valueComponentLoader.loadComponent();
-            valueComponent = valueComponentLoader.getResultComponent();
-        } else {
-            MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
-            valueComponent = getPropertyFilterSupport().generateValueComponent(metaClass,
-                    resultComponent.getProperty(), resultComponent.getOperation(), resultComponent.getId());
-        }
-
-        if (!(valueComponent instanceof HasValue)) {
-            throw new GuiDevelopmentException("Value component of the PropertyFilter must implement HasValue",
-                    getComponentContext().getCurrentFrameId());
-        }
-
-        resultComponent.setValueComponent((HasValue) valueComponent);
+    @Override
+    protected HasValue generateValueComponent() {
+        MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
+        return getSingleFilterSupport().generateValueComponent(metaClass,
+                resultComponent.getProperty(), resultComponent.getOperation());
     }
 
-    protected UiComponentsGenerator getUiComponentsGenerator() {
-        return (UiComponentsGenerator) applicationContext.getBean(UiComponentsGenerator.NAME);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void loadDefaultValue(PropertyFilter component, Element element) {
+        if (element.attribute("defaultValue") != null) {
+            String defaultValue = element.attributeValue("defaultValue");
+            MetaClass metaClass = component.getDataLoader().getContainer().getEntityMetaClass();
+            MetaProperty metaProperty = metaClass.findProperty(component.getProperty());
+            if (metaProperty != null) {
+                Object value = getPropertyFilterSupport().parseDefaultValue(metaProperty, defaultValue);
+                component.setValue(value);
+            }
+        }
     }
 
     protected PropertyFilterSupport getPropertyFilterSupport() {
         return applicationContext.getBean(PropertyFilterSupport.class);
-    }
-
-    protected UiProperties getUiProperties() {
-        return applicationContext.getBean(UiProperties.class);
     }
 }

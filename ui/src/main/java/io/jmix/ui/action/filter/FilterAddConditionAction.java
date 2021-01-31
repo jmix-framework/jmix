@@ -17,15 +17,14 @@
 package io.jmix.ui.action.filter;
 
 import io.jmix.core.Messages;
-import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
-import io.jmix.ui.component.filter.FilterConditionsBuilder;
+import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.component.filter.builder.FilterConditionsBuilder;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
@@ -36,7 +35,6 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.LookupScreen;
 import io.jmix.ui.screen.OpenMode;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -44,13 +42,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @StudioAction(category = "Filter Actions", description = "Adds condition to current filter configuration")
 @ActionType(FilterAddConditionAction.ID)
 public class FilterAddConditionAction extends FilterAction {
 
-    public static final String ID = "filter_add_condition";
+    public static final String ID = "filter_addCondition";
 
     protected FilterComponents filterComponents;
     protected FilterConditionsBuilder builder;
@@ -89,8 +86,8 @@ public class FilterAddConditionAction extends FilterAction {
     }
 
     @Autowired
-    public void setFilterConditionsBuilder(ObjectProvider<FilterConditionsBuilder> builderObjectProvider) {
-        this.builder = builderObjectProvider.getObject();
+    public void setFilterConditionsBuilder(FilterConditionsBuilder builder) {
+        this.builder = builder;
     }
 
     @Autowired
@@ -119,26 +116,7 @@ public class FilterAddConditionAction extends FilterAction {
 
     @Override
     public void execute() {
-        MetaClass entityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
-        Predicate<MetaPropertyPath> propertiesFilterPredicate = filter.getPropertiesFilterPredicate();
-        List<FilterCondition> allConditions = builder.createFilterConditionsByMetaClass(entityMetaClass,
-                propertiesFilterPredicate);
-
-        List<FilterComponent> components = filter.getConditions();
-        List<FilterCondition> conditionsByComponents = builder.createFilterConditionsByComponents(components, filter);
-        if (conditionsByComponents.size() > 1) {
-            allConditions.addAll(conditionsByComponents);
-        }
-
-        List<Filter.Configuration> configurations = filter.getConfigurations().stream()
-                .filter(configuration -> configuration != filter.getCurrentConfiguration())
-                .collect(Collectors.toList());
-        List<FilterCondition> conditionsByConfigurations =
-                builder.createFilterConditionsByConfigurations(configurations);
-        if (conditionsByConfigurations.size() > 1) {
-            allConditions.addAll(conditionsByConfigurations);
-        }
-
+        List<FilterCondition> allConditions = builder.buildConditions(filter);
         openAddConditionScreen(allConditions);
     }
 
@@ -179,9 +157,15 @@ public class FilterAddConditionAction extends FilterAction {
                     FilterComponent filterComponent = converter.convertToComponent(selectedCondition);
                     currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
                     currentConfiguration.setModified(filterComponent, true);
+                    if (filterComponent instanceof SingleFilterComponent) {
+                        currentConfiguration.setDefaultValue(
+                                ((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                                ((SingleFilterComponent<?>) filterComponent).getValue());
+                    }
                 }
 
                 filter.setCurrentConfiguration(currentConfiguration);
+                filter.apply();
             }
         };
     }

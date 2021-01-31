@@ -110,6 +110,7 @@ public abstract class BaseLoaderConfig {
         loaders.put(Filter.NAME, FilterLoader.class);
         loaders.put(GroupFilter.NAME, GroupFilterLoader.class);
         loaders.put(PropertyFilter.NAME, PropertyFilterLoader.class);
+        loaders.put(JpqlFilter.NAME, JpqlFilterLoader.class);
 
         loaders.put(Fragment.NAME, FragmentComponentLoader.class);
 

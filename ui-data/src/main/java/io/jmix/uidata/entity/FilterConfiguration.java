@@ -19,7 +19,9 @@ package io.jmix.uidata.entity;
 import io.jmix.core.annotation.TenantId;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
+import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.entity.LogicalFilterCondition;
 
 import javax.persistence.Column;
@@ -28,27 +30,38 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.UUID;
 
 @JmixEntity
 @Entity(name = "ui_FilterConfiguration")
 @Table(name = "UI_FILTER_CONFIGURATION")
 @SystemLevel
-public class FilterConfiguration {
+public class FilterConfiguration implements Serializable {
+
+    private static final long serialVersionUID = 8964192666029141513L;
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     @JmixGeneratedValue
     protected UUID id;
 
     @Column(name = "COMPONENT_ID", nullable = false)
     protected String componentId;
 
-    @Column(name = "CODE", nullable = false)
-    protected String code;
+    @Column(name = "CONFIGURATION_ID", nullable = false)
+    protected String configurationId;
+
+    @InstanceName
+    @Column(name = "NAME")
+    protected String name;
 
     @Column(name = "USERNAME")
     protected String username;
+
+    @Column(name = "DEFAULT_FOR_ALL")
+    protected Boolean defaultForAll = false;
 
     @Column(name = "ROOT_CONDITION")
     @Lob
@@ -58,6 +71,10 @@ public class FilterConfiguration {
     @TenantId
     @Column(name = "SYS_TENANT_ID")
     protected String sysTenantId;
+
+    @JmixProperty
+    @Transient
+    protected Boolean defaultForMe = false;
 
     public UUID getId() {
         return id;
@@ -75,12 +92,20 @@ public class FilterConfiguration {
         this.componentId = componentId;
     }
 
-    public String getCode() {
-        return code;
+    public String getConfigurationId() {
+        return configurationId;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setConfigurationId(String configurationId) {
+        this.configurationId = configurationId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getUsername() {
@@ -89,6 +114,14 @@ public class FilterConfiguration {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Boolean getDefaultForAll() {
+        return defaultForAll;
+    }
+
+    public void setDefaultForAll(Boolean defaultForAll) {
+        this.defaultForAll = defaultForAll;
     }
 
     public LogicalFilterCondition getRootCondition() {
@@ -105,5 +138,13 @@ public class FilterConfiguration {
 
     public void setSysTenantId(String sysTenantId) {
         this.sysTenantId = sysTenantId;
+    }
+
+    public Boolean getDefaultForMe() {
+        return defaultForMe;
+    }
+
+    public void setDefaultForMe(Boolean defaultForMe) {
+        this.defaultForMe = defaultForMe;
     }
 }

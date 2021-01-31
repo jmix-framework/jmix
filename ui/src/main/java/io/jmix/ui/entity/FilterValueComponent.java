@@ -17,13 +17,15 @@
 package io.jmix.ui.entity;
 
 import io.jmix.core.entity.annotation.SystemLevel;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 
-@JmixEntity(name = "ui_PropertyFilterValueComponent")
+@JmixEntity(name = "ui_FilterValueComponent")
 @SystemLevel
-public class PropertyFilterValueComponent {
+public class FilterValueComponent {
 
+    @InstanceName
     @JmixProperty
     protected String componentName;
 
@@ -32,6 +34,9 @@ public class PropertyFilterValueComponent {
 
     @JmixProperty
     protected String styleName;
+
+    @JmixProperty
+    protected String defaultValue;
 
     public String getComponentName() {
         return componentName;
@@ -55,5 +60,13 @@ public class PropertyFilterValueComponent {
 
     public void setStyleName(String styleName) {
         this.styleName = styleName;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 }

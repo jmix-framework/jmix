@@ -40,10 +40,6 @@ public abstract class LogicalFilterCondition extends FilterCondition {
     @JmixProperty
     protected List<FilterCondition> ownFilterConditions = new ArrayList<>();
 
-    public void setOwnFilterConditions(List<FilterCondition> ownFilterConditions) {
-        this.ownFilterConditions = ownFilterConditions;
-    }
-
     public LogicalFilterComponent.Operation getOperation() {
         return operation;
     }
@@ -54,5 +50,9 @@ public abstract class LogicalFilterCondition extends FilterCondition {
 
     public List<FilterCondition> getOwnFilterConditions() {
         return ownFilterConditions;
+    }
+
+    public void setOwnFilterConditions(List<FilterCondition> ownFilterConditions) {
+        this.ownFilterConditions = ownFilterConditions;
     }
 }

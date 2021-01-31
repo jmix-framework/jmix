@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(FilterClearValuesAction.ID)
 public class FilterClearValuesAction extends FilterAction {
 
-    public static final String ID = "filter_clear_values";
+    public static final String ID = "filter_clearValues";
 
     public FilterClearValuesAction() {
         this(ID);
@@ -62,5 +62,6 @@ public class FilterClearValuesAction extends FilterAction {
                 .stream()
                 .filter(filterComponent -> filterComponent instanceof HasValue)
                 .forEach(filterComponent -> ((HasValue<?>) filterComponent).setValue(null));
+        filter.apply();
     }
 }

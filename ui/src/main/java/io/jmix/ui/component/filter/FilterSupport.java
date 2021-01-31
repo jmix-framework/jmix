@@ -16,25 +16,32 @@
 
 package io.jmix.ui.component.filter;
 
+import com.google.common.collect.ImmutableSet;
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.Actions;
-import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.Screens;
-import io.jmix.ui.WindowConfig;
+import io.jmix.ui.Fragments;
 import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.action.filter.FilterClearValuesAction;
 import io.jmix.ui.action.filter.FilterCopyAction;
 import io.jmix.ui.action.filter.FilterEditAction;
-import io.jmix.ui.app.filter.configuration.FilterConfigurationFormFragment;
+import io.jmix.ui.app.filter.configuration.FilterConfigurationModelFragment;
 import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.FilterComponent;
+import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
+import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.sys.ScreensHelper;
+import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Internal
 @Component("ui_FilterSupport")
@@ -42,38 +49,121 @@ public class FilterSupport {
 
     @Autowired
     protected Actions actions;
-    @Autowired
-    protected ScreenBuilders screenBuilders;
-    @Autowired
-    protected FilterConditionsBuilder builder;
-    @Autowired
-    protected WindowConfig windowConfig;
-    @Autowired
-    protected ScreensHelper screensHelper;
 
     public List<FilterAction> getDefaultFilterActions(Filter filter) {
         List<FilterAction> filterActions = new ArrayList<>();
-        filterActions.add(createFilterAction(FilterEditAction.class, filter));
-        filterActions.add(createFilterAction(FilterCopyAction.class, filter));
-        filterActions.add(createFilterAction(FilterClearValuesAction.class, filter));
+        for (Class<? extends FilterAction> actionClass : getDefaultFilterActionClasses()) {
+            filterActions.add(createFilterAction(actionClass, filter));
+        }
         return filterActions;
     }
 
-    public List<Filter.Configuration> getConfigurations(Filter filter) {
-        return Collections.emptyList();
+    public Map<Filter.Configuration, Boolean> getConfigurationsMap(Filter filter) {
+        return Collections.emptyMap();
     }
 
-    public boolean filterConfigurationExists(String configurationCode, Filter filter) {
-        return filter.getConfigurations().stream()
-                .anyMatch(configuration -> configurationCode.equals(configuration.getCode()));
+    public Filter.Configuration saveCurrentFilterConfiguration(Filter.Configuration configuration,
+                                                               boolean isNewConfiguration,
+                                                               LogicalFilterComponent rootFilterComponent,
+                                                               ScreenFragment configurationFragment) {
+        String id = "";
+        if (configurationFragment instanceof FilterConfigurationModelFragment) {
+            id = ((FilterConfigurationModelFragment) configurationFragment).getConfigurationId();
+        }
+
+        Filter.Configuration resultConfiguration = initFilterConfiguration(id, configuration, isNewConfiguration,
+                rootFilterComponent);
+
+        if (configurationFragment instanceof FilterConfigurationModelFragment) {
+            resultConfiguration.setName(((FilterConfigurationModelFragment) configurationFragment).getConfigurationName());
+        }
+
+        return resultConfiguration;
     }
 
     public void removeCurrentFilterConfiguration(Filter filter) {
         filter.removeConfiguration(filter.getCurrentConfiguration());
     }
 
-    public Class<? extends ScreenFragment> getConfigurationFormFragmentClass() {
-        return FilterConfigurationFormFragment.class;
+    public ScreenFragment createFilterConfigurationFragment(FrameOwner owner,
+                                                            boolean isNewConfiguration,
+                                                            Filter.Configuration currentConfiguration) {
+        Fragments fragments = UiControllerUtils.getScreenContext(owner).getFragments();
+        FilterConfigurationModelFragment fragment = fragments.create(owner, FilterConfigurationModelFragment.class);
+        initFilterConfigurationFragment(fragment, isNewConfiguration, currentConfiguration);
+        return fragment;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Map<String, Object> initConfigurationValuesMap(Filter.Configuration configuration) {
+        Map<String, Object> valuesMap = new HashMap<>();
+        LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
+        for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
+            if (filterComponent instanceof SingleFilterComponent) {
+                String parameterName = ((SingleFilterComponent<?>) filterComponent).getParameterName();
+                valuesMap.put(parameterName, ((SingleFilterComponent<?>) filterComponent).getValue());
+                ((SingleFilterComponent) filterComponent).setValue(configuration.getDefaultValue(parameterName));
+            }
+        }
+
+        return valuesMap;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void resetConfigurationValuesMap(Filter.Configuration configuration, Map<String, Object> valuesMap) {
+        LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
+        for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
+            if (filterComponent instanceof SingleFilterComponent) {
+                ((SingleFilterComponent) filterComponent).setValue(
+                        valuesMap.get(((SingleFilterComponent<?>) filterComponent).getParameterName()));
+            }
+        }
+    }
+
+    public void refreshConfigurationDefaultValues(Filter.Configuration configuration) {
+        configuration.removeAllDefaultValues();
+        LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
+        for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
+            if (filterComponent instanceof SingleFilterComponent) {
+                configuration.setDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                        ((SingleFilterComponent<?>) filterComponent).getValue());
+            }
+        }
+    }
+
+    protected Filter.Configuration initFilterConfiguration(String id,
+                                                           Filter.Configuration existedConfiguration,
+                                                           boolean isNewConfiguration,
+                                                           LogicalFilterComponent rootFilterComponent) {
+        Filter.Configuration resultConfiguration;
+        if (isNewConfiguration) {
+            resultConfiguration = new RunTimeConfiguration(id, rootFilterComponent, existedConfiguration.getOwner());
+        } else {
+            resultConfiguration = existedConfiguration;
+            resultConfiguration.setRootLogicalFilterComponent(rootFilterComponent);
+        }
+
+        return resultConfiguration;
+    }
+
+    protected void initFilterConfigurationFragment(ScreenFragment fragment,
+                                                   boolean isNewConfiguration,
+                                                   Filter.Configuration currentConfiguration) {
+        if (fragment instanceof FilterConfigurationModelFragment) {
+            if (!isNewConfiguration) {
+                ((FilterConfigurationModelFragment) fragment).setConfigurationId(currentConfiguration.getId());
+            }
+
+            ((FilterConfigurationModelFragment) fragment).setConfigurationName(currentConfiguration.getName());
+        }
+    }
+
+    protected Set<Class<? extends FilterAction>> getDefaultFilterActionClasses() {
+        return ImmutableSet.of(
+                FilterEditAction.class,
+                FilterCopyAction.class,
+                FilterClearValuesAction.class
+        );
     }
 
     protected FilterAction createFilterAction(Class<? extends FilterAction> filterActionClass,

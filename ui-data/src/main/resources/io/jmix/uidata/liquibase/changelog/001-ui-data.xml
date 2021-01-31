@@ -74,4 +74,14 @@
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
         </addColumn>
     </changeSet>
+
+    <changeSet author="ui-data" id="4">
+        <addColumn tableName="UI_FILTER_CONFIGURATION">
+            <column name="NAME" type="varchar(255)"/>
+            <column name="DEFAULT_FOR_ALL" type="boolean"/>
+        </addColumn>
+        <renameColumn tableName="UI_FILTER_CONFIGURATION"
+                      oldColumnName="CODE"
+                      newColumnName="CONFIGURATION_ID"/>
+    </changeSet>
 </databaseChangeLog>

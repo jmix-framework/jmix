@@ -20,14 +20,12 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.component.PropertyFilter.Operation;
-import io.jmix.ui.component.SupportsCaptionPosition;
 
 import javax.persistence.Convert;
-import javax.persistence.Transient;
 
-@JmixEntity(name = "ui_PropertyFilterCondition", annotatedPropertiesOnly = true)
+@JmixEntity(name = "ui_PropertyFilterCondition")
 @SystemLevel
-public class PropertyFilterCondition extends FilterCondition {
+public class PropertyFilterCondition extends AbstractSingleFilterCondition {
 
     private static final long serialVersionUID = 486148668136186191L;
 
@@ -43,19 +41,6 @@ public class PropertyFilterCondition extends FilterCondition {
 
     @JmixProperty
     protected Boolean operationEditable = true;
-
-    @JmixProperty
-    @Convert(converter = CaptionPositionConverter.class)
-    protected SupportsCaptionPosition.CaptionPosition captionPosition;
-
-    @JmixProperty
-    protected PropertyFilterValueComponent valueComponent;
-
-    @JmixProperty
-    protected Boolean required = false;
-
-    @Transient
-    protected transient Object parameterValue;
 
     public String getProperty() {
         return property;
@@ -87,37 +72,5 @@ public class PropertyFilterCondition extends FilterCondition {
 
     public void setOperationEditable(Boolean operationEditable) {
         this.operationEditable = operationEditable;
-    }
-
-    public SupportsCaptionPosition.CaptionPosition getCaptionPosition() {
-        return captionPosition;
-    }
-
-    public void setCaptionPosition(SupportsCaptionPosition.CaptionPosition captionPosition) {
-        this.captionPosition = captionPosition;
-    }
-
-    public PropertyFilterValueComponent getValueComponent() {
-        return valueComponent;
-    }
-
-    public void setValueComponent(PropertyFilterValueComponent valueComponent) {
-        this.valueComponent = valueComponent;
-    }
-
-    public Boolean getRequired() {
-        return required;
-    }
-
-    public void setRequired(Boolean required) {
-        this.required = required;
-    }
-
-    public Object getParameterValue() {
-        return parameterValue;
-    }
-
-    public void setParameterValue(Object parameterValue) {
-        this.parameterValue = parameterValue;
     }
 }

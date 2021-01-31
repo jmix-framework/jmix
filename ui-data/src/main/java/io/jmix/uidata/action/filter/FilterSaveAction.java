@@ -19,15 +19,23 @@ package io.jmix.uidata.action.filter;
 import io.jmix.core.Messages;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.meta.StudioAction;
-import io.jmix.uidata.filter.DataFilterSupport;
+import io.jmix.uidata.entity.FilterConfiguration;
+import io.jmix.uidata.filter.UiDataFilterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 
 @StudioAction(category = "Filter Actions", description = "Saves changes to current filter configuration")
 @ActionType(FilterSaveAction.ID)
 public class FilterSaveAction extends FilterSaveAsAction {
 
     public static final String ID = "filter_save";
+
+    protected Map<FilterComponent, Object> valuesMap = new HashMap<>();
 
     public FilterSaveAction() {
         this(ID);
@@ -52,12 +60,24 @@ public class FilterSaveAction extends FilterSaveAsAction {
     @Override
     public void execute() {
         Filter.Configuration configuration = filter.getCurrentConfiguration();
-        if (configuration != filter.getEmptyConfiguration()
-                || !filterSupport.filterConfigurationExists(configuration.getCode(), filter)) {
+        if (configuration == filter.getEmptyConfiguration()) {
             openInputDialog();
         } else {
-            ((DataFilterSupport) filterSupport).saveFilterConfiguration(configuration);
-            setCurrentFilterConfiguration(configuration);
+            FilterConfiguration configurationModel =
+                    ((UiDataFilterSupport) filterSupport).loadFilterConfigurationModel(filter, configuration.getId());
+            if (configurationModel != null) {
+                saveExistedConfigurationModel(configuration, configurationModel);
+            } else {
+                openInputDialog();
+            }
         }
+    }
+
+    protected void saveExistedConfigurationModel(Filter.Configuration configuration,
+                                                 @Nullable FilterConfiguration existedConfigurationModel) {
+        Map<String, Object> valuesMap = filterSupport.initConfigurationValuesMap(configuration);
+        ((UiDataFilterSupport) filterSupport).saveConfigurationModel(configuration, existedConfigurationModel);
+        filterSupport.resetConfigurationValuesMap(configuration, valuesMap);
+        setCurrentFilterConfiguration(configuration);
     }
 }

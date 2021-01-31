@@ -21,22 +21,26 @@ import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SingleFilterComponent;
 
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class RunTimeConfiguration implements Filter.Configuration {
 
-    protected final String code;
+    protected final String id;
     protected final Filter owner;
 
-    protected String caption;
+    protected String name;
     protected LogicalFilterComponent rootLogicalFilterComponent;
     protected Set<FilterComponent> modifiedFilterComponents = new HashSet<>();
+    protected Map<String, Object> defaultValuesMap = new HashMap<>();
 
-    public RunTimeConfiguration(String code, LogicalFilterComponent rootLogicalFilterComponent, Filter owner) {
-        this.code = code;
+    public RunTimeConfiguration(String id, LogicalFilterComponent rootLogicalFilterComponent, Filter owner) {
+        this.id = id;
         this.rootLogicalFilterComponent = rootLogicalFilterComponent;
         this.owner = owner;
     }
@@ -47,20 +51,19 @@ public class RunTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public String getCode() {
-        return code;
+    public String getId() {
+        return id;
+    }
+
+    @Nullable
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
-    public String getCaption() {
-        return caption != null
-                ? caption
-                : code;
-    }
-
-    @Override
-    public void setCaption(@Nullable String caption) {
-        this.caption = caption;
+    public void setName(@Nullable String name) {
+        this.name = name;
     }
 
     @Override
@@ -109,5 +112,65 @@ public class RunTimeConfiguration implements Filter.Configuration {
                 setModified(ownFilterComponent, modified);
             }
         }
+    }
+
+    @Override
+    public void setDefaultValue(String parameterName, @Nullable Object defaultValue) {
+        Preconditions.checkNotNullArgument(parameterName);
+        if (isFilterComponentExist(parameterName)) {
+            defaultValuesMap.put(parameterName, defaultValue);
+        }
+    }
+
+    @Override
+    public void removeDefaultValue(String parameterName) {
+        Preconditions.checkNotNullArgument(parameterName);
+        if (isFilterComponentExist(parameterName)) {
+            defaultValuesMap.remove(parameterName);
+        }
+    }
+
+    @Nullable
+    @Override
+    public Object getDefaultValue(String parameterName) {
+        Preconditions.checkNotNullArgument(parameterName);
+        if (isFilterComponentExist(parameterName)) {
+            return defaultValuesMap.get(parameterName);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void removeAllDefaultValues() {
+        defaultValuesMap = new HashMap<>();
+    }
+
+    protected boolean isFilterComponentExist(String parameterName) {
+        return rootLogicalFilterComponent.getFilterComponents().stream()
+                .anyMatch(filterComponent -> filterComponent instanceof SingleFilterComponent
+                        && parameterName.equals(((SingleFilterComponent<?>) filterComponent).getParameterName()));
+    }
+
+    @Override
+    public int compareTo(Filter.Configuration other) {
+        return id.compareTo(other.getId());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof RunTimeConfiguration)) {
+            return false;
+        }
+
+        return id.equals(((RunTimeConfiguration) obj).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

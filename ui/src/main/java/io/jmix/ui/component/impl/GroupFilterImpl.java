@@ -16,16 +16,12 @@
 
 package io.jmix.ui.component.impl;
 
+import io.jmix.core.annotation.Internal;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.CompositeComponent;
-import io.jmix.ui.component.FilterComponent;
-import io.jmix.ui.component.GroupBoxLayout;
-import io.jmix.ui.component.GroupFilter;
-import io.jmix.ui.component.LogicalFilterComponent;
-import io.jmix.ui.component.ResponsiveGridLayout;
+import io.jmix.ui.component.*;
 import io.jmix.ui.model.DataLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,14 +30,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implements GroupFilter {
 
+    protected static final String GROUP_FILTER_STYLENAME = "jmix-group-filter";
+
     protected UiComponents uiComponents;
-    protected UiProperties uiProperties;
 
     protected DataLoader dataLoader;
-    protected boolean autoApply = true;
-    protected Integer columnsCount;
+    protected Condition initialDataLoaderCondition;
+    protected boolean autoApply;
+
+    @Internal
+    protected boolean conditionModificationDelegated = false;
+
+    protected int columnsCount;
+    protected CaptionPosition captionPosition = CaptionPosition.LEFT;
 
     protected Operation operation = Operation.AND;
     protected LogicalCondition queryCondition = LogicalCondition.and();
@@ -61,7 +67,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
     @Autowired
     public void setUiProperties(UiProperties uiProperties) {
-        this.uiProperties = uiProperties;
+        this.columnsCount = uiProperties.getFilterColumnsCount();
+        this.autoApply = uiProperties.isFilterAutoApply();
     }
 
     @Override
@@ -71,7 +78,15 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
     @Override
     public void setDataLoader(DataLoader dataLoader) {
+        checkState(this.dataLoader == null, "DataLoader has already been initialized");
+        checkNotNull(dataLoader);
+
         this.dataLoader = dataLoader;
+        this.initialDataLoaderCondition = dataLoader.getCondition();
+
+        if (!isConditionModificationDelegated()) {
+            updateDataLoaderCondition();
+        }
     }
 
     @Override
@@ -84,8 +99,20 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (this.autoApply != autoApply) {
             this.autoApply = autoApply;
 
-            getFilterComponents().forEach(filterComponent -> filterComponent.setAutoApply(autoApply));
+            getOwnFilterComponents().forEach(filterComponent -> filterComponent.setAutoApply(autoApply));
         }
+    }
+
+    @Internal
+    @Override
+    public boolean isConditionModificationDelegated() {
+        return conditionModificationDelegated;
+    }
+
+    @Internal
+    @Override
+    public void setConditionModificationDelegated(boolean conditionModificationDelegated) {
+        this.conditionModificationDelegated = conditionModificationDelegated;
     }
 
     @Override
@@ -99,18 +126,36 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
             this.operation = operation;
 
             updateQueryCondition();
+
+            if (!isConditionModificationDelegated()) {
+                updateDataLoaderCondition();
+            }
         }
     }
 
     @Override
     public int getColumnsCount() {
-        return columnsCount != null ? columnsCount : uiProperties.getGenericFilterColumnsCount();
+        return columnsCount;
     }
 
     @Override
     public void setColumnsCount(int columnsCount) {
-        if (this.columnsCount == null || this.columnsCount != columnsCount) {
+        if (this.columnsCount != columnsCount) {
             this.columnsCount = columnsCount;
+
+            updateConditionsLayout();
+        }
+    }
+
+    @Override
+    public CaptionPosition getCaptionPosition() {
+        return captionPosition;
+    }
+
+    @Override
+    public void setCaptionPosition(CaptionPosition position) {
+        if (this.captionPosition != position) {
+            this.captionPosition = position;
 
             updateConditionsLayout();
         }
@@ -123,10 +168,15 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
                     "GroupFilter component");
         }
 
+        filterComponent.setConditionModificationDelegated(true);
         filterComponent.setAutoApply(isAutoApply());
         queryCondition.add(filterComponent.getQueryCondition());
         ownFilterComponentsOrder.add(filterComponent);
         updateConditionsLayout();
+
+        if (!isConditionModificationDelegated()) {
+            updateDataLoaderCondition();
+        }
     }
 
     @Override
@@ -134,8 +184,16 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         if (ownFilterComponentsOrder.contains(filterComponent)) {
             ownFilterComponentsOrder.remove(filterComponent);
 
-            updateQueryCondition();
+            if (filterComponent instanceof SingleFilterComponent) {
+                getDataLoader().removeParameter(((SingleFilterComponent<?>) filterComponent).getParameterName());
+            }
+
             updateConditionsLayout();
+            updateQueryCondition();
+
+            if (!isConditionModificationDelegated()) {
+                updateDataLoaderCondition();
+            }
         } else {
             ownFilterComponentsOrder.stream()
                     .filter(ownComponent -> ownComponent instanceof LogicalFilterComponent)
@@ -148,8 +206,13 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     public void removeAll() {
         getComposition().removeAll();
         ownFilterComponentsOrder = new ArrayList<>();
-        updateQueryCondition();
+
         updateConditionsLayout();
+        updateQueryCondition();
+
+        if (!isConditionModificationDelegated()) {
+            updateDataLoaderCondition();
+        }
     }
 
     @Override
@@ -182,6 +245,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     protected GroupBoxLayout createRootComponent() {
         GroupBoxLayout rootLayout = uiComponents.create(GroupBoxLayout.class);
         rootLayout.setWidthFull();
+        rootLayout.unwrap(com.vaadin.ui.Component.class)
+                .setPrimaryStyleName(GROUP_FILTER_STYLENAME);
         return rootLayout;
     }
 
@@ -193,44 +258,73 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         }
     }
 
+    protected void updateDataLoaderCondition() {
+        if (dataLoader != null) {
+            LogicalCondition resultCondition;
+            if (initialDataLoaderCondition instanceof LogicalCondition) {
+                resultCondition = (LogicalCondition) initialDataLoaderCondition.copy();
+                resultCondition.add(getQueryCondition());
+            } else if (initialDataLoaderCondition != null) {
+                resultCondition = LogicalCondition.and()
+                        .add(initialDataLoaderCondition)
+                        .add(getQueryCondition());
+            } else {
+                resultCondition = getQueryCondition();
+            }
+
+            dataLoader.setCondition(resultCondition);
+        }
+    }
+
     protected void updateConditionsLayout() {
         getComposition().removeAll();
 
-        if (!getOwnFilterComponents().isEmpty()) {
+        boolean isAnyFilterComponentVisible = getOwnFilterComponents().stream().anyMatch(Component::isVisible);
+
+        if (isAnyFilterComponentVisible) {
             conditionsLayout = createConditionsLayout();
             getComposition().add(conditionsLayout);
 
             ResponsiveGridLayout.Row row = createConditionsLayoutRow(conditionsLayout);
-            for (FilterComponent ownFilterComponent : getOwnFilterComponents()) {
-                if (ownFilterComponent instanceof LogicalFilterComponent) {
-                    addLogicalFilterComponentToConditionsLayoutRow((LogicalFilterComponent) ownFilterComponent, row);
-                } else {
-                    addFilterComponentToConditionsLayoutRow(ownFilterComponent, row);
-                }
-            }
-        }
-
-        if (dataLoader != null) {
-            dataLoader.setCondition(getQueryCondition());
-            if (isAutoApply()) {
-                dataLoader.load();
-            }
+            getOwnFilterComponents().stream()
+                    .filter(Component::isVisible)
+                    .forEach(ownFilterComponent -> {
+                        if (ownFilterComponent instanceof LogicalFilterComponent) {
+                            addLogicalFilterComponentToConditionsLayoutRow(
+                                    (LogicalFilterComponent) ownFilterComponent, row);
+                        } else {
+                            addFilterComponentToConditionsLayoutRow(ownFilterComponent, row);
+                        }
+                    });
+        } else {
+            conditionsLayout = null;
         }
     }
 
     protected ResponsiveGridLayout createConditionsLayout() {
         ResponsiveGridLayout layout = uiComponents.create(ResponsiveGridLayout.NAME);
-        layout.setStyleName("px-0");
+        layout.addStyleName("px-0");
         return layout;
     }
 
     protected ResponsiveGridLayout.Row createConditionsLayoutRow(ResponsiveGridLayout layout) {
         ResponsiveGridLayout.Row row = layout.addRow();
 
+        int columnsCount = getColumnsCount();
         Map<ResponsiveGridLayout.Breakpoint, ResponsiveGridLayout.RowColumnsValue> rowColumns = new HashMap<>();
-        rowColumns.put(ResponsiveGridLayout.Breakpoint.XS, ResponsiveGridLayout.RowColumnsValue.columns(1));
-        rowColumns.put(ResponsiveGridLayout.Breakpoint.LG, ResponsiveGridLayout.RowColumnsValue.columns(2));
-        rowColumns.put(ResponsiveGridLayout.Breakpoint.XL, ResponsiveGridLayout.RowColumnsValue.columns(3));
+        rowColumns.put(ResponsiveGridLayout.Breakpoint.XS,
+                ResponsiveGridLayout.RowColumnsValue.columns(1));
+
+        if (columnsCount > 1) {
+            rowColumns.put(ResponsiveGridLayout.Breakpoint.LG,
+                    ResponsiveGridLayout.RowColumnsValue.columns(2));
+        }
+
+        if (columnsCount > 2) {
+            rowColumns.put(ResponsiveGridLayout.Breakpoint.XL,
+                    ResponsiveGridLayout.RowColumnsValue.columns(columnsCount));
+        }
+
         row.setRowColumns(rowColumns);
 
         row.setAlignItems(ResponsiveGridLayout.AlignItems.CENTER);
@@ -243,6 +337,14 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         logicalFilterComponent.setParent(null);
         ComponentsHelper.getComposition(logicalFilterComponent).setParent(null);
         column.setComponent(logicalFilterComponent);
+
+        if (logicalFilterComponent instanceof SupportsCaptionPosition) {
+            ((SupportsCaptionPosition) logicalFilterComponent).setCaptionPosition(getCaptionPosition());
+        }
+
+        if (logicalFilterComponent instanceof SupportsColumnsCount) {
+            ((SupportsColumnsCount) logicalFilterComponent).setColumnsCount(getColumnsCount());
+        }
     }
 
     protected ResponsiveGridLayout.Column createLogicalFilterComponentColumn(ResponsiveGridLayout.Row row) {
@@ -260,17 +362,23 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     protected void addFilterComponentToConditionsLayoutRow(FilterComponent filterComponent,
                                                            ResponsiveGridLayout.Row row) {
         ResponsiveGridLayout.Column conditionValueColumn = createFilterComponentColumn(row);
+
         filterComponent.setParent(null);
         ComponentsHelper.getComposition(filterComponent).setParent(null);
+
         filterComponent.setWidthFull();
+        if (filterComponent instanceof SupportsCaptionPosition) {
+            ((SupportsCaptionPosition) filterComponent).setCaptionPosition(getCaptionPosition());
+        }
+
         conditionValueColumn.setComponent(filterComponent);
     }
 
     protected ResponsiveGridLayout.Column createFilterComponentColumn(ResponsiveGridLayout.Row row) {
-        ResponsiveGridLayout.Column column = row.addColumn();
-
         boolean logicalFilterComponentAdded = row.getColumns().stream()
                 .anyMatch(rowColumn -> rowColumn.getComponent() instanceof LogicalFilterComponent);
+
+        ResponsiveGridLayout.Column column = row.addColumn();
 
         int columnIndex = row.getColumns().indexOf(column);
         if (columnIndex != 0) {
@@ -278,11 +386,13 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
         }
 
         if (!logicalFilterComponentAdded) {
-            if (columnIndex == 1) {
+            int columnsCount = getColumnsCount();
+
+            if (columnIndex == 1 && columnsCount > 1) {
                 column.addStyleName("pt-lg-0");
             }
 
-            if (columnIndex == 2) {
+            if (columnIndex == 2 && columnsCount > 2) {
                 column.addStyleName("pt-xl-0");
             }
         }

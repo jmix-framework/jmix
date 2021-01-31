@@ -17,24 +17,25 @@
 package io.jmix.ui.component.propertyfilter;
 
 import com.google.common.collect.ImmutableList;
+import io.jmix.core.DataManager;
+import io.jmix.core.Id;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.querycondition.PropertyCondition;
-import io.jmix.ui.component.ComponentGenerationContext;
-import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
-import io.jmix.ui.component.UiComponentsGenerator;
-import io.jmix.ui.component.factory.PropertyFilterComponentGenerationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -60,16 +61,17 @@ public class PropertyFilterSupport {
     protected Messages messages;
     protected MessageTools messageTools;
     protected MetadataTools metadataTools;
-    protected UiComponentsGenerator uiComponentsGenerator;
+    protected DataManager dataManager;
 
+    @Autowired
     public PropertyFilterSupport(Messages messages,
                                  MessageTools messageTools,
                                  MetadataTools metadataTools,
-                                 UiComponentsGenerator uiComponentsGenerator) {
+                                 DataManager dataManager) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
-        this.uiComponentsGenerator = uiComponentsGenerator;
+        this.dataManager = dataManager;
     }
 
     public String getOperationCaption(Operation operation) {
@@ -110,6 +112,22 @@ public class PropertyFilterSupport {
      */
     public String getPropertyFilterCaption(MetaClass metaClass, String property,
                                            Operation operation, boolean operationCaptionVisible) {
+        StringBuilder sb = new StringBuilder(getPropertyFilterCaption(metaClass, property));
+
+        if (operationCaptionVisible) {
+            sb.append(" ").append(getOperationCaption(operation));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Returns default caption for {@link PropertyFilter}.
+     *
+     * @param metaClass an entity meta class associated with property filter
+     * @param property  an entity attribute associated with property filter
+     */
+    public String getPropertyFilterCaption(MetaClass metaClass, String property) {
         MetaPropertyPath mpp = metaClass.getPropertyPath(property);
 
         if (mpp == null) {
@@ -134,9 +152,6 @@ public class PropertyFilterSupport {
                 if (i < metaProperties.length - 1) {
                     sb.append(".");
                 }
-            }
-            if (operationCaptionVisible) {
-                sb.append(" ").append(getOperationCaption(operation));
             }
 
             return sb.toString();
@@ -172,21 +187,12 @@ public class PropertyFilterSupport {
 
     public EnumSet<Operation> getAvailableOperations(MetaClass metaClass, String property) {
         MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, property);
+
+        if (mpp == null) {
+            throw new UnsupportedOperationException("Unsupported attribute name: " + property);
+        }
+
         return getAvailableOperations(mpp);
-    }
-
-    public HasValue generateValueComponent(MetaClass metaClass,
-                                           String property,
-                                           Operation operation,
-                                           @Nullable String ownerId) {
-        ComponentGenerationContext context =
-                new PropertyFilterComponentGenerationContext(metaClass, property, operation);
-        context.setTargetClass(PropertyFilter.class);
-
-        HasValue valueComponent = ((HasValue) uiComponentsGenerator.generate(context));
-        valueComponent.setId(getPropertyFilterPrefix(ownerId, property) + "valueComponent");
-
-        return ((HasValue) uiComponentsGenerator.generate(context));
     }
 
     public String toPropertyConditionOperation(Operation operation) {
@@ -220,46 +226,71 @@ public class PropertyFilterSupport {
         }
     }
 
-    public Operation fromPropertyConditionOperation(String conditionOperation) {
-        switch (conditionOperation) {
-            case PropertyCondition.Operation.EQUAL:
-                return EQUAL;
-            case PropertyCondition.Operation.NOT_EQUAL:
-                return NOT_EQUAL;
-            case PropertyCondition.Operation.GREATER:
-                return GREATER;
-            case PropertyCondition.Operation.GREATER_OR_EQUAL:
-                return GREATER_OR_EQUAL;
-            case PropertyCondition.Operation.LESS:
-                return LESS;
-            case PropertyCondition.Operation.LESS_OR_EQUAL:
-                return LESS_OR_EQUAL;
-            case PropertyCondition.Operation.CONTAINS:
-                return CONTAINS;
-            case PropertyCondition.Operation.NOT_CONTAINS:
-                return NOT_CONTAINS;
-            case PropertyCondition.Operation.STARTS_WITH:
-                return STARTS_WITH;
-            case PropertyCondition.Operation.ENDS_WITH:
-                return ENDS_WITH;
-            case PropertyCondition.Operation.IS_NOT_NULL:
-                return IS_SET;
-            case PropertyCondition.Operation.IS_NULL:
-                return IS_NOT_SET;
-            default:
-                throw new IllegalArgumentException("Unknown condition operation: " + conditionOperation);
+    /**
+     * Converts default value of value component to String
+     *
+     * @param metaProperty an entity attribute associated with filter
+     * @param value        a default value
+     * @return string default value
+     */
+    @Nullable
+    public String formatDefaultValue(MetaProperty metaProperty, @Nullable Object value) {
+        if (value == null) {
+            return null;
         }
+
+        Range range = metaProperty.getRange();
+
+        if (range.isClass()) {
+            return String.valueOf(EntityValues.getId(value));
+        } else if (range.isEnum()) {
+            return range.asEnumeration().format(value);
+        } else if (range.isDatatype()) {
+            return range.asDatatype().format(value);
+        }
+
+        return null;
     }
 
-    public String getValueComponentName(HasValue<?> valueComponent) {
+    /**
+     * Parses default value for value component from String
+     *
+     * @param metaProperty an entity attribute associated with filter
+     * @param value        a string default value
+     * @return default value
+     */
+    @Nullable
+    public Object parseDefaultValue(MetaProperty metaProperty, @Nullable String value) {
+        if (value == null) {
+            return null;
+        }
+
+        Range range = metaProperty.getRange();
+
         try {
-            return (String) valueComponent.getClass().getField("NAME").get(null);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
-            throw new IllegalArgumentException(String.format("Class '%s' doesn't have NAME field",
-                    valueComponent.getClass().getName()));
+            if (range.isClass()) {
+                MetaClass metaClass = range.asClass();
+                MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(metaClass);
+                if (idProperty != null && idProperty.getRange().isDatatype()) {
+                    Object idValue = idProperty.getRange().asDatatype().parse(value);
+                    if (idValue != null) {
+                        return dataManager.load(Id.of(idValue, metaClass.getJavaClass()))
+                                .one();
+                    }
+                }
+            } else if (range.isEnum()) {
+                return range.asEnumeration().parse(value);
+            } else if (range.isDatatype()) {
+                return range.asDatatype().parse(value);
+            }
+        } catch (ParseException e) {
+            return null;
         }
+
+        return null;
     }
 
+    @Nullable
     protected MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String property) {
         return metaClass.getPropertyPath(property);
     }

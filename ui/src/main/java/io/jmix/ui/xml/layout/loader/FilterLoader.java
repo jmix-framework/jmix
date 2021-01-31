@@ -22,6 +22,8 @@ import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.SingleFilterComponent;
+import io.jmix.ui.component.SupportsCaptionPosition;
 import io.jmix.ui.component.filter.inspector.FilterPropertiesInspector;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
@@ -69,6 +71,8 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
 
         loadCollapsible(resultComponent, element, true);
         loadInteger(element, "columnsCount", resultComponent::setColumnsCount);
+        loadEnum(element, SupportsCaptionPosition.CaptionPosition.class, "captionPosition",
+                resultComponent::setCaptionPosition);
 
         loadActions(resultComponent, element);
 
@@ -143,33 +147,44 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
     }
 
     protected void loadConfiguration(Filter component, Element configurationElement) {
-        String code = configurationElement.attributeValue("code");
+        String id = configurationElement.attributeValue("id");
         Optional<LogicalFilterComponent.Operation> rootOperationOptional =
                 loadEnum(configurationElement, LogicalFilterComponent.Operation.class, "operation");
-        String caption = loadString(configurationElement, "caption").orElse(null);
+        String name = loadResourceString(configurationElement.attributeValue("name"));
 
         Filter.Configuration configuration = rootOperationOptional
-                .map(operation -> getResultComponent().addConfiguration(code, caption, operation))
-                .orElseGet(() -> getResultComponent().addConfiguration(code, caption));
+                .map(operation -> getResultComponent().addConfiguration(id, name, operation))
+                .orElseGet(() -> getResultComponent().addConfiguration(id, name));
 
-        loadConfigurationComponents(configuration.getRootLogicalFilterComponent(), configurationElement);
+        loadConfigurationComponents(configuration, configurationElement);
 
-        loadBoolean(configurationElement, "showOnLayout", showOnLayout -> {
-            if (showOnLayout) {
+        loadBoolean(configurationElement, "default", defaultValue -> {
+            if (defaultValue
+                    && component.getCurrentConfiguration() == component.getEmptyConfiguration()) {
                 component.setCurrentConfiguration(configuration);
             }
         });
     }
 
-    protected void loadConfigurationComponents(LogicalFilterComponent rootGroupFilterComponent, Element element) {
+    protected void loadConfigurationComponents(Filter.Configuration configuration, Element element) {
+        LogicalFilterComponent rootGroupFilterComponent = configuration.getRootLogicalFilterComponent();
         for (Element filterElement : element.elements()) {
-            rootGroupFilterComponent.add(loadFilterComponent(filterElement));
+            FilterComponent filterComponent = loadFilterComponent(filterElement);
+            rootGroupFilterComponent.add(filterComponent);
+
+            if (filterComponent instanceof SingleFilterComponent) {
+                configuration.setDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                        ((SingleFilterComponent<?>) filterComponent).getValue());
+            }
         }
     }
 
     protected FilterComponent loadFilterComponent(Element element) {
         ComponentLoader<?> filterComponentLoader = getLayoutLoader().createComponent(element);
-        ((FilterComponent) filterComponentLoader.getResultComponent()).setDataLoader(resultComponent.getDataLoader());
+        ((FilterComponent) filterComponentLoader.getResultComponent())
+                .setConditionModificationDelegated(true);
+        ((FilterComponent) filterComponentLoader.getResultComponent())
+                .setDataLoader(resultComponent.getDataLoader());
         filterComponentLoader.loadComponent();
         return (FilterComponent) filterComponentLoader.getResultComponent();
     }

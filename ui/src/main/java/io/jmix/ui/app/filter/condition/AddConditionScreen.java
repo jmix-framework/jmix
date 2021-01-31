@@ -17,25 +17,31 @@
 package io.jmix.ui.app.filter.condition;
 
 import com.google.common.collect.Lists;
+import io.jmix.core.AccessManager;
 import io.jmix.core.LoadContext;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.WindowConfig;
+import io.jmix.ui.accesscontext.UiJpqlFilterConditionsContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PopupButton;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
-import io.jmix.ui.component.filter.FilterConditionsBuilder;
-import io.jmix.ui.component.filter.FilterSupport;
+import io.jmix.ui.component.filter.builder.PropertyConditionBuilder;
 import io.jmix.ui.component.filter.registration.FilterComponents;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
+import io.jmix.ui.entity.AbstractSingleFilterCondition;
 import io.jmix.ui.entity.FilterCondition;
+import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.HeaderFilterCondition;
+import io.jmix.ui.entity.JpqlFilterCondition;
+import io.jmix.ui.entity.PropertyFilterCondition;
+import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.LookupComponent;
 import io.jmix.ui.screen.Screen;
@@ -50,6 +56,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -67,15 +74,16 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected WindowConfig windowConfig;
-    @Autowired
-    protected FilterConditionsBuilder builder;
-    @Autowired
     protected ScreenBuilders screenBuilders;
     @Autowired
-    protected FilterSupport filterSupport;
-    @Autowired
     protected FilterComponents filterComponents;
+    @Autowired
+    protected AccessManager accessManager;
+    @Autowired
+    protected PropertyFilterSupport propertyFilterSupport;
+
+    @Autowired
+    protected CollectionLoader<FilterCondition> filterConditionsDl;
 
     @Autowired
     protected Tree<FilterCondition> filterConditionsTree;
@@ -85,6 +93,11 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
     protected TextField<String> conditionCaptionFilterField;
 
     protected List<FilterCondition> conditions = new ArrayList<>();
+    protected List<FilterCondition> rootConditions = new ArrayList<>();
+    protected List<FilterCondition> foundConditions = new ArrayList<>();
+    protected MetaClass filterMetaClass;
+    protected HeaderFilterCondition propertiesHeaderCondition;
+
     protected Filter.Configuration currentFilterConfiguration;
 
     public List<FilterCondition> getConditions() {
@@ -93,6 +106,8 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
 
     public void setConditions(List<FilterCondition> conditions) {
         this.conditions = conditions;
+        this.foundConditions = new ArrayList<>(conditions);
+        this.rootConditions = searchRootConditions(conditions);
     }
 
     public Filter.Configuration getCurrentFilterConfiguration() {
@@ -101,32 +116,45 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
 
     public void setCurrentFilterConfiguration(Filter.Configuration currentFilterConfiguration) {
         this.currentFilterConfiguration = currentFilterConfiguration;
+        this.filterMetaClass = currentFilterConfiguration.getOwner()
+                .getDataLoader()
+                .getContainer()
+                .getEntityMetaClass();
     }
 
     @Install(to = "filterConditionsDl", target = Target.DATA_LOADER)
     protected List<FilterCondition> filterConditionsDlLoadDelegate(LoadContext<FilterCondition> loadContext) {
-        String searchString = conditionCaptionFilterField.getValue();
-        return conditions.stream()
-                .filter(condition -> StringUtils.isEmpty(searchString) || condition.getCaption().contains(searchString))
-                .collect(Collectors.toList());
+        return foundConditions;
     }
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
-        String propertiesCaption =
-                messages.getMessage(FilterAddConditionAction.class, "addConditionAction.properties");
-
-        HeaderFilterCondition propertiesHeader = getHeaderFilterConditionByCaption(propertiesCaption);
-        if (propertiesHeader != null) {
-            filterConditionsTree.expand(propertiesHeader);
-        }
-
+        initFilterConditionsTree();
         initCreatePopupButton();
+    }
+
+    protected void initFilterConditionsTree() {
+        filterConditionsTree.collapseTree();
+        String propertiesCaption =
+                messages.getMessage(PropertyConditionBuilder.class, "propertyConditionBuilder.headerCaption");
+
+        propertiesHeaderCondition = getHeaderFilterConditionByCaption(propertiesCaption);
+        if (propertiesHeaderCondition != null) {
+            filterConditionsTree.expand(propertiesHeaderCondition);
+        }
     }
 
     protected void initCreatePopupButton() {
         for (Class<? extends FilterCondition> modelClass : filterComponents.getRegisteredModelClasses()) {
             try {
+                if (JpqlFilterCondition.class.isAssignableFrom(modelClass)) {
+                    UiJpqlFilterConditionsContext jpqlConditionsContext = new UiJpqlFilterConditionsContext();
+                    accessManager.applyRegisteredConstraints(jpqlConditionsContext);
+                    if (!jpqlConditionsContext.isPermitted()) {
+                        continue;
+                    }
+                }
+
                 String editScreenId = filterComponents.getEditScreenId(modelClass);
                 Action popupAction = createPopupAction(editScreenId, modelClass);
                 createPopupButton.addAction(popupAction);
@@ -136,8 +164,8 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
         }
     }
 
-    protected Action createPopupAction(String editScreenId,
-                                       Class<? extends FilterCondition> modelClass) {
+    @SuppressWarnings("unchecked")
+    protected Action createPopupAction(String editScreenId, Class modelClass) {
         MetaClass metaClass = metadata.getClass(modelClass);
 
         return new BaseAction("filter_create_" + editScreenId)
@@ -147,7 +175,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
                 .withHandler(actionPerformedEvent -> {
                     Screen editScreen = screenBuilders.editor(modelClass, getWindow().getFrameOwner())
                             .withScreenId(editScreenId)
-                            .newEntity()
+                            .newEntity(createFilterCondition(modelClass))
                             .build();
 
                     if (editScreen instanceof LogicalFilterConditionEdit) {
@@ -168,6 +196,16 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
                 });
     }
 
+    protected FilterCondition createFilterCondition(Class<? extends FilterCondition> modelClass) {
+        FilterCondition newCondition = metadata.create(modelClass);
+        newCondition.setMetaClass(filterMetaClass.getName());
+        if (newCondition instanceof AbstractSingleFilterCondition) {
+            FilterValueComponent filterValueComponent = metadata.create(FilterValueComponent.class);
+            ((AbstractSingleFilterCondition) newCondition).setValueComponent(filterValueComponent);
+        }
+        return newCondition;
+    }
+
     @Nullable
     protected HeaderFilterCondition getHeaderFilterConditionByCaption(String caption) {
         return conditions.stream()
@@ -176,5 +214,101 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
                 .map(condition -> (HeaderFilterCondition) condition)
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Subscribe("conditionCaptionFilterField")
+    protected void onConditionCaptionFilterFieldValueChange(HasValue.ValueChangeEvent<String> event) {
+        search(event.getValue());
+    }
+
+    @Nullable
+    protected List<FilterCondition> searchRootConditions(List<FilterCondition> conditions) {
+        return conditions.stream()
+                .filter(condition -> condition.getParent() == null)
+                .collect(Collectors.toList());
+    }
+
+    protected void search(@Nullable String searchValue) {
+        foundConditions.clear();
+
+        boolean loadAllConditions = StringUtils.isEmpty(searchValue) || rootConditions == null;
+        if (!loadAllConditions) {
+            findConditionsRecursively(rootConditions, searchValue, false);
+
+            List<FilterCondition> exactlyFoundConditions = new ArrayList<>(foundConditions);
+            for (FilterCondition condition : exactlyFoundConditions) {
+                addParentToExpand(condition);
+            }
+            filterConditionsTree.expandTree();
+        } else {
+            foundConditions = new ArrayList<>(conditions);
+        }
+
+        filterConditionsDl.load();
+
+        if (loadAllConditions) {
+            initFilterConditionsTree();
+        }
+    }
+
+    protected void findConditionsRecursively(List<FilterCondition> conditions,
+                                             String searchValue,
+                                             boolean addChildrenAutomatically) {
+        for (FilterCondition condition : conditions) {
+            boolean conditionFound = addChildrenAutomatically ||
+                    StringUtils.containsIgnoreCase(condition.getCaption(), searchValue);
+            if (conditionFound) {
+                foundConditions.add(condition);
+            }
+
+            List<FilterCondition> children = searchChildren(condition);
+            if (!children.isEmpty()) {
+                findConditionsRecursively(children, searchValue, conditionFound);
+            }
+        }
+    }
+
+    protected List<FilterCondition> searchChildren(FilterCondition condition) {
+        return conditions.stream()
+                .filter(child -> Objects.equals(child.getParent(), condition))
+                .collect(Collectors.toList());
+    }
+
+    protected void addParentToExpand(FilterCondition child) {
+        FilterCondition parent = child.getParent();
+        if (parent != null) {
+            if (!foundConditions.contains(parent)) {
+                foundConditions.add(child.getParent());
+            }
+            addParentToExpand(child.getParent());
+        }
+    }
+
+    @Override
+    protected void select(Collection<FilterCondition> items) {
+        for (FilterCondition filterCondition : items) {
+            if (filterCondition instanceof PropertyFilterCondition
+                    && propertiesHeaderCondition != null
+                    && Objects.equals(propertiesHeaderCondition, getHeaderFilterCondition(filterCondition))) {
+                String fullCaption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass,
+                        ((PropertyFilterCondition) filterCondition).getProperty());
+                filterCondition.setCaption(fullCaption);
+            }
+        }
+
+        super.select(items);
+    }
+
+    @Nullable
+    protected HeaderFilterCondition getHeaderFilterCondition(@Nullable FilterCondition filterCondition) {
+        if (filterCondition instanceof HeaderFilterCondition) {
+            return (HeaderFilterCondition) filterCondition;
+        }
+
+        if (filterCondition == null) {
+            return null;
+        }
+
+        return getHeaderFilterCondition(filterCondition.getParent());
     }
 }

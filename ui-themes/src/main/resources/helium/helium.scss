@@ -80,6 +80,8 @@
 @import "components/tree/tree";
 @import "components/twincolumn/twincolumn";
 @import "components/window/window";
+@import "components/filter/filter";
+@import "components/groupfilter/groupfilter";
 @import "shared/loading-indicator";
 @import "shared/reconnect-dialog";
 @import "shared/tooltip";
@@ -162,6 +164,8 @@
   @include he-menubar;
   @include he-folders-pane;
   @include he-generic-filter;
+  @include he-filter;
+  @include he-group-filter;
 
   // Add-ons
   @include he-pivottable;

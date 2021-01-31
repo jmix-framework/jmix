@@ -93,6 +93,7 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     protected void initAddAction() {
         FilterAddConditionAction addAction = getAddAction();
         if (addAction != null && getListComponent() != null) {
+            addAction.setIcon(null);
             addAction.setFilter(getConfiguration().getOwner());
             addAction.refreshState();
             addAction.setSelectHandler(this::addActionSelectHandler);
@@ -135,6 +136,7 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     protected void initEditAction() {
         EditAction<FilterCondition> editAction = getEditAction();
         if (getListComponent() != null && editAction != null) {
+            editAction.setIcon(null);
             editAction.setScreenConfigurer(this::editActionScreenConfigurer);
             editAction.setAfterCloseHandler(this::editActionAfterCloseHandler);
 
@@ -183,8 +185,10 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     }
 
     protected void initRemoveAction() {
-        if (getRemoveAction() != null && getListComponent() != null) {
-            getRemoveAction().setAfterActionPerformedHandler(event ->
+        RemoveAction<FilterCondition> removeAction = getRemoveAction();
+        if (removeAction != null && getListComponent() != null) {
+            removeAction.setIcon(null);
+            removeAction.setAfterActionPerformedHandler(event ->
                     event.getItems().forEach(this::removeItemFromOwnFilterConditions));
         }
     }
@@ -242,10 +246,17 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     }
 
     protected ValidationErrors performOwnFilterComponentsValidation() {
-        return hasEmptyLogicalFilterConditions()
-                ? ValidationErrors.of(messages.getMessage(LogicalFilterConditionEdit.class,
-                "logicalFilterConditionEdit.logicalConditionCannotBeEmpty"))
-                : ValidationErrors.none();
+        if (hasEmptyLogicalFilterConditions()) {
+            return ValidationErrors.of(messages.getMessage(LogicalFilterConditionEdit.class,
+                    "logicalFilterConditionEdit.logicalConditionCannotBeEmpty"));
+        }
+
+        if (configurationExist()) {
+            return ValidationErrors.of(messages.getMessage(LogicalFilterConditionEdit.class,
+                    "logicalFilterConditionEdit.uniqueConfigurationId"));
+        }
+
+        return ValidationErrors.none();
     }
 
     protected boolean hasEmptyLogicalFilterConditions() {
@@ -257,5 +268,11 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         }
 
         return getCollectionContainer().getItems().isEmpty();
+    }
+
+    protected boolean configurationExist() {
+        Filter filter = configuration.getOwner();
+        return filter.getConfiguration(configuration.getId()) != null
+                && !Objects.equals(filter.getCurrentConfiguration().getId(), configuration.getId());
     }
 }

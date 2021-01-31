@@ -19,8 +19,8 @@ package io.jmix.ui.action.filter;
 import io.jmix.core.Messages;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Filter;
-import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
+import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.entity.FilterCondition;
@@ -28,6 +28,8 @@ import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Map;
 
 @StudioAction(category = "Filter Actions",
         description = "Copies all conditions from design-time configuration to run-time configuration")
@@ -37,6 +39,7 @@ public class FilterCopyAction extends FilterAction {
     public static final String ID = "filter_copy";
 
     protected FilterComponents filterComponents;
+    protected FilterSupport filterSupport;
 
     public FilterCopyAction() {
         this(ID);
@@ -61,6 +64,11 @@ public class FilterCopyAction extends FilterAction {
         this.filterComponents = filterComponents;
     }
 
+    @Autowired
+    public void setFilterSupport(FilterSupport filterSupport) {
+        this.filterSupport = filterSupport;
+    }
+
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
@@ -72,23 +80,26 @@ public class FilterCopyAction extends FilterAction {
         Filter.Configuration configuration = filter.getCurrentConfiguration();
         Filter.Configuration emptyConfiguration = filter.getEmptyConfiguration();
         if (configuration != emptyConfiguration) {
-            copyComponents(configuration, emptyConfiguration);
+            copyConfiguration(configuration, emptyConfiguration);
             emptyConfiguration.setModified(true);
             filter.setCurrentConfiguration(emptyConfiguration);
         }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void copyComponents(Filter.Configuration sourceConfiguration, Filter.Configuration destConfiguration) {
+    public void copyConfiguration(Filter.Configuration sourceConfiguration, Filter.Configuration destConfiguration) {
         destConfiguration.getRootLogicalFilterComponent().removeAll();
 
+        Map<String, Object> valuesMap = filterSupport.initConfigurationValuesMap(sourceConfiguration);
         LogicalFilterComponent sourceRootComponent = sourceConfiguration.getRootLogicalFilterComponent();
-        for (FilterComponent ownFilterComponent : sourceRootComponent.getOwnFilterComponents()) {
-            FilterConverter converter =
-                    filterComponents.getConverterByComponentClass(ownFilterComponent.getClass(), filter);
-            FilterCondition filterCondition = converter.convertToModel(ownFilterComponent);
-            FilterComponent copy = converter.convertToComponent(filterCondition);
-            destConfiguration.getRootLogicalFilterComponent().add(copy);
-        }
+        FilterConverter converter =
+                filterComponents.getConverterByComponentClass(sourceRootComponent.getClass(), filter);
+        FilterCondition filterCondition = converter.convertToModel(sourceRootComponent);
+        filterSupport.resetConfigurationValuesMap(sourceConfiguration, valuesMap);
+
+        LogicalFilterComponent copy = (LogicalFilterComponent) converter.convertToComponent(filterCondition);
+        destConfiguration.setRootLogicalFilterComponent(copy);
+        filterSupport.refreshConfigurationDefaultValues(destConfiguration);
+        filterSupport.resetConfigurationValuesMap(destConfiguration, valuesMap);
     }
 }

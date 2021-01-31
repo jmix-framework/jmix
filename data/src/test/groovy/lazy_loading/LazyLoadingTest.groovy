@@ -21,6 +21,7 @@ import io.jmix.core.FetchPlanRepository
 import io.jmix.core.LoadContext
 import io.jmix.core.Metadata
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.lazyloading.*
 
@@ -143,6 +144,40 @@ class LazyLoadingTest extends DataSpec {
 
         oneToManyEntity.getName() == "Name"
         oneToManyEntity.getManyToOneEntities().size() == 2
+    }
+
+    @Ignore
+    def "OneToMany traverse from ManyToOne"() {
+        setup:
+
+        OneToManyEntity oneToManyEntity = metadata.create(OneToManyEntity.class)
+        oneToManyEntity.setName("Name")
+        dataManager.save(oneToManyEntity)
+
+        ManyToOneEntity manyToOneEntity1 = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity1.setName("Name many")
+        manyToOneEntity1.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity1)
+
+        ManyToOneEntity manyToOneEntity2 = metadata.create(ManyToOneEntity.class)
+        manyToOneEntity2.setName("Name many 2")
+        manyToOneEntity2.setOneToManyEntity(oneToManyEntity)
+        dataManager.save(manyToOneEntity2)
+
+        when:
+
+        LoadContext<ManyToOneEntity> loadContext = new LoadContext<>(metadata.getClass(ManyToOneEntity.class))
+        loadContext.setId(manyToOneEntity2)
+
+        ManyToOneEntity manyToOneEntity = dataManager.load(loadContext)
+        def manyToOneEntities = manyToOneEntity.getOneToManyEntity().manyToOneEntities
+
+        then:
+
+        manyToOneEntities.size() == 2
+        manyToOneEntities.each {
+            assert it.name.startsWith('Name')
+        }
     }
 
     def "ManyToMany test"() {

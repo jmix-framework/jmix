@@ -25,6 +25,9 @@
     <dialogMode height="600"
                 width="800"/>
     <layout spacing="true" expand="usersTable">
+        <filter id="filter" dataLoader="usersDl">
+            <properties include=".*"/>
+        </filter>
         <groupTable id="usersTable"
                     width="100%"
                     dataContainer="usersDc"

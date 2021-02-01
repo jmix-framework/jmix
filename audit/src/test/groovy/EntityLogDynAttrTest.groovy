@@ -69,7 +69,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
     protected Category firstCategory, secondCategory
 
-    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute, entityCollectionAttribute
+    protected CategoryAttribute firstAttribute, notLoggedAttribute, entityAttribute, entityCollectionAttribute, dottedAttribute
 
     void setup() {
         clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
@@ -100,7 +100,8 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
                 secondCategory,
                 entityAttribute,
-                entityCollectionAttribute)
+                entityCollectionAttribute,
+                dottedAttribute)
 
         dynamicModelConfiguration.reload()
     }
@@ -125,7 +126,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
     private void createFirstEntityAttributes() {
         firstAttribute = metadata.create(CategoryAttribute)
-        firstAttribute.name = 'firstAttribute'
+        firstAttribute.name = 'First Attribute'
         firstAttribute.code = 'firstAttribute'
         firstAttribute.dataType = AttributeType.STRING
         firstAttribute.categoryEntityType = 'dynaudit$FirstEntity'
@@ -133,7 +134,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         firstAttribute.defaultEntity = new ReferenceToEntity()
 
         notLoggedAttribute = metadata.create(CategoryAttribute)
-        notLoggedAttribute.name = 'notLoggedAttribute'
+        notLoggedAttribute.name = 'Not Logged Attribute'
         notLoggedAttribute.code = 'notLoggedAttribute'
         notLoggedAttribute.dataType = AttributeType.STRING
         notLoggedAttribute.categoryEntityType = 'dynaudit$FirstEntity'
@@ -143,8 +144,8 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
     private void createSecondEntityAttributes() {
         entityAttribute = metadata.create(CategoryAttribute)
-        entityAttribute.name = 'additionalEntityAttribute'
-        entityAttribute.code = 'additionalEntityAttribute'
+        entityAttribute.name = 'Entity Attribute'
+        entityAttribute.code = 'entityAttribute'
         entityAttribute.dataType = AttributeType.ENTITY
         entityAttribute.categoryEntityType = 'dynaudit$SecondEntity'
         entityAttribute.category = secondCategory
@@ -152,14 +153,22 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         entityAttribute.defaultEntity = new ReferenceToEntity()
 
         entityCollectionAttribute = metadata.create(CategoryAttribute)
-        entityCollectionAttribute.name = 'entityCollectionAttribute'
+        entityCollectionAttribute.name = 'Entity Collection Attribute'
         entityCollectionAttribute.code = 'entityCollectionAttribute'
         entityCollectionAttribute.dataType = AttributeType.ENTITY
-        entityCollectionAttribute.categoryEntityType = 'logdynattr$User'
+        entityCollectionAttribute.categoryEntityType = 'dynaudit$SecondEntity'
         entityCollectionAttribute.category = secondCategory
         entityCollectionAttribute.entityClass = 'test_support.testmodel.dynattr.AdditionalEntity'
         entityCollectionAttribute.isCollection = true
         entityCollectionAttribute.defaultEntity = new ReferenceToEntity()
+
+        dottedAttribute = metadata.create(CategoryAttribute)
+        dottedAttribute.name = 'Attribute with dots in name'
+        dottedAttribute.code = 'dotted.attribute'
+        dottedAttribute.dataType = AttributeType.BOOLEAN
+        dottedAttribute.categoryEntityType = 'dynaudit$SecondEntity'
+        dottedAttribute.category = secondCategory
+        dottedAttribute.defaultEntity = new ReferenceToEntity()
     }
 
     @Ignore
@@ -240,13 +249,17 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
     def "test attribute types"() {
 
         when: 'entity created'
-        def secondEntity = metadata.create(SecondEntity)
+        SecondEntity secondEntity = metadata.create(SecondEntity)
         dataManager.save(secondEntity)
         def creationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
         then: 'All attributes considered'
         creationRecord.type == EntityLogItem.Type.CREATE
-        creationRecord.changes == "stringAttribute=\nid=${secondEntity.id}\n"
+        creationRecord.changes.contains("stringAttribute=\n")
+        creationRecord.changes.contains("id=${secondEntity.id}\n")
+        creationRecord.changes.contains("+entityAttribute=\n")
+        creationRecord.changes.contains("+entityCollectionAttribute=\n")
+        creationRecord.changes.contains("+dotted.attribute=\n")
 
         when: 'Entity modified'
 
@@ -256,32 +269,45 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         anotherExtraEntity.name = "2"
         dataManager.save(prevExtraEntity, anotherExtraEntity)
 
-
         EntityValues.setValue(secondEntity, '+entityAttribute', prevExtraEntity)
         EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [prevExtraEntity, anotherExtraEntity])
+
+        EntityValues.setValue(secondEntity, '+dotted.attribute', true)
         dataManager.save(secondEntity)
 
         AdditionalEntity newExtraEntity = metadata.create(AdditionalEntity)
         newExtraEntity.name = "new"
         dataManager.save(newExtraEntity)
-        //secondEntity = reloadWithDynamicAttributes(secondEntity)//todo taimanov discuss: entity attribute value is not loaded
+        secondEntity = reloadWithDynamicAttributes(secondEntity)
         secondEntity.stringAttribute = "new string value"
         EntityValues.setValue(secondEntity, '+entityAttribute', newExtraEntity)
         EntityValues.setValue(secondEntity, '+entityCollectionAttribute', [newExtraEntity, anotherExtraEntity])
+        EntityValues.setValue(secondEntity, '+dotted.attribute', false)
+        EntityValues.setValue(secondEntity, '+notExistingAttribute', "WIZZARD")
         dataManager.save(secondEntity)
 
         def modificationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
         then: 'All changes logged correctly'
-        modificationRecord.changes.count("\n") == 8
-        modificationRecord.changes.contains("+entityAttribute-oldVlId=${prevExtraEntity.id}\n")
+        modificationRecord.changes.count("\n") == 10
+
         modificationRecord.changes.contains("+entityAttribute=>new<\n")
-        modificationRecord.changes.contains("+entityCollectionAttribute=[>new<,>2<]\n")
-        modificationRecord.changes.contains("+entityAttribute-oldVl=>prev<\n")
         modificationRecord.changes.contains("+entityAttribute-id=${newExtraEntity.id}\n")
-        modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>prev<,>2<]\n")
+
+        modificationRecord.changes.contains("+entityAttribute-oldVl=>prev<\n")
+        modificationRecord.changes.contains("+entityAttribute-oldVlId=${prevExtraEntity.id}\n")
+
+        modificationRecord.changes.contains("+dotted.attribute=false\n")
+        modificationRecord.changes.contains("dotted.attribute-oldVl=true\n")
+
         modificationRecord.changes.contains("stringAttribute=new string value\n")
         modificationRecord.changes.contains("stringAttribute-oldVl=\n")
+
+        (modificationRecord.changes.contains("+entityCollectionAttribute=[>new<,>2<]\n")
+                || modificationRecord.changes.contains("+entityCollectionAttribute=[>2<,>new<]\n"))
+        (modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>prev<,>2<]\n")
+                || modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>2<,>prev<]\n"))
+
     }
 
     protected Object reloadWithDynamicAttributes(Entity entity) {

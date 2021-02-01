@@ -35,7 +35,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
-import io.jmix.data.ExtraAttributesHelper;
 import io.jmix.data.PersistenceTools;
 import io.jmix.data.impl.EntityAttributeChanges;
 import io.jmix.data.impl.JpaDataStoreListener;
@@ -409,7 +408,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         MetaClass metaClass = metadata.getClass(entity);
         // filter attributes that do not exists in entity anymore
         return attributes.stream()
-                .filter(attributeName -> ExtraAttributesHelper.isExtraAttribute(attributeName, entity)
+                .filter(attributeName -> metadataTools.isAdditionalProperty(metaClass, attributeName)
                         || metaClass.getPropertyPath(attributeName) != null)
                 .collect(Collectors.toSet());
     }
@@ -525,7 +524,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             type = EntityLogItem.Type.MODIFY;
             Set<String> dirtyAttributes = new HashSet<>();
             for (String attributePath : attributes) {
-                if (ExtraAttributesHelper.isExtraAttribute(attributePath, entity)) {
+                if (metadataTools.isAdditionalProperty(metaClass, attributePath)) {
                     if (dirty.contains(attributePath)) {
                         dirtyAttributes.add(attributePath);
                     }
@@ -691,8 +690,9 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             attributes.add(metaProperty.getName());
         }
 
-        attributes.addAll(ExtraAttributesHelper.getExtraAttributes(entity));
-
+        for (MetaProperty object : metadataTools.getAdditionalProperties(metaClass)) {
+            attributes.add(object.getName());
+        }
         return attributes;
     }
 

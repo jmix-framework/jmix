@@ -1270,4 +1270,19 @@ public class MetadataTools {
                 .flatMap(metadataExtension -> metadataExtension.getAdditionalProperties(metaClass).stream())
                 .collect(Collectors.toSet());
     }
+
+    /**
+     * @param metaClass
+     * @param propertyName
+     */
+    public boolean isAdditionalProperty(MetaClass metaClass, String propertyName) {
+        if (metadataExtensions == null)
+            return false;
+
+        for (MetadataExtension extension : metadataExtensions) {
+            if (extension != null && extension.isAdditionalProperty(metaClass, propertyName))
+                return true;
+        }
+        return false;
+    }
 }

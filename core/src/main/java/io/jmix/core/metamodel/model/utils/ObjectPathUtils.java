@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectPathUtils {
+    private static final String SPECIAL_PATH_MARKERS = "+";
 
     /**
      * Converts a string of identifiers separated by dots to an array. A part of the given string, enclosed in square
@@ -37,7 +38,7 @@ public class ObjectPathUtils {
         if (path == null)
             return new String[0];
 
-        if (path.startsWith("+"))//todo taimanov discuss and remove if no dots in extra attribute name allowed
+        if (isSpecialPath(path))
             return new String[]{path};
 
         List<String> elements = new ArrayList<>(4);
@@ -95,5 +96,9 @@ public class ObjectPathUtils {
             i++;
         }
         return buffer.toString();
+    }
+
+    public static boolean isSpecialPath(String path) {
+        return SPECIAL_PATH_MARKERS.indexOf(path.charAt(0)) != -1;
     }
 }

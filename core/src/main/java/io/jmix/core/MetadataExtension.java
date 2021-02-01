@@ -28,9 +28,11 @@ public interface MetadataExtension {
 
     /**
      * Returns set additional properties of the given MetaClass.
-     *      @param metaClass MetaClass instance
-     *      @return Set of MetaProperties
+     *
+     * @param metaClass MetaClass instance
+     * @return Set of MetaProperties
      */
     Set<MetaProperty> getAdditionalProperties(MetaClass metaClass);
 
+    boolean isAdditionalProperty(MetaClass metaClass, String propertyName);
 }

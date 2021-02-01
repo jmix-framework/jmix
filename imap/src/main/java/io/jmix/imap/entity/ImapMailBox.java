@@ -17,6 +17,7 @@
 package io.jmix.imap.entity;
 
 import io.jmix.core.DeletePolicy;
+import io.jmix.core.FileRef;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
@@ -30,7 +31,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -88,7 +88,7 @@ public class ImapMailBox {
     protected String secureMode;
 
     @Column(name = "ROOT_CERTIFICATE")
-    protected URI rootCertificate;
+    protected FileRef rootCertificate;
 
     @Column(name = "AUTHENTICATION_METHOD", nullable = false)
     protected String authenticationMethod;
@@ -294,11 +294,11 @@ public class ImapMailBox {
         this.port = port;
     }
 
-    public void setRootCertificate(URI rootCertificate) {
+    public void setRootCertificate(FileRef rootCertificate) {
         this.rootCertificate = rootCertificate;
     }
 
-    public URI getRootCertificate() {
+    public FileRef getRootCertificate() {
         return rootCertificate;
     }
 

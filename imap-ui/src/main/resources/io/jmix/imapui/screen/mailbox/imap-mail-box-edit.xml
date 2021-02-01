@@ -51,7 +51,7 @@
                                 <numberFormatter format="#####"/>
                             </textField>
                             <field property="secureMode"/>
-                            <field id="mailBoxRootCertificateField" property="rootCertificate"/>
+                            <fileStorageUpload id="mailBoxRootCertificateField" property="rootCertificate"/>
                             <textField dataContainer="authenticationDc" property="username"/>
                             <passwordField caption="msg://passwordFieldCaption"
                                            dataContainer="authenticationDc"

@@ -16,15 +16,16 @@
 
 package io.jmix.imapui.screen.message;
 
-import com.vaadin.server.StreamResource;
-import io.jmix.core.FileTypesHelper;
+import io.jmix.core.CoreProperties;
 import io.jmix.imap.ImapAttachments;
 import io.jmix.imap.ImapManager;
 import io.jmix.imap.dto.ImapMessageDto;
 import io.jmix.imap.entity.ImapMessage;
 import io.jmix.imap.entity.ImapMessageAttachment;
+import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
+import io.jmix.ui.download.ByteArrayDataProvider;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.executor.BackgroundTask;
 import io.jmix.ui.executor.BackgroundTaskHandler;
@@ -72,6 +73,10 @@ public class ImapMessageEdit extends StandardEditor<ImapMessage> {
     protected Downloader downloader;
     @Autowired
     protected DataLoader imapDemoAttachmentsLoader;
+    @Autowired
+    protected UiProperties uiProperties;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     @Override
     public void setEntityToEdit(ImapMessage item) {
@@ -90,11 +95,9 @@ public class ImapMessageEdit extends StandardEditor<ImapMessage> {
     @Subscribe("attachmentsTable.download")
     public void downloadAttachment(Action.ActionPerformedEvent event) {
         attachmentsTable.getSelected().forEach(attachment -> {
-            StreamResource resource = new StreamResource(
-                    () -> new ByteArrayInputStream(imapAttachments.loadFile(attachment)), attachment.getName());
-
-            resource.setMIMEType(FileTypesHelper.getMIMEType(attachment.getName()));
-            downloader.download(resource);
+            byte[] bytes = imapAttachments.loadFile(attachment);
+            downloader.download(new ByteArrayDataProvider(bytes, uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
+                    coreProperties.getTempDir()), attachment.getName());
 
         });
     }

@@ -16,9 +16,7 @@
 
 package io.jmix.imapui.screen.mailbox;
 
-import io.jmix.core.EntityStates;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.imap.AvailableBeansProvider;
 import io.jmix.imap.entity.*;
@@ -35,6 +33,7 @@ import io.jmix.ui.model.DataContext;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,7 +103,7 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     protected boolean connectionEstablished = true;
 
     @Autowired
-    protected Component mailBoxRootCertificateField;
+    protected FileStorageUploadField mailBoxRootCertificateField;
 
     @Autowired
     protected TreeTable<ImapFolder> foldersTable;
@@ -136,6 +135,13 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     @Autowired
     protected ImapEventHandlersFragment handlersFragment;
 
+    protected boolean rootCertificateUploaded = false;
+
+    @Autowired
+    protected FileStorageLocator fileStorageLocator;
+
+    protected FileStorage fileStorage;
+
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent event) {
         mailBoxDl.load();
@@ -160,6 +166,11 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
         setTrashFolderControls();
+    }
+
+    @Subscribe("mailBoxRootCertificateField")
+    protected void onMailBoxRootCertificateFileUploadSucceed(SingleFileUploadField.FileUploadSucceedEvent event) {
+        rootCertificateUploaded = true;
     }
 
     @Subscribe("checkConnectionBtn")
@@ -198,6 +209,16 @@ public class ImapMailBoxEdit extends StandardEditor<ImapMailBox> {
                     .withCaption(getMessage("saveWithoutConnectionWarning"))
                     .show();
             event.preventCommit();
+        }
+        if (rootCertificateUploaded) {
+            String fileName = mailBoxRootCertificateField.getFileName();
+            if (StringUtils.isNotEmpty(fileName)) {
+                if (fileStorage == null) {
+                    fileStorage = fileStorageLocator.getDefault();
+                }
+                FileRef fileRef = fileStorage.saveStream(fileName, mailBoxRootCertificateField.getFileContent());
+                getEditedEntity().setRootCertificate(fileRef);
+            }
         }
     }
 

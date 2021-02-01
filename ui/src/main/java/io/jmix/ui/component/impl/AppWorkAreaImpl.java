@@ -18,6 +18,7 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.event.Action;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
@@ -26,11 +27,9 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.themes.ValoTheme;
 import io.jmix.core.Messages;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.ui.AppUI;
+import io.jmix.ui.*;
 import io.jmix.ui.Screens.OpenedScreens;
 import io.jmix.ui.Screens.WindowStack;
-import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.navigation.NavigationState;
 import io.jmix.ui.navigation.UrlRouting;
@@ -40,6 +39,8 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.widget.*;
+import io.jmix.ui.widget.addon.dragdroplayouts.drophandlers.DefaultTabSheetDropHandler;
+import io.jmix.ui.widget.client.addon.dragdroplayouts.ui.LayoutDragMode;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,14 +211,13 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected HasTabSheetBehaviour createTabbedModeContainer() {
-        //if (webConfig.getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
+        if (getUiProperties().getMainTabSheetMode() == MainTabSheetMode.DEFAULT) {
             JmixMainTabSheet jmixTabSheet = new JmixMainTabSheet();
 
             tabbedContainer = jmixTabSheet;
 
-            // todo dragdroplayouts
-//            jmixTabSheet.setDragMode(LayoutDragMode.CLONE);
-//            jmixTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
+            jmixTabSheet.setDragMode(LayoutDragMode.CLONE);
+            jmixTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
             Action.Handler actionHandler = createTabSheetActionHandler(jmixTabSheet);
             jmixTabSheet.addActionHandler(actionHandler);
 
@@ -227,28 +227,26 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
                 reflectTabChangeToUrl(event.isUserOriginated());
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
             });
-        // } else {
-            // todo managed tabsheet
-            /*JmixManagedTabSheet cubaManagedTabSheet = new JmixManagedTabSheet();
+         } else {
+            JmixManagedTabSheet jmixManagedTabSheet = new JmixManagedTabSheet();
 
-            ManagedMainTabSheetMode tabSheetMode = configuration.getConfig(WebConfig.class)
-                    .getManagedMainTabSheetMode();
-            cubaManagedTabSheet.setMode(JmixManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
+            ManagedMainTabSheetMode tabSheetMode = getUiProperties().getManagedMainTabSheetMode();
+            jmixManagedTabSheet.setMode(JmixManagedTabSheet.Mode.valueOf(tabSheetMode.name()));
 
-            tabbedContainer = cubaManagedTabSheet;
+            tabbedContainer = jmixManagedTabSheet;
 
-            cubaManagedTabSheet.setDragMode(LayoutDragMode.CLONE);
-            cubaManagedTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
-            Action.Handler actionHandler = createTabSheetActionHandler(cubaManagedTabSheet);
-            cubaManagedTabSheet.addActionHandler(actionHandler);
+            jmixManagedTabSheet.setDragMode(LayoutDragMode.CLONE);
+            jmixManagedTabSheet.setDropHandler(new TabSheetReorderingDropHandler());
+            Action.Handler actionHandler = createTabSheetActionHandler(jmixManagedTabSheet);
+            jmixManagedTabSheet.addActionHandler(actionHandler);
 
-            cubaManagedTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
-            cubaManagedTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
-            cubaManagedTabSheet.addSelectedTabChangeListener(event -> {
+            jmixManagedTabSheet.setCloseOthersHandler(this::closeOtherTabWindows);
+            jmixManagedTabSheet.setCloseAllTabsHandler(this::closeAllTabWindows);
+            jmixManagedTabSheet.addSelectedTabChangeListener(event -> {
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
                 reflectTabChangeToUrl(event.isUserOriginated());
-            });*/
-        // }
+            });
+         }
 
         tabbedContainer.setHeight(100, Sizeable.Unit.PERCENTAGE);
         tabbedContainer.setStyleName(TABBED_CONTAINER_STYLENAME);
@@ -751,9 +749,8 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         applicationContext.publishEvent(new WorkAreaTabChangedEvent(tabSheet, this));
     }
 
-    // todo dragdroplayouts
     // Allows Tabs reordering, do not support component / text drop to Tabs panel
-    /*public static class TabSheetReorderingDropHandler extends DefaultTabSheetDropHandler {
+    public static class TabSheetReorderingDropHandler extends DefaultTabSheetDropHandler {
         @Override
         protected void handleDropFromAbsoluteParentLayout(DragAndDropEvent event) {
             // do nothing
@@ -768,7 +765,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
         protected void handleHTML5Drop(DragAndDropEvent event) {
             // do nothing
         }
-    }*/
+    }
 
     /**
      * Application event that is sent after selected tab changed in the main TabSheet.

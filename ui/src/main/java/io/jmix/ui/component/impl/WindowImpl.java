@@ -536,15 +536,14 @@ public abstract class WindowImpl implements Window, Component.Wrapper, Component
         while (componentsIterator.hasNext()) {
             Component child = componentsIterator.next();
 
-            // todo implement
-            /*if (child instanceof io.jmix.ui.component.TabSheet
+            if (child instanceof io.jmix.ui.component.TabSheet
                     || child instanceof Accordion) {
                 // #PL-3176
                 // we don't know about selected tab after request
                 // may be focused component lays on not selected tab
                 // it may break component tree
                 continue;
-            }*/
+            }
 
             if (child instanceof Component.Focusable) {
 

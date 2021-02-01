@@ -29,6 +29,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -36,6 +37,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = {CoreConfiguration.class, DataConfiguration.class})
 @EnableTransactionManagement
+@EnableScheduling
 public class SearchConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(SearchConfiguration.class);

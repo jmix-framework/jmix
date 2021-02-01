@@ -16,8 +16,12 @@
 
 package io.jmix.search.index.mapping;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+
+import java.util.Collections;
+import java.util.List;
 
 public class MappingFieldDescriptor {
 
@@ -25,7 +29,7 @@ public class MappingFieldDescriptor {
 
     protected String indexPropertyFullName;
 
-    protected MetaClass rootEntityMetaClass;
+    //protected MetaClass rootEntityMetaClass;
 
     protected MetaPropertyPath metaPropertyPath;
 
@@ -36,6 +40,8 @@ public class MappingFieldDescriptor {
     protected ValueMapper valueMapper;
 
     protected int order;
+
+    protected List<MetaPropertyPath> instanceNameRelatedProperties;
 
     //todo runtime parameters
 
@@ -48,9 +54,9 @@ public class MappingFieldDescriptor {
         return indexPropertyFullName;
     }
 
-    public MetaClass getRootEntityMetaClass() {
+    /*public MetaClass getRootEntityMetaClass() {
         return rootEntityMetaClass;
-    }
+    }*/
 
     public MetaPropertyPath getMetaPropertyPath() {
         return metaPropertyPath;
@@ -73,9 +79,9 @@ public class MappingFieldDescriptor {
         this.indexPropertyFullName = indexPropertyFullName;
     }
 
-    public void setRootEntityMetaClass(MetaClass rootEntityMetaClass) {
+    /*public void setRootEntityMetaClass(MetaClass rootEntityMetaClass) {
         this.rootEntityMetaClass = rootEntityMetaClass;
-    }
+    }*/
 
     public void setMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
         this.metaPropertyPath = metaPropertyPath;
@@ -101,12 +107,28 @@ public class MappingFieldDescriptor {
         this.order = order;
     }
 
+    public JsonNode getValue(Object entity) {
+        return valueMapper.getValue(entity, metaPropertyPath, Collections.emptyMap() /* runtime parameters */);
+    }
+
+    /*public ValueMapper getValueMapper() {
+        return valueMapper;
+    }*/
+
+    public void setValueMapper(ValueMapper valueMapper) {
+        this.valueMapper = valueMapper;
+    }
+
     public ValueMapper getValueMapper() {
         return valueMapper;
     }
 
-    public void setValueMapper(ValueMapper valueMapper) {
-        this.valueMapper = valueMapper;
+    public List<MetaPropertyPath> getInstanceNameRelatedProperties() {
+        return instanceNameRelatedProperties;
+    }
+
+    public void setInstanceNameRelatedProperties(List<MetaPropertyPath> instanceNameRelatedProperties) {
+        this.instanceNameRelatedProperties = instanceNameRelatedProperties;
     }
 
     @Override

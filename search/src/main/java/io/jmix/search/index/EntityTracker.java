@@ -24,93 +24,91 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.PersistenceTools;
-import io.jmix.data.listener.AfterDeleteEntityListener;
-import io.jmix.data.listener.AfterInsertEntityListener;
-import io.jmix.data.listener.AfterUpdateEntityListener;
+import io.jmix.data.listener.BeforeDeleteEntityListener;
+import io.jmix.data.listener.BeforeInsertEntityListener;
+import io.jmix.data.listener.BeforeUpdateEntityListener;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
+import io.jmix.search.index.queue.QueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component(EntityTracker.NAME)
 public class EntityTracker implements
-        AfterInsertEntityListener<Object>,
-        AfterUpdateEntityListener<Object>,
-        AfterDeleteEntityListener<Object> {
+        BeforeInsertEntityListener<Object>,
+        BeforeUpdateEntityListener<Object>,
+        BeforeDeleteEntityListener<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(EntityTracker.class);
 
     public static final String NAME = "search_EntityTracker";
 
     @Autowired
-    protected EntityIndexer entityIndexer;
-
-    @Autowired
     protected Metadata metadata;
-
     @Autowired
     protected PersistenceTools persistenceTools;
-
     @Autowired
     protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
-
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected QueueService queueService;
 
     @Override
-    public void onAfterInsert(Object entity) {
+    public void onBeforeInsert(Object entity) {
         log.info("[IVGA] Track insertion of entity {}", entity);
-        handleEntity(entity, EntityChangeType.CREATE);
+        handleEntityChange(entity, EntityChangeType.CREATE);
     }
 
     @Override
-    public void onAfterUpdate(Object entity) {
+    public void onBeforeUpdate(Object entity) {
         log.info("[IVGA] Track update of entity {}", entity);
-        handleEntity(entity, EntityChangeType.UPDATE);
+        handleEntityChange(entity, EntityChangeType.UPDATE);
     }
 
     @Override
-    public void onAfterDelete(Object entity) {
+    public void onBeforeDelete(Object entity) {
         log.info("[IVGA] Track deletion of entity {}", entity);
-        handleEntity(entity, EntityChangeType.DELETE);
+        handleEntityChange(entity, EntityChangeType.DELETE);
     }
 
-    protected void handleEntity(Object entity, EntityChangeType entityChangeType) {
+    protected void handleEntityChange(Object entity, EntityChangeType entityChangeType) {
         try {
-            Set<String> dirtyFields = persistenceTools.getDirtyFields(entity);
-            log.info("[IVGA] Dirty fields: {}", dirtyFields);
             MetaClass metaClass = metadata.getClass(entity);
             Class<?> entityClass = metaClass.getJavaClass();
 
             if (isDirectlyIndexed(entityClass)) { //todo check dirty fields
                 log.info("[IVGA] {} is directly indexed", entityClass);
-                Object entityId = EntityValues.getId(entity);
-                if (entityId == null) {
-                    throw new RuntimeException("Unable to index entity with NULL id");
-                }
-                entityIndexer.indexEntityById(metaClass, entityId, entityChangeType);
+                String entityId = getEntityIdAsString(entity);
+                queueService.enqueue(metaClass, entityId, entityChangeType);
             }
 
+            Map<MetaClass, Set<String>> dependentEntityIds;
             switch (entityChangeType) {
+                case CREATE:
                 case UPDATE:
-                    Map<MetaClass, Set<Object>> dependentEntitiesForUpdate = getDependentEntitiesForUpdate(entity, entityClass);
-                    log.info("[IVGA] Dependent entities for Update: {}", dependentEntitiesForUpdate);
-                    //todo index
+                    dependentEntityIds = getDependentEntityIdsForUpdate(entity, entityClass);
+                    log.info("[IVGA] Dependent entities for Create/Update: {}", dependentEntityIds);
                     break;
                 case DELETE:
-                    Map<MetaClass, Set<Object>> dependentEntitiesForDelete = getDependentEntitiesForDelete(entity, entityClass);
-                    log.info("[IVGA] Dependent entities for Delete: {}", dependentEntitiesForDelete);
-                    //todo index
+                    dependentEntityIds = getDependentEntityIdsForDelete(entity, entityClass);
+                    log.info("[IVGA] Dependent entities for Delete: {}", dependentEntityIds);
                     break;
                 default:
+                    dependentEntityIds = Collections.emptyMap();
                     break;
-
             }
+
+            dependentEntityIds.forEach(((dependentEntityClass, ids) -> {
+                queueService.enqueue(dependentEntityClass, ids, EntityChangeType.UPDATE);
+            }));
         } catch (Exception e) {
-            log.error("[IVGA] Failed to index data for entity {} and change type '{}'", entity, entityChangeType);
+            log.error("[IVGA] Failed to enqueue data for entity {} and change type '{}'", entity, entityChangeType, e);
         }
     }
 
@@ -118,30 +116,30 @@ public class EntityTracker implements
         return indexDefinitionsProvider.isDirectlyIndexed(entityClass);
     }
 
-    protected Map<MetaClass, Set<Object>> getDependentEntitiesForUpdate(Object entity, Class<?> entityClass) {
-        log.info("[IVGA] getDependentEntitiesForUpdate: {} ({})", entity, entityClass);
-        Set<String> dirtyFields = persistenceTools.getDirtyFields(entity);
+    protected Map<MetaClass, Set<String>> getDependentEntityIdsForUpdate(Object entity, Class<?> entityClass) {
+        log.info("[IVGA] getDependentEntityIdsForUpdate: {} ({})", entity, entityClass);
+        Set<String> dirtyFields = persistenceTools.getDirtyFields(entity); //TODO Doesn't work during BeforeUpdateEntityListener firing (?)
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, dirtyFields);
-        return loadDependentEntities(entity, dependencies);
+        return loadDependentEntityIds(entity, dependencies);
     }
 
-    protected Map<MetaClass, Set<Object>> getDependentEntitiesForDelete(Object entity, Class<?> entityClass) {
-        log.info("[IVGA] getDependentEntitiesForDelete: {} ({})", entity, entityClass);
+    protected Map<MetaClass, Set<String>> getDependentEntityIdsForDelete(Object entity, Class<?> entityClass) {
+        log.info("[IVGA] getDependentEntityIdsForDelete: {} ({})", entity, entityClass);
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForDelete(entityClass);
-        return loadDependentEntities(entity, dependencies);
+        return loadDependentEntityIds(entity, dependencies);
     }
 
     //todo improve loading
-    protected Map<MetaClass, Set<Object>> loadDependentEntities(Object entity, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
+    protected Map<MetaClass, Set<String>> loadDependentEntityIds(Object entity, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
         log.info("[IVGA] Load Dependencies for entity {}: {}", entity, dependencyMetaData);
 
-        Map<MetaClass, Set<Object>> result = new HashMap<>();
+        Map<MetaClass, Set<String>> result = new HashMap<>();
         for(Map.Entry<MetaClass, Set<MetaPropertyPath>> entry : dependencyMetaData.entrySet()) {
             Set<MetaPropertyPath> properties = entry.getValue();
             if(properties.isEmpty()) {
                 continue;
             }
-            Set<Object> entities = new HashSet<>();
+            Set<String> entityIds = new HashSet<>();
             for(MetaPropertyPath property : properties) {
                 LoadContext.Query query = new LoadContext.Query(
                         "select e from " + entry.getKey().getName() + " e where e." + property.toPathString()  + " = :refObject"
@@ -152,14 +150,32 @@ public class EntityTracker implements
                 LoadContext<Object> loadContext = new LoadContext<>(entry.getKey());
                 loadContext.setQuery(query);
 
-                List<Object> loaded = dataManager.loadList(loadContext);
-                log.info("[IVGA] Loaded dependent references = {}", loaded);
-                entities.addAll(loaded);
+                List<String> loadedEntityIds = dataManager.loadList(loadContext).stream()
+                        .map(this::getEntityIdAsStringOrNull)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                log.info("[IVGA] Loaded dependent references = {}", loadedEntityIds);
+                entityIds.addAll(loadedEntityIds);
             }
-            result.put(entry.getKey(), entities);
+            result.put(entry.getKey(), entityIds);
         }
 
         log.info("[IVGA] LoadDependentEntities result = {}", result);
         return result;
+    }
+
+    protected String getEntityIdAsString(Object entity) {
+        String id = getEntityIdAsStringOrNull(entity);
+        if(id == null) {
+            throw new RuntimeException("Entity ID is null");
+        }
+        return id;
+    }
+
+    @Nullable
+    protected String getEntityIdAsStringOrNull(Object entity) {
+        Object id = EntityValues.getId(entity);
+        return id == null ? null : id.toString();
+        //todo cases of complex id?
     }
 }

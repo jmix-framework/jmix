@@ -18,12 +18,17 @@ package io.jmix.search.index;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.indices.CreateIndexRequest;
 import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
+import org.elasticsearch.client.indices.GetIndexResponse;
+import org.elasticsearch.cluster.metadata.MappingMetadata;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component("search_IndexManager")
 public class IndexManager {
@@ -56,8 +62,32 @@ public class IndexManager {
         log.info("[IVGA] Result of index '{}' creation (ack={}): {}", indexDefinition.getIndexName(), createIndexResponse.isAcknowledged(), createIndexResponse);
     }
 
+    public void dropIndex(String indexName) throws IOException {
+        DeleteIndexRequest request = new DeleteIndexRequest(indexName);
+        AcknowledgedResponse response = esClient.indices().delete(request, RequestOptions.DEFAULT);
+        log.info("[IVGA] Delete Index Response = {}", response);
+    }
+
     public boolean isIndexExist(String indexName) throws IOException {
         GetIndexRequest request = new GetIndexRequest(indexName);
         return esClient.indices().exists(request, RequestOptions.DEFAULT);
+    }
+
+    public boolean isIndexActual(IndexDefinition indexDefinition) throws IOException {
+        GetIndexResponse index = getIndex(indexDefinition.getIndexName());
+        Map<String, MappingMetadata> mappings = index.getMappings();
+        MappingMetadata mappingMetadata = mappings.get(indexDefinition.getIndexName());
+        Map<String, Object> currentMapping = mappingMetadata.getSourceAsMap();
+        log.info("[IVGA] Current mapping of index '{}': {}", indexDefinition.getIndexName(), currentMapping);
+
+        Map<String, Object> actualMapping = objectMapper.convertValue(indexDefinition.getMapping(), new TypeReference<Map<String, Object>>(){});
+        log.info("[IVGA] Actual mapping of index '{}': {}", indexDefinition.getIndexName(), actualMapping);
+
+        return actualMapping.equals(currentMapping);
+    }
+
+    public GetIndexResponse getIndex(String indexName) throws IOException {
+        GetIndexRequest request = new GetIndexRequest(indexName);
+        return esClient.indices().get(request, RequestOptions.DEFAULT);
     }
 }

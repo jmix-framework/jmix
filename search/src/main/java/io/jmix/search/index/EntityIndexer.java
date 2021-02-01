@@ -16,23 +16,31 @@
 
 package io.jmix.search.index;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
-import io.jmix.core.DataManager;
-import io.jmix.core.FetchPlanBuilder;
-import io.jmix.core.FetchPlans;
-import io.jmix.core.LoadContext;
+import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.Authenticator;
 import io.jmix.data.EntityChangeType;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
+import io.jmix.search.index.queue.QueueItem;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class EntityIndexer {
@@ -45,16 +53,36 @@ public class EntityIndexer {
     protected FetchPlans fetchPlans;
     @Autowired
     protected RestHighLevelClient esClient;
-
     @Autowired
     protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
+    @Autowired
+    protected Metadata metadata;
+
+    protected ObjectMapper objectMapper = new ObjectMapper();
+
+    public void indexEntities(Collection<QueueItem> queueItems) {
+        log.info("[IVGA] Index items: {}", queueItems);
+        Map<MetaClass, Map<EntityChangeType, Set<Object>>> indexScope = new HashMap<>();
+        queueItems.forEach(queueItem -> {
+            MetaClass metaClass = metadata.getClass(queueItem.getEntityClass());
+            Map<EntityChangeType, Set<Object>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
+            Set<Object> changesByType = changesByClass.computeIfAbsent(EntityChangeType.fromId(queueItem.getChangeType()), k -> new HashSet<>());
+            changesByType.add(getEntityIdFromString(queueItem.getEntityId()));
+        });
+
+        indexScope.forEach(
+                (metaClass, changes) -> changes.forEach(
+                        (entityChangeType, ids) -> indexEntitiesByIds(metaClass, ids, entityChangeType)
+                )
+        );
+    }
 
     public void indexEntityById(MetaClass metaClass, Object entityId, EntityChangeType changeType) {
         indexEntitiesByIds(metaClass, Collections.singletonList(entityId), changeType);
     }
 
     public void indexEntitiesByIds(MetaClass metaClass, Collection<Object> entityIds, EntityChangeType changeType) {
-        log.info("[IVGA] Index entity: Class={}, changeType={}, ids={}", metaClass, changeType, entityIds);
+        log.info("[IVGA] Index entities: Class={}, changeType={}, ids={}", metaClass, changeType, entityIds);
         IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionForEntityClass(metaClass.getJavaClass());
         if(indexDefinition == null) {
             log.warn("[IVGA] Index Definition not found for entity {}", metaClass);
@@ -64,37 +92,89 @@ public class EntityIndexer {
 
         if(EntityChangeType.UPDATE.equals(changeType) || EntityChangeType.CREATE.equals(changeType)) {
             LoadContext<Object> loadContext = new LoadContext<>(metaClass);
-            FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(metaClass.getJavaClass());
-            indexDefinition.getMapping().getFields().values().forEach((field) -> fetchPlanBuilder.add(field.getEntityPropertyFullName()));
 
-            loadContext.setIds(entityIds).setFetchPlan(fetchPlanBuilder.build());
+            FetchPlan fetchPlan = createFetchPlan(indexDefinition);
+            log.info("[IVGA] Fetch plan for class {}: {}", metaClass, fetchPlan.getProperties());
+            loadContext.setIds(entityIds).setFetchPlan(fetchPlan);
             List<Object> loaded = dataManager.loadList(loadContext);
             log.info("[IVGA] Loaded entities: {}", loaded);
 
+            BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
             loaded.forEach(object -> {
-                ObjectNode indexObject = JsonNodeFactory.instance.objectNode();
-                List<ObjectNode> fieldObjects = indexDefinition.getMapping().getFields().values().stream()
+                ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
+                indexDefinition.getMapping().getFields().values().stream()
                         .filter(field -> !field.isStandalone())
-                        .map(field -> {
-                            log.info("[IVGA] Extract value of property {}", field.getMetaPropertyPath());
-                            JsonNode propertyValue = field.getValueMapper().getValue(object, field.getMetaPropertyPath(), Collections.emptyMap());
+                        .forEach(field -> {
+                            log.trace("[IVGA] Extract value of property {}", field.getMetaPropertyPath());
+                            JsonNode propertyValue = field.getValue(object);
                             String indexPropertyFullName = field.getIndexPropertyFullName();
 
                             ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
-                            log.info("[IVGA] objectNodeForField = {}", objectNodeForField);
-
-                            return objectNodeForField;
-                        })
-                        .collect(Collectors.toList());
-
-                fieldObjects.forEach(fieldObject ->  merge(fieldObject, indexObject));
-                log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", object, indexObject);
+                            log.trace("[IVGA] objectNodeForField = {}", objectNodeForField);
+                            merge(objectNodeForField, resultObject);
+                        });
+                log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", object, resultObject);
+                try {
+                    request.add(new IndexRequest()
+                            .id(getEntityIdAsString(object))
+                            .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to create index request: unable to parse source object", e);
+                }
             });
+
+            try {
+                BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
+                log.info("[IVGA] Bulk Response (Index): Took {}, Status = {}, With Failures = {}",
+                        bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+            } catch (IOException e) {
+                throw new RuntimeException("Bulk request failed", e);
+            }
         } else if(EntityChangeType.DELETE.equals(changeType)) {
-            //todo
+            BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
+            entityIds.stream()
+                    .map(this::formatEntityIdAsString)
+                    .forEach(id -> request.add(new DeleteRequest().id(id)));
+
+            try {
+                BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
+                log.info("[IVGA] Bulk Response (Delete): Took {}, Status = {}, With Failures = {}",
+                        bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+            } catch (IOException e) {
+                throw new RuntimeException("Bulk request failed", e);
+            }
         } else {
             throw new UnsupportedOperationException("Entity Change Type '" + changeType + "' is not supported");
         }
+    }
+
+    protected FetchPlan createFetchPlan(IndexDefinition indexDefinition) {
+        FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexDefinition.getEntityClass());
+        indexDefinition.getMapping().getFields().values().forEach(field -> {
+            log.info("[IVGA] Add property to fetch plan: {}", field.getEntityPropertyFullName());
+            fetchPlanBuilder.add(field.getEntityPropertyFullName());
+            field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
+                log.info("[IVGA] Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
+            });
+        });
+        return fetchPlanBuilder.build();
+    }
+
+    protected String getEntityIdAsString(Object entity) {
+        Object entityId = EntityValues.getId(entity);
+        if(entityId == null) {
+            throw new RuntimeException("Entity ID is null");
+        }
+        return formatEntityIdAsString(entityId); //todo cases of complex id?
+    }
+
+    protected String formatEntityIdAsString(Object entityId) {
+        return entityId.toString();
+    }
+
+    protected Object getEntityIdFromString(String stringId) {
+        return UUID.fromString(stringId); //todo cases of complex id?
     }
 
     protected ObjectNode createObjectNodeForField(String key, JsonNode value) {
@@ -114,7 +194,7 @@ public class EntityIndexer {
 
     //todo move to tools?
     public void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
-        log.info("[IVGA] Merge object {} into {}", toBeMerged, mergedInTo);
+        log.trace("[IVGA] Merge object {} into {}", toBeMerged, mergedInTo);
         Iterator<Map.Entry<String, JsonNode>> incomingFieldsIterator = toBeMerged.fields();
         Iterator<Map.Entry<String, JsonNode>> mergedIterator;
 

@@ -16,8 +16,10 @@
 
 package io.jmix.search.index.mapping;
 
+import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.search.index.EntityTracker;
@@ -51,6 +53,8 @@ public class AnnotatedIndexDefinitionBuilder {
     protected PropertyTools propertyTools;
     @Autowired
     protected FieldMappingStrategyProvider fieldMappingStrategyProvider;
+    @Autowired
+    protected InstanceNameProvider instanceNameProvider;
 
     public IndexDefinition createIndexDefinition(String className) {
         log.info("[IVGA] Create Index Definition for class {}", className);
@@ -110,7 +114,7 @@ public class AnnotatedIndexDefinitionBuilder {
                             return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
                         }).filter(Optional::isPresent)
                         .map(Optional::get)
-                        .flatMap(descriptor -> processIndexMappingConfigTemplate(descriptor).stream())
+                        .flatMap(template -> processIndexMappingConfigTemplate(template).stream())
                         .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
                             int order1 = v1.getOrder();
                             int order2 = v2.getOrder();
@@ -169,19 +173,41 @@ public class AnnotatedIndexDefinitionBuilder {
         return effectiveProperties;
     }
 
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, IndexMappingConfigTemplate descriptor) {
-        FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(descriptor.getFieldMappingStrategyClass());
+    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, IndexMappingConfigTemplate template) {
+        FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(template.getFieldMappingStrategyClass());
         if(fieldMappingStrategy.isSupported(propertyPath)) {
+            List<MetaPropertyPath> instanceNameRelatedProperties;
+            if(propertyPath.getRange().isClass()) {
+                Collection<MetaProperty> instanceNameRelatedLocalProperties = instanceNameProvider.getInstanceNameRelatedProperties(
+                        propertyPath.getRange().asClass(), true
+                );
+                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+
+                instanceNameRelatedProperties = instanceNameRelatedLocalProperties.stream()
+                        .map(instanceNameRelatedProperty -> {
+                            MetaProperty[] extendedPropertyArray = Arrays.copyOf(metaProperties, metaProperties.length + 1);
+                            extendedPropertyArray[extendedPropertyArray.length - 1] = instanceNameRelatedProperty;
+                            return new MetaPropertyPath(propertyPath.getMetaClass(), extendedPropertyArray);
+                        })
+                        .collect(Collectors.toList());
+
+                log.info("[IVGA] instanceNameRelatedProperties={}", instanceNameRelatedProperties);
+            } else {
+                instanceNameRelatedProperties = Collections.emptyList();
+            }
+
+
             MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
             fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setMetaPropertyPath(propertyPath);
-            fieldDescriptor.setRootEntityMetaClass(descriptor.getRootEntityMetaClass());
+            //fieldDescriptor.setRootEntityMetaClass(descriptor.getRootEntityMetaClass());
             fieldDescriptor.setStandalone(false);
             fieldDescriptor.setOrder(fieldMappingStrategy.getOrder());
             fieldDescriptor.setValueMapper(fieldMappingStrategy.getValueMapper(propertyPath));
+            fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);
 
-            FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, descriptor.getParameters());
+            FieldConfiguration fieldConfiguration = fieldMappingStrategy.createFieldConfiguration(propertyPath, template.getParameters());
             fieldDescriptor.setFieldConfiguration(fieldConfiguration);
 
             return Optional.of(fieldDescriptor);

@@ -54,6 +54,13 @@ public class StartupIndexPreparer {
             if (indexExist) {
                 log.info("[IVGA] Index '{}' already exists", indexDefinition.getIndexName());
                 //todo compare mapping & settings
+                if(indexManager.isIndexActual(indexDefinition)) {
+                    log.info("[IVGA] Index '{}' has actual configuration", indexDefinition.getIndexName());
+                } else {
+                    log.info("[IVGA] Index '{}' has irrelevant configuration", indexDefinition.getIndexName());
+                    indexManager.dropIndex(indexDefinition.getIndexName());
+                    indexManager.createIndex(indexDefinition);
+                }
             } else {
                 log.info("[IVGA] Index '{}' does not exists. Create", indexDefinition.getIndexName());
                 indexManager.createIndex(indexDefinition);

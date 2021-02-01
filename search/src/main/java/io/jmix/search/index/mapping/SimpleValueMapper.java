@@ -43,7 +43,7 @@ public class SimpleValueMapper implements ValueMapper {
 
     @Override
     public JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameter) {
-        log.info("[IVGA] Get value of property '{}' from entity '{}'", propertyPath, entity);
+        //log.info("[IVGA] Get value of property '{}' from entity '{}'", propertyPath, entity);
         JsonNode result;
 
         Object value;
@@ -51,7 +51,7 @@ public class SimpleValueMapper implements ValueMapper {
             Object refEntity = EntityValues.getValueEx(entity, propertyPath);
             if(refEntity != null) {
                 String instanceName = metadataTools.getInstanceName(refEntity);
-                log.info("[IVGA] Instance Name for entity {} = {}", entity, instanceName);
+                //log.info("[IVGA] Instance Name for entity {} = {}", entity, instanceName);
                 JsonNode instanceNameNode = objectMapper.convertValue(instanceName, JsonNode.class);
                 ObjectNode node = JsonNodeFactory.instance.objectNode();
                 node.set("_instance_name", instanceNameNode);
@@ -64,7 +64,7 @@ public class SimpleValueMapper implements ValueMapper {
             result = objectMapper.convertValue(value, JsonNode.class);
         }
 
-        log.info("[IVGA] Result json: {}", result);
+        //log.info("[IVGA] Result json: {}", result);
         return result;
     }
 }

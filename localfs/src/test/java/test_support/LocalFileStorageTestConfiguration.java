@@ -36,7 +36,7 @@ public class LocalFileStorageTestConfiguration {
     @Bean
     @Primary
     FileStorage fileStorage() {
-        return new LocalFileStorage();
+        return new LocalFileStorage("testFs");
     }
 
     @Bean

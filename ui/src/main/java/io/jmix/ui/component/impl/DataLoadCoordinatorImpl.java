@@ -19,8 +19,8 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
+import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataLoadCoordinator;
 import io.jmix.ui.component.Frame;
@@ -190,13 +190,11 @@ public class DataLoadCoordinatorImpl extends AbstractFacet implements DataLoadCo
 
     private boolean containsLikeClause(Condition condition, String parameter) {
         if (condition instanceof JpqlCondition) {
-            String where = ((JpqlCondition) condition).getValue("where");
-            if (where != null) {
-                Matcher matcher = LIKE_PATTERN.matcher(where);
-                while (matcher.find()) {
-                    if (matcher.group(1).equals(parameter)) {
-                        return true;
-                    }
+            String where = ((JpqlCondition) condition).getWhere();
+            Matcher matcher = LIKE_PATTERN.matcher(where);
+            while (matcher.find()) {
+                if (matcher.group(1).equals(parameter)) {
+                    return true;
                 }
             }
         } else if (condition instanceof LogicalCondition) {

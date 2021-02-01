@@ -17,7 +17,6 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.querycondition.JpqlCondition;
-import io.jmix.core.querycondition.SingleJpqlCondition;
 import io.jmix.ui.model.DataLoader;
 
 import javax.annotation.Nullable;
@@ -36,10 +35,10 @@ public interface JpqlFilter<V> extends SingleFilterComponent<V> {
     String NAME = "jpqlFilter";
 
     /**
-     * @return a {@link SingleJpqlCondition} related to the current JpqlFilter
+     * @return a {@link JpqlCondition} related to the current JpqlFilter
      */
     @Override
-    SingleJpqlCondition getQueryCondition();
+    JpqlCondition getQueryCondition();
 
     /**
      * @return a Java class of the associated query parameter

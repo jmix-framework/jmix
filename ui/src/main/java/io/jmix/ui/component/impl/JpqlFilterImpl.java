@@ -19,7 +19,7 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Enumeration;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
-import io.jmix.core.querycondition.SingleJpqlCondition;
+import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.JpqlFilter;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 
 import static com.google.common.base.Preconditions.checkState;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -56,8 +57,8 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
     }
 
     @Override
-    protected SingleJpqlCondition createQueryCondition() {
-        return new SingleJpqlCondition("");
+    protected JpqlCondition createQueryCondition() {
+        return new JpqlCondition();
     }
 
     @Override
@@ -66,15 +67,19 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
     }
 
     @Override
-    public SingleJpqlCondition getQueryCondition() {
-        return (SingleJpqlCondition) queryCondition;
+    public JpqlCondition getQueryCondition() {
+        return (JpqlCondition) queryCondition;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     protected void updateQueryCondition(@Nullable V newValue) {
+        if (parameterName == null) {
+            return;
+        }
+
+        Object parameterValue = null;
         if (newValue != null) {
-            Object parameterValue;
             if (EntityValues.isEntity(newValue)) {
                 parameterValue = EntityValues.getIdOrEntity(newValue);
             } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
@@ -83,11 +88,9 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
             } else {
                 parameterValue = newValue;
             }
-
-            getQueryCondition().setParameterValue(parameterValue);
-        } else {
-            getQueryCondition().setParameterValue(null);
         }
+
+        getQueryCondition().setParameterValuesMap(Collections.singletonMap(parameterName, parameterValue));
     }
 
     @Override
@@ -101,7 +104,7 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
         checkNotNullArgument(parameterName);
 
         if (StringUtils.isNotEmpty(where)) {
-            queryCondition = new SingleJpqlCondition(join, where.replace("?", ":" + parameterName));
+            getQueryCondition().setWhere(where.replace("?", ":" + parameterName));
         }
 
         this.parameterName = parameterName;
@@ -136,9 +139,7 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
         checkNotNullArgument(where);
 
         if (StringUtils.isNotEmpty(parameterName)) {
-            queryCondition = new SingleJpqlCondition(join, where.replace("?", ":" + parameterName));
-        } else {
-            queryCondition = new SingleJpqlCondition(join, where);
+            getQueryCondition().setWhere(where.replace("?", ":" + parameterName));
         }
 
         this.where = where;

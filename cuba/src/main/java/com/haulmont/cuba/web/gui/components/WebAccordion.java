@@ -18,15 +18,21 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.HasSettings;
+import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.settings.CubaLegacySettings;
 import com.haulmont.cuba.settings.Settings;
+import com.vaadin.ui.TabSheet;
 import io.jmix.ui.component.ComponentContainer;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.AccordionImpl;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
+import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -44,6 +50,24 @@ public class WebAccordion extends AccordionImpl implements Accordion {
     @Override
     protected LazyTabChangeListener createLazyTabChangeListener(ComponentContainer tabContent, Element descriptor, ComponentLoader loader) {
         return new CubaLazyTabChangeListener(tabContent, descriptor, loader);
+    }
+
+    @Override
+    protected void onSelectedTabChangeListener(TabSheet.SelectedTabChangeEvent event) {
+        super.onSelectedTabChangeListener(event);
+
+        Window window = ComponentsHelper.getWindow(WebAccordion.this);
+        if (window != null) {
+            if (window.getFrameOwner() instanceof LegacyFrame) {
+                DsContext dsContext = ((LegacyFrame) window.getFrameOwner()).getDsContext();
+                if (dsContext != null) {
+                    ((DsContextImplementation) dsContext).resumeSuspended();
+                }
+            }
+        } else {
+            LoggerFactory.getLogger(AccordionImpl.class)
+                    .warn("Please specify Frame for Accordion");
+        }
     }
 
     protected class CubaLazyTabChangeListener extends LazyTabChangeListener {

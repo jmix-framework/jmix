@@ -17,6 +17,7 @@
 package io.jmix.core;
 
 import io.jmix.core.common.util.URLEncodeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -87,12 +88,23 @@ public class FileRef implements Serializable {
         }
         String storageName = fileRefUri.getScheme();
         String path = fileRefUri.getAuthority() + fileRefUri.getPath();
-        String[] params = fileRefUri.getQuery().split("&");
-        String fileName = URLEncodeUtils.decodeUtf8(params[0].split("=", -1)[1]);
+        String query = fileRefUri.getQuery();
+        if (StringUtils.isAnyBlank(storageName, path, query)) {
+            throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef");
+        }
+        String[] params = query.split("&");
+        String[] nameParamPair = params[0].split("=", -1);
+        if (nameParamPair.length != 2) {
+            throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef");
+        }
+        String fileName = URLEncodeUtils.decodeUtf8(nameParamPair[1]);
         if (params.length > 1) {
             Map<String, String> paramsMap = new LinkedHashMap<>();
             for (int i = 1; i < params.length; i++) {
                 String[] paramPair = params[i].split("=", -1);
+                if (paramPair.length != 2) {
+                    throw new IllegalArgumentException("Cannot convert " + fileRefString + " to FileRef");
+                }
                 paramsMap.put(paramPair[0], URLEncodeUtils.decodeUtf8(paramPair[1]));
             }
             return new FileRef(storageName, path, fileName, paramsMap);

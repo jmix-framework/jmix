@@ -16,6 +16,7 @@
 
 package io.jmix.email.entity;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.annotation.DeletedBy;
 import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.annotation.TenantId;
@@ -29,7 +30,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
@@ -84,7 +84,7 @@ public class SendingAttachment implements Serializable {
     protected byte[] content;
 
     @Column(name = "CONTENT_FILE")
-    protected URI contentFile;
+    protected FileRef contentFile;
 
     @Column(name = "NAME", length = 500)
     protected String name;
@@ -214,11 +214,11 @@ public class SendingAttachment implements Serializable {
         this.encoding = encoding;
     }
 
-    public URI getContentFile() {
+    public FileRef getContentFile() {
         return contentFile;
     }
 
-    public void setContentFile(URI contentFile) {
+    public void setContentFile(FileRef contentFile) {
         this.contentFile = contentFile;
     }
 

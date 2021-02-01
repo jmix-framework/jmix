@@ -38,7 +38,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
@@ -192,14 +191,14 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         msg = entityManager.merge(msg);
         byte[] bodyBytes = bodyTextToBytes(msg);
         String fileName = getFileName(msg);
-        URI contentTextFile = createContentFile(null, bodyBytes, fileName);
+        FileRef contentTextFile = createContentFile(null, bodyBytes, fileName);
         msg.setContentTextFile(contentTextFile);
         msg.setContentText(null);
     }
 
     protected void migrateAttachment(SendingAttachment attachment) {
         attachment = entityManager.merge(attachment);
-        URI contentFile = createContentFile(null, attachment.getContent(), attachment.getName());
+        FileRef contentFile = createContentFile(null, attachment.getContent(), attachment.getName());
         attachment.setContentFile(contentFile);
         attachment.setContent(null);
     }
@@ -244,7 +243,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             byte[] bodyBytes = bodyTextToBytes(message);
 
             String fileName = getFileName(message);
-            URI contentTextFile = createContentFile(context, bodyBytes, fileName);
+            FileRef contentTextFile = createContentFile(context, bodyBytes, fileName);
             message.setContentTextFile(contentTextFile);
             message.setContentText(null);
         }
@@ -253,7 +252,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
         message.getAttachments().forEach(attachment -> {
             if (useFileStorage) {
-                URI contentFile = createContentFile(context, attachment.getContent(), attachment.getName());
+                FileRef contentFile = createContentFile(context, attachment.getContent(), attachment.getName());
                 attachment.setContentFile(contentFile);
                 attachment.setContent(null);
             }
@@ -262,9 +261,8 @@ public class EmailDataProviderImpl implements EmailDataProvider {
         });
     }
 
-    protected URI createContentFile(@Nullable MessagePersistingContext context, byte[] bodyBytes, String fileName) {
-        URI contentTextFile = (URI) getFileStorage().createReference(fileName);
-        getFileStorage().saveStream(contentTextFile, new ByteArrayInputStream(bodyBytes));
+    protected FileRef createContentFile(@Nullable MessagePersistingContext context, byte[] bodyBytes, String fileName) {
+        FileRef contentTextFile = getFileStorage().saveStream(fileName, new ByteArrayInputStream(bodyBytes));
         if (context != null) {
             context.files.add(contentTextFile);
         }
@@ -292,7 +290,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     }
 
     protected static class MessagePersistingContext {
-        public final List<URI> files = new ArrayList<>();
+        public final List<FileRef> files = new ArrayList<>();
 
         public void finished() {
             files.clear();

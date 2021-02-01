@@ -42,7 +42,6 @@ import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
@@ -203,15 +202,13 @@ public class SendingMessageBrowser extends Screen {
         return msg.getAttachments();
     }
 
-    protected URI getReference(SendingAttachment attachment) {
+    protected FileRef getReference(SendingAttachment attachment) {
         UUID uuid = temporaryStorage.saveFile(attachment.getContent());
-        URI reference = (URI) fileStorage.createReference(attachment.getName());
-        temporaryStorage.putFileIntoStorage(uuid, reference);
-        return reference;
+        return temporaryStorage.putFileIntoStorage(uuid, attachment.getName());
     }
 
     protected void exportFile(SendingAttachment attachment) {
-        URI uri;
+        FileRef fileRef;
 
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
@@ -220,11 +217,11 @@ public class SendingMessageBrowser extends Screen {
         if (emailerProperties.isFileStorageUsed()
                 && attachment.getContentFile() != null
                 && fileStorage.fileExists(attachment.getContentFile())) {
-            uri = attachment.getContentFile();
+            fileRef = attachment.getContentFile();
         } else {
-            uri = getReference(attachment);
+            fileRef = getReference(attachment);
         }
 
-        downloader.download(new FileDataProvider<>(uri, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
+        downloader.download(new FileDataProvider(fileRef, fileStorage), attachment.getName(), DownloadFormat.OCTET_STREAM);
     }
 }

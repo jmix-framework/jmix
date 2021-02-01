@@ -129,9 +129,9 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
     @Test
     public void downloadFile() throws Exception {
-        String fileId = _uploadFile();
+        String fileRef = _uploadFile();
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = getHttpGet(fileId);
+        HttpGet httpGet = getHttpGet(fileRef);
 
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
@@ -147,7 +147,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
     public void downloadMissingFile() throws Exception {
         String fileId = UUID.randomUUID().toString();
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet httpGet = getHttpGet(String.format("2020/11/16/%s.txt*fileToUpload.txt", fileId));
+        HttpGet httpGet = getHttpGet(String.format("fs://2020/11/16/%s.txt?name=fileToUpload.txt", fileId));
         try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
             assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatusLine().getStatusCode());
             ReadContext ctx = parseResponse(response);
@@ -212,7 +212,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
     protected void checkLocation(CloseableHttpResponse response, String fileRef) {
         Header location = response.getFirstHeader("Location");
-        assertEquals(baseUrl + "/files/fileRef=" + fileRef, location.getValue());
+        assertEquals(baseUrl + "/files?fileRef=" + fileRef, location.getValue());
     }
 
     protected HttpPost getHttpPost(URIBuilder uriBuilder, HttpEntity entity) throws URISyntaxException {
@@ -222,8 +222,8 @@ public class FilesControllerFT extends AbstractRestControllerFT {
         return httpPost;
     }
 
-    protected HttpGet getHttpGet(String fileId) {
-        HttpGet httpGet = new HttpGet(baseUrl + "/files/" + fileId);
+    protected HttpGet getHttpGet(String fileRef) {
+        HttpGet httpGet = new HttpGet(baseUrl + "/files?fileRef=" + fileRef);
         httpGet.setHeader(AUTHORIZATION, "Bearer " + oauthToken);
         return httpGet;
     }

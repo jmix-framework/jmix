@@ -17,7 +17,12 @@
 package io.jmix.rest.api.controller;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.FileRef;
+import io.jmix.core.FileStorage;
+import io.jmix.core.FileStorageException;
+import io.jmix.core.FileStorageLocator;
+import io.jmix.core.Metadata;
 import io.jmix.rest.accesscontext.RestFileUploadContext;
 import io.jmix.rest.api.exception.RestAPIException;
 import io.jmix.rest.api.service.filter.data.FileInfo;
@@ -39,8 +44,6 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 
 /**
@@ -61,21 +64,17 @@ public class FileUploadController {
     @Autowired
     protected AccessManager accessManager;
 
-    protected FileStorage<URI> fileStorage;
-
     /**
      * Method for simple file upload. File contents are placed in the request body. Optional file name parameter is
      * passed as a query param.
      */
     @PostMapping(consumes = "!multipart/form-data")
     public ResponseEntity<FileInfo> uploadFile(HttpServletRequest request,
-                                               @RequestParam(required = false) String ref,
-                                               @RequestParam(required = false) String name) {
+                                               @RequestParam(required = false) String name,
+                                               @RequestParam(required = false) String storageName) {
         checkFileUploadPermission();
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
-        checkFileExists(ref);
+
+        FileStorage fileStorage = getFileStorage(storageName);
         try {
             String contentLength = request.getHeader("Content-Length");
 
@@ -86,8 +85,8 @@ public class FileUploadController {
             }
 
             ServletInputStream is = request.getInputStream();
-            URI fileReference = fileStorage.createReference(name);
-            uploadToFileStorage(is, fileReference);
+            name = Objects.toString(name, "");
+            FileRef fileReference = uploadToFileStorage(fileStorage, is, name);
 
             return createFileInfoResponseEntity(request, fileReference, name, size);
         } catch (Exception e) {
@@ -101,14 +100,12 @@ public class FileUploadController {
      */
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<FileInfo> uploadFile(@RequestParam("file") MultipartFile file,
-                                               @RequestParam(required = false) String ref,
                                                @RequestParam(required = false) String name,
+                                               @RequestParam(required = false) String storageName,
                                                HttpServletRequest request) {
         checkFileUploadPermission();
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
-        checkFileExists(ref);
+
+        FileStorage fileStorage = getFileStorage(storageName);
         try {
             if (Strings.isNullOrEmpty(name)) {
                 name = file.getOriginalFilename();
@@ -118,8 +115,7 @@ public class FileUploadController {
             long size = file.getSize();
 
             InputStream is = file.getInputStream();
-            URI fileReference = fileStorage.createReference(name);
-            uploadToFileStorage(is, fileReference);
+            FileRef fileReference = uploadToFileStorage(fileStorage, is, name);
 
             return createFileInfoResponseEntity(request, fileReference, name, size);
         } catch (Exception e) {
@@ -137,46 +133,41 @@ public class FileUploadController {
         }
     }
 
-    protected void checkFileExists(@Nullable String ref) {
-        if (Strings.isNullOrEmpty(ref)) {
-            return;
-        }
-        URI fileReference;
-        try {
-            fileReference = new URI(ref);
-            if (fileStorage.fileExists(fileReference)) {
-                log.error("File by the ref: '{}' already exists", ref);
-                throw new RestAPIException("File already exists",
-                        String.format("File by the ref: '%s' already exists", ref),
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+    protected FileStorage getFileStorage(@Nullable String storageName) {
+        if (Strings.isNullOrEmpty(storageName)) {
+            return fileStorageLocator.getDefault();
+        } else {
+            try {
+                return fileStorageLocator.getByName(storageName);
+            } catch (IllegalArgumentException e) {
+                throw new RestAPIException("Invalid storage name",
+                        String.format("Cannot find FileStorage with the given name: '%s'", storageName),
+                        HttpStatus.BAD_REQUEST,
+                        e);
             }
-        } catch (URISyntaxException | IllegalArgumentException e) {
-            log.error("Provided file reference is not valid: {}", ref);
-            throw new RestAPIException("Invalid file reference",
-                    String.format("Cannot convert '%s' into valid file reference", ref),
-                    HttpStatus.BAD_REQUEST);
         }
     }
 
     protected ResponseEntity<FileInfo> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                    URI fileReference, String filename, long size) {
-        FileInfo fileInfo = new FileInfo(fileReference, filename, size);
+                                                                    FileRef fileReference, String filename, long size) {
+        FileInfo fileInfo = new FileInfo(fileReference.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
-                .path("/{fileReference}")
-                .buildAndExpand(fileReference.toString());
+                .queryParam("fileRef", fileReference.toString())
+                .buildAndExpand();
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(uriComponents.toUri());
         return new ResponseEntity<>(fileInfo, httpHeaders, HttpStatus.CREATED);
     }
 
-    protected void uploadToFileStorage(InputStream is, URI fileReference) throws FileStorageException {
+    protected FileRef uploadToFileStorage(FileStorage fileStorage, InputStream is, String fileName)
+            throws FileStorageException {
         try {
-            fileStorage.saveStream(fileReference, is);
+            return fileStorage.saveStream(fileName, is);
         } catch (FileStorageException e) {
             throw new RestAPIException("Unable to upload file to FileStorage",
-                    "Unable to upload file to FileStorage: " + fileReference.toString(),
+                    "Unable to upload file to FileStorage: " + fileName,
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e);
         }

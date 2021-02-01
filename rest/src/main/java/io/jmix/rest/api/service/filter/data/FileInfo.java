@@ -16,26 +16,26 @@
 
 package io.jmix.rest.api.service.filter.data;
 
-import java.net.URI;
+import io.jmix.core.FileRef;
 
 /**
  */
 public class FileInfo {
-    protected URI fileReference;
+    protected String fileReference;
     protected String name;
     protected long size;
 
-    public FileInfo(URI fileReference, String name, long size) {
+    public FileInfo(String fileReference, String name, long size) {
         this.fileReference = fileReference;
         this.name = name;
         this.size = size;
     }
 
-    public URI getFileReference() {
+    public String getFileReference() {
         return fileReference;
     }
 
-    public void setFileReference(URI fileReference) {
+    public void setFileReference(String fileReference) {
         this.fileReference = fileReference;
     }
 

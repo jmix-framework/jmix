@@ -19,6 +19,7 @@ package io.jmix.ui.component.impl;
 import com.google.common.base.Strings;
 import com.vaadin.ui.Layout;
 import com.vaadin.ui.TabSheet;
+import io.jmix.ui.MainTabSheetMode;
 import org.springframework.context.ApplicationContext;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.TabWindow;
@@ -196,13 +197,11 @@ public class TabWindowImpl extends WindowImpl implements TabWindow {
     public void setContentSwitchMode(ContentSwitchMode mode) {
         checkNotNullArgument(mode, "Content switch mode can't be null. Use ContentSwitchMode.DEFAULT option instead");
 
-        // todo managed tabs
-        /*MainTabSheetMode tabSheetMode = beanLocator.get(ConfigInterfaces.class)
-                .getConfig(WebConfig.class)
+        MainTabSheetMode tabSheetMode = applicationContext.getBean(UiProperties.class)
                 .getMainTabSheetMode();
         if (tabSheetMode != MainTabSheetMode.MANAGED) {
             log.debug("Content switch mode can be set only for the managed main TabSheet. Current invocation will be ignored.");
-        }*/
+        }
 
         this.contentSwitchMode = mode;
     }

@@ -31,7 +31,7 @@ public class DataFetcherPlanBuilder {
         List<String> properties = definitions.keySet().stream()
                 .map(def -> def.replaceAll("/", "."))
                 // remove '__typename' from fetch plan
-                .filter(prop -> !prop.equals(NamingUtils.SYS_ATTR_TYPENAME))
+                .filter(propertyNotMatch(NamingUtils.SYS_ATTR_TYPENAME))
                 // todo fetch failed, if we need to return instanceName in nested entity,
                 //  but fetch plan does not contains attrs of nested entities required to compose instanceName
                 //  i.e. for garage.car.instanceName we need to request garage.car.manufacturer and garage.car.model attrs,

@@ -12,7 +12,6 @@ public class NamingUtils {
     public static final String FILTER = "filter";
     public static final String LIMIT = "limit";
     public static final String OFFSET = "offset";
-    public static final String SORT_ORDER = "sortOrder";
     public static final String ORDER_BY = "orderBy";
 
 

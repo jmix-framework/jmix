@@ -19,6 +19,8 @@ package io.jmix.data.impl;
 import io.jmix.core.Entity;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
+import io.jmix.core.event.AttributeChanges;
+import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.eclipse.persistence.internal.descriptors.changetracking.AttributeChangeListener;
 import org.eclipse.persistence.sessions.changesets.AggregateChangeRecord;
@@ -87,8 +89,8 @@ public class EntityAttributeChanges {
             Collection<EntityEntryExtraState> extraStates = ((Entity) entity).__getEntityEntry().getAllExtraState();
             for (EntityEntryExtraState state : extraStates) {
                 if (state instanceof EntityValuesProvider) {
-                    for (Map.Entry<String, Object> entry : ((EntityValuesProvider) state).getChanges().entrySet()) {
-                        addChange(entry.getKey(), entry.getValue());
+                    for (AttributeChanges.Change change : ((EntityValuesProvider) state).getChanges()) {
+                        addChange(change.name, change.oldValue);
                     }
                 }
             }
@@ -158,7 +160,10 @@ public class EntityAttributeChanges {
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T getOldValueEx(String attributePath) {
-        String[] properties = attributePath.split("[.]");
+        String[] properties = ObjectPathUtils.isSpecialPath(attributePath)
+                ? new String[]{attributePath}
+                : attributePath.split("\\.");
+
         if (properties.length == 1) {
             for (Change change : changes) {
                 if (change.name.equals(attributePath))

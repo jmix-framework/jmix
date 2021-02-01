@@ -18,12 +18,12 @@ package io.jmix.localfs;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.TimeSource;
 import io.jmix.core.UuidProvider;
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.common.util.URLEncodeUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -33,22 +33,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -56,9 +51,14 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Internal
 @Component("localfs_FileStorage")
-public class LocalFileStorage implements FileStorage<URI> {
+public class LocalFileStorage implements FileStorage {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileStorage.class);
+
+    public static final String DEFAULT_STORAGE_NAME = "fs";
+
+    protected String storageName;
+    protected String storageDir;
 
     @Autowired
     protected LocalFileStorageProperties properties;
@@ -76,50 +76,33 @@ public class LocalFileStorage implements FileStorage<URI> {
 
     protected volatile Path[] storageRoots;
 
-    @PostConstruct
-    public void init() {
-        this.isImmutableFileStorage = properties.isImmutableFileStorage();
+    public LocalFileStorage() {
+        this(DEFAULT_STORAGE_NAME);
     }
 
-    @Override
-    public Class<URI> getReferenceType() {
-        return URI.class;
-    }
-
-    @Override
-    public URI createReference(@Nullable String filename) {
-        filename = Objects.toString(filename, StringUtils.EMPTY);
-        //reference = yyyy/mm/dd/uuid
-        String reference = createDateDir() + "/" + createUuidFilename(filename);
-        //if the filename is given, add it as an additional info
-        if (StringUtils.isNotEmpty(filename)) {
-            reference += "*" + URLEncodeUtils.encodeUtf8(filename);
-        }
-        try {
-            return new URI(reference);
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
-        }
+    public LocalFileStorage(String storageName) {
+        this.storageName = storageName;
     }
 
     /**
-     * Returns the original filename for the file located by the given reference
-     * or an empty string if the filename is not included in the reference.
+     * Optional constructor that allows specifying storage directory,
+     * thus overriding {@link LocalFileStorageProperties#getStorageDir()} property.
      * <p>
-     * The original filename is passed as an argument to {@link #createReference(String)}.
+     * It can be useful if there are more than one local file storage in an application,
+     * and these storages should be using different dirs for storing files.
      */
-    @Override
-    public String getFileName(URI reference) {
-        String[] parts = getReferenceParts(reference);
-        String encodedFilename = StringUtils.EMPTY;
-        if (parts.length > 1) {
-            encodedFilename = parts[1];
-        }
-        return URLEncodeUtils.decodeUtf8(encodedFilename);
+    public LocalFileStorage(String storageName, String storageDir) {
+        this(storageName);
+        this.storageDir = storageDir;
     }
 
-    protected String createUuidFilename(String fileInfo) {
-        String extension = FilenameUtils.getExtension(fileInfo);
+    @Override
+    public String getStorageName() {
+        return storageName;
+    }
+
+    protected String createUuidFilename(String fileName) {
+        String extension = FilenameUtils.getExtension(fileName);
         if (StringUtils.isNotEmpty(extension)) {
             return UuidProvider.createUuid().toString() + "." + extension;
         } else {
@@ -129,15 +112,18 @@ public class LocalFileStorage implements FileStorage<URI> {
 
     protected Path[] getStorageRoots() {
         if (storageRoots == null) {
-            String conf = properties.getStorageDir();
-            if (StringUtils.isBlank(conf)) {
+            String storageDir = this.storageDir != null ? this.storageDir : properties.getStorageDir();
+            if (StringUtils.isBlank(storageDir)) {
                 String workDir = coreProperties.getWorkDir();
                 Path dir = Paths.get(workDir, "filestorage");
-                dir.toFile().mkdirs();
+                if (!dir.toFile().exists() && !dir.toFile().mkdirs()) {
+                    throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                            "Cannot create filestorage directory: " + dir.toAbsolutePath().toString());
+                }
                 storageRoots = new Path[]{dir};
             } else {
                 List<Path> list = new ArrayList<>();
-                for (String str : conf.split(",")) {
+                for (String str : storageDir.split(",")) {
                     str = str.trim();
                     if (!StringUtils.isEmpty(str)) {
                         Path path = Paths.get(str);
@@ -151,19 +137,20 @@ public class LocalFileStorage implements FileStorage<URI> {
         return storageRoots;
     }
 
-    @Override
-    public long saveStream(URI reference, InputStream inputStream) {
-        Path relativePath = getRelativePathFromURI(reference);
+    public long saveStream(FileRef fileRef, InputStream inputStream) {
+        Path relativePath = getRelativePath(fileRef.getPath());
 
         Path[] roots = getStorageRoots();
 
         // Store to primary storage
-
-        checkStorageDefined(roots, reference);
-        checkPrimaryStorageAccessible(roots, reference);
+        checkStorageDefined(roots, fileRef.getFileName());
+        checkPrimaryStorageAccessible(roots, fileRef.getFileName());
 
         Path path = roots[0].resolve(relativePath);
-        path.getParent().toFile().mkdirs();
+        if (!path.getParent().toFile().exists() && !path.getParent().toFile().mkdirs()) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
+                    "Cannot create directory: " + path.getParent().toAbsolutePath().toString());
+        }
 
         checkFileExists(path);
 
@@ -176,11 +163,11 @@ public class LocalFileStorage implements FileStorage<URI> {
             FileUtils.deleteQuietly(path.toFile());
             throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, path.toAbsolutePath().toString(), e);
         }
-        // Copy file to secondary storages asynchronously
 
+        // Copy file to secondary storages asynchronously
         for (int i = 1; i < roots.length; i++) {
             if (!roots[i].toFile().exists()) {
-                log.error("Error saving {} into {} : directory doesn't exist", reference, roots[i]);
+                log.error("Error saving {} into {} : directory doesn't exist", fileRef.getFileName(), roots[i]);
                 continue;
             }
 
@@ -190,7 +177,7 @@ public class LocalFileStorage implements FileStorage<URI> {
                 try {
                     FileUtils.copyFile(path.toFile(), pathCopy.toFile(), true);
                 } catch (Exception e) {
-                    log.error("Error saving {} into {} : {}", reference, pathCopy, e.getMessage());
+                    log.error("Error saving {} into {} : {}", fileRef.getFileName(), pathCopy, e.getMessage());
                 }
             });
         }
@@ -199,8 +186,20 @@ public class LocalFileStorage implements FileStorage<URI> {
     }
 
     @Override
-    public InputStream openStream(URI reference) {
-        Path relativePath = getRelativePathFromURI(reference);
+    public FileRef saveStream(String fileName, InputStream inputStream) {
+        Path relativePath = createRelativeFilePath(fileName);
+        FileRef fileRef = new FileRef(storageName, pathToString(relativePath), fileName);
+        saveStream(fileRef, inputStream);
+        return fileRef;
+    }
+
+    protected Path createRelativeFilePath(String fileName) {
+        return createDateDirPath().resolve(createUuidFilename(fileName));
+    }
+
+    @Override
+    public InputStream openStream(FileRef reference) {
+        Path relativePath = getRelativePath(reference.getPath());
 
         Path[] roots = getStorageRoots();
         if (roots.length == 0) {
@@ -232,14 +231,14 @@ public class LocalFileStorage implements FileStorage<URI> {
     }
 
     @Override
-    public void removeFile(URI reference) {
+    public void removeFile(FileRef reference) {
         Path[] roots = getStorageRoots();
         if (roots.length == 0) {
             log.error("No storage directories defined");
             return;
         }
 
-        Path relativePath = getRelativePathFromURI(reference);
+        Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
             File file = filePath.toFile();
@@ -253,10 +252,10 @@ public class LocalFileStorage implements FileStorage<URI> {
     }
 
     @Override
-    public boolean fileExists(URI reference) {
+    public boolean fileExists(FileRef reference) {
         Path[] roots = getStorageRoots();
 
-        Path relativePath = getRelativePathFromURI(reference);
+        Path relativePath = getRelativePath(reference.getPath());
         for (Path root : roots) {
             Path filePath = root.resolve(relativePath);
             if (filePath.toFile().exists()) {
@@ -266,16 +265,16 @@ public class LocalFileStorage implements FileStorage<URI> {
         return false;
     }
 
-    public String createDateDir() {
+    protected Path createDateDirPath() {
         Calendar cal = Calendar.getInstance();
         cal.setTime(timeSource.currentTimestamp());
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
         int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        return year + "/"
-                + StringUtils.leftPad(String.valueOf(month), 2, '0') + "/"
-                + StringUtils.leftPad(String.valueOf(day), 2, '0');
+        return Paths.get(String.valueOf(year),
+                StringUtils.leftPad(String.valueOf(month), 2, '0'),
+                StringUtils.leftPad(String.valueOf(day), 2, '0'));
     }
 
     protected void checkFileExists(Path path) {
@@ -291,35 +290,46 @@ public class LocalFileStorage implements FileStorage<URI> {
                     dir.toAbsolutePath().toString());
     }
 
-    protected void checkPrimaryStorageAccessible(Path[] roots, URI reference) {
-        if (!roots[0].toFile().exists()) {
+    protected void checkPrimaryStorageAccessible(Path[] roots, String fileName) {
+        if (!roots[0].toFile().exists() && !roots[0].toFile().mkdirs()) {
             log.error("Inaccessible primary storage at {}", roots[0]);
-            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileName(reference));
+            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, fileName);
         }
     }
 
-    protected void checkStorageDefined(Path[] roots, URI reference) {
+    protected void checkStorageDefined(Path[] roots, String fileName) {
         if (roots.length == 0) {
             log.error("No storage directories defined");
-            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, getFileName(reference));
+            throw new FileStorageException(FileStorageException.Type.STORAGE_INACCESSIBLE, fileName);
         }
-    }
-
-    protected String[] getReferenceParts(URI reference) {
-        String path = reference.getRawPath();
-        return path.split("\\*", 2);
     }
 
     /**
-     * Returns relative path to the file.
+     * This method is mostly needed for compatibility with an old API.
+     * <p>
+     * If {@link #isImmutableFileStorage} is false then {@link #saveStream(FileRef, InputStream)}
+     * will be overwriting existing files.
      */
-    protected Path getRelativePathFromURI(URI encodedReference) {
-        String rawReference = getReferenceParts(encodedReference)[0];
-        String[] parts = rawReference.split("/", 4);
+    public void setImmutableFileStorage(boolean immutableFileStorage) {
+        isImmutableFileStorage = immutableFileStorage;
+    }
+
+    /**
+     * Converts string path to {@link Path}.
+     */
+    protected Path getRelativePath(String path) {
+        String[] parts = path.split("/", 4);
         if (parts.length < 4) {
-            throw new IllegalArgumentException("Invalid URI reference format");
+            throw new IllegalArgumentException("Invalid path");
         }
         return Paths.get(parts[0], parts[1], parts[2], parts[3]);
+    }
+
+    /**
+     * Converts path to a uniform string representation ("yyyy/mm/dd/uuid.ext").
+     */
+    protected String pathToString(Path path) {
+        return path.toString().replace('\\', '/');
     }
 
     @PreDestroy

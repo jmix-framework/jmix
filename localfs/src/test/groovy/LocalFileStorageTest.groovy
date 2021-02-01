@@ -15,6 +15,7 @@
  */
 
 
+import io.jmix.core.FileRef
 import io.jmix.core.FileStorage
 import io.jmix.core.CoreConfiguration
 import io.jmix.localfs.LocalFileStorageConfiguration
@@ -32,41 +33,32 @@ import test_support.TestContextInititalizer
 class LocalFileStorageTest extends Specification {
 
     @Autowired
-    private FileStorage<URI> fileStorage
+    private FileStorage fileStorage
 
     def "write/load data using file storage"() {
-        URI reference = fileStorage.createReference('test.txt')
-
         byte[] a = 'Test output'.getBytes()
-        fileStorage.saveStream(reference, new ByteArrayInputStream(a)) == a.length
+        FileRef fileRef = fileStorage.saveStream("test.txt", new ByteArrayInputStream(a))
 
         expect:
-        InputStream inputStream = fileStorage.openStream(reference)
+        InputStream inputStream = fileStorage.openStream(fileRef)
         IOUtils.toByteArray(inputStream) == a
 
         cleanup:
-        fileStorage.removeFile(reference)
+        fileStorage.removeFile(fileRef)
     }
 
-    def "URI file reference format"() {
-
-        when: "Simple URI reference"
-        def uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4.txt*1.txt')
-
-        then:
-        fileStorage.getFileName(uri) == '1.txt'
-
-        when: "Filename is not defined"
-        uri = new URI('2020/05/04/5abf4a7e-1c99-b595-bca2-481d1e7f27a4')
+    def "FileRef format"() {
+        when: "FileRef as URI string"
+        def fileRefString = 'fs://2021/01/25/60680137-5d4a-69a0-999e-526acf141308.png?name=1.txt&testParam=foo'
+        def fileRef = FileRef.fromString(fileRefString)
 
         then:
-        fileStorage.getFileName(uri) == ''
+        fileRef.getStorageName() == 'fs'
+        fileRef.getPath() == '2021/01/25/60680137-5d4a-69a0-999e-526acf141308.png'
+        fileRef.getFileName() == '1.txt'
+        fileRef.getParameters().get('testParam') == 'foo'
 
-        when: "Create file reference"
-        uri = fileStorage.createReference('test.txt')
-
-        then:
-        fileStorage.getFileName(uri) == 'test.txt'
+        fileRef.toString() == fileRefString
     }
 
 }

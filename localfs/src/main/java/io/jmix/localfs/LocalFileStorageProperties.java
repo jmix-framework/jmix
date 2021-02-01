@@ -24,20 +24,16 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class LocalFileStorageProperties {
     String storageDir;
-    boolean immutableFileStorage;
 
     public LocalFileStorageProperties(
-            String storageDir,
-            @DefaultValue("true") boolean immutableFileStorage) {
+            String storageDir) {
         this.storageDir = storageDir;
-        this.immutableFileStorage = immutableFileStorage;
     }
 
+    /**
+     * {@link LocalFileStorage} storage directory. If not set, {@code jmix.core.workDir/filestorage} will be used.
+     */
     public String getStorageDir() {
         return storageDir;
-    }
-
-    public boolean isImmutableFileStorage() {
-        return immutableFileStorage;
     }
 }

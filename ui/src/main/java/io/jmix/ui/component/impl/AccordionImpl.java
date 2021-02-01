@@ -498,34 +498,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         // init component SelectedTabChangeListener only when needed, making sure it is
         // after all lazy tabs listeners
         if (selectedTabChangeListenerRegistration == null) {
-            selectedTabChangeListenerRegistration = component.addSelectedTabChangeListener(event -> {
-                if (context instanceof ComponentLoader.ComponentContext) {
-                    ((ComponentLoader.ComponentContext) context).executeInjectTasks();
-                    ((ComponentLoader.ComponentContext) context).executeInitTasks();
-                }
-                // Fire GUI listener
-                fireTabChanged();
-                // Execute outstanding post init tasks after GUI listener.
-                // We suppose that context.executePostInitTasks() executes a task once and then remove it from task list.
-                if (context instanceof ComponentLoader.ComponentContext) {
-                    ((ComponentLoader.ComponentContext) context).executePostInitTasks();
-                }
-
-                Window window = ComponentsHelper.getWindow(AccordionImpl.this);
-                if (window != null) {
-                    /*
-                    TODO: legacy-ui
-                    if (window.getFrameOwner() instanceof LegacyFrame) {
-                        DsContext dsContext = ((LegacyFrame) window.getFrameOwner()).getDsContext();
-                        if (dsContext != null) {
-                            ((DsContextImplementation) dsContext).resumeSuspended();
-                        }
-                    }*/
-                } else {
-                    LoggerFactory.getLogger(AccordionImpl.class)
-                            .warn("Please specify Frame for Accordion");
-                }
-            });
+            selectedTabChangeListenerRegistration = component.addSelectedTabChangeListener(this::onSelectedTabChangeListener);
         }
     }
 
@@ -538,6 +511,20 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         initComponentTabChangeListener();
         getEventHub().subscribe(SelectedTabChangeEvent.class, listener);
         return () -> internalRemoveSelectedTabChangeListener(listener);
+    }
+
+    protected void onSelectedTabChangeListener(com.vaadin.ui.TabSheet.SelectedTabChangeEvent event) {
+        if (context instanceof ComponentLoader.ComponentContext) {
+            ((ComponentLoader.ComponentContext) context).executeInjectTasks();
+            ((ComponentLoader.ComponentContext) context).executeInitTasks();
+        }
+        // Fire GUI listener
+        fireTabChanged();
+        // Execute outstanding post init tasks after GUI listener.
+        // We suppose that context.executePostInitTasks() executes a task once and then remove it from task list.
+        if (context instanceof ComponentLoader.ComponentContext) {
+            ((ComponentLoader.ComponentContext) context).executePostInitTasks();
+        }
     }
 
     protected void internalRemoveSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {

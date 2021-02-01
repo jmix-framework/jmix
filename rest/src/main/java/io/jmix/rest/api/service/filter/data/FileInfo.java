@@ -16,8 +16,6 @@
 
 package io.jmix.rest.api.service.filter.data;
 
-import io.jmix.core.FileRef;
-
 /**
  */
 public class FileInfo {

@@ -200,19 +200,19 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusLine().getStatusCode());
             ReadContext ctx = parseResponse(response);
 
-            String fileDescriptorId = ctx.read("$.fileReference");
+            String fileURI = ctx.read("$.fileReference");
 
-            assertNotNull(fileDescriptorId);
+            assertNotNull(fileURI);
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
             assertTrue(ctx.read("$.size", Integer.class) > 0);
 
-            checkLocation(response, fileDescriptorId);
+            checkLocation(response, fileURI);
         }
     }
 
-    protected void checkLocation(CloseableHttpResponse response, String fileDescriptorId) {
+    protected void checkLocation(CloseableHttpResponse response, String fileRef) {
         Header location = response.getFirstHeader("Location");
-        assertEquals(baseUrl + "/files/" + fileDescriptorId, location.getValue());
+        assertEquals(baseUrl + "/files/fileRef=" + fileRef, location.getValue());
     }
 
     protected HttpPost getHttpPost(URIBuilder uriBuilder, HttpEntity entity) throws URISyntaxException {

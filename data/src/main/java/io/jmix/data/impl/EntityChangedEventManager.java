@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
@@ -191,7 +192,14 @@ public class EntityChangedEventManager {
                     }
                     changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), idColl));
                 } else {
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), oldValue));
+                    Object convertedValue;
+                    if (entity != null) {
+                        MetaClass metaClass = metadata.getClass(entity);
+                        convertedValue = convertValueIfNeeded(metaClass.getProperty(changeRecord.getAttribute()), oldValue);
+                    } else {
+                        convertedValue = oldValue;
+                    }
+                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), convertedValue));
                 }
             }
         }
@@ -298,7 +306,7 @@ public class EntityChangedEventManager {
                         }
                         changes.add(new AttributeChanges.Change(property.getName(), idColl));
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), value));
+                        changes.add(new AttributeChanges.Change(property.getName(), convertValueIfNeeded(property, value)));
                     }
 
                 } else {
@@ -315,6 +323,17 @@ public class EntityChangedEventManager {
         }
 
         return new AttributeChanges(changes, embeddedChanges);
+    }
+
+    private Object convertValueIfNeeded(MetaProperty property, Object value) {
+        if (property.getRange().isEnum() && !(value instanceof EnumClass)) {
+            for (Object enumValue : property.getRange().asEnumeration().getValues()) {
+                if (enumValue instanceof EnumClass && ((EnumClass<?>) enumValue).getId().equals(value)) {
+                    return enumValue;
+                }
+            }
+        }
+        return value;
     }
 }
 

@@ -43,7 +43,7 @@ public class TestFileStorage implements FileStorage {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FileRef fileRef = new FileRef(getStorageName(), "/" + fileName, fileName);
+        FileRef fileRef = new FileRef(getStorageName(), fileName, fileName);
         files.put(fileRef, bytes);
         return fileRef;
     }

@@ -17,7 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.server.StreamResource;
-import io.jmix.core.FileStorage;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
@@ -33,16 +33,15 @@ import java.util.UUID;
 
 @Component("ui_FileStorageResource")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
-        implements WebResource, FileStorageResource<T> {
+public class FileStorageResourceImpl extends AbstractStreamSettingsResource
+        implements WebResource, FileStorageResource {
 
     protected static final String FILE_STORAGE_EXCEPTION_MESSAGE = "Can't create FileStorageResource. " +
             "An error occurred while obtaining a file from the storage";
 
     protected FileStorageLocator fileStorageLocator;
 
-    protected T fileReference;
-    protected FileStorage<T> fileStorage;
+    protected FileRef fileReference;
 
     protected String mimeType;
 
@@ -52,7 +51,7 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
     }
 
     @Override
-    public FileStorageResource<T> setFileReference(T fileReference) {
+    public FileStorageResource setFileReference(FileRef fileReference) {
         Preconditions.checkNotNullArgument(fileReference);
 
         this.fileReference = fileReference;
@@ -64,7 +63,7 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
     }
 
     @Override
-    public T getFileReference() {
+    public FileRef getFileReference() {
         return fileReference;
     }
 
@@ -72,7 +71,8 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
     protected void createResource() {
         resource = new StreamResource(() -> {
             try {
-                return getFileStorage().openStream(fileReference);
+                return fileStorageLocator.getByName(fileReference.getStorageName())
+                        .openStream(fileReference);
             } catch (FileStorageException e) {
                 throw new RuntimeException(FILE_STORAGE_EXCEPTION_MESSAGE, e);
             }
@@ -84,28 +84,12 @@ public class FileStorageResourceImpl<T> extends AbstractStreamSettingsResource
         streamResource.setBufferSize(bufferSize);
     }
 
-    @SuppressWarnings("unchecked")
-    protected FileStorage<T> getFileStorage() {
-        if (fileStorage == null) {
-            FileStorage<?> defaultFileStorage = fileStorageLocator.getDefault();
-            if (!defaultFileStorage.getReferenceType().isAssignableFrom(fileReference.getClass())) {
-                throw new IllegalArgumentException("Reference type is not compatible with the default file storage");
-            }
-            fileStorage = (FileStorage<T>) defaultFileStorage;
-        }
-        return fileStorage;
-    }
-
-    public void setFileStorage(FileStorage<T> fileStorage) {
-        this.fileStorage = fileStorage;
-    }
-
     protected String getResourceName() {
         StringBuilder name = new StringBuilder();
 
         String fullName = StringUtils.isNotEmpty(fileName)
                 ? fileName
-                : getFileStorage().getFileName(fileReference);
+                : fileReference.getFileName();
         String baseName = FilenameUtils.getBaseName(fullName);
 
         if (StringUtils.isEmpty(baseName)) {

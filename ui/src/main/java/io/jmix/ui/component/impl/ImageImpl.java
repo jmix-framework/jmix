@@ -17,8 +17,7 @@
 package io.jmix.ui.component.impl;
 
 import com.vaadin.event.MouseEvents;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
+import io.jmix.core.FileRef;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import org.springframework.context.ApplicationContextAware;
@@ -135,19 +134,14 @@ public class ImageImpl<T> extends AbstractResourceView<JmixImage> implements Ima
                     .setStreamSupplier(() ->
                             new ByteArrayInputStream((byte[]) resourceObject));
         }
-        if (isFileReference(resourceObject)) {
+        if (resourceObject instanceof FileRef) {
             return applicationContext.getBean(FileStorageResource.class)
-                    .setFileReference(resourceObject);
+                    .setFileReference((FileRef) resourceObject);
         }
 
         throw new GuiDevelopmentException(
                 "The Image component does not support property value binding for the property of type: "
                         + resourceObject.getClass().getName(), getFrame().getId());
-    }
-
-    protected boolean isFileReference(final Object resourceObject) {
-        FileStorage<?> defaultFileStorage = applicationContext.getBean(FileStorageLocator.class).getDefault();
-        return defaultFileStorage.getReferenceType().isAssignableFrom(resourceObject.getClass());
     }
 
     @Override

@@ -16,6 +16,7 @@
  */
 package io.jmix.ui.download;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 
 import java.io.InputStream;
@@ -25,12 +26,12 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 /**
  * Data provider for FileDescriptor
  */
-public class FileDataProvider<R> implements DownloadDataProvider {
+public class FileDataProvider implements DownloadDataProvider {
 
-    protected R fileReference;
-    protected FileStorage<R> fileStorage;
+    protected FileRef fileReference;
+    protected FileStorage fileStorage;
 
-    public FileDataProvider(R fileReference, FileStorage<R> fileStorage) {
+    public FileDataProvider(FileRef fileReference, FileStorage fileStorage) {
         checkNotNullArgument(fileReference, "Null file reference");
         this.fileReference = fileReference;
         this.fileStorage = fileStorage;

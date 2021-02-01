@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.download;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 
 import javax.annotation.Nullable;
@@ -48,9 +49,8 @@ public interface Downloader {
      * Different file storage can be set in {@link #setFileStorage(FileStorage)}.
      *
      * @param fileReference file reference
-     * @param <R>           file reference type
      */
-    <R> void download(R fileReference);
+    void download(FileRef fileReference);
 
     /**
      * Downloads a file from file storage.
@@ -59,18 +59,16 @@ public interface Downloader {
      * Different file storage can be set in {@link #setFileStorage(FileStorage)}.
      *
      * @param fileReference file reference
-     * @param <R>           file reference type
      * @param format        download format, can be null
      */
-    <R> void download(R fileReference, @Nullable DownloadFormat format);
+    void download(FileRef fileReference, @Nullable DownloadFormat format);
 
     /**
      * Sets a file storage where the files will be downloaded from.
      *
      * @param fileStorage file storage
-     * @param <R>         file reference type
      */
-    <R> void setFileStorage(FileStorage<R> fileStorage);
+    void setFileStorage(FileStorage fileStorage);
 
     /**
      * @return {@code true} if downloader should open a new window with the file content

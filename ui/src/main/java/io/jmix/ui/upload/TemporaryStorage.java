@@ -15,6 +15,7 @@
  */
 package io.jmix.ui.upload;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -97,21 +98,19 @@ public interface TemporaryStorage {
      * Uploads a file from the temporary storage to the FileStorage.
      *
      * @param fileId      temporary file ID
-     * @param reference   file reference
+     * @param fileName    file name
      * @param fileStorage file storage
-     * @param <R>         file reference type
      */
-    <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R> fileStorage);
+    FileRef putFileIntoStorage(UUID fileId, String fileName, FileStorage fileStorage);
 
     /**
      * Uploads a file from the temporary storage to the default FileStorage,
      * which is determined by calling {@link FileStorageLocator#getDefault()}.
      *
-     * @param fileId    temporary file ID
-     * @param reference file reference
-     * @param <R>       file reference type
+     * @param fileId   temporary file ID
+     * @param fileName file name
      */
-    <R> void putFileIntoStorage(UUID fileId, R reference);
+    FileRef putFileIntoStorage(UUID fileId, String fileName);
 
     class FileInfo {
         private UUID id;

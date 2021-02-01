@@ -100,7 +100,7 @@ public class FileUploadFieldLoader<T extends Field & SingleFileUploadField>
     protected void loadClearButton(SingleFileUploadField resultComponent, Element element) {
         String showClearButton = element.attributeValue("showClearButton");
         if (StringUtils.isNotEmpty(showClearButton)) {
-            resultComponent.setShowClearButton(Boolean.valueOf(showClearButton));
+            resultComponent.setShowClearButton(Boolean.parseBoolean(showClearButton));
         }
 
         String clearButtonCaption = element.attributeValue("clearButtonCaption");
@@ -122,7 +122,7 @@ public class FileUploadFieldLoader<T extends Field & SingleFileUploadField>
     protected void loadShowFileName(SingleFileUploadField resultComponent, Element element) {
         String showFileName = element.attributeValue("showFileName");
         if (StringUtils.isNotEmpty(showFileName)) {
-            resultComponent.setShowFileName(Boolean.valueOf(showFileName));
+            resultComponent.setShowFileName(Boolean.parseBoolean(showFileName));
         }
     }
 

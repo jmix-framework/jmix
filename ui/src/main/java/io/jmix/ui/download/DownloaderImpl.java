@@ -20,6 +20,7 @@ import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.VaadinResponse;
 import io.jmix.core.CoreProperties;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -49,9 +50,9 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  */
 @Component("ui_Downloader")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class WebDownloader implements Downloader {
+public class DownloaderImpl implements Downloader {
 
-    private static final Logger log = LoggerFactory.getLogger(WebDownloader.class);
+    private static final Logger log = LoggerFactory.getLogger(DownloaderImpl.class);
 
     @Autowired
     protected BackgroundWorker backgroundWorker;
@@ -75,7 +76,7 @@ public class WebDownloader implements Downloader {
     /**
      * Constructor with newWindow=false
      */
-    public WebDownloader() {
+    public DownloaderImpl() {
         this(false);
         useViewList = true;
     }
@@ -94,7 +95,7 @@ public class WebDownloader implements Downloader {
      * @param newWindow if true, show data in the same browser window;
      *                  if false, open new browser window
      */
-    public WebDownloader(boolean newWindow) {
+    public DownloaderImpl(boolean newWindow) {
         this.newWindow = newWindow;
     }
 
@@ -164,19 +165,18 @@ public class WebDownloader implements Downloader {
         download(dataProvider, resourceName, format);
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
-    public <R> void download(R fileReference, @Nullable DownloadFormat format) {
+    public void download(FileRef fileReference, @Nullable DownloadFormat format) {
         if (fileStorage == null) {
             fileStorage = fileStorageLocator.getDefault();
         }
-        String fileName = fileStorage.getFileName(fileReference);
-        download(new FileDataProvider<>(fileReference, fileStorage), fileName, format);
+        String fileName = fileReference.getFileName();
+        download(new FileDataProvider(fileReference, fileStorage), fileName, format);
     }
 
     @Override
-    public <R> void setFileStorage(FileStorage<R> fileStorage) {
+    public void setFileStorage(FileStorage fileStorage) {
         this.fileStorage = fileStorage;
     }
 
@@ -194,13 +194,9 @@ public class WebDownloader implements Downloader {
     }
 
     @Override
-    public <R> void download(R fileReference) {
-        if (fileStorage == null) {
-            fileStorage = fileStorageLocator.getDefault();
-        }
-        String fileName = fileStorage.getFileName(fileReference);
-        DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileName));
-        download(new FileDataProvider<>(fileReference, fileStorage), format);
+    public void download(FileRef fileReference) {
+        DownloadFormat format = DownloadFormat.getByExtension(FilenameUtils.getExtension(fileReference.getFileName()));
+        download(fileReference, format);
     }
 
     public void download(byte[] content, String resourceName, DownloadFormat format) {

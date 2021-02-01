@@ -17,36 +17,20 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.ui.component.FileStorageUploadField;
-import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Element;
+import io.jmix.ui.component.FileStorageUploadField.FileStoragePutMode;
 
-public class FileStorageUploadFieldLoader extends FileUploadFieldLoader<FileStorageUploadField<?>> {
+public class FileStorageUploadFieldLoader extends FileUploadFieldLoader<FileStorageUploadField> {
 
     @Override
     public void loadComponent() {
         super.loadComponent();
-        loadFileStorage(resultComponent, element);
-        loadMode(resultComponent, element);
+        loadString(element, "fileStorage", resultComponent::setFileStorageName);
+        loadEnum(element, FileStoragePutMode.class, "fileStoragePutMode", resultComponent::setMode);
     }
 
     @Override
     public void createComponent() {
         resultComponent = factory.create(FileStorageUploadField.NAME);
         loadId(resultComponent, element);
-    }
-
-    protected void loadMode(FileStorageUploadField resultComponent, Element element) {
-        String fileStoragePutMode = element.attributeValue("fileStoragePutMode");
-        if (StringUtils.isNotEmpty(fileStoragePutMode)) {
-            resultComponent.setMode(FileStorageUploadField.FileStoragePutMode.valueOf(fileStoragePutMode));
-        }
-    }
-
-
-    private void loadFileStorage(FileStorageUploadField resultComponent, Element element) {
-        String fileStorage = element.attributeValue("fileStorage");
-        if (StringUtils.isNotEmpty(fileStorage)) {
-            resultComponent.setFileStorageName(fileStorage);
-        }
     }
 }

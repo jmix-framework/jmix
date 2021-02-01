@@ -17,6 +17,7 @@
 package io.jmix.ui.upload;
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
@@ -34,6 +35,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -201,72 +207,66 @@ public class TemporaryStorageImpl implements TemporaryStorage {
     }
 
     @Override
-    public <R> void putFileIntoStorage(UUID fileId, R reference, FileStorage<R> fileStorage) {
+    public FileRef putFileIntoStorage(UUID fileId, String fileName, FileStorage fileStorage) {
         File file = getFile(fileId);
         if (file == null) {
-            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND,
-                    fileStorage.getFileName(reference));
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, fileName);
         }
 
+        FileRef fileRef;
         try (InputStream io = new FileInputStream(file)) {
-            fileStorage.saveStream(reference, io);
+            fileRef = fileStorage.saveStream(fileName, io);
         } catch (FileNotFoundException e) {
             throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND,
                     "Temp file is not found " + file.getAbsolutePath());
         } catch (IOException e) {
-            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION,
-                    fileStorage.getFileName(reference));
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, fileName);
         }
 
         deleteFile(fileId);
+        return fileRef;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R> void putFileIntoStorage(UUID fileId, R reference) {
-        FileStorage<?> defaultFileStorage = fileStorageLocator.getDefault();
-        if (!defaultFileStorage.getReferenceType().isAssignableFrom(reference.getClass())) {
-            throw new IllegalArgumentException("Reference type is not compatible with the default file storage");
-        }
-        putFileIntoStorage(fileId, reference, (FileStorage<R>) defaultFileStorage);
+    public FileRef putFileIntoStorage(UUID fileId, String fileName) {
+        FileStorage defaultFileStorage = fileStorageLocator.getDefault();
+        return putFileIntoStorage(fileId, fileName, defaultFileStorage);
     }
 
-    //todo shalyganov MBean
-//    @Override
-//    public void clearTempDirectory() {
-//        try {
-//            File dir = new File(tempDir);
-//            File[] files = dir.listFiles();
-//            if (files == null)
-//                throw new IllegalStateException("Not a directory: " + tempDir);
-//            Date currentDate = timeSource.currentTimestamp();
-//            for (File file : files) {
-//                Date fileDate = new Date(file.lastModified());
-//                Calendar calendar = new GregorianCalendar();
-//                calendar.setTime(fileDate);
-//                calendar.add(Calendar.DAY_OF_YEAR, 2);
-//                if (currentDate.compareTo(calendar.getTime()) > 0) {
-//                    deleteFileLink(file.getAbsolutePath());
-//                    if (!file.delete()) {
-//                        log.warn(String.format("Could not remove temp file %s", file.getName()));
-//                    }
-//                }
-//            }
-//        } catch (Exception ex) {
-//            log.error(ex.getMessage(), ex);
-//        }
-//    }
-//
-//    @Override
-//    public String showTempFiles() {
-//        StringBuilder builder = new StringBuilder();
-//        Map<UUID, File> clonedFileMap = new HashMap<>(tempFiles);
-//        for (Map.Entry<UUID, File> fileEntry : clonedFileMap.entrySet()) {
-//            builder.append(fileEntry.getKey().toString()).append(" | ");
-//            Date lastModified = new Date(fileEntry.getValue().lastModified());
-//            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//            builder.append(formatter.format(lastModified)).append("\n");
-//        }
-//        return builder.toString();
-//    }
+    public void clearTempDirectory() {
+        try {
+            File dir = new File(tempDir);
+            File[] files = dir.listFiles();
+            if (files == null)
+                throw new IllegalStateException("Not a directory: " + tempDir);
+            Date currentDate = timeSource.currentTimestamp();
+            for (File file : files) {
+                Date fileDate = new Date(file.lastModified());
+                Calendar calendar = new GregorianCalendar();
+                calendar.setTime(fileDate);
+                calendar.add(Calendar.DAY_OF_YEAR, 2);
+                if (currentDate.compareTo(calendar.getTime()) > 0) {
+                    deleteFileLink(file.getAbsolutePath());
+                    if (!file.delete()) {
+                        log.warn(String.format("Could not remove temp file %s", file.getName()));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+        }
+    }
+
+    public String showTempFiles() {
+        StringBuilder builder = new StringBuilder();
+        Map<UUID, File> clonedFileMap = new HashMap<>(tempFiles);
+        for (Map.Entry<UUID, File> fileEntry : clonedFileMap.entrySet()) {
+            builder.append(fileEntry.getKey().toString()).append(" | ");
+            Date lastModified = new Date(fileEntry.getValue().lastModified());
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            builder.append(formatter.format(lastModified)).append("\n");
+        }
+        return builder.toString();
+    }
 }

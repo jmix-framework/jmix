@@ -19,8 +19,8 @@ import com.vaadin.ui.Button;
 import io.jmix.ui.component.FileUploadField;
 import io.jmix.ui.component.data.ConversionException;
 import io.jmix.ui.widget.JmixFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.unit.DataSize;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
@@ -70,7 +70,7 @@ public class FileUploadFieldImpl extends AbstractSingleFileUploadField<byte[]>
             return null;
         }
         return StringUtils.isEmpty(fileName)
-                ? String.format(DEFAULT_FILENAME + " (%dKb)", DataSize.ofBytes(modelValue.length).toKilobytes())
+                ? String.format(DEFAULT_FILENAME + " (%s)", FileUtils.byteCountToDisplaySize(modelValue.length))
                 : fileName;
     }
 

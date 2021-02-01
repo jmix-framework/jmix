@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.FileRef;
 import io.jmix.ui.meta.*;
 import io.jmix.ui.upload.TemporaryStorage;
 
@@ -24,8 +25,6 @@ import java.util.UUID;
 
 /**
  * Component for uploading files to file storage.
- *
- * @param <T> file reference type
  */
 @StudioComponent(xmlElement = "fileStorageUpload",
         category = "Components",
@@ -35,14 +34,14 @@ import java.util.UUID;
         canvasTextProperty = "uploadButtonCaption")
 @StudioProperties(properties = {
         @StudioProperty(name = "css", type = PropertyType.STRING),
-        @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, typeParameter = "T"),
+        @StudioProperty(name = "property", type = PropertyType.PROPERTY_PATH_REF, options = "fileRef"),
         @StudioProperty(name = "datasource", type = PropertyType.DATASOURCE_REF),
         @StudioProperty(name = "dataContainer", type = PropertyType.DATACONTAINER_REF)
 }, groups = {
         @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"datasource", "property"}),
         @PropertiesGroup(constraint = PropertiesConstraint.ALL_OR_NOTHING, properties = {"dataContainer", "property"})
 })
-public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<T> {
+public interface FileStorageUploadField extends SingleFileUploadField, Field<FileRef> {
     String NAME = "fileStorageUpload";
 
     /**
@@ -72,14 +71,6 @@ public interface FileStorageUploadField<T> extends SingleFileUploadField, Field<
      */
     @Nullable
     String getFileName();
-
-    /**
-     * Returns reference instance of uploaded file. Can be null.
-     *
-     * @return file reference instance or null
-     */
-    @Nullable
-    T getReference();
 
     /**
      * Sets mode which determines when file will be put into FileStorage.

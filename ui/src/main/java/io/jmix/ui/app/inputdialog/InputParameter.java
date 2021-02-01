@@ -16,6 +16,7 @@
 
 package io.jmix.ui.app.inputdialog;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -23,7 +24,6 @@ import io.jmix.ui.component.Field;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.net.URI;
 import java.sql.Time;
 import java.util.Date;
 import java.util.function.Supplier;
@@ -352,13 +352,13 @@ public class InputParameter {
     }
 
     /**
-     * Creates parameter with URI (file reference) type.
+     * Creates parameter with FileRef (file reference) type.
      *
      * @param id field id
      * @return input parameter
      */
     public static InputParameter fileParameter(String id) {
-        return new InputParameter(id).withDatatypeJavaClass(URI.class);
+        return new InputParameter(id).withDatatypeJavaClass(FileRef.class);
     }
 
     /**

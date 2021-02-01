@@ -157,8 +157,7 @@ public abstract class AbstractSingleFileUploadField<R> extends AbstractField<Jmi
                 .show();
     }
 
-    protected void onFileNameClick(Button.ClickEvent e) {
-    }
+    protected abstract void onFileNameClick(Button.ClickEvent e);
 
     @Nullable
     public String getFileName() {

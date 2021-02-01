@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.factory;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
@@ -32,20 +33,16 @@ import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.OpenMode;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Method;
-import java.net.URI;
 import java.sql.Time;
 import java.time.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static io.jmix.ui.component.DateField.Resolution;
 
@@ -150,7 +147,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
             return createNumberField(context);
         } else if (type.equals(byte[].class)) {
             return createFileUploadField(context);
-        } else if (type.equals(URI.class)) {
+        } else if (type.equals(FileRef.class)) {
             return createFileStorageUploadField(context);
         }
         return null;

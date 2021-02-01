@@ -45,7 +45,7 @@ public class WebExportDisplay implements ExportDisplay {
     @Autowired
     public void setDownloader(Downloader downloader) {
         this.delegate = downloader;
-        delegate.setFileStorage(cubaFileStorage.getFileStorageAdapter());
+        delegate.setFileStorage(cubaFileStorage.getDelegate());
     }
 
     @Override
@@ -62,12 +62,12 @@ public class WebExportDisplay implements ExportDisplay {
     @Override
     public void show(FileDescriptor fileDescriptor, @Nullable ExportFormat format) {
         DownloadFormat downloadFormat = format == null ? null : format.getDownloadFormat();
-        delegate.download(fileDescriptor, downloadFormat);
+        delegate.download(cubaFileStorage.toFileRef(fileDescriptor), downloadFormat);
     }
 
     @Override
     public void show(FileDescriptor fileDescriptor) {
-        delegate.download(fileDescriptor);
+        delegate.download(cubaFileStorage.toFileRef(fileDescriptor));
     }
 
     @Override

@@ -18,11 +18,9 @@ package com.haulmont.cuba.core.app;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.Metadata;
-import io.jmix.core.FileStorage;
+import io.jmix.core.FileRef;
 import io.jmix.core.TimeSource;
-import io.jmix.core.common.util.URLEncodeUtils;
 import io.jmix.localfs.LocalFileStorage;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,6 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Calendar;
 
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
@@ -53,7 +49,7 @@ public class CubaFileStorage implements FileStorageAPI {
     public long saveStream(FileDescriptor fileDescr, InputStream inputStream) throws FileStorageException {
         checkFileDescriptor(fileDescr);
         try {
-            return delegate.saveStream(toURI(fileDescr), inputStream);
+            return delegate.saveStream(toFileRef(fileDescr), inputStream);
         } catch (io.jmix.core.FileStorageException e) {
             throw new FileStorageException(e);
         }
@@ -69,7 +65,7 @@ public class CubaFileStorage implements FileStorageAPI {
     public void removeFile(FileDescriptor fileDescr) throws FileStorageException {
         checkFileDescriptor(fileDescr);
         try {
-            delegate.removeFile(toURI(fileDescr));
+            delegate.removeFile(toFileRef(fileDescr));
         } catch (io.jmix.core.FileStorageException e) {
             throw new FileStorageException(e);
         }
@@ -79,7 +75,7 @@ public class CubaFileStorage implements FileStorageAPI {
     public InputStream openStream(FileDescriptor fileDescr) throws FileStorageException {
         checkFileDescriptor(fileDescr);
         try {
-            return delegate.openStream(toURI(fileDescr));
+            return delegate.openStream(toFileRef(fileDescr));
         } catch (io.jmix.core.FileStorageException e) {
             throw new FileStorageException(e);
         }
@@ -101,13 +97,13 @@ public class CubaFileStorage implements FileStorageAPI {
     public boolean fileExists(FileDescriptor fileDescr) throws FileStorageException {
         checkFileDescriptor(fileDescr);
         try {
-            return delegate.fileExists(toURI(fileDescr));
+            return delegate.fileExists(toFileRef(fileDescr));
         } catch (io.jmix.core.FileStorageException e) {
             throw new FileStorageException(e);
         }
     }
 
-    public URI toURI(FileDescriptor fileDescriptor) {
+    public FileRef toFileRef(FileDescriptor fileDescriptor) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(fileDescriptor.getCreateDate());
         int year = cal.get(Calendar.YEAR);
@@ -122,23 +118,12 @@ public class CubaFileStorage implements FileStorageAPI {
                 ? "." + fileDescriptor.getExtension()
                 : StringUtils.EMPTY;
 
-        StringBuilder reference = new StringBuilder(datePath)
-                .append("/")
-                .append(fileDescriptor.getId())
-                .append(fileExtension)
-                .append(";").append(URLEncodeUtils.encodeUtf8(fileDescriptor.getName()));
-        try {
-            return new URI(reference.toString());
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException(e);
-        }
+        String path = datePath + "/" + fileDescriptor.getId() + fileExtension;
+        return new FileRef(delegate.getStorageName(), path, fileDescriptor.getName());
     }
 
-    /**
-     * Returns an adapter to use this storage as {@link FileStorage}.
-     */
-    public FileStorage<FileDescriptor> getFileStorageAdapter() {
-        return new CubaFileStorageAdapter();
+    public LocalFileStorage getDelegate() {
+        return delegate;
     }
 
     protected void checkFileDescriptor(FileDescriptor fd) {
@@ -146,50 +131,4 @@ public class CubaFileStorage implements FileStorageAPI {
             throw new IllegalArgumentException("A FileDescriptor instance with populated 'createDate' attribute must be provided");
         }
     }
-
-    /**
-     * An adapter to use {@link CubaFileStorage} as {@link FileStorage}.
-     */
-    protected class CubaFileStorageAdapter implements FileStorage<FileDescriptor> {
-        @Override
-        public Class<FileDescriptor> getReferenceType() {
-            return FileDescriptor.class;
-        }
-
-        @Override
-        public FileDescriptor createReference(String fileName) {
-            FileDescriptor fileDescriptor = metadata.create(FileDescriptor.class);
-            fileDescriptor.setName(fileName);
-            fileDescriptor.setExtension(FilenameUtils.getExtension(fileName));
-            fileDescriptor.setCreateDate(timeSource.currentTimestamp());
-
-            return fileDescriptor;
-        }
-
-        @Override
-        public String getFileName(FileDescriptor reference) {
-            return delegate.getFileName(toURI(reference));
-        }
-
-        @Override
-        public long saveStream(FileDescriptor reference, InputStream inputStream) {
-            return delegate.saveStream(toURI(reference), inputStream);
-        }
-
-        @Override
-        public InputStream openStream(FileDescriptor reference) {
-            return delegate.openStream(toURI(reference));
-        }
-
-        @Override
-        public void removeFile(FileDescriptor reference) {
-            delegate.removeFile(toURI(reference));
-        }
-
-        @Override
-        public boolean fileExists(FileDescriptor reference) {
-            return delegate.fileExists(toURI(reference));
-        }
-    }
-
 }

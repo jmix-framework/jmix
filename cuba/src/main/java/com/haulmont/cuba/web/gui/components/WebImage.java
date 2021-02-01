@@ -19,12 +19,17 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.core.app.CubaFileStorage;
 import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.Image;
+import io.jmix.core.FileRef;
 import io.jmix.core.common.event.Subscription;
+import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.component.FileStorageResource;
 import io.jmix.ui.component.Resource;
+import io.jmix.ui.component.StreamResource;
 import io.jmix.ui.component.impl.FileStorageResourceImpl;
 import io.jmix.ui.component.impl.ImageImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
 import java.util.function.Consumer;
 
 @Deprecated
@@ -54,16 +59,23 @@ public class WebImage extends ImageImpl<FileDescriptor> implements Image {
 
     @Override
     protected Resource createImageResource(Object resourceObject) {
-        Resource resource = super.createImageResource(resourceObject);
-        if (resource instanceof FileStorageResourceImpl) {
-            ((FileStorageResourceImpl) resource).setFileStorage(cubaFileStorage.getFileStorageAdapter());
+        if (resourceObject == null) {
+            return null;
         }
-        return resource;
-    }
 
-    @Override
-    protected boolean isFileReference(Object resourceObject) {
-        return FileDescriptor.class.isAssignableFrom(resourceObject.getClass());
+        if (resourceObject instanceof byte[]) {
+            return applicationContext.getBean(StreamResource.class)
+                    .setStreamSupplier(() ->
+                            new ByteArrayInputStream((byte[]) resourceObject));
+        }
+        if (resourceObject instanceof FileDescriptor) {
+            return applicationContext.getBean(FileStorageResource.class)
+                    .setFileReference(cubaFileStorage.toFileRef((FileDescriptor) resourceObject));
+        }
+
+        throw new GuiDevelopmentException(
+                "The Image component does not support property value binding for the property of type: "
+                        + resourceObject.getClass().getName(), getFrame().getId());
     }
 
     @Override

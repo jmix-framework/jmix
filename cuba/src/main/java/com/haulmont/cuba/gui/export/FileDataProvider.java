@@ -23,10 +23,11 @@ import com.haulmont.cuba.core.global.AppBeans;
 /**
  * Data provider for FileDescriptor
  */
-public class FileDataProvider extends io.jmix.ui.download.FileDataProvider<FileDescriptor>
+public class FileDataProvider extends io.jmix.ui.download.FileDataProvider
         implements ExportDataProvider {
 
     public FileDataProvider(FileDescriptor fileDescriptor) {
-        super(fileDescriptor, AppBeans.get(CubaFileStorage.class).getFileStorageAdapter());
+        super(AppBeans.get(CubaFileStorage.class).toFileRef(fileDescriptor),
+                AppBeans.get(CubaFileStorage.class).getDelegate());
     }
 }

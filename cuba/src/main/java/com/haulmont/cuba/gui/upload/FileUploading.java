@@ -22,6 +22,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.FileStorageException;
 import com.haulmont.cuba.core.global.Metadata;
+import io.jmix.core.FileRef;
 import io.jmix.core.TimeSource;
 import io.jmix.ui.executor.TaskLifeCycle;
 import io.jmix.ui.upload.TemporaryStorage;
@@ -31,6 +32,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -140,7 +144,23 @@ public class FileUploading implements FileUploadingAPI {
 
     @Override
     public void putFileIntoStorage(UUID fileId, FileDescriptor fileDescr) throws FileStorageException {
-        delegate.putFileIntoStorage(fileId, fileStorage.toURI(fileDescr));
+        File file = getFile(fileId);
+        if (file == null) {
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND,
+                    fileDescr.getName());
+        }
+
+        FileRef fileRef = fileStorage.toFileRef(fileDescr);
+        try (InputStream io = new FileInputStream(file)) {
+            fileStorage.getDelegate().saveStream(fileRef, io);
+        } catch (FileNotFoundException e) {
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND,
+                    "Temp file is not found " + file.getAbsolutePath());
+        } catch (IOException e) {
+            throw new FileStorageException(FileStorageException.Type.IO_EXCEPTION, fileDescr.getName());
+        }
+
+        deleteFile(fileId);
     }
 
     @Override

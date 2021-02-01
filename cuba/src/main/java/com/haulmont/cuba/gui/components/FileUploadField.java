@@ -20,10 +20,12 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.FileStorageUploadField;
+import io.jmix.ui.component.SingleFileUploadField;
 import io.jmix.ui.upload.TemporaryStorage;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -33,9 +35,23 @@ import java.util.function.Supplier;
  * @deprecated Use {@link io.jmix.ui.component.FileStorageUploadField} instead
  */
 @Deprecated
-public interface FileUploadField extends UploadField, FileStorageUploadField<FileDescriptor>, Field<FileDescriptor> {
+public interface FileUploadField extends UploadField, SingleFileUploadField, Field<FileDescriptor> {
 
     String NAME = "upload";
+
+    /**
+     * Get id of the uploaded file in {@link com.haulmont.cuba.gui.upload.FileUploading}.
+     *
+     * @return File Id.
+     */
+    @Nullable
+    UUID getFileId();
+
+    /**
+     * @return caption to be shown in the file download link next to upload button
+     */
+    @Nullable
+    String getFileName();
 
     /**
      * Returns FileDescriptor instance of uploaded file. Can be null.
@@ -49,10 +65,20 @@ public interface FileUploadField extends UploadField, FileStorageUploadField<Fil
      * Gets content bytes for uploaded file.
      *
      * @return Bytes for uploaded file.
-     * @deprecated Please use {@link FileStorageUploadField#getFileId()} method and {@link TemporaryStorage}.
+     * @deprecated Please use {@link #getFileId()} method and {@link TemporaryStorage}.
      */
     @Deprecated
     byte[] getBytes();
+
+    /**
+     * Sets mode which determines when file will be put into FileStorage.
+     */
+    void setMode(FileStorageUploadField.FileStoragePutMode mode);
+
+    /**
+     * @return mode which determines when file will be put into FileStorage.
+     */
+    FileStorageUploadField.FileStoragePutMode getMode();
 
     /**
      * @param listener a listener to remove

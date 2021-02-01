@@ -26,16 +26,20 @@ import com.haulmont.cuba.gui.data.DataSupplier;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.upload.FileUploadingAPI;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import io.jmix.core.FileStorage;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.FileStorageUploadField;
 import io.jmix.ui.component.UploadField;
 import io.jmix.ui.component.Window;
-import io.jmix.ui.component.impl.FileStorageUploadFieldImpl;
+import io.jmix.ui.component.impl.AbstractFileStorageUploadField;
 import io.jmix.ui.upload.TemporaryStorage;
+import io.jmix.ui.widget.JmixFileUpload;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +48,12 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.function.Consumer;
 
 @Deprecated
-public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescriptor>
+public class WebFileUploadField extends AbstractFileStorageUploadField<FileDescriptor>
         implements FileUploadField {
 
     private static final Logger log = LoggerFactory.getLogger(WebFileUploadField.class);
@@ -63,13 +69,73 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
     @Override
     public void setFileStorageLocator(FileStorageLocator fileStorageLocator) {
         //ignore FileStorageLocator and use cuba file storage
-        fileStorage = cubaFileStorage.getFileStorageAdapter();
+        fileStorage = cubaFileStorage.getDelegate();
     }
 
     @Override
     protected void initComponent() {
         super.initComponent();
         applyPermissions();
+    }
+
+    @Override
+    protected void onUploadSucceeded(JmixFileUpload.SucceededEvent event) {
+        fileName = event.getFileName();
+        fileId = tempFileId;
+
+        saveFile(getFileDescriptor());
+        component.setFileNameButtonCaption(fileName);
+
+        super.onUploadSucceeded(event);
+    }
+
+    @Override
+    protected void onFileNameClick(Button.ClickEvent e) {
+        FileDescriptor value = getValue();
+        if (value == null) {
+            return;
+        }
+
+        switch (mode) {
+            case MANUAL:
+                String name = getFileName();
+                String fileName = StringUtils.isEmpty(name) ? value.getName() : name;
+                downloader.download(this::getFileContent, fileName);
+                break;
+            case IMMEDIATE:
+                downloader.download(this::getFileContent, value.getName());
+                break;
+        }
+    }
+
+    protected void saveFile(FileDescriptor fileDescriptor) {
+        switch (mode) {
+            case MANUAL:
+                internalValueChangedOnUpload = true;
+                setValue(fileDescriptor);
+                internalValueChangedOnUpload = false;
+                break;
+            case IMMEDIATE:
+                try {
+                    fileUploading.putFileIntoStorage(fileId, fileDescriptor);
+                    FileDescriptor committedDescriptor = commitFileDescriptor(fileDescriptor);
+                    setValue(committedDescriptor);
+                } catch (FileStorageException e) {
+                    log.error("Error has occurred during file saving", e);
+                }
+                break;
+        }
+    }
+
+    @Nullable
+    @Override
+    public InputStream getFileContent() {
+        if (contentProvider != null) {
+            return contentProvider.get();
+        }
+
+        FileRef fileRef = cubaFileStorage.toFileRef(getValue());
+        return getFileContent(fileRef);
     }
 
     protected void applyPermissions() {
@@ -82,11 +148,6 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
         if (!security.isEntityOpPermitted(FileDescriptor.class, EntityOp.READ)) {
             component.setFileNameButtonEnabled(false);
         }
-    }
-
-    @Override
-    protected String getFileNameByValue(FileDescriptor value) {
-        return value.getName();
     }
 
     protected FileDescriptor commitFileDescriptor(FileDescriptor fileDescriptor) {
@@ -128,7 +189,7 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
      * Get content bytes for uploaded file
      *
      * @return Bytes for uploaded file
-     * @deprecated Please use {@link FileStorageUploadFieldImpl#getFileId()} method
+     * @deprecated Please use {@link AbstractFileStorageUploadField#getFileId()} method
      * and {@link TemporaryStorage}
      */
     @Override
@@ -148,6 +209,16 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
         }
 
         return bytes;
+    }
+
+    @Override
+    public FileStorageUploadField.FileStoragePutMode getMode() {
+        return mode;
+    }
+
+    @Override
+    public void setMode(FileStorageUploadField.FileStoragePutMode mode) {
+        this.mode = mode;
     }
 
     @Override
@@ -178,32 +249,6 @@ public class WebFileUploadField extends FileStorageUploadFieldImpl<FileDescripto
     @Override
     public void removeFileUploadErrorListener(Consumer<FileUploadErrorEvent> listener) {
         unsubscribe(FileUploadErrorEvent.class, listener);
-    }
-
-    @Override
-    protected void saveFile(FileDescriptor fileDescriptor) {
-        switch (mode) {
-            case MANUAL:
-                internalValueChangedOnUpload = true;
-                setValue(fileDescriptor);
-                internalValueChangedOnUpload = false;
-                break;
-            case IMMEDIATE:
-                try {
-                    fileUploading.putFileIntoStorage(fileId, fileDescriptor);
-                    FileDescriptor committedDescriptor = commitFileDescriptor(fileDescriptor);
-                    setValue(committedDescriptor);
-                } catch (FileStorageException e) {
-                    log.error("Error has occurred during file saving", e);
-                }
-                break;
-        }
-    }
-
-    @Nullable
-    @Override
-    public FileDescriptor getReference() {
-        return getFileDescriptor();
     }
 
     @Override

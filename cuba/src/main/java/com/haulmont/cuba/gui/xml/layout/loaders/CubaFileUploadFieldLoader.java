@@ -21,21 +21,19 @@ import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.ui.component.FileStorageUploadField;
-import io.jmix.ui.xml.layout.loader.FileStorageUploadFieldLoader;
+import io.jmix.ui.component.FileStorageUploadField.FileStoragePutMode;
+import io.jmix.ui.xml.layout.loader.FileUploadFieldLoader;
 import org.dom4j.Element;
 
-public class CubaFileUploadFieldLoader extends FileStorageUploadFieldLoader {
+public class CubaFileUploadFieldLoader extends FileUploadFieldLoader<FileUploadField> {
 
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings("rawtypes")
     @Override
-    protected void loadData(FileStorageUploadField<?> component, Element element) {
-        super.loadData(component, element);
+    public void loadComponent() {
+        super.loadComponent();
+        loadEnum(element, FileStoragePutMode.class, "fileStoragePutMode", resultComponent::setMode);
 
-        DatasourceLoaderHelper
-                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
-                        (ComponentLoaderContext) getComponentContext())
-                .ifPresent(component::setValueSource);
+        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
     @Override
@@ -44,11 +42,14 @@ public class CubaFileUploadFieldLoader extends FileStorageUploadFieldLoader {
         loadId(resultComponent, element);
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes"})
     @Override
-    public void loadComponent() {
-        super.loadComponent();
+    protected void loadData(FileUploadField component, Element element) {
+        super.loadData(component, element);
 
-        ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
+        DatasourceLoaderHelper
+                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
+                        (ComponentLoaderContext) getComponentContext())
+                .ifPresent(component::setValueSource);
     }
 }

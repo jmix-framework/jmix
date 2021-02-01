@@ -20,36 +20,55 @@ import com.vaadin.event.Action;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Layout;
 import io.jmix.core.Messages;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.Notifications.NotificationType;
+import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.action.Action.MainTabSheetAction;
+import io.jmix.ui.action.MainTabSheetActionProvider;
+import io.jmix.ui.app.core.dev.LayoutAnalyzer;
+import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
+import io.jmix.ui.app.core.dev.LayoutTip;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.screen.OpenMode;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenContext;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.HasTabSheetBehaviour;
 import io.jmix.ui.widget.TabSheetBehaviour;
 import io.jmix.ui.widget.WindowBreadCrumbs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainTabSheetActionHandler implements Action.Handler {
+
+    private final Logger log = LoggerFactory.getLogger(MainTabSheetActionHandler.class);
 
     protected Action closeAllTabs;
     protected Action closeOtherTabs;
     protected Action closeCurrentTab;
-
-    protected Action showInfo;
-
     protected Action analyzeLayout;
 
     protected boolean initialized = false;
     protected HasTabSheetBehaviour tabSheet;
 
+    protected ApplicationContext applicationContext;
     protected Messages messages;
     protected UiProperties uiProperties;
 
-    public MainTabSheetActionHandler(HasTabSheetBehaviour tabSheet, Messages messages, UiProperties uiProperties) {
+    public MainTabSheetActionHandler(HasTabSheetBehaviour tabSheet, ApplicationContext applicationContext) {
         this.tabSheet = tabSheet;
-        this.messages = messages;
-        this.uiProperties = uiProperties;
+        this.applicationContext = applicationContext;
+        this.messages = applicationContext.getBean(Messages.class);
+        this.uiProperties = applicationContext.getBean(UiProperties.class);
     }
 
     @Override
@@ -58,7 +77,6 @@ public class MainTabSheetActionHandler implements Action.Handler {
             closeAllTabs = new Action(messages.getMessage("actions.closeAllTabs"));
             closeOtherTabs = new Action(messages.getMessage("actions.closeOtherTabs"));
             closeCurrentTab = new Action(messages.getMessage("actions.closeCurrentTab"));
-            showInfo = new Action(messages.getMessage("actions.showInfo"));
             analyzeLayout = new Action(messages.getMessage("actions.analyzeLayout"));
 
             initialized = true;
@@ -70,18 +88,35 @@ public class MainTabSheetActionHandler implements Action.Handler {
         actions.add(closeAllTabs);
 
         if (target != null) {
-            // CurrentAuthentication currentAuthentication = AppBeans.get(CurrentAuthentication.NAME);
-            // todo permissions
-//            if (userSession.isSpecificPermitted(ShowInfoAction.ACTION_PERMISSION) &&
-//                    findEditor((Layout) target) != null) {
-//                actions.add(showInfo);
-//            }
             if (uiProperties.isLayoutAnalyzerEnabled()) {
                 actions.add(analyzeLayout);
             }
+
+            actions.addAll(collectAdditionalActions(target));
         }
 
         return actions.toArray(new Action[0]);
+    }
+
+    protected List<Action> collectAdditionalActions(Object target) {
+        Screen screen = findScreen(((Layout) target));
+        if (screen == null) {
+            return Collections.emptyList();
+        }
+
+        Map<String, MainTabSheetActionProvider> beans =
+                applicationContext.getBeansOfType(MainTabSheetActionProvider.class);
+        if (beans.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return beans.values().stream()
+                .flatMap(provider ->
+                        provider.getActions().stream())
+                .filter(action ->
+                        action.isApplicable(screen))
+                .map(MainTabSheetActionWrapper::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -94,55 +129,52 @@ public class MainTabSheetActionHandler implements Action.Handler {
                 tabSheetBehaviour.closeOtherTabs((Component) target);
             } else if (closeAllTabs == action) {
                 tabSheetBehaviour.closeAllTabs();
-            } else if (showInfo == action) {
-                showInfo(target);
             } else if (analyzeLayout == action) {
                 analyzeLayout(target);
             }
+
+            if (action instanceof MainTabSheetActionWrapper) {
+                Screen screen = findScreen(((Layout) target));
+                if (screen != null) {
+                    ((MainTabSheetActionWrapper) action).execute(screen);
+                }
+            } else {
+                log.warn("'{}' action isn't handled", action.getCaption());
+            }
         }
-    }
-
-    protected void showInfo(Object target) {
-        // todo show info
-        /*Window.Editor editor = findEditor((Layout) target);
-        Entity entity = editor.getItem();
-
-        Metadata metadata = AppBeans.get(Metadata.NAME);
-        MetaClass metaClass = metadata.getSession().getClass(entity.getClass());
-
-        new ShowInfoAction().showInfo(entity, metaClass, editor);*/
     }
 
     protected void analyzeLayout(Object target) {
-        // todo analyzer
-        /*Window window = findWindow((Layout) target);
-        if (window != null) {
-            LayoutAnalyzer analyzer = new LayoutAnalyzer();
-            List<LayoutTip> tipsList = analyzer.analyze(window);
+        Screen screen = findScreen((Layout) target);
+        if (screen == null) {
+            return;
+        }
 
-            if (tipsList.isEmpty()) {
-                Notifications notifications = ComponentsHelper.getScreenContext(window).getNotifications();
+        LayoutAnalyzer analyzer = new LayoutAnalyzer();
+        List<LayoutTip> layoutTips = analyzer.analyze(screen);
 
-                notifications.create(NotificationType.HUMANIZED)
-                        .withCaption("No layout problems found")
-                        .show();
-            } else {
-                WindowManager wm = (WindowManager) ComponentsHelper.getScreenContext(window).getScreens();
-                WindowInfo windowInfo = AppBeans.get(WindowConfig.class).getWindowInfo("layoutAnalyzer");
-
-                wm.openWindow(windowInfo, OpenType.DIALOG, ParamsMap.of("tipsList", tipsList));
-            }
-        }*/
+        ScreenContext screenContext = UiControllerUtils.getScreenContext(screen);
+        if (layoutTips.isEmpty()) {
+            Notifications notifications = screenContext.getNotifications();
+            notifications.create(NotificationType.HUMANIZED)
+                    .withCaption("No layout problems found")
+                    .show();
+        } else {
+            Screens screens = screenContext.getScreens();
+            LayoutAnalyzerScreen analyzerScreen = screens.create(LayoutAnalyzerScreen.class, OpenMode.DIALOG);
+            analyzerScreen.setLayoutTips(layoutTips);
+            analyzerScreen.show();
+        }
     }
 
     @Nullable
-    protected Window getWindow(Object target) {
-        if (target instanceof Layout) {
-            Layout layout = (Layout) target;
-            for (Component component : layout) {
-                if (component instanceof WindowBreadCrumbs) {
-                    WindowBreadCrumbs breadCrumbs = (WindowBreadCrumbs) component;
-                    return breadCrumbs.getCurrentWindow();
+    protected Screen findScreen(Layout layout) {
+        for (Object component : layout) {
+            if (component instanceof WindowBreadCrumbs) {
+                WindowBreadCrumbs breadCrumbs = (WindowBreadCrumbs) component;
+                if (breadCrumbs.getCurrentWindow() != null) {
+                    Window currentWindow = breadCrumbs.getCurrentWindow();
+                    return UiControllerUtils.getScreen(currentWindow.getFrameOwner());
                 }
             }
         }
@@ -150,35 +182,16 @@ public class MainTabSheetActionHandler implements Action.Handler {
         return null;
     }
 
-    // todo
-    /*protected Window.Editor findEditor(Layout layout) {
-        for (Object component : layout) {
-            if (component instanceof WindowBreadCrumbs) {
-                WindowBreadCrumbs breadCrumbs = (WindowBreadCrumbs) component;
-                if (breadCrumbs.getCurrentWindow() != null) {
-                    Screen frameOwner = breadCrumbs.getCurrentWindow().getFrameOwner();
-                    if (frameOwner instanceof Window.Editor) {
-                        return (Window.Editor) frameOwner;
-                    }
+    protected static class MainTabSheetActionWrapper extends Action {
+        protected MainTabSheetAction action;
 
-                    if (frameOwner instanceof EditorScreen) {
-                        return new ScreenEditorWrapper(frameOwner);
-                    }
-                }
-            }
+        public MainTabSheetActionWrapper(MainTabSheetAction action) {
+            super(action.getCaption());
+            this.action = action;
         }
-        return null;
+
+        public void execute(Screen screen) {
+            action.execute(screen);
+        }
     }
-
-    protected io.jmix.ui.component.Window findWindow(Layout layout) {
-        for (Object component : layout) {
-            if (component instanceof WindowBreadCrumbs) {
-                WindowBreadCrumbs breadCrumbs = (WindowBreadCrumbs) component;
-                if (breadCrumbs.getCurrentWindow() != null) {
-                    return breadCrumbs.getCurrentWindow();
-                }
-            }
-        }
-        return null;
-    }*/
 }

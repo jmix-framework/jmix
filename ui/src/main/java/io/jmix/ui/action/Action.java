@@ -333,6 +333,28 @@ public interface Action {
     }
 
     /**
+     * An action that can be used as Main TabSheet context menu item.
+     */
+    interface MainTabSheetAction extends Action {
+
+        /**
+         * Determines whether this action is applicable for the given screen.
+         *
+         * @param screen a screen for which the applicable state is determined
+         * @return {@code true} if this action is applicable for the given
+         * screen, {@code false} otherwise
+         */
+        boolean isApplicable(Screen screen);
+
+        /**
+         * Executes this {@link Action} for the given screen.
+         *
+         * @param screen a screen for which this action is executed
+         */
+        void execute(Screen screen);
+    }
+
+    /**
      * Used in dialogs to assign a special visual style for a button representing the action.
      */
     enum Status {

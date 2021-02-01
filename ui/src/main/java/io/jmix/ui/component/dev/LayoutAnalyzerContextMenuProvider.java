@@ -19,24 +19,20 @@ package io.jmix.ui.component.dev;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.MenuBar;
 import io.jmix.core.Messages;
-import io.jmix.core.common.util.ParamsMap;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.app.core.dev.LayoutAnalyzer;
 import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
 import io.jmix.ui.app.core.dev.LayoutTip;
-import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.OpenMode;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.widget.addon.contextmenu.ContextMenu;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
-
-import static io.jmix.ui.app.core.dev.LayoutAnalyzerScreen.TIPS_LIST_PARAM;
 
 @Component("ui_LayoutAnalyzerContextMenuProvider")
 public class LayoutAnalyzerContextMenuProvider {
@@ -66,12 +62,8 @@ public class LayoutAnalyzerContextMenuProvider {
                             .getScreens();
 
                     LayoutAnalyzerScreen layoutAnalyzerScreen =
-                            screens.create(
-                                    LayoutAnalyzerScreen.class,
-                                    OpenMode.DIALOG,
-                                    new MapScreenOptions(
-                                            ParamsMap.of(TIPS_LIST_PARAM, tipsList)));
-
+                            screens.create(LayoutAnalyzerScreen.class, OpenMode.DIALOG);
+                    layoutAnalyzerScreen.setLayoutTips(tipsList);
                     layoutAnalyzerScreen.show();
                 }
             });

@@ -292,7 +292,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
     }
 
     protected Action.Handler createTabSheetActionHandler(HasTabSheetBehaviour tabSheet) {
-        return new MainTabSheetActionHandler(tabSheet, messages, getUiProperties());
+        return new MainTabSheetActionHandler(tabSheet, applicationContext);
     }
 
     protected JmixSingleModeContainer createSingleModeContainer() {

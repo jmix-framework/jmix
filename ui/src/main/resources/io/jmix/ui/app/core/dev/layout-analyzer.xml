@@ -15,13 +15,14 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://caption"
+        caption="msg://layoutAnalyzerScreen.caption"
         focusComponent="closeBtn">
     <layout expand="analyzeResultBox" spacing="true">
         <textArea id="analyzeResultBox"
+                  editable="false"
                   width="100%"/>
         <button id="closeBtn"
-                caption="msg://actions.Close"
+                caption="msg:///actions.Close"
                 icon="OK"/>
     </layout>
 </window>

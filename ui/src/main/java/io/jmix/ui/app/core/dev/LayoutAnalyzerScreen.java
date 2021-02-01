@@ -40,39 +40,26 @@ import java.util.List;
 @UiDescriptor("layout-analyzer.xml")
 public class LayoutAnalyzerScreen extends Screen {
 
-    public static final String TIPS_LIST_PARAM = "tipsList";
-
     private static final Logger log = LoggerFactory.getLogger(LayoutAnalyzerScreen.class);
 
     @Autowired
     protected TextArea<String> analyzeResultBox;
 
-    @Subscribe
-    public void onInit(InitEvent event) {
-        if (event.getOptions() instanceof MapScreenOptions) {
-            MapScreenOptions options = (MapScreenOptions) event.getOptions();
-
-            //noinspection unchecked
-            List<LayoutTip> layoutTips = (List<LayoutTip>) options.getParams()
-                    .get(TIPS_LIST_PARAM);
-
-            if (CollectionUtils.isNotEmpty(layoutTips)) {
-                StringBuilder analysisText = new StringBuilder();
-                for (LayoutTip tip : layoutTips) {
-                    analysisText.append("[")
-                            .append(tip.errorType.name()).append("] ")
-                            .append(tip.componentPath).append("\n")
-                            .append(tip.message).append("\n\n");
-                }
-                String analysisLog = analysisText.toString().trim();
-
-                log.info("Analyze layout\n{}", analysisLog);
-
-                analyzeResultBox.setValue(analysisLog);
+    public void setLayoutTips(List<LayoutTip> layoutTips) {
+        if (CollectionUtils.isNotEmpty(layoutTips)) {
+            StringBuilder analysisText = new StringBuilder();
+            for (LayoutTip tip : layoutTips) {
+                analysisText.append("[")
+                        .append(tip.errorType.name()).append("] ")
+                        .append(tip.componentPath).append("\n")
+                        .append(tip.message).append("\n\n");
             }
-        }
+            String analysisLog = analysisText.toString().trim();
 
-        analyzeResultBox.setEditable(false);
+            log.info("Analyze layout\n{}", analysisLog);
+
+            analyzeResultBox.setValue(analysisLog);
+        }
     }
 
     @Subscribe("closeBtn")

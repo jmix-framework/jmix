@@ -31,6 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -104,27 +106,29 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
     }
 
     protected List<CategoryDefinition> loadCategoryDefinitions(String entityName) {
+
+        TransactionTemplate template = storeAwareLocator.getTransactionTemplate(dynamicAttributesStore);
+        template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         //noinspection ConstantConditions
-        return storeAwareLocator.getTransactionTemplate(dynamicAttributesStore)
-                .execute(transactionStatus -> {
-                    EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
+        return template.execute(transactionStatus -> {
+            EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
-                    FetchPlan fetchPlan = fetchPlans.builder(Category.class)
-                            .addFetchPlan(FetchPlan.LOCAL)
-                            .add("categoryAttrs", builder -> {
-                                builder.addFetchPlan(FetchPlan.LOCAL);
-                                builder.add("category", FetchPlan.LOCAL);
-                                builder.add("defaultEntity", FetchPlan.LOCAL);
-                            })
-                            .build();
+            FetchPlan fetchPlan = fetchPlans.builder(Category.class)
+                    .addFetchPlan(FetchPlan.LOCAL)
+                    .add("categoryAttrs", builder -> {
+                        builder.addFetchPlan(FetchPlan.LOCAL);
+                        builder.add("category", FetchPlan.LOCAL);
+                        builder.add("defaultEntity", FetchPlan.LOCAL);
+                    })
+                    .build();
 
-                    return entityManager.createQuery("select c from sys_Category c where c.entityType = :entityType", Category.class)
-                            .setParameter("entityType", entityName)
-                            .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
-                            .getResultList().stream()
-                            .map(this::buildCategoryDefinition)
-                            .collect(Collectors.toList());
-                });
+            return entityManager.createQuery("select c from sys_Category c where c.entityType = :entityType", Category.class)
+                    .setParameter("entityType", entityName)
+                    .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
+                    .getResultList().stream()
+                    .map(this::buildCategoryDefinition)
+                    .collect(Collectors.toList());
+        });
     }
 
     protected CategoryDefinition buildCategoryDefinition(Category category) {

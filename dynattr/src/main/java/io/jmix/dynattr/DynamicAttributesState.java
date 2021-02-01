@@ -20,10 +20,11 @@ import com.google.common.base.Preconditions;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
 import io.jmix.core.EntityValuesProvider;
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.impl.EntityInternals;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -89,9 +90,9 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
     }
 
     @Override
-    public Map<String, Object> getChanges() {
+    public Set<AttributeChanges.Change> getChanges() {
         DynamicAttributes.Changes changes = dynamicModel.getChanges();
-        Map<String, Object> oldValues = new HashMap<>();
+        Set<AttributeChanges.Change> oldValues = new HashSet<>();
 
         putTransformed(oldValues, changes.getCreated());
         putTransformed(oldValues, changes.getUpdated());
@@ -101,9 +102,9 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
     }
 
 
-    protected void putTransformed(Map<String, Object> output, Map<String, Object> source) {
+    protected void putTransformed(Set<AttributeChanges.Change> output, Map<String, Object> source) {
         for (Map.Entry<String, Object> entry : source.entrySet()) {
-            output.put('+' + entry.getKey(), entry.getValue());
+            output.add(new AttributeChanges.Change('+' + entry.getKey(), entry.getValue()));
         }
     }
 }

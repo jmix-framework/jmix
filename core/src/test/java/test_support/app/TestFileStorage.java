@@ -17,66 +17,63 @@
 package test_support.app;
 
 import com.google.common.io.ByteStreams;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
-import io.jmix.core.UuidProvider;
+import io.jmix.core.FileStorageException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestFileStorage implements FileStorage<URI> {
+public class TestFileStorage implements FileStorage {
 
-    private Map<URI, byte[]> files = new HashMap<>();
+    private Map<FileRef, byte[]> files = new HashMap<>();
+    private String storageName;
 
-    @Override
-    public Class<URI> getReferenceType() {
-        return URI.class;
+    public TestFileStorage() {
+        this.storageName = "testFileStorage";
+    }
+
+    public TestFileStorage(String storageName) {
+        this.storageName = storageName;
     }
 
     @Override
-    public URI createReference(String fileName) {
-        try {
-            return new URI("test:" + UuidProvider.createUuid() + ";" + fileName);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+    public String getStorageName() {
+        return storageName;
     }
 
     @Override
-    public String getFileName(URI reference) {
-        String path = reference.getRawPath();
-        return path.split(";", -1)[1];
-    }
-
-    @Override
-    public long saveStream(URI reference, InputStream inputStream) {
+    public FileRef saveStream(String fileName, InputStream inputStream) {
         byte[] bytes;
         try {
             bytes = ByteStreams.toByteArray(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        FileRef reference = new FileRef("testFs", "/" + fileName, fileName);
         files.put(reference, bytes);
-        return bytes.length;
+        return reference;
     }
 
     @Override
-    public InputStream openStream(URI reference) {
+    public InputStream openStream(FileRef reference) {
+        if (!fileExists(reference)) {
+            throw new FileStorageException(FileStorageException.Type.FILE_NOT_FOUND, "File not found");
+        }
         byte[] bytes = files.get(reference);
         return new ByteArrayInputStream(bytes);
     }
 
     @Override
-    public void removeFile(URI reference) {
+    public void removeFile(FileRef reference) {
         files.remove(reference);
     }
 
     @Override
-    public boolean fileExists(URI reference) {
+    public boolean fileExists(FileRef reference) {
         return files.containsKey(reference);
     }
 }

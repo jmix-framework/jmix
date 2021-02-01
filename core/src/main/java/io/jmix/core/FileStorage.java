@@ -20,40 +20,26 @@ import java.io.InputStream;
 
 /**
  * Interface of a component to store and load files defined by file reference.
- *
- * @param <R> file reference type
  */
-public interface FileStorage<R> {
+public interface FileStorage {
 
     /**
-     * Returns file reference type.
+     * Returns the name of this storage, which will be saved in {@link FileRef}s.
+     * <p>
+     * Each file storage in the application should have a unique name.
      */
-    Class<R> getReferenceType();
-
-    /**
-     * Creates new file reference, which can be used to store a file.
-     *
-     * @param fileName file name
-     */
-    R createReference(String fileName);
-
-    /**
-     * Returns file name for the given file reference.
-     *
-     * @throws IllegalArgumentException if file reference is invalid
-     */
-    String getFileName(R reference);
+    String getStorageName();
 
     /**
      * Saves an InputStream contents into file storage.
      *
-     * @param reference   file reference
+     * @param fileName    file name
      * @param inputStream input stream, must be closed in the calling code
      * @return number of bytes saved
      * @throws IllegalArgumentException if arguments are incorrect
      * @throws FileStorageException     if something goes wrong
      */
-    long saveStream(R reference, InputStream inputStream);
+    FileRef saveStream(String fileName, InputStream inputStream);
 
     /**
      * Return an input stream to load a file contents.
@@ -63,7 +49,7 @@ public interface FileStorage<R> {
      * @throws IllegalArgumentException if arguments are incorrect
      * @throws FileStorageException     if something goes wrong
      */
-    InputStream openStream(R reference);
+    InputStream openStream(FileRef reference);
 
     /**
      * Removes a file from the file storage.
@@ -71,7 +57,7 @@ public interface FileStorage<R> {
      * @param reference file reference
      * @throws IllegalArgumentException if file reference is invalid
      */
-    void removeFile(R reference);
+    void removeFile(FileRef reference);
 
     /**
      * Tests whether the file denoted by this file reference exists.
@@ -80,5 +66,5 @@ public interface FileStorage<R> {
      * @return true if the file denoted by this file reference exists
      * @throws IllegalArgumentException if file reference is invalid
      */
-    boolean fileExists(R reference);
+    boolean fileExists(FileRef reference);
 }

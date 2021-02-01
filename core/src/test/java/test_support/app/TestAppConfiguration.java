@@ -24,12 +24,12 @@ public class TestAppConfiguration {
     @Bean
     @Primary
     TestFileStorage testFileStorage() {
-        return new TestFileStorage();
+        return new TestFileStorage("testFs");
     }
 
     @Bean
     TestFileStorage testFileStorage2() {
-        return new TestFileStorage();
+        return new TestFileStorage("testFs2");
     }
 
     @Bean

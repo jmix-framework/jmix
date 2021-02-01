@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2020 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="emailtemplates">
+
+        <!-- EMAILTEMPLATES_TEMPLATE_GROUP -->
+        <createTable tableName="EMAILTEMPLATES_TEMPLATE_GROUP">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <!-- EMAILTEMPLATES_TEMPLATE_GROUP -->
+
+        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
+        <createTable tableName="EMAILTEMPLATES_EMAIL_TEMPLATE">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="DTYPE" type="varchar(100)"/>
+
+            <column name="USE_REPORT_SUBJECT" type="boolean"/>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="uuid">
+                <constraints foreignKeyName="FK_EMAILTEMPLATES_EMATEM_GRO" references="EMAILTEMPLATES_TEMPLATE_GROUP(ID)"/>
+            </column>
+            <column name="TYPE_" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CODE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FROM_" type="varchar(255)"/>
+            <column name="TO_" type="clob"/>
+            <column name="CC" type="clob"/>
+            <column name="BCC" type="clob"/>
+            <column name="SUBJECT" type="varchar(255)"/>
+
+            <!-- from emailtemplates_ReportEmailTemplate-->
+            <column name="EMAIL_BODY_REPORT_ID" type="uuid"/>
+
+            <!-- from emailtemplates_JsonEmailTemplate-->
+            <column name="HTML" type="clob"/>
+            <column name="REPORT_XML" type="clob"/>
+        </createTable>
+
+        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_EMAILTEMPLATES_TEMP_UK_CO" unique="true">
+            <column name="CODE"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_EMAILTEMPLATES_TEMP_GROUP">
+            <column name="GROUP_ID"/>
+        </createIndex>
+        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
+
+        <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
+        <createTable tableName="EMAILTEMPLATES_TEMPLATE_REPORT">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)"/>
+            <column name="REPORT_ID" type="uuid">
+                <constraints nullable="false"
+                             foreignKeyName="FK_EMAILTEMPLATES_TEMREP_REP"
+                             references="REPORT_REPORT(ID)"/>
+            </column>
+            <column name="EMAIL_TEMPLATE_ID" type="uuid">
+                <constraints foreignKeyName="FK_EMAILTEMPLATES_TERE_EMTE"
+                             references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_EMAILTEMPLATES_TEMREP_REP">
+            <column name="REPORT_ID"/>
+        </createIndex>
+
+        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_EMAILTEMPLATES_TERE_EMTE">
+            <column name="EMAIL_TEMPLATE_ID"/>
+        </createIndex>
+        <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
+
+
+        <addForeignKeyConstraint baseTableName="EMAILTEMPLATES_EMAIL_TEMPLATE" baseColumnNames="EMAIL_BODY_REPORT_ID"
+                                 constraintName="FK_EMAILTEMPLATES_TEMP_BODYRE" referencedTableName="EMAILTEMPLATES_TEMPLATE_REPORT"
+                                 referencedColumnNames="ID"/>
+
+        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT -->
+        <createTable tableName="EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CONTENT_FILE" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EMAIL_TEMPLATE_ID" type="uuid">
+                <constraints foreignKeyName="FK_EMAILTEMPLATES_ATTACH_TEMP" references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
+            </column>
+        </createTable>
+        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT -->
+
+        <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
+        <createTable tableName="EMAILTEMPLATES_PARAMETER_VALUE">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="PARAMETER_TYPE" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ALIAS" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DEFAULT_VALUE" type="varchar(255)"/>
+
+            <column name="TEMPLATE_REPORT_ID" type="uuid">
+                <constraints foreignKeyName="FK_EMAILTEMPLATES_PAVA_TEPA"
+                             references="EMAILTEMPLATES_TEMPLATE_REPORT(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMAILTEMPLATES_PARAMETER_VALUE" indexName="IDX_EMAILTEMPLATES_PAVA_TEPA">
+            <column name="TEMPLATE_REPORT_ID"/>
+        </createIndex>
+        <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
+
+        <!-- EMAILTEMPLATES_BLOCK_GROUP -->
+        <createTable tableName="EMAILTEMPLATES_BLOCK_GROUP">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="EMAILTEMPLATES_BLOCK_GROUP" indexName="IDX_EMAILTEMPLATES_CTB_U_NAME"
+                     unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <!-- EMAILTEMPLATES_BLOCK_GROUP -->
+
+        <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->
+        <createTable tableName="EMAILTEMPLATES_TEMPLATE_BLOCK">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CATEGORY_ID" type="uuid">
+                <constraints foreignKeyName="FK_EMAILTEMPLATES_TEMBLO_CAT"
+                             references="EMAILTEMPLATES_BLOCK_GROUP(ID)"/>
+            </column>
+            <column name="CONTENT" type="clob"/>
+            <column name="ICON" type="varchar(50)"/>
+        </createTable>
+
+        <createIndex indexName="IDX_EMAILTEMPLATES_TEBL_UK_NA" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK"
+                     unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <createIndex indexName="IDX_EMAILTEMPLATES_TEMBLO_CAT" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK" >
+            <column name="CATEGORY_ID"/>
+        </createIndex>
+        <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->
+        
+        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+            <column name="ID" value="26c1c349-fa68-a66f-9d93-fda2b4e4e898"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" value="2019-09-13 15:56:17"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" value="2019-09-13 15:56:17"/>
+            <column name="NAME" value="Basic"/>
+        </insert>
+
+        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+            <column name="ID" value="46c195fd-c046-cb27-432e-213260d9ce6d"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" value="2019-09-13 15:56:28"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" value="2019-09-13 15:56:28"/>
+            <column name="NAME" value="Extra"/>
+        </insert>
+
+        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+            <column name="ID" value="66359bdd-1e16-5ae4-7f8a-88b9e7b4a5ed"/>
+            <column name="VERSION" value="1"/>
+            <column name="CREATE_TS" value="2019-09-13 15:56:40"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="UPDATE_TS" value="2019-09-13 15:56:40"/>
+            <column name="NAME" value="Forms"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -1266,7 +1266,6 @@ public class MetadataTools {
             return Collections.emptySet();
         }
         return metadataExtensions.stream()
-                .filter(Objects::nonNull)
                 .flatMap(metadataExtension -> metadataExtension.getAdditionalProperties(metaClass).stream())
                 .collect(Collectors.toSet());
     }
@@ -1280,7 +1279,7 @@ public class MetadataTools {
             return false;
 
         for (MetadataExtension extension : metadataExtensions) {
-            if (extension != null && extension.isAdditionalProperty(metaClass, propertyName))
+            if (extension.isAdditionalProperty(metaClass, propertyName))
                 return true;
         }
         return false;

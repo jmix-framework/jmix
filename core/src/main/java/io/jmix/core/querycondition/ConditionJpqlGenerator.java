@@ -72,7 +72,7 @@ public class ConditionJpqlGenerator {
                         .collect(Collectors.joining(" "));
             }
         } else if (condition instanceof JpqlCondition) {
-            String join = ((JpqlCondition) condition).getValue("join");
+            String join = ((JpqlCondition) condition).getJoin();
             return join != null ? join : "";
         } else if (condition instanceof PropertyCondition) {
             return "";
@@ -104,7 +104,7 @@ public class ConditionJpqlGenerator {
                 return sb.toString();
             }
         } else if (condition instanceof JpqlCondition) {
-            return ((JpqlCondition) condition).getValue("where");
+            return ((JpqlCondition) condition).getWhere();
         } else if (condition instanceof PropertyCondition) {
             PropertyCondition propertyCondition = (PropertyCondition) condition;
             if (PropertyConditionUtils.isUnaryOperation(propertyCondition)) {

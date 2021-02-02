@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,68 +16,128 @@
 
 package io.jmix.core.querycondition;
 
-import com.google.common.base.Strings;
-
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Condition that represents parts of a JPQL query: "where" and optional "join".
+ * Condition that represents JPQL query with "where" and optional "join" sections.
  */
-public class JpqlCondition extends AbstractQueryCondition {
+public class JpqlCondition implements Condition {
 
     public static final Pattern PARAMETER_PATTERN = Pattern.compile(":([\\w.$]+)");
 
-    public static JpqlCondition where(String join, String where) {
-        return new JpqlCondition(join, where);
+    protected String where;
+    protected String join;
+    protected Map<String, Object> parameterValuesMap = new HashMap<>();
+
+    public JpqlCondition() {
     }
 
-    public static JpqlCondition where(String where) {
-        return new JpqlCondition(where);
+    public static JpqlCondition create(String where, @Nullable String join) {
+        JpqlCondition condition = new JpqlCondition();
+        condition.setWhere(where);
+        condition.setJoin(join);
+        return condition;
     }
 
-    public JpqlCondition(List<Entry> entries) {
-        super(entries);
+    public static JpqlCondition createWithParameters(String where,
+                                                     @Nullable String join,
+                                                     Map<String, Object> parameterValuesMap) {
+        JpqlCondition condition = new JpqlCondition();
+        condition.setWhere(where);
+        condition.setJoin(join);
+        condition.setParameterValuesMap(parameterValuesMap);
+        return condition;
     }
 
-    public JpqlCondition(@Nullable String join, String where) {
-        super(makeEntries(join, where));
+    public String getWhere() {
+        return where;
     }
 
-    public JpqlCondition(String where) {
-        super(makeEntries(null, where));
+    public void setWhere(String where) {
+        if (!Objects.equals(this.where, where)) {
+            if (this.where != null) {
+                removeParameters(this.where);
+            }
+
+            parseParameters(where);
+            this.where = where;
+        }
     }
 
-    private static List<Entry> makeEntries(@Nullable String join, String where) {
-        List<Entry> list = new ArrayList<>();
-        if (!Strings.isNullOrEmpty(join))
-            list.add(new Entry("join", join));
-        if (!Strings.isNullOrEmpty(where))
-            list.add(new Entry("where", where));
-        return list;
+    @Nullable
+    public String getJoin() {
+        return join;
+    }
+
+    public void setJoin(@Nullable String join) {
+        if (!Objects.equals(this.join, join)) {
+            if (this.join != null) {
+                removeParameters(this.join);
+            }
+
+            if (join != null) {
+                parseParameters(join);
+            }
+
+            this.join = join;
+        }
+    }
+
+    public Map<String, Object> getParameterValuesMap() {
+        return parameterValuesMap;
+    }
+
+    public void setParameterValuesMap(Map<String, Object> parameterValuesMap) {
+        this.parameterValuesMap.putAll(parameterValuesMap);
     }
 
     @Override
-    protected void parseParameters() {
-        for (Entry entry : entries) {
-            Matcher matcher = PARAMETER_PATTERN.matcher(entry.value);
-            while (matcher.find()) {
-                String parameter = matcher.group(1);
-                if (!parameters.contains(parameter))
-                    parameters.add(parameter);
+    public Collection<String> getParameters() {
+        return new ArrayList<>(parameterValuesMap.keySet());
+    }
+
+    @Nullable
+    @Override
+    public Condition actualize(Set<String> actualParameters) {
+        for (Map.Entry<String, Object> parameter : parameterValuesMap.entrySet()) {
+            if (!actualParameters.contains(parameter.getKey()) && parameter.getValue() == null) {
+                return null;
             }
         }
+
+        return this;
     }
 
     @Override
     public Condition copy() {
-        List<Entry> entriesCopy = new ArrayList<>(entries.size());
-        for (Entry entry : entries) {
-            entriesCopy.add(new Entry(entry.name, entry.value));
+        JpqlCondition copy = new JpqlCondition();
+        copy.setWhere(this.where);
+        copy.setJoin(this.join);
+        copy.setParameterValuesMap(this.parameterValuesMap);
+        return copy;
+    }
+
+    protected void parseParameters(String value) {
+        Matcher matcher = PARAMETER_PATTERN.matcher(value);
+        while (matcher.find()) {
+            String parameterName = matcher.group(1);
+            parameterValuesMap.put(parameterName, null);
         }
-        return new JpqlCondition(entriesCopy);
+    }
+
+    protected void removeParameters(String value) {
+        Matcher matcher = PARAMETER_PATTERN.matcher(value);
+        while (matcher.find()) {
+            String parameterName = matcher.group(1);
+            parameterValuesMap.remove(parameterName);
+        }
     }
 }

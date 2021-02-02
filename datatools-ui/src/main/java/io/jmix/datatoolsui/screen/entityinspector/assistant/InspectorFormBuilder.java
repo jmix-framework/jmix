@@ -27,7 +27,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.component.data.value.ContainerValueSource;
@@ -213,7 +213,7 @@ public class InspectorFormBuilder {
         if (range.isClass()) {
             EntityPicker pickerField = uiComponents.create(EntityPicker.class);
 
-            LookupAction lookupAction = actions.create(LookupAction.class);
+            EntityLookupAction lookupAction = actions.create(EntityLookupAction.class);
             lookupAction.setScreenClass(EntityInspectorBrowser.class);
             lookupAction.setScreenOptionsSupplier(() -> new MapScreenOptions(
                     ParamsMap.of("entity", metaProperty.getRange().asClass().getName())));

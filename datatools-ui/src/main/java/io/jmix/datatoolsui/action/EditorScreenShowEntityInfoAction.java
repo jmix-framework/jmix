@@ -34,12 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ActionType(EditorScreenShowEntityInfoAction.ID)
 public class EditorScreenShowEntityInfoAction extends BaseAction implements Action.MainTabSheetAction {
 
-    public static final String ID = "editorScreenShowEntityInfoAction";
+    public static final String ID = "editorScreenShowEntityInfo";
 
     protected boolean visibleBySpecificUiPermission = true;
 
     public EditorScreenShowEntityInfoAction() {
-        super("editorScreenShowEntityInfoAction");
+        super(ID);
     }
 
     @Autowired

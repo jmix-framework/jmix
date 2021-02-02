@@ -22,7 +22,6 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
  * Factory that generates components for {@link DataGrid} editor.
  */
 public interface DataGridEditorFieldFactory {
-    String NAME = "ui_DataGridEditorFieldFactory";
 
     /**
      * Generates component for {@link DataGrid} editor.
@@ -32,5 +31,5 @@ public interface DataGridEditorFieldFactory {
      * @return generated component
      * @throws IllegalStateException if created component doesn't implement the {@link Field} interface
      */
-    Field createField(EntityValueSource valueSource, String property);
+    Field<?> createField(EntityValueSource valueSource, String property);
 }

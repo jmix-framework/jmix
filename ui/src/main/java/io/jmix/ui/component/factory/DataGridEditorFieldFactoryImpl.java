@@ -22,22 +22,14 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-@org.springframework.stereotype.Component(DataGridEditorFieldFactory.NAME)
+@org.springframework.stereotype.Component("ui_DataGridEditorFieldFactory")
 public class DataGridEditorFieldFactoryImpl implements DataGridEditorFieldFactory {
 
     @Autowired
     protected UiComponentsGenerator uiComponentsGenerator;
 
-    /*
-    TODO: legacy-ui
-    @SuppressWarnings("unchecked")
     @Override
-    public Field createField(Datasource datasource, String property) {
-        return createField(new DatasourceValueSource(datasource, property), property);
-    }*/
-
-    @Override
-    public Field createField(EntityValueSource valueSource, String property) {
+    public Field<?> createField(EntityValueSource valueSource, String property) {
         MetaClass metaClass = valueSource.getEntityMetaClass();
 
         ComponentGenerationContext context = new ComponentGenerationContext(metaClass, property)
@@ -45,10 +37,10 @@ public class DataGridEditorFieldFactoryImpl implements DataGridEditorFieldFactor
                 .setTargetClass(DataGrid.class);
 
         Component component = uiComponentsGenerator.generate(context);
-        if (component instanceof Field) {
-            return (Field) component;
+        if (!(component instanceof Field)) {
+            throw new IllegalStateException("Editor field must implement Field");
         }
 
-        throw new IllegalStateException("Editor field must implement com.haulmont.cuba.web.components.Field");
+        return (Field<?>) component;
     }
 }

@@ -19,43 +19,55 @@ package io.jmix.ui.component.table;
 import com.google.common.base.Strings;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.v7.ui.TableFieldFactory;
 import io.jmix.core.AccessManager;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
-import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.BelongToFrame;
-import io.jmix.ui.component.Field;
-import io.jmix.ui.component.Table;
-import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.data.HasValueSource;
 import io.jmix.ui.component.data.Options;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.data.value.ContainerValueSource;
-import io.jmix.ui.component.factory.AbstractFieldFactory;
 import io.jmix.ui.component.impl.AbstractTable;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.UiControllerUtils;
+import org.dom4j.Element;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public class TableFieldFactoryImpl<E> extends AbstractFieldFactory implements TableFieldFactory {
+public class TableFieldFactoryImpl<E> implements com.vaadin.v7.ui.TableFieldFactory {
+
     protected AbstractTable<?, E> webTable;
+
     protected AccessManager accessManager;
     protected MetadataTools metadataTools;
+    protected UiComponentsGenerator uiComponentsGenerator;
 
-    public TableFieldFactoryImpl(AbstractTable<?, E> webTable, AccessManager accessManager, MetadataTools metadataTools,
-                                 UiComponentsGenerator uiComponentsGenerator) {
-        super(uiComponentsGenerator);
+    public TableFieldFactoryImpl(AbstractTable<?, E> webTable,
+                             AccessManager accessManager, MetadataTools metadataTools,
+                             UiComponentsGenerator uiComponentsGenerator) {
         this.webTable = webTable;
         this.accessManager = accessManager;
         this.metadataTools = metadataTools;
+        this.uiComponentsGenerator = uiComponentsGenerator;
+    }
+
+    public io.jmix.ui.component.Component createField(EntityValueSource valueSource, String property, Element xmlDescriptor) {
+        MetaClass metaClass = valueSource.getEntityMetaClass();
+
+        ComponentGenerationContext context = new ComponentGenerationContext(metaClass, property)
+                .setValueSource(valueSource)
+                .setOptions(getOptions(valueSource, property))
+                .setXmlDescriptor(xmlDescriptor)
+                .setTargetClass(Table.class);
+
+        return uiComponentsGenerator.generate(context);
     }
 
     @SuppressWarnings("unchecked")
@@ -148,7 +160,6 @@ public class TableFieldFactoryImpl<E> extends AbstractFieldFactory implements Ta
 
     @SuppressWarnings("unchecked")
     @Nullable
-    @Override
     protected Options getOptions(EntityValueSource valueSource, String property) {
         MetaClass metaClass = valueSource.getEntityMetaClass();
         MetaPropertyPath metaPropertyPath = metadataTools.resolveMetaPropertyPathOrNull(metaClass, property);
@@ -158,13 +169,6 @@ public class TableFieldFactoryImpl<E> extends AbstractFieldFactory implements Ta
         if (collectionContainer != null) {
             return new ContainerOptions(collectionContainer);
         }
-
-        /*
-        TODO: legacy-ui
-        CollectionDatasource ds = findOptionsDatasource(columnConf, property);
-        if (ds != null) {
-            return new DatasourceOptions(ds);
-        }*/
 
         return null;
     }
@@ -188,29 +192,4 @@ public class TableFieldFactoryImpl<E> extends AbstractFieldFactory implements Ta
                     String.format("'%s' is not an instance of CollectionContainer", optDcName));
         }
     }
-
-    /*
-    TODO: legacy-ui
-    @Nullable
-    protected CollectionDatasource findOptionsDatasource(Table.Column columnConf, String propertyId) {
-        String optDsName = columnConf.getXmlDescriptor() != null ?
-                columnConf.getXmlDescriptor().attributeValue("optionsDatasource") : "";
-
-        if (Strings.isNullOrEmpty(optDsName)) {
-            return null;
-        } else {
-            if (webTable.getDatasource() == null) {
-                throw new IllegalStateException("Table datasource is null");
-            }
-
-            DsContext dsContext = webTable.getDatasource().getDsContext();
-            CollectionDatasource ds = (CollectionDatasource) dsContext.get(optDsName);
-            if (ds == null) {
-                throw new IllegalStateException(
-                        String.format("Options datasource for table column '%s' not found: %s", propertyId, optDsName));
-            }
-
-            return ds;
-        }
-    }*/
 }

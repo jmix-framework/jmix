@@ -326,8 +326,8 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
     }
 
     protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
-        DataGridEditorFieldFactory fieldFactory = (DataGridEditorFieldFactory) this.applicationContext.getBean(DataGridEditorFieldFactory.NAME);
-        return new WebDataGridEditorFieldFactory<>(this, fieldFactory);
+        DataGridEditorFieldFactory fieldFactory = this.applicationContext.getBean(DataGridEditorFieldFactory.class);
+        return new DataGridEditorFieldFactoryAdapter<>(this, fieldFactory);
     }
 
     protected void initComponentComposition(GridComposition componentComposition) {
@@ -1439,13 +1439,13 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         return new ContainerValueSourceProvider<>(instanceContainer);
     }
 
-    protected static class WebDataGridEditorFieldFactory<E> implements JmixGridEditorFieldFactory<E> {
+    protected static class DataGridEditorFieldFactoryAdapter<E> implements JmixGridEditorFieldFactory<E> {
 
         protected AbstractDataGrid<?, E> dataGrid;
         protected DataGridEditorFieldFactory fieldFactory;
 
-        public WebDataGridEditorFieldFactory(AbstractDataGrid<?, E> dataGrid,
-                                             DataGridEditorFieldFactory fieldFactory) {
+        public DataGridEditorFieldFactoryAdapter(AbstractDataGrid<?, E> dataGrid,
+                                                 DataGridEditorFieldFactory fieldFactory) {
             this.dataGrid = dataGrid;
             this.fieldFactory = fieldFactory;
         }
@@ -1458,7 +1458,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                 return null;
             }
 
-            Field columnComponent;
+            Field<?> columnComponent;
             if (column.getEditFieldGenerator() != null) {
                 ValueSourceProvider valueSourceProvider = dataGrid.createValueSourceProvider(bean);
                 EditorFieldGenerationContext<E> context = new EditorFieldGenerationContext<>(bean, valueSourceProvider);
@@ -1473,13 +1473,14 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             return createCustomField(columnComponent);
         }
 
-        protected Field createField(ColumnImpl<E> column, E bean) {
+        protected Field<?> createField(ColumnImpl<E> column, E bean) {
             String fieldPropertyId = String.valueOf(column.getPropertyId());
             InstanceContainer<E> container = dataGrid.createInstanceContainer(bean);
-            return fieldFactory.createField(new ContainerValueSource<>(container, fieldPropertyId), fieldPropertyId);
+            ContainerValueSource<E, Object> valueSource = new ContainerValueSource<>(container, fieldPropertyId);
+            return fieldFactory.createField(valueSource, fieldPropertyId);
         }
 
-        protected JmixEditorField createCustomField(final Field columnComponent) {
+        protected JmixEditorField<?> createCustomField(Field<?> columnComponent) {
             if (!(columnComponent instanceof Buffered)) {
                 throw new IllegalArgumentException("Editor field must implement " +
                         "io.jmix.ui.component.Buffered");
@@ -1487,8 +1488,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
             Component content = ComponentsHelper.getComposition(columnComponent);
 
-            //noinspection unchecked
-            JmixEditorField wrapper = new DataGridEditorCustomField(columnComponent) {
+            JmixEditorField<?> wrapper = new DataGridEditorCustomField(columnComponent) {
                 @Override
                 protected Component initContent() {
                     return content;
@@ -1502,7 +1502,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             wrapper.setReadOnly(!columnComponent.isEditable());
             wrapper.setRequiredIndicatorVisible(columnComponent.isRequired());
 
-            //noinspection unchecked
             columnComponent.addValueChangeListener(event -> wrapper.markAsDirty());
 
             return wrapper;
@@ -1523,7 +1522,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                     fireEvent(createValueChange(event.getPrevValue(), event.isUserOriginated())));
         }
 
-        protected Field getField() {
+        protected Field<T> getField() {
             return columnComponent;
         }
 
@@ -1532,6 +1531,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
             columnComponent.setValue(value);
         }
 
+        @Nullable
         @Override
         public T getValue() {
             return columnComponent.getValue();

@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.actions.picker;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.meta.StudioAction;
 
 /**
@@ -33,7 +34,7 @@ import io.jmix.ui.meta.StudioAction;
  */
 @StudioAction(category = "Picker Actions", description = "Sets an entity to the picker field using the entity lookup screen")
 @ActionType(LookupAction.ID)
-public class LookupAction<E extends Entity> extends io.jmix.ui.action.entitypicker.LookupAction<E>
+public class LookupAction<E extends Entity> extends EntityLookupAction<E>
         implements PickerField.PickerFieldAction {
 
     public static final String ID = "picker_lookup";

@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.actions.picker;
 
 
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.entitypicker.EntityOpenCompositionAction;
 import io.jmix.ui.meta.StudioAction;
 
 /**
@@ -30,7 +31,7 @@ import io.jmix.ui.meta.StudioAction;
  */
 @StudioAction(category = "Picker Actions", description = "Opens a one-to-one composition entity using the entity edit screen")
 @ActionType(OpenCompositionAction.ID)
-public class OpenCompositionAction extends io.jmix.ui.action.entitypicker.OpenCompositionAction {
+public class OpenCompositionAction extends EntityOpenCompositionAction {
 
     public static final String ID = "picker_open_composition";
 

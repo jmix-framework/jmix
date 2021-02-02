@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.actions.picker;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.Entity;
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.entitypicker.EntityOpenAction;
 import io.jmix.ui.meta.StudioAction;
 
 /**
@@ -31,7 +32,7 @@ import io.jmix.ui.meta.StudioAction;
  */
 @StudioAction(category = "Picker Actions", description = "Opens an entity using the entity edit screen")
 @ActionType(OpenAction.ID)
-public class OpenAction<E extends Entity> extends io.jmix.ui.action.entitypicker.OpenAction<E>
+public class OpenAction<E extends Entity> extends EntityOpenAction<E>
         implements PickerField.PickerFieldAction {
 
     public static final String ID = "picker_open";

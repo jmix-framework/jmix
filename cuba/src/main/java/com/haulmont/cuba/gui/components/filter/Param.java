@@ -37,7 +37,6 @@ import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalCompon
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.*;
-import io.jmix.core.DataManager;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.ParamsMap;
@@ -51,7 +50,7 @@ import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.OpenAction;
+import io.jmix.ui.action.entitypicker.EntityOpenAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.ValueConversionException;
 import io.jmix.ui.component.data.options.ContainerOptions;
@@ -873,7 +872,7 @@ public class Param {
                 picker.setMetaClass(metaClass);
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
-                picker.addAction(actions.create(OpenAction.ID));
+                picker.addAction(actions.create(EntityOpenAction.ID));
                 picker.addAction(actions.create(EntityClearAction.ID));
 
                 picker.addValueChangeListener(e ->

@@ -15,20 +15,26 @@
  */
 package io.jmix.ui.widget;
 
+import com.vaadin.server.Resource;
 import com.vaadin.server.Sizeable;
 import com.vaadin.shared.ui.window.WindowMode;
 import com.vaadin.ui.*;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.Messages;
+import io.jmix.core.TimeSource;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.*;
+import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.CompositeDescriptor;
 import io.jmix.ui.component.KeyCombination;
-import io.jmix.ui.accesscontext.UiShowExceptionDetailsContext;
+import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.sys.ControllerUtils;
+import io.jmix.ui.theme.ThemeClassNames;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +56,7 @@ import static io.jmix.ui.action.DialogAction.Type;
  * This dialog can be used by exception handlers to show an information about error.
  */
 public class ExceptionDialog extends JmixWindow {
+
     private static final Logger log = LoggerFactory.getLogger(ExceptionDialog.class);
 
     protected VerticalLayout mainLayout;
@@ -65,9 +72,6 @@ public class ExceptionDialog extends JmixWindow {
     protected Map<String, Object> additionalExceptionReportBinding = null;
 
     protected Messages messages;
-
-//    todo exception report service
-//    protected ExceptionReportService reportService = AppBeans.get(ExceptionReportService.NAME);
 
     protected WindowConfig windowConfig;
 
@@ -126,8 +130,7 @@ public class ExceptionDialog extends JmixWindow {
         center();
 
         final String text = message != null ? message : getText(throwable);
-        Throwable exception = removeRemoteException(throwable);
-        final String stackTrace = getStackTrace(exception);
+        final String stackTrace = getStackTrace(throwable);
 
         mainLayout = new VerticalLayout();
         mainLayout.setMargin(false);
@@ -140,7 +143,7 @@ public class ExceptionDialog extends JmixWindow {
         boolean showExceptionDetails = false;
         if (currentAuthentication.isSet()) {
             UiShowExceptionDetailsContext showExceptionDetailsContext = new UiShowExceptionDetailsContext();
-                    accessManager.applyRegisteredConstraints(showExceptionDetailsContext);
+            accessManager.applyRegisteredConstraints(showExceptionDetailsContext);
             showExceptionDetails = showExceptionDetailsContext.isPermitted();
         }
 
@@ -179,31 +182,9 @@ public class ExceptionDialog extends JmixWindow {
         String logContentClassName = "c-exception-dialog-log-content";
         String copyLogContentClassName = logContentClassName + "-" + UUID.randomUUID();
 
-//        todo JmixCopyButtonExtension
-        /*if (JmixCopyButtonExtension.browserSupportCopy()) {
-            copyButton = new JmixButton(messages.getMainMessage("exceptionDialog.copyStackTrace"));
-            copyButton.setVisible(false);
-            JmixCopyButtonExtension copyExtension = JmixCopyButtonExtension.copyWith(copyButton, copyLogContentClassName);
-            copyExtension.addCopyListener(event ->
-                    Notification.show(messages.getMessage(
-                            event.isSuccess() ? "exceptionDialog.copingSuccessful" : "exceptionDialog.copingFailed"),
-                            Notification.Type.TRAY_NOTIFICATION));
+        if (JmixCopyButtonExtension.browserSupportsCopy()) {
+            copyButton = createCopyButton(applicationContext, copyLogContentClassName);
             buttonsLayout.addComponent(copyButton);
-        }*/
-
-        if (currentAuthentication.isSet()) {
-            if (!StringUtils.isBlank(properties.getSupportEmail())) {
-                Button reportButton = new JmixButton(messages.getMessage("exceptionDialog.reportBtn"));
-                reportButton.addClickListener(event -> {
-                    sendSupportEmail(text, stackTrace);
-                    reportButton.setEnabled(false);
-                });
-                buttonsLayout.addComponent(reportButton);
-
-                if (ui.isTestMode()) {
-                    reportButton.setJTestId("errorReportButton");
-                }
-            }
         }
 
         Button logoutButton = new JmixButton(messages.getMessage("exceptionDialog.logout"));
@@ -240,42 +221,34 @@ public class ExceptionDialog extends JmixWindow {
         }
     }
 
+    private Button createCopyButton(ApplicationContext applicationContext, String copyLogContentClassName) {
+        Button copyButton = new JmixButton();
+
+        Resource iconResource = applicationContext.getBean(IconResolver.class).getIconResource("font-icon:CLIPBOARD");
+        copyButton.setIcon(iconResource);
+        copyButton.setStyleName(ThemeClassNames.BUTTON_ICON_ONLY);
+
+        copyButton.setDescription(messages.getMessage("exceptionDialog.copyStackTrace"));
+        copyButton.setVisible(false);
+
+        JmixCopyButtonExtension copyExtension =
+                JmixCopyButtonExtension.copyWith(copyButton, copyLogContentClassName);
+        copyExtension.addCopyListener(event ->
+                Notification.show(messages.getMessage(
+                        event.isSuccess()
+                                ? "exceptionDialog.copingSuccessful"
+                                : "exceptionDialog.copingFailed"),
+                        Notification.Type.TRAY_NOTIFICATION));
+
+        return copyButton;
+    }
+
     protected String getStackTrace(Throwable throwable) {
         return ExceptionUtils.getStackTrace(throwable);
     }
 
-    protected Throwable removeRemoteException(Throwable throwable) {
-        // todo do we need this ?
-        /*if (throwable instanceof RemoteException) {
-            RemoteException re = (RemoteException) throwable;
-            for (int i = re.getCauses().size() - 1; i >= 0; i--) {
-                if (re.getCauses().get(i).getThrowable() != null) {
-                    return re.getCauses().get(i).getThrowable();
-                }
-            }
-        }*/
-        return throwable;
-    }
-
     protected String getText(Throwable rootCause) {
         StringBuilder msg = new StringBuilder();
-        // todo RemoteException
-        /*if (rootCause instanceof RemoteException) {
-            RemoteException re = (RemoteException) rootCause;
-            if (!re.getCauses().isEmpty()) {
-                RemoteException.Cause cause = re.getCauses().get(re.getCauses().size() - 1);
-                if (cause.getThrowable() != null) {
-                    rootCause = cause.getThrowable();
-                } else {
-                    // root cause is not supported by client
-                    String className = cause.getClassName();
-                    if (className != null && className.indexOf('.') > 0) {
-                        className = className.substring(className.lastIndexOf('.') + 1);
-                    }
-                    msg.append(className).append(": ").append(cause.getMessage());
-                }
-            }
-        }*/
 
         if (msg.length() == 0) {
             msg.append(rootCause.getClass().getSimpleName());
@@ -295,8 +268,7 @@ public class ExceptionDialog extends JmixWindow {
                         if (template != null) {
                             params.put("XML descriptor", template.value());
                         }
-                    } else
-                    if (guiDevException.getFrameId() != null) {
+                    } else if (guiDevException.getFrameId() != null) {
                         String frameId = guiDevException.getFrameId();
                         params.put("Frame ID", frameId);
                         try {
@@ -360,32 +332,6 @@ public class ExceptionDialog extends JmixWindow {
 
             setWindowMode(WindowMode.NORMAL);
         }
-    }
-
-    public void sendSupportEmail(String message, String stackTrace) {
-        // todo exception report
-        /*try {
-            User user = userSessionSource.getUserSession().getUser();
-            String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timeSource.currentTimestamp());
-
-            Map<String, Object> binding = new HashMap<>();
-            binding.put("timestamp", date);
-            binding.put("errorMessage", message);
-            binding.put("stacktrace", stackTrace);
-            binding.put("systemId", clientConfig.getSystemID());
-            binding.put("userLogin", user.getLogin());
-
-            if (MapUtils.isNotEmpty(additionalExceptionReportBinding)) {
-                binding.putAll(additionalExceptionReportBinding);
-            }
-
-            reportService.sendExceptionReport(clientConfig.getSupportEmail(), MapUtils.unmodifiableMap(binding));
-
-            Notification.show(messages.getMainMessage("exceptionDialog.emailSent"));
-        } catch (Throwable e) {
-            log.error("Error sending exception report", e);
-            Notification.show(messages.getMainMessage("exceptionDialog.emailSendingErr"));
-        }*/
     }
 
     protected void logoutPrompt() {

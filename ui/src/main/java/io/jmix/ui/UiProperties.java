@@ -37,7 +37,6 @@ public class UiProperties {
     boolean testMode;
     boolean performanceTestMode;
     int maxUploadSizeMb;
-    String supportEmail;
     String closeShortcut;
     String commitShortcut;
     String tableInsertShortcut;
@@ -101,7 +100,6 @@ public class UiProperties {
             boolean testMode,
             boolean performanceTestMode,
             @DefaultValue("20") int maxUploadSizeMb,
-            String supportEmail,
             @DefaultValue("ESCAPE") String closeShortcut,
             @DefaultValue("CTRL-ENTER") String commitShortcut,
             @DefaultValue("CTRL-BACKSLASH") String tableInsertShortcut,
@@ -163,7 +161,6 @@ public class UiProperties {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
         this.maxUploadSizeMb = maxUploadSizeMb;
-        this.supportEmail = supportEmail;
         this.closeShortcut = closeShortcut;
         this.commitShortcut = commitShortcut;
         this.tableInsertShortcut = tableInsertShortcut;
@@ -238,10 +235,6 @@ public class UiProperties {
 
     public int getMaxUploadSizeMb() {
         return maxUploadSizeMb;
-    }
-
-    public String getSupportEmail() {
-        return supportEmail;
     }
 
     public String getCloseShortcut() {

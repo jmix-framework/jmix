@@ -105,7 +105,7 @@ public class JmixCopyButtonExtension extends AbstractExtension {
         return addListener(CopyEvent.class, listener, COPY_METHOD);
     }
 
-    public static boolean browserSupportCopy() {
+    public static boolean browserSupportsCopy() {
         WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
         return !webBrowser.isSafari() && !webBrowser.isIOS() && !webBrowser.isWindowsPhone();
     }

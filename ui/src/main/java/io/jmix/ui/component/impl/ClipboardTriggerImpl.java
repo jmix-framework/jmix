@@ -25,7 +25,7 @@ import io.jmix.ui.widget.JmixCopyButtonExtension;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-import static io.jmix.ui.widget.JmixCopyButtonExtension.browserSupportCopy;
+import static io.jmix.ui.widget.JmixCopyButtonExtension.browserSupportsCopy;
 import static io.jmix.ui.widget.JmixCopyButtonExtension.copyWith;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 
@@ -66,7 +66,7 @@ public class ClipboardTriggerImpl extends AbstractFacet implements ClipboardTrig
 
     @Override
     public boolean isSupportedByWebBrowser() {
-        return browserSupportCopy();
+        return browserSupportsCopy();
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.haulmont.cuba.gui.components.LookupComponent;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeDataGrid;
 import com.haulmont.cuba.gui.components.data.datagrid.AggregatableDataGridItems;
+import com.haulmont.cuba.gui.components.data.meta.DatasourceDataUnit;
 import com.haulmont.cuba.gui.components.valueprovider.DataGridConverterBasedValueProvider;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
@@ -576,6 +577,31 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     @Override
     public void removeLookupValueChangeListener(Consumer<LookupSelectionChangeEvent<E>> listener) {
         unsubscribe(LookupSelectionChangeEvent.class, (Consumer) listener);
+    }
+
+    @Override
+    protected Collection<MetaPropertyPath> getAutowiredProperties(EntityDataGridItems<E> entityDataGridSource) {
+        if (entityDataGridSource instanceof DatasourceDataUnit) {
+            CollectionDatasource datasource = ((DatasourceDataUnit) entityDataGridSource).getDatasource();
+
+            return datasource.getView() != null ?
+                    // if a view is specified - use view properties
+                    metadataTools.getFetchPlanPropertyPaths(datasource.getView(), datasource.getMetaClass()) :
+                    // otherwise use all properties from meta-class
+                    metadataTools.getPropertyPaths(datasource.getMetaClass());
+        }
+
+        return super.getAutowiredProperties(entityDataGridSource);
+    }
+
+    @Override
+    protected void detachItemContainer(Object container) {
+        if (container instanceof Datasource) {
+            Datasource<?> datasource = (Datasource<?>) container;
+            datasource.setItem(null);
+        } else {
+            super.detachItemContainer(container);
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

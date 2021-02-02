@@ -15,7 +15,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        xmlns:uidata="http://jmix.io/schema/ui/ui-data.xsd">
+        xmlns:uidata="http://jmix.io/schema/ui/ui-data">
     <facets>
         <uidata:screenSettings id="facet" auto="true"/>
     </facets>

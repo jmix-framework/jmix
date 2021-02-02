@@ -15,7 +15,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        xmlns:uidata="http://jmix.io/schema/ui/ui-data.xsd">
+        xmlns:uidata="http://jmix.io/schema/ui/ui-data">
     <data readOnly="true">
         <collection id="projectsDc"
                     class="test_support.entity.Project">

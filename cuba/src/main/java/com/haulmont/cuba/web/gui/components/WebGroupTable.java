@@ -35,6 +35,7 @@ import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.settings.binder.CubaGroupTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyGroupTableSettingsConverter;
+import com.haulmont.cuba.web.gui.components.table.CubaTableFieldFactoryImpl;
 import com.haulmont.cuba.web.gui.components.table.TableDelegate;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -50,6 +51,7 @@ import io.jmix.ui.component.impl.AbstractTable;
 import io.jmix.ui.component.impl.GroupTableImpl;
 import io.jmix.ui.component.impl.WrapperUtils;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
+import io.jmix.ui.component.table.TableFieldFactoryImpl;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -590,5 +592,10 @@ public class WebGroupTable<E extends Entity> extends GroupTableImpl<E>
         return column instanceof com.haulmont.cuba.gui.components.Table.Column
                 ? ((com.haulmont.cuba.gui.components.Table.Column<E>) column).getType()
                 : super.getColumnType(column);
+    }
+
+    @Override
+    protected TableFieldFactoryImpl createFieldFactory() {
+        return new CubaTableFieldFactoryImpl<>(this, accessManager, metadataTools, uiComponentsGenerator);
     }
 }

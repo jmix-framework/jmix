@@ -493,8 +493,8 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
     @Override
     protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
         DataGridEditorFieldFactory fieldFactory =
-                (DataGridEditorFieldFactory) this.applicationContext.getBean(DataGridEditorFieldFactory.NAME);
-        return new WebDataGridEditorFieldFactory<>(this, fieldFactory);
+                this.applicationContext.getBean(DataGridEditorFieldFactory.class);
+        return new DataGridEditorFieldFactoryAdapter<>(this, fieldFactory);
     }
 
     protected Datasource createItemDatasource(E item) {
@@ -689,9 +689,10 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static class WebDataGridEditorFieldFactory<E extends Entity> extends AbstractDataGrid.WebDataGridEditorFieldFactory {
+    protected static class DataGridEditorFieldFactoryAdapter<E extends Entity>
+            extends AbstractDataGrid.DataGridEditorFieldFactoryAdapter {
 
-        public WebDataGridEditorFieldFactory(AbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
+        public DataGridEditorFieldFactoryAdapter(AbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
             super(dataGrid, fieldFactory);
         }
 
@@ -702,6 +703,7 @@ public class WebDataGrid<E extends Entity> extends DataGridImpl<E>
                 Datasource fieldDataSource = ((WebDataGrid) dataGrid).createItemDatasource((Entity) bean);
                 return ((ColumnImpl) column).getEditorFieldGenerator().createField(fieldDataSource, fieldPropertyId);
             }
+
             return super.createField(column, bean);
         }
     }

@@ -34,6 +34,7 @@ import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.settings.binder.CubaTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyTableSettingsConverter;
+import com.haulmont.cuba.web.gui.components.table.CubaTableFieldFactoryImpl;
 import com.haulmont.cuba.web.gui.components.table.TableDelegate;
 import io.jmix.core.Entity;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -48,6 +49,7 @@ import io.jmix.ui.component.impl.AbstractTable;
 import io.jmix.ui.component.impl.TableImpl;
 import io.jmix.ui.component.impl.WrapperUtils;
 import io.jmix.ui.component.presentation.TablePresentationsLayout;
+import io.jmix.ui.component.table.TableFieldFactoryImpl;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.presentation.model.TablePresentation;
@@ -566,5 +568,10 @@ public class WebTable<E extends Entity> extends TableImpl<E>
         return column instanceof Table.Column
                 ? ((Table.Column<E>) column).getType()
                 : super.getColumnType(column);
+    }
+
+    @Override
+    protected TableFieldFactoryImpl createFieldFactory() {
+        return new CubaTableFieldFactoryImpl<>(this, accessManager, metadataTools, uiComponentsGenerator);
     }
 }

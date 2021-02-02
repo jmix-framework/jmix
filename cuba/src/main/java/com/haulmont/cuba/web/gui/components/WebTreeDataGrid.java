@@ -499,8 +499,8 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     @Override
     protected JmixGridEditorFieldFactory<E> createEditorFieldFactory() {
         DataGridEditorFieldFactory fieldFactory =
-                (DataGridEditorFieldFactory) this.applicationContext.getBean(DataGridEditorFieldFactory.NAME);
-        return new WebTreeDataGridEditorFieldFactory<>(this, fieldFactory);
+                this.applicationContext.getBean(DataGridEditorFieldFactory.class);
+        return new TreeDataGridEditorFieldFactoryAdapter<>(this, fieldFactory);
     }
 
     protected Datasource createItemDatasource(E item) {
@@ -605,9 +605,9 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static class WebTreeDataGridEditorFieldFactory<E extends Entity> extends AbstractDataGrid.WebDataGridEditorFieldFactory {
+    protected static class TreeDataGridEditorFieldFactoryAdapter<E extends Entity> extends DataGridEditorFieldFactoryAdapter {
 
-        public WebTreeDataGridEditorFieldFactory(AbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
+        public TreeDataGridEditorFieldFactoryAdapter(AbstractDataGrid dataGrid, DataGridEditorFieldFactory fieldFactory) {
             super(dataGrid, fieldFactory);
         }
 

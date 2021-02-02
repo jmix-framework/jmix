@@ -37,7 +37,7 @@ import io.jmix.dynattrui.impl.model.TargetScreenComponent;
 import io.jmix.dynattrui.screen.localization.AttributeLocalizationFragment;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.valuespicker.SelectAction;
+import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
@@ -510,8 +510,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     @SuppressWarnings("unchecked")
     protected void initDependsOnAttributesField() {
-        SelectAction<CategoryAttribute> selectAction =
-                (SelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
+        ValuesSelectAction<CategoryAttribute> selectAction =
+                (ValuesSelectAction<CategoryAttribute>) dependsOnAttributesField.getActionNN("select");
         selectAction.setOptions(new ListEntityOptions<>(getAttributesOptions(), metadata));
 
         if (getEditedEntity().getConfiguration() != null

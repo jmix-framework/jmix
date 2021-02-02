@@ -33,9 +33,9 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
-import io.jmix.ui.action.valuespicker.SelectAction;
+import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.options.ListOptions;
 import io.jmix.ui.component.data.options.MapOptions;
@@ -173,7 +173,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         setValidators(valuesPicker, attribute);
         setValueSource(valuesPicker, context);
 
-        SelectAction selectAction = actions.create(SelectAction.class);
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
         initValuesSelectActionByAttribute(selectAction, attribute);
 
         if (valuesPicker.getValueSource() instanceof ContainerValueSource) {
@@ -275,7 +275,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         } else {
             EntityPicker entityPicker = uiComponents.create(EntityPicker.class);
 
-            LookupAction lookupAction = actions.create(LookupAction.class);
+            EntityLookupAction lookupAction = actions.create(EntityLookupAction.class);
 
             setLookupActionScreen(lookupAction, attribute);
 
@@ -338,7 +338,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
                 msgBundleTools.getLocalizedValue(attribute.getNameMsgBundle(), attribute.getName())));
     }
 
-    protected void initValuesSelectActionByAttribute(SelectAction selectAction, AttributeDefinition attribute) {
+    protected void initValuesSelectActionByAttribute(ValuesSelectAction selectAction, AttributeDefinition attribute) {
         AttributeType attributeType = attribute.getDataType();
         switch (attributeType) {
             case DATE:
@@ -395,13 +395,13 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         Object entity = container.getItemOrNull();
         if (entity != null) {
             List options = optionsLoader.loadOptions(entity, attribute);
-            ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+            ((ValuesSelectAction) valuesPicker.getActionNN(ValuesSelectAction.ID))
                     .setOptions(new ListOptions(options));
         }
         container.addItemChangeListener(e -> {
             List options = optionsLoader.loadOptions(e.getItem(), attribute);
 
-            ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+            ((ValuesSelectAction) valuesPicker.getActionNN(ValuesSelectAction.ID))
                     .setOptions(new ListOptions(options));
         });
 
@@ -411,7 +411,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
             container.addItemPropertyChangeListener(e -> {
                 if (dependsOnAttributeCodes.contains(e.getProperty())) {
                     List options = optionsLoader.loadOptions(e.getItem(), attribute);
-                    ((SelectAction) valuesPicker.getActionNN(SelectAction.ID))
+                    ((ValuesSelectAction) valuesPicker.getActionNN(ValuesSelectAction.ID))
                             .setOptions(new ListOptions(options));
                     if (!options.contains(valuesPicker.getValue())) {
                         valuesPicker.setValue(null);
@@ -452,7 +452,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         }
     }
 
-    protected void setLookupActionScreen(LookupAction lookupAction, AttributeDefinition attribute) {
+    protected void setLookupActionScreen(EntityLookupAction lookupAction, AttributeDefinition attribute) {
         String screen = attribute.getConfiguration().getLookupScreen();
         if (!Strings.isNullOrEmpty(screen)) {
             lookupAction.setScreenId(screen);

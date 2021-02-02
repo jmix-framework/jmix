@@ -15,9 +15,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/rest/services-v2.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/rest/services-v2"
         xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns="http://jmix.io/schema/rest/services-v2.xsd"
+        xmlns="http://jmix.io/schema/rest/services-v2"
         elementFormDefault="qualified"
         attributeFormDefault="unqualified">
 

@@ -44,8 +44,8 @@ import javax.annotation.Nullable;
  * @param <E> type of entity
  */
 @StudioAction(category = "EntityPicker Actions", description = "Sets an entity to the entity picker using the entity lookup screen")
-@ActionType(LookupAction.ID)
-public class LookupAction<E> extends AbstractLookupAction<E>
+@ActionType(EntityLookupAction.ID)
+public class EntityLookupAction<E> extends AbstractLookupAction<E>
         implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,
         Action.ExecutableAction {
 
@@ -57,11 +57,11 @@ public class LookupAction<E> extends AbstractLookupAction<E>
 
     protected boolean editable = true;
 
-    public LookupAction() {
-        super(LookupAction.ID);
+    public EntityLookupAction() {
+        super(EntityLookupAction.ID);
     }
 
-    public LookupAction(String id) {
+    public EntityLookupAction(String id) {
         super(id);
     }
 

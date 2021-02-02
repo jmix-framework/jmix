@@ -24,8 +24,8 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.action.entitypicker.OpenCompositionAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
+import io.jmix.ui.action.entitypicker.EntityOpenCompositionAction;
 import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.OptionsField;
@@ -156,10 +156,10 @@ public class EntityFieldCreationSupport {
         if (actionIds == null || actionIds.isEmpty()) {
             if (!(field instanceof EntityComboBox)) {
                 if (metaPropertyType == MetaProperty.Type.ASSOCIATION) {
-                    field.addAction(actions.create(LookupAction.ID));
+                    field.addAction(actions.create(EntityLookupAction.ID));
                     field.addAction(actions.create(EntityClearAction.ID));
                 } else if (metaPropertyType == MetaProperty.Type.COMPOSITION) {
-                    field.addAction(actions.create(OpenCompositionAction.ID));
+                    field.addAction(actions.create(EntityOpenCompositionAction.ID));
                     field.addAction(actions.create(EntityClearAction.ID));
                 }
             }

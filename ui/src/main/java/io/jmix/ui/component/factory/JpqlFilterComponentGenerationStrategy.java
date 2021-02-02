@@ -29,7 +29,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -112,7 +112,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
         field.setMetaClass(metaClass);
 
-        LookupAction<?> lookupAction = (LookupAction<?>) actions.create(LookupAction.ID);
+        EntityLookupAction<?> lookupAction = (EntityLookupAction<?>) actions.create(EntityLookupAction.ID);
         lookupAction.setOpenMode(OpenMode.DIALOG);
         field.addAction(lookupAction);
         field.addAction(actions.create(EntityClearAction.ID));

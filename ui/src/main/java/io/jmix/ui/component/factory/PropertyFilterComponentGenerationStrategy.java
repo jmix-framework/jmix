@@ -28,7 +28,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
@@ -126,7 +126,7 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         MetaClass metaClass = mpp.getMetaProperty().getRange().asClass();
         field.setMetaClass(metaClass);
 
-        LookupAction<?> lookupAction = (LookupAction<?>) actions.create(LookupAction.ID);
+        EntityLookupAction<?> lookupAction = (EntityLookupAction<?>) actions.create(EntityLookupAction.ID);
         lookupAction.setOpenMode(OpenMode.DIALOG);
         field.addAction(lookupAction);
         field.addAction(actions.create(EntityClearAction.ID));

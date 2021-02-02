@@ -56,8 +56,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  * screen controller.
  */
 @StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
-@ActionType(OpenAction.ID)
-public class OpenAction<E> extends BaseAction
+@ActionType(EntityOpenAction.ID)
+public class EntityOpenAction<E> extends BaseAction
         implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,
         Action.ExecutableAction {
 
@@ -80,11 +80,11 @@ public class OpenAction<E> extends BaseAction
     private Consumer<E> afterCommitHandler;
     private Function<E, E> transformation;
 
-    public OpenAction() {
+    public EntityOpenAction() {
         super(ID);
     }
 
-    public OpenAction(String id) {
+    public EntityOpenAction(String id) {
         super(id);
     }
 

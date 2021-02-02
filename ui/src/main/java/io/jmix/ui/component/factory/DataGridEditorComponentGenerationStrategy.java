@@ -25,9 +25,9 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.action.entitypicker.OpenAction;
-import io.jmix.ui.action.entitypicker.OpenCompositionAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
+import io.jmix.ui.action.entitypicker.EntityOpenAction;
+import io.jmix.ui.action.entitypicker.EntityOpenCompositionAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -86,9 +86,9 @@ public class DataGridEditorComponentGenerationStrategy extends AbstractComponent
         EntityPicker field = entityFieldCreationSupport.createEntityField(mpp, context.getOptions());
         setValueSource(field, context);
 
-        initActionScreenParameters((LookupAction) field.getAction(LookupAction.ID));
-        initActionScreenParameters((OpenAction) field.getAction(OpenAction.ID));
-        initActionScreenParameters((OpenCompositionAction) field.getAction(OpenCompositionAction.ID));
+        initActionScreenParameters((EntityLookupAction) field.getAction(EntityLookupAction.ID));
+        initActionScreenParameters((EntityOpenAction) field.getAction(EntityOpenAction.ID));
+        initActionScreenParameters((EntityOpenCompositionAction) field.getAction(EntityOpenCompositionAction.ID));
 
         return field;
     }

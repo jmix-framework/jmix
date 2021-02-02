@@ -13,7 +13,7 @@ import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.builder.LookupBuilder;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component.Alignment;
@@ -283,7 +283,7 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
 
         Actions actions = getApplicationContext().getBean(Actions.class);
 
-        BaseAction lookupAction = (BaseAction) actions.create(LookupAction.ID);
+        BaseAction lookupAction = (BaseAction) actions.create(EntityLookupAction.ID);
 
         lookupAction.addActionPerformedListener(this::lookupActionPerformed);
         entityPicker.addAction(lookupAction);

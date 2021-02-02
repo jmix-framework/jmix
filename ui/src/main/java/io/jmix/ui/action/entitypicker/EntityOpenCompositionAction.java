@@ -28,16 +28,16 @@ import io.jmix.ui.meta.StudioAction;
  * screen controller.
  */
 @StudioAction(category = "EntityPicker Actions", description = "Opens a one-to-one composition entity using the entity edit screen")
-@ActionType(OpenCompositionAction.ID)
-public class OpenCompositionAction extends OpenAction {
+@ActionType(EntityOpenCompositionAction.ID)
+public class EntityOpenCompositionAction extends EntityOpenAction {
 
-    public static final String ID = "entity_open_composition";
+    public static final String ID = "entity_openComposition";
 
-    public OpenCompositionAction() {
+    public EntityOpenCompositionAction() {
         super(ID);
     }
 
-    public OpenCompositionAction(String id) {
+    public EntityOpenCompositionAction(String id) {
         super(id);
     }
 

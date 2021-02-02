@@ -19,8 +19,8 @@ package io.jmix.ui.xml.layout.loader;
 import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.action.entitypicker.LookupAction;
-import io.jmix.ui.action.entitypicker.OpenAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
+import io.jmix.ui.action.entitypicker.EntityOpenAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.EntitySuggestionField;
 import org.apache.commons.lang3.StringUtils;
@@ -71,8 +71,8 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
     protected void addDefaultActions() {
         Actions actions = getActions();
 
-        getResultComponent().addAction(actions.create(LookupAction.ID));
-        getResultComponent().addAction(actions.create(OpenAction.ID));
+        getResultComponent().addAction(actions.create(EntityLookupAction.ID));
+        getResultComponent().addAction(actions.create(EntityOpenAction.ID));
     }
 
     protected Actions getActions() {

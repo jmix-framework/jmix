@@ -23,7 +23,7 @@ import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.UiProperties
 import io.jmix.ui.action.entitypicker.EntityClearAction
-import io.jmix.ui.action.entitypicker.LookupAction
+import io.jmix.ui.action.entitypicker.EntityLookupAction
 import io.jmix.ui.component.EntityComboBox
 import io.jmix.ui.component.EntityPicker
 import io.jmix.ui.screen.OpenMode
@@ -77,7 +77,7 @@ class FormFieldTest extends ScreenSpecification {
         def editor = showOrderEdit()
 
         then:
-        fieldIsEntityPicker(editor.customerField, [LookupAction.ID, EntityClearAction.ID])
+        fieldIsEntityPicker(editor.customerField, [EntityLookupAction.ID, EntityClearAction.ID])
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']
@@ -96,7 +96,7 @@ class FormFieldTest extends ScreenSpecification {
         def editor = showOrderEdit()
 
         then:
-        fieldIsEntityPicker(editor.customerField, [LookupAction.ID, EntityClearAction.ID])
+        fieldIsEntityPicker(editor.customerField, [EntityLookupAction.ID, EntityClearAction.ID])
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']

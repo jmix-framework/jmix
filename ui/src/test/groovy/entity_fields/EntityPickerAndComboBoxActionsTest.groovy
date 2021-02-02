@@ -24,7 +24,7 @@ import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.UiProperties
 import io.jmix.ui.action.entitypicker.EntityClearAction
-import io.jmix.ui.action.entitypicker.LookupAction
+import io.jmix.ui.action.entitypicker.EntityLookupAction
 import io.jmix.ui.screen.OpenMode
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
@@ -76,7 +76,7 @@ class EntityPickerAndComboBoxActionsTest extends ScreenSpecification {
         def editor = showOrderEdit()
 
         then:
-        editor.customerPicker.actions.collect { it.id } == [LookupAction.ID, EntityClearAction.ID]
+        editor.customerPicker.actions.collect { it.id } == [EntityLookupAction.ID, EntityClearAction.ID]
 
         when: "specify actions in properties"
         def actionIds = ['entity_lookup', 'entity_open', 'entity_clear']

@@ -61,8 +61,8 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
 @StudioAction(
         category = "ValuesPicker Actions",
         description = "Sets a value to the values picker using the selection screen")
-@ActionType(SelectAction.ID)
-public class SelectAction<V> extends BaseAction implements ValuePickerAction, InitializingBean,
+@ActionType(ValuesSelectAction.ID)
+public class ValuesSelectAction<V> extends BaseAction implements ValuePickerAction, InitializingBean,
         Action.ExecutableAction {
 
     public static final String ID = "values_select";
@@ -80,11 +80,11 @@ public class SelectAction<V> extends BaseAction implements ValuePickerAction, In
     protected ActionScreenInitializer screenInitializer = new ActionScreenInitializer();
     protected SelectValueContext<V> selectValueContext = new SelectValueContext<>();
 
-    public SelectAction() {
+    public ValuesSelectAction() {
         this(ID);
     }
 
-    public SelectAction(String id) {
+    public ValuesSelectAction(String id) {
         super(id);
     }
 

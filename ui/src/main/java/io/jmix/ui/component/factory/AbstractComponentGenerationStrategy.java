@@ -27,7 +27,7 @@ import io.jmix.core.metamodel.model.Range;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
-import io.jmix.ui.action.valuespicker.SelectAction;
+import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
@@ -368,7 +368,7 @@ public abstract class AbstractComponentGenerationStrategy implements ComponentGe
         ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
         setValueSource(valuesPicker, context);
 
-        SelectAction selectAction = actions.create(SelectAction.class);
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
         Range range = mpp.getRange();
         if (range.isClass()) {
             selectAction.setEntityName(range.asClass().getName());

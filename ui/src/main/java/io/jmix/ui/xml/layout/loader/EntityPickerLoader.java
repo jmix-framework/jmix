@@ -19,7 +19,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.component.EntityPicker;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
@@ -82,7 +82,7 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
     protected void addEntityPickerDefaultActions() {
         Actions actions = getActions();
 
-        resultComponent.addAction(actions.create(LookupAction.ID));
+        resultComponent.addAction(actions.create(EntityLookupAction.ID));
         resultComponent.addAction(actions.create(EntityClearAction.ID));
     }
 }

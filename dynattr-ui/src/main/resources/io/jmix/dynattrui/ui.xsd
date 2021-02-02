@@ -14,9 +14,9 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/dynattr/dynattr-ui.xsd"
+<xs:schema targetNamespace="http://jmix.io/schema/dynattr/ui"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://jmix.io/schema/dynattr/dynattr-ui.xsd"
+           xmlns="http://jmix.io/schema/dynattr/ui"
            elementFormDefault="qualified">
 
     <!-- DynamicAttributes Facet -->

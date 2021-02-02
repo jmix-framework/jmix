@@ -25,7 +25,7 @@ import io.jmix.ui.meta.StudioFacet;
         description = "Shows dynamic attributes on a screen",
         category = "Facets",
         icon = "icon/dynamicAttributes.svg",
-        xmlns = "http://jmix.io/schema/dynattr/dynattr-ui.xsd",
+        xmlns = "http://jmix.io/schema/dynattr/ui",
         xmlnsAlias = "dynattrui"
 )
 public interface DynAttrFacet extends Facet {

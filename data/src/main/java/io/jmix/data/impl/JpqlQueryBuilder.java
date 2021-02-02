@@ -234,20 +234,17 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     }
                 }
 
-                List<SingleJpqlCondition> singleJpqlConditions = collectNestedSingleJpqlConditions(actualized);
-                for (SingleJpqlCondition singleJpqlCondition : singleJpqlConditions) {
-                    singleJpqlCondition.getParameters().stream()
-                            .findFirst()
-                            .ifPresent(parameterName -> {
-                                Object parameterValue;
-                                if (!nonNullParamNames.contains(parameterName)) {
-                                    parameterValue = singleJpqlCondition.getParameterValue();
-                                } else {
-                                    parameterValue = queryParameters.get(parameterName);
-                                }
-
-                                resultParameters.put(parameterName, parameterValue);
-                            });
+                List<JpqlCondition> jpqlConditions = collectNestedJpqlConditions(actualized);
+                for (JpqlCondition jpqlCondition : jpqlConditions) {
+                    for (Map.Entry<String, Object> parameter : jpqlCondition.getParameterValuesMap().entrySet()) {
+                        // JpqlCondition may take a value from queryParameters collection or from the
+                        // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
+                        if (!nonNullParamNames.contains(parameter.getKey())) {
+                            resultParameters.put(parameter.getKey(), parameter.getValue());
+                        } else {
+                            resultParameters.put(parameter.getKey(), queryParameters.get(parameter.getKey()));
+                        }
+                    }
                 }
             }
             resultQuery = conditionJpqlGenerator.processQuery(resultQuery, actualized);
@@ -255,7 +252,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
     }
 
     @Nullable
-    private Object wrapQueryParameterValueForJpql(String operation, @Nullable Object parameterValue) {
+    protected Object wrapQueryParameterValueForJpql(String operation, @Nullable Object parameterValue) {
         if (parameterValue instanceof String) {
             switch (operation) {
                 case PropertyCondition.Operation.CONTAINS:
@@ -270,7 +267,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         return parameterValue;
     }
 
-    private List<PropertyCondition> collectNestedPropertyConditions(Condition rootCondition) {
+    protected List<PropertyCondition> collectNestedPropertyConditions(Condition rootCondition) {
         List<PropertyCondition> propertyConditions = new ArrayList<>();
         if (rootCondition instanceof LogicalCondition) {
             ((LogicalCondition) rootCondition).getConditions().forEach(c ->
@@ -281,15 +278,15 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
         return propertyConditions;
     }
 
-    private List<SingleJpqlCondition> collectNestedSingleJpqlConditions(Condition rootCondition) {
-        List<SingleJpqlCondition> singleJpqlConditions = new ArrayList<>();
+    protected List<JpqlCondition> collectNestedJpqlConditions(Condition rootCondition) {
+        List<JpqlCondition> jpqlConditions = new ArrayList<>();
         if (rootCondition instanceof LogicalCondition) {
             ((LogicalCondition) rootCondition).getConditions().forEach(c ->
-                    singleJpqlConditions.addAll(collectNestedSingleJpqlConditions(c)));
-        } else if (rootCondition instanceof SingleJpqlCondition) {
-            singleJpqlConditions.add((SingleJpqlCondition) rootCondition);
+                    jpqlConditions.addAll(collectNestedJpqlConditions(c)));
+        } else if (rootCondition instanceof JpqlCondition) {
+            jpqlConditions.add((JpqlCondition) rootCondition);
         }
-        return singleJpqlConditions;
+        return jpqlConditions;
     }
 
     protected void applyCount() {

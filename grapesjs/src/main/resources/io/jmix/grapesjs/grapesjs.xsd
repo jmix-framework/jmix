@@ -15,10 +15,10 @@
   ~ limitations under the License.
   -->
 
-<xs:schema xmlns="http://jmix.io/schema/grapesjs/ui"
+<xs:schema xmlns="http://jmix.io/schema/grapesjs/grapesjs.xsd"
            attributeFormDefault="unqualified"
            elementFormDefault="qualified"
-           targetNamespace="http://jmix.io/schema/grapesjs/ui"
+           targetNamespace="http://jmix.io/schema/grapesjs/grapesjs.xsd"
            xmlns:layout="http://jmix.io/schema/ui/layout"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
 

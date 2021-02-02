@@ -19,11 +19,11 @@ package io.jmix.reports;
 import com.haulmont.yarg.reporting.ReportOutputDocument;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
+import io.jmix.core.FileRef;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.reports.app.ParameterPrototype;
 import io.jmix.reports.entity.*;
 
-import java.net.URI;
 import java.util.*;
 
 /**
@@ -109,8 +109,8 @@ public interface Reports {
      * @param fileName output file name
      * @return FileDescriptor instance pointing to the report output
      */
-    URI createAndSaveReport(Report report,
-                                       Map<String, Object> params, String fileName);
+    FileRef createAndSaveReport(Report report,
+                                Map<String, Object> params, String fileName);
 
     /**
      * Generates a report and saves its output to the file storage.
@@ -121,8 +121,8 @@ public interface Reports {
      * @param fileName     output file name
      * @return FileDescriptor instance pointing to the report output
      */
-    URI createAndSaveReport(Report report, String templateCode,
-                            Map<String, Object> params, String fileName);
+    FileRef createAndSaveReport(Report report, String templateCode,
+                                Map<String, Object> params, String fileName);
 
     /**
      * Generates a report and saves its output to the file storage.
@@ -133,8 +133,8 @@ public interface Reports {
      * @param fileName output file name
      * @return FileDescriptor instance pointing to the report output
      */
-    URI createAndSaveReport(Report report, ReportTemplate template,
-                            Map<String, Object> params, String fileName);
+    FileRef createAndSaveReport(Report report, ReportTemplate template,
+                                Map<String, Object> params, String fileName);
 
     /**
      * Generates a report and saves its output to the file storage.
@@ -142,7 +142,7 @@ public interface Reports {
      * @param reportRunParams all report parameters in a single POJO
      * @return FileDescriptor instance pointing to the report output
      */
-    URI createAndSaveReport(ReportRunParams reportRunParams);
+    FileRef createAndSaveReport(ReportRunParams reportRunParams);
 
     /**
      * Exports all reports and their templates into one zip archive. Each report is exported into a separate zip

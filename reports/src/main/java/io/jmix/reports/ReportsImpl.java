@@ -55,7 +55,6 @@ import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 import java.util.zip.CRC32;
 
@@ -523,23 +522,23 @@ public class ReportsImpl implements Reports {
     }
 
     @Override
-    public URI createAndSaveReport(Report report, Map<String, Object> params, String fileName) {
+    public FileRef createAndSaveReport(Report report, Map<String, Object> params, String fileName) {
         report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
         ReportTemplate template = getDefaultTemplate(report);
         return createAndSaveReport(report, template, params, fileName);
     }
 
     @Override
-    public URI createAndSaveReport(Report report, String templateCode,
-                                   Map<String, Object> params, String fileName) {
+    public FileRef createAndSaveReport(Report report, String templateCode,
+                                       Map<String, Object> params, String fileName) {
         report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
         ReportTemplate template = report.getTemplateByCode(templateCode);
         return createAndSaveReport(report, template, params, fileName);
     }
 
     @Override
-    public URI createAndSaveReport(Report report, ReportTemplate template,
-                                   Map<String, Object> params, String fileName) {
+    public FileRef createAndSaveReport(Report report, ReportTemplate template,
+                                       Map<String, Object> params, String fileName) {
         report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
         ReportRunParams reportRunParams = new ReportRunParams()
                 .setReport(report)
@@ -550,14 +549,14 @@ public class ReportsImpl implements Reports {
     }
 
     @Override
-    public URI createAndSaveReport(ReportRunParams reportRunParams) {
+    public FileRef createAndSaveReport(ReportRunParams reportRunParams) {
         Report report = reportRunParams.getReport();
         report = reloadEntity(report, REPORT_EDIT_VIEW_NAME);
         reportRunParams.setReport(report);
         return createAndSaveReportDocument(reportRunParams);
     }
 
-    protected URI createAndSaveReportDocument(ReportRunParams reportRunParams) {
+    protected FileRef createAndSaveReportDocument(ReportRunParams reportRunParams) {
         ReportOutputDocument reportOutputDocument = createReportDocument(reportRunParams);
         byte[] reportData = reportOutputDocument.getContent();
         String documentName = reportOutputDocument.getDocumentName();
@@ -566,14 +565,8 @@ public class ReportsImpl implements Reports {
         return saveReport(reportData, documentName, ext);
     }
 
-    protected URI saveReport(byte[] reportData, String fileName, String ext) {
-        URI reference = (URI) getFileStorage().createReference(fileName + "." + ext);
-        getFileStorage().saveStream(reference, new ByteArrayInputStream(reportData));
-
-//        transaction.executeWithoutResult(status -> {
-//            em.persist(file);
-//        });
-        return reference;
+    protected FileRef saveReport(byte[] reportData, String fileName, String ext) {
+        return getFileStorage().saveStream(fileName + "." + ext, new ByteArrayInputStream(reportData));
     }
 
     @Override

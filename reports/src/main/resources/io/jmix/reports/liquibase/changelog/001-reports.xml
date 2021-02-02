@@ -160,7 +160,7 @@
             <column name="PARAMS" type="varchar(100)"/>
             <column name="ERROR_MESSAGE" type="varchar(500)"/>
             <column name="SERVER_ID" type="varchar(50)"/>
-            <column name="FILE_URI" type="varchar(255)"/>
+            <column name="OUTPUT_DOCUMENT" type="varchar(255)"/>
         </createTable>
 
         <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXECUTION_REPORT_ID">

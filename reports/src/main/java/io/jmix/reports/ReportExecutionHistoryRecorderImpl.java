@@ -34,7 +34,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.ByteArrayInputStream;
-import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,8 +90,8 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
             execution.setFinishTime(timeSource.currentTimestamp());
             if (shouldSaveDocument(execution, document)) {
                 try {
-                    URI reference = saveDocument(document);
-                    execution.setFileUri(reference);
+                    FileRef reference = saveDocument(document);
+                    execution.setOutputDocument(reference);
                 } catch (FileStorageException e) {
                     log.error("Failed to save output document", e);
                 }
@@ -160,10 +159,8 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         return reportsProperties.isSaveOutputDocumentsToHistory() && !outputTypesWithoutDocument.contains(type.getId());
     }
 
-    protected URI saveDocument(ReportOutputDocument document) throws FileStorageException {
-        URI reference = (URI) getFileStorage().createReference(document.getDocumentName());
-        getFileStorage().saveStream(reference, new ByteArrayInputStream(document.getContent()));
-        return reference;
+    protected FileRef saveDocument(ReportOutputDocument document) throws FileStorageException {
+        return getFileStorage().saveStream(document.getDocumentName(), new ByteArrayInputStream(document.getContent()));
     }
 
     /**
@@ -204,14 +201,15 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
         Date borderDate = DateUtils.addDays(timeSource.currentTimestamp(), -historyCleanupMaxDays);
         log.debug("Deleting report executions older than {}", borderDate);
 
-        List<URI> paths = new ArrayList<>();
+        List<FileRef> fileRefs = new ArrayList<>();
 
         int deleted = transaction.execute(status -> {
-            List<URI> ids = entityManager.createQuery("select e.pathDocument from report_ReportExecution e"
-                    + " where e.pathDocument is not null and e.startTime < :borderDate", URI.class)
+            //todo test the query
+            List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
+                    + " where e.pathDocument is not null and e.startTime < :borderDate", FileRef.class)
                     .setParameter("borderDate", borderDate)
                     .getResultList();
-            paths.addAll(ids);
+            fileRefs.addAll(fileRefs1);
 
             //todo
             //entityManager.setSoftDeletion(false);
@@ -220,16 +218,16 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
                     .executeUpdate();
         });
 
-        deleteFileAndFiles(paths);
+        deleteFiles(fileRefs);
         return deleted;
     }
 
-    private void deleteFileAndFiles(List<URI> paths) {
-        if (!paths.isEmpty()) {
-            log.debug("Deleting {} output document files", paths.size());
+    private void deleteFiles(List<FileRef> fileRefs) {
+        if (!fileRefs.isEmpty()) {
+            log.debug("Deleting {} output document files", fileRefs.size());
         }
 
-        for (URI path : paths) {
+        for (FileRef path : fileRefs) {
             try {
                 getFileStorage().removeFile(path);
             } catch (FileStorageException e) {
@@ -261,7 +259,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
     }
 
     private int deleteForOneReport(UUID reportId, int maxItemsPerReport) {
-        List<URI> paths = new ArrayList<>();
+        List<FileRef> fileRefs = new ArrayList<>();
         int deleted = transaction.execute(status -> {
             //em.setSoftDeletion(false);
             int rows = 0;
@@ -275,12 +273,13 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
                     .getSingleResult();
 
             if (borderStartTime != null) {
-                List<URI> ids = entityManager.createQuery("select e.pathDocument from report_ReportExecution e"
-                        + " where e.outputDocument is not null and e.report.id = :reportId and e.startTime <= :borderTime", URI.class)
+                //todo test the query
+                List<FileRef> fileRefs1 = entityManager.createQuery("select e.outputDocument from report_ReportExecution e"
+                        + " where e.outputDocument is not null and e.report.id = :reportId and e.startTime <= :borderTime", FileRef.class)
                         .setParameter("reportId", reportId)
                         .setParameter("borderTime", borderStartTime)
                         .getResultList();
-                paths.addAll(ids);
+                fileRefs.addAll(fileRefs1);
 
                 rows = entityManager.createQuery("delete from report_ReportExecution e"
                         + " where e.report.id = :reportId and e.startTime <= :borderTime")
@@ -290,7 +289,7 @@ public class ReportExecutionHistoryRecorderImpl implements ReportExecutionHistor
             }
             return rows;
         });
-        deleteFileAndFiles(paths);
+        deleteFiles(fileRefs);
         return deleted;
     }
 

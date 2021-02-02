@@ -18,16 +18,12 @@ package io.jmix.reports.libintegration;
 
 import com.haulmont.yarg.exception.ReportFormattingException;
 import com.haulmont.yarg.formatters.impl.inline.AbstractInliner;
-import io.jmix.core.DataManager;
-import io.jmix.core.FileStorage;
-import io.jmix.core.FileStorageLocator;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.regex.Pattern;
 
 @Component("report_FileStorageContentInliner")
@@ -58,13 +54,13 @@ public class FileStorageContentInliner extends AbstractInliner {
     protected byte[] getContent(Object paramValue) {
         try {
             //todo image format
-            URI uri = null;
+            FileRef fileRef = null;
 //            if (paramValue instanceof FileDescriptor) {
 //                file = dataManager.load(new LoadContext(metadata.getClass(FileDescriptor.class)).setId(((FileDescriptor) paramValue).getId()));
 //            } else {
 //                file = dataManager.load(new LoadContext(metadata.getClass(FileDescriptor.class)).setId(UuidProvider.fromString(paramValue.toString())));
 //            }
-            byte[] bytes = IOUtils.toByteArray(getFileStorage().openStream(uri));
+            byte[] bytes = IOUtils.toByteArray(getFileStorage().openStream(fileRef));
             return bytes;
         } catch (IOException e) {
             throw new ReportFormattingException(String.format("Unable to get image from file storage. File id [%s]", paramValue), e);

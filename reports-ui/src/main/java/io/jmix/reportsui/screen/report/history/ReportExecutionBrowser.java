@@ -18,6 +18,7 @@ package io.jmix.reportsui.screen.report.history;
 
 
 import io.jmix.core.CoreProperties;
+import io.jmix.core.FileRef;
 import io.jmix.core.FileStorage;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.reports.entity.Report;
@@ -27,19 +28,13 @@ import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Table;
-import io.jmix.ui.download.ByteArrayDataProvider;
-import io.jmix.ui.download.DownloadFormat;
 import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.screen.*;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -127,7 +122,7 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
                 return false;
             }
             ReportExecution execution = executionsTable.getSingleSelected();
-            return execution != null && execution.getFileUri() != null;
+            return execution != null && execution.getOutputDocument() != null;
         }
 
         @Override
@@ -143,17 +138,9 @@ public class ReportExecutionBrowser extends StandardLookup<ReportExecution> {
         @Override
         public void actionPerform(Component component) {
             ReportExecution execution = executionsTable.getSingleSelected();
-            if (execution != null && execution.getFileUri() != null) {
-                URI uri = execution.getFileUri();
-                String fileName = getFileStorage().getFileName(uri);
-                try {
-                    downloader.download(new ByteArrayDataProvider(
-                            IOUtils.toByteArray(uri),
-                            uiProperties.getSaveExportedByteArrayDataThresholdBytes(),
-                            coreProperties.getTempDir()), DownloadFormat.getByExtension(FilenameUtils.getExtension(fileName)));
-                } catch (IOException e) {
-                    new RuntimeException(e);
-                }
+            if (execution != null && execution.getOutputDocument() != null) {
+                FileRef fileRef = execution.getOutputDocument();
+                downloader.download(fileRef);
             }
         }
     }

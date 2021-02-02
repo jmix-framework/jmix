@@ -16,6 +16,7 @@
 
 package io.jmix.reports.entity;
 
+import io.jmix.core.FileRef;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.JmixEntity;
@@ -25,7 +26,6 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
-import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
@@ -79,8 +79,8 @@ public class ReportExecution {
     @Column(name = "CANCELLED")
     private Boolean cancelled;
 
-    @Column(name = "FILE_URI")
-    private URI fileUri;
+    @Column(name = "OUTPUT_DOCUMENT")
+    private FileRef outputDocument;
 
     @Column(name = "PARAMS")
     @Lob
@@ -187,12 +187,12 @@ public class ReportExecution {
         this.cancelled = cancelled;
     }
 
-    public URI getFileUri() {
-        return fileUri;
+    public FileRef getOutputDocument() {
+        return outputDocument;
     }
 
-    public void setFileUri(URI fileUri) {
-        this.fileUri = fileUri;
+    public void setOutputDocument(FileRef outputDocument) {
+        this.outputDocument = outputDocument;
     }
 
     public String getParams() {

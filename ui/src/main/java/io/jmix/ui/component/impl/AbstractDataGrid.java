@@ -983,18 +983,6 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
                     metadataTools.getPropertyPaths(container.getEntityMetaClass());
         }
 
-        /*
-        TODO: legacy-ui
-        if (entityDataGridSource instanceof DatasourceDataUnit) {
-            CollectionDatasource datasource = ((DatasourceDataUnit) entityDataGridSource).getDatasource();
-
-            return datasource.getView() != null ?
-                    // if a view is specified - use view properties
-                    metadataTools.getViewPropertyPaths(datasource.getView(), datasource.getMetaClass()) :
-                    // otherwise use all properties from meta-class
-                    metadataTools.getPropertyPaths(datasource.getMetaClass());
-        }*/
-
         if (entityDataGridSource instanceof EmptyDataUnit) {
             return metadataTools.getPropertyPaths(entityDataGridSource.getEntityMetaClass());
         }
@@ -1443,12 +1431,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         if (container instanceof InstanceContainer) {
             InstanceContainer<E> instanceContainer = (InstanceContainer<E>) container;
             instanceContainer.setItem(null);
-        }/*
-         TODO: legacy-ui
-         else if (container instanceof Datasource) {
-            Datasource<E> datasource = (Datasource<E>) container;
-            datasource.setItem(null);
-        }*/
+        }
     }
 
     protected ValueSourceProvider createValueSourceProvider(E item) {

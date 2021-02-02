@@ -34,7 +34,7 @@ import static io.jmix.core.entity.EntitySystemAccess.getSecurityState;
 public class CollectionValuePropertyHolder extends AbstractValueHolder {
     private static final long serialVersionUID = -8280038568067316785L;
 
-    protected Object rootEntity;
+    private Object rootEntity;
 
     public CollectionValuePropertyHolder(BeanFactory beanFactory,
                                          ValueHolderInterface originalValueHolder,

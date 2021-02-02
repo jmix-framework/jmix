@@ -26,6 +26,7 @@ import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
+import io.jmix.data.impl.lazyloading.LazyLoadingContext;
 import io.jmix.data.persistence.DbmsSpecifics;
 import org.eclipse.persistence.exceptions.QueryException;
 import org.slf4j.Logger;
@@ -311,7 +312,9 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
             def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
         }
         PlatformTransactionManager txManager = storeAwareLocator.getTransactionManager(storeName);
-        return txManager.getTransaction(def);
+        Object transaction = txManager.getTransaction(def);
+        LazyLoadingContext.setDisabled();
+        return transaction;
     }
 
     @Override
@@ -346,6 +349,12 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
 
             entityChangedEventManager.publish(events);
         }
+    }
+
+    @Override
+    protected void beforeRollbackSaveTransaction(SaveContext context) {
+        LazyLoadingContext.setEnabled();
+        super.beforeRollbackSaveTransaction(context);
     }
 
     protected Query createQuery(EntityManager em, LoadContext<?> context, boolean countQuery) {

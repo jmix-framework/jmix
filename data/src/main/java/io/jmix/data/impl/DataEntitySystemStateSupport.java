@@ -16,28 +16,34 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Entity;
-import io.jmix.core.EntityStates;
-import io.jmix.core.EntitySystemStateSupport;
-import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.impl.lazyloading.AbstractValueHolder;
+import io.jmix.data.impl.lazyloading.IndirectListWrapper;
+import io.jmix.data.impl.lazyloading.IndirectSetWrapper;
+import org.eclipse.persistence.indirection.IndirectList;
+import org.eclipse.persistence.indirection.IndirectSet;
 import org.eclipse.persistence.internal.queries.EntityFetchGroup;
 import org.eclipse.persistence.queries.FetchGroup;
 import org.eclipse.persistence.queries.FetchGroupTracker;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.function.Function;
+
+import static io.jmix.data.impl.lazyloading.ValueHoldersSupport.*;
 
 public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
 
     @Autowired
     protected Metadata metadata;
+
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Autowired
     protected EntityStates entityStates;
@@ -49,7 +55,6 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
             FetchGroup srcFetchGroup = ((FetchGroupTracker) src)._persistence_getFetchGroup();
             ((FetchGroupTracker) dst)._persistence_setFetchGroup(srcFetchGroup);
         }
-
     }
 
     public void mergeSystemState(Entity src, Entity dst) {
@@ -68,19 +73,37 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
     }
 
     @Override
-    public void mergeLazyLoadingState(Entity src, Entity dst, BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
-        boolean srcNew = entityStates.isNew(src);
-        MetaClass metaClass = metadata.getClass(src.getClass());
+    public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,
+                                      Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
+        if (!metadataTools.isEmbedded(metaProperty)) {
+            if (metaProperty.getRange().getCardinality().isMany()) {
+                Object value = getCollectionProperty(src, metaProperty.getName());
 
-        for (MetaProperty property : metaClass.getProperties()) {
-            String propertyName = property.getName();
-            if (property.getRange().isClass()) {
-                if (!srcNew && !entityStates.isLoaded(src, propertyName)) {
-                    if (property.getRange().getCardinality().isMany()) {
-                        replaceCollectionField(src, dst, propertyName, collectionWrapper);
-                    } else {
-                        replaceValueHolderField(src, dst, propertyName);
-                    }
+                if (value instanceof IndirectList) {
+                    //noinspection unchecked
+                    Collection<Object> collection = (Collection<Object>) value;
+                    //noinspection unchecked
+                    IndirectList<Object> indirectList = (IndirectList<Object>) value;
+
+                    Collection<Object> wrappedCollection =
+                            new IndirectListWrapper<>((List<Object>) collectionWrapFunction.apply(collection), indirectList);
+
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                } else if (value instanceof IndirectSet) {
+                    //noinspection unchecked
+                    Collection<Object> collection = (Collection<Object>) value;
+                    //noinspection unchecked
+                    IndirectSet<Object> indirectSet = (IndirectSet<Object>) value;
+
+                    Collection<Object> wrappedCollection =
+                            new IndirectSetWrapper<>((Set<Object>) collectionWrapFunction.apply(collection), indirectSet);
+
+                    setCollectionProperty(dst, metaProperty.getName(), wrappedCollection);
+                }
+            } else {
+                Object valueHolder = getSingleValueHolder(src, metaProperty.getName());
+                if (valueHolder instanceof AbstractValueHolder) {
+                    setSingleValueHolder(dst, metaProperty.getName(), valueHolder);
                 }
             }
         }
@@ -111,30 +134,6 @@ public class DataEntitySystemStateSupport extends EntitySystemStateSupport {
             } else {
                 set.add(prefix + attribute);
             }
-        }
-    }
-
-    protected void replaceValueHolderField(Entity src, Entity dst, String propertyName) {
-        try {
-            Field declaredField = dst.getClass().getDeclaredField(String.format("_persistence_%s_vh", propertyName));
-            boolean accessible = declaredField.isAccessible();
-            declaredField.setAccessible(true);
-            declaredField.set(dst, declaredField.get(src));
-            declaredField.setAccessible(accessible);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-        }
-    }
-
-    protected void replaceCollectionField(Entity src, Entity dst, String propertyName,
-                                          BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
-        try {
-            Field declaredField = dst.getClass().getDeclaredField(propertyName);
-            boolean accessible = declaredField.isAccessible();
-            declaredField.setAccessible(true);
-            //noinspection unchecked
-            declaredField.set(dst, collectionWrapper.apply((Collection<Object>) declaredField.get(src), dst));
-            declaredField.setAccessible(accessible);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
         }
     }
 }

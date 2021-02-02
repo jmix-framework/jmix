@@ -16,7 +16,6 @@
 
 package io.jmix.data.impl.lazyloading;
 
-import io.jmix.core.entity.EntityValues;
 import org.eclipse.persistence.expressions.Expression;
 import org.eclipse.persistence.indirection.IndirectCollection;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
@@ -40,12 +39,8 @@ public class ValueHoldersSupport {
                         propertyName, entity.getClass().getName()));
             }
 
-            boolean accessible = valueHolderField.isAccessible();
-
-            valueHolderField.setAccessible(true);
+            ReflectionUtils.makeAccessible(valueHolderField);
             valueHolder = valueHolderField.get(entity);
-
-            valueHolderField.setAccessible(accessible);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                     propertyName, entity.getClass().getName()), e);
@@ -61,19 +56,49 @@ public class ValueHoldersSupport {
                 throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
                         propertyName, entity.getClass().getName()));
             }
-            boolean accessible = valueHolderField.isAccessible();
-
-            valueHolderField.setAccessible(true);
+            ReflectionUtils.makeAccessible(valueHolderField);
             valueHolderField.set(entity, valueHolder);
-
-            valueHolderField.setAccessible(accessible);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(String.format("Unable to access value holder for property: %s on entity %s",
-                    propertyName, entity.getClass().getName()), e);        }
+                    propertyName, entity.getClass().getName()), e);
+        }
+    }
+
+    public static Object getCollectionProperty(Object entity, String propertyName) {
+        Object value;
+        try {
+            Field valueField = ReflectionUtils.findField(entity.getClass(), propertyName);
+            if (valueField == null) {
+                throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
+                        propertyName, entity.getClass().getName()));
+            }
+            ReflectionUtils.makeAccessible(valueField);
+            value = valueField.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
+                    propertyName, entity.getClass().getName()), e);
+        }
+
+        return value;
+    }
+
+    public static void setCollectionProperty(Object entity, String propertyName, Object value) {
+        try {
+            Field valueField = ReflectionUtils.findField(entity.getClass(), propertyName);
+            if (valueField == null) {
+                throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
+                        propertyName, entity.getClass().getName()));
+            }
+            ReflectionUtils.makeAccessible(valueField);
+            valueField.set(entity, value);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(String.format("Unable to access value for property: %s on entity %s",
+                    propertyName, entity.getClass().getName()), e);
+        }
     }
 
     public static Object getCollectionValueHolder(Object entity, String propertyName) {
-        Object value = EntityValues.getValue(entity, propertyName);
+        Object value = getCollectionProperty(entity, propertyName);
         if (value instanceof IndirectCollection) {
             return ((IndirectCollection) value).getValueHolder();
         }
@@ -81,7 +106,7 @@ public class ValueHoldersSupport {
     }
 
     public static void setCollectionValueHolder(Object entity, String propertyName, Object valueHolder) {
-        Object value = EntityValues.getValue(entity, propertyName);
+        Object value = getCollectionProperty(entity, propertyName);
         if (value instanceof IndirectCollection) {
             ((IndirectCollection) value).setValueHolder((ValueHolderInterface) valueHolder);
         } else {

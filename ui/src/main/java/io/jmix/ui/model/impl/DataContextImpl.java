@@ -329,7 +329,7 @@ public class DataContextImpl implements DataContext {
             }
         }
 
-        mergeLazyLoadingState(srcEntity, dstEntity, options);
+        mergeLazyLoadingState(srcEntity, dstEntity);
     }
 
     protected void setPropertyValue(Object entity, MetaProperty property, @Nullable Object value) {
@@ -373,16 +373,19 @@ public class DataContextImpl implements DataContext {
         }
     }
 
-    protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity, MergeOptions options) {
-        entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, (collection, entity) -> {
-                    if (collection instanceof List) {
-                        return createObservableList((List<Object>) collection, entity);
-                    } else if (collection instanceof Set) {
-                        return createObservableSet((Set<Object>) collection, entity);
-                    }
-                    return collection;
+    protected void mergeLazyLoadingState(Object srcEntity, Object dstEntity) {
+        boolean srcNew = entityStates.isNew(srcEntity);
+        MetaClass metaClass = metadata.getClass(srcEntity.getClass());
+
+        for (MetaProperty property : metaClass.getProperties()) {
+            String propertyName = property.getName();
+            if (property.getRange().isClass()) {
+                if (!srcNew && !entityStates.isLoaded(srcEntity, propertyName)) {
+                    entitySystemStateSupport.mergeLazyLoadingState((Entity) srcEntity, (Entity) dstEntity, property,
+                            collection -> wrapLazyValueIntoObservableCollection(collection, dstEntity));
                 }
-        );
+            }
+        }
     }
 
     protected void mergeList(List<Object> list, Object managedEntity, MetaProperty property, boolean replace,
@@ -462,6 +465,15 @@ public class DataContextImpl implements DataContext {
                 }
             }
         }
+    }
+
+    protected Collection<Object> wrapLazyValueIntoObservableCollection(Collection<Object> collection, Object notifiedEntity) {
+        if (collection instanceof List) {
+            return createObservableList((List<Object>) collection, notifiedEntity);
+        } else if (collection instanceof Set) {
+            return createObservableSet((Set<Object>) collection, notifiedEntity);
+        }
+        return collection;
     }
 
     protected List<Object> createObservableList(Object notifiedEntity) {

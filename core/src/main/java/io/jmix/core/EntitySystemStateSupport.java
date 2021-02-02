@@ -16,10 +16,11 @@
 
 package io.jmix.core;
 
+import io.jmix.core.metamodel.model.MetaProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Component("core_EntitySystemStateSupport")
 public class EntitySystemStateSupport {
@@ -32,6 +33,7 @@ public class EntitySystemStateSupport {
         dst.__getEntityEntry().copy(src.__getEntityEntry());
     }
 
-    public void mergeLazyLoadingState(Entity src, Entity dst, BiFunction<Collection<Object>, Object, Object> collectionWrapper) {
+    public void mergeLazyLoadingState(Entity src, Entity dst, MetaProperty metaProperty,
+                                      Function<Collection<Object>, Collection<Object>> collectionWrapFunction) {
     }
 }

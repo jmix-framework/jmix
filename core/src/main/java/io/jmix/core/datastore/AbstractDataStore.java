@@ -229,6 +229,7 @@ public abstract class AbstractDataStore implements DataStore {
             beforeCommitSaveTransaction(context, savedEntities, deletedEntities);
             commitTransaction(transaction);
         } finally {
+            beforeRollbackSaveTransaction(context);
             rollbackTransaction(transaction);
         }
 
@@ -295,6 +296,9 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected void beforeCommitSaveTransaction(SaveContext context, Collection<Object> savedEntities,
                                                Collection<Object> removedEntities) {
+    }
+
+    protected void beforeRollbackSaveTransaction(SaveContext context) {
     }
 
     public void registerInterceptor(DataStoreEventListener listener) {

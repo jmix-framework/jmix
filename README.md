@@ -83,7 +83,7 @@ To use the component you need to add HTML editor to the screen. Then add UI comp
 
 ## Adding HTML Editor to the Screen <a name="adding-html-editor-to-the-screen"></a>
 
-To use the `GrapesJS` component in your screen, you need to add the special scheme `http://jmix.io/schema/grapesjs/grapesjs.xsd` in the XML descriptor of the screen and then add a namespace like `grapesjs` for the schema. The schema contains information about the `grapesJsHtmlEditor` tag.
+To use the `GrapesJS` component in your screen, you need to add the special scheme `http://jmix.io/schema/grapesjs/ui` in the XML descriptor of the screen and then add a namespace like `grapesjs` for the schema. The schema contains information about the `grapesJsHtmlEditor` tag.
 
 Look at the example of usage:
 
@@ -91,13 +91,13 @@ Look at the example of usage:
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <window xmlns="http://jmix.io/schema/ui/window"
         caption="msg://caption"
-        xmlns:grapesjs="http://jmix.io/schema/grapesjs/grapesjs.xsd">
+        xmlns:et="http://jmix.io/schema/grapesjs/ui">
     ...
-        <grapesjs:grapesJsHtmlEditor id="htmlEditor">
-            <grapesjs:disabledBlocks>
+        <et:grapesJsHtmlEditor id="htmlEditor">
+            <et:disabledBlocks>
                  //comma separated panel names which should be disabled, for example "map,tabs"
-            </grapesjs:disabledBlocks>
-        </grapesjs:grapesJsHtmlEditor>
+            </et:disabledBlocks>
+        </et:grapesJsHtmlEditor>
     ...
 ```
 
@@ -135,39 +135,39 @@ Custom project plugins can be registered via `io.jmix.grapesjs.component.GjsBloc
 
 Example:
 ```xml
-<grapesjs:grapesJsNewsletterHtmlEditor
+<et:grapesJsNewsletterHtmlEditor
        id="templateEditor"
        inlineCss="true"
        height="100%" width="100%">
-   <grapesjs:disabledBlocks>
+   <et:disabledBlocks>
        map,tabs
-    </grapesjs:disabledBlocks>
-   <grapesjs:plugin name="ckeditor">
+    </et:disabledBlocks>
+   <et:plugin name="ckeditor">
        <!-- path to plugin configuration-->
-       <grapesjs:optionsPath>/io/jmix/grapesjs/plugins/gjs-plugin-ckeditor.js</grapesjs:optionsPath>
-   </grapesjs:plugin>
-   <grapesjs:plugin name="forms"/>
-   <grapesjs:plugin name="flexBlocks"/>
-   <grapesjs:plugin name="tuiImageEditor"/>
-   <grapesjs:plugin name="customcode"/>
-   <grapesjs:plugin name="postcss"/>
-   <grapesjs:plugin name="touch">
-       <grapesjs:options>
+       <et:optionsPath>/io/jmix/grapesjs/plugins/gjs-plugin-ckeditor.js</et:optionsPath>
+   </et:plugin>
+   <et:plugin name="forms"/>
+   <et:plugin name="flexBlocks"/>
+   <et:plugin name="tuiImageEditor"/>
+   <et:plugin name="customcode"/>
+   <et:plugin name="postcss"/>
+   <et:plugin name="touch">
+       <et:options>
            <![CDATA[
                ... custom plugin settings ...
            ]]>
-       </grapesjs:options>
-   </grapesjs:plugin>
-   <grapesjs:plugin name="styleFilter"/>
-   <grapesjs:plugin>
-       <grapesjs:name>customPlugin</grapesjs:name>
-       <grapesjs:options>
+       </et:options>
+   </et:plugin>
+   <et:plugin name="styleFilter"/>
+   <et:plugin>
+       <et:name>customPlugin</et:name>
+       <et:options>
            <![CDATA[
                ... custom plugin settings ...
            ]]>
-       </grapesjs:options>
-   </grapesjs:plugin>
-</grapesjs:grapesJsNewsletterHtmlEditor>
+       </et:options>
+   </et:plugin>
+</et:grapesJsNewsletterHtmlEditor>
 ```
 
 ## Commands <a name="commands"></a>
@@ -188,24 +188,24 @@ Custom blocks can be added to the component using `block` tag with the following
 
 Block example:
 ```xml
-<grapesjs:block>
- <grapesjs:name>h1-block</grapesjs:name>
- <grapesjs:label>Heading</grapesjs:label>
- <grapesjs:category>Basic</grapesjs:category>
- <grapesjs:content>
+<et:block>
+ <et:name>h1-block</et:name>
+ <et:label>Heading</et:label>
+ <et:category>Basic</et:category>
+ <et:content>
    <![CDATA[
            <h1>Put your title here</h1>
        ]]>
- </grapesjs:content>
- <grapesjs:attributes>
+ </et:content>
+ <et:attributes>
    <![CDATA[
            {
               title: 'Insert h1 block',
               class:'fa fa-th'
            }
        ]]>
- </grapesjs:attributes>
-</grapesjs:block>
+ </et:attributes>
+</et:block>
 ```
 
 Custom project blocks can be registered via `io.jmix.grapesjs.component.GjsBlocksRepository` class.

@@ -2272,7 +2272,6 @@
                 <xs:attributeGroup ref="hasTabIndex"/>
 
                 <xs:attribute name="optionsContainer" type="xs:string"/>
-                <xs:attribute name="refreshOptionsOnLookupClose" type="xs:boolean"/>
                 <xs:attribute name="nullOptionVisible" type="xs:boolean"/>
                 <xs:attribute name="filterMode" type="filterMode"/>
                 <xs:attribute name="nullName" type="resourceString"/>

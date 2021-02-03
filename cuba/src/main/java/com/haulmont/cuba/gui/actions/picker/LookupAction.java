@@ -32,7 +32,9 @@ import io.jmix.ui.meta.StudioAction;
  *
  * @param <E> type of entity
  */
-@StudioAction(category = "Picker Actions", description = "Sets an entity to the picker field using the entity lookup screen")
+@StudioAction(
+        target = "com.haulmont.cuba.gui.components.PickerField",
+        description = "Sets an entity to the picker field using the entity lookup screen")
 @ActionType(LookupAction.ID)
 public class LookupAction<E extends Entity> extends EntityLookupAction<E>
         implements PickerField.PickerFieldAction {

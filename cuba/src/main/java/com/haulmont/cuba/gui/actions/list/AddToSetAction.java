@@ -44,7 +44,9 @@ import java.util.Set;
 /**
  * An action that adds a record to the set.
  */
-@StudioAction(category = "List Actions", description = "Adds the selected entity to a set")
+@StudioAction(
+        target = "com.haulmont.cuba.gui.components.ListComponent",
+        description = "Adds the selected entity to a set")
 @ActionType(AddToSetAction.ID)
 public class AddToSetAction extends SecuredListAction {
 

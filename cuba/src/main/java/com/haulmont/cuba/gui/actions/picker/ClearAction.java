@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * <p>
  * Should be defined for {@code PickerField} or its subclass in a screen XML descriptor.
  */
-@StudioAction(category = "Picker Actions", description = "Clears the picker field value")
+@StudioAction(target = "com.haulmont.cuba.gui.components.PickerField", description = "Clears the picker field value")
 @ActionType(ClearAction.ID)
 public class ClearAction extends EntityClearAction implements PickerField.PickerFieldAction {
 

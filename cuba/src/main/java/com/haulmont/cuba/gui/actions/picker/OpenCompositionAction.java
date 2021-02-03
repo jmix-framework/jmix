@@ -29,7 +29,9 @@ import io.jmix.ui.meta.StudioAction;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "Picker Actions", description = "Opens a one-to-one composition entity using the entity edit screen")
+@StudioAction(
+        target = "com.haulmont.cuba.gui.components.PickerField",
+        description = "Opens a one-to-one composition entity using the entity edit screen")
 @ActionType(OpenCompositionAction.ID)
 public class OpenCompositionAction extends EntityOpenCompositionAction {
 

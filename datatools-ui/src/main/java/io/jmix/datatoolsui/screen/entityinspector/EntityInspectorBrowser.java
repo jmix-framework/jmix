@@ -25,7 +25,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.Session;
 import io.jmix.datatools.EntityRestore;
-import io.jmix.datatoolsui.action.ExportAction;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorFetchPlanBuilder;
 import io.jmix.datatoolsui.screen.entityinspector.assistant.InspectorTableBuilder;
 import io.jmix.ui.*;
@@ -40,6 +39,9 @@ import io.jmix.ui.action.list.RefreshAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.LookupComponent;
 import io.jmix.ui.component.*;
+import io.jmix.ui.download.ByteArrayDataProvider;
+import io.jmix.ui.download.DownloadFormat;
+import io.jmix.ui.download.Downloader;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
@@ -51,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -125,6 +128,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
     @Autowired
     private ComboBox<ShowMode> showMode;
+
+    @Autowired
+    private CoreProperties coreProperties;
+
+    @Autowired
+    private Downloader downloader;
 
     //TODO filter implementation component (Filter in Table/DataGrid #221)
     protected Component filter;
@@ -339,15 +348,15 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         exportPopupButton.setCaption(messages.getMessage(EntityInspectorBrowser.class, "export"));
         exportPopupButton.setIcon(icons.get(JmixIcon.DOWNLOAD));
 
-        ExportAction exportJSONAction = (ExportAction) actions.create(ExportAction.ID, "exportJSON");
+        ExportAction exportJSONAction = new ExportAction("exportJSON");
         exportJSONAction.setFormat(JSON);
-        exportJSONAction.setTable(entitiesTable);
+        exportJSONAction.setTable(table);
         exportJSONAction.setMetaClass(selectedMeta);
         exportPopupButton.addAction(exportJSONAction);
 
-        ExportAction exportZIPAction = (ExportAction) actions.create(ExportAction.ID, "exportZIP");
+        ExportAction exportZIPAction = new ExportAction("exportZIP");
         exportZIPAction.setFormat(ZIP);
-        exportZIPAction.setTable(entitiesTable);
+        exportZIPAction.setTable(table);
         exportZIPAction.setMetaClass(selectedMeta);
         exportPopupButton.addAction(exportZIPAction);
 
@@ -507,6 +516,69 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         } else {
             notifications.create(Notifications.NotificationType.HUMANIZED)
                     .withDescription(messages.getMessage(EntityInspectorBrowser.class, "restore.dialog.empty")).show();
+        }
+    }
+
+    public class ExportAction extends ItemTrackingAction {
+
+        protected DownloadFormat format;
+        protected MetaClass metaClass;
+        protected Table table;
+
+        public ExportAction(String id) {
+            super(id);
+        }
+
+        public void setFormat(DownloadFormat format) {
+            this.format = format;
+        }
+
+        public void setMetaClass(MetaClass metaClass) {
+            this.metaClass = metaClass;
+        }
+
+        public void setTable(Table table) {
+            this.table = table;
+        }
+
+        @Override
+        public void actionPerform(Component component) {
+            Collection<Object> selected = table.getSelected();
+            if (selected.isEmpty()
+                    && table.getItems() != null) {
+                selected = table.getItems().getItems();
+            }
+
+            try {
+                int saveExportedByteArrayDataThresholdBytes = uiProperties.getSaveExportedByteArrayDataThresholdBytes();
+                String tempDir = coreProperties.getTempDir();
+                if (format == ZIP) {
+                    byte[] data = entityImportExport.exportEntitiesToZIP(selected);
+                    String resourceName = metaClass.getJavaClass().getSimpleName() + ".zip";
+                    downloader.download(
+                            new ByteArrayDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir), resourceName, ZIP);
+                } else if (format == JSON) {
+                    byte[] data = entityImportExport.exportEntitiesToJSON(selected)
+                            .getBytes(StandardCharsets.UTF_8);
+                    String resourceName = metaClass.getJavaClass().getSimpleName() + ".json";
+                    downloader.download(
+                            new ByteArrayDataProvider(data, saveExportedByteArrayDataThresholdBytes, tempDir), resourceName, JSON);
+                }
+            } catch (Exception e) {
+                ScreenContext screenContext = ComponentsHelper.getScreenContext(table);
+                Notifications notifications = screenContext.getNotifications();
+                notifications.create(Notifications.NotificationType.ERROR)
+                        .withCaption(messages.getMessage(EntityInspectorBrowser.class, "exportFailed"))
+                        .withDescription(e.getMessage())
+                        .show();
+                log.error("Entities export failed", e);
+            }
+        }
+
+        @Nullable
+        @Override
+        public String getCaption() {
+            return messages.getMessage("io.jmix.datatoolsui.screen.entityinspector/" + id);
         }
     }
 }

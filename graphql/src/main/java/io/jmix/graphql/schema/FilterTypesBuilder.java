@@ -61,13 +61,6 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
                 .inputValueDefinition(valueDef("GTE", scalarTypeName, "greater than or equals"))
                 .inputValueDefinition(valueDef("LT", scalarTypeName, "less that"))
                 .inputValueDefinition(valueDef("LTE", scalarTypeName, "less than or equals"))
-// todo not supported in data fetcher now
-//                .inputValueDefinition(listValueDef("IN", scalarTypeName, "in"))
-//                .inputValueDefinition(listValueDef("NIN", scalarTypeName, "not in"))
-//                .inputValueDefinition(valueDef("IS_NULL", scalarTypeName, "is null"))
-                .inputValueDefinition(listValueDef(ConditionUnionType.AND.name(), name, null))
-//                .inputValueDefinition(listValueDef(ConditionUnionType.NOT.name(), name, null))
-                .inputValueDefinition(listValueDef(ConditionUnionType.OR.name(), name, null))
                 .build();
     }
 

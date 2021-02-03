@@ -10,79 +10,53 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class FilterConditionBuilder {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    /**
-     * build condition composed with 'AND' operator from graphql conditions stored in Collection
-     * @param graphqlConditions collection of graphql format conditions
-     * @return LogicalCondition that compose all entries with AND
-     */
-    public LogicalCondition buildCollectionOfConditions(String path, Collection<?> graphqlConditions) {
-        log.debug("buildCollectionOfConditions: for path '{}'", path);
+    public List<Condition> buildCollectionOfConditions(String path, Collection<Map<String, Object>> filter) {
+        log.debug("buildCollectionOfConditions: for path {}", path);
+        List<Condition> result = new ArrayList<>();
 
-        List<Condition> andConditions = new ArrayList<>();
-        List<Condition> orConditions = new ArrayList<>();
+        filter.forEach(condItem -> {
 
-        graphqlConditions.forEach(filterCond -> {
+            if (condItem.isEmpty()) return;
 
-            if (filterCond == null || !Map.class.isAssignableFrom(filterCond.getClass())) {
-                throw new UnsupportedOperationException(String.format(
-                        "expected class of graphql filter condition object is java.util.Map, but actual is %s",
-                        filterCond == null ? null : filterCond.getClass()));
+            // todo need check - used only first element of map
+            Map.Entry<String, Object> condEntry = condItem.entrySet().iterator().next();
+            String condPath = condEntry.getKey();
+            Object condition = condEntry.getValue();
+            FilterTypesBuilder.ConditionUnionType conditionUnionType = FilterTypesBuilder.ConditionUnionType.find(condPath);
+            if (conditionUnionType != null) {
+                // aggregate nested conditions
+                List<Condition> conditions = buildCollectionOfConditions(path, (Collection<Map<String, Object>>) condition);
+                switch (conditionUnionType) {
+                    case AND:
+                        result.add(LogicalCondition.and(conditions.toArray(new Condition[0])));
+                        return;
+                    case OR:
+                        result.add(LogicalCondition.or(conditions.toArray(new Condition[0])));
+                        return;
+                }
             }
 
-            ((Map<String, Object>) filterCond).forEach((key, value) -> {
-                FilterTypesBuilder.ConditionUnionType ct = FilterTypesBuilder.ConditionUnionType.find(key);
+            String newPath = StringUtils.isEmpty(path) ? condPath : path + "." + condPath;
+            if (Collection.class.isAssignableFrom(condition.getClass())) {
+                result.addAll(buildCollectionOfConditions(newPath, (Collection<Map<String, Object>>) condition));
+                return;
+            }
 
-                if (ct != null) {
-                    // step into union condition
-                    Map<String, Object> condition = ((Iterable<Map<String, Object>>) value).iterator().next();
-                    Map.Entry<String, Object> conditionEntry = condition.entrySet().iterator().next();
-                    key = conditionEntry.getKey();
-                    value = conditionEntry.getValue();
-
-                    switch (ct) {
-                        case AND:
-                            andConditions.add(buildPropertyCondition(path, key, value));
-                            break;
-                        case OR:
-                            orConditions.add(buildPropertyCondition(path, key, value));
-                            break;
-//                        case NOT:
-//                            break;
-                    }
-                } else {
-                    andConditions.add(buildPropertyCondition(path, key, value));
-                }
-            });
+            log.debug("buildPropertyCondition: {} {} {}", path, condPath, condition);
+            Types.FilterOperation operation = Types.FilterOperation.valueOf(condPath);
+            result.add(PropertyCondition.createWithValue(path, operation.getJmixOperation(), condition));
         });
-
-        return LogicalCondition.or(orConditions.toArray(new Condition[0]))
-                .add(LogicalCondition.and(andConditions.toArray(new Condition[0])));
-    }
-
-    protected Condition buildPropertyCondition(String path, String key, Object value) {
-        Class<?> valueClass = value.getClass();
-
-        String newPath = StringUtils.isBlank(path) ? key : path + "." + key;
-        if (Collection.class.isAssignableFrom(valueClass)) {
-            return buildCollectionOfConditions(newPath, (Collection<?>) value);
-        }
-
-        // todo looks like this never call
-        if (Map.class.isAssignableFrom(valueClass)) {
-            // todo need to check and support
-            throw new IllegalStateException("can't create condition for valueClass " + valueClass);
-        }
-
-        log.debug("buildPropertyCondition: {} {} {}", path, key, value);
-        Types.FilterOperation operation = Types.FilterOperation.valueOf(key);
-        return PropertyCondition.createWithValue(path, operation.getJmixOperation(), value);
+        return result;
     }
 
 }

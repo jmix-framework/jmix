@@ -3,6 +3,7 @@ package io.jmix.graphql.datafetcher;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.schema.NamingUtils;
 import io.jmix.graphql.schema.Types;
@@ -61,7 +62,16 @@ public class EntityQueryDataFetcher {
 
             LogicalCondition condition = null;
             if (filter != null && Collection.class.isAssignableFrom(filter.getClass())) {
-                condition = filterConditionBuilder.buildCollectionOfConditions("", (Collection<?>) filter);
+                /*
+                root conditions always aggregated by 'and', 'or' - could be achieved to add the only one 'or' condition in next level
+                carList (filter: {OR: [
+                      {manufacturer: {EQ: "TESLA"}}
+                      {manufacturer: {EQ: "TATA"}}
+                    ]})
+                 */
+                condition = LogicalCondition.and(
+                        filterConditionBuilder.buildCollectionOfConditions("", (Collection<Map<String, Object>>) filter)
+                                .toArray(new Condition[0]));
             }
 
             // fetch plan

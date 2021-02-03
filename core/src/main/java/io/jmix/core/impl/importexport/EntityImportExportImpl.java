@@ -156,6 +156,7 @@ public class EntityImportExportImpl implements EntityImportExport {
         zipEntry.setSize(data.length);
         zipEntry.setCompressedSize(zipEntry.getSize());
         CRC32 crc32 = new CRC32();
+        crc32.update(data);
         zipEntry.setCrc(crc32.getValue());
         return zipEntry;
     }

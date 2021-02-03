@@ -24,7 +24,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StudioAction(category = "Filter Actions", description = "Clears the filter condition values")
+@StudioAction(target = "io.jmix.ui.component.Filter", description = "Clears the filter condition values")
 @ActionType(FilterClearValuesAction.ID)
 public class FilterClearValuesAction extends FilterAction {
 

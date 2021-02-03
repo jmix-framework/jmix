@@ -37,7 +37,9 @@ import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@StudioAction(category = "List Actions", description = "Opens a browser screen with list of related entities")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Opens a browser screen with list of related entities")
 @ActionType(RelatedAction.ID)
 public class RelatedAction extends SecuredListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {

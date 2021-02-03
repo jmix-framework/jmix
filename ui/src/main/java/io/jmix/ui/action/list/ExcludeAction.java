@@ -46,7 +46,10 @@ import java.util.function.Consumer;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "List Actions", description = "Excludes entities from the list. The excluded entities are not deleted.")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Excludes entities from the list. The excluded entities are not deleted.",
+        availableInScreenWizard = true)
 @ActionType(ExcludeAction.ID)
 public class ExcludeAction<E> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly,
         Action.ExecutableAction {

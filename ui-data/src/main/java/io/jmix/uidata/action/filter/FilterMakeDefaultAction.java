@@ -28,7 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
 
-@StudioAction(category = "Filter Actions", description = "Makes the filter configuration default for this screen")
+@StudioAction(
+        target = "io.jmix.ui.component.Filter",
+        description = "Makes the filter configuration default for this screen")
 @ActionType(FilterMakeDefaultAction.ID)
 public class FilterMakeDefaultAction extends FilterAction {
 

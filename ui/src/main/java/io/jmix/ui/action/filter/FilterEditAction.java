@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@StudioAction(category = "Filter Actions", description = "Edits current run-time filter configuration")
+@StudioAction(target = "io.jmix.ui.component.Filter", description = "Edits current run-time filter configuration")
 @ActionType(FilterEditAction.ID)
 public class FilterEditAction extends FilterAction {
 

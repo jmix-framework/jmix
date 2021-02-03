@@ -55,7 +55,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "EntityPicker Actions", description = "Opens an entity using the entity edit screen")
+@StudioAction(target = "io.jmix.ui.component.EntityPicker", description = "Opens an entity using the entity edit screen")
 @ActionType(EntityOpenAction.ID)
 public class EntityOpenAction<E> extends BaseAction
         implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,

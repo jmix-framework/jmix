@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * <p>
  * Should be defined for {@link ValuePicker} or its subclass in a screen XML descriptor.
  */
-@StudioAction(category = "ValuePicker Actions", description = "Clears the value picker value")
+@StudioAction(target = "io.jmix.ui.component.ValuePicker", description = "Clears the value picker value")
 @ActionType(ValueClearAction.ID)
 public class ValueClearAction extends BaseAction implements ValuePicker.ValuePickerAction, InitializingBean,
         Action.ExecutableAction {

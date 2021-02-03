@@ -40,7 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <p>
  * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.) in a screen XML descriptor.
  */
-@StudioAction(category = "List Actions", description = "Reloads a list of entities from the database")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Reloads a list of entities from the database",
+        availableInScreenWizard = true)
 @ActionType(RefreshAction.ID)
 public class RefreshAction extends ListAction implements Action.ExecutableAction {
 

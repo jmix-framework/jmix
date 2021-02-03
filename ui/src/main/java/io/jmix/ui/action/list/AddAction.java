@@ -54,7 +54,10 @@ import java.util.function.Supplier;
  *
  * @param <E> type of entity
  */
-@StudioAction(category = "List Actions", description = "Adds entities to the list using a lookup screen")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Adds entities to the list using a lookup screen",
+        availableInScreenWizard = true)
 @ActionType(AddAction.ID)
 public class AddAction<E> extends ListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {

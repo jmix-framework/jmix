@@ -59,7 +59,7 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  * Should be defined for {@link ValuesPicker} or its subclass in a screen XML descriptor.
  */
 @StudioAction(
-        category = "ValuesPicker Actions",
+        target = "io.jmix.ui.component.ValuesPicker",
         description = "Sets a value to the values picker using the selection screen")
 @ActionType(ValuesSelectAction.ID)
 public class ValuesSelectAction<V> extends BaseAction implements ValuePickerAction, InitializingBean,

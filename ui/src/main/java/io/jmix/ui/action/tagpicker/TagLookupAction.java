@@ -29,7 +29,6 @@ import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.meta.StudioPropertiesItem;
 import io.jmix.ui.screen.MultiSelectLookupScreen;
 import io.jmix.ui.screen.Screen;
-import io.jmix.ui.sys.ActionScreenInitializer;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,7 +40,7 @@ import javax.annotation.Nullable;
  * @param <E> type of entity
  */
 @StudioAction(
-        category = "TagPicker Actions",
+        target = "io.jmix.ui.component.TagPicker",
         description = "Sets an entity to the tag picker using the entity lookup screen")
 @ActionType(TagLookupAction.ID)
 public class TagLookupAction<E> extends AbstractLookupAction<E>

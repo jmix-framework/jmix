@@ -42,7 +42,10 @@ import javax.annotation.Nullable;
  * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.) in a screen XML descriptor.
  */
 @SuppressWarnings("rawtypes")
-@StudioAction(category = "List Actions", description = "Export selected entities")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Export selected entities",
+        availableInScreenWizard = true)
 @ActionType(ExportAction.ID)
 public class ExportAction extends ListAction implements ApplicationContextAware {
 

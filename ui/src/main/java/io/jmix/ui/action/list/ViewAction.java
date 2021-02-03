@@ -50,7 +50,9 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "List Actions", description = "Opens an editor screen for an entity instance in read-only mode")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Opens an editor screen for an entity instance in read-only mode")
 @ActionType(ViewAction.ID)
 public class ViewAction<E> extends SecuredListAction implements Action.ScreenOpeningAction, Action.ExecutableAction {
 

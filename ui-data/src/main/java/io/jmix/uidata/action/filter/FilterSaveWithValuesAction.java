@@ -30,8 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@StudioAction(category = "Filter Actions", description = "Saves changes to current filter configuration using the " +
-        "values in filter components as default values")
+@StudioAction(
+        target = "io.jmix.ui.component.Filter",
+        description = "Saves changes to current filter configuration using the values in filter components as default values")
 @ActionType(FilterSaveWithValuesAction.ID)
 public class FilterSaveWithValuesAction extends FilterSaveAction {
 

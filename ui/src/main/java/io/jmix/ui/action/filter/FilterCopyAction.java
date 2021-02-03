@@ -31,7 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
-@StudioAction(category = "Filter Actions",
+@StudioAction(
+        target = "io.jmix.ui.component.Filter",
         description = "Copies all conditions from design-time configuration to run-time configuration")
 @ActionType(FilterCopyAction.ID)
 public class FilterCopyAction extends FilterAction {

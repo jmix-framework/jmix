@@ -53,7 +53,10 @@ import static io.jmix.ui.screen.FrameOwner.WINDOW_COMMIT_AND_CLOSE_ACTION;
  *
  * @param <E> type of entity
  */
-@StudioAction(category = "List Actions", description = "Creates an entity instance using its editor screen")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Creates an entity instance using its editor screen",
+        availableInScreenWizard = true)
 @ActionType(CreateAction.ID)
 public class CreateAction<E> extends ListAction
         implements Action.AdjustWhenScreenReadOnly, Action.ScreenOpeningAction, Action.ExecutableAction {

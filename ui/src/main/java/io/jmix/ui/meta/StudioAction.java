@@ -39,12 +39,19 @@ public @interface StudioAction {
     String description() default "";
 
     /**
-     * Category of the action in Screen Designer Palette.
+     * Fully-qualified class names of the components to which the action can be applied.
+     * Some base interface is expected in most cases.
+     * E.g. "io.jmix.ui.component.ListComponent"
      */
-    String category() default "";
+    String[] target() default {};
 
     /**
      * Component Palette icon, SVG or PNG.
      */
     String icon() default "";
+
+    /**
+     * Indicates that action should be available in screen wizard
+     */
+    boolean availableInScreenWizard() default false;
 }

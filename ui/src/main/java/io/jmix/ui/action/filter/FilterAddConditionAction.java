@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@StudioAction(category = "Filter Actions", description = "Adds condition to current filter configuration")
+@StudioAction(target = "io.jmix.ui.component.Filter", description = "Adds condition to current filter configuration")
 @ActionType(FilterAddConditionAction.ID)
 public class FilterAddConditionAction extends FilterAction {
 

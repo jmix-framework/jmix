@@ -43,7 +43,9 @@ import javax.annotation.Nullable;
  *
  * @param <E> type of entity
  */
-@StudioAction(category = "EntityPicker Actions", description = "Sets an entity to the entity picker using the entity lookup screen")
+@StudioAction(
+        target = "io.jmix.ui.component.EntityPicker",
+        description = "Sets an entity to the entity picker using the entity lookup screen")
 @ActionType(EntityLookupAction.ID)
 public class EntityLookupAction<E> extends AbstractLookupAction<E>
         implements EntityPicker.EntityPickerAction, Action.ScreenOpeningAction, InitializingBean,

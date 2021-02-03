@@ -47,7 +47,10 @@ import java.util.function.Consumer;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "List Actions", description = "Removes an entity instance from the list and from the database")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Removes an entity instance from the list and from the database",
+        availableInScreenWizard = true)
 @ActionType(RemoveAction.ID)
 public class RemoveAction<E> extends SecuredListAction implements Action.AdjustWhenScreenReadOnly,
         Action.ExecutableAction {

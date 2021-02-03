@@ -54,7 +54,9 @@ import static io.jmix.ui.component.ComponentsHelper.getScreenContext;
  * The action instance can be parameterized using the nested {@code properties} XML element or programmatically in the
  * screen controller.
  */
-@StudioAction(category = "List Actions", description = "Opens an editor for changing attribute values for several entity instances at once")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Opens an editor for changing attribute values for several entity instances at once")
 @ActionType(BulkEditAction.ID)
 public class BulkEditAction extends SecuredListAction implements Action.ExecutableAction {
 

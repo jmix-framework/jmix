@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-@StudioAction(category = "Filter Actions", description = "Saves changes to current filter configuration")
+@StudioAction(target = "io.jmix.ui.component.Filter", description = "Saves changes to current filter configuration")
 @ActionType(FilterSaveAction.ID)
 public class FilterSaveAction extends FilterSaveAsAction {
 

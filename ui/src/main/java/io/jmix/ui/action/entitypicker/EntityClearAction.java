@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  * <p>
  * Should be defined for {@link EntityPicker} or its subclass in a screen XML descriptor.
  */
-@StudioAction(category = "EntityPicker Actions", description = "Clears the entity picker value")
+@StudioAction(target = "io.jmix.ui.component.EntityPicker", description = "Clears the entity picker value")
 @ActionType(EntityClearAction.ID)
 public class EntityClearAction extends ValueClearAction implements EntityPicker.EntityPickerAction {
 

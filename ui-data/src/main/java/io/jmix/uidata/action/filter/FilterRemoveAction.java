@@ -26,7 +26,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StudioAction(category = "Filter Actions", description = "Removes current run-time filter configuration")
+@StudioAction(target = "io.jmix.ui.component.Filter", description = "Removes current run-time filter configuration")
 @ActionType(FilterRemoveAction.ID)
 public class FilterRemoveAction extends FilterAction {
 

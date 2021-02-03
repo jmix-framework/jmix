@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
  * <p>
  * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.) in a screen XML descriptor.
  */
-@StudioAction(category = "List Actions", description = "Export selected entities to Excel")
+@StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Export selected entities to Excel")
 @ActionType(ExcelExportAction.ID)
 public class ExcelExportAction extends ExportAction {
 

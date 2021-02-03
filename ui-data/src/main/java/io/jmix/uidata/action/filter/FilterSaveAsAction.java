@@ -54,7 +54,8 @@ import java.util.function.Consumer;
 
 import static io.jmix.ui.component.filter.FilterUtils.generateConfigurationId;
 
-@StudioAction(category = "Filter Actions",
+@StudioAction(
+        target = "io.jmix.ui.component.Filter",
         description = "Saves current filter configuration under a new id and name")
 @ActionType(FilterSaveAsAction.ID)
 public class FilterSaveAsAction extends FilterAction {

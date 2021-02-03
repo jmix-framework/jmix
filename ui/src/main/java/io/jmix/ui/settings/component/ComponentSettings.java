@@ -19,7 +19,6 @@ package io.jmix.ui.settings.component;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 
 import javax.annotation.Nullable;
-import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -27,7 +26,7 @@ import java.util.UUID;
  *
  * @see ComponentSettingsBinder
  */
-public interface ComponentSettings extends Serializable {
+public interface ComponentSettings {
 
     @Nullable
     String getId();

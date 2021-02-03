@@ -28,7 +28,8 @@ import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.meta.StudioAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@StudioAction(category = "List Actions",
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
         description = "Displays a dialog window with detailed information about the selected entity")
 @ActionType(ShowEntityInfoAction.ID)
 public class ShowEntityInfoAction extends SecuredListAction implements Action.ExecutableAction {

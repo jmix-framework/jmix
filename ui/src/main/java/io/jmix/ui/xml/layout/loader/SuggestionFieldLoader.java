@@ -36,7 +36,6 @@ public class SuggestionFieldLoader extends AbstractSuggestionFieldLoader<Suggest
         loadMinSearchStringLength(resultComponent, element);
         loadSuggestionsLimit(resultComponent, element);
 
-        loadCaptionProperty(resultComponent, element);
         loadInputPrompt(resultComponent, element);
 
         loadPopupWidth(resultComponent, element);

@@ -23,12 +23,11 @@ public class PropertyConditionUtils {
 
     /**
      * @param propertyCondition property condition
-     * @return true if property condition operation is unary (doesn't require parameter value), e.g "is null"
+     * @return true if property condition operation is unary (doesn't require parameter value), e.g "is set"
      */
     public static boolean isUnaryOperation(PropertyCondition propertyCondition) {
         String operation = propertyCondition.getOperation();
-        return PropertyCondition.Operation.IS_NULL.equals(operation) ||
-                PropertyCondition.Operation.IS_NOT_NULL.equals(operation);
+        return PropertyCondition.Operation.IS_SET.equals(operation);
     }
 
     /**

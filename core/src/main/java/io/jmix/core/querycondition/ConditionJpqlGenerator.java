@@ -39,7 +39,8 @@ public class ConditionJpqlGenerator {
 
     /**
      * Returns a JPQL query modified according to the given tree of conditions.
-     * @param query JPQL query
+     *
+     * @param query     JPQL query
      * @param condition root condition. If null, the query is returned as is.
      */
     public String processQuery(String query, @Nullable Condition condition) {
@@ -122,40 +123,32 @@ public class ConditionJpqlGenerator {
         throw new UnsupportedOperationException("Condition is not supported: " + condition);
     }
 
-    private String getJpqlOperation(PropertyCondition condition) {
-        if (PropertyCondition.Operation.IS_NULL.equals(condition.getOperation())) {
-            return Boolean.TRUE.equals(condition.getParameterValue()) ? "is null" : "is not null";
-        } else if (PropertyCondition.Operation.IS_NOT_NULL.equals(condition.getOperation())) {
-            return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
-        } else {
-            switch (condition.getOperation()) {
-                case PropertyCondition.Operation.EQUAL:
-                    return "=";
-                case PropertyCondition.Operation.NOT_EQUAL:
-                    return "<>";
-                case PropertyCondition.Operation.GREATER:
-                    return ">";
-                case PropertyCondition.Operation.GREATER_OR_EQUAL:
-                    return ">=";
-                case PropertyCondition.Operation.LESS:
-                    return "<";
-                case PropertyCondition.Operation.LESS_OR_EQUAL:
-                    return "<=";
-                case PropertyCondition.Operation.CONTAINS:
-                case PropertyCondition.Operation.STARTS_WITH:
-                case PropertyCondition.Operation.ENDS_WITH:
-                    return "like";
-                case PropertyCondition.Operation.NOT_CONTAINS:
-                    return "not like";
-                case PropertyCondition.Operation.IS_NULL:
-                    return "is null";
-                case PropertyCondition.Operation.IS_NOT_NULL:
-                    return "is not null";
-                case PropertyCondition.Operation.IN_LIST:
-                    return "in";
-                case PropertyCondition.Operation.NOT_IN_LIST:
-                    return "not in";
-            }
+    protected String getJpqlOperation(PropertyCondition condition) {
+        switch (condition.getOperation()) {
+            case PropertyCondition.Operation.EQUAL:
+                return "=";
+            case PropertyCondition.Operation.NOT_EQUAL:
+                return "<>";
+            case PropertyCondition.Operation.GREATER:
+                return ">";
+            case PropertyCondition.Operation.GREATER_OR_EQUAL:
+                return ">=";
+            case PropertyCondition.Operation.LESS:
+                return "<";
+            case PropertyCondition.Operation.LESS_OR_EQUAL:
+                return "<=";
+            case PropertyCondition.Operation.CONTAINS:
+            case PropertyCondition.Operation.STARTS_WITH:
+            case PropertyCondition.Operation.ENDS_WITH:
+                return "like";
+            case PropertyCondition.Operation.NOT_CONTAINS:
+                return "not like";
+            case PropertyCondition.Operation.IN_LIST:
+                return "in";
+            case PropertyCondition.Operation.NOT_IN_LIST:
+                return "not in";
+            case PropertyCondition.Operation.IS_SET:
+                return Boolean.TRUE.equals(condition.getParameterValue()) ? "is not null" : "is null";
         }
         throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());
     }

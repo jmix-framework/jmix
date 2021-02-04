@@ -151,10 +151,11 @@ public class PropertyCondition implements Condition {
     }
 
     /**
-     * Creates a condition that is translated to "is null".
+     * Creates a condition that is translated to "is null" or "is not null"
+     * depending on the parameter value.
      */
-    public static PropertyCondition isNull(String property, Object value) {
-        return createWithValue(property, Operation.IS_NULL, value);
+    public static PropertyCondition isSet(String property, Object value) {
+        return createWithValue(property, Operation.IS_SET, value);
     }
 
     /**
@@ -251,8 +252,7 @@ public class PropertyCondition implements Condition {
         public static final String LESS_OR_EQUAL = "less_or_equal";
         public static final String CONTAINS = "contains";
         public static final String NOT_CONTAINS = "not_contains";
-        public static final String IS_NULL = "is_null";
-        public static final String IS_NOT_NULL = "is_not_null";
+        public static final String IS_SET = "is_set";
         public static final String STARTS_WITH = "starts_with";
         public static final String ENDS_WITH = "ends_with";
         public static final String IN_LIST = "in_list";

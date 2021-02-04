@@ -20,6 +20,12 @@ import com.vaadin.event.Action;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Component;
+import io.jmix.ui.Notifications;
+import io.jmix.ui.Screens;
+import io.jmix.ui.app.core.dev.LayoutAnalyzer;
+import io.jmix.ui.app.core.dev.LayoutAnalyzerScreen;
+import io.jmix.ui.app.core.dev.LayoutTip;
+import io.jmix.ui.screen.OpenMode;
 import org.springframework.context.ApplicationContext;
 import io.jmix.core.Messages;
 import io.jmix.ui.AppUI;
@@ -46,6 +52,8 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
     protected JmixWindow dialogWindow;
 
     protected ApplicationContext applicationContext;
+    protected Notifications notifications;
+    protected Screens screens;
 
     public DialogWindowImpl() {
         this.dialogWindow = createComponent();
@@ -153,6 +161,16 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
     @Autowired
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+
+    @Autowired
+    public void setNotifications(Notifications notifications) {
+        this.notifications = notifications;
+    }
+
+    @Autowired
+    public void setScreens(Screens screens) {
+        this.screens = screens;
     }
 
     @Override
@@ -352,22 +370,23 @@ public class DialogWindowImpl extends WindowImpl implements DialogWindow, Initia
 
         @Override
         public void handleAction(Action action, Object sender, Object target) {
-            // todo actions
-
-            /*if (initialized) {
+            if (initialized) {
                 if (analyzeAction == action) {
                     LayoutAnalyzer analyzer = new LayoutAnalyzer();
-                    List<LayoutTip> tipsList = analyzer.analyze(WebDialogWindow.this);
+                    List<LayoutTip> tipsList = analyzer.analyze(getFrameOwner());
 
                     if (tipsList.isEmpty()) {
-                        getWindowManager().showNotification("No layout problems found", Frame.NotificationType.HUMANIZED);
+                        notifications.create(Notifications.NotificationType.HUMANIZED)
+                                .withCaption("No layout problems found")
+                                .show();
                     } else {
-                        WindowConfig windowConfig = beanLocator.get(WindowConfig.NAME);
-                        WindowInfo windowInfo = windowConfig.getWindowInfo("layoutAnalyzer");
-                        getWindowManager().openWindow(windowInfo, OpenType.DIALOG, ParamsMap.of("tipsList", tipsList));
+                        LayoutAnalyzerScreen analyzerScreen =
+                                screens.create(LayoutAnalyzerScreen.class, OpenMode.DIALOG);
+                        analyzerScreen.setLayoutTips(tipsList);
+                        analyzerScreen.show();
                     }
                 }
-            }*/
+            }
         }
     }
 

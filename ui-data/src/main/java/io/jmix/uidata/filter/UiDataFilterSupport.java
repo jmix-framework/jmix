@@ -126,7 +126,7 @@ public class UiDataFilterSupport extends FilterSupport {
                         .add(PropertyCondition.equal("componentId", componentId))
                         .add(LogicalCondition.or()
                                 .add(PropertyCondition.createWithValue("username",
-                                        PropertyCondition.Operation.IS_NOT_NULL, username))
+                                        PropertyCondition.Operation.IS_SET, false))
                                 .add(PropertyCondition.equal("username", username))))
                 .optional()
                 .orElse(null);
@@ -178,7 +178,7 @@ public class UiDataFilterSupport extends FilterSupport {
                         .add(PropertyCondition.equal("componentId", filterComponentId))
                         .add(LogicalCondition.or()
                                 .add(PropertyCondition.createWithValue("username",
-                                        PropertyCondition.Operation.IS_NOT_NULL, username))
+                                        PropertyCondition.Operation.IS_SET, false))
                                 .add(PropertyCondition.equal("username", username))))
                 .list();
     }

@@ -25,10 +25,12 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
@@ -67,16 +69,19 @@ public class PropertyFilterSupport {
     protected MessageTools messageTools;
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
+    protected DatatypeRegistry datatypeRegistry;
 
     @Autowired
     public PropertyFilterSupport(Messages messages,
                                  MessageTools messageTools,
                                  MetadataTools metadataTools,
-                                 DataManager dataManager) {
+                                 DataManager dataManager,
+                                 DatatypeRegistry datatypeRegistry) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
+        this.datatypeRegistry = datatypeRegistry;
     }
 
     public String getOperationCaption(Operation operation) {
@@ -226,9 +231,7 @@ public class PropertyFilterSupport {
             case ENDS_WITH:
                 return PropertyCondition.Operation.ENDS_WITH;
             case IS_SET:
-                return PropertyCondition.Operation.IS_NOT_NULL;
-            case IS_NOT_SET:
-                return PropertyCondition.Operation.IS_NULL;
+                return PropertyCondition.Operation.IS_SET;
             case IN_LIST:
                 return PropertyCondition.Operation.IN_LIST;
             case NOT_IN_LIST:
@@ -263,6 +266,9 @@ public class PropertyFilterSupport {
                     .map(singleValue -> formatSingleDefaultValue(range, singleValue))
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining(",")));
+        } else if (operationType == Type.UNARY) {
+            DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
+            return formatSingleDefaultValue(booleanRange, value);
         } else {
             return formatSingleDefaultValue(range, value);
         }
@@ -301,6 +307,9 @@ public class PropertyFilterSupport {
                     .map(singleValue -> parseSingleDefaultValue(range, singleValue.trim()))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+        } else if (operationType == Type.UNARY) {
+            DatatypeRange booleanRange = new DatatypeRange(datatypeRegistry.get(Boolean.class));
+            return parseSingleDefaultValue(booleanRange, value);
         } else {
             return parseSingleDefaultValue(range, value);
         }

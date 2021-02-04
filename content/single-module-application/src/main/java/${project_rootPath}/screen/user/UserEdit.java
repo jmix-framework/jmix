@@ -4,6 +4,7 @@ import ${project_rootPackage}.entity.User;
 import io.jmix.core.EntityStates;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.component.PasswordField;
+import io.jmix.ui.component.TextField;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UserEdit extends StandardEditor<User> {
     private PasswordField passwordField;
 
     @Autowired
+    private TextField usernameField;
+
+    @Autowired
     private PasswordField confirmPasswordField;
 
     @Autowired
@@ -37,6 +41,7 @@ public class UserEdit extends StandardEditor<User> {
 
     @Subscribe
     public void onInitEntity(InitEntityEvent<User> event) {
+        usernameField.setEditable(true);
         passwordField.setVisible(true);
         confirmPasswordField.setVisible(true);
     }

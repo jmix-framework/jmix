@@ -17,7 +17,7 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="userDc">
             <column width="350px">
-                <textField id="usernameField" property="username"/>
+                <textField id="usernameField" property="username" editable="false"/>
                 <passwordField id="passwordField"
                                caption="msg://${project_rootPackage}.entity/User.password"
                                required="true"

@@ -28,7 +28,7 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
-import io.jmix.ui.action.entitypicker.LookupAction;
+import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.tagpicker.TagLookupAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.component.*;
@@ -219,7 +219,7 @@ public class ParameterFieldCreator {
 
             field.setMetaClass(entityMetaClass);
 
-            LookupAction pickerLookupAction = (LookupAction) actions.create(LookupAction.ID);
+            EntityLookupAction pickerLookupAction = (EntityLookupAction) actions.create(EntityLookupAction.ID);
             field.addAction(pickerLookupAction);
 
             String parameterScreen = parameter.getScreen();

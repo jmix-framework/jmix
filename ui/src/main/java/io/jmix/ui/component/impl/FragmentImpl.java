@@ -270,14 +270,6 @@ public class FragmentImpl extends VBoxLayoutImpl implements Fragment, FragmentIm
         return false;
     }
 
-    /*
-    TODO: legacy-ui
-    @Deprecated
-    @Override
-    public WindowManager getWindowManager() {
-        return (WindowManager) UiControllerUtils.getScreenContext(getFrameOwner()).getScreens();
-    }*/
-
     @Override
     public void addAction(Action action) {
         checkNotNullArgument(action, "action must be non null");

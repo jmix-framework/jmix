@@ -23,9 +23,8 @@ import javax.annotation.Nullable;
 /**
  * Base interface for Presentation entity.
  * <p>
- * <br>
  * Note that by default, UI does not provide persistence functionality for presentations. To save/load presentations add
- * "ui-persistence" add-on.
+ * corresponding add-on.
  *
  * @see TablePresentations
  */
@@ -42,9 +41,9 @@ public interface TablePresentation {
     void setSettings(@Nullable String settings);
 
     @Nullable
-    String getUserLogin();
+    String getUsername();
 
-    void setUserLogin(@Nullable String userLogin);
+    void setUsername(@Nullable String username);
 
     @Nullable
     Boolean getDefault();

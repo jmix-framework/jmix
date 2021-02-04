@@ -20,7 +20,7 @@
         <property name="componentId"/>
         <property name="name"/>
         <property name="settings"/>
-        <property name="userLogin"/>
+        <property name="username"/>
         <property name="autoSave"/>
     </fetchPlan>
 

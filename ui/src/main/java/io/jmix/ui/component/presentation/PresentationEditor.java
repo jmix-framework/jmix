@@ -141,7 +141,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         if (allowGlobalPresentations) {
             globalField = new CheckBox();
             globalField.setCaption(messages.getMessage("PresentationsEditor.global"));
-            globalField.setValue(!isNew && presentation.getUserLogin() == null);
+            globalField.setValue(!isNew && presentation.getUsername() == null);
             root.addComponent(globalField);
         }
 
@@ -210,7 +210,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         UserDetails user = currentAuthentication.getUser();
 
         boolean userOnly = !allowGlobalPresentations || !BooleanUtils.isTrue(globalField.getValue());
-        presentation.setUserLogin(userOnly ? user.getUsername() : null);
+        presentation.setUsername(userOnly ? user.getUsername() : null);
 
         if (log.isTraceEnabled()) {
             log.trace(String.format("Presentation: %s", stringSettings));
@@ -232,7 +232,8 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
 
     protected String getStringSettings() {
         if (userSettingsTools == null) {
-            throw new IllegalStateException("Cannot commit presentation because ui-persistence add-on is not added");
+            throw new IllegalStateException("Cannot commit presentation because add-on that provides settings" +
+                    "functionality is not added");
         }
 
         ComponentSettings componentSettings = SettingsHelper.createSettings(settingsBinder.getSettingsClass());

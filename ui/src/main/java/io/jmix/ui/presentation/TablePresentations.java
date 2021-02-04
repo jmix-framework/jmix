@@ -132,7 +132,7 @@ public interface TablePresentations {
     void removeListener(PresentationsChangeListener listener);
 
     /**
-     * @return presentation instance or stub if "ui-persistence" add-on is not added to the project
+     * @return presentation instance or stub if corresponding add-on is not added to the project
      */
     TablePresentation create();
 }

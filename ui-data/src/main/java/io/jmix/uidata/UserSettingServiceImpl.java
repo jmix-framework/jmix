@@ -91,7 +91,7 @@ public class UserSettingServiceImpl implements UserSettingService {
             UiSetting us = findUserSettings(name);
             if (us == null) {
                 us = metadata.create(UiSetting.class);
-                us.setUserLogin(authentication.getUser().getUsername());
+                us.setUsername(authentication.getUser().getUsername());
                 us.setName(name);
                 us.setValue(value);
 
@@ -129,7 +129,7 @@ public class UserSettingServiceImpl implements UserSettingService {
         }
 
         transaction.executeWithoutResult(status -> {
-            Query deleteSettingsQuery = entityManager.createQuery("delete from ui_Setting s where s.userLogin = ?1");
+            Query deleteSettingsQuery = entityManager.createQuery("delete from ui_Setting s where s.username = ?1");
             deleteSettingsQuery.setParameter(1, toUser.getUsername());
             deleteSettingsQuery.executeUpdate();
         });
@@ -138,13 +138,13 @@ public class UserSettingServiceImpl implements UserSettingService {
 
         transaction.executeWithoutResult(status -> {
             TypedQuery<UiSetting> q = entityManager.
-                    createQuery("select s from ui_Setting s where s.userLogin = ?1", UiSetting.class);
+                    createQuery("select s from ui_Setting s where s.username = ?1", UiSetting.class);
             q.setParameter(1, fromUser.getUsername());
             List<UiSetting> fromUserSettings = q.getResultList();
 
             for (UiSetting currSetting : fromUserSettings) {
                 UiSetting newSetting = metadata.create(UiSetting.class);
-                newSetting.setUserLogin(toUser.getUsername());
+                newSetting.setUsername(toUser.getUsername());
                 newSetting.setName(currSetting.getName());
 
                 try {
@@ -192,7 +192,7 @@ public class UserSettingServiceImpl implements UserSettingService {
     @Nullable
     protected UiSetting findUserSettings(String name) {
         TypedQuery<UiSetting> q = entityManager.createQuery(
-                "select s from ui_Setting s where s.userLogin = ?1 and s.name =?2",
+                "select s from ui_Setting s where s.username = ?1 and s.name =?2",
                 UiSetting.class);
         q.setParameter(1, authentication.getUser().getUsername());
         q.setParameter(2, name);
@@ -208,20 +208,20 @@ public class UserSettingServiceImpl implements UserSettingService {
     protected Map<UUID, UiTablePresentation> copyPresentations(UserDetails fromUser, UserDetails toUser) {
         Map<UUID, UiTablePresentation> resultMap = transaction.execute(status -> {
             // delete existing
-            Query delete = entityManager.createQuery("delete from ui_TablePresentation p where p.userLogin = ?1");
+            Query delete = entityManager.createQuery("delete from ui_TablePresentation p where p.username = ?1");
             delete.setParameter(1, toUser.getUsername());
             delete.executeUpdate();
 
             // copy settings
             TypedQuery<UiTablePresentation> selectQuery = entityManager.createQuery(
-                    "select p from ui_TablePresentation p where p.userLogin = ?1", UiTablePresentation.class);
+                    "select p from ui_TablePresentation p where p.username = ?1", UiTablePresentation.class);
             selectQuery.setParameter(1, fromUser.getUsername());
             List<UiTablePresentation> presentations = selectQuery.getResultList();
 
             Map<UUID, UiTablePresentation> presentationMap = new HashMap<>();
             for (UiTablePresentation presentation : presentations) {
                 UiTablePresentation newPresentation = metadata.create(UiTablePresentation.class);
-                newPresentation.setUserLogin(toUser.getUsername());
+                newPresentation.setUsername(toUser.getUsername());
                 newPresentation.setComponentId(presentation.getComponentId());
                 newPresentation.setAutoSave(presentation.getAutoSave());
                 newPresentation.setName(presentation.getName());

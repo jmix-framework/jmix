@@ -113,7 +113,7 @@ class GroupTableSettingsTest extends UiDataTestSpecification {
     UiTablePresentation persistTablePresentation(GroupTable table, ScreenSettings screenSettings) {
         UiTablePresentation presentation = metadata.create(UiTablePresentation)
         presentation.componentId = table.id
-        presentation.userLogin = authentication.user.username
+        presentation.username = authentication.user.username
         presentation.name = "testPresentation"
 
         def groupTableSettings = tableBinder.getSettings(table)

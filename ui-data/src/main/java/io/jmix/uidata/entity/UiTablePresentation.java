@@ -64,8 +64,8 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     @Column(name = "SETTINGS", length = 4000)
     private String settings;
 
-    @Column(name = "USER_LOGIN")
-    private String userLogin;
+    @Column(name = "USERNAME")
+    private String username;
 
     @Column(name = "IS_AUTO_SAVE")
     private Boolean autoSave;
@@ -154,12 +154,14 @@ public class UiTablePresentation implements TablePresentation, Serializable {
     }
 
     @Nullable
-    public String getUserLogin() {
-        return userLogin;
+    @Override
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserLogin(@Nullable String userLogin) {
-        this.userLogin = userLogin;
+    @Override
+    public void setUsername(@Nullable String username) {
+        this.username = username;
     }
 
     @Override

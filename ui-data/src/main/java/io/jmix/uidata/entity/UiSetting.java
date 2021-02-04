@@ -52,8 +52,8 @@ public class UiSetting implements Serializable {
     @Column(name = "CREATED_BY", length = 50)
     private String createdBy;
 
-    @Column(name = "USER_LOGIN")
-    private String userLogin;
+    @Column(name = "USERNAME")
+    private String username;
 
     @Column(name = "NAME")
     private String name;
@@ -86,12 +86,12 @@ public class UiSetting implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {

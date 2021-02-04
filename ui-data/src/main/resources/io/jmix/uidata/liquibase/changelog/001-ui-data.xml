@@ -29,7 +29,7 @@
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="USER_LOGIN" type="varchar(255)"/>
+            <column name="USERNAME" type="varchar(255)"/>
             <column name="NAME" type="varchar(255)"/>
             <column name="VALUE_" type="clob"/>
         </createTable>
@@ -43,7 +43,7 @@
             <column name="COMPONENT" type="varchar(255)"/>
             <column name="NAME" type="varchar(255)"/>
             <column name="SETTINGS" type="varchar(4000)"/>
-            <column name="USER_LOGIN" type="varchar(255)"/>
+            <column name="USERNAME" type="varchar(255)"/>
             <column name="IS_AUTO_SAVE" type="boolean"/>
             <column name="UPDATE_TS" type="datetime"/>
             <column name="UPDATED_BY" type="varchar(50)"/>

@@ -227,7 +227,7 @@ public class TablePresentationsImpl implements TablePresentations {
         Preconditions.checkNotNullArgument(p);
 
         p = getPresentation(EntityValues.<UUID>getId(p));
-        return p != null && !entityStates.isNew(p) && p.getUserLogin() == null;
+        return p != null && !entityStates.isNew(p) && p.getUsername() == null;
     }
 
     @Override
@@ -325,9 +325,9 @@ public class TablePresentationsImpl implements TablePresentations {
             UserDetails user = authentication.getUser();
 
             ctx.setQueryString("select p from ui_TablePresentation p " +
-                    "where p.componentId = :component and (p.userLogin is null or p.userLogin = :userLogin)")
+                    "where p.componentId = :component and (p.username is null or p.username = :username)")
                     .setParameter("component", name)
-                    .setParameter("userLogin", user.getUsername());
+                    .setParameter("username", user.getUsername());
 
             final List<UiTablePresentation> list = dataManager.loadList(ctx);
 

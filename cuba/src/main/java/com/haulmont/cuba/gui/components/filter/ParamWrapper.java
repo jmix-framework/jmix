@@ -19,12 +19,13 @@ package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.ParametersHelper;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
 import com.haulmont.cuba.gui.components.filter.condition.PropertyCondition;
 import io.jmix.core.Entity;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.QueryUtils;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
@@ -33,8 +34,6 @@ import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.SizeUnit;
-import com.haulmont.cuba.core.global.filter.Op;
-import com.haulmont.cuba.core.global.filter.ParametersHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -80,7 +79,7 @@ public class ParamWrapper implements Component, HasValue<Object> {
             if (condition instanceof PropertyCondition || condition instanceof DynamicAttributesCondition) {
                 String escapedValue = value.toString();
                 if (condition.getEntityMetaClass() != null) {
-                    String thisStore = AppBeans.get(MetadataTools.class).getStoreName(condition.getEntityMetaClass());
+                    String thisStore = condition.getEntityMetaClass().getStore().getName();
                     CubaProperties properties = AppBeans.get(CubaProperties.class);
                     if (properties.getDisableEscapingLikeForDataStores() == null || !properties.getDisableEscapingLikeForDataStores().contains(thisStore)) {
                         escapedValue = QueryUtils.escapeForLike(escapedValue);

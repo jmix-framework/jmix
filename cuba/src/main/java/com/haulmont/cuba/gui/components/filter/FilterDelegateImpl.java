@@ -781,7 +781,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         boolean makeDefaultActionEnabled = !isDefault && !isFolder && !isSet && !isAdHocFilter && (!isGlobal || userCanEditGlobalFilter);
         boolean pinAppliedActionEnabled = lastAppliedFilter != null
                 && !(lastAppliedFilter.getFilterEntity() == adHocFilter && lastAppliedFilter.getConditions().getRoots().size() == 0)
-                && (adapter == null || Stores.isMain(metadataTools.getStoreName(adapter.getMetaClass())));
+                && (adapter == null || Stores.isMain(adapter.getMetaClass().getStore().getName()));
         boolean saveAsSearchFolderActionEnabled = folderActionsEnabled && !isFolder && !hasCode;
         boolean saveAsAppFolderActionEnabled = folderActionsEnabled && !isFolder && !hasCode && userCanEditGlobalAppFolder;
 

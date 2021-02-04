@@ -30,6 +30,11 @@ public class DynamicAttributesMetaClass extends MetadataObjectImpl implements Me
 
     private Map<String, MetaProperty> properties = new LinkedHashMap<>();
     private Map<String, CategoryAttribute> attributes = new LinkedHashMap<>();
+    private Store store;
+
+    public DynamicAttributesMetaClass(Store store) {
+        this.store = store;
+    }
 
     public void addProperty(MetaProperty property, CategoryAttribute attribute) {
         properties.put(property.getName(), property);
@@ -44,7 +49,7 @@ public class DynamicAttributesMetaClass extends MetadataObjectImpl implements Me
 
     @Override
     public Store getStore() {
-        return null;
+        return store;
     }
 
     @Nullable

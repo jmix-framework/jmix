@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import io.jmix.core.DevelopmentException;
 import io.jmix.core.Entity;
+import io.jmix.core.Stores;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -72,7 +73,7 @@ public class RuntimePropsDatasourceImpl
         this.dynamicAttributesGuiTools = AppBeans.get(DynamicAttributesGuiTools.NAME);
         this.dynAttrMetadata = AppBeans.get(DynAttrMetadata.class);
 
-        this.metaClass = new DynamicAttributesMetaClass();
+        this.metaClass = new DynamicAttributesMetaClass(AppBeans.get(Stores.class).get(Stores.UNDEFINED));
         this.setMainDs(mainDsId);
         this.setCommitMode(CommitMode.DATASTORE);
     }

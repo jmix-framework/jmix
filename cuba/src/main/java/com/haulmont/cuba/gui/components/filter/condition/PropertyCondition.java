@@ -121,7 +121,7 @@ public class PropertyCondition extends AbstractCondition {
         String nameToUse = !Strings.isNullOrEmpty(propertiesPath) ? propertiesPath : name;
         boolean useCrossDataStoreRefId = false;
         boolean stringType = false;
-        String thisStore = metadataTools.getStoreName(metaClass);
+        String thisStore = metaClass.getStore().getName();
         MetaPropertyPath propertyPath = metaClass.getPropertyPath(name);
         if (propertyPath != null) {
             MetaProperty metaProperty = propertyPath.getMetaProperty();

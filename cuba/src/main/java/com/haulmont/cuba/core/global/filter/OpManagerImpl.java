@@ -79,8 +79,7 @@ public class OpManagerImpl implements OpManager {
         Class javaClass = metaProperty.getJavaType();
         if (String.class.equals(javaClass)
                 && metadataTools.isLob(metaProperty)
-                && (metaClass.getStore() == null
-                || !metaClass.getStore().supportsLobSortingAndFiltering())) {
+                && !metaClass.getStore().supportsLobSortingAndFiltering()) {
             return EnumSet.of(CONTAINS, DOES_NOT_CONTAIN, NOT_EMPTY, STARTS_WITH, ENDS_WITH);
         }
         return availableOps(javaClass);

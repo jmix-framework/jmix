@@ -103,7 +103,7 @@ public class ConditionDescriptorsTreeBuilder implements ConditionDescriptorsTree
         queryTransformerFactory = AppBeans.get(QueryTransformerFactory.class);
         filterComponentName = getFilterComponentName();
         excludedProperties = new ArrayList<>();
-        storeName = metadataTools.getStoreName(((FilterImplementation) filter).getEntityMetaClass());
+        storeName = ((FilterImplementation) filter).getEntityMetaClass().getStore().getName();
         entityMetaClass = ((FilterImplementation) filter).getEntityMetaClass();
         isKeyValueMetaClass = entityMetaClass instanceof KeyValueMetaClass;
         entityAlias = ((FilterImplementation) filter).getEntityAlias();

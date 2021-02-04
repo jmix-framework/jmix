@@ -17,6 +17,7 @@
 package io.jmix.core.querycondition;
 
 import com.google.common.base.Strings;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -46,8 +47,8 @@ public class PropertyCondition implements Condition {
      * Creates property condition with the specified parameter name. The parameter value must be provided by
      * calling {@link #setParameterValue(Object)} method.
      *
-     * @param property entity attribute name
-     * @param operation comparison operation
+     * @param property      entity attribute name
+     * @param operation     comparison operation
      * @param parameterName parameter name
      */
     public static PropertyCondition createWithParameterName(String property, String operation, String parameterName) {
@@ -62,8 +63,8 @@ public class PropertyCondition implements Condition {
      * Creates a condition to compare the property with the provided value. A parameter name is generated based
      * on the property name.
      *
-     * @param property entity attribute name
-     * @param operation comparison operation
+     * @param property       entity attribute name
+     * @param operation      comparison operation
      * @param parameterValue value to compare with
      */
     public static PropertyCondition createWithValue(String property, String operation, Object parameterValue) {
@@ -78,9 +79,9 @@ public class PropertyCondition implements Condition {
     /**
      * Creates a condition to compare the property with the given value.
      *
-     * @param property entity attribute name
+     * @param property  entity attribute name
      * @param operation comparison operation, see constants in {@link Operation}
-     * @param value value to compare with
+     * @param value     value to compare with
      */
     public static PropertyCondition create(String property, String operation, Object value) {
         return createWithValue(property, operation, value);
@@ -156,6 +157,20 @@ public class PropertyCondition implements Condition {
         return createWithValue(property, Operation.IS_NULL, value);
     }
 
+    /**
+     * Creates a condition that is translated to "in".
+     */
+    public static PropertyCondition inList(String property, Object value) {
+        return createWithValue(property, Operation.IN_LIST, value);
+    }
+
+    /**
+     * Creates a condition that is translated to "not in".
+     */
+    public static PropertyCondition notInList(String property, Object value) {
+        return createWithValue(property, Operation.NOT_IN_LIST, value);
+    }
+
     public String getProperty() {
         return property;
     }
@@ -206,6 +221,10 @@ public class PropertyCondition implements Condition {
                 if (!Strings.isNullOrEmpty((String) parameterValue)) {
                     return this;
                 }
+            } else if (parameterValue instanceof Collection) {
+                if (CollectionUtils.isNotEmpty((Collection<?>) parameterValue)) {
+                    return this;
+                }
             } else {
                 return this;
             }
@@ -236,5 +255,7 @@ public class PropertyCondition implements Condition {
         public static final String IS_NOT_NULL = "is_not_null";
         public static final String STARTS_WITH = "starts_with";
         public static final String ENDS_WITH = "ends_with";
+        public static final String IN_LIST = "in_list";
+        public static final String NOT_IN_LIST = "not_in_list";
     }
 }

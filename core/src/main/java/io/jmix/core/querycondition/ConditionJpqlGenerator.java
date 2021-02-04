@@ -151,6 +151,10 @@ public class ConditionJpqlGenerator {
                     return "is null";
                 case PropertyCondition.Operation.IS_NOT_NULL:
                     return "is not null";
+                case PropertyCondition.Operation.IN_LIST:
+                    return "in";
+                case PropertyCondition.Operation.NOT_IN_LIST:
+                    return "not in";
             }
         }
         throw new RuntimeException("Unknown PropertyCondition operation: " + condition.getOperation());

@@ -37,8 +37,6 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.AbstractAction;
-import io.jmix.ui.action.Action;
-import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
@@ -53,8 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Named;
 import java.util.*;
-
-import static io.jmix.ui.component.Window.COMMIT_ACTION_ID;
 
 @UiController("report_ReportWizardCreator")
 @UiDescriptor("report-wizard.xml")
@@ -424,7 +420,7 @@ public class ReportWizardCreator extends Screen implements MainWizardFrame<Scree
             reportData.setQuery(query);
             reportData.setQueryParameters(queryParameters);
             MetaClass entityMetaClass = entity.getValue();
-            String storeName = metadataTools.getStoreName(entityMetaClass);
+            String storeName = entityMetaClass.getStore().getName();
             if (!Stores.isMain(storeName)) {
                 reportData.setDataStore(storeName);
             }

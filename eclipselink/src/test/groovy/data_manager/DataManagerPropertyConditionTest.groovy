@@ -16,9 +16,7 @@
 
 package data_manager
 
-
 import io.jmix.core.DataManager
-import io.jmix.core.EntityStates
 import io.jmix.core.querycondition.LogicalCondition
 import io.jmix.core.querycondition.PropertyCondition
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,9 +27,6 @@ class DataManagerPropertyConditionTest extends DataSpec {
 
     @Autowired
     DataManager dataManager
-
-    @Autowired
-    EntityStates entityStates
 
     def "load using PropertyCondition starts with"() {
 
@@ -147,4 +142,52 @@ class DataManagerPropertyConditionTest extends DataSpec {
         list == [testAppEntity2]
     }
 
+    def "load using PropertyCondition in list"() {
+
+        TestAppEntity testEntity1 = dataManager.create(TestAppEntity)
+        testEntity1.name = 'test one'
+
+        TestAppEntity testEntity2 = dataManager.create(TestAppEntity)
+        testEntity2.name = 'test two'
+
+        TestAppEntity testEntity3 = dataManager.create(TestAppEntity)
+        testEntity3.name = 'test three'
+
+        dataManager.save(testEntity1, testEntity2, testEntity3)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.inList("name", ["test one", "test two"]))
+                .list()
+
+        then:
+
+        list.contains(testEntity1)
+        list.contains(testEntity2)
+    }
+
+    def "load using PropertyCondition not in list"() {
+
+        TestAppEntity testEntity1 = dataManager.create(TestAppEntity)
+        testEntity1.name = 'test one'
+
+        TestAppEntity testEntity2 = dataManager.create(TestAppEntity)
+        testEntity2.name = 'test two'
+
+        TestAppEntity testEntity3 = dataManager.create(TestAppEntity)
+        testEntity3.name = 'test three'
+
+        dataManager.save(testEntity1, testEntity2, testEntity3)
+
+        when:
+
+        def list = dataManager.load(TestAppEntity)
+                .condition(PropertyCondition.notInList("name", ["test one", "test two"]))
+                .list()
+
+        then:
+
+        list.contains(testEntity3)
+    }
 }

@@ -252,7 +252,7 @@ public class DataManagerImpl implements DataManager {
         for (MetaProperty property : metaClass.getProperties()) {
             if (property.getRange().isClass() && !property.getRange().getCardinality().isMany()) {
                 MetaClass propertyMetaClass = property.getRange().asClass();
-                if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), metadataTools.getStoreName(metaClass))) {
+                if (!Objects.equals(propertyMetaClass.getStore().getName(), metaClass.getStore().getName())) {
                     List<String> dependsOnProperties = metadataTools.getDependsOnProperties(property);
                     if (dependsOnProperties.size() == 0) {
                         continue;

@@ -79,14 +79,14 @@ public class CrossDataStoreReferenceLoader {
             return;
         visited.add(fetchPlan);
 
-        String storeName = metadataTools.getStoreName(metaClass);
+        String storeName = metaClass.getStore().getName();
 
         Class<?> entityClass = fetchPlan.getEntityClass();
         for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metadata.getClass(entityClass).getProperty(fetchPlanProperty.getName());
             if (metaProperty.getRange().isClass()) {
                 MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-                if (!Objects.equals(metadataTools.getStoreName(propertyMetaClass), storeName)) {
+                if (!Objects.equals(propertyMetaClass.getStore().getName(), storeName)) {
                     List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
                     if (dependsOnProperties.size() == 0) {
                         continue;

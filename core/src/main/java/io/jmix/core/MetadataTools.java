@@ -206,19 +206,6 @@ public class MetadataTools {
     }
 
     /**
-     * @return name of a data store of the given entity or null if the entity is not persistent and no data store is
-     * defined for it
-     */
-    @Nullable
-    public String getStoreName(MetaClass metaClass) {
-        Store store = metaClass.getStore();
-        if (store == null) {
-            return isPersistent(metaClass) ? Stores.MAIN : null;
-        } else
-            return store.getName();
-    }
-
-    /**
      * @return name of a primary key attribute, or null if the entity has no primary key (e.g. embeddable)
      */
     @Nullable
@@ -872,7 +859,7 @@ public class MetadataTools {
         if (!metaProperty.getRange().isClass())
             return null;
 
-        String propStore = getStoreName(metaProperty.getRange().asClass());
+        String propStore = metaProperty.getRange().asClass().getStore().getName();
         if (Objects.equals(thisStore, propStore))
             return null;
 

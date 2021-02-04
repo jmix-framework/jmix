@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  * @deprecated Use {@link io.jmix.ui.component.Frame} instead
  */
 @Deprecated
-public interface Frame extends io.jmix.ui.component.Frame, ExpandingLayout {
+public interface Frame extends io.jmix.ui.component.Frame, ExpandingLayout, HasWindowManager {
 
 
     /**

@@ -16,12 +16,14 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.Fragment;
 import com.haulmont.cuba.gui.components.LayoutClickNotifier;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.impl.FragmentImpl;
+import io.jmix.ui.screen.UiControllerUtils;
 
 import java.util.function.Consumer;
 
@@ -37,5 +39,10 @@ public class WebFragment extends FragmentImpl implements Fragment, LayoutClickNo
     @Override
     public void removeLayoutClickListener(Consumer<LayoutClickEvent> listener) {
         internalRemoveLayoutClickListener(listener);
+    }
+
+    @Override
+    public WindowManager getWindowManager() {
+        return (WindowManager) UiControllerUtils.getScreenContext(getFrameOwner()).getScreens();
     }
 }

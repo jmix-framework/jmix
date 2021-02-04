@@ -70,6 +70,7 @@ public class UiProperties {
     MainTabSheetMode mainTabSheetMode;
     ManagedMainTabSheetMode managedMainTabSheetMode;
     boolean defaultScreenCanBeClosed;
+    String defaultScreenId;
     String loginScreenId;
     String mainScreenId;
     String initialScreenId;
@@ -132,6 +133,7 @@ public class UiProperties {
             @DefaultValue("2") double tableCacheRate,
             @DefaultValue("DEFAULT") MainTabSheetMode mainTabSheetMode,
             @DefaultValue("HIDE_TABS") ManagedMainTabSheetMode managedMainTabSheetMode,
+            String defaultScreenId,
             @DefaultValue("true") boolean defaultScreenCanBeClosed,
             @DefaultValue("login") String loginScreenId,
             @DefaultValue("main") String mainScreenId,
@@ -193,6 +195,7 @@ public class UiProperties {
         this.tableCacheRate = tableCacheRate;
         this.mainTabSheetMode = mainTabSheetMode;
         this.managedMainTabSheetMode = managedMainTabSheetMode;
+        this.defaultScreenId = defaultScreenId;
         this.defaultScreenCanBeClosed = defaultScreenCanBeClosed;
         this.loginScreenId = loginScreenId;
         this.mainScreenId = mainScreenId;
@@ -409,6 +412,13 @@ public class UiProperties {
      */
     public ManagedMainTabSheetMode getManagedMainTabSheetMode() {
         return managedMainTabSheetMode;
+    }
+
+    /**
+     * Defines which screen should be opened after login. This setting will be applied to all users.
+     */
+    public String getDefaultScreenId() {
+        return defaultScreenId;
     }
 
     /**

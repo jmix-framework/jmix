@@ -34,10 +34,7 @@ import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
 import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
-import com.haulmont.cuba.web.sys.CubaDialogs;
-import com.haulmont.cuba.web.sys.CubaFragments;
-import com.haulmont.cuba.web.sys.CubaMenuItemCommands;
-import com.haulmont.cuba.web.sys.CubaScreens;
+import com.haulmont.cuba.web.sys.*;
 import com.haulmont.cuba.web.sys.navigation.CubaUrlChangeHandler;
 import com.vaadin.spring.annotation.UIScope;
 import io.jmix.core.*;
@@ -288,6 +285,12 @@ public class CubaConfiguration {
     @Primary
     protected BulkEditors bulkEditors() {
         return new com.haulmont.cuba.gui.BulkEditors();
+    }
+
+    @Bean("cuba_ScreenTools")
+    @Primary
+    protected ScreenTools screenTools() {
+        return new WebScreenTools();
     }
 
     @EventListener

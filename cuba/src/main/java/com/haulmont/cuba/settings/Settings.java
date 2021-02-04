@@ -17,6 +17,7 @@ package com.haulmont.cuba.settings;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.ui.screen.Screen;
+import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.dom4j.Element;
 
 /**
@@ -28,7 +29,7 @@ import org.dom4j.Element;
  * <p>
  * See {@code com.haulmont.cuba.gui.components.AbstractWindow#applySettings(Settings)}
  *
- * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
+ * @deprecated For the {@link Screen} use {@link ScreenSettingsFacet} instead
  */
 @Deprecated
 public interface Settings {

@@ -17,6 +17,7 @@
 package com.haulmont.cuba.settings;
 
 import io.jmix.ui.screen.Screen;
+import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.dom4j.*;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
+ * @deprecated For the {@link Screen} use {@link ScreenSettingsFacet} instead
  */
 @Deprecated
 public class SettingsElementWrapper implements Element {

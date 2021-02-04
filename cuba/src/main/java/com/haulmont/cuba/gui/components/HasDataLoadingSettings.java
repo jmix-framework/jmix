@@ -21,14 +21,13 @@ import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.dom4j.Element;
 
 /**
- * @deprecated to use component settings add "ui-persistence" add-on. See {@link DataLoadingSettingsBinder} and
- * {@link ScreenSettingsFacet}.
+ * @deprecated See {@link DataLoadingSettingsBinder} and {@link ScreenSettingsFacet}
  */
 @Deprecated
 public interface HasDataLoadingSettings {
 
     /**
-     * @deprecated for component settings use "ui-persistence" add-on and {@link DataLoadingSettingsBinder} instead.
+     * @deprecated For component settings use {@link DataLoadingSettingsBinder} instead
      */
     @Deprecated
     void applyDataLoadingSettings(Element element);

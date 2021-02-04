@@ -24,7 +24,7 @@ import org.dom4j.Element;
 /**
  * Base interface for converters.  As {@link HasSettings#saveSettings(Element)} and
  * {@link HasSettings#applySettings(Element)} are deprecated we need to support XML elements for legacy screens that do
- * not support new screen settings API. See "ui-persistence" add-on.
+ * not support new screen settings API.
  */
 public interface LegacySettingsConverter {
 

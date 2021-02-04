@@ -19,12 +19,13 @@ import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.common.xmlparsing.Dom4jTools;
 import io.jmix.ui.screen.Screen;
 import io.jmix.uidata.UiSettingsCache;
+import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 /**
- * @deprecated For the {@link Screen} use ScreenSettingsFacet in the "ui-persistence" add-on instead.
+ * @deprecated For the {@link Screen} use {@link ScreenSettingsFacet} instead
  */
 @Deprecated
 public class SettingsImpl implements Settings {

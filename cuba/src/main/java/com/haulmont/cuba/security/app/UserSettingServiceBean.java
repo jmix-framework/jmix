@@ -23,7 +23,6 @@ import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.PermissionType;
 import io.jmix.uidata.UserSettingServiceImpl;
 import io.jmix.uidata.entity.UiSetting;
 import io.jmix.uidata.entity.UiTablePresentation;
@@ -59,7 +58,7 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
 
         transaction.executeWithoutResult(status -> {
             Query deleteSettingsQuery =
-                    entityManager.createQuery("delete from ui_Setting s where s.userLogin = ?1");
+                    entityManager.createQuery("delete from ui_Setting s where s.username = ?1");
             deleteSettingsQuery.setParameter(1, toUser.getUsername());
             deleteSettingsQuery.executeUpdate();
         });
@@ -72,13 +71,13 @@ public class UserSettingServiceBean extends UserSettingServiceImpl {
 
         transaction.executeWithoutResult(status -> {
             TypedQuery<UiSetting> q = entityManager.
-                    createQuery("select s from ui_Setting s where s.userLogin = ?1", UiSetting.class);
+                    createQuery("select s from ui_Setting s where s.username = ?1", UiSetting.class);
             q.setParameter(1, fromUser.getUsername());
             List<UiSetting> fromUserSettings = q.getResultList();
 
             for (UiSetting currSetting : fromUserSettings) {
                 UiSetting newSetting = metadata.create(UiSetting.class);
-                newSetting.setUserLogin(toUser.getUsername());
+                newSetting.setUsername(toUser.getUsername());
                 newSetting.setName(currSetting.getName());
 
                 try {

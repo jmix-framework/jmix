@@ -26,8 +26,7 @@ import org.dom4j.Element;
  * Object supporting save/restore of user settings.
  *
  * @see UserSettingService
- * @deprecated for component settings use "ui-persistence" add-on. Also see {@link ComponentSettingsBinder},
- * {@link ComponentSettings}, {@link ScreenSettingsFacet}.
+ * @deprecated See {@link ComponentSettingsBinder}, {@link ComponentSettings}, {@link ScreenSettingsFacet}.
  */
 @Deprecated
 public interface HasSettings {
@@ -36,7 +35,7 @@ public interface HasSettings {
      * Applies user settings for object.
      *
      * @param element settings element
-     * @deprecated for components that should have settings use {@link ComponentSettingsBinder}
+     * @deprecated For components that should have settings use {@link ComponentSettingsBinder}
      * and {@link ComponentSettings} instead.
      */
     @Deprecated
@@ -47,7 +46,7 @@ public interface HasSettings {
      *
      * @param element settings element
      * @return true if settings were modified
-     * @deprecated for components that should have settings use {@link ComponentSettingsBinder}
+     * @deprecated For components that should have settings use {@link ComponentSettingsBinder}
      * and {@link ComponentSettings} instead.
      */
     @Deprecated
@@ -55,7 +54,7 @@ public interface HasSettings {
 
     /**
      * @return true if object allows to save and apply settings
-     * @deprecated to enable/disable component settings use {@link ScreenSettingsFacet} instead.
+     * @deprecated To enable/disable component settings use {@link ScreenSettingsFacet} instead.
      */
     @Deprecated
     boolean isSettingsEnabled();
@@ -64,7 +63,7 @@ public interface HasSettings {
      * Set to true if object should allow to save and apply settings
      *
      * @param settingsEnabled whether settings should be enabled for the object
-     * @deprecated to enable/disable component settings use {@link ScreenSettingsFacet} instead.
+     * @deprecated To enable/disable component settings use {@link ScreenSettingsFacet} instead.
      */
     @Deprecated
     void setSettingsEnabled(boolean settingsEnabled);

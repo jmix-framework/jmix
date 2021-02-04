@@ -84,9 +84,18 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     @Nullable
     @Override
     protected Component createComponentInternal(ComponentGenerationContext context) {
+        MetaClass metaClass = context.getMetaClass();
+        MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, context.getProperty());
+
+        if (mpp == null) {
+            return null;
+        }
+
         PropertyFilterComponentGenerationContext pfContext = (PropertyFilterComponentGenerationContext) context;
         if (pfContext.getOperation().getType() == PropertyFilter.Operation.Type.UNARY) {
             return createUnaryField(context);
+        } else if (pfContext.getOperation().getType() == PropertyFilter.Operation.Type.LIST) {
+            return createCollectionField(context, mpp);
         }
 
         return super.createComponentInternal(context);
@@ -172,5 +181,4 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
     public int getOrder() {
         return JmixOrder.HIGHEST_PRECEDENCE + 100;
     }
-
 }

@@ -114,7 +114,8 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
                 String modelDefaultValue = getEditedEntity().getValueComponent().getDefaultValue();
                 MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
                 if (metaProperty != null) {
-                    Object defaultValue = propertyFilterSupport.parseDefaultValue(metaProperty, modelDefaultValue);
+                    Object defaultValue = propertyFilterSupport.parseDefaultValue(metaProperty,
+                            getEditedEntity().getOperation().getType(), modelDefaultValue);
                     defaultValueField.setValue(defaultValue);
                 }
             }
@@ -161,12 +162,14 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     @Subscribe
     protected void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
         if (defaultValueField != null
-                && getEditedEntity().getProperty() != null) {
+                && getEditedEntity().getProperty() != null
+                && getEditedEntity().getOperation() != null) {
             MetaProperty metaProperty = filterMetaClass.findProperty(getEditedEntity().getProperty());
 
             String modelDefaultValue = null;
             if (metaProperty != null) {
-                modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty, defaultValueField.getValue());
+                modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty,
+                        getEditedEntity().getOperation().getType(), defaultValueField.getValue());
             }
             getEditedEntity().getValueComponent().setDefaultValue(modelDefaultValue);
         }

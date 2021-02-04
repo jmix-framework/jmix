@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.propertyfilter;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
@@ -41,10 +42,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.ui.component.PropertyFilter.Operation.*;
 
@@ -162,22 +167,25 @@ public class PropertyFilterSupport {
         Range mppRange = mpp.getRange();
 
         if (mppRange.isClass() || mppRange.isEnum()) {
-            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET); // TODO: add IN, NOT_IN,
+            return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
             if (String.class.equals(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, CONTAINS, NOT_CONTAINS, IS_SET, STARTS_WITH, ENDS_WITH); // TODO: add IN, NOT_IN,
+                return EnumSet.of(EQUAL, NOT_EQUAL, CONTAINS, NOT_CONTAINS, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
+                        NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET);  // TODO: add IN, NOT_IN, DATE_INTERVAL
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
+                        NOT_IN_LIST);  // TODO: add DATE_INTERVAL
             } else if (timeClasses.contains(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET); // TODO: add DATE_INTERVAL
             } else if (Number.class.isAssignableFrom(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET); // TODO: add IN, NOT_IN,
+                return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
+                        NOT_IN_LIST);
             } else if (Boolean.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             } else if (UUID.class.equals(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET); // TODO: add IN, NOT_IN,
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
             }
 
         }
@@ -221,6 +229,10 @@ public class PropertyFilterSupport {
                 return PropertyCondition.Operation.IS_NOT_NULL;
             case IS_NOT_SET:
                 return PropertyCondition.Operation.IS_NULL;
+            case IN_LIST:
+                return PropertyCondition.Operation.IN_LIST;
+            case NOT_IN_LIST:
+                return PropertyCondition.Operation.NOT_IN_LIST;
             default:
                 throw new IllegalArgumentException("Unknown operation: " + operation);
         }
@@ -229,18 +241,35 @@ public class PropertyFilterSupport {
     /**
      * Converts default value of value component to String
      *
-     * @param metaProperty an entity attribute associated with filter
-     * @param value        a default value
+     * @param metaProperty  an entity attribute associated with filter
+     * @param operationType an operation type
+     * @param value         a default value
      * @return string default value
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Nullable
-    public String formatDefaultValue(MetaProperty metaProperty, @Nullable Object value) {
+    public String formatDefaultValue(MetaProperty metaProperty, Type operationType, @Nullable Object value) {
         if (value == null) {
             return null;
         }
 
         Range range = metaProperty.getRange();
+        if (operationType == Type.LIST && value instanceof Collection) {
+            if (((Collection<?>) value).isEmpty()) {
+                return null;
+            }
 
+            return Strings.emptyToNull((String) ((Collection) value).stream()
+                    .map(singleValue -> formatSingleDefaultValue(range, singleValue))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(",")));
+        } else {
+            return formatSingleDefaultValue(range, value);
+        }
+    }
+
+    @Nullable
+    protected String formatSingleDefaultValue(Range range, Object value) {
         if (range.isClass()) {
             return String.valueOf(EntityValues.getId(value));
         } else if (range.isEnum()) {
@@ -255,18 +284,30 @@ public class PropertyFilterSupport {
     /**
      * Parses default value for value component from String
      *
-     * @param metaProperty an entity attribute associated with filter
-     * @param value        a string default value
+     * @param metaProperty  an entity attribute associated with filter
+     * @param operationType an operation type
+     * @param value         a string default value
      * @return default value
      */
     @Nullable
-    public Object parseDefaultValue(MetaProperty metaProperty, @Nullable String value) {
+    public Object parseDefaultValue(MetaProperty metaProperty, Type operationType, @Nullable String value) {
         if (value == null) {
             return null;
         }
 
         Range range = metaProperty.getRange();
+        if (operationType == Type.LIST) {
+            return Stream.of(value.split(","))
+                    .map(singleValue -> parseSingleDefaultValue(range, singleValue.trim()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } else {
+            return parseSingleDefaultValue(range, value);
+        }
+    }
 
+    @Nullable
+    protected Object parseSingleDefaultValue(Range range, String value) {
         try {
             if (range.isClass()) {
                 MetaClass metaClass = range.asClass();

@@ -432,7 +432,7 @@ public class ValuesSelectAction<V> extends BaseAction implements ValuePickerActi
             CloseAction closeAction = event.getCloseAction();
             if (closeAction.equals(WINDOW_COMMIT_AND_CLOSE_ACTION)) {
                 SelectValueController<V> selectValueScreen = (SelectValueController<V>) screen;
-                valuesPicker.setValue((selectValueScreen).getValue());
+                valuesPicker.setValueFromUser((selectValueScreen).getValue());
             }
         });
 

@@ -132,11 +132,12 @@ public class PropertyFilterConverter
     protected Object convertDefaultValueToComponent(PropertyFilterCondition model) {
         String modelDefaultValue = model.getValueComponent().getDefaultValue();
         Object value = null;
-        if (model.getProperty() != null) {
+        if (model.getProperty() != null && model.getOperation() != null) {
             MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
             MetaProperty metaProperty = metaClass.findProperty(model.getProperty());
             if (metaProperty != null) {
-                value = propertyFilterSupport.parseDefaultValue(metaProperty, modelDefaultValue);
+                value = propertyFilterSupport.parseDefaultValue(metaProperty, model.getOperation().getType(),
+                        modelDefaultValue);
             }
         }
 
@@ -162,7 +163,8 @@ public class PropertyFilterConverter
 
         String modelDefaultValue = null;
         if (metaProperty != null) {
-            modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty, defaultValue);
+            modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty,
+                    component.getOperation().getType(), defaultValue);
         }
 
         return modelDefaultValue;

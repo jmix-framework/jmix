@@ -88,7 +88,8 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
             MetaClass metaClass = component.getDataLoader().getContainer().getEntityMetaClass();
             MetaProperty metaProperty = metaClass.findProperty(component.getProperty());
             if (metaProperty != null) {
-                Object value = getPropertyFilterSupport().parseDefaultValue(metaProperty, defaultValue);
+                Object value = getPropertyFilterSupport().parseDefaultValue(metaProperty,
+                        component.getOperation().getType(), defaultValue);
                 component.setValue(value);
             }
         }

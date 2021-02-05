@@ -35,9 +35,9 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
-import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges;
 import io.jmix.data.impl.EntityAttributeChanges;
 import io.jmix.data.impl.JpaDataStoreListener;
+import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges;
 import org.apache.commons.lang3.BooleanUtils;
 import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.slf4j.Logger;
@@ -747,8 +747,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         if (changes == null) {
             if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
                 return Collections.emptySet();
-            changes = new EntityAttributeChanges();
-            changes.addChanges(entity);
+            changes = new EclipselinkEntityAttributeChanges();
+            ((EclipselinkEntityAttributeChanges) changes).addChanges(entity);
         }
         return changes.getAttributes();
     }

@@ -168,7 +168,7 @@
 
     <Match>
         <Bug pattern="CN_IDIOM_NO_SUPER_CALL"/>
-        <Class name="io.jmix.data.impl.DescriptorEventManagerWrapper"/>
+        <Class name="io.jmix.eclipselink.impl.DescriptorEventManagerWrapper"/>
     </Match>
 
 
@@ -189,7 +189,7 @@
 
     <Match>
         <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
-        <Class name="io.jmix.data.persistence.JmixIsNullExpressionOperator"/>
+        <Class name="io.jmix.eclipselink.impl.support.JmixIsNullExpressionOperator"/>
     </Match>
 
     <Match>

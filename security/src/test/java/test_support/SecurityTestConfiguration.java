@@ -18,38 +18,23 @@ package test_support;
 
 import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
-import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
-import io.jmix.data.DataConfiguration;
-import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.data.impl.JmixTransactionManager;
-import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
-import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.security.SecurityConfiguration;
-import liquibase.integration.spring.SpringLiquibase;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
-import org.springframework.transaction.PlatformTransactionManager;
-
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {SecurityConfiguration.class})
 public class SecurityTestConfiguration {
 
     @Bean
@@ -60,39 +45,6 @@ public class SecurityTestConfiguration {
     @Bean
     public MessageSource messageSource(JmixModules modules, Resources resources) {
         return new JmixMessageSource(modules, resources);
-    }
-
-    @Bean
-    DataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setUrl("jdbc:hsqldb:mem:testdb");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
-        return dataSource;
-    }
-
-    @Bean
-    @Primary
-    LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
-                                                                JpaVendorAdapter jpaVendorAdapter,
-                                                                DbmsSpecifics dbmsSpecifics,
-                                                                JmixModules jmixModules,
-                                                                Resources resources) {
-        return new JmixEntityManagerFactoryBean(Stores.MAIN, dataSource, jpaVendorAdapter, dbmsSpecifics, jmixModules, resources);
-    }
-
-    @Bean
-    @Primary
-    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
-    }
-
-    @Bean
-    public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        SpringLiquibase liquibase = new SpringLiquibase();
-        liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("file:" + processor.createMasterChangeLog(Stores.MAIN));
-        return liquibase;
     }
 
     @Bean

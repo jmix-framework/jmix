@@ -28,6 +28,7 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.security.SecurityConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -50,7 +51,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
-@JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
+@JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
 public class SecurityDataTestConfiguration {
 
     @Bean

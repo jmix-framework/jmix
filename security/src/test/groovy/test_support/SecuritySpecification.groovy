@@ -17,13 +17,12 @@
 package test_support
 
 import io.jmix.core.CoreConfiguration
-import io.jmix.data.DataConfiguration
 import io.jmix.security.SecurityConfiguration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 @ContextConfiguration(
-        classes = [CoreConfiguration, DataConfiguration, SecurityConfiguration, SecurityTestConfiguration],
+        classes = [CoreConfiguration, SecurityConfiguration, SecurityTestConfiguration],
         initializers = [TestContextInititalizer]
 )
 class SecuritySpecification extends Specification {

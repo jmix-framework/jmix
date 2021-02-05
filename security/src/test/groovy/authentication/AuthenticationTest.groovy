@@ -19,7 +19,6 @@ package authentication
 import io.jmix.core.DataManager
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.data.PersistenceTools
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -32,9 +31,6 @@ class AuthenticationTest extends SecuritySpecification {
 
     @Autowired
     DataManager dataManager
-
-    @Autowired
-    PersistenceTools persistenceTools
 
     @Autowired
     AuthenticationManager authenticationManager

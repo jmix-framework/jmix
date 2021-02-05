@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import java.util.Date;
 
 @Component("data_EntityAuditInfoProvider")
-public class    EntityAuditInfoProvider {
+public class EntityAuditInfoProvider {
 
     private final Logger logger = LoggerFactory.getLogger(EntityAuditInfoProvider.class);
 

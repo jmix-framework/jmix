@@ -61,29 +61,9 @@ public interface DbmsFeatures {
     boolean isNullsLastSorting();
 
     /**
-     * @return true if user name must be used when providing schema name for obtaining database metadata
-     */
-    boolean isSchemaByUser();
-
-    /**
-     * @return true if catalog name must be used for obtaining database metadata
-     */
-    default boolean requiresDbCatalogName() {
-        return false;
-    }
-
-    /**
      * @return true if the DBMS supports equality check and sorting for LOB columns
      */
     boolean supportsLobSortingAndFiltering();
-
-    /**
-     * @return true if equals for string properties in the property conditions of filter
-     * should be emulated by like expressions
-     */
-    default boolean emulateEqualsByLike() {
-        return false;
-    }
 
     /**
      * @return true if the DBMS supports paging only with order by

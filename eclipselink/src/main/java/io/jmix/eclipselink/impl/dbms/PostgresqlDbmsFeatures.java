@@ -61,11 +61,6 @@ public class PostgresqlDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
-    public boolean isSchemaByUser() {
-        return false;
-    }
-
-    @Override
     public boolean supportsLobSortingAndFiltering() {
         return true;
     }

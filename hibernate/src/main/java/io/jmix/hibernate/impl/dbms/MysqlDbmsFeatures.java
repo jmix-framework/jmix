@@ -61,16 +61,6 @@ public class MysqlDbmsFeatures implements DbmsFeatures {
     }
 
     @Override
-    public boolean isSchemaByUser() {
-        return false;
-    }
-
-    @Override
-    public boolean requiresDbCatalogName() {
-        return true;
-    }
-
-    @Override
     public boolean supportsLobSortingAndFiltering() {
         return true;
     }

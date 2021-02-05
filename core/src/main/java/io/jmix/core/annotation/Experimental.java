@@ -22,12 +22,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that the annotated program element is considered an internal implementation detail and should
- * not be used in application code.
+ * Indicates that the annotated program element is considered usable in applications but is unstable.
  * <p>
- * Internal APIs can be changed without notice in any new version of Jmix.
+ * Experimental APIs can become public, {@link Internal}, be changed or removed in a minor or major version of Jmix.
  */
 @Target({ElementType.PACKAGE, ElementType.TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Internal {
+public @interface Experimental {
 }

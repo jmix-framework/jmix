@@ -25,6 +25,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.imap.ImapConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -41,7 +42,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
-@Import({CoreConfiguration.class, DataConfiguration.class, ImapConfiguration.class})
+@Import({CoreConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class,
+        ImapConfiguration.class})
 @EnableWebSecurity
 public class ImapTestConfiguration extends CoreSecurityConfiguration {
 

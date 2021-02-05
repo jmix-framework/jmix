@@ -690,7 +690,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
         MetadataTools metadataTools = getMetadataTools();
 
         Stream<String> properties;
-        if (metadataTools.isPersistent(metaClass) && fetchPlan != null) {
+        if (metadataTools.isJpaEntity(metaClass) && fetchPlan != null) {
             properties = fetchPlan.getProperties().stream().map(FetchPlanProperty::getName);
         } else {
             properties = metaClass.getProperties().stream().map(MetadataObject::getName);

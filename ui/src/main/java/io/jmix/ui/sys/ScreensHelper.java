@@ -364,7 +364,7 @@ public class ScreensHelper {
         do {
             isAvailable = className.equals(entity.getName());
             entity = entity.getSuperclass();
-            process = metadata.findClass(entity) != null && metadataTools.isPersistent(entity);
+            process = metadata.findClass(entity) != null && metadataTools.isJpaEntity(entity);
         } while (process && !isAvailable);
         return isAvailable;
     }

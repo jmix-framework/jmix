@@ -271,7 +271,7 @@ public class LookupBuilderProcessor {
 
         List<E> mergedItems = new ArrayList<>(selectedItems.size());
         FetchPlan viewForCollectionContainer = properties.isReloadUnfetchedAttributesFromLookupScreens() &&
-                collectionDc.getEntityMetaClass() != null && metadataTools.isPersistent(collectionDc.getEntityMetaClass())
+                collectionDc.getEntityMetaClass() != null && metadataTools.isJpaEntity(collectionDc.getEntityMetaClass())
                 ? getFetchPlanForCollectionContainer(collectionDc, initializeMasterReference, inverseMetaProperty)
                 : null;
         for (E item : selectedItems) {
@@ -374,7 +374,7 @@ public class LookupBuilderProcessor {
         E firstItem = itemsFromLookup.iterator().next();
 
         boolean reloadByFetchPlan = properties.isReloadUnfetchedAttributesFromLookupScreens()
-                && metadataTools.isPersistent(firstItem.getClass());
+                && metadataTools.isJpaEntity(firstItem.getClass());
 
         Collection<E> reloadedItems = new ArrayList<>(itemsFromLookup.size());
         if (reloadByFetchPlan) {

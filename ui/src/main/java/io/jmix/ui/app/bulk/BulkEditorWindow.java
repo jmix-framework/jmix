@@ -214,7 +214,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
 
         // field owner metaclass is embeddable only if field domain embeddable,
         // so we can check field domain
-        if (metadataTools.isEmbeddable(metaProperty.getDomain())
+        if (metadataTools.isJpaEmbeddable(metaProperty.getDomain())
                 && field.getParentFqn() != null) {
             fieldDc = getScreenData().getContainer(field.getParentFqn());
         }
@@ -534,7 +534,7 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
 
     protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isSystem(metaProperty)
-                || !metadataTools.isPersistent(metaProperty)
+                || !metadataTools.isJpa(metaProperty)
                 || metadataTools.isSystemLevel(metaProperty)
                 || metaProperty.getRange().getCardinality().isMany()
                 || !isEntityAttributeModifyPermitted(metaClass, metaProperty)) {

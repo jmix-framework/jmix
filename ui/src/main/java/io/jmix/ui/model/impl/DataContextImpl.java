@@ -708,7 +708,7 @@ public class DataContextImpl implements DataContext {
 
     protected List filterCommittedInstances(Set<Object> instances) {
         return instances.stream()
-                .filter(entity -> !metadataTools.isEmbeddable(entity.getClass()))
+                .filter(entity -> !metadataTools.isJpaEmbeddable(entity.getClass()))
                 .collect(Collectors.toList());
     }
 

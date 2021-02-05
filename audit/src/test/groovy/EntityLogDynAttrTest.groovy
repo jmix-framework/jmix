@@ -27,6 +27,7 @@ import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.dynattr.DynAttrQueryHints
 import io.jmix.dynattr.model.Category
 import io.jmix.dynattr.model.CategoryAttribute
+import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Ignore
@@ -54,7 +55,7 @@ import test_support.testmodel.dynattr.SecondEntity
 
 @ContextConfiguration(
         inheritLocations = false,
-        classes = [CoreConfiguration, DataConfiguration, AuditConfiguration, DynAttrConfiguration, AuditTestConfiguration]
+        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration, AuditConfiguration, DynAttrConfiguration, AuditTestConfiguration]
 )
 class EntityLogDynAttrTest extends AbstractEntityLogTest {
 

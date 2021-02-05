@@ -15,21 +15,22 @@
  */
 package com.haulmont.cuba.core.sys;
 
-import io.jmix.core.FetchPlan;
-import io.jmix.core.FetchPlanRepository;
-import io.jmix.core.Entity;
-import io.jmix.data.PersistenceHints;
 import com.haulmont.cuba.core.Query;
 import com.haulmont.cuba.core.TypedQuery;
-import io.jmix.data.impl.JmixQuery;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
+import io.jmix.core.FetchPlanRepository;
+import io.jmix.data.JmixQuery;
+import io.jmix.data.PersistenceHints;
+import io.jmix.eclipselink.impl.JmixEclipseLinkQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.FlushModeType;
 import javax.persistence.LockModeType;
 import javax.persistence.TemporalType;
@@ -75,7 +76,7 @@ public class QueryImpl<T> implements TypedQuery<T> {
     @Override
     @Nullable
     public T getFirstResult() {
-        return (T) delegate.getSingleResultOrNull();
+        return (T) ((JmixEclipseLinkQuery) delegate).getSingleResultOrNull();
     }
 
     @Override
@@ -215,6 +216,6 @@ public class QueryImpl<T> implements TypedQuery<T> {
     }
 
     public void setSingleResultExpected(boolean singleResultExpected) {
-        delegate.setSingleResultExpected(singleResultExpected);
+        ((JmixEclipseLinkQuery) delegate).setSingleResultExpected(singleResultExpected);
     }
 }

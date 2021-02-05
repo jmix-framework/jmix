@@ -25,6 +25,7 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
     api 'io.jmix.data:jmix-data'
+    api 'io.jmix.data:jmix-eclipselink'
     api 'io.jmix.ui:jmix-ui'
     api 'io.jmix.ui:jmix-ui-data'
     api 'io.jmix.security:jmix-security'

@@ -18,7 +18,7 @@ package com.haulmont.cuba.core.sys;
 import com.haulmont.cuba.core.Transaction;
 import com.haulmont.cuba.core.TransactionParams;
 import io.jmix.core.Stores;
-import io.jmix.data.impl.PersistenceSupport;
+import io.jmix.eclipselink.impl.EclipselinkPersistenceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -32,7 +32,7 @@ public class TransactionImpl implements Transaction {
 
     private final PlatformTransactionManager tm;
     private final PersistenceImpl persistence;
-    private final PersistenceSupport persistenceSupport;
+    private final EclipselinkPersistenceSupport persistenceSupport;
     private final String storeName;
     private final DefaultTransactionDefinition td;
     private TransactionStatus ts;
@@ -41,7 +41,7 @@ public class TransactionImpl implements Transaction {
     private static final Logger log = LoggerFactory.getLogger(TransactionImpl.class);
 
     public TransactionImpl(PlatformTransactionManager transactionManager, PersistenceImpl persistence,
-                           PersistenceSupport persistenceSupport, boolean join,
+                           EclipselinkPersistenceSupport persistenceSupport, boolean join,
                            @Nullable TransactionParams params, String storeName) {
         this.tm = transactionManager;
         this.persistence = persistence;

@@ -35,6 +35,7 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.datatools.DatatoolsConfiguration;
 import io.jmix.datatoolsui.DatatoolsUiConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
@@ -64,7 +65,7 @@ import javax.sql.DataSource;
 @Configuration
 @Import({
         CoreConfiguration.class,
-        DataConfiguration.class,
+        DataConfiguration.class, EclipselinkConfiguration.class,
         UiConfiguration.class, UiDataConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class,

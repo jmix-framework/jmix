@@ -75,7 +75,7 @@ public class NumberIdWorker {
         if (!dataProperties.isUseEntityDataStoreForIdSequence()) {
             return Stores.MAIN;
         } else {
-            return metadataTools.getStoreName(metadata.getClass(entityName));
+            return metadata.getClass(entityName).getStore().getName();
         }
     }
 

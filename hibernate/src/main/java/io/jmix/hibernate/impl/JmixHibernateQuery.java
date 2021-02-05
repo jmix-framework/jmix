@@ -420,7 +420,7 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
         }
 
         if (getQueryOptions().getFirstRow() != null && getQueryOptions().getFirstRow() > 0) {
-            String storeName = metadataTools.getStoreName(effectiveMetaClass);
+            String storeName = effectiveMetaClass.getStore().getName();
             DbmsFeatures dbmsFeatures = dbmsSpecifics.getDbmsFeatures(storeName);
             if (dbmsFeatures.useOrderByForPaging()) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(result);

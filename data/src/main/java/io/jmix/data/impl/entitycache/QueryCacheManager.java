@@ -70,7 +70,7 @@ public class QueryCacheManager {
         QueryResult queryResult = queryCache.get(queryKey);
         if (queryResult != null) {
             MetaClass metaClass = metadata.getClass(queryResult.getType());
-            String storeName = metadataTools.getStoreName(metaClass);
+            String storeName = metaClass.getStore().getName();
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             resultList = new ArrayList<>(queryResult.getResult().size());
             if (!metadataTools.isCacheable(metaClass)) {
@@ -103,7 +103,7 @@ public class QueryCacheManager {
                 ex.fillInStackTrace();
                 throw queryResult.getException();
             }
-            String storeName = metadataTools.getStoreName(metaClass);
+            String storeName = metaClass.getStore().getName();
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object id : queryResult.getResult()) {
                 return (T) em.find(metaClass.getJavaClass(), id, PersistenceHints.builder().withFetchPlans(fetchPlans).build());

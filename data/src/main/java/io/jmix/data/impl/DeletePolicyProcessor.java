@@ -79,8 +79,8 @@ public class DeletePolicyProcessor {
         this.metaClass = metadata.getClass(entity.getClass());
         primaryKeyName = metadataTools.getPrimaryKeyName(metaClass);
 
-        String storeName = metadataTools.getStoreName(metaClass);
-        entityManager = getEntityManager(storeName == null ? Stores.MAIN : storeName);
+        String storeName = metaClass.getStore().getName();
+        entityManager = getEntityManager(storeName);
     }
 
     private EntityManager getEntityManager(String storeName) {

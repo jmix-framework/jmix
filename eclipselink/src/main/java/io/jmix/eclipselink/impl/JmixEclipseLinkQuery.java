@@ -577,7 +577,7 @@ public class JmixEclipseLinkQuery<E> implements JmixQuery<E> {
         }
 
         if (firstResult != null && firstResult > 0) {
-            String storeName = metadataTools.getStoreName(effectiveMetaClass);
+            String storeName = effectiveMetaClass.getStore().getName();
             DbmsFeatures dbmsFeatures = dbmsSpecifics.getDbmsFeatures(storeName);
             if (dbmsFeatures.useOrderByForPaging()) {
                 QueryTransformer transformer = queryTransformerFactory.transformer(result);

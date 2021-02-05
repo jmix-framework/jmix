@@ -173,17 +173,15 @@ public class EntityFetcher {
             if (log.isTraceEnabled()) {
                 log.trace("Object " + entity + " is detached, loading it");
             }
-            String storeName = metadataTools.getStoreName(metadata.getClass(entity));
-            if (storeName != null) {
-                storeAwareLocator.getTransactionTemplate(storeName).executeWithoutResult(transactionStatus -> {
-                    EntityManager em = storeAwareLocator.getEntityManager(storeName);
-                    Object managed = em.find(entity.getClass(), EntityValues.getId(entity));
-                    if (managed != null) { // the instance here can be null if it has been deleted
-                        managedEntityConsumer.accept(managed);
-                        fetch(managed, fetchPlan, visited, optimizeForDetached);
-                    }
-                });
-            }
+            String storeName = metadata.getClass(entity).getStore().getName();
+            storeAwareLocator.getTransactionTemplate(storeName).executeWithoutResult(transactionStatus -> {
+                EntityManager em = storeAwareLocator.getEntityManager(storeName);
+                Object managed = em.find(entity.getClass(), EntityValues.getId(entity));
+                if (managed != null) { // the instance here can be null if it has been deleted
+                    managedEntityConsumer.accept(managed);
+                    fetch(managed, fetchPlan, visited, optimizeForDetached);
+                }
+            });
         }
     }
 

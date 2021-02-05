@@ -203,7 +203,7 @@ public class SortJpqlGenerator {
 
     protected boolean supportsLobSorting(MetaPropertyPath metaPropertyPath) {
         MetaClass metaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
-        String storeName = metadataTools.getStoreName(metaClass);
+        String storeName = metaClass.getStore().getName();
 
         return storeName == null || dbmsSpecifics.getDbmsFeatures(storeName).supportsLobSortingAndFiltering();
     }

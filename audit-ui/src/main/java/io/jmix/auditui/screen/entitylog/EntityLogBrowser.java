@@ -321,7 +321,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     public TreeMap<String, String> getEntityMetaClasses() {
         TreeMap<String, String> options = new TreeMap<>();
 
-        for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (extendedEntities.getExtendedClass(metaClass) == null) {
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metaClass);
                 String originalName = originalMetaClass.getName();

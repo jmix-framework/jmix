@@ -248,7 +248,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     protected void saveItem(EntityLogItem item) {
-        String storeName = metadataTools.getStoreName(metadata.getClass(item.getEntity()));
+        String storeName = metadata.getClass(item.getEntity()).getStore().getName();
         if (item.getDbGeneratedIdEntity() == null) {
             if (Stores.isMain(storeName)) {
                 entityManager.persist(item);
@@ -395,7 +395,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
 
             MetaClass metaClass = metadata.getClass(entityName);
             attributes = filterRemovedAttributes(entity, attributes);
-            String storeName = metadataTools.getStoreName(metaClass);
+            String storeName = metaClass.getStore().getName();
             internalRegisterCreate(entity, entityName, storeName, attributes);
         } catch (Exception e) {
             logError(entity, e);
@@ -490,7 +490,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             MetaClass metaClass = metadata.getClass(entityName);
             attributes = filterRemovedAttributes(entity, attributes);
 
-            String storeName = metadataTools.getStoreName(metaClass);
+            String storeName = metaClass.getStore().getName();
             // Create a new transaction in main DB if we are saving an entity from additional data store
             if (!Stores.isMain(storeName)) {
                 Set<String> finalAttributes = attributes;
@@ -634,7 +634,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
 
             MetaClass metaClass = metadata.getClass(entityName);
             attributes = filterRemovedAttributes(entity, attributes);
-            String storeName = metadataTools.getStoreName(metaClass);
+            String storeName = metaClass.getStore().getName();
             internalRegisterDelete(entity, entityName, storeName, attributes);
         } catch (Exception e) {
             logError(entity, e);

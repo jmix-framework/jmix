@@ -2,6 +2,7 @@ import io.jmix.audit.entity.EntityLogItem
 import io.jmix.core.Entity
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.impl.EntityAttributeChanges
+import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges
 import test_support.testmodel.IdentityEntity
 import test_support.testmodel.IntIdentityEntity
 import test_support.testmodel.StringKeyEntity
@@ -191,7 +192,7 @@ class EntityLogTest extends AbstractEntityLogTest {
             e.name = 'test2'
             e.description = 'description2'
 
-            EntityAttributeChanges changes = new EntityAttributeChanges()
+            EntityAttributeChanges changes = new EclipselinkEntityAttributeChanges()
             changes.addChanges(e)
             changes.addChange('description', 'description1')
             entityLog.registerModify(e, false, changes)

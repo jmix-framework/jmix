@@ -24,7 +24,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.data:jmix-data'
-    testImplementation 'io.jmix.dynattr:jmix-dynattr'
+    api 'io.jmix.data:jmix-eclipselink'
 
     implementation 'org.springframework:spring-orm'
     implementation 'org.springframework:spring-tx'
@@ -33,6 +33,7 @@ dependencies {
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
+    testImplementation 'io.jmix.dynattr:jmix-dynattr'
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'

@@ -35,7 +35,7 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.EntityChangeType;
-import io.jmix.data.PersistenceTools;
+import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges;
 import io.jmix.data.impl.EntityAttributeChanges;
 import io.jmix.data.impl.JpaDataStoreListener;
 import org.apache.commons.lang3.BooleanUtils;
@@ -76,8 +76,6 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     protected MetadataTools metadataTools;
     @Autowired
     protected ExtendedEntities extendedEntities;
-    @Autowired
-    protected PersistenceTools persistenceTools;
     @Autowired
     protected EntityStates entityStates;
     @Autowired

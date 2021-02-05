@@ -113,8 +113,11 @@ public class MainTabSheetActionHandler implements Action.Handler {
         return beans.values().stream()
                 .flatMap(provider ->
                         provider.getActions().stream())
-                .filter(action ->
-                        action.isApplicable(screen))
+                .filter(action -> {
+                    action.refreshState();
+                    return action.isVisible()
+                            && action.isApplicable(screen);
+                })
                 .map(MainTabSheetActionWrapper::new)
                 .collect(Collectors.toList());
     }

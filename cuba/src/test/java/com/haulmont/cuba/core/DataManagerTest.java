@@ -25,7 +25,10 @@ import com.haulmont.cuba.core.model.common.Server;
 import com.haulmont.cuba.core.model.common.User;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
-import io.jmix.core.*;
+import io.jmix.core.DevelopmentException;
+import io.jmix.core.Entity;
+import io.jmix.core.Metadata;
+import io.jmix.core.TimeSource;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,8 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DataManagerTest {
     @Autowired
     protected DataManager dataManager;
-    @Autowired
-    protected MetadataTools metadataTools;
     @Autowired
     protected Persistence persistence;
     @Autowired
@@ -124,7 +125,7 @@ public class DataManagerTest {
         dataManager.commit(new CommitContext(Collections.<Entity>singleton(server)));
 
         LoadContext<Server> loadContext = LoadContext.create(Server.class);
-        loadContext.setQueryString("select s from " + metadataTools.getEntityName(Server.class) + " s");
+        loadContext.setQueryString("select s from " + metadata.getClass(Server.class).getName() + " s");
 
         List<Server> list = dataManager.loadList(loadContext);
         assertTrue(list.size() > 0);

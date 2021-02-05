@@ -80,6 +80,7 @@ dependencies {
     def graphqlVersion = baseVersion
     def imapVersion = baseVersion
     def localfsVersion = baseVersion
+    def awsfsVersion = baseVersion
     def mapsVersion = baseVersion
     def restVersion = baseVersion
     def datatoolsVersion = baseVersion
@@ -133,6 +134,9 @@ dependencies {
 
         api "io.jmix.localfs:jmix-localfs:${snapshotOr(localfsVersion)}"
         api "io.jmix.localfs:jmix-localfs-starter:${snapshotOr(localfsVersion)}"
+
+        api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
+        api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
 
         api "io.jmix.maps:jmix-maps:${snapshotOr(mapsVersion)}"
         api "io.jmix.maps:jmix-maps-ui:${snapshotOr(mapsVersion)}"
@@ -255,6 +259,8 @@ dependencies {
         api 'javax.media.jai:com.springsource.javax.media.jai.core:1.1.3'
 
         api 'com.thoughtworks.xstream:xstream:1.4.13'
+
+        api 'software.amazon.awssdk:s3:2.15.75'
 
         def yargVersion = '2.2.9'
         api "com.haulmont.yarg:yarg-api:$yargVersion"

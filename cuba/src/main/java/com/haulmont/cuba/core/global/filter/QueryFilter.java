@@ -212,9 +212,8 @@ public class QueryFilter extends FilterParser implements Serializable {
             }
         } else if (condition instanceof Clause) {
             Clause clause = (Clause) condition;
-            result = new JpqlCondition(
-                    clause.getJoins().isEmpty() ? null : clause.getJoins().iterator().next(),
-                    clause.getContent());
+            result = JpqlCondition.create(clause.getContent(),
+                    clause.getJoins().isEmpty() ? null : clause.getJoins().iterator().next());
         } else {
             throw new UnsupportedOperationException("Condition is not supported: " + condition);
         }

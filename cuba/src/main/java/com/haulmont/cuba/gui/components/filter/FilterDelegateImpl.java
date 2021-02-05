@@ -1592,7 +1592,7 @@ public class FilterDelegateImpl implements FilterDelegate {
 
         if (getResultingManualApplyRequired()) {
             // set initial denying condition to get empty datasource before explicit filter applying
-            JpqlCondition denyingCondition = new JpqlCondition("0<>0");
+            JpqlCondition denyingCondition = JpqlCondition.create("0<>0", null);
             this.dataLoader.setCondition(denyingCondition);
         }
 

@@ -43,15 +43,10 @@ class LiquibaseChangeLogProcessorTest extends Specification {
         def processor = new LiquibaseChangeLogProcessor(environment, jmixModules)
 
         when:
-        def fileName = processor.createMasterChangeLog(Stores.MAIN)
+        def masterFileContent = processor.createMasterChangeLog(Stores.MAIN)
 
         then:
-        def masterFile = new File(fileName)
-        masterFile.exists()
-        masterFile.canonicalPath == new File(environment.getProperty('jmix.core.workDir'), 'liquibase-changelog.xml').canonicalPath
-
-        and:
-        def databaseChangeLog = new XmlSlurper().parse(masterFile)
+        def databaseChangeLog = new XmlSlurper().parseText(masterFileContent)
         databaseChangeLog.include[0].@file == '/io/jmix/data/liquibase/changelog.xml'
         databaseChangeLog.include[1].@file == '/test_support_modules/addon/liquibase/changelog.xml'
         databaseChangeLog.include[2].@file == '/test_support_modules/app/liquibase/changelog.xml'
@@ -61,15 +56,10 @@ class LiquibaseChangeLogProcessorTest extends Specification {
         def processor = new LiquibaseChangeLogProcessor(environment, jmixModules)
 
         when:
-        def fileName = processor.createMasterChangeLog('db1')
+        def masterFileContent = processor.createMasterChangeLog('db1')
 
         then:
-        def masterFile = new File(fileName)
-        masterFile.exists()
-        masterFile.canonicalPath == new File(environment.getProperty('jmix.core.workDir'), 'db1-liquibase-changelog.xml').canonicalPath
-
-        and:
-        def databaseChangeLog = new XmlSlurper().parse(masterFile)
+        def databaseChangeLog = new XmlSlurper().parseText(masterFileContent)
         databaseChangeLog.include[0].@file == '/test_support_modules/addon/liquibase/db1-changelog.xml'
         databaseChangeLog.include[1].@file == '/test_support_modules/app/liquibase/db1-changelog.xml'
     }

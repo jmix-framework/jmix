@@ -16,23 +16,23 @@
 
 package io.jmix.autoconfigure.data;
 
+import io.jmix.data.impl.liquibase.JmixLiquibase;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 
 import javax.sql.DataSource;
 
-public class JmixLiquibase {
+public class JmixLiquibaseCreator {
 
     public static SpringLiquibase create(DataSource dataSource,
                                          LiquibaseProperties properties,
                                          LiquibaseChangeLogProcessor processor,
                                          String storeName) {
-        properties.setChangeLog("file:" + processor.createMasterChangeLog(storeName));
 
-        SpringLiquibase liquibase = new SpringLiquibase();
+        JmixLiquibase liquibase = new JmixLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog(properties.getChangeLog());
+        liquibase.setChangeLogContent(processor.createMasterChangeLog(storeName));
         liquibase.setContexts(properties.getContexts());
         liquibase.setDefaultSchema(properties.getDefaultSchema());
         liquibase.setDropFirst(properties.isDropFirst());

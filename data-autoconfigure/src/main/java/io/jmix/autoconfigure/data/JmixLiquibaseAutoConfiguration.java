@@ -47,6 +47,6 @@ public class JmixLiquibaseAutoConfiguration {
     @ConditionalOnClass({SpringLiquibase.class})
     @ConditionalOnMissingBean(name = "jmix_Liquibase")
     public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        return JmixLiquibase.create(dataSource, liquibaseProperties(), processor, Stores.MAIN);
+        return JmixLiquibaseCreator.create(dataSource, liquibaseProperties(), processor, Stores.MAIN);
     }
 }

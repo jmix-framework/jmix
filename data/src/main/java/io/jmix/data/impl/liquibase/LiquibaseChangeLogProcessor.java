@@ -25,13 +25,11 @@ import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +47,10 @@ public class LiquibaseChangeLogProcessor {
         this.jmixModules = jmixModules;
     }
 
+    /**
+     * @return master changelog content
+     */
     public String createMasterChangeLog(String storeName) {
-        String fileName = getOutputFileName(storeName);
-
         List<String> moduleFiles = new ArrayList<>();
 
         for (JmixModuleDescriptor module : jmixModules.getAll()) {
@@ -75,27 +74,7 @@ public class LiquibaseChangeLogProcessor {
         } else {
             log.debug("Did not find changelogs in {}", jmixModules.getAll());
         }
-        log.info("Creating file " + fileName);
-
-        File outFile;
-        try {
-            outFile = new File(fileName).getCanonicalFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        if (!outFile.getParentFile().exists()) {
-            if (!outFile.getParentFile().mkdirs()) {
-                throw new RuntimeException("Cannot create directory " + outFile.getParentFile());
-            }
-        }
-        try (OutputStream os = new FileOutputStream(outFile);
-             Writer writer = new OutputStreamWriter(os, StandardCharsets.UTF_8)) {
-            Dom4j.writeDocument(doc, true, writer);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return fileName;
+        return Dom4j.writeDocument(doc, true);
     }
 
     protected String getOutputFileName(String storeName) {

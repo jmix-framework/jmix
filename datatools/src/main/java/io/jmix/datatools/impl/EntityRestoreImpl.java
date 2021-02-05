@@ -58,8 +58,8 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
 
-            if(!metadataTools.isPersistent(entity.getClass())) {
-                log.warn("Unable to restore non-persistent entity {}", entity);
+            if(!metadataTools.isJpaEntity(entity.getClass())) {
+                log.warn("Unable to restore non-JPA entity {}", entity);
                 continue;
             }
 
@@ -196,7 +196,7 @@ public class EntityRestoreImpl implements EntityRestore {
         metaClassesToRestore.add(detailMetaClass);
         metaClassesToRestore.addAll(detailMetaClass.getDescendants());
         for (MetaClass metaClassToRestore : metaClassesToRestore) {
-            if (!metadataTools.isPersistent(metaClassToRestore)) {
+            if (!metadataTools.isJpaEntity(metaClassToRestore)) {
                 continue;
             }
             String jpql = getOnDeleteInverseCascadePropertyQueryString(metaClassToRestore, property);

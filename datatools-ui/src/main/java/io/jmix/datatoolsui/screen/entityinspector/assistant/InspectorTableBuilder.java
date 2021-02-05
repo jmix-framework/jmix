@@ -93,7 +93,7 @@ public class InspectorTableBuilder {
         List<MetaProperty> systemProperties = new ArrayList<>(10);
         for (MetaProperty metaProperty : metaClass.getProperties()) {
             //don't show embedded, transient & multiple referred entities
-            if (isEmbedded(metaProperty) || !metadataTools.isPersistent(metaProperty)) {
+            if (isEmbedded(metaProperty) || !metadataTools.isJpa(metaProperty)) {
                 continue;
             }
 

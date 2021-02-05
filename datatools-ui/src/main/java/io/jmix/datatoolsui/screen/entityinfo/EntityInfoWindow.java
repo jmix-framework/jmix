@@ -130,7 +130,7 @@ public class EntityInfoWindow extends Screen {
 
         if (sqlGenerationService == null
                 || !uiProperties.isEntityInfoScriptsEnabled()
-                || !metadataTools.isPersistent(entity.getClass())) {
+                || !metadataTools.isJpaEntity(entity.getClass())) {
             buttonsPanel.setVisible(false);
         }
     }
@@ -151,16 +151,16 @@ public class EntityInfoWindow extends Screen {
         Class<?> javaClass = metaClass.getJavaClass();
         items.add(createItem("entityInfo.entityClass", javaClass.getName()));
 
-        if ((metadataTools.isEmbeddable(metaClass) || metadataTools.isPersistent(metaClass))
+        if ((metadataTools.isJpaEmbeddable(metaClass) || metadataTools.isJpaEntity(metaClass))
                 && isNewEntity) {
             items.add(createItem("entityInfo.state",
                     messageBundle.getMessage("entityInfo.isNew")));
         }
 
-        if (metadataTools.isEmbeddable(metaClass)) {
+        if (metadataTools.isJpaEmbeddable(metaClass)) {
             items.add(createItem("entityInfo.specificInstance",
                     messageBundle.getMessage("entityInfo.embeddableInstance")));
-        } else if (!metadataTools.isPersistent(metaClass)) {
+        } else if (!metadataTools.isJpaEntity(metaClass)) {
             items.add(createItem("entityInfo.specificInstance",
                     messageBundle.getMessage("entityInfo.nonPersistentInstance")));
         }

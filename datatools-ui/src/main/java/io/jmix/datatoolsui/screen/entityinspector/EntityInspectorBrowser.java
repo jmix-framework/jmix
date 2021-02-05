@@ -182,20 +182,13 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected Map<String, MetaClass> getEntitiesLookupFieldOptions() {
         Map<String, MetaClass> options = new TreeMap<>();
 
-        for (MetaClass metaClass : metadata.getClasses()) {
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (readPermitted(metaClass)) {
-                Class javaClass = metaClass.getJavaClass();
-                if (Entity.class.isAssignableFrom(javaClass) && isNotAbstract(javaClass)) {
-                    options.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")", metaClass);
-                }
+                options.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")", metaClass);
             }
         }
 
         return options;
-    }
-
-    private boolean isNotAbstract(Class javaClass) {
-        return !javaClass.isInterface() && !Modifier.isAbstract(javaClass.getModifiers());
     }
 
     private void showEntities() {
@@ -454,7 +447,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         EntityImportPlanBuilder planBuilder = entityImportPlans.builder(metaClass.getJavaClass());
 
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (!metadataTools.isPersistent(metaProperty)) {
+            if (!metadataTools.isJpa(metaProperty)) {
                 continue;
             }
 

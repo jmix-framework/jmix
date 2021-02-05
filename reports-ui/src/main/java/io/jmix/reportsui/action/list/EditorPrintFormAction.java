@@ -24,7 +24,6 @@ import io.jmix.reportsui.screen.ReportGuiManager;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.component.Component;
-import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
@@ -33,9 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@StudioAction(
-        target = "io.jmix.ui.screen.EditorScreen",
-        description = "Prints the reports for a list of entity instances associated with a list component")
 @ActionType(EditorPrintFormAction.ID)
 public class EditorPrintFormAction extends AbstractPrintFormAction {
 

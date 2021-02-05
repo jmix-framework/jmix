@@ -54,6 +54,7 @@ import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.S3Object;
 import software.amazon.awssdk.services.s3.model.UploadPartRequest;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -75,7 +76,14 @@ public class AwsFileStorage implements FileStorage {
     @Autowired
     protected AwsFileStorageProperties properties;
 
+    boolean useConfigurationProperties = true;
+
+    protected String accessKey;
+    protected String secretAccessKey;
+    protected String region;
     protected String bucket;
+    protected int chunkSize;
+    protected String endpointUrl;
 
     @Autowired
     protected TimeSource timeSource;
@@ -90,23 +98,40 @@ public class AwsFileStorage implements FileStorage {
         this.storageName = storageName;
     }
 
-    public AwsFileStorage(String storageName, String bucket) {
+    /**
+     * Optional constructor that allows you to override {@link AwsFileStorageProperties}.
+     */
+    public AwsFileStorage(String storageName, String accessKey, String secretAccessKey,
+                          String region, String bucket, int chunkSize, @Nullable String endpointUrl) {
+        this.useConfigurationProperties = false;
         this.storageName = storageName;
+        this.accessKey = accessKey;
+        this.secretAccessKey = secretAccessKey;
+        this.region = region;
         this.bucket = bucket;
+        this.chunkSize = chunkSize;
+        this.endpointUrl = endpointUrl;
     }
 
     @EventListener
     protected void initS3Client(ApplicationStartedEvent event) {
         refreshS3Client();
-        if (this.bucket == null) {
+    }
+
+    protected void refreshProperties() {
+        if (useConfigurationProperties) {
+            this.accessKey = properties.getAccessKey();
+            this.secretAccessKey = properties.getSecretAccessKey();
+            this.region = properties.getRegion();
             this.bucket = properties.getBucket();
+            this.chunkSize = properties.getChunkSize();
+            this.endpointUrl = properties.getEndpointUrl();
         }
     }
 
     protected AwsCredentialsProvider getAwsCredentialsProvider() {
-        if (properties.getAccessKey() != null && properties.getSecretAccessKey() != null) {
-            AwsCredentials awsCredentials = AwsBasicCredentials.create(
-                    properties.getAccessKey(), properties.getSecretAccessKey());
+        if (accessKey != null && secretAccessKey != null) {
+            AwsCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretAccessKey);
             return StaticCredentialsProvider.create(awsCredentials);
         } else {
             return DefaultCredentialsProvider.builder().build();
@@ -114,17 +139,18 @@ public class AwsFileStorage implements FileStorage {
     }
 
     public void refreshS3Client() {
+        refreshProperties();
         AwsCredentialsProvider awsCredentialsProvider = getAwsCredentialsProvider();
-        if (Strings.isNullOrEmpty(properties.getEndpointUrl())) {
+        if (Strings.isNullOrEmpty(endpointUrl)) {
             s3ClientReference.set(S3Client.builder()
                     .credentialsProvider(awsCredentialsProvider)
-                    .region(Region.of(properties.getRegion()))
+                    .region(Region.of(region))
                     .build());
         } else {
             s3ClientReference.set(S3Client.builder()
                     .credentialsProvider(awsCredentialsProvider)
-                    .endpointOverride(URI.create(properties.getEndpointUrl()))
-                    .region(Region.of(properties.getRegion()))
+                    .endpointOverride(URI.create(endpointUrl))
+                    .region(Region.of(region))
                     .build());
         }
     }
@@ -165,7 +191,7 @@ public class AwsFileStorage implements FileStorage {
         try {
             byte[] data = IOUtils.toByteArray(inputStream);
             S3Client s3Client = s3ClientReference.get();
-            int chunkSize = properties.getChunkSize() * 1024;
+            int chunkSizeBytes = this.chunkSize * 1024;
 
             CreateMultipartUploadRequest createMultipartUploadRequest = CreateMultipartUploadRequest.builder()
                     .bucket(bucket)
@@ -174,7 +200,7 @@ public class AwsFileStorage implements FileStorage {
             CreateMultipartUploadResponse response = s3Client.createMultipartUpload(createMultipartUploadRequest);
 
             List<CompletedPart> completedParts = new ArrayList<>();
-            for (int i = 0; i * chunkSize < data.length; i++) {
+            for (int i = 0; i * chunkSizeBytes < data.length; i++) {
                 int partNumber = i + 1;
                 UploadPartRequest uploadPartRequest = UploadPartRequest.builder()
                         .bucket(bucket)
@@ -182,8 +208,8 @@ public class AwsFileStorage implements FileStorage {
                         .uploadId(response.uploadId())
                         .partNumber(partNumber)
                         .build();
-                int endChunkPosition = Math.min(partNumber * chunkSize, data.length);
-                byte[] chunkBytes = getChunkBytes(data, i * chunkSize, endChunkPosition);
+                int endChunkPosition = Math.min(partNumber * chunkSizeBytes, data.length);
+                byte[] chunkBytes = getChunkBytes(data, i * chunkSizeBytes, endChunkPosition);
                 String eTag = s3Client.uploadPart(uploadPartRequest, RequestBody.fromBytes(chunkBytes)).eTag();
                 CompletedPart part = CompletedPart.builder()
                         .partNumber(partNumber)
@@ -258,5 +284,29 @@ public class AwsFileStorage implements FileStorage {
                 .map(S3Object::key)
                 .collect(Collectors.toList())
                 .contains(reference.getPath());
+    }
+
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
+
+    public void setSecretAccessKey(String secretAccessKey) {
+        this.secretAccessKey = secretAccessKey;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
+    }
+
+    public void setChunkSize(int chunkSize) {
+        this.chunkSize = chunkSize;
+    }
+
+    public void setEndpointUrl(@Nullable String endpointUrl) {
+        this.endpointUrl = endpointUrl;
     }
 }

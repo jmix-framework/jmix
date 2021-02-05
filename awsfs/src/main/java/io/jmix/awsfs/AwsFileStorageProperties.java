@@ -58,7 +58,7 @@ public class AwsFileStorageProperties {
     }
 
     /**
-     * Amazon S3 chunk size.
+     * Amazon S3 chunk size (kB).
      */
     public int getChunkSize() {
         return chunkSize;

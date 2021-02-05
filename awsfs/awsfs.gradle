@@ -25,7 +25,7 @@ dependencies {
 
     api 'io.jmix.core:jmix-core'
 
-    implementation 'software.amazon.awssdk:s3:2.7.21'
+    implementation 'software.amazon.awssdk:s3'
 
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

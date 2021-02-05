@@ -20,6 +20,7 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
@@ -46,6 +47,7 @@ import static test_support.RestTestUtils.getAuthToken;
 @ContextConfiguration(classes = {
         CoreConfiguration.class,
         DataConfiguration.class,
+        EclipselinkConfiguration.class,
         SecurityConfiguration.class,
         RestConfiguration.class,
         JmixRestTestConfiguration.class})

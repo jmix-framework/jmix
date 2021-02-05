@@ -51,10 +51,6 @@ public abstract class AbstractValuePickerLoader<T extends ValuePicker> extends A
         resultComponent.addAction(actions.create(ValueClearAction.ID));
     }
 
-    protected Actions getActions() {
-        return applicationContext.getBean(Actions.class);
-    }
-
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         return loadValuePickerDeclarativeAction(actionsHolder, element);

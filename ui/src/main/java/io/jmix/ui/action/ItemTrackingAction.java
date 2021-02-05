@@ -19,8 +19,6 @@ package io.jmix.ui.action;
 import io.jmix.ui.action.list.SecuredListAction;
 import io.jmix.ui.component.ListComponent;
 
-import javax.annotation.Nullable;
-
 /**
  * Standard action that changes enabled property depending on selection of a bound {@link ListComponent}.
  * <br>
@@ -45,45 +43,6 @@ public class ItemTrackingAction extends SecuredListAction {
     }
 
     public ItemTrackingAction(String id) {
-        this(null, id);
-    }
-
-    public ItemTrackingAction(@Nullable ListComponent target, String id) {
         super(id);
-
-        this.target = target;
-    }
-
-    @Override
-    protected boolean isApplicable() {
-        return target != null
-                && target.getSingleSelected() != null;
-    }
-
-    @Override
-    protected boolean isPermitted() {
-        if (target == null) {
-            return false;
-        }
-
-        Object singleSelected = target.getSingleSelected();
-        if (singleSelected == null) {
-            return false;
-        }
-
-        //TODO: access manager
-//        if (constraintOperationType != null) {
-//            boolean isPermitted;
-//            if (constraintCode != null) {
-//                isPermitted = security.isPermitted(singleSelected, constraintCode);
-//            } else {
-//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-//            }
-//            if (!isPermitted) {
-//                return false;
-//            }
-//        }
-
-        return true;
     }
 }

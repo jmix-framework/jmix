@@ -85,10 +85,6 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
         return applicationContext.getBean(EntityFieldCreationSupport.class);
     }
 
-    protected Actions getActions() {
-        return applicationContext.getBean(Actions.class);
-    }
-
     protected Metadata getMetadata() {
         return applicationContext.getBean(Metadata.class);
     }

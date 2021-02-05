@@ -50,9 +50,9 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
 
     @Override
     protected boolean isApplicable() {
-        return target != null
-                && target.getSingleSelected() != null
-                && super.isApplicable();
+        return super.isApplicable()
+                && target != null
+                && target.getSingleSelected() != null;
     }
 
     @Override

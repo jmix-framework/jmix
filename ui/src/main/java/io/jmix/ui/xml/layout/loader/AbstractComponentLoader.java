@@ -204,6 +204,10 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return applicationContext.getBean(Messages.class);
     }
 
+    protected Actions getActions() {
+        return applicationContext.getBean(Actions.class);
+    }
+
     protected MessageTools getMessageTools() {
         return applicationContext.getBean(MessageTools.class);
     }
@@ -585,7 +589,8 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         Action targetAction;
 
         if (shouldTrackSelection) {
-            targetAction = new ItemTrackingAction(id);
+            Actions actions = getActions();
+            targetAction = actions.create(ItemTrackingAction.ID, id);
             loadActionConstraint(targetAction, element);
         } else {
             targetAction = new BaseAction(id);
@@ -769,7 +774,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
     protected Action loadValuePickerDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String type = element.attributeValue("type");
         if (StringUtils.isNotEmpty(type)) {
-            Actions actions = applicationContext.getBean(Actions.class);
+            Actions actions = getActions();
 
             String id = loadActionId(element);
             Action action = actions.create(type, id);

@@ -75,10 +75,6 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
         getResultComponent().addAction(actions.create(EntityOpenAction.ID));
     }
 
-    protected Actions getActions() {
-        return applicationContext.getBean(Actions.class);
-    }
-
     protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {
         String metaClass = element.attributeValue("metaClass");
         if (StringUtils.isNotEmpty(metaClass)) {

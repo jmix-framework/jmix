@@ -195,8 +195,8 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
 
         // check that entities are placed in the same data store
         MetaClass propertyMetaClass = metaProperty.getRange().asClass();
-        String propertyStore = metadataTools.getStoreName(propertyMetaClass);
-        String effectiveStore = metadataTools.getStoreName(metaClass);
+        String propertyStore = propertyMetaClass.getStore().getName();
+        String effectiveStore = metaClass.getStore().getName();
         if (!Objects.equals(effectiveStore, propertyStore)) {
             return false;
         }

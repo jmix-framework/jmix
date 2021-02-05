@@ -506,7 +506,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
                 return !property.getRange().isClass()
                         || metadataTools.isEmbedded(property)
                         || metadataTools.isEmbeddedId(property)
-                        || !metadataTools.isPersistent(property);
+                        || !metadataTools.isJpa(property);
             }
         });
     }

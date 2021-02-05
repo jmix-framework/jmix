@@ -298,7 +298,7 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
             getEntityEntry(merged).setNew(false);
             // copy non-persistent attributes to the resulting merged instance
             for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
-                if (!metadataTools.isPersistent(property) && !property.isReadOnly()) {
+                if (!metadataTools.isJpa(property) && !property.isReadOnly()) {
                     // copy using reflection to avoid executing getter/setter code
                     Field field = FieldUtils.getField(entity.getClass(), property.getName(), true);
                     if (field != null) {
@@ -360,7 +360,7 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
                     continue;
 
                 Class refClass = srcProperty.getRange().asClass().getJavaClass();
-                if (!metadataTools.isPersistent(refClass))
+                if (!metadataTools.isJpaEntity(refClass))
                     continue;
 
                 if (srcProperty.getRange().getCardinality().isMany()) {

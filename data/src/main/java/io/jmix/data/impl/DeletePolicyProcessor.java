@@ -263,7 +263,7 @@ public class DeletePolicyProcessor {
                     MetaClass ancestor = entityMetaClass.getAncestor();
                     if (ancestor == null)
                         throw new IllegalStateException("Cannot determine a persistent entity for property " + property);
-                    if (metadataTools.isPersistent(ancestor)) {
+                    if (metadataTools.isJpaEntity(ancestor)) {
                         entityMetaClass = ancestor;
                     } else {
                         break;

@@ -510,8 +510,8 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
                 return !property.getRange().isClass()
                         || metadataTools.isEmbedded(property)
                         || metadataTools.isEmbeddedId(property)
-                        || !metadataTools.isPersistent(property)
-                        || !metadataTools.isPersistent(property.getRange().asClass());
+                        || !metadataTools.isJpa(property)
+                        || !metadataTools.isJpaEntity(property.getRange().asClass());
             }
         });
     }

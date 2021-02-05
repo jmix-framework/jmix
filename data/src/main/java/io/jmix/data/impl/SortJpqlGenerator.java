@@ -91,7 +91,7 @@ public class SortJpqlGenerator {
                 List<String> uniqueSortExpressions = new ArrayList<>();
                 MetaClass pkMetaClass = idProperty.getRange().asClass();
                 for (MetaProperty metaProperty : pkMetaClass.getProperties()) {
-                    if (metadataTools.isPersistent(metaProperty)) {
+                    if (metadataTools.isJpa(metaProperty)) {
                         MetaPropertyPath idPropertyPath = metaClass.getPropertyPath(String.format("%s.%s", pkName, metaProperty.getName()));
                         List<String> currentSortExpressions = getPropertySortExpressions(Objects.requireNonNull(idPropertyPath), asc);
                         if (currentSortExpressions.stream().noneMatch(sortExpressions::contains)) {
@@ -124,7 +124,7 @@ public class SortJpqlGenerator {
     protected List<String> getPropertySortExpressions(MetaPropertyPath metaPropertyPath, boolean sortDirectionAsc) {
         MetaProperty metaProperty = metaPropertyPath.getMetaProperty();
 
-        if (metadataTools.isPersistent(metaPropertyPath)) {
+        if (metadataTools.isJpa(metaPropertyPath)) {
             if (!metaProperty.getRange().isClass()) {
 
                 String sortExpression = metadataTools.isLob(metaProperty) ?
@@ -158,7 +158,7 @@ public class SortJpqlGenerator {
         if (!properties.isEmpty()) {
             List<String> sortExpressions = new ArrayList<>(properties.size());
             for (MetaProperty metaProperty : properties) {
-                if (metadataTools.isPersistent(metaProperty)) {
+                if (metadataTools.isJpa(metaProperty)) {
                     MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath, metaProperty);
                     sortExpressions.addAll(getPropertySortExpressions(childPropertyPath, sortDirectionAsc));
                 }
@@ -177,7 +177,7 @@ public class SortJpqlGenerator {
             List<String> sortExpressions = new ArrayList<>(related.size());
             for (String item : related) {
                 MetaProperty metaProperty = propertyMetaClass.getProperty(item);
-                if (metadataTools.isPersistent(metaProperty)) {
+                if (metadataTools.isJpa(metaProperty)) {
                     List<MetaProperty> metaProperties = Arrays.asList(metaPropertyPath.getMetaProperties());
                     metaProperties.set(metaProperties.size() - 1, metaProperty);
                     MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath.getMetaClass(),

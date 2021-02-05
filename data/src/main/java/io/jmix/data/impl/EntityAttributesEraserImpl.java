@@ -152,7 +152,7 @@ public class EntityAttributesEraserImpl implements EntityAttributesEraser {
     }
 
     protected boolean isPersistentEntityProperty(MetaProperty metaProperty) {
-        return metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty);
+        return metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty);
     }
 
     protected interface Visitor {

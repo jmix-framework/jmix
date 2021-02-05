@@ -75,7 +75,7 @@ public class GeneratedNumberIdEntityInitializer implements EntityInitializer, Or
 
     private String getEntityNameForIdGeneration(MetaClass metaClass) {
         List<MetaClass> persistentAncestors = metaClass.getAncestors().stream()
-                .filter(mc -> metadataTools.isPersistent(mc)) // filter out all mapped superclasses
+                .filter(mc -> metadataTools.isJpaEntity(mc)) // filter out all mapped superclasses
                 .collect(Collectors.toList());
         if (persistentAncestors.size() > 0) {
             MetaClass root = persistentAncestors.get(persistentAncestors.size() - 1);

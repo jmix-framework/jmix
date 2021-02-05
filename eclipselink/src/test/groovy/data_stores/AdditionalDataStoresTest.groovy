@@ -47,7 +47,7 @@ class AdditionalDataStoresTest extends DataSpec {
         then:
         dbCustMetaClass.getStore().name == 'db1'
         dbCustMetaClass.getStore().descriptor.beanName == 'data_JpaDataStore'
-        dbCustMetaClass.getStore().descriptor.persistent
+        dbCustMetaClass.getStore().descriptor.jpa
 
         when:
         def memCustMetaClass = metadata.getClass(Mem1Customer)
@@ -55,7 +55,7 @@ class AdditionalDataStoresTest extends DataSpec {
         then:
         memCustMetaClass.getStore().name == 'mem1'
         memCustMetaClass.getStore().descriptor.beanName == 'test_InMemoryDataStore'
-        !memCustMetaClass.getStore().descriptor.persistent
+        !memCustMetaClass.getStore().descriptor.jpa
     }
 
     def "save and load in additional store"() {

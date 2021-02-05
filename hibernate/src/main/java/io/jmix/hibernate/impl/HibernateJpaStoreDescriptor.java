@@ -28,7 +28,7 @@ public class HibernateJpaStoreDescriptor implements StoreDescriptor {
     }
 
     @Override
-    public boolean isPersistent() {
+    public boolean isJpa() {
         return true;
     }
 }

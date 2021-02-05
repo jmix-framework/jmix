@@ -187,7 +187,7 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         for (FetchPlanProperty property : fetchPlan.getProperties()) {
             MetaProperty metaProperty = metaClass.getProperty(property.getName());
             if (!metaProperty.getRange().isClass() && !isLazyFetchedLocalAttribute(metaProperty)
-                    || !metadataTools.isPersistent(metaProperty)) {
+                    || !metadataTools.isJpa(metaProperty)) {
                 continue;
             }
 

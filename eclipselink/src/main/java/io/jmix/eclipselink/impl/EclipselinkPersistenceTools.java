@@ -100,7 +100,7 @@ public class EclipselinkPersistenceTools implements PersistenceTools {
         HashSet<String> result = new HashSet<>();
         if (entityStates.isNew(entity)) {
             for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
-                if (metadataTools.isPersistent(property))
+                if (metadataTools.isJpa(property))
                     result.add(property.getName());
             }
         } else {

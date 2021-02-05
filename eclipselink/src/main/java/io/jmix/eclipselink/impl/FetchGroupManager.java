@@ -146,7 +146,7 @@ public class FetchGroupManager {
             if (field.metaProperty.getRange().isClass()
                     && !metadataTools.isEmbedded(field.metaProperty)
                     && !metadataTools.isEmbeddedId(field.metaProperty)
-                    && metadataTools.isPersistent(field.metaProperty.getRange().asClass())) {
+                    && metadataTools.isJpaEntity(field.metaProperty.getRange().asClass())) {
                 refFields.add(field);
             }
         }
@@ -381,7 +381,7 @@ public class FetchGroupManager {
             if (pkProperty != null && !UUID.class.equals(pkProperty.getJavaType())) {
                 String uuidPropName = metadataTools.getUuidPropertyName(entityClass);
                 MetaProperty uuidProp = uuidPropName != null ? entityMetaClass.findProperty(uuidPropName) : null;
-                if (uuidProp != null && metadataTools.isPersistent(uuidProp)) {
+                if (uuidProp != null && metadataTools.isJpa(uuidProp)) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, uuidPropName));
                 }
             }
@@ -398,7 +398,7 @@ public class FetchGroupManager {
             String propertyName = property.getName();
             MetaProperty metaProperty = entityMetaClass.getProperty(propertyName);
 
-            if (metadataTools.isPersistent(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
+            if (metadataTools.isJpa(metaProperty) && (metaProperty.getRange().isClass() || useFetchGroup)) {
                 FetchGroupField field = createFetchGroupField(entityClass, parentField, propertyName, property.getFetchMode());
                 fetchGroupFields.add(field);
                 if (property.getFetchPlan() != null) {
@@ -437,7 +437,7 @@ public class FetchGroupManager {
 
         if (useFetchGroup) {
             for (MetaProperty metaProperty : entityMetaClass.getProperties()) {
-                if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)
+                if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
                         && !metadataTools.isEmbedded(metaProperty)
                         && !fetchPlan.containsProperty(metaProperty.getName())) {
                     fetchGroupFields.add(createFetchGroupField(entityClass, parentField, metaProperty.getName(), FetchMode.AUTO, true));

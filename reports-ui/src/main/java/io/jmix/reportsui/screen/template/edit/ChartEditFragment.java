@@ -322,8 +322,9 @@ public class ChartEditFragment extends DescriptionEditFragment {
         private final boolean up;
 
         ChartSeriesMoveAction(boolean up) {
-            super(seriesTable, up ? "up" : "down");
+            super(up ? "up" : "down");
             setCaption(messages.getMessage(getClass(), up ? "generalFrame.up" : "generalFrame.down"));
+            this.target = seriesTable;
             this.up = up;
         }
 

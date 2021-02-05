@@ -435,7 +435,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
 
                         @Override
                         public boolean skip(MetaProperty property) {
-                            return !metadataTools.isPersistent(property) || !property.getRange().isClass();
+                            return !metadataTools.isJpa(property) || !property.getRange().isClass();
                         }
                     });
                 }

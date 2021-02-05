@@ -743,7 +743,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     protected Map<String, String> getEntityOptions() {
         Map<String, String> optionsMap = new TreeMap<>();
-        for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (!metadataTools.isSystemLevel(metaClass)) {
                 if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                     continue;

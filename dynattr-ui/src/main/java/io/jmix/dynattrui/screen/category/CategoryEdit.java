@@ -129,7 +129,7 @@ public class CategoryEdit extends StandardEditor<Category> {
 
     protected void initEntityTypeField() {
         Map<String, MetaClass> options = new TreeMap<>();//the map sorts meta classes by the string key
-        for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.hasUuid(metaClass)) {
                 continue;
             }

@@ -68,7 +68,7 @@ public abstract class BaseEmbeddingStrategy implements EmbeddingStrategy {
         if (getWindowId(frame) != null) {
 
             MetaClass entityMetaClass = getEntityMetaClass(component);
-            if (metadataTools.isPersistent(entityMetaClass)) {
+            if (metadataTools.isJpaEntity(entityMetaClass)) {
 
                 List<AttributeDefinition> attributes = findVisibleAttributes(
                         entityMetaClass,

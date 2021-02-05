@@ -121,7 +121,7 @@ public class DetailsStepFrame extends StepFrame {
 
         protected Map<String, MetaClass> getAvailableEntities() {
             Map<String, MetaClass> result = new TreeMap<>(String::compareTo);
-            Collection<MetaClass> classes = wizard.metadataTools.getAllPersistentMetaClasses();
+            Collection<MetaClass> classes = wizard.metadataTools.getAllJpaEntityMetaClasses();
             for (MetaClass metaClass : classes) {
                 MetaClass effectiveMetaClass = wizard.extendedEntities.getEffectiveMetaClass(metaClass);
                 if (!wizard.reportWizardService.isEntityAllowedForReportWizard(effectiveMetaClass)) {

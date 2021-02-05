@@ -116,7 +116,7 @@ public class EntityTreeNodeDs extends CollectionContainerImpl<EntityTreeNode> {
                 continue;
             }
 
-            if (persistentOnly && !metadataTools.isPersistent(child.getWrappedMetaProperty())) {
+            if (persistentOnly && !metadataTools.isJpa(child.getWrappedMetaProperty())) {
                 continue;
             }
 

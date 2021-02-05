@@ -435,7 +435,7 @@ public class ReportingWizardImpl implements ReportingWizard {
     @Override
     public boolean isEntityAllowedForReportWizard(final MetaClass effectiveMetaClass) {
         if (metadataTools.isSystemLevel(effectiveMetaClass)
-                || metadataTools.isEmbeddable(effectiveMetaClass)
+                || metadataTools.isJpaEmbeddable(effectiveMetaClass)
                 || effectiveMetaClass.getProperties().isEmpty()) {
             return false;
         }

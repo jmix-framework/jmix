@@ -28,8 +28,8 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
     public void run(Project project, SourceSet sourceSet, Set<String> allStores) {
         for (String storeName : allStores) {
             Configuration conf = project.getConfigurations().findByName(sourceSet.getCompileClasspathConfigurationName());
-            if (!findEclipseLink(conf.getResolvedConfiguration().getFirstLevelModuleDependencies())) {
-                project.getLogger().info("EclipseLink not found in classpath, EclipseLink enhancer will not run");
+            if (!findJpaDependencies(conf.getResolvedConfiguration().getFirstLevelModuleDependencies())) {
+                project.getLogger().info("Jpa dependencies not found in classpath, EclipseLink enhancer will not run");
                 return;
             }
 
@@ -53,11 +53,11 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
         }
     }
 
-    protected boolean findEclipseLink(Set<ResolvedDependency> deps) {
+    protected boolean findJpaDependencies(Set<ResolvedDependency> deps) {
         for (ResolvedDependency dep : deps) {
-            if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.jpa".equals(dep.getModuleName()))
+            if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.core".equals(dep.getModuleName()))
                 return true;
-            if (findEclipseLink(dep.getChildren()))
+            if (findJpaDependencies(dep.getChildren()))
                 return true;
         }
         return false;

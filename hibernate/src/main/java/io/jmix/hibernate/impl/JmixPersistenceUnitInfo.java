@@ -33,11 +33,9 @@ import java.util.Properties;
 public class JmixPersistenceUnitInfo implements PersistenceUnitInfo {
 
     protected PersistenceUnitInfo delegate;
-    protected BeanFactory beanFactory;
 
-    public JmixPersistenceUnitInfo(PersistenceUnitInfo delegate, BeanFactory beanFactory) {
+    public JmixPersistenceUnitInfo(PersistenceUnitInfo delegate) {
         this.delegate = delegate;
-        this.beanFactory = beanFactory;
     }
 
     @Override

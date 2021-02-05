@@ -36,6 +36,6 @@ public class HibernateJmixPersistenceProvider extends HibernatePersistenceProvid
     @Override
     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
         properties.put(BEAN_FACTORY_PROPERTY, beanFactory);
-        return super.createContainerEntityManagerFactory(new JmixPersistenceUnitInfo(info, beanFactory), properties);
+        return super.createContainerEntityManagerFactory(new JmixPersistenceUnitInfo(info), properties);
     }
 }

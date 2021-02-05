@@ -119,14 +119,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
         getRunnerResourceHolder(store);
     }
 
-    /**
-     * INTERNAL
-     */
-    public void addBeforeCommitAction(String storeName, Runnable action) {
-        RunnerResourceHolder runner = getRunnerResourceHolder(storeName);
-        runner.add(action);
-    }
-
     private RunnerResourceHolder getRunnerResourceHolder(String storeName) {
         RunnerResourceHolder runner = (RunnerResourceHolder) TransactionSynchronizationManager.getResource(RUNNER_RESOURCE_HOLDER);
         if (runner == null) {
@@ -159,7 +151,7 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             return;
 
         if (session == null)
-            throw new RuntimeException("Session is not a UnitOfWork: " + session);
+            throw new RuntimeException("Session is null");
 
         getInstanceContainerResourceHolder(getStorageName(session)).registerInstanceForUnitOfWork(entity, session);
     }

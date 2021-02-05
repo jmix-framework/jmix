@@ -246,12 +246,8 @@ public class HibernatePersistenceTools implements PersistenceTools {
      * @throws RuntimeException         if anything goes wrong when retrieving the ID
      */
     public RefId getReferenceId(Object entity, String property) {
-        MetaClass metaClass = metadata.getClass(entity.getClass());
-        MetaProperty metaProperty = metaClass.getProperty(property);
-
         //TODO implement
         return RefId.createNotLoaded(property);
-
     }
 
     /**

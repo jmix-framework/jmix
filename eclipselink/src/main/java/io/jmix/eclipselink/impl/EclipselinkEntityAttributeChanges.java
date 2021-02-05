@@ -24,6 +24,7 @@ import org.eclipse.persistence.sessions.changesets.ChangeRecord;
 import org.eclipse.persistence.sessions.changesets.ObjectChangeSet;
 
 public class EclipselinkEntityAttributeChanges extends EntityAttributeChanges {
+
     /**
      * Accumulates changes for the entity. Stores changed attribute names and old values.
      */
@@ -38,6 +39,8 @@ public class EclipselinkEntityAttributeChanges extends EntityAttributeChanges {
             return;
 
         addChanges(changeListener.getObjectChangeSet());
+
+        addExtraChanges(entity);
     }
 
     /**

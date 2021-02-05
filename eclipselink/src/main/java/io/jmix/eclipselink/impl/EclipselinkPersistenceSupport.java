@@ -572,10 +572,9 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             if (changeListener == null)
                 return false;
 
-            EntityAttributeChanges changes = new EntityAttributeChanges();
+            EclipselinkEntityAttributeChanges changes = new EclipselinkEntityAttributeChanges();
             // add changes before listener
             changes.addChanges(entity);
-
 
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
@@ -591,15 +590,8 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
 
-            } else if (changeListener.hasChanges()) {
-
-                EclipselinkEntityAttributeChanges changes = new EclipselinkEntityAttributeChanges();
-                // add changes before listener
-                changes.addChanges(entity);
-
-                entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
             } else if (changes.hasChanges()) {//changeListener.hasChanges()
-                if (changeListener != null && changeListener.hasChanges()) {
+                if (changeListener.hasChanges()) {
                     entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
                 }
 

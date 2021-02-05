@@ -48,7 +48,12 @@ public class SessionImpl implements Session {
     @Nullable
     @Override
     public MetaClass findClass(Class<?> javaClass) {
-        return classByClass.get(javaClass);
+        // ToDo: Hibernate change - temporary solution to HibernateProxy problem
+        MetaClass metaClass = classByClass.get(javaClass);
+        if (metaClass == null && javaClass.getSimpleName().contains("HibernateProxy")) {
+            metaClass = classByClass.get(javaClass.getSuperclass());
+        }
+        return metaClass;
     }
 
     @Override

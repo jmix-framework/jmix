@@ -148,8 +148,7 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
     }
 
     protected String composeFilterOrderByTypeName(MetaClass metaClass) {
-        String name = metadataTools.getEntityName(metaClass.getJavaClass());
-        return composeFilterOrderByTypeName(name);
+        return composeFilterOrderByTypeName(metaClass.getName());
     }
 
     protected String composeFilterOrderByTypeName(String name) {
@@ -157,8 +156,7 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
     }
 
     protected String composeFilterConditionTypeName(MetaClass metaClass) {
-        String name = metadataTools.getEntityName(metaClass.getJavaClass());
-        return composeFilterTypeName(name, "FilterCondition");
+        return composeFilterTypeName(metaClass.getName(), "FilterCondition");
     }
 
     private String composeFilterConditionTypeName(String name) {

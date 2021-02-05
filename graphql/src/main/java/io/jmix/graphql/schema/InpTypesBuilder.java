@@ -107,12 +107,8 @@ public class InpTypesBuilder extends BaseTypesBuilder {
         // todo non-persistent jmix entities
         if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION || metaProperty.getType() == MetaProperty.Type.COMPOSITION)) {
 
-            if (metaProperty.getRange().getCardinality().isMany()) {
-                return normalizeInpTypeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
-            }
-
             if (metadataTools.isJpaEntity(metaProperty.getJavaType())) {
-                return normalizeInpTypeName(metadataTools.getEntityName(javaType));
+                return normalizeInpTypeName(metaProperty.getRange().asClass().getName());
             }
         }
 

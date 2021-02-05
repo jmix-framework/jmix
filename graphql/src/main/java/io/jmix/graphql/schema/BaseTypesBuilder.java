@@ -112,12 +112,8 @@ public abstract class BaseTypesBuilder {
     }
 
     protected String getReferenceTypeName(MetaProperty metaProperty) {
-        if (metaProperty.getRange().getCardinality().isMany()) {
-            return normalizeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
-        }
-
         if (metadataTools.isJpaEntity(metaProperty.getJavaType())) {
-            return normalizeName(metadataTools.getEntityName(metaProperty.getJavaType()));
+            return normalizeName(metaProperty.getRange().asClass().getName());
         } else {
             // todo non-persistent entities are not fully supported now
             return "String";

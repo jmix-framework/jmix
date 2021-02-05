@@ -268,7 +268,7 @@ public class EntityValues {
     @Nullable
     public static Object getVersion(Object entity) {
         if (isVersionSupported(entity)) {
-            ((EntityEntryVersioned) getUncheckedEntityEntry(entity)).getVersion();
+            return ((EntityEntryVersioned) getUncheckedEntityEntry(entity)).getVersion();
         }
         return null;
     }

@@ -23,6 +23,7 @@ import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
 import io.jmix.data.entity.ReferenceToEntity
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.DynAttrMetadata
@@ -42,7 +43,8 @@ import test_support.entity.UserRole
 import javax.sql.DataSource
 
 @ContextConfiguration(
-        classes = [CoreConfiguration, DataConfiguration, DynAttrConfiguration, JmixDynAttrTestConfiguration],
+        classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration,
+                DynAttrConfiguration, JmixDynAttrTestConfiguration],
         initializers = [TestContextInititalizer]
 )
 class DynamicAttributesTest extends Specification {

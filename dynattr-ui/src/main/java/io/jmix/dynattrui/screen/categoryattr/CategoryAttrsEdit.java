@@ -62,7 +62,6 @@ import java.util.stream.Collectors;
 import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
-import static org.eclipse.persistence.jpa.jpql.parser.Expression.WHERE;
 
 @UiController("sys_CategoryAttribute.edit")
 @UiDescriptor("category-attrs-edit.xml")
@@ -89,6 +88,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
 
     protected static final Multimap<AttributeType, String> FIELDS_VISIBLE_FOR_TYPES = ArrayListMultimap.create();
     protected static final Set<AttributeType> SUPPORTED_OPTIONS_TYPES = ImmutableSet.of(STRING, DOUBLE, DECIMAL, INTEGER, ENTITY);
+
+    protected static final String JPQL_WHERE = "where";
 
     static {
         FIELDS_VISIBLE_FOR_TYPES.put(BOOLEAN, "defaultBooleanField");
@@ -821,9 +822,9 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         }
         if (StringUtils.isNotEmpty(whereStr)) {
             if (sender == whereClauseField) {
-                queryPosition = queryBuilder.length() + WHERE.length() + senderCursorPosition;
+                queryPosition = queryBuilder.length() + JPQL_WHERE.length() + senderCursorPosition;
             }
-            queryBuilder.append(WHERE)
+            queryBuilder.append(JPQL_WHERE)
                     .append(" ")
                     .append(whereStr);
         }

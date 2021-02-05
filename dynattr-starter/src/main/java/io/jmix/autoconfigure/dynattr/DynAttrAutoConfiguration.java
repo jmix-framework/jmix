@@ -18,7 +18,6 @@ package io.jmix.autoconfigure.dynattr;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.data.DataConfiguration;
-import io.jmix.data.impl.entitycache.StandardQueryCache;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
 import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import javax.cache.Cache;
-import javax.cache.CacheManager;
 import javax.cache.configuration.MutableConfiguration;
 
 @Configuration

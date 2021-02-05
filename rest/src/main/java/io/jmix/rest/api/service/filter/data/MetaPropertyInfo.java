@@ -61,8 +61,8 @@ public class MetaPropertyInfo {
         this.cardinality = metaProperty.getRange().getCardinality();
         this.readOnly = metaProperty.isReadOnly();
         this.mandatory = metaProperty.isMandatory();
-        this.isPersistent = metadataTools.isPersistent(metaProperty);
-        this.isTransient = !metadataTools.isPersistent(metaProperty);
+        this.isPersistent = metadataTools.isJpa(metaProperty);
+        this.isTransient = !metadataTools.isJpa(metaProperty);
         this.description = messageTools.getPropertyCaption(metaProperty);
     }
 

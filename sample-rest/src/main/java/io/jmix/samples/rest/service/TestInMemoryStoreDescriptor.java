@@ -28,7 +28,7 @@ public class TestInMemoryStoreDescriptor implements StoreDescriptor {
     }
 
     @Override
-    public boolean isPersistent() {
+    public boolean isJpa() {
         return false;
     }
 }

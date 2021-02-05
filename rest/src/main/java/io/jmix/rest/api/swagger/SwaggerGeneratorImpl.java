@@ -168,7 +168,7 @@ public class SwaggerGeneratorImpl implements SwaggerGenerator {
     protected List<Tag> generateTags() {
         List<Tag> tags = new ArrayList<>();
 
-        List<Tag> entityTags = metadataTools.getAllPersistentMetaClasses()
+        List<Tag> entityTags = metadataTools.getAllJpaEntityMetaClasses()
                 .stream()
                 .filter(mc -> !metadataTools.isSystemLevel(mc))
                 .sorted(Comparator.comparing(MetadataObject::getName))
@@ -208,7 +208,7 @@ public class SwaggerGeneratorImpl implements SwaggerGenerator {
     protected Map<String, Path> generateEntitiesPaths() {
         Map<String, Path> paths = new LinkedHashMap<>();
 
-        for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
             if (metadataTools.isSystemLevel(metaClass)) {
                 continue;
             }

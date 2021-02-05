@@ -71,8 +71,8 @@ public class EntitiesMetadataControllerManager {
     }
 
     public Collection<MetaClassInfo> getAllMetaClassesInfo() {
-        Set<MetaClass> metaClasses = new HashSet<>(metadataTools.getAllPersistentMetaClasses());
-        metaClasses.addAll(metadataTools.getAllEmbeddableMetaClasses());
+        Set<MetaClass> metaClasses = new HashSet<>(metadataTools.getAllJpaEntityMetaClasses());
+        metaClasses.addAll(metadataTools.getAllJpaEmbeddableMetaClasses());
 
         return metaClasses.stream()
                 .filter(metaClass -> extendedEntities.getExtendedClass(metaClass) == null)

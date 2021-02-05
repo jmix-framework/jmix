@@ -372,7 +372,7 @@ public class EntitiesControllerManager {
         if (!properties.isEmpty()) {
             List<String> sortExpressions = new ArrayList<>(properties.size());
             for (MetaProperty metaProperty : properties) {
-                if (metadataTools.isPersistent(metaProperty)) {
+                if (metadataTools.isJpa(metaProperty)) {
                     MetaPropertyPath childPropertyPath = new MetaPropertyPath(metaPropertyPath, metaProperty);
                     if (metaProperty.getRange().isClass()) {
                         if (!metaProperty.getRange().getCardinality().isMany()) {

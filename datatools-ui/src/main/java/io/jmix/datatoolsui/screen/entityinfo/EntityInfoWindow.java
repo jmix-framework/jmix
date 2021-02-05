@@ -33,7 +33,6 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -41,8 +40,6 @@ import java.util.function.Function;
 @UiController("entityInfoWindow")
 @UiDescriptor("entity-info-window.xml")
 public class EntityInfoWindow extends Screen {
-
-    protected static final String TIMESTAMP_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Autowired
     protected Table<InfoValue> infoTable;
@@ -172,17 +169,16 @@ public class EntityInfoWindow extends Screen {
         addItem(items, EntityValues.getId(entity), "entityInfo.id");
         addItem(items, EntityValues.getVersion(entity), "entityInfo.version");
 
-        SimpleDateFormat df = new SimpleDateFormat(TIMESTAMP_DATE_FORMAT);
         if (EntityValues.isAuditSupported(entity)) {
-            addItem(items, entity, "createdDate", "entityInfo.createdDate", df::format);
+            addItem(items, entity, "createdDate", "entityInfo.createdDate", metadataTools::format);
             addItem(items, entity, "createdBy", "entityInfo.createdBy");
 
-            addItem(items, entity, "lastModifiedDate", "entityInfo.lastModifiedDate", df::format);
+            addItem(items, entity, "lastModifiedDate", "entityInfo.lastModifiedDate", metadataTools::format);
             addItem(items, entity, "lastModifiedBy", "entityInfo.lastModifiedBy");
         }
 
         if (EntityValues.isSoftDeleted(entity)) {
-            addItem(items, entity, "deletedDate", "entityInfo.deletedDate", df::format);
+            addItem(items, entity, "deletedDate", "entityInfo.deletedDate", metadataTools::format);
             addItem(items, entity, "deletedBy", "entityInfo.deletedBy");
         }
 

@@ -55,7 +55,7 @@ public class SchemaBuilder {
 
     public GraphQLSchema createSchema() {
 
-        Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllPersistentMetaClasses()
+        Collection<MetaClass> allPersistentMetaClasses = metadataTools.getAllJpaEntityMetaClasses()
                 // todo need to be fixed later - ReferenceToEntity is not persistent but returned in 'metadataTools.getAllPersistentMetaClasses'
                 .stream()
                 .filter(metaClass -> !metaClass.getJavaClass().getSimpleName().equals("ReferenceToEntity"))

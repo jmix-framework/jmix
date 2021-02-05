@@ -128,7 +128,7 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
 
                     if (metaProperty.getRange().isClass()) {
                         // todo now we support only persistent entities
-                        if (!metadataTools.isPersistent(metaProperty.getJavaType())) {
+                        if (!metadataTools.isJpaEntity(metaProperty.getJavaType())) {
                             return null;
                         }
                         String typeName = composeFilterOrderByTypeName(getFieldTypeName(metaProperty));

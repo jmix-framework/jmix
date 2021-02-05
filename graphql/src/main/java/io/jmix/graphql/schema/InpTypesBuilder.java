@@ -111,7 +111,7 @@ public class InpTypesBuilder extends BaseTypesBuilder {
                 return normalizeInpTypeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
             }
 
-            if (metadataTools.isPersistent(metaProperty.getJavaType())) {
+            if (metadataTools.isJpaEntity(metaProperty.getJavaType())) {
                 return normalizeInpTypeName(metadataTools.getEntityName(javaType));
             }
         }

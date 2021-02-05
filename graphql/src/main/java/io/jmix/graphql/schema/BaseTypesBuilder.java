@@ -116,7 +116,7 @@ public abstract class BaseTypesBuilder {
             return normalizeName(metadataTools.getEntityName(metaProperty.getRange().asClass().getJavaClass()));
         }
 
-        if (metadataTools.isPersistent(metaProperty.getJavaType())) {
+        if (metadataTools.isJpaEntity(metaProperty.getJavaType())) {
             return normalizeName(metadataTools.getEntityName(metaProperty.getJavaType()));
         } else {
             // todo non-persistent entities are not fully supported now

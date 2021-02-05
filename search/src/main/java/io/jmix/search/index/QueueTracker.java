@@ -16,6 +16,7 @@
 
 package io.jmix.search.index;
 
+import io.jmix.search.SearchService;
 import io.jmix.search.index.queue.QueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,13 @@ public class QueueTracker {
 
     @Autowired
     protected QueueService queueService;
+    @Autowired
+    protected SearchService searchService; //todo remove
 
     @Scheduled(fixedDelay = 5000L) //TODO Property for timing. Schedule by executor explicitly?
     public void scheduleQueueTracking() {
-        log.info("[IVGA] Track Queue");
+        log.trace("[IVGA] Track Queue");
         queueService.processQueue();
+        //searchService.search("findme");
     }
 }

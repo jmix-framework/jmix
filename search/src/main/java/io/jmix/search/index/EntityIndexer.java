@@ -61,7 +61,7 @@ public class EntityIndexer {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     public void indexEntities(Collection<QueueItem> queueItems) {
-        log.info("[IVGA] Index items: {}", queueItems);
+        log.trace("[IVGA] Index items: {}", queueItems);
         Map<MetaClass, Map<EntityChangeType, Set<Object>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
             MetaClass metaClass = metadata.getClass(queueItem.getEntityClass());
@@ -107,11 +107,13 @@ public class EntityIndexer {
                         .forEach(field -> {
                             log.trace("[IVGA] Extract value of property {}", field.getMetaPropertyPath());
                             JsonNode propertyValue = field.getValue(object);
-                            String indexPropertyFullName = field.getIndexPropertyFullName();
+                            if(!propertyValue.isNull()) {
+                                String indexPropertyFullName = field.getIndexPropertyFullName();
 
-                            ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
-                            log.trace("[IVGA] objectNodeForField = {}", objectNodeForField);
-                            merge(objectNodeForField, resultObject);
+                                ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
+                                log.trace("[IVGA] objectNodeForField = {}", objectNodeForField);
+                                merge(objectNodeForField, resultObject);
+                            }
                         });
                 log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", object, resultObject);
                 try {

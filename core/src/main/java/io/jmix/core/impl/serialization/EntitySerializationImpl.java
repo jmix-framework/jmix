@@ -217,7 +217,7 @@ public class EntitySerializationImpl implements EntitySerialization {
         protected JsonObject serializeEntity(Entity entity, @Nullable FetchPlan fetchPlan, Set<Entity> cyclicReferences) {
             JsonObject jsonObject = new JsonObject();
             MetaClass metaClass = metadata.getClass(entity.getClass());
-            if (!metadataTools.isEmbeddable(metaClass)) {
+            if (!metadataTools.isJpaEmbeddable(metaClass)) {
                 jsonObject.addProperty(ENTITY_NAME_PROP, metaClass.getName());
                 if (serializeInstanceName) {
                     String instanceName = null;
@@ -279,7 +279,7 @@ public class EntitySerializationImpl implements EntitySerialization {
             String propertyName = metaProperty.getName();
 
             if (!Objects.equals(primaryKeyName, propertyName)) {
-                if (metadataTools.isPersistent(metaProperty)) {
+                if (metadataTools.isJpa(metaProperty)) {
                     return entityStates.isLoaded(entity, propertyName) && exportImportContext.canExported(propertyName);
                 } else {
                     return (!metaProperty.isReadOnly() || !doNotSerializeReadOnlyProperties) && exportImportContext.canExported(propertyName);

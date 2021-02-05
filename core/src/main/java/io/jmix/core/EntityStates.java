@@ -175,7 +175,7 @@ public class EntityStates {
             if (metaProperty.getRange().isClass()) {
                 FetchPlan propertyFetchPlan = property.getFetchPlan();
 
-                if (propertyFetchPlan != null && metadataTools.isPersistent(metaProperty)) {
+                if (propertyFetchPlan != null && metadataTools.isJpa(metaProperty)) {
                     Object value = EntityValues.getValue(entity, metaProperty.getName());
 
                     if (value != null) {
@@ -245,7 +245,7 @@ public class EntityStates {
             if (metaProperty.getRange().isClass()) {
                 FetchPlan propertyFetchPlan = property.getFetchPlan();
 
-                if (propertyFetchPlan != null && metadataTools.isPersistent(metaProperty)) {
+                if (propertyFetchPlan != null && metadataTools.isJpa(metaProperty)) {
                     Object value = EntityValues.getValue(entity, metaProperty.getName());
 
                     if (value != null) {

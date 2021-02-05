@@ -42,20 +42,24 @@ class MetadataToolsTest extends Specification {
         expect:
 
         // @Entity
-        metadataTools.isPersistent(Owner)
+        metadataTools.isJpaEntity(Owner)
+        !metadataTools.isJpaEmbeddable(Owner)
 
         // @Embeddable
-        metadataTools.isPersistent(Address)
+        metadataTools.isJpaEmbeddable(Address)
+        !metadataTools.isJpaEntity(Address)
     }
 
     def "non-persistent entities"() {
         expect:
 
         // @JmixEntity
-        !metadataTools.isPersistent(TestAddon1Entity)
+        !metadataTools.isJpaEntity(TestAddon1Entity)
+        !metadataTools.isJpaEmbeddable(TestAddon1Entity)
 
         // @MappedSuperclass
-        !metadataTools.isPersistent(BaseEntity)
+        !metadataTools.isJpaEntity(BaseEntity)
+        !metadataTools.isJpaEmbeddable(BaseEntity)
     }
 
     def "persistent properties"() {
@@ -64,38 +68,32 @@ class MetadataToolsTest extends Specification {
         expect:
 
         // property of @Entity
-        metadataTools.isPersistent(ownerMetaClass.getProperty('name'))
+        metadataTools.isJpa(ownerMetaClass.getProperty('name'))
 
         // property of @Entity inherited from @MappedSuperclass
-        metadataTools.isPersistent(ownerMetaClass.getProperty('createTs'))
+        metadataTools.isJpa(ownerMetaClass.getProperty('createTs'))
 
         // property of @Embeddable
-        metadataTools.isPersistent(addressMetaClass.getProperty('city'))
+        metadataTools.isJpa(addressMetaClass.getProperty('city'))
 
         // @Embedded property in @Entity
-        metadataTools.isPersistent(ownerMetaClass.getProperty('address'))
+        metadataTools.isJpa(ownerMetaClass.getProperty('address'))
 
         // nested property of @Embedded in @Entity
-        metadataTools.isPersistent(ownerMetaClass.getProperty('address').range.asClass().getProperty('city'))
+        metadataTools.isJpa(ownerMetaClass.getProperty('address').range.asClass().getProperty('city'))
 
         // nested property of @Embedded in @Entity, passed as MetaPropertyPath
-        metadataTools.isPersistent(metadataTools.resolveMetaPropertyPathOrNull(ownerMetaClass, 'address.city'))
+        metadataTools.isJpa(metadataTools.resolveMetaPropertyPathOrNull(ownerMetaClass, 'address.city'))
     }
 
     def "non-persistent properties"() {
         expect:
 
         // @JmixProperty in @Entity
-        !metadataTools.isPersistent(metadata.getClass(Pet).getProperty('nick'))
+        !metadataTools.isJpa(metadata.getClass(Pet).getProperty('nick'))
 
         // property of @MappedSuperclass
-        !metadataTools.isPersistent(metadata.getClass(BaseEntity).getProperty('createTs'))
-    }
-
-    def "embeddable entities"() {
-        expect:
-        metadataTools.isEmbeddable(Address)
-        !metadataTools.isEmbeddable(Owner)
+        !metadataTools.isJpa(metadata.getClass(BaseEntity).getProperty('createTs'))
     }
 
     def "embedded property"() {

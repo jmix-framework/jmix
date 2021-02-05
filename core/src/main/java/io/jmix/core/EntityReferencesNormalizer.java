@@ -84,7 +84,7 @@ public class EntityReferencesNormalizer {
                     Object propEntity = EntityValues.getValue(entity, property.getName());
                     if (propEntity != null) {
                         if (propEntity != refEntity && getId(propEntity).equals(getId(refEntity))) {
-                            if (property.isReadOnly() && !metadataTools.isPersistent(property)) {
+                            if (property.isReadOnly() && !metadataTools.isJpa(property)) {
                                 continue;
                             }
                             EntityValues.setValue(entity, property.getName(), refEntity, false);

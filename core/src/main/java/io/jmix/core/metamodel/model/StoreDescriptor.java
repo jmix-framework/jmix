@@ -27,7 +27,7 @@ public interface StoreDescriptor {
     String getBeanName();
 
     /**
-     * Whether data is stored in a persistent storage.
+     * Whether the data store works with JPA entities.
      */
-    boolean isPersistent();
+    boolean isJpa();
 }

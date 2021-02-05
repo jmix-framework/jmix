@@ -61,7 +61,7 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
 
         MetaProperty metaProperty = metaClass.getProperty(property);
 
-        if (!metadataTools.isPersistent(metaProperty)) {
+        if (!metadataTools.isJpa(metaProperty)) {
             List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
             if (dependsOnProperties.isEmpty()) {
                 return true;

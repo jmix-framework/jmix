@@ -273,7 +273,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
 
     protected void addAttributesToLocalFetchPlan(MetaClass metaClass, FetchPlanBuilder fetchPlanBuilder) {
         for (MetaProperty property : metaClass.getProperties()) {
-            if (!property.getRange().isClass() && metadataTools.isPersistent(property)) {
+            if (!property.getRange().isClass() && metadataTools.isJpa(property)) {
                 fetchPlanBuilder.add(property.getName());
             }
         }
@@ -297,7 +297,7 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
                                                 FetchPlanLoader.FetchPlanInfo info,
                                                 Set<FetchPlanLoader.FetchPlanInfo> visited) {
         for (MetaProperty metaProperty : metaClass.getProperties()) {
-            if (metadataTools.isPersistent(metaProperty)) {
+            if (metadataTools.isJpa(metaProperty)) {
                 if (!metaProperty.getRange().isClass()) {
                     fetchPlanBuilder.add(metaProperty.getName());
                 } else if (metadataTools.isEmbedded(metaProperty)) {
@@ -338,13 +338,13 @@ public class FetchPlanRepositoryImpl implements FetchPlanRepository {
     protected Collection<MetaProperty> getInstanceNamePersistentProperties(MetaClass metaClass) {
         Collection<MetaProperty> metaProperties = new ArrayList<>();
         for (MetaProperty metaProperty : metadataTools.getInstanceNameRelatedProperties(metaClass, true)) {
-            if (metadataTools.isPersistent(metaProperty)) {
+            if (metadataTools.isJpa(metaProperty)) {
                 metaProperties.add(metaProperty);
             } else {
                 List<String> dependsOnProperties = metadataTools.getDependsOnProperties(metaProperty);
                 for (String dependsOnPropertyName : dependsOnProperties) {
                     MetaProperty relatedProperty = metaClass.getProperty(dependsOnPropertyName);
-                    if (metadataTools.isPersistent(relatedProperty)) {
+                    if (metadataTools.isJpa(relatedProperty)) {
                         metaProperties.add(relatedProperty);
                     }
                 }

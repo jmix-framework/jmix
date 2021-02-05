@@ -128,7 +128,7 @@ public class EntitySerializationTokenManager {
     }
 
     protected void validateToken(JsonObject tokenObject, Object entity, MetaClass metaClass) {
-        if (!metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.isEmbeddable(metaClass)) {
+        if (!metadataTools.hasCompositePrimaryKey(metaClass) && !metadataTools.isJpaEmbeddable(metaClass)) {
 
             if (!tokenObject.has(ENTITY_ID_KEY) || !tokenObject.has(ENTITY_NAME_KEY)) {
                 throw new EntityTokenException("Invalid format for security token");

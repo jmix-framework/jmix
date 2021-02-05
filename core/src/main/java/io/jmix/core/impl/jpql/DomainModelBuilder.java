@@ -65,7 +65,7 @@ public class DomainModelBuilder {
 
             Collection<MetaProperty> props = aClass.getProperties();
             for (MetaProperty prop : props) {
-                if (metadataTools.isPersistent(prop))
+                if (metadataTools.isJpa(prop))
                     addProperty(builder, aClass, prop);
             }
 

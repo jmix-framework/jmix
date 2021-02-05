@@ -669,7 +669,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
                 MetaClass metaClass = metadata.getClass(entity.getClass());
                 for (MetaProperty metaProperty : metaClass.getProperties()) {
-                    if (metaProperty.getRange().isClass() && metadataTools.isPersistent(metaProperty)
+                    if (metaProperty.getRange().isClass() && metadataTools.isJpa(metaProperty)
                             && fetchPlan.containsProperty(metaProperty.getName())) {
 
                         InMemoryCrudEntityContext inMemoryContext =

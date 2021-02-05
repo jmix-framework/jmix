@@ -106,7 +106,7 @@ public class MetadataTools {
     @Autowired(required = false)
     protected Collection<MetaPropertyPathResolver> metaPropertyPathResolvers;
 
-    protected volatile Collection<Class> enums;
+    protected volatile Collection<Class<?>> enums;
 
     /**
      * Default constructor used by container at runtime and in server-side integration tests.
@@ -355,28 +355,26 @@ public class MetadataTools {
     }
 
     /**
-     * Determine whether all the properties defined by the given property path are persistent.
+     * Determine whether all the properties defined by the given property path are persistent attributes
+     * of JPA entities or embeddables.
      *
-     * @see #isPersistent(io.jmix.core.metamodel.model.MetaProperty)
+     * @see #isJpa(io.jmix.core.metamodel.model.MetaProperty)
      */
-    public boolean isPersistent(MetaPropertyPath metaPropertyPath) {
+    public boolean isJpa(MetaPropertyPath metaPropertyPath) {
         Objects.requireNonNull(metaPropertyPath, "metaPropertyPath is null");
         for (MetaProperty metaProperty : metaPropertyPath.getMetaProperties()) {
-            if (!isPersistent(metaProperty))
+            if (!isJpa(metaProperty))
                 return false;
         }
         return true;
     }
 
     /**
-     * Determine whether the given property is persistent, that is managed by ORM.
-     * <p>
-     * A property is persistent if it is defined in a persistent entity and the corresponding
-     * attribute is managed by ORM, i.e. has an annotation like {@code @Column}, {@code @JoinColumn}, etc.
+     * Determine whether the given property is a persistent attribute of a JPA entity or embeddable.
      */
-    public boolean isPersistent(MetaProperty metaProperty) {
+    public boolean isJpa(MetaProperty metaProperty) {
         Objects.requireNonNull(metaProperty, "metaProperty is null");
-        return metaProperty.getStore().getDescriptor().isPersistent();
+        return metaProperty.getStore().getDescriptor().isJpa();
     }
 
     /**
@@ -506,40 +504,37 @@ public class MetadataTools {
     }
 
     /**
-     * Determine whether the given metaclass represents a persistent entity.
-     * <p>
-     * A persistent entity is an entity that is managed by ORM and is not a MappedSuperclass.
+     * Determine whether the given meta-class represents a JPA entity.
      */
-    public boolean isPersistent(MetaClass metaClass) {
+    public boolean isJpaEntity(MetaClass metaClass) {
         checkNotNullArgument(metaClass, "metaClass is null");
-        return metaClass.getStore().getDescriptor().isPersistent();
+        return metaClass.getStore().getDescriptor().isJpa()
+                && metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Entity.class);
     }
 
     /**
-     * Determine whether the given class represents a persistent entity.
-     * <p>
-     * A persistent entity is an entity that is managed by ORM and is not a MappedSuperclass.
+     * Determine whether the given class represents a JPA entity.
      */
-    public boolean isPersistent(Class aClass) {
+    public boolean isJpaEntity(Class<?> aClass) {
         checkNotNullArgument(aClass, "class is null");
-        return isPersistent(metadata.getClass(aClass));
+        return isJpaEntity(metadata.getClass(aClass));
     }
 
     /**
-     * Determine whether the given meta-class is persistent embeddable.
+     * Determine whether the given meta-class is JPA embeddable.
      */
-    public boolean isEmbeddable(MetaClass metaClass) {
+    public boolean isJpaEmbeddable(MetaClass metaClass) {
         checkNotNullArgument(metaClass, "metaClass is null");
-        return metaClass.getStore().getDescriptor().isPersistent()
+        return metaClass.getStore().getDescriptor().isJpa()
                 && metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Embeddable.class);
     }
 
     /**
-     * Determine whether the given entity class is persistent embeddable.
+     * Determine whether the given entity class is JPA embeddable.
      */
-    public boolean isEmbeddable(Class<?> aClass) {
+    public boolean isJpaEmbeddable(Class<?> aClass) {
         checkNotNullArgument(aClass, "Class is null");
-        return isEmbeddable(metadata.getClass(aClass));
+        return isJpaEmbeddable(metadata.getClass(aClass));
     }
 
     public boolean isCacheable(MetaClass metaClass) {
@@ -654,42 +649,34 @@ public class MetadataTools {
     }
 
     /**
-     * @return collection of all persistent entities
+     * @return collection of all meta-classes representing JPA entities
      */
-    public Collection<MetaClass> getAllPersistentMetaClasses() {
-        Set<MetaClass> result = new LinkedHashSet<>();
-        for (MetaClass metaClass : metadata.getSession().getClasses()) {
-            if (isPersistent(metaClass)) {
-                result.add(metaClass);
-            }
-        }
-        return result;
+    public Collection<MetaClass> getAllJpaEntityMetaClasses() {
+        return metadata.getSession().getClasses().stream()
+                .filter(this::isJpaEntity)
+                .collect(Collectors.toList());
     }
 
     /**
-     * @return collection of all embeddable entities
+     * @return collection of all meta-classes representing JPA embeddable classes
      */
-    public Collection<MetaClass> getAllEmbeddableMetaClasses() {
-        List<MetaClass> result = new ArrayList<>();
-        for (MetaClass metaClass : metadata.getSession().getClasses()) {
-            if (metaClass.getJavaClass().isAnnotationPresent(javax.persistence.Embeddable.class)) {
-                result.add(metaClass);
-            }
-        }
-        return result;
+    public Collection<MetaClass> getAllJpaEmbeddableMetaClasses() {
+        return metadata.getSession().getClasses().stream()
+                .filter(this::isJpaEmbeddable)
+                .collect(Collectors.toList());
     }
 
     /**
      * @return collection of all Java enums used as a type of an entity attribute
      */
-    public Collection<Class> getAllEnums() {
+    public Collection<Class<?>> getAllEnums() {
         if (enums == null) {
             synchronized (this) {
                 enums = new HashSet<>();
                 for (MetaClass metaClass : metadata.getSession().getClasses()) {
                     for (MetaProperty metaProperty : metaClass.getProperties()) {
-                        if (metaProperty.getRange() != null && metaProperty.getRange().isEnum()) {
-                            Class c = metaProperty.getRange().asEnumeration().getJavaClass();
+                        if (metaProperty.getRange().isEnum()) {
+                            Class<?> c = metaProperty.getRange().asEnumeration().getJavaClass();
                             enums.add(c);
                         }
                     }
@@ -719,7 +706,7 @@ public class MetadataTools {
      */
     @Nullable
     public String getDatabaseTable(MetaClass metaClass) {
-        if (isEmbeddable(metaClass) || !isPersistent(metaClass))
+        if (isJpaEmbeddable(metaClass) || !isJpaEntity(metaClass))
             return null;
 
         Class<?> javaClass = metaClass.getJavaClass();
@@ -735,7 +722,7 @@ public class MetadataTools {
 
     @Nullable
     public String getDatabaseColumn(MetaProperty metaProperty) {
-        if (!isPersistent(metaProperty))
+        if (!isJpa(metaProperty))
             return null;
         Column column = metaProperty.getAnnotatedElement().getAnnotation(Column.class);
         if (column != null) {

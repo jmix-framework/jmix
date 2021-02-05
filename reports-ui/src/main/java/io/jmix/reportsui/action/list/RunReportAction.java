@@ -51,7 +51,9 @@ import java.util.Set;
  * Should be defined in the screen that is associated with {@link Report}. Should be defined for a {@code Button}
  * or a list component ({@code Table}, {@code DataGrid}, etc.).
  */
-@StudioAction(category = "Reports list actions", description = "Runs the reports associated with current screen or list component")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Runs the reports associated with current screen or list component")
 @ActionType(RunReportAction.ID)
 public class RunReportAction extends ListAction {
 

@@ -49,7 +49,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@StudioAction(category = "Reports list actions", description = "Edit action for an entity band")
+@StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Edit action for an entity band")
 @ActionType(EditViewAction.ID)
 public class EditViewAction extends ListAction {
 

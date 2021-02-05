@@ -20,7 +20,9 @@ import io.jmix.ui.component.Table;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.meta.StudioAction;
 
-@StudioAction(category = "Reports list actions", description = "Prints the reports associated with current editor screen")
+@StudioAction(
+        target = "io.jmix.ui.component.Table",
+        description = "Prints the reports associated with current editor screen")
 @ActionType(TablePrintFormAction.ID)
 public class TablePrintFormAction extends ListPrintFormAction {
 

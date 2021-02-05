@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 
-@StudioAction(category = "Reports list actions", description = "Prints the reports for a list of entity instances associated with a list component")
+@StudioAction(
+        target = "io.jmix.ui.screen.EditorScreen",
+        description = "Prints the reports for a list of entity instances associated with a list component")
 @ActionType(EditorPrintFormAction.ID)
 public class EditorPrintFormAction extends AbstractPrintFormAction {
 

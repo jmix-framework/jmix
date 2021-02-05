@@ -42,7 +42,7 @@ import java.util.Collection;
  * Should be defined in the screen that is associated with {@link Report}. Should be defined for a {@code Button}
  * or a list component ({@code Table}, {@code DataGrid}, etc.).
  */
-@StudioAction(category = "Reports list actions", description = "Shows the report execution history")
+@StudioAction(target = "io.jmix.ui.component.ListComponent", description = "Shows the report execution history")
 @ActionType(ExecutionHistoryAction.ID)
 public class ExecutionHistoryAction extends ListAction {
 

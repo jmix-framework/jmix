@@ -53,7 +53,9 @@ import java.util.Set;
  * If only one report is available as a result of selection, it is invoked immediately.
  * If several reports are available, their list is offered to the user for selection.
  */
-@StudioAction(category = "Reports list actions", description = "Prints the reports for a list of entity instances associated with a list component")
+@StudioAction(
+        target = "io.jmix.ui.component.ListComponent",
+        description = "Prints the reports for a list of entity instances associated with a list component")
 @ActionType(ListPrintFormAction.ID)
 public class ListPrintFormAction extends AbstractPrintFormAction implements Action.HasTarget {
 

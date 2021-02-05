@@ -16,13 +16,11 @@
 
 package io.jmix.data.impl;
 
-import org.eclipse.persistence.internal.helper.CubaUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -37,22 +35,6 @@ public class JmixTransactionManager extends JpaTransactionManager implements App
     public JmixTransactionManager(String storeName, EntityManagerFactory entityManagerFactory) {
         this.storeName = storeName;
         setEntityManagerFactory(entityManagerFactory);
-    }
-
-    @Override
-    protected void doBegin(Object transaction, TransactionDefinition definition) {
-        super.doBegin(transaction, definition);
-        // set soft deletion at beginning of each new transaction
-        CubaUtil.setSoftDeletion(true);
-        CubaUtil.setOriginalSoftDeletion(true);
-    }
-
-    @Override
-    protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
-        super.prepareSynchronization(status, definition);
-        // lookup instead of injection to avoid circular dependency
-        PersistenceSupport persistenceSupport = applicationContext.getBean(PersistenceSupport.class);
-        persistenceSupport.registerSynchronizations(storeName);
     }
 
     @Override

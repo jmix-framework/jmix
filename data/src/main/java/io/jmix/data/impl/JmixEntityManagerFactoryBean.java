@@ -69,7 +69,7 @@ public class JmixEntityManagerFactoryBean extends LocalContainerEntityManagerFac
 
     protected void setupJpaProperties() {
         if (!Stores.isMain(storeName))
-            getJpaPropertyMap().put(PersistenceSupport.PROP_NAME, storeName);
+            getJpaPropertyMap().put(PersistenceUnitProperties.STORE_NAME_PROPERTY, storeName);
 
         getJpaPropertyMap().putAll(dbmsSpecifics.getDbmsFeatures(storeName).getJpaParameters());
     }

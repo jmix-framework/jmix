@@ -16,7 +16,6 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.core.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.support.ResourceHolderSupport;

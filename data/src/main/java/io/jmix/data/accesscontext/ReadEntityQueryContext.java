@@ -4,10 +4,10 @@ package io.jmix.data.accesscontext;
 import com.google.common.base.Strings;
 import io.jmix.core.QueryTransformer;
 import io.jmix.core.QueryTransformerFactory;
-import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.accesscontext.AccessContext;
+import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.impl.JmixQuery;
+import io.jmix.data.JmixQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,8 @@ public class ReadEntityQueryContext implements AccessContext {
 
     protected final QueryTransformerFactory queryTransformerFactory;
 
-    protected final JmixQuery<?> originalQuery;
+    @SuppressWarnings("rawtypes")
+    protected final JmixQuery originalQuery;
     protected final MetaClass entityClass;
     protected final boolean singleResult;
     protected List<Condition> conditions;
@@ -40,7 +41,7 @@ public class ReadEntityQueryContext implements AccessContext {
         }
     }
 
-    public ReadEntityQueryContext(JmixQuery<?> originalQuery,
+    public ReadEntityQueryContext(@SuppressWarnings("rawtypes") JmixQuery originalQuery,
                                   MetaClass entityClass,
                                   QueryTransformerFactory transformerFactory) {
         this.originalQuery = originalQuery;
@@ -64,7 +65,8 @@ public class ReadEntityQueryContext implements AccessContext {
         this.queryParamsProvider = queryParamsProvider;
     }
 
-    public JmixQuery<?> getResultQuery() {
+    @SuppressWarnings("rawtypes")
+    public JmixQuery getResultQuery() {
         buildQuery();
         return originalQuery;
     }

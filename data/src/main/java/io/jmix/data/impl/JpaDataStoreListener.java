@@ -21,7 +21,7 @@ import io.jmix.data.EntityChangeType;
 import javax.annotation.Nullable;
 
 /**
- * Beans implementing this interface are notified by {@link JpaDataStore} and {@link PersistenceSupport} on their
+ * Beans implementing this interface are notified by {@link JpaDataStore} on their
  * specific events.
  */
 public interface JpaDataStoreListener {

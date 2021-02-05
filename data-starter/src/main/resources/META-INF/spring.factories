@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.jmix.autoconfigure.data.DataAutoConfiguration,\
-  io.jmix.autoconfigure.data.JmixLiquibaseAutoConfiguration, \
-  io.jmix.autoconfigure.data.JmixEclipseLinkChannelAutoConfiguration

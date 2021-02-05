@@ -18,6 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.data.JmixQuery;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.persistence.DbTypeConverter;
 import io.jmix.data.persistence.DbmsSpecifics;

@@ -31,6 +31,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
@@ -56,9 +58,6 @@ public class DeletePolicyProcessor {
 
     @Autowired
     protected DbmsSpecifics dbmsSpecifics;
-
-    @Autowired
-    protected PersistenceSupport persistenceSupport;
 
     @Autowired
     protected Metadata metadata;
@@ -215,24 +214,27 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardDeleteNotLoadedReference(Object entity, MetaProperty property, Object reference) {
-        persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
-            try {
-                String column = metadataTools.getDatabaseColumn(property);
-                if (column != null) { // is null for mapped-by property
-                    String updateMasterSql = "update " + metadataTools.getDatabaseTable(metaClass)
-                            + " set " + column + " = null where "
-                            + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
-                    log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, EntityValues.getId(entity));
-                    getJdbcTemplate().update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
-                }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void beforeCompletion() {
+                try {
+                    String column = metadataTools.getDatabaseColumn(property);
+                    if (column != null) { // is null for mapped-by property
+                        String updateMasterSql = "update " + metadataTools.getDatabaseTable(metaClass)
+                                + " set " + column + " = null where "
+                                + metadataTools.getPrimaryKeyName(metaClass) + " = ?";
+                        log.debug("Hard delete un-fetched reference: {}, bind: [{}]", updateMasterSql, EntityValues.getId(entity));
+                        getJdbcTemplate().update(updateMasterSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                    }
 
-                MetaClass refMetaClass = property.getRange().asClass();
-                String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
-                        + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
-                log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, EntityValues.getId(reference));
-                getJdbcTemplate().update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(reference)));
-            } catch (DataAccessException e) {
-                throw new RuntimeException("Error processing deletion of " + entity, e);
+                    MetaClass refMetaClass = property.getRange().asClass();
+                    String deleteRefSql = "delete from " + metadataTools.getDatabaseTable(refMetaClass) + " where "
+                            + metadataTools.getPrimaryKeyName(refMetaClass) + " = ?";
+                    log.debug("Hard delete un-fetched reference: {}, bind: [{}]", deleteRefSql, EntityValues.getId(reference));
+                    getJdbcTemplate().update(deleteRefSql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(reference)));
+                } catch (DataAccessException e) {
+                    throw new RuntimeException("Error processing deletion of " + entity, e);
+                }
             }
         });
     }
@@ -253,27 +255,30 @@ public class DeletePolicyProcessor {
     }
 
     protected void hardSetReferenceNull(Object entity, MetaProperty property) {
-        persistenceSupport.addBeforeCommitAction(metaClass.getStore().getName(), () -> {
-            MetaClass entityMetaClass = metadata.getClass(entity.getClass());
-            while (!entityMetaClass.equals(property.getDomain())) {
-                MetaClass ancestor = entityMetaClass.getAncestor();
-                if (ancestor == null)
-                    throw new IllegalStateException("Cannot determine a persistent entity for property " + property);
-                if (metadataTools.isPersistent(ancestor)) {
-                    entityMetaClass = ancestor;
-                } else {
-                    break;
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void beforeCompletion() {
+                MetaClass entityMetaClass = metadata.getClass(entity.getClass());
+                while (!entityMetaClass.equals(property.getDomain())) {
+                    MetaClass ancestor = entityMetaClass.getAncestor();
+                    if (ancestor == null)
+                        throw new IllegalStateException("Cannot determine a persistent entity for property " + property);
+                    if (metadataTools.isPersistent(ancestor)) {
+                        entityMetaClass = ancestor;
+                    } else {
+                        break;
+                    }
                 }
-            }
-            String sql = String.format("update %s set %s = null where %s = ?",
-                    metadataTools.getDatabaseTable(entityMetaClass),
-                    metadataTools.getDatabaseColumn(property),
-                    metadataTools.getPrimaryKeyName(entityMetaClass));
-            try {
-                log.debug("Set reference to null: {}, bind: [{}]", sql, EntityValues.getId(entity));
-                getJdbcTemplate().update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
-            } catch (DataAccessException e) {
-                throw new RuntimeException("Error processing deletion of " + entity, e);
+                String sql = String.format("update %s set %s = null where %s = ?",
+                        metadataTools.getDatabaseTable(entityMetaClass),
+                        metadataTools.getDatabaseColumn(property),
+                        metadataTools.getPrimaryKeyName(entityMetaClass));
+                try {
+                    log.debug("Set reference to null: {}, bind: [{}]", sql, EntityValues.getId(entity));
+                    getJdbcTemplate().update(sql, dbmsSpecifics.getDbTypeConverter().getSqlObject(EntityValues.getId(entity)));
+                } catch (DataAccessException e) {
+                    throw new RuntimeException("Error processing deletion of " + entity, e);
+                }
             }
         });
     }

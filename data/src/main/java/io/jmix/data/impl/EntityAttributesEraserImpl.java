@@ -24,7 +24,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.SecurityState;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

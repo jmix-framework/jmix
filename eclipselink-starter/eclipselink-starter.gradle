@@ -1,0 +1,14 @@
+group = 'io.jmix.data'
+archivesBaseName = 'jmix-eclipselink-starter'
+
+dependencies {
+    api project(':eclipselink')
+    api project(':data-autoconfigure')
+
+    implementation 'org.springframework:spring-messaging'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    compileOnly 'com.hazelcast:hazelcast'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.hsqldb:hsqldb'
+}

@@ -17,7 +17,6 @@ package io.jmix.data.impl;
 
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.annotation.Listeners;
-import io.jmix.data.PersistenceTools;
 import io.jmix.data.listener.*;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
@@ -103,9 +102,6 @@ public class EntityListenerManager {
     }
 
     private static final Logger log = LoggerFactory.getLogger(EntityListenerManager.class);
-
-    @Autowired
-    protected PersistenceTools persistenceTools;
 
     protected Map<Key, List> cache = new ConcurrentHashMap<>();
 
@@ -277,19 +273,7 @@ public class EntityListenerManager {
         if (log.isDebugEnabled()) {
             StringBuilder sb = new StringBuilder();
             sb.append("Executing ").append(type).append(" entity listener for ")
-                    .append(entity.getClass().getName()).append(" id=").append((Object) EntityValues.getId(entity));
-            if (type != EntityListenerType.BEFORE_DETACH && type != EntityListenerType.BEFORE_ATTACH) {
-                Set<String> dirty = persistenceTools.getDirtyFields(entity);
-                if (!dirty.isEmpty()) {
-                    sb.append(", changedProperties: ");
-                    for (Iterator<String> it = dirty.iterator(); it.hasNext(); ) {
-                        String field = it.next();
-                        sb.append(field);
-                        if (it.hasNext())
-                            sb.append(",");
-                    }
-                }
-            }
+                    .append(entity.getClass().getName()).append(" id=").append(EntityValues.getId(entity));
             log.debug(sb.toString());
         }
     }

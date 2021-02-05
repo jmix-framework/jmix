@@ -24,6 +24,7 @@ import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.*;
+import io.jmix.data.JmixQuery;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -40,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Component("data_OrmQueryBuilder")
 @Scope("prototype")
-public class JpqlQueryBuilder {
+public class JpqlQueryBuilder<Q extends JmixQuery> {
 
     protected Object id;
     protected List<?> ids;
@@ -146,8 +147,8 @@ public class JpqlQueryBuilder {
         return resultParameters;
     }
 
-    public JmixQuery<?> getQuery(EntityManager em) {
-        JmixQuery<?> query = (JmixQuery<?>) em.createQuery(getResultQueryString());
+    public Q getQuery(EntityManager em) {
+        Q query = (Q) em.createQuery(getResultQueryString());
 
         //we have to replace parameter names in macros because for {@link com.haulmont.cuba.core.sys.querymacro.TimeBetweenQueryMacroHandler}
         //we need to replace a parameter with number of days with its value before macros is expanded to JPQL expression
@@ -328,7 +329,7 @@ public class JpqlQueryBuilder {
         }
     }
 
-    protected void replaceParamsInMacros(JmixQuery<?> query) {
+    protected void replaceParamsInMacros(Q query) {
         Collection<QueryMacroHandler> handlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream()
                 .collect(Collectors.toList());
         String modifiedQuery = query.getQueryString();

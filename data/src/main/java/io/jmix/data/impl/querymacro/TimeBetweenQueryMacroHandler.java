@@ -17,7 +17,6 @@ package io.jmix.data.impl.querymacro;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import groovy.lang.Binding;
 import io.jmix.core.DateTimeTransformations;
 import io.jmix.core.TimeSource;
 import org.springframework.context.annotation.Scope;

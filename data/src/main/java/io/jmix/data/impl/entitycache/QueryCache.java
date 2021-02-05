@@ -17,9 +17,7 @@
 package io.jmix.data.impl.entitycache;
 
 
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Cache that contains queries and a collection of object identifiers

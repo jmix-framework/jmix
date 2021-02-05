@@ -687,21 +687,6 @@ public class MetadataTools {
     }
 
     /**
-     * @param entityClass entity class
-     * @return entity name as defined in {@link javax.persistence.Entity} annotation
-     */
-    public String getEntityName(Class<?> entityClass) {
-        Annotation annotation = entityClass.getAnnotation(javax.persistence.Entity.class);
-        if (annotation == null)
-            throw new IllegalArgumentException("Class " + entityClass + " is not a persistent entity");
-        String name = ((javax.persistence.Entity) annotation).name();
-        if (!StringUtils.isEmpty(name))
-            return name;
-        else
-            return entityClass.getSimpleName();
-    }
-
-    /**
      * @return table name for the given entity, or null if the entity is Embeddable, MappedSuperclass or non-persistent
      */
     @Nullable

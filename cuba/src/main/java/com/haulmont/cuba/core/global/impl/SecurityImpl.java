@@ -25,7 +25,6 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.AccessDeniedException;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.core.security.PermissionType;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.securityui.constraint.UiPolicyStore;
@@ -107,7 +106,7 @@ public class SecurityImpl implements Security {
     public boolean isEntityAttrUpdatePermitted(MetaPropertyPath metaPropertyPath) {
         MetaClass propertyMetaClass = metadataTools.getPropertyEnclosingMetaClass(metaPropertyPath);
 
-        if (metadataTools.isEmbeddable(propertyMetaClass)) {
+        if (metadataTools.isJpaEmbeddable(propertyMetaClass)) {
             return isEntityOpPermitted(propertyMetaClass, EntityOp.UPDATE)
                     && isEntityAttrPermitted(propertyMetaClass, metaPropertyPath, EntityAttrAccess.MODIFY);
         }

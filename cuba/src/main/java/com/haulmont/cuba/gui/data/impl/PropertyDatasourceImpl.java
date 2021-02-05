@@ -110,8 +110,8 @@ public class PropertyDatasourceImpl<T extends Entity>
     public FetchPlan getView() {
         if (view == null) {
             MetaClass metaMetaClass = masterDs.getMetaClass();
-            if (metadata.getTools().isPersistent(metaMetaClass)
-                    || metadata.getTools().isEmbeddable(metaMetaClass)) {
+            if (metadata.getTools().isJpaEntity(metaMetaClass)
+                    || metadata.getTools().isJpaEmbeddable(metaMetaClass)) {
                 FetchPlan masterView = masterDs.getView();
                 if (masterView == null) {
                     throw new DevelopmentException("No view for datasource " + masterDs.getId(),

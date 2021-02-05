@@ -41,7 +41,7 @@ public class CollectionDsHelper {
         List<MetaPropertyPath> properties = new ArrayList<>();
         MetadataTools metadataTools = AppBeans.get(MetadataTools.class);
 
-        if (fetchPlan != null && metadataTools.isPersistent(metaClass)) {
+        if (fetchPlan != null && metadataTools.isJpaEntity(metaClass)) {
             for (FetchPlanProperty property : fetchPlan.getProperties()) {
                 final String name = property.getName();
 
@@ -51,7 +51,7 @@ public class CollectionDsHelper {
                     throw new DevelopmentException(message);
                 }
 
-                if (!metadataTools.isPersistent(metaProperty)) {
+                if (!metadataTools.isJpa(metaProperty)) {
                     String message = String.format(
                             "Specified transient property %s in view for datasource with persistent entity %s",
                             name, metaClass.getName());
@@ -73,7 +73,7 @@ public class CollectionDsHelper {
 
             // add all non-persistent properties
             for (MetaProperty metaProperty : metaClass.getProperties()) {
-                if (!metadataTools.isPersistent(metaProperty)) {
+                if (!metadataTools.isJpa(metaProperty)) {
                     properties.add(new MetaPropertyPath(metaClass, metaProperty));
                 }
             }

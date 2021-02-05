@@ -235,7 +235,7 @@ public class BulkEditorWindow extends AbstractWindow {
                 Datasource<Entity> fieldDs = datasource;
                 // field owner metaclass is embeddable only if field domain embeddable,
                 // so we can check field domain
-                if (metadataTools.isEmbeddable(field.getMetaProperty().getDomain())) {
+                if (metadataTools.isJpaEmbeddable(field.getMetaProperty().getDomain())) {
                     fieldDs = datasources.get(field.getParentFqn());
                 }
 
@@ -522,7 +522,7 @@ public class BulkEditorWindow extends AbstractWindow {
 
     protected boolean isManagedAttribute(MetaClass metaClass, MetaProperty metaProperty) {
         if (metadataTools.isSystem(metaProperty)
-                || !metadataTools.isPersistent(metaProperty)
+                || !metadataTools.isJpa(metaProperty)
                 || metadataTools.isSystemLevel(metaProperty)
                 || metaProperty.getRange().getCardinality().isMany()
                 || !isPermitted(metaClass, metaProperty)) {

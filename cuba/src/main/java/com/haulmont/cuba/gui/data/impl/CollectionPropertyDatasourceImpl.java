@@ -98,7 +98,7 @@ public class CollectionPropertyDatasourceImpl<T extends Entity, K>
             Collection coll = e.getItem() == null ? null : (Collection) EntityValues.getValue(e.getItem(), metaProperty.getName());
             reattachListeners(prevColl, coll);
 
-            if (coll != null && metadata.getTools().isPersistent(metaProperty)) {
+            if (coll != null && metadata.getTools().isJpa(metaProperty)) {
                 for (Object collItem : coll) {
                     if (PersistenceHelper.isNew(collItem)) {
                         itemsToCreate.remove(collItem);

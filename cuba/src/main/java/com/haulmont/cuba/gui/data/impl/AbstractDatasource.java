@@ -182,7 +182,7 @@ public abstract class AbstractDatasource<T extends Entity> implements Datasource
             // If the datasource is a property datasource of the Child
             if (sibling instanceof NestedDatasource
                     && ((NestedDatasource) sibling).getMaster().equals(this)
-                    && !metadata.getTools().isEmbeddable(sibling.getMetaClass())) {
+                    && !metadata.getTools().isJpaEmbeddable(sibling.getMetaClass())) {
                 // Look for corresponding property datasource in the Parent's DsContext
                 for (Datasource siblingOfParent : parentDs.getDsContext().getAll()) {
                     if (siblingOfParent instanceof NestedDatasource

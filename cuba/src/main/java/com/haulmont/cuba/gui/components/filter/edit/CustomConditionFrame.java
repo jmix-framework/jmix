@@ -244,7 +244,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         Map<String, Object> items = new TreeMap<>();
         Object selectedItem = null;
         if (ParamType.ENTITY.equals(typeSelect.getValue())) {
-            for (MetaClass metaClass : metadataTools.getAllPersistentMetaClasses()) {
+            for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
                 if (!metadataTools.isSystemLevel(metaClass)) {
                     items.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")", metaClass);
                 }

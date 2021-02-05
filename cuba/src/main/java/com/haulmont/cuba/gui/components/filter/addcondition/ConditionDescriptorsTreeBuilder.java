@@ -415,7 +415,7 @@ public class ConditionDescriptorsTreeBuilder implements ConditionDescriptorsTree
     protected boolean isPropertyAllowed(MetaClass metaClass, MetaProperty property) {
         return security.isEntityAttrPermitted(metaClass, property.getName(), EntityAttrAccess.VIEW)
                 && !metadataTools.isSystemLevel(property)           // exclude system level attributes
-                && ((metadataTools.isPersistent(property) || isKeyValueMetaClass)           // exclude transient properties
+                && ((metadataTools.isJpa(property) || isKeyValueMetaClass)           // exclude transient properties
                 || (metadataTools.getCrossDataStoreReferenceIdProperty(storeName, property) != null))
                 && !defaultExcludedProps.contains(property.getName())
                 && !(byte[].class.equals(property.getJavaType()))

@@ -212,7 +212,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
     }
 
     protected List<FieldGroup.FieldConfig> loadDynamicAttributeFields(Datasource ds) {
-        if (ds != null && getMetadataTools().isPersistent(ds.getMetaClass())) {
+        if (ds != null && getMetadataTools().isJpaEntity(ds.getMetaClass())) {
             String windowId = getWindowId(context);
 
             Set<AttributeDefinition> attributes =
@@ -670,7 +670,7 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
             Security security = applicationContext.getBean(Security.class);
             if (!security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
-                    (getMetadataTools().isEmbeddable(metaClass) &&
+                    (getMetadataTools().isJpaEmbeddable(metaClass) &&
                             !security.isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
                 field.setEditable(false);
             }

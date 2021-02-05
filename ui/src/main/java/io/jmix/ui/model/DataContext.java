@@ -138,7 +138,7 @@ public interface DataContext {
     void clear();
 
     /**
-     * Creates an entity instance and merge it into the context.
+     * Creates an entity instance and merges it into the context.
      * <p>
      * Same as:
      * <pre>

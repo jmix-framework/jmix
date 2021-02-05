@@ -31,6 +31,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
 
     testImplementation project(':ui-test-assist')
+    testImplementation 'io.jmix.data:jmix-eclipselink'
     testRuntimeOnly 'org.slf4j:slf4j-simple'
     testRuntimeOnly 'org.hsqldb:hsqldb'
 }

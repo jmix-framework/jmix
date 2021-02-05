@@ -21,6 +21,7 @@ import component.simplepagination.screen.SimplePaginationTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import io.jmix.ui.widget.JmixSimplePagination
@@ -30,7 +31,8 @@ import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.sales.Customer
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class SimplePaginationTest extends ScreenSpecification {
 
     @Autowired

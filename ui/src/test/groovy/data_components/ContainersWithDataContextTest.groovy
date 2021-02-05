@@ -19,6 +19,7 @@ package data_components
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.test.context.ContextConfiguration
@@ -26,7 +27,8 @@ import test_support.UiTestConfiguration
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class ContainersWithDataContextTest extends ScreenSpecification {
 
     def "entity added to property container are not merged into context"() {

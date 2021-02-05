@@ -52,7 +52,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'
     testImplementation project(':ui-test-assist')
-    testImplementation 'io.jmix.data:jmix-data'
+    testImplementation 'io.jmix.data:jmix-eclipselink'
     testImplementation 'org.apache.commons:commons-dbcp2'
     testImplementation 'org.springframework:spring-orm'
     testImplementation 'cglib:cglib-nodep:3.3.0'

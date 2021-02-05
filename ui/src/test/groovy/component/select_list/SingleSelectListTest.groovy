@@ -20,6 +20,7 @@ import component.select_list.screen.SingleSelectListTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.common.event.Subscription
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.HasValue
 import io.jmix.ui.component.SingleSelectList
@@ -30,7 +31,8 @@ import test_support.UiTestConfiguration
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Consumer
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class SingleSelectListTest extends ScreenSpecification {
 
     @Override

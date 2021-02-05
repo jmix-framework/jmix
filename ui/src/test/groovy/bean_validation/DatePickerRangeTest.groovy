@@ -20,6 +20,7 @@ import bean_validation.screen.DateValidationTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DateTimeTransformations
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.DatePicker
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -29,7 +30,8 @@ import test_support.UiTestConfiguration
 
 import java.time.*
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class DatePickerRangeTest extends ScreenSpecification {
 
     @Autowired

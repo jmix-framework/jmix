@@ -16,11 +16,12 @@
 
 package facet.timer
 
-import facet.timer.screen.TimerFacetTestFragment
 import facet.timer.screen.NestedTimerFragmentTestScreen
+import facet.timer.screen.TimerFacetTestFragment
 import facet.timer.screen.TimerFacetTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Timer
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -28,7 +29,8 @@ import io.jmix.ui.widget.JmixTimer
 import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class TimerFacetTest extends ScreenSpecification {
 
     @Override

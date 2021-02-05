@@ -18,7 +18,7 @@ package data_components
 
 import io.jmix.core.SaveContext
 import io.jmix.core.EntitySet
-import io.jmix.data.impl.JmixEntityFetchGroup
+import io.jmix.eclipselink.impl.JmixEntityFetchGroup
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.DataContext
 import io.jmix.ui.model.impl.NoopDataContext

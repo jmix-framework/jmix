@@ -18,16 +18,18 @@ package component.menu
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.mainwindow.AppMenu
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
+import test_support.UiTestConfiguration
 import test_support.bean.TestAppMenuBuilder
 import test_support.bean.TestMenuConfig
-import test_support.UiTestConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class AppMenuBuilderTest extends ScreenSpecification {
 
     @Autowired

@@ -10,7 +10,7 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core-starter'
-    api 'io.jmix.data:jmix-data-starter'
+    api 'io.jmix.data:jmix-eclipselink-starter'
     api project(':ui-starter')
     implementation project(':ui-widgets-compiled')
 

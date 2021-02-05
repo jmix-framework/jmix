@@ -18,6 +18,7 @@ package screen
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.screen.FrameOwner
 import io.jmix.ui.screen.OpenMode
@@ -27,7 +28,8 @@ import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.bean.TestWebBean
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class ScreenOpenedClosedEvtTest extends ScreenSpecification {
 
     @Autowired

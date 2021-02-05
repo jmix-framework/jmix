@@ -19,6 +19,7 @@ package entity_fields
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.DataManager
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.ScreenBuilders
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.UiProperties
@@ -36,7 +37,8 @@ import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.screen.OrderEdit
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class FormFieldTest extends ScreenSpecification {
     @Autowired
     ScreenBuilders screenBuilders

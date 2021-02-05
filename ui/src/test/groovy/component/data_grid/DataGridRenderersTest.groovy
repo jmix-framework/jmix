@@ -19,6 +19,7 @@ package component.data_grid
 import component.data_grid.screen.DataGridRenderersTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.DataGrid
 import io.jmix.ui.component.renderer.*
@@ -27,7 +28,8 @@ import org.springframework.test.context.ContextConfiguration
 import test_support.UiTestConfiguration
 import test_support.entity.model_objects.RendererObject
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class DataGridRenderersTest extends ScreenSpecification {
 
     @Override

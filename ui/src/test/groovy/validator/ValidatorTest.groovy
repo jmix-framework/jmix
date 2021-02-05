@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry
 import io.jmix.core.metamodel.datatype.impl.DateTimeDatatype
 import io.jmix.core.metamodel.datatype.impl.LocalTimeDatatype
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
 import io.jmix.ui.component.validation.*
@@ -37,7 +38,8 @@ import java.time.OffsetDateTime
 import java.time.OffsetTime
 import java.util.Calendar
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class ValidatorTest extends ScreenSpecification {
 
     @Autowired

@@ -10,7 +10,7 @@ dependencies {
     api project(':ui-starter')
 
     api 'io.jmix.core:jmix-core-starter'
-    api 'io.jmix.data:jmix-data-starter'
+    api 'io.jmix.data:jmix-eclipselink-starter'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
 

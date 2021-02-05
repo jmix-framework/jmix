@@ -18,6 +18,7 @@ package data_components
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.TextField
 import io.jmix.ui.component.data.value.ContainerValueSource
@@ -29,7 +30,8 @@ import test_support.entity.sales.Customer
 import test_support.entity.sales.Order
 import test_support.entity.sales.OrderLine
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class ContainerBindingToPathTest extends ScreenSpecification {
 
     private Customer customer1

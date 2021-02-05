@@ -18,6 +18,7 @@ package xml
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.action.ListAction
 import io.jmix.ui.xml.layout.loader.ActionCustomPropertyLoader
@@ -27,7 +28,8 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import test_support.UiTestConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class ActionCustomPropertyLoaderTest extends Specification {
 
     @Autowired

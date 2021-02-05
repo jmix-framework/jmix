@@ -19,6 +19,7 @@ package component.select_list
 import component.select_list.screen.MultiSelectListTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.MultiSelectList
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -30,7 +31,8 @@ import test_support.entity.sales.Product
 
 import java.util.function.Consumer
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class MultiSelectListTest extends ScreenSpecification {
 
     @Override

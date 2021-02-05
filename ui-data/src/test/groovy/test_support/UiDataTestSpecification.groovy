@@ -33,6 +33,7 @@ package test_support
 
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.screen.Screen
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -42,8 +43,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 
-@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, UiConfiguration, UiDataConfiguration,
-        UiDataTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, DataConfiguration, EclipselinkConfiguration,
+        UiConfiguration, UiDataConfiguration, UiDataTestConfiguration])
 class UiDataTestSpecification extends ScreenSpecification {
 
     @Autowired

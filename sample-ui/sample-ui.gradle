@@ -27,7 +27,7 @@ dependencies {
     api project(':ui-data-starter')
 
     api 'io.jmix.core:jmix-core-starter'
-    api 'io.jmix.data:jmix-data-starter'
+    api 'io.jmix.data:jmix-eclipselink-starter'
 
     api 'org.springframework.boot:spring-boot-autoconfigure'
 

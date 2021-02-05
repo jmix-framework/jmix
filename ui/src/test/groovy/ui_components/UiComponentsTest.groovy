@@ -19,6 +19,7 @@ package ui_components
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.metamodel.datatype.impl.IntegerDatatype
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.Facets
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.*
@@ -30,7 +31,8 @@ import spock.lang.Unroll
 import test_support.UiTestConfiguration
 import test_support.entity.Foo
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class UiComponentsTest extends ScreenSpecification {
 
     @Autowired

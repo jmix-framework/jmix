@@ -20,6 +20,7 @@ import fragment.screen.EventListenerTestFragment
 import fragment.screen.FragmentXmlListenerTestScreen
 import io.jmix.core.CoreConfiguration
 import io.jmix.data.DataConfiguration
+import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.component.Fragment
 import io.jmix.ui.testassist.spec.ScreenSpecification
@@ -28,7 +29,8 @@ import test_support.UiTestConfiguration
 
 import java.util.function.Consumer
 
-@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration, UiTestConfiguration])
+@ContextConfiguration(classes = [CoreConfiguration, UiConfiguration, DataConfiguration,
+        EclipselinkConfiguration, UiTestConfiguration])
 class FragmentEventsTest extends ScreenSpecification {
 
     @Override

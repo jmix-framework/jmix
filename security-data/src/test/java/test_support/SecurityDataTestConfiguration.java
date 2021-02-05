@@ -26,6 +26,7 @@ import io.jmix.core.security.UserRepository;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
+import io.jmix.data.impl.liquibase.JmixLiquibase;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
@@ -97,9 +98,9 @@ public class SecurityDataTestConfiguration {
 
     @Bean
     public SpringLiquibase liquibase(DataSource dataSource, LiquibaseChangeLogProcessor processor) {
-        SpringLiquibase liquibase = new SpringLiquibase();
+        JmixLiquibase liquibase = new JmixLiquibase();
         liquibase.setDataSource(dataSource);
-        liquibase.setChangeLog("file:" + processor.createMasterChangeLog(Stores.MAIN));
+        liquibase.setChangeLogContent(processor.createMasterChangeLog(Stores.MAIN));
         return liquibase;
     }
 

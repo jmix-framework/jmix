@@ -33,21 +33,6 @@ public class EntityStates extends io.jmix.core.EntityStates {
     public static final String NAME = "cuba_EntityStates";
 
     /**
-     * DEPRECATED. Use {@link MetadataTools#getEntityName(Class)} instead.
-     */
-    @Deprecated
-    public String getEntityName(Class<?> entityClass) {
-        Annotation annotation = entityClass.getAnnotation(javax.persistence.Entity.class);
-        if (annotation == null)
-            throw new IllegalArgumentException("Class " + entityClass + " is not a persistent entity");
-        String name = ((javax.persistence.Entity) annotation).name();
-        if (!StringUtils.isEmpty(name))
-            return name;
-        else
-            return entityClass.getSimpleName();
-    }
-
-    /**
      * DEPRECATED. Use {@link MetadataTools#isSoftDeletable(Class)} instead.
      */
     @Deprecated

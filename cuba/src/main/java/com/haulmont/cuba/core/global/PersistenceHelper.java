@@ -55,15 +55,6 @@ public class PersistenceHelper {
     }
 
     /**
-     * DEPRECATED. Use {@link MetadataTools#getEntityName(Class)} instead.
-     */
-    @Deprecated
-    public static String getEntityName(Class<?> entityClass) {
-        EntityStates entityStates = AppBeans.get(EntityStates.class);
-        return entityStates != null ? entityStates.getEntityName(entityClass) : _entityStates.getEntityName(entityClass);
-    }
-
-    /**
      * DEPRECATED. Use {@link MetadataTools#isSoftDeletable(Class)} instead.
      */
     @Deprecated

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,12 +30,14 @@ public class InpTypesBuilder extends BaseTypesBuilder {
     }
 
     public InputObjectTypeDefinition buildObjectTypeDef(MetaClass metaClass) {
-        log.debug("buildObjectTypeDef: for meta class {}", metaClass.getName());
+        Collection<MetaProperty> properties = metaClass.getProperties().stream()
+                .filter(this::isNotIgnored)
+                .collect(Collectors.toList());
+        log.debug("buildObjectTypeDef: for meta class {} properties {}", metaClass.getName(), properties);
 
         return InputObjectTypeDefinition.newInputObjectDefinition()
                 .name(normalizeInpTypeName(metaClass.getName()))
-                .inputValueDefinitions(metaClass.getProperties().stream()
-                        .filter(this::isNotIgnored)
+                .inputValueDefinitions(properties.stream()
                         .flatMap(this::getObjectFieldDef)
                         .collect(Collectors.toList()))
                 .build();
@@ -107,7 +110,7 @@ public class InpTypesBuilder extends BaseTypesBuilder {
         // todo non-persistent jmix entities
         if ((metaProperty.getType() == MetaProperty.Type.ASSOCIATION || metaProperty.getType() == MetaProperty.Type.COMPOSITION)) {
 
-            if (metadataTools.isJpaEntity(metaProperty.getJavaType())) {
+            if (metadataTools.isJpaEntity(metaProperty.getRange().asClass())) {
                 return normalizeInpTypeName(metaProperty.getRange().asClass().getName());
             }
         }

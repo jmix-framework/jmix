@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,12 +26,13 @@ public class OutTypesBuilder extends BaseTypesBuilder {
     }
 
     public ObjectTypeDefinition buildObjectTypeDef(MetaClass metaClass) {
-        log.debug("buildObjectTypeDef: for meta class {}", metaClass.getName());
+        List<MetaProperty> properties = metaClass.getProperties().stream()
+                .filter(this::isNotIgnored).collect(Collectors.toList());
+        log.debug("buildObjectTypeDef: for meta class {} properties {}", metaClass.getName(), properties);
 
         return ObjectTypeDefinition.newObjectTypeDefinition()
                 .name(normalizeOutTypeName(metaClass.getName()))
-                .fieldDefinitions(metaClass.getProperties().stream()
-                        .filter(this::isNotIgnored)
+                .fieldDefinitions(properties.stream()
                         .flatMap(this::getObjectFieldDef)
                         .collect(Collectors.toList()))
                 // add system attrs

@@ -24,7 +24,6 @@ import io.jmix.samples.rest.entity.driver.Model;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
 
@@ -794,7 +793,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     void createNewEntityWithDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String numberOfSeats = "10";
@@ -1328,7 +1326,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     void updateCarWithExistingDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String dynamicAttributeValue = "ZZZ";
@@ -1353,7 +1350,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     void updateCarWithNullDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String json = getFileContent("updateCarWithNullDynamicAttribute.json", replacements);
@@ -1363,7 +1359,11 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(carUuidString, ctx.read("$.id"));
-            assertNull(ctx.read("$.+numberOfSeatsAttr"));
+            try {
+                ctx.read("$.+numberOfSeatsAttr");
+                fail();
+            } catch (PathNotFoundException ignored) {
+            }
         }
 
         try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
@@ -1376,7 +1376,6 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
-    @Disabled
     void updateCarWithNonExistingDynamicAttribute() throws Exception {
         Map<String, String> replacements = new HashMap<>();
         String dynamicAttributeValue = "ZZZ";

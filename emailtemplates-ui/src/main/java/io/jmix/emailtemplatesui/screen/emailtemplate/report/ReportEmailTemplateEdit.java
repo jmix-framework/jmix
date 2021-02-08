@@ -156,7 +156,10 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreCommitEvent event) {
-        event.getModifiedInstances().add(emailBodyReportDc.getItemOrNull());
+        TemplateReport templateReport = emailBodyReportDc.getItemOrNull();
+        if (templateReport != null) {
+            event.getModifiedInstances().add(templateReport);
+        }
     }
 
     protected void resetTemplateReport() {

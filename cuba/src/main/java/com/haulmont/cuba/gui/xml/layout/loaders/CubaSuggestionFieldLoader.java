@@ -32,6 +32,7 @@ public class CubaSuggestionFieldLoader extends SuggestionFieldLoader {
     public void loadComponent() {
         super.loadComponent();
 
+        loadQuery(resultComponent, element);
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 

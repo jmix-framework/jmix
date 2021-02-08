@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba;
 
+import com.haulmont.cuba.core.global.CubaMessageTools;
 import com.haulmont.cuba.core.global.CubaMetadataTools;
 import com.haulmont.cuba.core.global.EntityStates;
 import com.haulmont.cuba.core.global.impl.CubaFetchPlanRepository;
@@ -139,6 +140,12 @@ public class CubaConfiguration {
     @Primary
     protected Messages messages() {
         return new MessagesImpl();
+    }
+
+    @Bean("cuba_MessageTools")
+    @Primary
+    protected MessageTools messageTools() {
+        return new CubaMessageTools();
     }
 
     @Bean("cuba_Metadata")

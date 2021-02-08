@@ -39,7 +39,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@Component("data_EnhancementCheckDescriptorProcessor")
+@Component("eclipselink_EnhancementCheckDescriptorProcessor")
 public class EnhancementCheckDescriptorProcessor implements DescriptorProcessor {
     @Autowired
     protected Environment environment;

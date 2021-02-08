@@ -46,7 +46,7 @@ class AdditionalDataStoresTest extends DataSpec {
 
         then:
         dbCustMetaClass.getStore().name == 'db1'
-        dbCustMetaClass.getStore().descriptor.beanName == 'data_JpaDataStore'
+        dbCustMetaClass.getStore().descriptor.beanName == 'eclipselink_JpaDataStore'
         dbCustMetaClass.getStore().descriptor.jpa
 
         when:

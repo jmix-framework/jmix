@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
 
 import java.util.Set;

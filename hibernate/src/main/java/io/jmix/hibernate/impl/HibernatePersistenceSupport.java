@@ -24,7 +24,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
-import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
 import org.hibernate.Session;
@@ -70,9 +69,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected EntityListenerManager entityListenerManager;
-
-    @Autowired
-    protected QueryCacheManager queryCacheManager;
 
     @Autowired
     protected HibernateEntityChangedEventManager entityChangedEventManager;
@@ -432,7 +428,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             }
 
             Collection<Object> instances = container.getAllInstances();
-            Set<String> typeNames = new HashSet<>();
             for (Object instance : instances) {
                 if (instance instanceof Entity) {
 
@@ -450,9 +445,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 //                        if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
 //                            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
 //                    }
-                    if (getEntityEntry(instance).isNew()) {
-                        typeNames.add(metadata.getClass(instance).getName());
-                    }
                     fireBeforeDetachEntityListener(instance, container.getStoreName());
                 }
             }
@@ -462,7 +454,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
                 for (BeforeCommitTransactionListener transactionListener : beforeCommitTxListeners) {
                     transactionListener.beforeCommit(container.getStoreName(), allInstances);
                 }
-                queryCacheManager.invalidate(typeNames);
 
                 List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect((SessionImplementor) storeAwareLocator.getEntityManager(container.getStoreName()), container.getAllInstances());
 

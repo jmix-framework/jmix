@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-@Component("data_QueryHintsProcessor")
+@Component("eclipselink_QueryHintsProcessor")
 public class QueryHintsProcessor {
 
     protected Map<String, BiConsumer<JpaQuery, Object>> hintHandlers = new HashMap<>();

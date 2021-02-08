@@ -32,7 +32,7 @@ import java.util.Objects;
 /**
  * Uses all instances of {@link JoinExpressionProvider} beans to create and apply additional join criteria to the mapping.
  */
-@Component("data_JoinCriteriaMappingProcessor")
+@Component("eclipselink_JoinCriteriaMappingProcessor")
 public class JoinCriteriaMappingProcessor implements MappingProcessor {
     @Autowired
     protected ListableBeanFactory beanFactory;

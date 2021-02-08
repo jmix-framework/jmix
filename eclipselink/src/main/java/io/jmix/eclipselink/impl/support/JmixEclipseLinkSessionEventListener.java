@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Component("data_JmixEclipseLinkSessionEventListener")
+@Component("eclipselink_JmixEclipseLinkSessionEventListener")
 public class JmixEclipseLinkSessionEventListener extends SessionEventAdapter {
 
     @Autowired

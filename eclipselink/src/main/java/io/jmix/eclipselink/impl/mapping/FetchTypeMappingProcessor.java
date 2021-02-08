@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * Relational mappings: 1:1, 1:m, m:1, m:m are set to lazy. Other types like {@link org.eclipse.persistence.mappings.AggregateObjectMapping}
  * are set to eager.
  */
-@Component("data_FetchTypeMappingProcessor")
+@Component("eclipselink_FetchTypeMappingProcessor")
 public class FetchTypeMappingProcessor implements MappingProcessor {
     private static final Logger log = LoggerFactory.getLogger(FetchTypeMappingProcessor.class);
 

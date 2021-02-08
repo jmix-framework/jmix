@@ -22,7 +22,7 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.data.impl.entitycache.StandardQueryCache;
+import io.jmix.eclipselink.impl.entitycache.StandardQueryCache;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.eclipselink.impl.JmixEclipselinkTransactionManager;

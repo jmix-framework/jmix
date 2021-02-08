@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
 import com.google.common.base.MoreObjects;
 import io.jmix.core.UuidProvider;

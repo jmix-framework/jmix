@@ -23,11 +23,10 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.EntityFetcher;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.PersistenceHints;
-import io.jmix.hibernate.impl.metadata.FetchGraphProvider;
 import io.jmix.data.impl.QueryMacroHandler;
-import io.jmix.data.impl.entitycache.QueryCacheManager;
 import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.hibernate.impl.metadata.FetchGraphProvider;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.graph.spi.RootGraphImplementor;
 import org.hibernate.query.ParameterMetadata;
@@ -68,7 +67,6 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
     protected ExtendedEntities extendedEntities;
     protected FetchPlanRepository fetchPlanRepository;
     protected EntityFetcher entityFetcher;
-    protected QueryCacheManager queryCacheMgr;
     protected QueryTransformerFactory queryTransformerFactory;
     protected DbmsSpecifics dbmsSpecifics;
     protected Collection<QueryMacroHandler> macroHandlers;
@@ -101,7 +99,6 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
         extendedEntities = beanFactory.getBean(ExtendedEntities.class);
         fetchPlanRepository = beanFactory.getBean(FetchPlanRepository.class);
         entityFetcher = beanFactory.getBean(EntityFetcher.class);
-        queryCacheMgr = beanFactory.getBean(QueryCacheManager.class);
         queryTransformerFactory = beanFactory.getBean(QueryTransformerFactory.class);
         dbmsSpecifics = beanFactory.getBean(DbmsSpecifics.class);
         macroHandlers = beanFactory.getBeanProvider(QueryMacroHandler.class).stream().collect(Collectors.toList());

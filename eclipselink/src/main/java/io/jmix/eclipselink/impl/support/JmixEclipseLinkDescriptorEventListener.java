@@ -43,7 +43,7 @@ import java.util.List;
 
 import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
-@Component("data_EclipseLinkDescriptorEventListener")
+@Component("eclipselink_EclipseLinkDescriptorEventListener")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventListener {
 

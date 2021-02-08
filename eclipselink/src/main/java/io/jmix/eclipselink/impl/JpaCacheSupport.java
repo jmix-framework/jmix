@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.persistence.EntityManagerFactory;
 
-@Component("data_OrmCacheSupport")
+@Component("eclipselink_OrmCacheSupport")
 public class JpaCacheSupport {
 
     @Autowired

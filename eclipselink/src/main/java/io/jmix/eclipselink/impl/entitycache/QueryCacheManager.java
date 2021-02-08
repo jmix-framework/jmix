@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
-import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
+import io.jmix.eclipselink.EclipselinkProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +37,11 @@ import javax.persistence.TypedQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("data_QueryCacheManager")
+@Component("eclipselink_QueryCacheManager")
 public class QueryCacheManager {
 
     @Autowired
-    protected DataProperties properties;
+    protected EclipselinkProperties properties;
     @Autowired
     protected QueryCache queryCache;
     @Autowired

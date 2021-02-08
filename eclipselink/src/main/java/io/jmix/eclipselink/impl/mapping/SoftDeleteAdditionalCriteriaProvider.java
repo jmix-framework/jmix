@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * The implementation of additional criterion for soft delete.
  */
-@Component("data_SoftDeleteAdditionalCriteriaProvider")
+@Component("eclipselink_SoftDeleteAdditionalCriteriaProvider")
 public class SoftDeleteAdditionalCriteriaProvider implements AdditionalCriteriaProvider {
     @Autowired
     protected MetadataTools metadataTools;

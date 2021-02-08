@@ -35,7 +35,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-@Component("data_JmixEclipseLinkJpaDialect")
+@Component("eclipselink_JmixEclipseLinkJpaDialect")
 public class JmixEclipseLinkJpaDialect extends EclipseLinkJpaDialect {
 
     private static final long serialVersionUID = 7560990917358283944L;

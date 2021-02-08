@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 /**
  * Updates database mapping to support embedded parameters.
  */
-@Component("data_EmbeddedAttributesMappingProcessor")
+@Component("eclipselink_EmbeddedAttributesMappingProcessor")
 public class EmbeddedAttributesMappingProcessor implements MappingProcessor {
     @Autowired
     protected Metadata metadata;

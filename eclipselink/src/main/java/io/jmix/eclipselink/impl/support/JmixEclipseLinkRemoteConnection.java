@@ -21,7 +21,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.impl.StandardSerialization;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.impl.entitycache.QueryCacheManager;
+import io.jmix.eclipselink.impl.entitycache.QueryCacheManager;
 import org.eclipse.persistence.internal.helper.Helper;
 import org.eclipse.persistence.internal.sessions.UnitOfWorkChangeSet;
 import org.eclipse.persistence.internal.sessions.coordination.broadcast.BroadcastRemoteConnection;
@@ -38,7 +38,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component("data_JmixEclipseLinkRemoteConnection")
+@Component("eclipselink_JmixEclipseLinkRemoteConnection")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixEclipseLinkRemoteConnection extends BroadcastRemoteConnection {
 

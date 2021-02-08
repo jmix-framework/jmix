@@ -38,7 +38,7 @@ import java.util.UUID;
 /**
  * Updates entity mappings to add UUID support even for databases that do not support UUID datatype directly.
  */
-@Component("data_UuidMappingProcessor")
+@Component("eclipselink_UuidMappingProcessor")
 public class UuidMappingProcessor implements MappingProcessor {
     @Autowired
     protected Metadata metadata;

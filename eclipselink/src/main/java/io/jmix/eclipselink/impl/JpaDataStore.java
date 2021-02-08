@@ -60,7 +60,7 @@ import static io.jmix.core.entity.EntityValues.getValue;
  * INTERNAL.
  * Implementation of the {@link DataStore} interface working with a relational database using JPA.
  */
-@Component("data_JpaDataStore")
+@Component("eclipselink_JpaDataStore")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JpaDataStore extends AbstractDataStore implements DataSortingOptions {
 

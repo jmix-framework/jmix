@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.stereotype.Component;
 
-@ManagedResource(description = "Manages query cache", objectName = "jmix.data:type=QueryCache")
-@Component("data_QueryCacheManagementFacade")
+@ManagedResource(description = "Manages query cache", objectName = "jmix.eclipselink:type=QueryCache")
+@Component("eclipselink_QueryCacheManagementFacade")
 public class QueryCacheManagementFacade {
 
     @Autowired

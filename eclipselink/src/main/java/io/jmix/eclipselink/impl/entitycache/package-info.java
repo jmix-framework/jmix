@@ -15,6 +15,6 @@
  */
 
 @Internal
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
 import io.jmix.core.annotation.Internal;

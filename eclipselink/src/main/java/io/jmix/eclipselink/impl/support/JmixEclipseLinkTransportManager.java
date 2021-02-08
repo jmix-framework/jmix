@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 
-@Component("data_JmixEclipseLinkTransportManager")
+@Component("eclipselink_JmixEclipseLinkTransportManager")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JmixEclipseLinkTransportManager extends BroadcastTransportManager {
 

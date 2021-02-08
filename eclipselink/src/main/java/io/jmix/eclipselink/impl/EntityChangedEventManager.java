@@ -47,7 +47,7 @@ import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
-@Component("data_EntityChangedEventManager")
+@Component("eclipselink_EntityChangedEventManager")
 public class EntityChangedEventManager {
 
     private static final Logger log = LoggerFactory.getLogger(EntityChangedEventManager.class);

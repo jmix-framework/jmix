@@ -173,12 +173,12 @@
 
     <Match>
         <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
-        <Class name="io.jmix.data.impl.entitycache.QueryKey"/>
+        <Class name="io.jmix.eclipselink.impl.entitycache.QueryKey"/>
     </Match>
 
     <Match>
         <Bug pattern="SE_NO_SERIALVERSIONID"/>
-        <Class name="io.jmix.data.impl.entitycache.QueryKey"/>
+        <Class name="io.jmix.eclipselink.impl.entitycache.QueryKey"/>
     </Match>
 
     <Match>

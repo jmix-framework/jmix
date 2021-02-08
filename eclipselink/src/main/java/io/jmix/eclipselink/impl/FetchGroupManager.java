@@ -39,7 +39,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("data_FetchGroupManager")
+@Component("eclipselink_FetchGroupManager")
 public class FetchGroupManager {
 
     private final Logger log = LoggerFactory.getLogger(FetchGroupManager.class);

@@ -35,7 +35,7 @@ import javax.persistence.OneToOne;
 /**
  * Generates expression to support soft delete feature in CUBA.
  */
-@Component("data_SoftDeleteJoinExpressionProvider")
+@Component("eclipselink_SoftDeleteJoinExpressionProvider")
 public class SoftDeleteJoinExpressionProvider extends AbstractJoinExpressionProvider {
     @Autowired
     protected Metadata metadata;

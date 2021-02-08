@@ -40,7 +40,7 @@ import javax.persistence.OneToOne;
  * Modifies mapping to support soft delete feature. Updates softDeletionForBatch and
  * softDeletionForValueHolder properties using corresponding setters.
  */
-@Component("data_SoftDeleteProcessor")
+@Component("eclipselink_SoftDeleteProcessor")
 public class SoftDeleteProcessor implements MappingProcessor, DescriptorProcessor {
     @Autowired
     protected Metadata metadata;

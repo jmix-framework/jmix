@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data.impl.entitycache;
+package io.jmix.eclipselink.impl.entitycache;
 
 import com.google.common.collect.Sets;
 import io.jmix.core.CacheOperations;
@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Component("data_QueryCache")
+@Component("eclipselink_QueryCache")
 public class StandardQueryCache implements QueryCache {
 
     protected Cache queries;
@@ -41,7 +41,7 @@ public class StandardQueryCache implements QueryCache {
     @Autowired
     protected CacheOperations cacheOperations;
 
-    public static final String QUERY_CACHE_NAME = "jmix-orm-query-cache";
+    public static final String QUERY_CACHE_NAME = "jmix-eclipselink-query-cache";
 
     protected static final Logger log = LoggerFactory.getLogger(QueryCache.class);
 

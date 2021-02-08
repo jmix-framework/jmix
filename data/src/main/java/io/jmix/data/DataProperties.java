@@ -25,27 +25,20 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class DataProperties {
 
     boolean useReadOnlyTransactionForLoad;
-    boolean queryCacheEnabled;
     int numberIdCacheSize;
     boolean useEntityDataStoreForIdSequence;
 
     public DataProperties(
             @DefaultValue("true") boolean useReadOnlyTransactionForLoad,
-            @DefaultValue("true") boolean queryCacheEnabled,
             @DefaultValue("100") int numberIdCacheSize,
             boolean useEntityDataStoreForIdSequence) {
         this.useReadOnlyTransactionForLoad = useReadOnlyTransactionForLoad;
-        this.queryCacheEnabled = queryCacheEnabled;
         this.numberIdCacheSize = numberIdCacheSize;
         this.useEntityDataStoreForIdSequence = useEntityDataStoreForIdSequence;
     }
 
     public boolean isUseReadOnlyTransactionForLoad() {
         return useReadOnlyTransactionForLoad;
-    }
-
-    public boolean isQueryCacheEnabled() {
-        return queryCacheEnabled;
     }
 
     public int getNumberIdCacheSize() {

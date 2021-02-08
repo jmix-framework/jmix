@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 
 import static io.jmix.eclipselink.impl.lazyloading.ValueHoldersSupport.*;
 
-@Component("data_JpaLazyLoadingInterceptor")
+@Component("eclipselink_JpaLazyLoadingInterceptor")
 public class JpaLazyLoadingListener implements DataStoreEventListener {
     @Autowired
     protected Metadata metadata;

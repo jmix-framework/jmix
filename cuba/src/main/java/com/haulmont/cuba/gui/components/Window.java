@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
+import com.haulmont.cuba.gui.DialogOptions;
 import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.compatibility.AfterCloseListenerAdapter;
@@ -26,6 +27,7 @@ import com.haulmont.cuba.gui.components.compatibility.SelectValidatorAdapter;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.screen.OpenMode;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
@@ -99,6 +101,13 @@ public interface Window extends io.jmix.ui.component.Window, Frame {
      */
     @Deprecated
     WindowManager getWindowManager();
+
+    /**
+     * @return dialog options of window. Options will be applied only if window opened with {@link OpenMode#DIALOG}
+     * @deprecated Cast a window instance to {@link io.jmix.ui.component.DialogWindow}
+     */
+    @Deprecated
+    DialogOptions getDialogOptions();
 
     /**
      * Adds a listener that will be notified when this screen is closed.

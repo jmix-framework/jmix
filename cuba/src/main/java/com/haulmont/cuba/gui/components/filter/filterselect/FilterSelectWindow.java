@@ -68,10 +68,10 @@ public class FilterSelectWindow extends AbstractWindow {
     public void init(Map<String, Object> params) {
         ThemeConstants theme = themeConstantsManager.getConstants();
 
-        /*getDialogOptions()
+        getDialogOptions()
                 .setHeight(theme.get("cuba.gui.filterSelect.dialog.height"))
                 .setWidth(theme.get("cuba.gui.filterSelect.dialog.width"))
-                .setResizable(true);*/
+                .setResizable(true);
 
         filterEntitiesTable.addGeneratedColumn("name", entity -> {
             Label<String> label = componentsFactory.createComponent(Label.class);

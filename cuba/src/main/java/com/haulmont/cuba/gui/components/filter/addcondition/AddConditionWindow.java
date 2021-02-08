@@ -69,10 +69,10 @@ public class AddConditionWindow extends AbstractWindow {
 
         ThemeConstants theme = themeConstantsManager.getConstants();
 
-        /*getDialogOptions()
+        getDialogOptions()
                 .setHeight(theme.get("cuba.gui.addFilterCondition.dialog.height"))
                 .setWidth(theme.get("cuba.gui.addFilterCondition.dialog.width"))
-                .setResizable(true);*/
+                .setResizable(true);
 
         conditionDescriptorsDs.refresh(params);
         expandTreeRoots();

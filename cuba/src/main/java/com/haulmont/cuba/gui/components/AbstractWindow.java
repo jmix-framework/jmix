@@ -16,6 +16,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.DialogOptions;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.data.DsContext;
 import com.haulmont.cuba.gui.screen.ScreenSettings;
@@ -93,6 +94,11 @@ public class AbstractWindow extends Screen
     @Override
     public WindowManager getWindowManager() {
         return windowManager;
+    }
+
+    @Override
+    public DialogOptions getDialogOptions() {
+        return ((com.haulmont.cuba.gui.components.Window) frame).getDialogOptions();
     }
 
     @Override

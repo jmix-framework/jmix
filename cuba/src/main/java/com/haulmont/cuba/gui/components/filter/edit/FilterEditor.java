@@ -163,10 +163,10 @@ public class FilterEditor extends AbstractWindow {
             setCaption(messages.getMessage("filter.editor.captionShortForm"));
         }
 
-        /*getDialogOptions()
+        getDialogOptions()
                 .setWidth(theme.get("cuba.gui.filterEditor.dialog.width"))
                 .setHeight(theme.get("cuba.gui.filterEditor.dialog.height"))
-                .setResizable(true);*/
+                .setResizable(true);
 
         filterEntity = (FilterEntity) params.get("filterEntity");
         if (filterEntity == null) {

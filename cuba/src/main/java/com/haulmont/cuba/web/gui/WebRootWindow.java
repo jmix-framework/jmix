@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui;
 
+import com.haulmont.cuba.gui.DialogOptions;
 import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
@@ -28,6 +29,8 @@ import io.jmix.ui.screen.UiControllerUtils;
 @Deprecated
 public class WebRootWindow extends RootWindowImpl implements Window {
 
+    protected DialogOptions dialogOptions; // lazily initialized
+
     @Override
     public WindowContext getContext() {
         return (WindowContext) super.getContext();
@@ -36,6 +39,14 @@ public class WebRootWindow extends RootWindowImpl implements Window {
     @Override
     public WindowManager getWindowManager() {
         return (WindowManager) UiControllerUtils.getScreenContext(getFrameOwner()).getScreens();
+    }
+
+    @Override
+    public DialogOptions getDialogOptions() {
+        if (dialogOptions == null) {
+            dialogOptions = new DialogOptions();
+        }
+        return dialogOptions;
     }
 
     @Override

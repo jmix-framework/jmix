@@ -65,9 +65,9 @@ public class DateIntervalEditor extends AbstractWindow {
     public void init(Map<String, Object> params) {
         super.init(params);
 
-        /*getDialogOptions()
+        getDialogOptions()
                 .setResizable(true)
-                .setWidth(themeConstants.get("cuba.gui.filter.dateIntervalEditor.width"));*/
+                .setWidth(themeConstants.get("cuba.gui.filter.dateIntervalEditor.width"));
 
         componentsVisibilityMap.putAll(DateIntervalValue.Type.LAST, Arrays.asList(timeUnitLookup, numberField, includingCurrentCheckBox));
         componentsVisibilityMap.putAll(DateIntervalValue.Type.NEXT, Arrays.asList(timeUnitLookup, numberField, includingCurrentCheckBox));

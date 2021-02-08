@@ -24,7 +24,7 @@ public class JpaStoreDescriptor implements StoreDescriptor {
 
     @Override
     public String getBeanName() {
-        return "data_JpaDataStore";
+        return "eclipselink_JpaDataStore";
     }
 
     @Override

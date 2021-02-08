@@ -16,21 +16,14 @@
 
 package io.jmix.core;
 
-import io.jmix.core.event.AttributeChanges;
+public class EntityValueAccessException extends RuntimeException {
+    private static final long serialVersionUID = -5195098190724742867L;
 
-import javax.annotation.Nullable;
-import java.util.Set;
+    public EntityValueAccessException(String message) {
+        super(message);
+    }
 
-public interface EntityValuesProvider {
-
-    boolean supportAttribute(String name);
-
-    @Nullable
-    <T> T getAttributeValue(String name) throws EntityValueAccessException;
-
-    void setAttributeValue(String name, @Nullable Object value, boolean checkEquals) throws EntityValueAccessException;
-
-    Set<String> getAttributes();
-
-    Set<AttributeChanges.Change> getChanges();
+    public EntityValueAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

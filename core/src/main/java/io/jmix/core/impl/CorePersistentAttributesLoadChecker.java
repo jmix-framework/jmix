@@ -24,6 +24,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,9 +55,8 @@ public class CorePersistentAttributesLoadChecker implements PersistentAttributes
         }
         MetaClass metaClass = metadata.getClass(entity.getClass());
 
-        if (property.startsWith("+")) {
-            Set<MetaProperty> dynAttr = metadataTools.getAdditionalProperties(metaClass);
-            return dynAttr.stream().anyMatch(metaProperty -> metaProperty.getName().equals(property));
+        if (ObjectPathUtils.isSpecialPath(property)) {
+            return metadataTools.isAdditionalProperty(metaClass, property);
         }
 
         MetaProperty metaProperty = metaClass.getProperty(property);

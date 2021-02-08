@@ -390,6 +390,9 @@ public abstract class AbstractDataStore implements DataStore {
                         .setId(Objects.requireNonNull(EntityValues.getId(entity)))
                         .setFetchPlan(getFetchPlanForSave(context.getFetchPlans(), entity));
 
+                DataStoreEntityReloadEvent reloadEvent = new DataStoreEntityReloadEvent(loadContext, context, loadState);
+                fireEvent(reloadEvent);
+
                 DataStoreBeforeEntityLoadEvent beforeLoadEvent = new DataStoreBeforeEntityLoadEvent(loadContext, loadState);
                 fireEvent(beforeLoadEvent);
 

@@ -317,7 +317,12 @@ public class EntitySerializationImpl implements EntitySerialization {
                     }
                 }
 
-                Object fieldValue = EntityValues.getValue(entity, metaProperty.getName());
+                Object fieldValue;
+                try {
+                    fieldValue = EntityValues.getValue(entity, metaProperty.getName());
+                } catch (EntityValueAccessException e) {
+                    continue;
+                }
 
                 //always write nulls here. GSON will not serialize them to the result if
                 //EntitySerializationOptions.SERIALIZE_NULLS was not set.

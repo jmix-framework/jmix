@@ -39,7 +39,5 @@ public class SuggestionFieldLoader extends AbstractSuggestionFieldLoader<Suggest
         loadInputPrompt(resultComponent, element);
 
         loadPopupWidth(resultComponent, element);
-
-        loadQuery(resultComponent, element);
     }
 }

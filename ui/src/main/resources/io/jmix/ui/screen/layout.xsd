@@ -2150,10 +2150,6 @@
     <xs:complexType name="suggestionFieldComponent">
         <xs:complexContent>
             <xs:extension base="baseFieldComponent">
-                <xs:all>
-                    <xs:element name="query" minOccurs="0" type="suggestionFieldQuery"/>
-                </xs:all>
-
                 <xs:attribute name="stylename" type="suggestionFieldStylename"/>
 
                 <xs:attribute name="asyncSearchDelayMs" type="xs:integer"/>
@@ -2173,10 +2169,11 @@
     <xs:complexType name="entitySuggestionFieldComponent">
         <xs:complexContent>
             <xs:extension base="suggestionFieldComponent">
-                <xs:sequence>
+                <xs:all>
                     <xs:element name="actions" minOccurs="0" type="componentActions"/>
                     <xs:element name="validators" minOccurs="0" type="constraintValidatorType"/>
-                </xs:sequence>
+                    <xs:element name="query" minOccurs="0" type="suggestionFieldQuery"/>
+                </xs:all>
 
                 <xs:attribute name="metaClass" type="xs:string"/>
                 <xs:attributeGroup ref="hasTabIndex"/>

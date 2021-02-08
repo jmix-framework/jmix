@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.dynattr.DynAttrUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -37,7 +38,6 @@ public class DynAttrMetadataExtension implements MetadataExtension {
         this.dynAttrMetadata = dynAttrMetadata;
     }
 
-
     @Override
     public Set<MetaProperty> getAdditionalProperties(MetaClass metaClass) {
         Collection<AttributeDefinition> attributeDefinitions = dynAttrMetadata.getAttributes(metaClass);
@@ -48,15 +48,7 @@ public class DynAttrMetadataExtension implements MetadataExtension {
 
     @Override
     public boolean isAdditionalProperty(MetaClass metaClass, String propertyName) {
-        if (ObjectPathUtils.isSpecialPath(propertyName))
-            propertyName = propertyName.substring(1);
-
-        for (AttributeDefinition definition : dynAttrMetadata.getAttributes(metaClass)) {
-            if (definition.getCode().equals(propertyName))
-                return true;
-        }
-        return false;
+        String code = DynAttrUtils.getAttributeCodeFromProperty(propertyName);
+        return dynAttrMetadata.getAttributeByCode(metaClass, code).isPresent();
     }
-
-
 }

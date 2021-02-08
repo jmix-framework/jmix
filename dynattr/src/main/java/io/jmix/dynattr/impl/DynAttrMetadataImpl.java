@@ -100,7 +100,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
         List<CategoryDefinition> categories = loadCategoryDefinitions(entityName);
         Map<String, AttributeDefinition> attributes = categories.stream()
                 .flatMap(category -> category.getAttributeDefinitions().stream())
-                .collect(Collectors.toMap(AttributeDefinition::getCode, Function.identity()));
+                .collect(Collectors.toMap(AttributeDefinition::getCode, Function.identity(),
+                        (v1, v2) -> v1, HashMap::new));
 
         return new CacheItem(categories, attributes);
     }

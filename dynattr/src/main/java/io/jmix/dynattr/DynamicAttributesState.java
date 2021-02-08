@@ -16,9 +16,9 @@
 
 package io.jmix.dynattr;
 
-import com.google.common.base.Preconditions;
 import io.jmix.core.EntityEntry;
 import io.jmix.core.EntityEntryExtraState;
+import io.jmix.core.EntityValueAccessException;
 import io.jmix.core.EntityValuesProvider;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.impl.EntityInternals;
@@ -55,12 +55,17 @@ public class DynamicAttributesState implements EntityEntryExtraState, EntityValu
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getAttributeValue(String name) {
+        if (dynamicModel == null) {
+            throw new EntityValueAccessException("Dynamic attributes should be loaded explicitly");
+        }
         return (T) dynamicModel.getValue(DynAttrUtils.getAttributeCodeFromProperty(name));
     }
 
     @Override
     public void setAttributeValue(String name, @Nullable Object value, boolean checkEquals) {
-        Preconditions.checkState(dynamicModel != null, "Dynamic attributes should be loaded explicitly");
+        if (dynamicModel == null) {
+            throw new EntityValueAccessException("Dynamic attributes should be loaded explicitly");
+        }
 
         String code = DynAttrUtils.getAttributeCodeFromProperty(name);
         Object oldValue = dynamicModel.getValue(code);

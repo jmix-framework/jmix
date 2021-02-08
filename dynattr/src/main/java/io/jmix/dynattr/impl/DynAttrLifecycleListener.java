@@ -18,8 +18,9 @@ package io.jmix.dynattr.impl;
 
 import io.jmix.core.DataStore;
 import io.jmix.core.LoadContext;
+import io.jmix.core.SaveContext;
 import io.jmix.core.datastore.*;
-import io.jmix.data.impl.JpaDataStoreListener;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.dynattr.DynAttrManager;
 import io.jmix.dynattr.DynAttrQueryHints;
 import io.jmix.dynattr.DynamicAttributes;
@@ -28,12 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
-import static io.jmix.core.entity.EntitySystemAccess.addExtraState;
-import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
+import static io.jmix.core.entity.EntitySystemAccess.*;
 
 @Component("dynattr_DynAttrLifecycleListener")
-public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStoreEventListener, DataStoreCustomizer {
+public class DynAttrLifecycleListener implements DataStoreEventListener, DataStoreCustomizer {
 
     @Autowired
     protected DynAttrManager dynAttrManager;
@@ -42,12 +43,11 @@ public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStore
     public void afterEntityLoad(DataStoreAfterEntityLoadEvent event) {
         LoadContext<?> context = event.getLoadContext();
         Map<String, Object> hints = context.getHints();
-        if (hints != null && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
+        if (Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR))) {
             dynAttrManager.loadValues(event.getResultEntities(), context.getFetchPlan(), context.getAccessConstraints());
         } else {
             for (Object entity : event.getResultEntities()) {
                 DynamicAttributesState state = new DynamicAttributesState(getEntityEntry(entity));
-                state.setDynamicAttributes(new DynamicAttributes());
                 addExtraState(entity, state);
             }
         }
@@ -56,6 +56,25 @@ public class DynAttrLifecycleListener implements JpaDataStoreListener, DataStore
     @Override
     public void entitySaving(DataStoreEntitySavingEvent event) {
         dynAttrManager.storeValues(event.getSaveContext().getEntitiesToSave(), event.getSaveContext().getAccessConstraints());
+    }
+
+    @Override
+    public void entityReload(DataStoreEntityReloadEvent event) {
+        LoadContext<?> loadContext = event.getLoadContext();
+        SaveContext saveContext = event.getSaveContext();
+
+        Object entity = saveContext.getEntitiesToSave().stream()
+                .filter(e -> Objects.equals(EntityValues.getId(e), loadContext.getId()))
+                .findFirst()
+                .orElse(null);
+
+        DynamicAttributesState state = getExtraState(entity, DynamicAttributesState.class);
+        if (state != null) {
+            DynamicAttributes dynamicAttributes = state.getDynamicAttributes();
+            if (dynamicAttributes != null) {
+                loadContext.setHint(DynAttrQueryHints.LOAD_DYN_ATTR, true);
+            }
+        }
     }
 
     @Override

@@ -156,6 +156,10 @@ public class DynamicAttributes implements Serializable {
         return Collections.unmodifiableSet(values.keySet());
     }
 
+    public boolean isEmpty() {
+        return values.isEmpty();
+    }
+
     public Changes getChanges() {
         Map<String, Object> created = new HashMap<>();
         Map<String, Object> updated = new HashMap<>();

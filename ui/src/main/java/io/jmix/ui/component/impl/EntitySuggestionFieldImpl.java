@@ -249,6 +249,7 @@ public class EntitySuggestionFieldImpl<V> extends EntityPickerImpl<V>
         } else {
             getComponent().setEnterActionHandler(null);
         }
+        getComponent().setSelectFirstSuggestionOnShow(handler == null);
     }
 
     @Nullable

@@ -159,7 +159,7 @@ public class JmixSuggestionFieldWidget extends Composite implements HasEnabled, 
                 suggestionsContainer.addItem(menuItem);
             }
 
-            if (selectFirstSuggestionOnShow) {
+            if (isSelectFirstSuggestionOnShow()) {
                 suggestionsContainer.selectItem(0);
             }
 

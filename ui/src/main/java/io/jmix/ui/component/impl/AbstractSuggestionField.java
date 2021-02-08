@@ -159,6 +159,7 @@ public abstract class AbstractSuggestionField<V, I, T extends JmixAbstractSugges
         } else {
             component.setEnterActionHandler(null);
         }
+        component.setSelectFirstSuggestionOnShow(handler == null);
     }
 
     @Nullable

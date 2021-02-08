@@ -27,7 +27,7 @@ import com.haulmont.cuba.core.testsupport.TestAppender;
 import com.haulmont.cuba.core.testsupport.TestNamePrinter;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.impl.entitycache.QueryCache;
+import io.jmix.eclipselink.impl.entitycache.QueryCache;
 import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.internal.jpa.EntityManagerFactoryDelegate;
 import org.eclipse.persistence.jpa.JpaCache;

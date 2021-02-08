@@ -129,7 +129,7 @@ public class ValidationMessageInterpolator implements MessageInterpolator {
                 parameterValue = messages.getMessage(messageCode, locale);
                 // try to find tokens recursive
                 parameterValue = interpolateMessage(parameterValue, locale);
-            } else if (messageCode.startsWith(MessageTools.MARK)) {
+            } else if (messageTools.isMessageKey(messageCode)) {
                 parameterValue = messageTools.loadString(messageCode, locale);
                 // try to find tokens recursive
                 parameterValue = interpolateMessage(parameterValue, locale);

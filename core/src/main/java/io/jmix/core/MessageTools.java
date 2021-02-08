@@ -305,7 +305,7 @@ public class MessageTools {
                 && !"{javax.validation.constraints.NotNull.message}".equals(notNullMessage)) {
             if (notNullMessage.startsWith("{") && notNullMessage.endsWith("}")) {
                 notNullMessage = notNullMessage.substring(1, notNullMessage.length() - 1);
-                if (notNullMessage.startsWith(MARK)) {
+                if (isMessageKey(notNullMessage)) {
                     return loadString(notNullMessage);
                 }
             }
@@ -415,5 +415,13 @@ public class MessageTools {
         return temporalType == TemporalType.DATE
                 ? messages.getMessage("dateFormat")
                 : messages.getMessage("dateTimeFormat");
+    }
+
+    /**
+     * @param message a message to check
+     * @return whether the given message is a key in a localized messages pack
+     */
+    public boolean isMessageKey(@Nullable String message) {
+        return StringUtils.isNotEmpty(message) && message.startsWith(MARK);
     }
 }

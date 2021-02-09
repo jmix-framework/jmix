@@ -39,6 +39,7 @@ import io.jmix.ui.action.list.ViewAction;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.PopupButton;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.ValidationException;
 import io.jmix.ui.model.CollectionChangeType;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionPropertyContainer;
@@ -60,6 +61,9 @@ import java.util.stream.Collectors;
 public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceRoleModelEdit.class);
+
+    @Autowired
+    private TextField<String> codeField;
 
     @Autowired
     @Qualifier("resourcePoliciesTable.edit")
@@ -159,6 +163,17 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
 
         childRolesTableRemove.setConfirmation(false);
         sourceField.setValue(messages.getMessage("io.jmix.securityui.model/roleSource." + getEditedEntity().getSource()));
+
+        codeField.addValidator(s -> {
+            ResourceRoleModel editedEntity = getEditedEntity();
+            boolean exist = roleRepository.getAllRoles().stream()
+                    .filter(resourceRole -> !resourceRole.getCustomProperties().isEmpty())
+                    .filter(resourceRole -> !resourceRole.getCustomProperties().get("databaseId").equals(editedEntity.getCustomProperties().get("databaseId")))
+                    .anyMatch(resourceRole -> resourceRole.getCode().equals(s));
+            if (exist) {
+                throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
+            }
+        });
     }
 
     @Subscribe

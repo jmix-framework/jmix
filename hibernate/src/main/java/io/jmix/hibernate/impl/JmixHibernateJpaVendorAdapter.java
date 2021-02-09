@@ -19,6 +19,7 @@ import io.jmix.core.EnvironmentUtils;
 import io.jmix.hibernate.impl.listeners.HibernateIntegratorProvider;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
+import org.hibernate.persister.internal.PersisterClassResolverInitiator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -42,6 +43,8 @@ public class JmixHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
 
     protected final HibernateIntegratorProvider integratorProvider;
 
+    protected final JmixPersisterClassResolver persisterClassResolver;
+
     protected BeanFactory beanFactory;
 
     protected HibernateDataProperties dataProperties;
@@ -50,6 +53,7 @@ public class JmixHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
     public JmixHibernateJpaVendorAdapter(Environment environment,
                                          HibernateJpaDialect jpaDialect,
                                          HibernateIntegratorProvider integratorProvider,
+                                         JmixPersisterClassResolver persisterClassResolver,
                                          HibernateDataProperties dataProperties,
                                          BeanFactory beanFactory) {
         this.environment = environment;
@@ -57,6 +61,7 @@ public class JmixHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
         this.beanFactory = beanFactory;
         this.integratorProvider = integratorProvider;
         this.dataProperties = dataProperties;
+        this.persisterClassResolver = persisterClassResolver;
         this.persistenceProvider = new HibernateJmixPersistenceProvider(beanFactory);
 
         setGenerateDdl(false);
@@ -82,6 +87,7 @@ public class JmixHibernateJpaVendorAdapter extends HibernateJpaVendorAdapter {
         map.put("javax.persistence.validation.mode", "NONE");
         map.put(AvailableSettings.ENABLE_LAZY_LOAD_NO_TRANS, true);
         map.put(EntityManagerFactoryBuilderImpl.INTEGRATOR_PROVIDER, integratorProvider);
+        map.put(PersisterClassResolverInitiator.IMPL_NAME, persisterClassResolver);
 
         for (String name : EnvironmentUtils.getPropertyNames(environment)) {
             if (name.startsWith("hibernate.")) {

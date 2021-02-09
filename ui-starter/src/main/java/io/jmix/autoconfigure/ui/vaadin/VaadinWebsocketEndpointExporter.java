@@ -16,7 +16,7 @@
 
 package io.jmix.autoconfigure.ui.vaadin;
 
-// import com.vaadin.server.communication.JSR356WebsocketInitializer;
+import com.vaadin.server.communication.JSR356WebsocketInitializer;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 public class VaadinWebsocketEndpointExporter extends ServerEndpointExporter {
@@ -24,8 +24,8 @@ public class VaadinWebsocketEndpointExporter extends ServerEndpointExporter {
     @Override
     protected void registerEndpoints() {
         super.registerEndpoints();
-        // todo implement web socket initialization
-        /*if (!JSR356WebsocketInitializer.isAtmosphereAvailable()) {
+
+        if (!JSR356WebsocketInitializer.isAtmosphereAvailable()) {
             return;
         }
 
@@ -43,7 +43,7 @@ public class VaadinWebsocketEndpointExporter extends ServerEndpointExporter {
             return;
         }
 
-        new JSR356WebsocketInitializer().init(getServletContext());*/
+        new JSR356WebsocketInitializer().init(getServletContext());
     }
 
     @Override

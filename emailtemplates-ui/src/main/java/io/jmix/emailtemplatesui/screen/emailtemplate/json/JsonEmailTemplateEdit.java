@@ -27,8 +27,7 @@ import io.jmix.emailtemplatesui.screen.html.HtmlSourceCodeScreen;
 import io.jmix.grapesjs.component.GjsBlock;
 import io.jmix.grapesjs.component.GrapesJsHtmlEditor;
 import io.jmix.reports.Reports;
-import io.jmix.reports.entity.Report;
-import io.jmix.reports.entity.ReportInputParameter;
+import io.jmix.reports.entity.*;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.Screens;
 import io.jmix.ui.UiProperties;
@@ -45,6 +44,7 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -211,6 +211,19 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreCommitEvent event) {
         getEditedEntity().setReportXml(getReportXml(reportDc.getItem()));
+
+        List<Object> excludedEntities = new ArrayList<>();
+
+        for (Object modifiedInstance : event.getModifiedInstances()) {
+            if (isRelatedToReport(modifiedInstance)) {
+                excludedEntities.add(modifiedInstance);
+            }
+        }
+        excludedEntities.forEach(o -> event.getSource().evict(o));
+    }
+
+    private boolean isRelatedToReport(Object modifiedInstance) {
+        return modifiedInstance instanceof Report || modifiedInstance instanceof ReportTemplate;
     }
 
     protected String getReportXml(Report report) {

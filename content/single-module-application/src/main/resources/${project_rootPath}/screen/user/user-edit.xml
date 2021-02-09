@@ -14,7 +14,7 @@
                 caption="msg:///actions.Ok"
                 icon="EDITOR_OK"
                 primary="true"
-                shortcut="${COMMIT_SHORTCUT}"/>
+                shortcut="\${COMMIT_SHORTCUT}"/>
         <action id="windowClose"
                 caption="msg:///actions.Close"
                 icon="EDITOR_CANCEL"/>

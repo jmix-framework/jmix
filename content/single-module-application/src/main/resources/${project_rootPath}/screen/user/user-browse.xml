@@ -24,7 +24,7 @@
                 caption="msg:///actions.Select"
                 icon="LOOKUP_OK"
                 primary="true"
-                shortcut="${COMMIT_SHORTCUT}"/>
+                shortcut="\${COMMIT_SHORTCUT}"/>
         <action id="lookupCancelAction"
                 caption="msg:///actions.Cancel"
                 icon="LOOKUP_CANCEL"/>

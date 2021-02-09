@@ -21,11 +21,13 @@ import com.vaadin.spring.internal.UIScopeImpl;
 import com.vaadin.spring.internal.VaadinSessionScope;
 import com.vaadin.spring.server.SpringVaadinServlet;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // Exposes JmixUIProvider with customized widgetset lookup
 public class JmixVaadinServlet extends SpringVaadinServlet {
@@ -47,6 +49,8 @@ public class JmixVaadinServlet extends SpringVaadinServlet {
 
     @Override
     protected void servletInitialized() {
+        List<BootstrapListener> bootstrapListeners = getBootstrapListeners();
+
         VaadinServletService service = getService();
         service.addSessionInitListener(sessionInitEvent -> {
             // remove DefaultUIProvider instances to avoid mapping
@@ -65,13 +69,23 @@ public class JmixVaadinServlet extends SpringVaadinServlet {
             // add JMix UI provider
             UIProvider uiProvider = new JmixUIProvider(session);
             session.addUIProvider(uiProvider);
+
+            bootstrapListeners.forEach(sessionInitEvent.getSession()::addBootstrapListener);
         });
+
         service.addSessionDestroyListener(event -> {
             VaadinSession session = event.getSession();
 
             UIScopeImpl.cleanupSession(session);
             VaadinSessionScope.cleanupSession(session);
         });
+    }
+
+    protected List<BootstrapListener> getBootstrapListeners() {
+        return applicationContext.getBeansOfType(BootstrapListener.class)
+                .values().stream()
+                .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                .collect(Collectors.toList());
     }
 
     @Nullable

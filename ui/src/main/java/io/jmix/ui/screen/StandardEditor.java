@@ -538,7 +538,7 @@ public abstract class StandardEditor<T> extends Screen
                 });
     }
 
-    private void showSaveNotification() {
+    protected void showSaveNotification() {
         if (!showSaveNotification) {
             return;
         }

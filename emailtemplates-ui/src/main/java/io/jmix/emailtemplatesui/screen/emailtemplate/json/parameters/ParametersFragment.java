@@ -22,6 +22,7 @@ import io.jmix.core.Sort;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetadataObject;
 import io.jmix.emailtemplates.entity.JsonEmailTemplate;
+import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
@@ -79,6 +80,9 @@ public class ParametersFragment extends ScreenFragment {
 
     @Autowired
     protected Messages messages;
+
+    @Autowired
+    private ParameterClassResolver parameterClassResolver;
 
     @Install(to = "inputParametersTable.remove", subject = "afterActionPerformedHandler")
     protected void inputParametersTableRemoveAfterActionPerformedHandler() {
@@ -194,6 +198,7 @@ public class ParametersFragment extends ScreenFragment {
                 if (parameter == null) {
                     parameter = initNewParameter(field);
                     parameter.setType(ParameterType.TEXT);
+                    parameter.setParameterClass(parameterClassResolver.resolveClass(parameter));
                     newParameters.add(parameter);
                 }
             }
@@ -236,6 +241,10 @@ public class ParametersFragment extends ScreenFragment {
                 if (metaClass != null) {
                     parameter.setEntityMetaClass(metaClass.getName());
                 }
+            }
+
+            if (parameter.getParameterClass() == null) {
+                parameter.setParameterClass(parameterClassResolver.resolveClass(parameter));
             }
         }
         return newParameters;

@@ -173,24 +173,6 @@ public class TimerImpl extends AbstractFacet implements Timer {
             try {
                 listener.accept(new TimerActionEvent(TimerImpl.this));
             } catch (RuntimeException e) {
-                // todo RemoteException
-                /*int reIdx = ExceptionUtils.indexOfType(e, RemoteException.class);
-                if (reIdx > -1) {
-                    RemoteException re = (RemoteException) ExceptionUtils.getThrowableList(e).get(reIdx);
-                    for (RemoteException.Cause cause : re.getCauses()) {
-                        if (cause.getThrowable() instanceof NoUserSessionException) {
-                            log.warn("NoUserSessionException in timer {}, timer will be stopped", id != null ? id : "<noid>");
-                            stop();
-                            return;
-                        }
-                    }
-                } else */
-                /*if (ExceptionUtils.indexOfThrowable(e, NoUserSessionException.class) > -1) {
-                    log.warn("NoUserSessionException in timer {}, timer will be stopped", id != null ? id : "<noid>");
-                    stop();
-                    return;
-                }*/
-
                 throw new RuntimeException("Exception on timer action", e);
             }
         }

@@ -22,8 +22,7 @@ import com.haulmont.cuba.core.global.Messages;
 
 /**
  * Generic filter grouping condition type.
- *
-*/
+ */
 public enum GroupType {
 
     AND("and"),
@@ -48,6 +47,6 @@ public enum GroupType {
     }
 
     public String getLocCaption() {
-        return AppBeans.get(Messages.class).getMainMessage("GroupType." + this.name());
+        return AppBeans.get(Messages.class).getMessage(GroupType.class, "GroupType." + this.name());
     }
 }

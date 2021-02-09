@@ -35,6 +35,6 @@ public enum ParamType {
     UNARY;
 
     public String getLocCaption() {
-        return AppBeans.get(Messages.class).getMainMessage("ParamType." + this.name());
+        return AppBeans.get(Messages.class).getMessage(ParamType.class, "ParamType." + this.name());
     }
 }

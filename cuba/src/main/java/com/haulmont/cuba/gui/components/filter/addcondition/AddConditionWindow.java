@@ -94,10 +94,11 @@ public class AddConditionWindow extends AbstractWindow {
         });
     }
 
+    @SuppressWarnings({"ConstantConditions", "unchecked"})
     public void expandTreeRoots() {
         Collection<UUID> rootItemIds = conditionDescriptorsDs.getRootItemIds();
         for (UUID rootItemId : rootItemIds) {
-            tree.expand(rootItemId);
+            tree.expand(conditionDescriptorsDs.getItem(rootItemId));
         }
     }
 

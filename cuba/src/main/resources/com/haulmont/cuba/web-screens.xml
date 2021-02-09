@@ -71,6 +71,9 @@
     <screen id="filterSelect"
             template="/com/haulmont/cuba/gui/components/filter/filterselect/filter-select.xml"/>
 
+    <screen id="date-interval-editor"
+            template="/com/haulmont/cuba/gui/components/filter/dateinterval/date-interval-editor.xml"/>
+
     <screen id="sys$ScheduledTask.browse"
             template="/com/haulmont/cuba/web/app/scheduled/scheduled-task-browse.xml"/>
 

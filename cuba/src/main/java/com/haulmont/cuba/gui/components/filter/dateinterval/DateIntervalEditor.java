@@ -36,7 +36,7 @@ import java.util.*;
  */
 public class DateIntervalEditor extends AbstractWindow {
 
-    @WindowParam(required = true)
+    @WindowParam
     protected String dateIntervalDescription;
 
     @Autowired

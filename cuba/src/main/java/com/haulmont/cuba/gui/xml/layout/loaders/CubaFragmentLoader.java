@@ -26,8 +26,6 @@ import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
-import io.jmix.ui.component.Fragment;
-import io.jmix.ui.component.Frame;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.xml.layout.loader.FragmentLoader;
 import org.dom4j.Element;
@@ -54,13 +52,6 @@ public class CubaFragmentLoader extends FragmentLoader {
         if (resultComponent.getFrameOwner() instanceof LegacyFrame) {
             Element dsContextElement = element.element("dsContext");
             loadDsContext(dsContextElement);
-        }
-
-        if (resultComponent.getFrameOwner() instanceof AbstractFrame) {
-            Element companionsElem = element.element("companions");
-            if (companionsElem != null) {
-                getComponentContext().addInjectTask(new FragmentLoaderCompanionTask(resultComponent));
-            }
         }
     }
 
@@ -104,53 +95,5 @@ public class CubaFragmentLoader extends FragmentLoader {
                 getProperties(),
                 applicationContext.getBean(CubaProperties.class),
                 context);
-    }
-
-    protected class FragmentLoaderCompanionTask implements InjectTask {
-        protected Fragment fragment;
-
-        public FragmentLoaderCompanionTask(Fragment fragment) {
-            this.fragment = fragment;
-        }
-
-        @Override
-        public void execute(ComponentContext context, Frame frame) {
-            String loggingId = context.getFullFrameId();
-            try {
-                if (fragment.getFrameOwner() instanceof AbstractFrame) {
-                    Element companionsElem = element.element("companions");
-                    if (companionsElem != null) {
-                        // todo companions
-//                        initCompanion(companionsElem, (AbstractFrame) fragment.getFrameOwner());
-                    }
-                }
-            } catch (Throwable e) {
-                throw new RuntimeException("Unable to init frame companion", e);
-            }
-        }
-
-        protected void initCompanion(Element companionsElem, AbstractFrame frame) {
-            // todo companions
-            throw new UnsupportedOperationException();
-//            String clientTypeId = AppConfig.getClientType().toString().toLowerCase();
-//            Element element = companionsElem.element(clientTypeId);
-//            if (element != null) {
-//                String className = element.attributeValue("class");
-//                if (!StringUtils.isBlank(className)) {
-//                    Class aClass = getScripting().loadClassNN(className);
-//                    Object companion;
-//                    try {
-//                        companion = aClass.newInstance();
-//                        frame.setCompanion(companion);
-//
-//                        CompanionDependencyInjector cdi = new CompanionDependencyInjector(frame, companion);
-//                        cdi.setBeanLocator(beanLocator);
-//                        cdi.inject();
-//                    } catch (Exception e) {
-//                        throw new RuntimeException("Unable to init companion for frame", e);
-//                    }
-//                }
-//            }
-        }
     }
 }

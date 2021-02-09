@@ -279,14 +279,6 @@
     <xs:element name="window">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="companions" minOccurs="0">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="web" type="companionType" minOccurs="0"/>
-                            <xs:element name="desktop" type="companionType" minOccurs="0"/>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
                 <xs:element name="metadataContext" minOccurs="0">
                     <xs:complexType>
                         <xs:sequence>

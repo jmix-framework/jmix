@@ -20,11 +20,6 @@
         caption="mainMsg://filter.editor.caption"
         focusComponent="filterName">
 
-    <companions>
-        <web class="com.haulmont.cuba.web.gui.components.filter.edit.WebFilterEditorCompanion"/>
-        <desktop class="com.haulmont.cuba.desktop.gui.components.filter.edit.DesktopFilterEditorCompanion"/>
-    </companions>
-
     <dsContext>
         <collectionDatasource id="conditionsDs"
                               class="com.haulmont.cuba.gui.components.filter.condition.AbstractCondition"
@@ -32,7 +27,8 @@
     </dsContext>
 
     <actions>
-        <action id="commit" invoke="commitAndClose" caption="mainMsg://actions.Ok" icon="CHECK" primary="true" shortcut="CTRL-ENTER"/>
+        <action id="commit" invoke="commitAndClose" caption="mainMsg://actions.Ok" icon="CHECK" primary="true"
+                shortcut="CTRL-ENTER"/>
     </actions>
 
     <layout spacing="true" expand="mainLayout">
@@ -47,15 +43,19 @@
                         </columns>
                         <rows>
                             <row>
-                                <label id="filterNameLabel" value="mainMsg://filter.editor.filterName" align="MIDDLE_LEFT"/>
-                                <textField id="filterName" width="100%" required="true" requiredMessage="mainMsg://filter.editor.fillFilterName"/>
+                                <label id="filterNameLabel" value="mainMsg://filter.editor.filterName"
+                                       align="MIDDLE_LEFT"/>
+                                <textField id="filterName" width="100%" required="true"
+                                           requiredMessage="mainMsg://filter.editor.fillFilterName"/>
                             </row>
                             <row>
-                                <label id="availableForAllLabel" value="mainMsg://filter.editor.availableForAll" align="MIDDLE_LEFT"/>
+                                <label id="availableForAllLabel" value="mainMsg://filter.editor.availableForAll"
+                                       align="MIDDLE_LEFT"/>
                                 <checkBox id="availableForAllCb"/>
                             </row>
                             <row>
-                                <label id="globalDefaultLabel" value="mainMsg://filter.editor.globalDefault" align="MIDDLE_LEFT"/>
+                                <label id="globalDefaultLabel" value="mainMsg://filter.editor.globalDefault"
+                                       align="MIDDLE_LEFT"/>
                                 <checkBox id="globalDefaultCb"/>
                             </row>
                             <row>
@@ -63,7 +63,8 @@
                                 <checkBox id="defaultCb"/>
                             </row>
                             <row>
-                                <label id="applyDefaultLabel" value="mainMsg://filter.editor.applyDefault" align="MIDDLE_LEFT"/>
+                                <label id="applyDefaultLabel" value="mainMsg://filter.editor.applyDefault"
+                                       align="MIDDLE_LEFT"/>
                                 <checkBox id="applyDefaultCb"/>
                             </row>
                         </rows>
@@ -79,12 +80,17 @@
                     <tree id="conditionsTree" width="100%">
                         <actions>
                             <action id="add" invoke="addCondition" caption="mainMsg://filter.editor.addCondition"/>
-                            <action id="remove" trackSelection="true" invoke="removeCondition" caption="mainMsg://filter.editor.removeCondition"/>
-                            <action id="addAndGroup" invoke="addAndGroup" caption="mainMsg://filter.editor.addAndGroup"/>
+                            <action id="remove" trackSelection="true" invoke="removeCondition"
+                                    caption="mainMsg://filter.editor.removeCondition"/>
+                            <action id="addAndGroup" invoke="addAndGroup"
+                                    caption="mainMsg://filter.editor.addAndGroup"/>
                             <action id="addOrGroup" invoke="addOrGroup" caption="mainMsg://filter.editor.addOrGroup"/>
-                            <action id="moveConditionUp" trackSelection="true" invoke="moveConditionUp" caption="mainMsg://filter.editor.moveUp" icon="CARET_UP"/>
-                            <action id="moveConditionDown" trackSelection="true" invoke="moveConditionDown" caption="mainMsg://filter.editor.moveDown" icon="CARET_DOWN"/>
-                            <action id="showComponentName" trackSelection="true" invoke="showComponentName" caption="mainMsg://filter.editor.showComponentName"/>
+                            <action id="moveConditionUp" trackSelection="true" invoke="moveConditionUp"
+                                    caption="mainMsg://filter.editor.moveUp" icon="CARET_UP"/>
+                            <action id="moveConditionDown" trackSelection="true" invoke="moveConditionDown"
+                                    caption="mainMsg://filter.editor.moveDown" icon="CARET_DOWN"/>
+                            <action id="showComponentName" trackSelection="true" invoke="showComponentName"
+                                    caption="mainMsg://filter.editor.showComponentName"/>
                         </actions>
                         <treechildren datasource="conditionsDs" captionProperty="locCaption"/>
                     </tree>
@@ -93,7 +99,8 @@
                           height="100%" width="100%" outerMargin="false, false, false, true">
                     <scrollBox scrollBars="vertical" height="100%" width="100%">
                         <frame id="customConditionFrame" screen="customConditionFrame" visible="false"/>
-                        <frame id="dynamicAttributesConditionFrame" screen="dynamicAttributesConditionFrame" visible="false"/>
+                        <frame id="dynamicAttributesConditionFrame" screen="dynamicAttributesConditionFrame"
+                               visible="false"/>
                         <frame id="propertyConditionFrame" screen="propertyConditionFrame" visible="false"/>
                         <frame id="groupConditionFrame" screen="groupConditionFrame" visible="false"/>
                         <frame id="ftsConditionFrame" screen="ftsConditionFrame" visible="false"/>

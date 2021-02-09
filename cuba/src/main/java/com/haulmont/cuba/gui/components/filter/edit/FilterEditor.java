@@ -20,9 +20,9 @@ package com.haulmont.cuba.gui.components.filter.edit;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.UserSessionSource;
-import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractWindow;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.AddConditionHelper;
@@ -32,9 +32,8 @@ import com.haulmont.cuba.gui.components.filter.GroupType;
 import com.haulmont.cuba.gui.components.filter.condition.*;
 import com.haulmont.cuba.gui.components.filter.descriptor.GroupConditionDescriptor;
 import com.haulmont.cuba.security.entity.FilterEntity;
-import com.haulmont.cuba.core.global.DataManager;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowParam;
@@ -116,9 +115,6 @@ public class FilterEditor extends AbstractWindow {
     protected UserSessionSource userSessionSource;
 
     @Autowired
-    protected Companion companion;
-
-    @Autowired
     protected Metadata metadata;
 
     protected ConditionsTree conditions;
@@ -150,10 +146,6 @@ public class FilterEditor extends AbstractWindow {
     private DataManager dataManager;
 
     protected Set<Entity> modifiedGlobalDefaultFilters = new HashSet<>();
-
-    public interface Companion {
-        void showComponentName(WindowManager windowManager, String title, String message);
-    }
 
     @Override
     public void init(Map<String, Object> params) {
@@ -484,8 +476,11 @@ public class FilterEditor extends AbstractWindow {
 
     public void showComponentName() {
         AbstractCondition item = conditionsDs.getItem();
-        String message = (item != null && item.getParam() != null) ? item.getParam().getName() : messages.getMessage("filter.editor.showComponentName.conditionIsNotSelected");
-        companion.showComponentName(getWindowManager(), messages.getMessage("filter.editor.showComponentName.title"), message);
+        String message = (item != null && item.getParam() != null)
+                ? item.getParam().getName()
+                : messages.getMessage("filter.editor.showComponentName.conditionIsNotSelected");
+        showMessageDialog(messages.getMessage("filter.editor.showComponentName.title"), message,
+                MessageType.CONFIRMATION);
     }
 
     public FilterEntity getFilterEntity() {

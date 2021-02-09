@@ -24,17 +24,21 @@ import javax.annotation.Nullable;
 public class JpqlFilterComponentGenerationContext extends ComponentGenerationContext {
 
     protected final Class parameterClass;
+    protected final boolean hasInExpression;
 
     /**
      * Creates an instance of ComponentGenerationContext.
      *
-     * @param metaClass      the entity for which the component is created
-     * @param property       the entity attribute for which the component is created
-     * @param parameterClass the component value type
+     * @param metaClass       the entity for which the component is created
+     * @param property        the entity attribute for which the component is created
+     * @param hasInExpression whether the query condition has an IN expression and the value is a collection
+     * @param parameterClass  the component value type
      */
-    public JpqlFilterComponentGenerationContext(MetaClass metaClass, String property, @Nullable Class parameterClass) {
+    public JpqlFilterComponentGenerationContext(MetaClass metaClass, String property, boolean hasInExpression,
+                                                @Nullable Class parameterClass) {
         super(metaClass, property);
 
+        this.hasInExpression = hasInExpression;
         this.parameterClass = parameterClass != null
                 ? parameterClass
                 : String.class;
@@ -42,5 +46,9 @@ public class JpqlFilterComponentGenerationContext extends ComponentGenerationCon
 
     public Class getParameterClass() {
         return parameterClass;
+    }
+
+    public boolean hasInExpression() {
+        return hasInExpression;
     }
 }

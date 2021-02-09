@@ -43,6 +43,7 @@
                 </textField>
                 <textField id="captionField" property="caption" required="true"/>
                 <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
+                <checkBox id="hasInExpressionField" property="hasInExpression"/>
                 <sourceCodeEditor id="joinField" property="join"
                                   contextHelpText="msg://jpqlFilterConditionEdit.joinFieldContextHelp"
                                   contextHelpTextHtmlEnabled="true"

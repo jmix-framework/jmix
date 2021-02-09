@@ -105,12 +105,14 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         if (filterMetaClass != null
                 && getEditedEntity().getParameterClass() != null) {
             Class parameterClass = classManager.loadClass(getEditedEntity().getParameterClass());
-            defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass, parameterClass);
+            defaultValueField = singleFilterSupport.generateValueComponent(filterMetaClass,
+                    getEditedEntity().getHasInExpression(), parameterClass);
 
             if (getEditedEntity().getValueComponent() != null
                     && getEditedEntity().getValueComponent().getDefaultValue() != null) {
                 String modelDefaultValue = getEditedEntity().getValueComponent().getDefaultValue();
-                Object defaultValue = jpqlFilterSupport.parseDefaultValue(parameterClass, modelDefaultValue);
+                Object defaultValue = jpqlFilterSupport.parseDefaultValue(parameterClass,
+                        getEditedEntity().getHasInExpression(), modelDefaultValue);
                 defaultValueField.setValue(defaultValue);
             }
         } else {
@@ -171,6 +173,13 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         }
     }
 
+    @Subscribe("hasInExpressionField")
+    protected void onHasInExpressionFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
+        if (event.isUserOriginated()) {
+            initDefaultValueField();
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     @Subscribe
     protected void onBeforeCommitChanges(BeforeCommitChangesEvent event) {
@@ -178,7 +187,8 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
                 && getEditedEntity().getParameterClass() != null
                 && getEditedEntity().getValueComponent() != null) {
             Class parameterClass = classManager.loadClass(getEditedEntity().getParameterClass());
-            String modelDefaultValue = jpqlFilterSupport.formatDefaultValue(parameterClass, defaultValueField.getValue());
+            String modelDefaultValue = jpqlFilterSupport.formatDefaultValue(parameterClass,
+                    getEditedEntity().getHasInExpression(), defaultValueField.getValue());
             getEditedEntity().getValueComponent().setDefaultValue(modelDefaultValue);
         }
     }

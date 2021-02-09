@@ -4120,6 +4120,7 @@
                 <xs:attribute name="parameterName" type="xs:string"/>
                 <xs:attribute name="parameterClass" type="xs:string" use="required"/>
                 <xs:attribute name="defaultValue" type="xs:string"/>
+                <xs:attribute name="hasInExpression" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

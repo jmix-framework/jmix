@@ -42,6 +42,7 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
     protected Class parameterClass;
     protected String where;
     protected String join;
+    protected boolean hasInExpression;
 
     @Autowired
     public void setJpqlFilterSupport(JpqlFilterSupport jpqlFilterSupport) {
@@ -142,7 +143,19 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
             getQueryCondition().setWhere(where.replace("?", ":" + parameterName));
         }
 
+        getQueryCondition().setJoin(join);
+
         this.where = where;
         this.join = join;
+    }
+
+    @Override
+    public boolean hasInExpression() {
+        return hasInExpression;
+    }
+
+    @Override
+    public void setHasInExpression(boolean hasInExpression) {
+        this.hasInExpression = hasInExpression;
     }
 }

@@ -100,4 +100,16 @@ public interface JpqlFilter<V> extends SingleFilterComponent<V> {
      * @see #getWhere()
      */
     void setCondition(String where, @Nullable String join);
+
+    /**
+     * Sets whether the query condition has an IN expression and the value is a collection.
+     *
+     * @param hasInExpression whether the query condition has an IN expression
+     */
+    void setHasInExpression(boolean hasInExpression);
+
+    /**
+     * @return whether the query condition has an IN expression and the value is a collection
+     */
+    boolean hasInExpression();
 }

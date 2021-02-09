@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.jpqlfilter;
 
+import com.google.common.base.Strings;
 import io.jmix.core.DataManager;
 import io.jmix.core.Entity;
 import io.jmix.core.Id;
@@ -35,6 +36,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.text.ParseException;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Internal
 @Component("ui_JpqlFilterSupport")
@@ -88,20 +93,37 @@ public class JpqlFilterSupport {
     /**
      * Converts default value of value component to String
      *
-     * @param parameterClass the component value type
-     * @param value          a default value
+     * @param parameterClass  the component value type
+     * @param hasInExpression whether the query condition has an IN expression and the value is a collection
+     * @param value           a default value
      * @return string default value
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Nullable
-    public String formatDefaultValue(Class parameterClass, @Nullable Object value) {
+    public String formatDefaultValue(Class parameterClass, boolean hasInExpression, @Nullable Object value) {
         if (value == null) {
             return null;
         }
 
+        if (hasInExpression && value instanceof Collection) {
+            if (((Collection<?>) value).isEmpty()) {
+                return null;
+            }
+
+            return Strings.emptyToNull(((Collection<?>) value).stream()
+                    .map(objectValue -> formatSingleDefaultValue(parameterClass, objectValue))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(",")));
+        } else {
+            return formatSingleDefaultValue(parameterClass, value);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
+    protected String formatSingleDefaultValue(Class parameterClass, Object value) {
         if (Entity.class.isAssignableFrom(parameterClass)) {
             return String.valueOf(EntityValues.getId(value));
-        } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
+        } else if (Enum.class.isAssignableFrom(parameterClass)) {
             Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
             return enumeration.format(value);
         } else if (datatypeRegistry.find(parameterClass) != null) {
@@ -115,17 +137,30 @@ public class JpqlFilterSupport {
     /**
      * Parses default value for value component from String
      *
-     * @param parameterClass the component value type
-     * @param value          a string default value
+     * @param parameterClass  the component value type
+     * @param hasInExpression whether the query condition has an IN expression and the value is a collection
+     * @param value           a string default value
      * @return default value
      */
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Nullable
-    public Object parseDefaultValue(Class parameterClass, @Nullable String value) {
+    public Object parseDefaultValue(Class parameterClass, boolean hasInExpression, @Nullable String value) {
         if (value == null) {
             return null;
         }
 
+        if (hasInExpression) {
+            return Stream.of(value.split(","))
+                    .map(stringValue -> parseSingleDefaultValue(parameterClass, stringValue.trim()))
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } else {
+            return parseSingleDefaultValue(parameterClass, value);
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    @Nullable
+    protected Object parseSingleDefaultValue(Class parameterClass, String value) {
         try {
             if (Entity.class.isAssignableFrom(parameterClass)) {
                 MetaProperty idProperty = metadataTools.getPrimaryKeyProperty(parameterClass);
@@ -136,7 +171,7 @@ public class JpqlFilterSupport {
                                 .one();
                     }
                 }
-            } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
+            } else if (Enum.class.isAssignableFrom(parameterClass)) {
                 Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
                 return enumeration.parse(value);
             } else if (datatypeRegistry.find(parameterClass) != null) {

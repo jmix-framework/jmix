@@ -47,6 +47,7 @@ public class JpqlFilterLoader extends AbstractSingleFilterComponentLoader<JpqlFi
                         resultComponent.getParameterClass().getSimpleName())));
 
         loadCondition(resultComponent, element);
+        loadBoolean(element, "hasInExpression", resultComponent::setHasInExpression);
     }
 
     @Override
@@ -73,7 +74,8 @@ public class JpqlFilterLoader extends AbstractSingleFilterComponentLoader<JpqlFi
     @Override
     protected HasValue<?> generateValueComponent() {
         MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
-        return getSingleFilterSupport().generateValueComponent(metaClass, resultComponent.getParameterClass());
+        return getSingleFilterSupport().generateValueComponent(metaClass, resultComponent.hasInExpression(),
+                resultComponent.getParameterClass());
     }
 
     protected void loadCondition(JpqlFilter<?> component, Element element) {
@@ -106,7 +108,8 @@ public class JpqlFilterLoader extends AbstractSingleFilterComponentLoader<JpqlFi
         if (element.attribute("defaultValue") != null) {
             String defaultValue = element.attributeValue("defaultValue");
             Class parameterClass = component.getParameterClass();
-            Object value = getJpqlFilterSupport().parseDefaultValue(parameterClass, defaultValue);
+            Object value = getJpqlFilterSupport().parseDefaultValue(parameterClass, component.hasInExpression(),
+                    defaultValue);
             component.setValue(value);
         }
     }

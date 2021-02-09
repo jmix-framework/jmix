@@ -108,7 +108,7 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
 
     protected HasValue generateValueComponent(JpqlFilter component, JpqlFilterCondition model) {
         return singleFilterSupport.generateValueComponent(metadata.getClass(model.getMetaClass()),
-                component.getParameterClass());
+                component.hasInExpression(), component.getParameterClass());
     }
 
     protected HasValue convertValueComponentToComponent(JpqlFilter component, JpqlFilterCondition model) {
@@ -133,7 +133,8 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
     @Nullable
     protected Object convertDefaultValueToComponent(JpqlFilter component, JpqlFilterCondition model) {
         String defaultValueModel = model.getValueComponent().getDefaultValue();
-        return jpqlFilterSupport.parseDefaultValue(component.getParameterClass(), defaultValueModel);
+        return jpqlFilterSupport.parseDefaultValue(component.getParameterClass(), model.getHasInExpression(),
+                defaultValueModel);
     }
 
     protected FilterValueComponent convertValueComponentToModel(JpqlFilter component) {
@@ -150,6 +151,7 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
     @Nullable
     protected String convertDefaultValueToModel(JpqlFilter component) {
         Object defaultValue = component.getValue();
-        return jpqlFilterSupport.formatDefaultValue(component.getParameterClass(), defaultValue);
+        return jpqlFilterSupport.formatDefaultValue(component.getParameterClass(), component.hasInExpression(),
+                defaultValue);
     }
 }

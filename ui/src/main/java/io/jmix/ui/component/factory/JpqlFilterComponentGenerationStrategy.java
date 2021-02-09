@@ -31,6 +31,8 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
+import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -87,7 +89,9 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
         Class parameterClass = cfContext.getParameterClass();
 
-        if (Entity.class.isAssignableFrom(parameterClass)) {
+        if (cfContext.hasInExpression()) {
+            return createCollectionField(context);
+        } else if (Entity.class.isAssignableFrom(parameterClass)) {
             return createEntityField(context);
         } else if (Enum.class.isAssignableFrom(parameterClass)) {
             return createEnumField(context);
@@ -103,6 +107,34 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         }
 
         return super.createComponentInternal(context);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Component createCollectionField(ComponentGenerationContext context) {
+        JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
+        Class parameterClass = cfContext.getParameterClass();
+
+        ValuesPicker valuesPicker = uiComponents.create(ValuesPicker.class);
+        setValueSource(valuesPicker, cfContext);
+
+        ValuesSelectAction selectAction = actions.create(ValuesSelectAction.class);
+
+        if (Entity.class.isAssignableFrom(parameterClass)) {
+            MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
+            selectAction.setEntityName(metaClass.getName());
+        } else if (Enum.class.isAssignableFrom(parameterClass)) {
+            Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
+            selectAction.setEnumClass(enumeration.getJavaClass());
+        } else if (datatypeRegistry.find(parameterClass) != null) {
+            Datatype datatype = datatypeRegistry.get(parameterClass);
+            selectAction.setJavaClass(datatype.getJavaClass());
+        }
+        valuesPicker.addAction(selectAction);
+
+        ValueClearAction valueClearAction = actions.create(ValueClearAction.class);
+        valuesPicker.addAction(valueClearAction);
+
+        return valuesPicker;
     }
 
     protected Component createEntityField(ComponentGenerationContext context) {

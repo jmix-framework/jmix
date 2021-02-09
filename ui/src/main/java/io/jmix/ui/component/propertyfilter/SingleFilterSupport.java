@@ -19,8 +19,8 @@ package io.jmix.ui.component.propertyfilter;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.component.ComponentGenerationContext;
-import io.jmix.ui.component.JpqlFilter;
 import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.JpqlFilter;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.UiComponentsGenerator;
 import io.jmix.ui.component.factory.JpqlFilterComponentGenerationContext;
@@ -60,15 +60,17 @@ public class SingleFilterSupport {
      * Generates filter value component by given metaClass and value type.
      * In general case the value component is created for {@link JpqlFilter}.
      *
-     * @param metaClass      an entity meta class associated with filter
-     * @param parameterClass a value type
+     * @param metaClass       an entity meta class associated with filter
+     * @param hasInExpression whether the query condition has an IN expression and the value is a collection
+     * @param parameterClass  a value type
      * @return a filter value component
      */
     @SuppressWarnings({"rawtypes"})
     public HasValue generateValueComponent(MetaClass metaClass,
+                                           boolean hasInExpression,
                                            @Nullable Class parameterClass) {
         ComponentGenerationContext context =
-                new JpqlFilterComponentGenerationContext(metaClass, "", parameterClass);
+                new JpqlFilterComponentGenerationContext(metaClass, "", hasInExpression, parameterClass);
         context.setTargetClass(JpqlFilter.class);
 
         return ((HasValue) uiComponentsGenerator.generate(context));

@@ -71,5 +71,14 @@
     <screen id="filterSelect"
             template="/com/haulmont/cuba/gui/components/filter/filterselect/filter-select.xml"/>
 
+    <screen id="sys$ScheduledTask.browse"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-task-browse.xml"/>
+
+    <screen id="sys$ScheduledTask.edit"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-task-edit.xml"/>
+
+    <screen id="sys$ScheduledExecution.browse"
+            template="/com/haulmont/cuba/web/app/scheduled/scheduled-execution-browse.xml"/>
+
 
 </screen-config>

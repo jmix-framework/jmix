@@ -59,7 +59,6 @@ public class UserSessionSourceImpl implements UserSessionSource {
     public UserSession getUserSession() throws NoUserSessionException {
         Authentication authentication = SecurityContextHelper.getAuthentication();
         UserRepository userRepository = beanFactory.getBean(UserRepository.class);
-
         UserSession session = new UserSession();
         if (authentication instanceof UsernamePasswordAuthenticationToken) {
             session.setUser((UserDetails) authentication.getPrincipal());

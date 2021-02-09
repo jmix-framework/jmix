@@ -105,4 +105,178 @@
 
     </changeSet>
 
+    <changeSet id="3" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_SCHEDULED_TASK">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="BEAN_NAME" type="varchar(50)"/>
+            <column name="METHOD_NAME" type="varchar(50)"/>
+            <column name="METHOD_PARAMS" type="varchar(4000)"/>
+            <column name="DEFINED_BY" type="varchar(1)" defaultValue="B"/>
+            <column name="CLASS_NAME" type="varchar(500)"/>
+            <column name="SCRIPT_NAME" type="varchar(500)"/>
+            <column name="USER_NAME" type="varchar(50)"/>
+            <column name="IS_SINGLETON" type="boolean"/>
+            <column name="IS_ACTIVE" type="boolean"/>
+            <column name="PERIOD_" type="integer"/>
+            <column name="TIMEOUT" type="integer"/>
+            <column name="START_DATE" type="datetime"/>
+            <column name="TIME_FRAME" type="integer"/>
+            <column name="START_DELAY" type="integer"/>
+            <column name="PERMITTED_SERVERS" type="varchar(4096)"/>
+            <column name="LOG_START" type="boolean"/>
+            <column name="LOG_FINISH" type="boolean"/>
+            <column name="LAST_START_TIME" type="datetime"/>
+            <column name="LAST_START_SERVER" type="varchar(512)"/>
+            <column name="DESCRIPTION" type="varchar(1000)"/>
+            <column name="CRON" type="varchar(1000)"/>
+            <column name="SCHEDULING_TYPE" type="varchar(1)" defaultValue="P"/>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="4-oracle-hsqldb" author="cuba" context="!cuba" dbms="oracle, hsqldb">
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="uuid"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="timestamp"/>
+            <column name="FINISH_TIME" type="timestamp"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="4-mssql-mysql" author="cuba" context="!cuba" dbms="mssql, mysql">
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="uuid"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="datetime"/>
+            <column name="FINISH_TIME" type="datetime"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="4-postgres" author="cuba" context="!cuba" dbms="postgresql">
+
+        <createTable tableName="SYS_SCHEDULED_EXECUTION">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="SYS_TENANT_ID" type="varchar(255)"/>
+
+            <column name="TASK_ID" type="uuid"/>
+            <column name="SERVER" type="varchar(512)"/>
+            <column name="START_TIME" type="timestamp with time zone"/>
+            <column name="FINISH_TIME" type="timestamp with time zone"/>
+            <column name="RESULT" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_START_TIME">
+            <column name="TASK_ID"/>
+            <column name="START_TIME"/>
+        </createIndex>
+
+        <createIndex tableName="SYS_SCHEDULED_EXECUTION" indexName="IDX_SYS_SCHEDULED_EXECUTION_TASK_FINISH_TIME">
+            <column name="TASK_ID"/>
+            <column name="FINISH_TIME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="5" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_SERVER">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(512)"/>
+            <column name="IS_RUNNING" type="boolean"/>
+            <column name="DATA" type="text"/>
+        </createTable>
+
+        <createIndex tableName="SYS_SERVER" indexName="IDX_SYS_SERVER_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+
+    </changeSet>
+
+    <changeSet id="6" author="cuba" context="!cuba">
+
+        <createTable tableName="SYS_CONFIG">
+            <column name="ID" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE_" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="SYS_CONFIG" indexName="IDX_SYS_CONFIG_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+
+    </changeSet>
+
 </databaseChangeLog>

@@ -82,6 +82,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Collections;
 
@@ -93,6 +94,7 @@ import java.util.Collections;
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class, DatatoolsUiConfiguration.class
 })
 @PropertySource(name = "com.haulmont.cuba", value = "classpath:/com/haulmont/cuba/module.properties")
+@EnableScheduling
 public class CubaConfiguration {
 
     protected ApplicationContext applicationContext;

@@ -19,18 +19,18 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.CommitContext;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
+import com.haulmont.cuba.core.global.filter.ParameterInfo;
 import com.haulmont.cuba.gui.data.*;
 import com.haulmont.cuba.gui.data.impl.compatibility.DsContextCommitListenerWrapper;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
-import io.jmix.core.FetchPlan;
 import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;
-import com.haulmont.cuba.core.global.filter.ParameterInfo;
 import io.jmix.ui.screen.FrameOwner;
 
 import java.util.*;
@@ -249,13 +249,13 @@ public class DsContextImpl implements DsContextImplementation {
                 boolean listenersEnabled = implementation.enableListeners(false);
                 try {
                     for (Entity entity : implementation.getItemsToCreate()) {
-                        addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
+                        addToContext(entity, datasource, context.getEntitiesToSave(), context.getFetchPlans());
                     }
                     for (Entity entity : implementation.getItemsToUpdate()) {
-                        addToContext(entity, datasource, context.getCommitInstances(), context.getFetchPlans());
+                        addToContext(entity, datasource, context.getEntitiesToSave(), context.getFetchPlans());
                     }
                     for (Entity entity : implementation.getItemsToDelete()) {
-                        addToContext(entity, datasource, context.getRemoveInstances(), context.getFetchPlans());
+                        addToContext(entity, datasource, context.getEntitiesToRemove(), context.getFetchPlans());
                     }
                 } finally {
                     implementation.enableListeners(listenersEnabled);
@@ -314,7 +314,7 @@ public class DsContextImpl implements DsContextImplementation {
     }
 
     protected void addToContext(Entity entity, Datasource<Entity> datasource,
-                                Collection<Entity> entities, Map<Object, FetchPlan> views) {
+                                Collection<Object> entities, Map<Object, FetchPlan> views) {
         if (datasource instanceof NestedDatasource) {
             replaceMasterCopies(entity, ((NestedDatasource) datasource));
         }

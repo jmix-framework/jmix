@@ -16,8 +16,17 @@
  */
 package com.haulmont.cuba.core.global;
 
-import org.apache.commons.lang3.NotImplementedException;
+import com.haulmont.cuba.core.sys.AppContext;
+import freemarker.cache.StringTemplateLoader;
+import freemarker.cache.TemplateLoader;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import org.apache.commons.collections4.map.LazyMap;
 
+import java.io.StringWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,39 +35,19 @@ import java.util.Map;
  */
 public class TemplateHelper {
     public static String processTemplate(String templateStr, Map<String, ?> parameterValues) {
-        throw new NotImplementedException("");
-        /*StringTemplateLoader templateLoader = new StringTemplateLoader();
+        StringTemplateLoader templateLoader = new StringTemplateLoader();
         templateLoader.putTemplate("template", templateStr);
-        return __processTemplate(templateLoader, "template", parameterValues);*/
+        return __processTemplate(templateLoader, "template", parameterValues);
     }
 
-    public static String processTemplateFromFile(String templatePath, Map<String, Object> parameterValues) {
-        throw new NotImplementedException("");
-        /*final FileTemplateLoader templateLoader;
-        try {
-            String rootPath = AppContext.getProperty("cuba.templateRootDir");
-            if (Strings.isNullOrEmpty(rootPath)) {
-                rootPath = AppContext.getProperty("cuba.confDir");
-            }
-            if (Strings.isNullOrEmpty(rootPath)) {
-                throw new IllegalStateException("Unable to get template root path");
-            }
-            templateLoader = new FileTemplateLoader(new File(rootPath), true);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to process template from file", e);
-        }
-        return __processTemplate(templateLoader, templatePath, parameterValues);*/
-    }
-
-    protected static String __processTemplate(/*TemplateLoader templateLoader, String templateName,
-                                              Map<String, ?> parameterValues*/) {
-        throw new NotImplementedException("");
-        /*Map<String, Object> params = prepareParams(parameterValues);
+    protected static String __processTemplate(TemplateLoader templateLoader, String templateName,
+                                              Map<String, ?> parameterValues) {
+        Map<String, Object> params = prepareParams(parameterValues);
 
         StringWriter writer = new StringWriter();
 
         try {
-            Configuration configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            Configuration configuration = new Configuration(freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
             configuration.setTemplateLoader(templateLoader);
             Template template = configuration.getTemplate(templateName);
             template.process(params, writer);
@@ -66,12 +55,11 @@ public class TemplateHelper {
             return writer.toString();
         } catch (Throwable e) {
             throw new RuntimeException("Unable to process template", e);
-        }*/
+        }
     }
 
     protected static Map<String, Object> prepareParams(Map<String, ?> parameterValues) {
-        throw new NotImplementedException("");
-        /*Map<String, Object> parameterValuesWithStats = new HashMap<>(parameterValues);
+        Map<String, Object> parameterValuesWithStats = new HashMap<>(parameterValues);
         BeansWrapper beansWrapper = new BeansWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS).build();
         parameterValuesWithStats.put("statics", beansWrapper.getStaticModels());
 
@@ -85,6 +73,6 @@ public class TemplateHelper {
             return null;
         });
 
-        return params;*/
+        return params;
     }
 }

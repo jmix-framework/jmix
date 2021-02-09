@@ -38,6 +38,7 @@ dependencies {
 
     api 'com.thoughtworks.xstream:xstream:1.4.13'
     api 'org.perf4j:perf4j:0.9.16'
+    api 'org.freemarker:freemarker:2.3.30'
 
     api 'javax.inject:javax.inject'
 

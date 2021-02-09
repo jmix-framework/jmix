@@ -50,6 +50,7 @@
                 <action id="refresh" type="refresh"/>
                 <action id="showRoleAssignments" type="showRoleAssignments"/>
                 <action id="changePassword" type="changePassword"/>
+                <action id="resetRememberMeToken" type="resetRememberMeToken"/>
             </actions>
             <columns>
                 <column id="username"/>
@@ -66,9 +67,10 @@
                 <button id="removeBtn" action="usersTable.remove"/>
                 <button id="showRoleAssignmentsBtn" action="usersTable.showRoleAssignments"/>
                 <popupButton id="additionalActionsBtn" caption="msg://additional" icon="GEARS">
-                    <popup>
-                        <button id="changePasswordBtn" action="usersTable.changePassword"/>
-                    </popup>
+                    <actions>
+                        <action id="usersTable.changePassword"/>
+                        <action id="usersTable.resetRememberMeToken"/>
+                    </actions>
                 </popupButton>
                 <button id="refreshBtn" action="usersTable.refresh"/>
             </buttonsPanel>

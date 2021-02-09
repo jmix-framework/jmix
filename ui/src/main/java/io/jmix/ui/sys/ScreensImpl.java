@@ -104,8 +104,6 @@ public class ScreensImpl implements Screens {
     @Autowired
     protected UrlTools urlTools;
     @Autowired
-    protected WindowCreationHelper windowCreationHelper;
-    @Autowired
     protected MeterRegistry meterRegistry;
     @Autowired
     protected AccessManager accessManager;
@@ -352,8 +350,6 @@ public class ScreensImpl implements Screens {
         }
 
         Timer.Sample uiPermissionsSample = Timer.start(meterRegistry);
-
-        windowCreationHelper.applyUiPermissions(screen.getWindow());
 
         uiPermissionsSample.stop(createScreenTimer(meterRegistry, ScreenLifeCycle.UI_PERMISSIONS, screen.getId()));
 

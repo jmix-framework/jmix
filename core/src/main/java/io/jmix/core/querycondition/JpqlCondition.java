@@ -16,6 +16,8 @@
 
 package io.jmix.core.querycondition;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,7 +110,10 @@ public class JpqlCondition implements Condition {
     @Override
     public Condition actualize(Set<String> actualParameters) {
         for (Map.Entry<String, Object> parameter : parameterValuesMap.entrySet()) {
-            if (!actualParameters.contains(parameter.getKey()) && parameter.getValue() == null) {
+            if (!actualParameters.contains(parameter.getKey())
+                    && (parameter.getValue() == null
+                    || (parameter.getValue() instanceof Collection
+                    && CollectionUtils.isEmpty((Collection<?>) parameter.getValue())))) {
                 return null;
             }
         }

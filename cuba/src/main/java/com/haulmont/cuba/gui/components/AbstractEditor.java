@@ -98,7 +98,7 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
 
             getFrame().addAction(
                     new BaseAction(WINDOW_COMMIT_AND_CLOSE)
-                            .withCaption(messages.getMessage("actions.OkClose"))
+                            .withCaption(messages.getMessage("actions.SaveClose"))
                             .withPrimary(true)
                             .withShortcut(commitShortcut)
                             .withHandler(e -> commitAndClose()));

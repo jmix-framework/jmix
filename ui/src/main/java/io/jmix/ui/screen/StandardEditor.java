@@ -17,20 +17,22 @@
 package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
-import io.jmix.core.*;
+import io.jmix.core.AccessManager;
+import io.jmix.core.EntityStates;
+import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.UiProperties;
+import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.ValidationErrors;
-import io.jmix.ui.component.Window;
-import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.*;
@@ -38,10 +40,7 @@ import io.jmix.ui.util.OperationResult;
 import io.jmix.ui.util.UnknownOperationResult;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.EventObject;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -72,41 +71,78 @@ public abstract class StandardEditor<T> extends Screen
     }
 
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
-        Window window = getWindow();
-
         Messages messages = getApplicationContext().getBean(Messages.class);
         Icons icons = getApplicationContext().getBean(Icons.class);
 
+        BaseAction commitAndCloseAction = (BaseAction) getWindowActionOptional(WINDOW_COMMIT_AND_CLOSE)
+                .orElseGet(() ->
+                        addDefaultCommitAndCloseAction(messages, icons));
+        commitAndCloseAction.addActionPerformedListener(this::commitAndClose);
+
+        BaseAction commitAction = (BaseAction) getWindowActionOptional(WINDOW_COMMIT)
+                .orElseGet(() ->
+                        addDefaultCommitAction(messages, icons));
+        commitAction.addActionPerformedListener(this::commit);
+
+        BaseAction closeAction = (BaseAction) getWindowActionOptional(WINDOW_CLOSE)
+                .orElseGet(() ->
+                        addDefaultCloseAction(messages, icons));
+        closeAction.addActionPerformedListener(this::cancel);
+
+        BaseAction enableEditingAction = (BaseAction) getWindowActionOptional(ENABLE_EDITING)
+                .orElseGet(() ->
+                        addDefaultEnableEditingAction(messages, icons));
+        enableEditingAction.addActionPerformedListener(this::enableEditing);
+    }
+
+    protected Optional<Action> getWindowActionOptional(String id) {
+        Action action = getWindow().getAction(id);
+        return Optional.ofNullable(action);
+    }
+
+    protected Action addDefaultCommitAndCloseAction(Messages messages, Icons icons) {
         String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 
-        Action commitAndCloseAction = new BaseAction(WINDOW_COMMIT_AND_CLOSE)
+        Action action = new BaseAction(WINDOW_COMMIT_AND_CLOSE)
                 .withCaption(messages.getMessage("actions.Ok"))
                 .withIcon(icons.get(JmixIcon.EDITOR_OK))
                 .withPrimary(true)
-                .withShortcut(commitShortcut)
-                .withHandler(this::commitAndClose);
+                .withShortcut(commitShortcut);
 
-        window.addAction(commitAndCloseAction);
+        getWindow().addAction(action);
 
-        Action commitAction = new BaseAction(WINDOW_COMMIT)
+        return action;
+    }
+
+    protected Action addDefaultCommitAction(Messages messages, Icons icons) {
+        Action action = new BaseAction(WINDOW_COMMIT)
                 .withCaption(messages.getMessage("actions.Save"))
-                .withHandler(this::commit);
+                .withIcon(icons.get(JmixIcon.EDITOR_SAVE));
 
-        window.addAction(commitAction);
+        getWindow().addAction(action);
 
-        Action closeAction = new BaseAction(WINDOW_CLOSE)
-                .withIcon(icons.get(JmixIcon.EDITOR_CANCEL))
+        return action;
+    }
+
+    protected Action addDefaultCloseAction(Messages messages, Icons icons) {
+        Action action = new BaseAction(WINDOW_CLOSE)
                 .withCaption(messages.getMessage("actions.Cancel"))
-                .withHandler(this::cancel);
+                .withIcon(icons.get(JmixIcon.EDITOR_CANCEL));
 
-        window.addAction(closeAction);
+        getWindow().addAction(action);
 
-        Action enableEditingAction = new BaseAction(ENABLE_EDITING)
+        return action;
+    }
+
+    protected Action addDefaultEnableEditingAction(Messages messages, Icons icons) {
+        Action action = new BaseAction(ENABLE_EDITING)
                 .withCaption(messages.getMessage("actions.EnableEditing"))
-                .withIcon(icons.get(JmixIcon.ENABLE_EDITING))
-                .withHandler(this::enableEditing);
-        enableEditingAction.setVisible(false);
-        window.addAction(enableEditingAction);
+                .withIcon(icons.get(JmixIcon.ENABLE_EDITING));
+        action.setVisible(false);
+
+        getWindow().addAction(action);
+
+        return action;
     }
 
     protected void enableEditing(Action.ActionPerformedEvent actionPerformedEvent) {

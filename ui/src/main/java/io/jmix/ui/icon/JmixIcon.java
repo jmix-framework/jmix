@@ -57,6 +57,7 @@ public enum JmixIcon implements Icons.Icon {
     LOOKUP_OK("font-icon:CHECK"),
     LOOKUP_CANCEL("font-icon:BAN"),
     EDITOR_OK("font-icon:CHECK"),
+    EDITOR_SAVE("font-icon:SAVE"),
     EDITOR_CANCEL("font-icon:BAN"),
 
     ENABLE_EDITING("font-icon:PENCIL"),

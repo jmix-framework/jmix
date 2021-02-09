@@ -30,6 +30,7 @@ import io.jmix.ui.util.OperationResult;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -48,28 +49,47 @@ public class StandardLookup<T> extends Screen implements LookupScreen<T>, MultiS
     }
 
     protected void initActions(@SuppressWarnings("unused") InitEvent event) {
-        Window window = getWindow();
-
         Messages messages = getApplicationContext().getBean(Messages.class);
         Icons icons = getApplicationContext().getBean(Icons.class);
 
+        BaseAction selectAction = (BaseAction) getWindowActionOptional(LOOKUP_SELECT_ACTION_ID)
+                .orElseGet(() ->
+                        addDefaultSelectAction(messages, icons));
+        selectAction.addActionPerformedListener(this::select);
+
+        BaseAction cancelAction = (BaseAction) getWindowActionOptional(LOOKUP_CANCEL_ACTION_ID)
+                .orElseGet(() ->
+                        addDefaultCancelAction(messages, icons));
+        cancelAction.addActionPerformedListener(this::cancel);
+    }
+
+    protected Optional<Action> getWindowActionOptional(String id) {
+        Action action = getWindow().getAction(id);
+        return Optional.ofNullable(action);
+    }
+
+    protected Action addDefaultSelectAction(Messages messages, Icons icons) {
         String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
 
-        Action commitAction = new BaseAction(LOOKUP_SELECT_ACTION_ID)
+        Action action = new BaseAction(LOOKUP_SELECT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Select"))
                 .withIcon(icons.get(JmixIcon.LOOKUP_OK))
                 .withPrimary(true)
-                .withShortcut(commitShortcut)
-                .withHandler(this::select);
+                .withShortcut(commitShortcut);
 
-        window.addAction(commitAction);
+        getWindow().addAction(action);
 
-        Action closeAction = new BaseAction(LOOKUP_CANCEL_ACTION_ID)
+        return action;
+    }
+
+    protected Action addDefaultCancelAction(Messages messages, Icons icons) {
+        Action action = new BaseAction(LOOKUP_CANCEL_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Cancel"))
-                .withIcon(icons.get(JmixIcon.LOOKUP_CANCEL))
-                .withHandler(this::cancel);
+                .withIcon(icons.get(JmixIcon.LOOKUP_CANCEL));
 
-        window.addAction(closeAction);
+        getWindow().addAction(action);
+
+        return action;
     }
 
     private void beforeShow(@SuppressWarnings("unused") BeforeShowEvent beforeShowEvent) {

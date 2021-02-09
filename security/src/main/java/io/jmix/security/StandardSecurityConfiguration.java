@@ -40,12 +40,14 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -67,6 +69,9 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired(required = false)
+    private DataSource dataSource;
 
     @Autowired
     private PersistentTokenRepository rememberMeTokenRepository;
@@ -119,11 +124,6 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
         return rememberMeServices;
     }
 
-    @Bean("sec_rememberMeRepository")
-    protected PersistentTokenRepository rememberMeRepository() {
-        return new InMemoryTokenRepositoryImpl();
-    }
-
     @Primary
     @Bean
     protected SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
@@ -169,5 +169,15 @@ public class StandardSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Bean(name = "sec_SecurityConstraintsRegistration")
     public SecurityConstraintsRegistration constraintsRegistration() {
         return new SecurityConstraintsRegistration();
+    }
+
+    @Bean("sec_rememberMeRepository")
+    protected PersistentTokenRepository rememberMeRepository() {
+        if (dataSource == null) {
+            return new InMemoryTokenRepositoryImpl();
+        }
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
     }
 }

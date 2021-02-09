@@ -257,4 +257,21 @@
             <column name="DELETE_TS"/>
         </createIndex>
     </changeSet>
+
+    <changeSet id="4" author="security-data">
+        <createTable tableName="persistent_logins">
+            <column name="series" type="varchar(64)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_used" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

@@ -184,28 +184,18 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
 
     @Subscribe("resourcePoliciesTable.createMenuPolicy")
     public void onResourcePoliciesTableCreateMenuPolicy(Action.ActionPerformedEvent event) {
-        screenBuilders.editor(resourcePoliciesTable)
-                .withScreenClass(MenuResourcePolicyModelEdit.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setType(ResourcePolicyType.MENU);
-                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
-                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
-                })
+        screenBuilders.screen(this)
+                .withScreenClass(MenuResourcePolicyModelCreate.class)
+                .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesScreen)
                 .build()
                 .show();
     }
 
     @Subscribe("resourcePoliciesTable.createScreenPolicy")
     public void onResourcePoliciesTableCreateScreen(Action.ActionPerformedEvent event) {
-        screenBuilders.editor(resourcePoliciesTable)
-                .withScreenClass(ScreenResourcePolicyModelEdit.class)
-                .newEntity()
-                .withInitializer(resourcePolicyModel -> {
-                    resourcePolicyModel.setType(ResourcePolicyType.SCREEN);
-                    resourcePolicyModel.setEffect(ResourcePolicyEffect.ALLOW);
-                    resourcePolicyModel.setAction(ResourcePolicy.DEFAULT_ACTION);
-                })
+        screenBuilders.screen(this)
+                .withScreenClass(ScreenResourcePolicyModelCreate.class)
+                .withAfterCloseListener(this::addPoliciesFromMultiplePoliciesScreen)
                 .build()
                 .show();
     }

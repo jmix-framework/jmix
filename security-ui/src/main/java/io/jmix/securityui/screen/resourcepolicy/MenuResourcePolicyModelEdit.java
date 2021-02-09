@@ -19,14 +19,9 @@ package io.jmix.securityui.screen.resourcepolicy;
 import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.menu.MenuConfig;
-import io.jmix.ui.menu.MenuItem;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 @UiController("sec_MenuResourcePolicyModel.edit")
 @UiDescriptor("menu-resource-policy-model-edit.xml")
@@ -37,43 +32,14 @@ public class MenuResourcePolicyModelEdit extends StandardEditor<ResourcePolicyMo
     private ComboBox<String> menuField;
 
     @Autowired
-    private MenuConfig menuConfig;
-
-    @Autowired
-    private MessageBundle messageBundle;
+    private ResourcePolicyEditorUtils resourcePolicyEditorUtils;
 
     @Autowired
     private DefaultResourcePolicyGroupResolver resourcePolicyGroupResolver;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        menuField.setOptionsMap(getMenuItemsOptionsMap());
-    }
-
-    private Map<String, String> getMenuItemsOptionsMap() {
-        Map<String, String> collectedMenus = new TreeMap<>();
-        for (MenuItem rootItem : menuConfig.getRootItems()) {
-            walkMenuItem(rootItem, collectedMenus);
-        }
-        collectedMenus.put(messageBundle.getMessage("allMenus"), "*");
-        return collectedMenus;
-    }
-
-    private void walkMenuItem(MenuItem menuItem, Map<String, String> collectedMenus) {
-        collectedMenus.put(getMenuCaption(menuItem), menuItem.getId());
-        if (menuItem.getChildren() != null) {
-            menuItem.getChildren().forEach(childMenuItem -> walkMenuItem(childMenuItem, collectedMenus));
-        }
-    }
-
-    private String getMenuCaption(MenuItem menuItem) {
-        StringBuilder caption = new StringBuilder(menuConfig.getItemCaption(menuItem));
-        MenuItem parent = menuItem.getParent();
-        while (parent != null) {
-            caption.insert(0, menuConfig.getItemCaption(parent) + " > ");
-            parent = parent.getParent();
-        }
-        return String.format("%s (%s)", caption.toString(), menuItem.getId());
+        menuField.setOptionsMap(resourcePolicyEditorUtils.getMenuItemOptionsMap());
     }
 
     @Subscribe(id = "resourcePolicyModelDc", target = Target.DATA_CONTAINER)

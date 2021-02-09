@@ -16,7 +16,6 @@
 
 package io.jmix.securityui.screen.resourcepolicy;
 
-import com.google.common.base.Strings;
 import io.jmix.securityui.model.DefaultResourcePolicyGroupResolver;
 import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.ui.WindowConfig;
@@ -24,10 +23,8 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.screen.*;
-import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -40,39 +37,14 @@ public class ScreenResourcePolicyModelEdit extends StandardEditor<ResourcePolicy
     private ComboBox<String> screenField;
 
     @Autowired
-    private WindowConfig windowConfig;
-
-    @Autowired
-    private MessageBundle messageBundle;
-
-    @Autowired
-    private ScreensHelper screensHelper;
+    private ResourcePolicyEditorUtils resourcePolicyEditorUtils;
 
     @Autowired
     private DefaultResourcePolicyGroupResolver resourcePolicyGroupResolver;
 
     @Subscribe
     public void onBeforeShow(BeforeShowEvent event) {
-        TreeMap<String, String> map = windowConfig.getWindows().stream()
-                .collect(Collectors.toMap(
-                        windowInfo -> {
-                            try {
-                                String screenCaption = screensHelper.getScreenCaption(windowInfo);
-                                if (Strings.isNullOrEmpty(screenCaption))
-                                    return windowInfo.getId();
-                                else
-                                    return screenCaption;
-                            } catch (FileNotFoundException e) {
-                                return windowInfo.getId();
-                            }
-                        },
-                        WindowInfo::getId,
-                        (v1, v2) -> {
-                            throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
-                        },
-                        TreeMap::new));
-        map.put(messageBundle.getMessage("allScreens"), "*");
-        screenField.setOptionsMap(map);
+        screenField.setOptionsMap(resourcePolicyEditorUtils.getScreenOptionsMap());
     }
 
     @Subscribe("screenField")

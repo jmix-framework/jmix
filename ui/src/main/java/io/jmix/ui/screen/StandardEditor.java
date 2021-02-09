@@ -17,15 +17,14 @@
 package io.jmix.ui.screen;
 
 import com.google.common.base.Strings;
-import io.jmix.core.AccessManager;
-import io.jmix.core.EntityStates;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.event.TriggerOnce;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityContext;
 import io.jmix.ui.action.Action;
@@ -52,6 +51,7 @@ import java.util.function.Consumer;
 public abstract class StandardEditor<T> extends Screen
         implements EditorScreen<T>, ReadOnlyAwareScreen {
 
+    protected boolean showSaveNotification = true;
     protected boolean commitActionPerformed = false;
 
     private T entityToEdit;
@@ -532,7 +532,29 @@ public abstract class StandardEditor<T> extends Screen
 
     protected void commit(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
         commitChanges()
-                .then(() -> commitActionPerformed = true);
+                .then(() -> {
+                    commitActionPerformed = true;
+                    showSaveNotification();
+                });
+    }
+
+    private void showSaveNotification() {
+        if (!showSaveNotification) {
+            return;
+        }
+
+        Metadata metadata = getApplicationContext().getBean(Metadata.class);
+        Messages messages = getApplicationContext().getBean(Messages.class);
+        MessageTools messageTools = getApplicationContext().getBean(MessageTools.class);
+        InstanceNameProvider instanceNameProvider = getApplicationContext().getBean(InstanceNameProvider.class);
+
+        T entity = getEditedEntity();
+        MetaClass metaClass = metadata.getClass(entity);
+        getScreenContext().getNotifications().create(NotificationType.TRAY)
+                .withCaption(messages.formatMessage("", "info.EntitySave",
+                        messageTools.getEntityCaption(metaClass),
+                        instanceNameProvider.getInstanceName(entity)))
+                .show();
     }
 
     protected void cancel(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
@@ -559,6 +581,22 @@ public abstract class StandardEditor<T> extends Screen
      */
     public OperationResult closeWithDiscard() {
         return close(WINDOW_DISCARD_AND_CLOSE_ACTION);
+    }
+
+    /**
+     * @return whether a notification will be shown in case of successful commit
+     */
+    public boolean isShowSaveNotification() {
+        return showSaveNotification;
+    }
+
+    /**
+     * Sets whether a notification will be shown in case of successful commit.
+     *
+     * @param showSaveNotification {@code true} if a notification needs to be shown, {@code false} otherwise
+     */
+    public void setShowSaveNotification(boolean showSaveNotification) {
+        this.showSaveNotification = showSaveNotification;
     }
 
     /**

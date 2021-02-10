@@ -16,7 +16,9 @@
 
 package io.jmix.ui;
 
+import com.google.common.base.Strings;
 import com.vaadin.spring.annotation.VaadinSessionScope;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.ui.util.OperationResult;
 import org.slf4j.Logger;
@@ -56,7 +58,11 @@ public class JmixApp extends App {
         closeWindowsInternal(true);
         removeAllWindows(Collections.singletonList(AppUI.getCurrent()));
 
-        AppUI.getCurrent().getPage().setLocation("/logout");
+        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
+
+        AppUI.getCurrent().getPage().setLocation(logoutPath);
+
         return OperationResult.success();
     }
 

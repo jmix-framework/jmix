@@ -24,7 +24,6 @@ dependencies {
     api platform("io.jmix.bom:jmix-bom:$bomVersion")
 
     api 'io.jmix.core:jmix-core'
-    compileOnlyApi 'org.springframework:spring-jdbc:5.3.3'
     implementation 'org.springframework:spring-tx'
 
     testImplementation 'org.springframework:spring-test'

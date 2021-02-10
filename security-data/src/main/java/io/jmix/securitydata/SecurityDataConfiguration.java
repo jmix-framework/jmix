@@ -19,13 +19,26 @@ package io.jmix.securitydata;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
 import io.jmix.security.SecurityConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.*;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 @ComponentScan
 @JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class})
 @PropertySource(name = "io.jmix.securitydata", value = "classpath:/io/jmix/securitydata/module.properties")
 public class SecurityDataConfiguration {
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean
+    @Primary
+    public PersistentTokenRepository jdbcRememberMeRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        return jdbcTokenRepository;
+    }
 }

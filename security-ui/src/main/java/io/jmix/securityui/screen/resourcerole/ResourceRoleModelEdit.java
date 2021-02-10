@@ -167,8 +167,12 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         codeField.addValidator(s -> {
             ResourceRoleModel editedEntity = getEditedEntity();
             boolean exist = roleRepository.getAllRoles().stream()
-                    .filter(resourceRole -> !resourceRole.getCustomProperties().isEmpty())
-                    .filter(resourceRole -> !resourceRole.getCustomProperties().get("databaseId").equals(editedEntity.getCustomProperties().get("databaseId")))
+                    .filter(resourceRole -> {
+                        if (resourceRole.getCustomProperties().isEmpty()) {
+                            return true;
+                        }
+                        return !resourceRole.getCustomProperties().get("databaseId").equals(editedEntity.getCustomProperties().get("databaseId"));
+                    })
                     .anyMatch(resourceRole -> resourceRole.getCode().equals(s));
             if (exist) {
                 throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));

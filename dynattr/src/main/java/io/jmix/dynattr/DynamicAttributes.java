@@ -80,19 +80,21 @@ public class DynamicAttributes implements Serializable {
             this.oldValue = null;
         }
 
+        @Nullable
         public Object getValue() {
             return value;
         }
 
-        public void setValue(Object value) {
+        public void setValue(@Nullable Object value) {
             this.value = value;
         }
 
+        @Nullable
         public Object getOldValue() {
             return oldValue;
         }
 
-        public void setOldValue(Object oldValue) {
+        public void setOldValue(@Nullable Object oldValue) {
             this.oldValue = oldValue;
         }
 
@@ -140,7 +142,9 @@ public class DynamicAttributes implements Serializable {
                 holder.setState(State.CREATED);
                 values.put(code, holder);
             } else {
-                holder.setOldValue(holder.getValue());
+                if (holder.getOldValue() == null) {
+                    holder.setOldValue(holder.getValue());
+                }
                 holder.setValue(value);
                 holder.setState(State.UPDATED);
             }

@@ -23,6 +23,7 @@ import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelRole;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -32,8 +33,8 @@ public class RoleGrantedAuthority implements PolicyAwareGrantedAuthority {
     protected final String code;
     protected final Collection<ResourcePolicy> resourcePolicies;
     protected final Collection<RowLevelPolicy> rowLevelPolicies;
-    protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new HashMap<>();
-    protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes = new HashMap<>();
+    protected Map<Class<?>, ResourcePolicyIndex> resourceIndexes = new ConcurrentHashMap<>();
+    protected Map<Class<?>, RowLevelPolicyIndex> rowLevelIndexes = new ConcurrentHashMap<>();
 
     public static class Builder {
         protected Function<String, ResourceRole> resourceRoleProvider;

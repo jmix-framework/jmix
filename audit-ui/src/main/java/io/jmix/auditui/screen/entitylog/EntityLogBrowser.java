@@ -384,17 +384,14 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                 }
             }
 
-            //todo DynamicAttributes
-//            Collection<CategoryAttribute> attributes = dynamicAttributes.getAttributesForMetaClass(metaClass);
-//            if (attributes != null) {
-//                for (CategoryAttribute categoryAttribute : attributes) {
-//                    MetaPropertyPath propertyPath = DynamicAttributesUtils.getMetaPropertyPath(metaClass, categoryAttribute);
-//                    MetaProperty property = propertyPath.getMetaProperty();
-//                    if (allowLogProperty(property, categoryAttribute)) {
-//                        addAttribute(enabledAttr, property.getName(), editable);
-//                    }
-//                }
-//            }
+            Collection<MetaProperty> additionalProperties = metadataTools.getAdditionalProperties(metaClass);
+            if (additionalProperties != null) {
+                for (MetaProperty property : additionalProperties) {
+                    if (allowLogProperty(property)) {
+                        addAttribute(enabledAttr, property.getName(), metaClass, editable);
+                    }
+                }
+            }
         }
     }
 
@@ -460,7 +457,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     }
 
     public boolean isEntityHaveAttribute(String propertyName, MetaClass metaClass, Set<LoggedAttribute> enabledAttr) {
-        if (enabledAttr != null && !metadataTools.isSystem(metaClass.getProperty(propertyName))) {
+        if (enabledAttr != null && (metaClass.findProperty(propertyName) == null || !metadataTools.isSystem(metaClass.getProperty(propertyName)))) {
             for (LoggedAttribute logAttr : enabledAttr)
                 if (logAttr.getName().equals(propertyName))
                     return true;
@@ -578,7 +575,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         if (range.isClass() && range.getCardinality().isMany()) {
             return false;
         }
-        //todo DynamicAttributes
+        //todo DynamicAttributes (until Haulmont/jmix-ui#272 & others will be finished and it can be tested)
 //        if (categoryAttribute != null &&
 //                BooleanUtils.isTrue(categoryAttribute.getIsCollection())) {
 //            return false;

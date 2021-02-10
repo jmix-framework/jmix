@@ -30,7 +30,6 @@ import io.jmix.dynattr.model.CategoryAttribute
 import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import spock.lang.Ignore
 import test_support.AuditTestConfiguration
 import test_support.testmodel.dynattr.AdditionalEntity
 import test_support.testmodel.dynattr.FirstEntity
@@ -172,61 +171,49 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         dottedAttribute.defaultEntity = new ReferenceToEntity()
     }
 
-    @Ignore
-//todo known issue
-    def "do not loose extra state"() {
-        when: "Entity saved through dataManager"
-        def firstEntity = metadata.create(FirstEntity)
-        EntityValues.setValue(firstEntity, '+firstAttribute', 'extraValue')
-        def reloaded = dataManager.save(firstEntity)
-
-        then: "Extra state for saved instance is loaded"
-        EntityValues.setValue(reloaded, '+firstAttribute', 'newExtraValue')//should not throw exception
-    }
-
     def "test dynamic only by operation types"() {
         when: 'entity created'
         def firstEntity = metadata.create(FirstEntity)
         dataManager.save(firstEntity)
-        def creationRecord = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
+        EntityLogItem creationRecord = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
 
         then: 'creation logged'
         creationRecord.type == EntityLogItem.Type.CREATE
-        creationRecord.changes == "+firstAttribute=\n"
+        loggedValueMatches(creationRecord, "+firstAttribute", "")
 
 
         when: 'entity modified'
         firstEntity = reloadWithDynamicAttributes(firstEntity)
         EntityValues.setValue(firstEntity, '+firstAttribute', 'changed first time')
         dataManager.save(firstEntity)
-        def firstChange = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
+        EntityLogItem firstChange = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
 
+        EntityValues.setValue(firstEntity, '+firstAttribute', 'intermediate change, should not be registered')
         EntityValues.setValue(firstEntity, '+firstAttribute', 'changed second time')
         dataManager.save(firstEntity)
         def secondChange = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
 
         then: 'modification logged'
         firstChange.type == EntityLogItem.Type.MODIFY
-        firstChange.changes.count("\n") == 2
-        firstChange.changes.contains("+firstAttribute=changed first time\n")
-        firstChange.changes.contains("+firstAttribute-oldVl=\n")
+        firstChange.attributes.size() == 1
+        loggedValueMatches(firstChange, "+firstAttribute", "changed first time")
+        loggedOldValueMatches(firstChange, "+firstAttribute", "")
 
         secondChange.type == EntityLogItem.Type.MODIFY
 
-        secondChange.changes.count("\n") == 2
-        secondChange.changes.contains("+firstAttribute=changed second time\n")
-        secondChange.changes.contains("+firstAttribute-oldVl=changed first time\n")
+        secondChange.attributes.size() == 1
+        loggedValueMatches(secondChange, "+firstAttribute", "changed second time")
+        loggedOldValueMatches(secondChange, "+firstAttribute", "changed first time")
 
 
         when: 'entity deleted'
         firstEntity = reloadWithDynamicAttributes(firstEntity)
         dataManager.remove(firstEntity)
-        def removeRecord = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
+        EntityLogItem removeRecord = getLatestEntityLogItem('dynaudit$FirstEntity', firstEntity.getId())
 
         then: 'deletion logged'
         removeRecord.type == EntityLogItem.Type.DELETE
-        removeRecord.changes == '+firstAttribute=changed second time\n'
-
+        loggedValueMatches(removeRecord, "+firstAttribute", "changed second time")
 
         when: 'entity restored'
         FirstEntity deletedEntity = dataManager.load(Id.of(firstEntity))
@@ -242,9 +229,9 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'restoration logged'
         restoreRecord.type == EntityLogItem.Type.RESTORE
-        restoreRecord.changes.count("\n") == 2
-        restoreRecord.changes.contains("+firstAttribute=changed second time\n")
-        restoreRecord.changes.contains("+firstAttribute-oldVl=\n")
+        restoreRecord.attributes.size() == 1
+        loggedValueMatches(restoreRecord, "+firstAttribute", "changed second time")
+        loggedOldValueMatches(restoreRecord, "+firstAttribute", "")
     }
 
     def "test attribute types"() {
@@ -256,11 +243,11 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         then: 'All attributes considered'
         creationRecord.type == EntityLogItem.Type.CREATE
-        creationRecord.changes.contains("stringAttribute=\n")
-        creationRecord.changes.contains("id=${secondEntity.id}\n")
-        creationRecord.changes.contains("+entityAttribute=\n")
-        creationRecord.changes.contains("+entityCollectionAttribute=\n")
-        creationRecord.changes.contains("+dotted.attribute=\n")
+        loggedValueMatches(creationRecord, "stringAttribute", "")
+        loggedValueMatches(creationRecord, "id", secondEntity.id.toString())
+        loggedValueMatches(creationRecord, "+entityAttribute", "")
+        loggedValueMatches(creationRecord, "+entityCollectionAttribute", "")
+        loggedValueMatches(creationRecord, "+dotted.attribute", "")
 
         when: 'Entity modified'
 
@@ -290,24 +277,22 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         def modificationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
         then: 'All changes logged correctly'
-        modificationRecord.changes.count("\n") == 10
+        modificationRecord.attributes.size() == 4
 
-        modificationRecord.changes.contains("+entityAttribute=>new<\n")
-        modificationRecord.changes.contains("+entityAttribute-id=${newExtraEntity.id}\n")
+        loggedValueMatches(modificationRecord, "+entityAttribute", ">new<")
 
-        modificationRecord.changes.contains("+entityAttribute-oldVl=>prev<\n")
-        modificationRecord.changes.contains("+entityAttribute-oldVlId=${prevExtraEntity.id}\n")
+        loggedOldValueMatches(modificationRecord, "+entityAttribute", ">prev<")
 
-        modificationRecord.changes.contains("+dotted.attribute=false\n")
-        modificationRecord.changes.contains("dotted.attribute-oldVl=true\n")
+        loggedValueMatches(modificationRecord, "+dotted.attribute", "false")
+        loggedOldValueMatches(modificationRecord, "+dotted.attribute", "true")
 
-        modificationRecord.changes.contains("stringAttribute=new string value\n")
-        modificationRecord.changes.contains("stringAttribute-oldVl=\n")
+        loggedValueMatches(modificationRecord, "stringAttribute", "new string value")
+        loggedOldValueMatches(modificationRecord, "stringAttribute", "")
 
-        (modificationRecord.changes.contains("+entityCollectionAttribute=[>new<,>2<]\n")
-                || modificationRecord.changes.contains("+entityCollectionAttribute=[>2<,>new<]\n"))
-        (modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>prev<,>2<]\n")
-                || modificationRecord.changes.contains("+entityCollectionAttribute-oldVl=[>2<,>prev<]\n"))
+        (loggedValueMatches(modificationRecord, "+entityCollectionAttribute", "[>new<,>2<]")
+                || loggedValueMatches(modificationRecord, "+entityCollectionAttribute", "[>2<,>new<]"))
+        (loggedOldValueMatches(modificationRecord, "+entityCollectionAttribute", "[>prev<,>2<]")
+                || loggedOldValueMatches(modificationRecord, "+entityCollectionAttribute", "[>2<,>prev<]"))
 
     }
 

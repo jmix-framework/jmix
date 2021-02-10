@@ -23,7 +23,6 @@ import io.jmix.ui.app.jmxconsole.model.ManagedBeanInfo;
 import io.jmix.ui.app.jmxconsole.screen.inspect.MBeanInspectScreen;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.HasValue;
-import io.jmix.ui.component.Label;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
@@ -40,9 +39,6 @@ import java.util.stream.Collectors;
 public class JmxConsoleScreen extends Screen {
     @Autowired
     protected CollectionContainer<ManagedBeanInfo> mbeanDc;
-
-    @Autowired
-    protected Label<String> localJmxField;
 
     @Autowired
     protected GroupTable<ManagedBeanInfo> mbeansTable;
@@ -63,8 +59,6 @@ public class JmxConsoleScreen extends Screen {
         mbeansTable.setItemClickAction(inspectAction);
 
         reloadMBeans(null);
-
-        localJmxField.setValue(jmxControl.getLocalNodeName());
     }
 
     @Subscribe("mbeansTable.inspect")

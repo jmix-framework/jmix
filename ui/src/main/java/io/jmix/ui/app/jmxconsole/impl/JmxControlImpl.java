@@ -34,8 +34,6 @@ import javax.management.*;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Proxy;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.UnmarshalException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,23 +68,6 @@ public class JmxControlImpl implements JmxControl {
      */
     protected static final String ROLE_SETTER = "setter";
 
-
-    @Override
-    public String getLocalNodeName() {
-        String hostName;
-
-        try {
-            hostName = System.getProperty(RMI_SERVER_HOSTNAME_SYSTEM_PROPERTY,
-                    InetAddress.getLocalHost().getHostName());
-        } catch (UnknownHostException e) {
-            log.warn("Unable to get local hostname", e);
-            hostName = "<unknown-host>";
-        }
-
-        String jmxPort = System.getProperty(JMX_PORT_SYSTEM_PROPERTY, "<unknown-port>");
-
-        return String.format("<local> (%s:%s)", hostName, jmxPort);
-    }
 
     @Override
     public List<ManagedBeanInfo> getManagedBeans() {

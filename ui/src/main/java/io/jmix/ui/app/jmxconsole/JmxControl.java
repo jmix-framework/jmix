@@ -30,11 +30,6 @@ import java.util.List;
 public interface JmxControl {
 
     /**
-     * @return the local cluster node name
-     */
-    String getLocalNodeName();
-
-    /**
      * Loads the list of managed bean infos
      *
      * @return the list with managed beans

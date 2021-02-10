@@ -33,10 +33,6 @@
                 <columns count="2"/>
                 <rows>
                     <row>
-                        <label value="msg://localJmxNode" align="MIDDLE_LEFT"/>
-                        <label id="localJmxField" stylename="h2" width="theme://jmix.ui.jmxconsole.display-mbeans.field.width"/>
-                    </row>
-                    <row>
                         <label value="msg://searchByObjectName" align="MIDDLE_LEFT"/>
                         <textField id="objectNameField" width="theme://jmix.ui.jmxconsole.display-mbeans.field.width"/>
                     </row>

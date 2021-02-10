@@ -40,7 +40,6 @@ public interface ServerInfoAPI {
      * <ul>
      *     <li>{@link io.jmix.core.CoreProperties#getWebHostName()}</li>
      *     <li>{@link io.jmix.core.CoreProperties#getWebPort()}</li>
-     *     <li>{@link io.jmix.core.CoreProperties#getWebContextName()}</li>
      * </ul>
      *
      * @return this middleware instance identifier

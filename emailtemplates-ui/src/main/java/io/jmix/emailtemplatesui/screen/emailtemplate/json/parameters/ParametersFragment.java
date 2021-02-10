@@ -27,6 +27,7 @@ import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.ui.Notifications;
+import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.CollectionContainer;
@@ -85,7 +86,7 @@ public class ParametersFragment extends ScreenFragment {
     private ParameterClassResolver parameterClassResolver;
 
     @Install(to = "inputParametersTable.remove", subject = "afterActionPerformedHandler")
-    protected void inputParametersTableRemoveAfterActionPerformedHandler() {
+    protected void inputParametersTableRemoveAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<ReportInputParameter> event) {
         orderParameters();
     }
 

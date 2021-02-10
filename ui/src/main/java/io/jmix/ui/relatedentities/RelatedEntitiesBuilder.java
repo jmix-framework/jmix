@@ -59,7 +59,7 @@ public class RelatedEntitiesBuilder {
     protected ScreenOptions options = FrameOwner.NO_OPTIONS;
     protected Collection<?> selectedEntities;
 
-    protected String filterCaption;
+    protected String configurationName;
 
     public RelatedEntitiesBuilder(RelatedEntitiesBuilder builder) {
         this.handler = builder.handler;
@@ -76,7 +76,7 @@ public class RelatedEntitiesBuilder {
         this.options = builder.options;
         this.selectedEntities = builder.selectedEntities;
 
-        this.filterCaption = builder.filterCaption;
+        this.configurationName = builder.configurationName;
     }
 
     public RelatedEntitiesBuilder(FrameOwner origin, Function<RelatedEntitiesBuilder, Screen> handler) {
@@ -154,11 +154,11 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * @return filter caption set by {@link #withFilterCaption(String)}
+     * @return filter caption set by {@link #withConfigurationName(String)}
      */
     @Nullable
-    public String getFilterCaption() {
-        return filterCaption;
+    public String getConfigurationName() {
+        return configurationName;
     }
 
     /**
@@ -266,13 +266,13 @@ public class RelatedEntitiesBuilder {
     }
 
     /**
-     * Sets caption to filter in opened screen.
+     * Sets a name to filter configuration in opened screen.
      *
-     * @param filterCaption caption
+     * @param configurationName a configuration name
      * @return current instance of builder
      */
-    public RelatedEntitiesBuilder withFilterCaption(String filterCaption) {
-        this.filterCaption = filterCaption;
+    public RelatedEntitiesBuilder withConfigurationName(String configurationName) {
+        this.configurationName = configurationName;
         return this;
     }
 

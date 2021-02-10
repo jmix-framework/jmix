@@ -51,7 +51,7 @@ public class RelatedAction extends SecuredListAction
 
     protected MetaProperty metaProperty;
     protected String property;
-    protected String filterCaption;
+    protected String configurationName;
 
     public RelatedAction() {
         super(ID);
@@ -156,18 +156,18 @@ public class RelatedAction extends SecuredListAction
      * @return the caption that will be set to filter in opened screen
      */
     @Nullable
-    public String getFilterCaption() {
-        return filterCaption;
+    public String getConfigurationName() {
+        return configurationName;
     }
 
     /**
      * Sets the caption that will be set to filter in opened screen.
      *
-     * @param filterCaption the caption to set
+     * @param configurationName the caption to set
      */
     @StudioPropertiesItem
-    public void setFilterCaption(@Nullable String filterCaption) {
-        this.filterCaption = filterCaption;
+    public void setConfigurationName(@Nullable String configurationName) {
+        this.configurationName = configurationName;
     }
 
     @Override
@@ -209,7 +209,7 @@ public class RelatedAction extends SecuredListAction
                 .withProperty(property)
                 .withMetaProperty(metaProperty)
                 .withSelectedEntities(target.getSelected())
-                .withFilterCaption(filterCaption);
+                .withConfigurationName(configurationName);
 
         builder = screenInitializer.initBuilder(builder);
 

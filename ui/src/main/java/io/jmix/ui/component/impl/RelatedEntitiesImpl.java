@@ -129,12 +129,12 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
     public void addPropertyOption(String property,
                                   @Nullable String screen,
                                   @Nullable String caption,
-                                  @Nullable String filterCaption) {
+                                  @Nullable String configurationName) {
         if (StringUtils.isBlank(property)) {
             throw new IllegalArgumentException("Empty name for custom property option");
         }
 
-        propertyOptions.put(property, new PropertyOption(screen, caption, filterCaption));
+        propertyOptions.put(property, new PropertyOption(screen, caption, configurationName));
 
         refreshNavigationActions();
     }
@@ -261,8 +261,8 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
                 relatedAction.setCaption(propertyOption.getCaption());
             }
 
-            if (StringUtils.isNotEmpty(propertyOption.getFilterCaption())) {
-                relatedAction.setFilterCaption(propertyOption.getFilterCaption());
+            if (StringUtils.isNotEmpty(propertyOption.getConfigurationName())) {
+                relatedAction.setConfigurationName(propertyOption.getConfigurationName());
             }
 
             if (StringUtils.isNotEmpty(propertyOption.getScreenId())) {
@@ -277,12 +277,12 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
 
         protected String screenId;
         protected String caption;
-        protected String filterCaption;
+        protected String configurationName;
 
-        public PropertyOption(@Nullable String screenId, @Nullable String caption, @Nullable String filterCaption) {
+        public PropertyOption(@Nullable String screenId, @Nullable String caption, @Nullable String configurationName) {
             this.screenId = screenId;
             this.caption = caption;
-            this.filterCaption = filterCaption;
+            this.configurationName = configurationName;
         }
 
         @Nullable
@@ -296,8 +296,8 @@ public class RelatedEntitiesImpl<E> extends PopupButtonImpl
         }
 
         @Nullable
-        public String getFilterCaption() {
-            return filterCaption;
+        public String getConfigurationName() {
+            return configurationName;
         }
     }
 }

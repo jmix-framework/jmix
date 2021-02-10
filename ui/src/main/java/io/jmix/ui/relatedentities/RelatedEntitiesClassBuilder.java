@@ -82,8 +82,8 @@ public class RelatedEntitiesClassBuilder<S extends Screen> extends RelatedEntiti
     }
 
     @Override
-    public RelatedEntitiesClassBuilder<S> withFilterCaption(String filterCaption) {
-        super.withFilterCaption(filterCaption);
+    public RelatedEntitiesClassBuilder<S> withConfigurationName(String configurationName) {
+        super.withConfigurationName(configurationName);
         return this;
     }
 

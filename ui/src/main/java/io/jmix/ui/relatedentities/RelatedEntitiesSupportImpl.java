@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2020 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,72 @@
 package io.jmix.ui.relatedentities;
 
 import com.google.common.base.Strings;
+import io.jmix.core.ExtendedEntities;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Range;
+import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
+import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.Filter;
+import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.JpqlFilter;
+import io.jmix.ui.component.filter.FilterUtils;
+import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
+import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+
+@SuppressWarnings({"unchecked", "rawtypes"})
 @Internal
 @Component("ui_RelatedEntities")
 public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
 
-    //    protected Messages messages;
+    protected Messages messages;
+    protected MessageTools messageTools;
     protected Metadata metadata;
     protected WindowConfig windowConfig;
+    protected ExtendedEntities extendedEntities;
+    protected UiComponents uiComponents;
+    protected JpqlFilterSupport jpqlFilterSupport;
+    protected SingleFilterSupport singleFilterSupport;
+    protected MetadataTools metadataTools;
 
-    public RelatedEntitiesSupportImpl(Metadata metadata, WindowConfig windowConfig) {
-//        this.messages = messages;
+    public RelatedEntitiesSupportImpl(Metadata metadata,
+                                      MessageTools messageTools,
+                                      WindowConfig windowConfig,
+                                      Messages messages,
+                                      ExtendedEntities extendedEntities,
+                                      UiComponents uiComponents,
+                                      JpqlFilterSupport jpqlFilterSupport,
+                                      SingleFilterSupport singleFilterSupport,
+                                      MetadataTools metadataTools) {
+        this.messages = messages;
+        this.messageTools = messageTools;
         this.metadata = metadata;
         this.windowConfig = windowConfig;
+        this.extendedEntities = extendedEntities;
+        this.uiComponents = uiComponents;
+        this.jpqlFilterSupport = jpqlFilterSupport;
+        this.singleFilterSupport = singleFilterSupport;
+        this.metadataTools = metadataTools;
     }
 
     @Override
@@ -51,44 +94,48 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
         MetaClass metaClass = getMetaClass(builder);
         MetaProperty metaProperty = getMetaProperty(builder, metaClass);
 
-        return createScreen(builder, metaClass, metaProperty);
-        // TODO: gg, wait for Haulmont/jmix-old#90
-        /*Screen screen = createScreen(builder, metaClass, metaProperty);
-
-        Collection<? extends JmixEntity> selectedEntities = builder.getSelectedEntities() == null
-                ? Collections.emptyList()
-                : builder.getSelectedEntities();
+        Screen screen = createScreen(builder, metaClass, metaProperty);
 
         boolean found = ComponentsHelper.walkComponents(screen.getWindow(), screenComponent -> {
-            if (!(screenComponent instanceof Filter)) {
-                return false;
-            } else {
-                MetaClass actualMetaClass = ((FilterImplementation) screenComponent).getEntityMetaClass();
+            if (screenComponent instanceof Filter) {
+                Filter filter = (Filter) screenComponent;
+                DataLoader dataLoader = filter.getDataLoader();
+                MetaClass actualMetaClass = dataLoader.getContainer().getEntityMetaClass();
                 MetaClass relatedMetaClass = metaProperty.getRange().asClass();
                 MetaClass effectiveMetaClass = extendedEntities.getEffectiveMetaClass(relatedMetaClass);
-                if (Objects.equals(actualMetaClass, effectiveMetaClass)) {
-                    MetaDataDescriptor metaDataDescriptor = new MetaDataDescriptor(metaClass, metaProperty);
 
-                    RelatedScreenDescriptor descriptor = new RelatedScreenDescriptor();
-                    descriptor.setFilterCaption(builder.getFilterCaption());
-                    applyFilter(((Filter) screenComponent), selectedEntities, descriptor, metaDataDescriptor);
+                if (Objects.equals(actualMetaClass, effectiveMetaClass)) {
+                    Collection selectedEntities = builder.getSelectedEntities() == null
+                            ? Collections.emptyList()
+                            : builder.getSelectedEntities();
+
+                    String configurationName = generateConfigurationName(builder, metaProperty);
+                    Filter.Configuration configuration = createFilterConfiguration((Filter) screenComponent,
+                            configurationName);
+
+                    JpqlFilter jpqlFilter = createJpqlFilter(filter.getDataLoader(), metaProperty, metaClass,
+                            selectedEntities);
+                    configuration.getRootLogicalFilterComponent().add(jpqlFilter);
+
+                    filter.setCurrentConfiguration(configuration);
+
                     return true;
                 }
-                return false;
             }
+            return false;
         });
 
         if (!found) {
             screen.addAfterShowListener(event -> {
                 ScreenContext screenContext = UiControllerUtils.getScreenContext(event.getSource());
                 screenContext.getNotifications()
-                        .create(NotificationType.WARNING)
+                        .create(Notifications.NotificationType.WARNING)
                         .withCaption(messages.getMessage("actions.Related.FilterNotFound"))
                         .show();
             });
         }
 
-        return screen;*/
+        return screen;
     }
 
     protected MetaClass getMetaClass(RelatedEntitiesBuilder builder) {
@@ -140,5 +187,98 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
 
             return screens.create(screenId, builder.getOpenMode(), builder.getOptions());
         }
+    }
+
+    protected Filter.Configuration createFilterConfiguration(Filter filter, String configurationName) {
+        String configurationId = FilterUtils.generateConfigurationId(configurationName);
+        return filter.addConfiguration(configurationId, configurationName);
+    }
+
+    protected String generateConfigurationName(RelatedEntitiesBuilder builder, MetaProperty metaProperty) {
+        String configurationName = builder.getConfigurationName();
+        if (StringUtils.isEmpty(configurationName)) {
+            configurationName = messages.getMessage("actions.Related.Filter") + " "
+                    + messageTools.getPropertyCaption(metaProperty.getDomain(), metaProperty.getName());
+        }
+
+        return configurationName;
+    }
+
+    protected JpqlFilter createJpqlFilter(DataLoader dataLoader,
+                                          MetaProperty metaProperty,
+                                          MetaClass parentMetaClass,
+                                          Collection selectedParentEntities) {
+        JpqlFilter jpqlFilter = uiComponents.create(JpqlFilter.NAME);
+        jpqlFilter.setDataLoader(dataLoader);
+        jpqlFilter.setHasInExpression(true);
+        jpqlFilter.setVisible(false);
+
+        Class parameterClass = parentMetaClass.getJavaClass();
+        jpqlFilter.setParameterClass(parameterClass);
+        jpqlFilter.setParameterName(jpqlFilterSupport.generateParameterName(null, parameterClass.getSimpleName()));
+
+        String where = getWhereExpression(metaProperty, parentMetaClass);
+        jpqlFilter.setCondition(where, null);
+
+        HasValue valueComponent = singleFilterSupport.generateValueComponent(metaProperty.getDomain(),
+                true, parameterClass);
+        jpqlFilter.setValueComponent(valueComponent);
+        jpqlFilter.setValue(selectedParentEntities);
+
+        return jpqlFilter;
+    }
+
+    protected String getWhereExpression(MetaProperty metaProperty,
+                                        MetaClass parentMetaClass) {
+        Range.Cardinality cardinality = metaProperty.getRange().getCardinality();
+
+        switch (cardinality) {
+            case MANY_TO_ONE:
+                return getManyToOneJpqlCondition(metaProperty, parentMetaClass);
+            case ONE_TO_ONE:
+            case ONE_TO_MANY:
+                return getOneToManyJpqlCondition(metaProperty, parentMetaClass);
+            case MANY_TO_MANY:
+                return getManyToManyJpqlCondition(metaProperty, parentMetaClass);
+            default:
+                throw new IllegalArgumentException("Unsupported cardinality: " + cardinality);
+        }
+    }
+
+    protected String getManyToOneJpqlCondition(MetaProperty metaProperty,
+                                               MetaClass parentMetaClass) {
+        String entityAlias = RandomStringUtils.randomAlphabetic(6);
+        String inExpression = String.format("select %s.%s.%s from %s %s where %s.%s in ?",
+                entityAlias, metaProperty.getName(), metadataTools.getPrimaryKeyName(metaProperty.getDomain()),
+                parentMetaClass.getName(), entityAlias,
+                entityAlias, metadataTools.getPrimaryKeyName(parentMetaClass));
+        return String.format("{E}.%s in (%s)", metadataTools.getPrimaryKeyName(metaProperty.getDomain()), inExpression);
+    }
+
+    protected String getOneToManyJpqlCondition(MetaProperty metaProperty,
+                                               MetaClass parentMetaClass) {
+        MetaProperty inverseProperty = metaProperty.getInverse();
+        if (inverseProperty == null) {
+            throw new IllegalStateException(String.format("Unable to find inverse property for property %s",
+                    metaProperty.getName()));
+        }
+
+        return String.format("{E}.%s.%s in ?", inverseProperty.getName(),
+                metadataTools.getPrimaryKeyName(parentMetaClass));
+    }
+
+    protected String getManyToManyJpqlCondition(MetaProperty metaProperty,
+                                                MetaClass parentMetaClass) {
+        String parentEntityAlias = RandomStringUtils.randomAlphabetic(6);
+        String entityAlias = RandomStringUtils.randomAlphabetic(6);
+
+        String select = String.format("select %s.%s from %s %s ", entityAlias,
+                metadataTools.getPrimaryKeyName(metaProperty.getDomain()), parentMetaClass.getName(), parentEntityAlias);
+
+        String joinWhere = String.format("join %s.%s %s where %s.%s in ?", parentEntityAlias, metaProperty.getName(),
+                entityAlias, parentEntityAlias, metadataTools.getPrimaryKeyName(parentMetaClass));
+
+        return String.format("{E}.%s in (%s)", metadataTools.getPrimaryKeyName(metaProperty.getDomain()),
+                select + joinWhere);
     }
 }

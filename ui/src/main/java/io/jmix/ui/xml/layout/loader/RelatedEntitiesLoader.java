@@ -90,7 +90,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
                                 context, "componentId", resultComponent.getId()));
 
         String caption = loadResourceString(routeElement.attributeValue("caption"));
-        String filterCaption = loadResourceString(routeElement.attributeValue("filterCaption"));
+        String configurationName = loadResourceString(routeElement.attributeValue("configurationName"));
         String screen = routeElement.attributeValue("screen");
 
         if (StringUtils.isNotEmpty(screen)) {
@@ -100,7 +100,7 @@ public class RelatedEntitiesLoader extends AbstractComponentLoader<RelatedEntiti
             }
         }
 
-        resultComponent.addPropertyOption(property, screen, caption, filterCaption);
+        resultComponent.addPropertyOption(property, screen, caption, configurationName);
     }
 
     protected WindowConfig getWindowConfig() {

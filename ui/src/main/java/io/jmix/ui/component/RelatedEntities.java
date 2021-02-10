@@ -38,7 +38,7 @@ public interface RelatedEntities<E> extends Component,
     void addPropertyOption(String property,
                            @Nullable String screen,
                            @Nullable String caption,
-                           @Nullable String filterCaption);
+                           @Nullable String configurationName);
 
     void removePropertyOption(String property);
 

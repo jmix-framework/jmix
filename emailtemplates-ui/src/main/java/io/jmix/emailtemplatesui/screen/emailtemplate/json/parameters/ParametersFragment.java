@@ -164,6 +164,7 @@ public class ParametersFragment extends ScreenFragment {
     protected void reportDcOnItemChangeEvent(InstanceContainer.ItemChangeEvent<Report> e) {
         if (e.getItem() != null) {
             setValidationScriptGroupBoxCaption(e.getItem().getValidationOn());
+            sortParametersByPosition();
         }
     }
 

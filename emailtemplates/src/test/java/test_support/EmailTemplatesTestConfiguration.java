@@ -26,6 +26,7 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.email.EmailConfiguration;
 import io.jmix.emailtemplates.EmailTemplatesConfiguration;
 import io.jmix.reports.ReportsConfiguration;
@@ -53,7 +54,7 @@ import java.util.Collections;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EmailTemplatesConfiguration.class, EmailConfiguration.class,
-        ReportsConfiguration.class, SecurityConfiguration.class})
+        ReportsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class})
 public class EmailTemplatesTestConfiguration {
     @Bean
     @Primary

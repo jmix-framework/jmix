@@ -25,6 +25,7 @@ import io.jmix.ui.relatedentities.RelatedEntitiesBuilder;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenOptions;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 
 @Deprecated
@@ -100,9 +101,16 @@ public class RelatedEntitiesClassBuilder<S extends Screen>
         return this;
     }
 
-    @Override
+    /**
+     * Sets caption to filter in opened screen.
+     *
+     * @param filterCaption caption
+     * @return current instance of builder
+     * @deprecated Use {@link #withConfigurationName(String)} instead
+     */
+    @Deprecated
     public RelatedEntitiesClassBuilder<S> withFilterCaption(String filterCaption) {
-        super.withFilterCaption(filterCaption);
+        super.withConfigurationName(filterCaption);
         return this;
     }
 
@@ -114,5 +122,15 @@ public class RelatedEntitiesClassBuilder<S extends Screen>
     @Deprecated
     public Screens.LaunchMode getLaunchMode() {
         return OpenMode.from(getOpenMode());
+    }
+
+    /**
+     * @return filter caption set by {@link #withFilterCaption(String)}
+     * @deprecated Use {@link #getConfigurationName()} instead
+     */
+    @Deprecated
+    @Nullable
+    public String getFilterCaption() {
+        return super.getConfigurationName();
     }
 }

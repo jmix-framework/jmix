@@ -23,11 +23,11 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.impl.RelatedEntitiesImpl;
-import io.jmix.ui.screen.OpenMode;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
 
+@Deprecated
 public class WebRelatedEntities extends RelatedEntitiesImpl implements RelatedEntities {
 
     @Override
@@ -57,8 +57,8 @@ public class WebRelatedEntities extends RelatedEntitiesImpl implements RelatedEn
             if (StringUtils.isNotEmpty(propertyOption.getCaption())) {
                 relatedAction.setCaption(propertyOption.getCaption());
             }
-            if (StringUtils.isNotEmpty(propertyOption.getFilterCaption())) {
-                relatedAction.setFilterCaption(propertyOption.getFilterCaption());
+            if (StringUtils.isNotEmpty(propertyOption.getConfigurationName())) {
+                relatedAction.setFilterCaption(propertyOption.getConfigurationName());
             }
             if (StringUtils.isNotEmpty(propertyOption.getScreenId())) {
                 relatedAction.setScreen(propertyOption.getScreenId());

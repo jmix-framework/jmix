@@ -48,6 +48,7 @@ import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.PasswordField;
 import io.jmix.ui.component.RadioButtonGroup;
+import io.jmix.ui.component.RelatedEntities;
 import io.jmix.ui.component.RichTextArea;
 import io.jmix.ui.component.Slider;
 import io.jmix.ui.component.SourceCodeEditor;
@@ -159,6 +160,7 @@ public class CubaLoaderConfig extends BaseLoaderConfig implements LoaderConfig {
         loaders.put(SplitPanel.NAME, CubaSplitPanelLoader.class);
         loaders.put(PopupButton.NAME, CubaPopupButtonLoader.class);
         loaders.put(Embedded.NAME, EmbeddedLoader.class);
+        loaders.put(RelatedEntities.NAME, CubaRelatedEntitiesLoader.class);
 
         /* Main window components */
         loaders.put(AppWorkArea.NAME, AppWorkAreaLoader.class);

@@ -17,6 +17,7 @@
 package io.jmix.ui.component.factory;
 
 import io.jmix.core.Entity;
+import io.jmix.core.FileRef;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
@@ -40,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
-import java.net.URI;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -166,7 +166,7 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
             return createNumberField(context);
         } else if (type.equals(byte[].class)) {
             return createFileUploadField(context);
-        } else if (type.equals(URI.class)) {
+        } else if (type.equals(FileRef.class)) {
             return createFileStorageUploadField(context);
         }
         return null;

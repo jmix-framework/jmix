@@ -153,6 +153,6 @@ public class User implements UserDetails, GrantedAuthorityContainer {
     @DependsOnProperties({"firstName", "lastName", "username"})
     public String getDisplayName() {
         return String.format("%s %s [%s]", (firstName != null ? firstName : ""),
-                (lastName != null ? lastName : ""), username);
+                (lastName != null ? lastName : ""), username).trim();
     }
 }

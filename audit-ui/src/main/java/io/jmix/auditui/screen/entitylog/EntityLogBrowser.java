@@ -194,18 +194,23 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                 enableAllCheckBoxes(e.getValue());
             }
         });
-
-        entityLogTable.addGeneratedColumn("entityId", entity -> {
-            if (entity.getEntityRef().getObjectEntityId() != null) {
-                return new Table.PlainTextCell(entity.getEntityRef().getObjectEntityId().toString());
-            }
-            return null;
-        }, Table.PlainTextCell.class);
     }
 
-    @Install(to = "entityLogTable.displayedEntityName", subject = "valueProvider")
-    protected String entityLogTableDisplayedEntityNameValueProvider(EntityLogItem entityLogItem) {
-        return evaluateEntityLogItemDisplayedEntityName(entityLogItem);
+    @Install(to = "entityLogTable.entityId", subject = "columnGenerator")
+    protected Component entityLogTableEntityIdColumnGenerator(EntityLogItem entityLogItem) {
+        if (entityLogItem.getEntityRef().getObjectEntityId() != null) {
+            return new Table.PlainTextCell(entityLogItem.getEntityRef().getObjectEntityId().toString());
+        }
+        return null;
+    }
+
+    @Install(to = "entityLogTable.displayedEntityName", subject = "columnGenerator")
+    protected Component entityLogTableDisplayedEntityNameColumnGenerator(EntityLogItem entityLogItem) {
+        String entityName = evaluateEntityLogItemDisplayedEntityName(entityLogItem);
+        if (entityName != null) {
+            return new Table.PlainTextCell(entityName);
+        }
+        return null;
     }
 
     protected String evaluateEntityLogItemDisplayedEntityName(EntityLogItem entityLogItem) {
@@ -218,7 +223,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         }
     }
 
-    @Install(to = "entityLogAttrTable.displayName", subject = "valueProvider")
+    @Install(to = "entityLogAttrTable.name", subject = "valueProvider")
     protected String entityLogAttrTableDisplayNameValueProvider(EntityLogAttr entityLogAttr) {
         String entityName = entityLogAttr.getLogItem().getEntity();
         MetaClass metaClass = getClassFromEntityName(entityName);
@@ -229,12 +234,12 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         }
     }
 
-    @Install(to = "entityLogAttrTable.displayValue", subject = "valueProvider")
+    @Install(to = "entityLogAttrTable.value", subject = "valueProvider")
     protected String entityLogAttrTableDisplayValueValueProvider(EntityLogAttr entityLogAttr) {
         return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getValue());
     }
 
-    @Install(to = "entityLogAttrTable.displayOldValue", subject = "valueProvider")
+    @Install(to = "entityLogAttrTable.oldValue", subject = "valueProvider")
     protected String entityLogAttrTableDisplayOldValueValueProvider(EntityLogAttr entityLogAttr) {
         return evaluateEntityLogItemAttrDisplayValue(entityLogAttr, entityLogAttr.getOldValue());
     }

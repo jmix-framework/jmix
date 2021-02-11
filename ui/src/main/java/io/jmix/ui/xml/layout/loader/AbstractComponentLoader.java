@@ -22,7 +22,7 @@ import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.Actions;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiComponents;
@@ -48,8 +48,8 @@ import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import io.jmix.ui.xml.layout.LayoutLoaderConfig;
-import io.jmix.ui.xml.layout.LoaderSupport;
 import io.jmix.ui.xml.layout.LoaderResolver;
+import io.jmix.ui.xml.layout.LoaderSupport;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -669,15 +669,11 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         if (action instanceof Action.HasSecurityConstraint) {
             Action.HasSecurityConstraint itemTrackingAction = (Action.HasSecurityConstraint) action;
 
-            Attribute operationTypeAttribute = element.attribute("constraintOperationType");
+            Attribute operationTypeAttribute = element.attribute("constraintEntityOp");
             if (operationTypeAttribute != null) {
-                ConstraintOperationType operationType
-                        = ConstraintOperationType.fromId(operationTypeAttribute.getValue());
-                itemTrackingAction.setConstraintOperationType(operationType);
+                EntityOp operationType = EntityOp.fromId(operationTypeAttribute.getValue());
+                itemTrackingAction.setConstraintEntityOp(operationType);
             }
-
-            String constraintCode = element.attributeValue("constraintCode");
-            itemTrackingAction.setConstraintCode(constraintCode);
         }
     }
 
@@ -960,7 +956,7 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
                 .ifPresent(setter);
     }
 
-    protected  <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
+    protected <T extends Enum<T>> Optional<T> loadEnum(Element element, Class<T> type, String attributeName) {
         return getLoaderSupport().loadEnum(element, type, attributeName);
     }
 

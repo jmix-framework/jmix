@@ -17,7 +17,10 @@
 package io.jmix.ui.action.list;
 
 import io.jmix.core.AccessManager;
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.Metadata;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ListComponent;
@@ -30,10 +33,9 @@ import javax.annotation.Nullable;
  */
 public abstract class SecuredListAction extends ListAction implements Action.HasSecurityConstraint {
 
-    protected ConstraintOperationType constraintOperationType;
-    protected String constraintCode;
-
+    protected EntityOp constraintEntityOp;
     protected AccessManager accessManager;
+    protected Metadata metadata;
 
     protected SecuredListAction(String id) {
         super(id);
@@ -46,6 +48,11 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
     @Autowired
     protected void setAccessManager(AccessManager accessManager) {
         this.accessManager = accessManager;
+    }
+
+    @Autowired
+    protected void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     @Override
@@ -66,41 +73,35 @@ public abstract class SecuredListAction extends ListAction implements Action.Has
             return false;
         }
 
-        //TODO: access manager
-//        if (constraintOperationType != null) {
-//            boolean isPermitted;
-//            if (constraintCode != null) {
-//                isPermitted = security.isPermitted(singleSelected, constraintCode);
-//            } else {
-//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-//            }
-//            if (!isPermitted) {
-//                return false;
-//            }
-//        }
+        if (constraintEntityOp != null) {
+            MetaClass metaClass = metadata.getClass(singleSelected.getClass());
+            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(context);
+
+            if (constraintEntityOp == EntityOp.CREATE) {
+                return context.isCreatePermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.READ) {
+                return context.isReadPermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.UPDATE) {
+                return context.isUpdatePermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.DELETE) {
+                return context.isDeletePermitted(singleSelected);
+            } else {
+                return false;
+            }
+        }
 
         return super.isPermitted();
     }
 
     @Override
-    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
-        this.constraintOperationType = constraintOperationType;
+    public void setConstraintEntityOp(@Nullable EntityOp entityOp) {
+        this.constraintEntityOp = entityOp;
     }
 
     @Nullable
     @Override
-    public ConstraintOperationType getConstraintOperationType() {
-        return constraintOperationType;
-    }
-
-    @Override
-    public void setConstraintCode(@Nullable String constraintCode) {
-        this.constraintCode = constraintCode;
-    }
-
-    @Nullable
-    @Override
-    public String getConstraintCode() {
-        return constraintCode;
+    public EntityOp getConstraintEntityOp() {
+        return constraintEntityOp;
     }
 }

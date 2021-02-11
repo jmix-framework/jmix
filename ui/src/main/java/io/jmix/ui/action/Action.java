@@ -15,7 +15,7 @@
  */
 package io.jmix.ui.action;
 
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.KeyCombination;
@@ -184,15 +184,10 @@ public interface Action {
      * Interface defining constraintOperationType and constraintCode options.
      */
     interface HasSecurityConstraint {
-        void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType);
+        void setConstraintEntityOp(@Nullable EntityOp entityOp);
 
         @Nullable
-        ConstraintOperationType getConstraintOperationType();
-
-        @Nullable
-        String getConstraintCode();
-
-        void setConstraintCode(@Nullable String constraintCode);
+        EntityOp getConstraintEntityOp();
     }
 
     /**

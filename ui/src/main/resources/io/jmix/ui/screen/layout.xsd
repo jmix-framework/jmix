@@ -395,15 +395,13 @@
         </xs:union>
     </xs:simpleType>
 
-    <xs:simpleType name="constraintOperationType">
+    <xs:simpleType name="constraintEntityOp">
         <xs:restriction base="xs:string">
             <xs:enumeration value="none"/>
             <xs:enumeration value="create"/>
             <xs:enumeration value="read"/>
             <xs:enumeration value="update"/>
             <xs:enumeration value="delete"/>
-            <xs:enumeration value="all"/>
-            <xs:enumeration value="custom"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1608,8 +1606,7 @@
 
         <xs:attribute name="trackSelection" type="xs:boolean"/>
         <xs:attribute name="shortcut" type="shortcut"/>
-        <xs:attribute name="constraintOperationType" type="constraintOperationType"/>
-        <xs:attribute name="constraintCode" type="xs:string"/>
+        <xs:attribute name="constraintEntityOp" type="constraintEntityOp"/>
     </xs:complexType>
 
     <xs:complexType name="actionProperties">

@@ -16,5 +16,9 @@
   -->
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
-    <menu id="administration"/>
+
+    <menu id="administration">
+        <item screen="ui_JmxConsoleScreen"/>
+    </menu>
+
 </menu-config>

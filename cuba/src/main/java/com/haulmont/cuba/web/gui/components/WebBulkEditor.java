@@ -21,7 +21,7 @@ import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.actions.BulkEditAction;
-import io.jmix.core.security.ConstraintOperationType;
+import com.haulmont.cuba.security.entity.ConstraintOperationType;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.component.impl.ButtonImpl;
 
@@ -168,7 +168,6 @@ public class WebBulkEditor extends ButtonImpl implements BulkEditor {
         }
     }
 
-    @Override
     public void setConstraintOperationType(ConstraintOperationType constraintOperationType) {
         this.constraintOperationType = constraintOperationType;
         if (bulkEditAction != null) {
@@ -176,7 +175,6 @@ public class WebBulkEditor extends ButtonImpl implements BulkEditor {
         }
     }
 
-    @Override
     public ConstraintOperationType getConstraintOperationType() {
         return constraintOperationType;
     }

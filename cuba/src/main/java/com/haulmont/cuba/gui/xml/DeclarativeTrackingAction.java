@@ -16,9 +16,14 @@
 
 package com.haulmont.cuba.gui.xml;
 
+import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.compatibility.LegacyFragmentAdapter;
-import io.jmix.core.Entity;
-import io.jmix.core.security.ConstraintOperationType;
+import com.haulmont.cuba.security.entity.ConstraintOperationType;
+import io.jmix.core.AccessManager;
+import io.jmix.core.Metadata;
+import io.jmix.core.accesscontext.InMemoryCrudEntityContext;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ActionsHolder;
@@ -36,9 +41,9 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
 
     protected Frame frame;
     protected String methodName;
-
-    protected ConstraintOperationType constraintOperationType;
-    protected String constraintCode;
+    protected EntityOp constraintEntityOp;
+    protected Metadata metadata = AppBeans.get(Metadata.class);
+    protected AccessManager accessManager = AppBeans.get(AccessManager.class);
 
     public DeclarativeTrackingAction(String id, String caption, String description, String icon, @Nullable String enable,
                                      @Nullable String visible, String methodName, @Nullable String shortcut, ActionsHolder holder) {
@@ -114,48 +119,53 @@ public class DeclarativeTrackingAction extends ListAction implements Action.HasT
             return false;
         }
 
-        Entity singleSelected = (Entity) target.getSingleSelected();
+        Object singleSelected = target.getSingleSelected();
         if (singleSelected == null) {
             return false;
         }
 
-        //TODO: access manager
+        if (constraintEntityOp != null) {
+            MetaClass metaClass = metadata.getClass(singleSelected.getClass());
+            InMemoryCrudEntityContext context = new InMemoryCrudEntityContext(metaClass);
+            accessManager.applyRegisteredConstraints(context);
 
-//
-//        if (constraintOperationType != null) {
-//            boolean isPermitted;
-//            if (constraintCode != null) {
-//                isPermitted = security.isPermitted(singleSelected, constraintCode);
-//            } else {
-//                isPermitted = security.isPermitted(singleSelected, constraintOperationType);
-//            }
-//            if (!isPermitted) {
-//                return false;
-//            }
-//        }
+            if (constraintEntityOp == EntityOp.CREATE) {
+                return context.isCreatePermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.READ) {
+                return context.isReadPermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.UPDATE) {
+                return context.isUpdatePermitted(singleSelected);
+            } else if (constraintEntityOp == EntityOp.DELETE) {
+                return context.isDeletePermitted(singleSelected);
+            } else {
+                return false;
+            }
+        }
 
         return super.isPermitted();
     }
 
+    public void setConstraintOperationType(ConstraintOperationType constraintOperationType) {
+        if (constraintOperationType == null) {
+            setConstraintEntityOp(null);
+        } else {
+            setConstraintEntityOp(EntityOp.fromId(constraintOperationType.getId()));
+        }
+    }
+
     @Nullable
-    @Override
     public ConstraintOperationType getConstraintOperationType() {
-        return constraintOperationType;
+        return constraintEntityOp == null ? null : ConstraintOperationType.fromId(constraintEntityOp.getId());
     }
 
     @Override
-    public void setConstraintOperationType(@Nullable ConstraintOperationType constraintOperationType) {
-        this.constraintOperationType = constraintOperationType;
+    public void setConstraintEntityOp(@Nullable EntityOp entityOp) {
+        this.constraintEntityOp = entityOp;
     }
 
     @Nullable
     @Override
-    public String getConstraintCode() {
-        return constraintCode;
-    }
-
-    @Override
-    public void setConstraintCode(@Nullable String constraintCode) {
-        this.constraintCode = constraintCode;
+    public EntityOp getConstraintEntityOp() {
+        return constraintEntityOp;
     }
 }

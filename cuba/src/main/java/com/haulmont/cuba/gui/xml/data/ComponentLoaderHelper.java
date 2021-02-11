@@ -22,11 +22,7 @@ import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.ListActionType;
-import com.haulmont.cuba.gui.components.validators.DateValidator;
-import com.haulmont.cuba.gui.components.validators.DoubleValidator;
-import com.haulmont.cuba.gui.components.validators.IntegerValidator;
-import com.haulmont.cuba.gui.components.validators.LongValidator;
-import com.haulmont.cuba.gui.components.validators.ScriptValidator;
+import com.haulmont.cuba.gui.components.validators.*;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
 import com.haulmont.cuba.gui.xml.DeclarativeTrackingAction;
@@ -36,7 +32,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
@@ -406,13 +402,9 @@ public final class ComponentLoaderHelper {
 
             Attribute operationTypeAttribute = element.attribute("constraintOperationType");
             if (operationTypeAttribute != null) {
-                ConstraintOperationType operationType
-                        = ConstraintOperationType.fromId(operationTypeAttribute.getValue());
-                itemTrackingAction.setConstraintOperationType(operationType);
+                EntityOp operationType = EntityOp.fromId(operationTypeAttribute.getValue());
+                itemTrackingAction.setConstraintEntityOp(operationType);
             }
-
-            String constraintCode = element.attributeValue("constraintCode");
-            itemTrackingAction.setConstraintCode(constraintCode);
         }
     }
 
@@ -462,8 +454,8 @@ public final class ComponentLoaderHelper {
     }
 
     public static void loadTableColumnType(io.jmix.ui.component.Table.Column column,
-                                    Element element,
-                                    ApplicationContext applicationContext) {
+                                           Element element,
+                                           ApplicationContext applicationContext) {
         if (!(column instanceof Table.Column)) {
             return;
         }

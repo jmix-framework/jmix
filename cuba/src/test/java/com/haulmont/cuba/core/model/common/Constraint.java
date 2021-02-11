@@ -16,9 +16,9 @@
 package com.haulmont.cuba.core.model.common;
 
 import com.haulmont.cuba.core.entity.StandardEntity;
+import com.haulmont.cuba.security.entity.ConstraintOperationType;
 import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.core.security.ConstraintOperationType;
 
 import javax.persistence.*;
 

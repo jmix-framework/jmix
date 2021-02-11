@@ -24,14 +24,14 @@ import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.ListComponent;
 import com.haulmont.cuba.gui.components.Window;
+import com.haulmont.cuba.security.entity.ConstraintOperationType;
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.core.security.ConstraintOperationType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Notifications.NotificationType;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
-import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.icon.Icons;
@@ -88,7 +88,7 @@ public class BulkEditAction extends ItemTrackingAction
 
         Messages messages = AppBeans.get(Messages.class);
         this.caption = messages.getMessage("actions.BulkEdit");
-        this.constraintOperationType = ConstraintOperationType.UPDATE;
+        this.constraintEntityOp = EntityOp.UPDATE;
 
         Security security = AppBeans.get(Security.class);
         if (!security.isSpecificPermitted(BulkEditor.PERMISSION)) {

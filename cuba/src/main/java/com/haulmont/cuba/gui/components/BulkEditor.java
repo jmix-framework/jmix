@@ -17,31 +17,33 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.WindowManager.OpenType;
-import io.jmix.core.security.ConstraintOperationType;
+import com.haulmont.cuba.security.entity.ConstraintOperationType;
+import io.jmix.ui.app.bulk.ColumnsMode;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasHtmlCaption;
 import io.jmix.ui.component.HasHtmlDescription;
 import io.jmix.ui.component.HasHtmlSanitizer;
-import io.jmix.ui.app.bulk.ColumnsMode;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * Use {@code BulkEditAction} in new screens instead.
- *
+ * <p>
  * see io.jmix.ui.bulk.BulkEditors
  */
 public interface BulkEditor extends Component, Component.HasCaption, Component.BelongToFrame, Component.HasIcon,
-                                    Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
+        Component.Focusable, HasHtmlCaption, HasHtmlDescription, HasHtmlSanitizer {
 
     String NAME = "bulkEditor";
     String PERMISSION = "cuba.gui.bulkEdit";
 
     OpenType getOpenType();
+
     void setOpenType(OpenType openType);
 
     String getExcludePropertiesRegex();
+
     void setExcludePropertiesRegex(String excludeRegex);
 
     /**
@@ -57,15 +59,19 @@ public interface BulkEditor extends Component, Component.HasCaption, Component.B
     void setIncludeProperties(List<String> includeProperties);
 
     ListComponent getListComponent();
+
     void setListComponent(ListComponent listComponent);
 
     Map<String, Field.Validator> getFieldValidators();
-    void setFieldValidators(Map <String, Field.Validator> fieldValidators);
+
+    void setFieldValidators(Map<String, Field.Validator> fieldValidators);
 
     List<Field.Validator> getModelValidators();
+
     void setModelValidators(List<Field.Validator> modelValidators);
 
     void setLoadDynamicAttributes(boolean loadDynamicAttributes);
+
     boolean isLoadDynamicAttributes();
 
     /**

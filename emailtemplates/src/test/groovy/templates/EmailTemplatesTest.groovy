@@ -110,7 +110,6 @@ class EmailTemplatesTest extends Specification {
         when:
         EmailTemplate template = metadata.create(JsonEmailTemplate)
         template.setName("Test")
-        template.setSubject("Test")
         template.setCode("Test")
         template.setHtml("\${paramValue}")
         template.setTo("address1")

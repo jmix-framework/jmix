@@ -133,7 +133,7 @@ public class TemplateConverterImpl implements TemplateConverter {
             subject = subject.replaceAll("\\$\\{([a-zA-Z0-9]*).([a-zA-Z0-9.]*)}", "\"+params[\"$1\"].$2+\"");
             dataSet.setText("return [[\"__REPORT_FILE_NAME\": \"" + subject + "\"]]");
         } else {
-            dataSet.setText("");
+            dataSet.setText("return []");
         }
     }
 }

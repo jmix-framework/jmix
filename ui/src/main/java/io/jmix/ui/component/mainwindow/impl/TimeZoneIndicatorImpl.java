@@ -17,6 +17,8 @@
 package io.jmix.ui.component.mainwindow.impl;
 
 import com.vaadin.ui.Label;
+import io.jmix.ui.component.mainwindow.TimeZoneIndicatorSupport;
+import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.context.ApplicationContext;
 import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.component.mainwindow.TimeZoneIndicator;
@@ -25,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.TimeZone;
 
 public class TimeZoneIndicatorImpl extends AbstractComponent<Label> implements TimeZoneIndicator {
 
@@ -40,15 +43,10 @@ public class TimeZoneIndicatorImpl extends AbstractComponent<Label> implements T
     public void setApplicationContext(ApplicationContext applicationContext) {
         super.setApplicationContext(applicationContext);
 
-        // CurrentAuthentication currentAuthentication = applicationContext.get(CurrentAuthentication.NAME);
-        // TimeZone timeZone = currentAuthentication.getTimeZone();
-        // todo TimeZones
-//        TimeZones timeZones = applicationContext.get(TimeZones.NAME);
-//        component.setValue(timeZones.getDisplayNameShort(timeZone));
-//        if (timeZone == null) {
-//            // hidden by default if timeZone is null
-//            setVisible(false);
-//        }
+        CurrentAuthentication currentAuthentication = applicationContext.getBean(CurrentAuthentication.class);
+        TimeZone timeZone = currentAuthentication.getTimeZone();
+        TimeZoneIndicatorSupport timeZoneSupport = applicationContext.getBean(TimeZoneIndicatorSupport.class);
+        component.setValue(timeZoneSupport.getDisplayNameShort(timeZone));
     }
 
     @Override

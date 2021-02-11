@@ -15,6 +15,9 @@
  */
 package io.jmix.core.security;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 /**
  * Type of operation on entity.
  */
@@ -32,5 +35,14 @@ public enum EntityOp {
 
     public String getId() {
         return id;
+    }
+
+    @Nullable
+    public static EntityOp fromId(String id) {
+        for (EntityOp it : EntityOp.values()) {
+            if (Objects.equals(id, it.getId()))
+                return it;
+        }
+        return null; // unknown id
     }
 }

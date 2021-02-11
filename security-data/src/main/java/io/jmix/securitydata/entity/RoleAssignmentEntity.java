@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "SEC_ROLE_ASSIGNMENT_ENTITY")
+@Table(name = "SEC_ROLE_ASSIGNMENT")
 @Entity(name = "sec_RoleAssignmentEntity")
 @JmixEntity
 public class RoleAssignmentEntity implements Serializable {

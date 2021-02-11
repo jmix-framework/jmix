@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "SEC_RESOURCE_POLICY_ENTITY")
+@Table(name = "SEC_RESOURCE_POLICY")
 @Entity(name = "sec_ResourcePolicyEntity")
 @JmixEntity
 public class ResourcePolicyEntity implements Serializable {
@@ -89,7 +89,7 @@ public class ResourcePolicyEntity implements Serializable {
 
     @NotNull
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "ROLE_ENTITY_ID")
+    @JoinColumn(name = "ROLE_ID")
     private ResourceRoleEntity role;
 
     public UUID getId() {

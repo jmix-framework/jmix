@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Table(name = "SEC_RESOURCE_ROLE_ENTITY")
+@Table(name = "SEC_RESOURCE_ROLE")
 @Entity(name = "sec_ResourceRoleEntity")
 @JmixEntity
 public class ResourceRoleEntity implements Serializable {

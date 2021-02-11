@@ -32,19 +32,7 @@ public class CubaScreensEventListener {
 
     @EventListener
     public void onAppCloseWindowsInternal(CloseWindowsInternalEvent event) {
-        saveScreenHistory();
         saveScreenSettings(event.getSource());
-    }
-
-    public void saveScreenHistory() {
-        // todo screen history
-        /*getOpenedWorkAreaScreensStream().forEach(s ->
-                screenHistorySupport.saveScreenHistory(s)
-        );
-
-        getDialogScreensStream().forEach(s ->
-                screenHistorySupport.saveScreenHistory(s)
-        );*/
     }
 
     public void saveScreenSettings(Screens screens) {

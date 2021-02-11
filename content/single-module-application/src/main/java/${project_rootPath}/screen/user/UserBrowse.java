@@ -4,7 +4,7 @@ import ${project_rootPackage}.entity.User;
 import io.jmix.ui.navigation.Route;
 import io.jmix.ui.screen.*;
 
-@UiController("${project_idPrefix}_User.browse")
+@UiController("${normalizedPrefix_underscore}User.browse")
 @UiDescriptor("user-browse.xml")
 @LookupComponent("usersTable")
 @Route("users")

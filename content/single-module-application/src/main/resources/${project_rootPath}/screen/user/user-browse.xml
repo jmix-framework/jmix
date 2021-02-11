@@ -14,7 +14,7 @@
             </fetchPlan>
             <loader id="usersDl">
                 <query>
-                    <![CDATA[select e from ${project_idPrefix}_User e order by e.username]]>
+                    <![CDATA[select e from ${normalizedPrefix_underscore}User e order by e.username]]>
                 </query>
             </loader>
         </collection>

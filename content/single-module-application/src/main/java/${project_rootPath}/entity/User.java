@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.UUID;
 
 @JmixEntity
-@Entity(name = "${project_idPrefix}_User")
-@Table(name = "${project_idPrefix.toUpperCase()}_USER", indexes = {
-        @Index(name = "IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME", columnList = "USERNAME", unique = true)
+@Entity(name = "${normalizedPrefix_underscore}User")
+@Table(name = "${normalizedPrefix_underscore.toUpperCase()}USER", indexes = {
+        @Index(name = "IDX_${normalizedPrefix_underscore.toUpperCase()}USER_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
 public class User implements UserDetails, GrantedAuthorityContainer {
 

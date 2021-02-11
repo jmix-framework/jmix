@@ -1,0 +1,3 @@
+<%
+globals["normalizedPrefix_underscore"] = (project_idPrefix == null || project_idPrefix.isEmpty()) ? "" : project_idPrefix + "_"
+%>

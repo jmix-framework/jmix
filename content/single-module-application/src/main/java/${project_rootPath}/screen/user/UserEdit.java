@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
 
-@UiController("${project_idPrefix}_User.edit")
+@UiController("${normalizedPrefix_underscore}User.edit")
 @UiDescriptor("user-edit.xml")
 @EditedEntityContainer("userDc")
 @Route(value = "users/edit", parentPrefix = "users")

@@ -19,7 +19,7 @@ import org.springframework.security.authentication.DisabledException;
 
 import java.util.Locale;
 
-@UiController("${project_idPrefix}_LoginScreen")
+@UiController("${normalizedPrefix_underscore}LoginScreen")
 @UiDescriptor("login-screen.xml")
 @Route(path = "login", root = true)
 public class LoginScreen extends Screen {

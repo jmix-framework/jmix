@@ -7,7 +7,7 @@
 
     <changeSet id="1" author="${project_name}">
 
-        <createTable tableName="${project_idPrefix.toUpperCase()}_USER">
+        <createTable tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -27,15 +27,15 @@
     </changeSet>
 
     <changeSet id="2" author="${project_name}">
-        <createIndex indexName="IDX_${project_idPrefix.toUpperCase()}_USER_ON_USERNAME"
-                     tableName="${project_idPrefix.toUpperCase()}_USER" unique="true">
+        <createIndex indexName="IDX_${normalizedPrefix_underscore.toUpperCase()}USER_ON_USERNAME"
+                     tableName="${normalizedPrefix_underscore.toUpperCase()}USER" unique="true">
             <column name="USERNAME"/>
         </createIndex>
     </changeSet>
 
     <changeSet id="3" author="${project_name}">
 
-        <insert tableName="${project_idPrefix.toUpperCase()}_USER">
+        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
             <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>

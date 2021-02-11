@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Primary
-@Component("${project_idPrefix}_UserRepository")
+@Component("${normalizedPrefix_underscore}UserRepository")
 public class DatabaseUserRepository extends AbstractDatabaseUserRepository<User> {
 
     @Override

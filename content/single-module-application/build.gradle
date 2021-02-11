@@ -6,8 +6,8 @@ plugins {
 apply plugin: 'org.springframework.boot'
 
 jmix {
-    bomVersion = '@bomVersion@'
-    projectId = '$project_id'
+    bomVersion = '@bomVersion@' <%if (project_id) {%>
+    projectId = '$project_id'<%}%>
 }
 
 group = 'com.company'

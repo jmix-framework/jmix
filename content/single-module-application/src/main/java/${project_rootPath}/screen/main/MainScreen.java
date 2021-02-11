@@ -13,7 +13,7 @@ import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.screen.UiDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("${project_idPrefix}_MainScreen")
+@UiController("${normalizedPrefix_underscore}MainScreen")
 @UiDescriptor("main-screen.xml")
 public class MainScreen extends Screen implements Window.HasWorkArea {
 

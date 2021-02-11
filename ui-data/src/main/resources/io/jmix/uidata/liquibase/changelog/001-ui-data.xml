@@ -82,6 +82,7 @@
         </addColumn>
         <renameColumn tableName="UI_FILTER_CONFIGURATION"
                       oldColumnName="CODE"
-                      newColumnName="CONFIGURATION_ID"/>
+                      newColumnName="CONFIGURATION_ID"
+                      columnDataType="varchar(255)"/>
     </changeSet>
 </databaseChangeLog>

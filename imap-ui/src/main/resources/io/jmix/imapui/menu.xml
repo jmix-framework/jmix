@@ -16,10 +16,10 @@
   -->
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
-    <menu id="administration">
-        <menu id="imap-component">
-            <item screen="imap_MailBox.browse"/>
-            <item screen="imap_Message.browse"/>
-        </menu>
+
+    <menu id="imap-component" insertAfter="administration">
+        <item screen="imap_MailBox.browse"/>
+        <item screen="imap_Message.browse"/>
     </menu>
+
 </menu-config>

@@ -16,12 +16,39 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.sys.FrameHelper;
+import io.jmix.ui.WindowInfo;
 import io.jmix.ui.xml.layout.loader.FragmentComponentLoader;
+import org.dom4j.Element;
 
 public class CubaFragmentComponentLoader extends FragmentComponentLoader {
 
     @Override
     protected ComponentLoaderContext createInnerContext() {
         return new ComponentLoaderContext(getComponentContext().getOptions());
+    }
+
+    @Override
+    protected WindowInfo createWindowInfo(Element element) {
+        String src = element.attributeValue("src");
+        if (src == null) {
+            return super.createWindowInfo(element);
+        }
+
+        String frameId;
+        if (element.attributeValue("id") != null) {
+            frameId = element.attributeValue("id");
+        } else if (element.attributeValue("screen") != null) {
+            frameId = element.attributeValue("screen");
+        } else {
+            frameId = src;
+        }
+
+        FrameHelper frameHelper = getFrameHelper();
+        return frameHelper.createFakeWindowInfo(src, frameId);
+    }
+
+    protected FrameHelper getFrameHelper() {
+        return applicationContext.getBean(FrameHelper.class);
     }
 }

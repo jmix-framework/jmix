@@ -49,7 +49,12 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
     @Override
     public void createComponent() {
         WindowInfo windowInfo = createWindowInfo(element);
-        String fragmentId = windowInfo.getId();
+        String fragmentId;
+        if (element.attributeValue("id") != null) {
+            fragmentId = element.attributeValue("id");
+        } else {
+            fragmentId = windowInfo.getId();
+        }
 
         Timer.Sample createSample = Timer.start(getMeterRegistry());
 

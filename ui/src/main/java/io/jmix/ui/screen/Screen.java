@@ -324,12 +324,6 @@ public abstract class Screen implements FrameOwner {
             return OperationResult.fail();
         }
 
-        // todo history
-        /*if (isSaveScreenHistoryOnClose(action)) {
-            ScreenHistorySupport screenHistorySupport = beanLocator.get(ScreenHistorySupport.NAME);
-            screenHistorySupport.saveScreenHistory(this);
-        }*/
-
         screenContext.getScreens().remove(this);
 
         AfterCloseEvent afterCloseEvent = new AfterCloseEvent(this, action);
@@ -355,14 +349,6 @@ public abstract class Screen implements FrameOwner {
      */
     public OperationResult close(StandardOutcome outcome) {
         return close(outcome.getCloseAction());
-    }
-
-    /**
-     * @param action close action
-     * @return true if the screen should be registered in UI history
-     */
-    protected boolean isSaveScreenHistoryOnClose(@SuppressWarnings("unused") CloseAction action) {
-        return true;
     }
 
     /**

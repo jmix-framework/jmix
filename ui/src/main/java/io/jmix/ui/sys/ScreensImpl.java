@@ -108,11 +108,6 @@ public class ScreensImpl implements Screens {
     @Autowired
     protected AccessManager accessManager;
 
-    // todo implement
-    /*
-    @Autowired
-    protected ScreenHistorySupport screenHistorySupport;*/
-
     @Autowired
     protected UiProperties uiProperties;
 

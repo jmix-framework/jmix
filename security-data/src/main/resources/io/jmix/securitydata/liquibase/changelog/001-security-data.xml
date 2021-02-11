@@ -129,9 +129,9 @@
             <column name="ENTITY_NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="WHERE_CLAUSE" type="varchar(5000)"/>
-            <column name="JOIN_CLAUSE" type="varchar(5000)"/>
-            <column name="SCRIPT_" type="varchar(5000)"/>
+            <column name="WHERE_CLAUSE" type="CLOB"/>
+            <column name="JOIN_CLAUSE" type="CLOB"/>
+            <column name="SCRIPT_" type="CLOB"/>
 
             <column name="ROLE_ID" type="uuid">
                 <constraints foreignKeyName="FK_ROW_LVL_POL_ROLE"

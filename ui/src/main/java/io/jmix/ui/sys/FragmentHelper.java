@@ -29,15 +29,12 @@ import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.List;
 
 import static io.jmix.ui.component.ComponentsHelper.getFullFrameId;
@@ -87,46 +84,6 @@ public class FragmentHelper {
         int start = messagesPack.startsWith(".") ? 1 : 0;
         messagesPack = messagesPack.substring(start);
         return messagesPack;
-    }
-
-    @SuppressWarnings("unchecked")
-    public WindowInfo createFakeWindowInfo(String src, String fragmentId) {
-        Element screenElement = DocumentHelper.createElement("screen");
-        screenElement.addAttribute("template", src);
-        screenElement.addAttribute("id", fragmentId);
-
-        Element windowElement = screenXmlLoader.load(src, fragmentId, Collections.emptyMap());
-        Class<? extends ScreenFragment> fragmentClass;
-
-        String className = windowElement.attributeValue("class");
-        if (StringUtils.isNotEmpty(className)) {
-            fragmentClass = (Class<? extends ScreenFragment>) classManager.loadClass(className);
-        } else {
-            // fragmentClass = AbstractFrame.class; todo
-            throw new UnsupportedOperationException();
-        }
-
-        return new WindowInfo(fragmentId, new WindowAttributesProvider() {
-            @Override
-            public WindowInfo.Type getType(WindowInfo wi) {
-                return WindowInfo.Type.FRAGMENT;
-            }
-
-            @Override
-            public String getTemplate(WindowInfo wi) {
-                return src;
-            }
-
-            @Override
-            public Class<? extends FrameOwner> getControllerClass(WindowInfo wi) {
-                return fragmentClass;
-            }
-
-            @Override
-            public WindowInfo resolve(WindowInfo windowInfo) {
-                return windowInfo;
-            }
-        }, screenElement);
     }
 
     public static class FragmentLoaderInjectTask implements ComponentLoader.InjectTask {

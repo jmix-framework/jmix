@@ -48,36 +48,13 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
     @Override
     public void createComponent() {
-        String src = element.attributeValue("src");
-        String screenId = element.attributeValue("screen");
-        if (src == null
-                && screenId == null) {
-            throw new GuiDevelopmentException("Either 'src' or 'screen' must be specified for 'frame'",
-                    context, "fragment", element.attributeValue("id"));
-        }
-
-        String fragmentId;
-        if (element.attributeValue("id") != null) {
-            fragmentId = element.attributeValue("id");
-        } else if (screenId != null) {
-            fragmentId = screenId;
-        } else {
-            fragmentId = src;
-        }
-
-        FragmentHelper fragmentHelper = getFragmentHelper();
-
-        WindowInfo windowInfo;
-        if (src == null) {
-            // load screen class only once
-            windowInfo = getWindowConfig().getWindowInfo(screenId).resolve();
-        } else {
-            windowInfo = fragmentHelper.createFakeWindowInfo(src, fragmentId);
-        }
+        WindowInfo windowInfo = createWindowInfo(element);
+        String fragmentId = windowInfo.getId();
 
         Timer.Sample createSample = Timer.start(getMeterRegistry());
 
         Fragment fragment = factory.create(Fragment.NAME);
+        FragmentHelper fragmentHelper = getFragmentHelper();
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
 
         // setup screen and controller
@@ -134,6 +111,16 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         createSample.stop(createScreenTimer(getMeterRegistry(), ScreenLifeCycle.CREATE, windowInfo.getId()));
 
         this.resultComponent = fragment;
+    }
+
+    protected WindowInfo createWindowInfo(Element element) {
+        String screenId = element.attributeValue("screen");
+        if (screenId == null) {
+            throw new GuiDevelopmentException("'screen' attribute must be specified for 'fragment'",
+                    context, "fragment", element.attributeValue("id"));
+        }
+
+        return getWindowConfig().getWindowInfo(screenId).resolve();
     }
 
     protected ComponentLoaderContext createInnerContext() {

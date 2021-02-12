@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.dom4j.Element;
 
 /**

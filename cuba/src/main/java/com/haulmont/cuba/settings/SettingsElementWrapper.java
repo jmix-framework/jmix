@@ -17,7 +17,7 @@
 package com.haulmont.cuba.settings;
 
 import io.jmix.ui.screen.Screen;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.dom4j.*;
 
 import java.io.IOException;

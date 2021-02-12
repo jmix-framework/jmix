@@ -19,7 +19,7 @@ package com.haulmont.cuba.gui.components;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.dom4j.Element;
 
 /**

@@ -16,36 +16,47 @@
 
 package io.jmix.ui.component.mainwindow.impl;
 
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.ui.Component;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.component.impl.AbstractComponent;
+import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.UiComponents;
+import io.jmix.ui.component.CompositeComponent;
+import io.jmix.ui.component.CssLayout;
+import io.jmix.ui.component.Label;
+import io.jmix.ui.component.formatter.Formatter;
 import io.jmix.ui.component.mainwindow.UserIndicator;
-import io.jmix.ui.widget.JmixComboBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
-import static com.vaadin.server.Sizeable.Unit;
-
-public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements UserIndicator {
+public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements UserIndicator {
 
     protected static final String USER_INDICATOR_STYLENAME = "c-userindicator";
 
-//    protected final Function<? super BaseUser, String> DEFAULT_USER_NAME_FORMATTER = this::getDefaultUserCaption;
-
-    protected Label userNameLabel;
-    protected JmixComboBox<UserDetails> userComboBox;
-
-    protected Function<? super UserDetails, String> userNameFormatter;
-
     protected MetadataTools metadataTools;
+    protected UiComponents uiComponents;
+
+    protected Label<UserDetails> userNameLabel;
+
+    protected Formatter<? super UserDetails> userNameFormatter;
 
     public UserIndicatorImpl() {
-        component = new com.vaadin.ui.CssLayout();
-        component.setPrimaryStyleName(USER_INDICATOR_STYLENAME);
+        addCreateListener(this::onCreate);
+    }
+
+    protected void onCreate(CreateEvent createEvent) {
+        root = createRootComponent();
+        initRootComponent(root);
+    }
+
+    protected CssLayout createRootComponent() {
+        return uiComponents.create(CssLayout.class);
+    }
+
+    protected void initRootComponent(CssLayout root) {
+        root.unwrap(Component.class).setPrimaryStyleName(USER_INDICATOR_STYLENAME);
     }
 
     @Autowired
@@ -53,136 +64,40 @@ public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements U
         this.metadataTools = metadataTools;
     }
 
-    // todo user substitution
+    @Autowired
+    public void setUiComponents(UiComponents uiComponents) {
+        this.uiComponents = uiComponents;
+    }
 
-//    @Override
-//    public void refreshUserSubstitutions() {
-//        component.removeAllComponents();
-//
-//        UserSessionSource uss = beanLocator.get(UserSessionSource.NAME);
-//        List<UserSubstitution> substitutions = getUserSubstitutions();
-//
-//        AppUI ui = AppUI.getCurrent();
-//
-//        User currentOrSubstitutedUser = uss.getUserSession().getCurrentOrSubstitutedUser();
-//        if (substitutions.isEmpty()) {
-//            String substitutedUserCaption = getSubstitutedUserCaption(currentOrSubstitutedUser);
-//
-//            userComboBox = null;
-//
-//            userNameLabel = new Label(substitutedUserCaption);
-//            userNameLabel.setStyleName("c-user-select-label");
-//            userNameLabel.setSizeUndefined();
-//
-//            if (ui != null && ui.isTestMode()) {
-//                userNameLabel.setJTestId("currentUserLabel");
-//            }
-//
-//            component.addComponent(userNameLabel);
-//            component.setDescription(substitutedUserCaption);
-//        } else {
-//            userNameLabel = null;
-//
-//            userComboBox = new JmixComboBox<>();
-//            userComboBox.setEmptySelectionAllowed(false);
-//            userComboBox.setItemCaptionGenerator(this::getSubstitutedUserCaption);
-//            userComboBox.setStyleName("c-user-select-combobox");
-//
-//            if (ui != null) {
-//                if (ui.isTestMode()) {
-//                    userComboBox.setJTestId("substitutedUserSelect");
-//                }
-//                if (ui.isPerformanceTestMode()) {
-//                    userComboBox.setId(ui.getTestIdManager().getTestId("substitutedUserSelect"));
-//                }
-//            }
-//            List<User> options = new ArrayList<>();
-//            User sessionUser = uss.getUserSession().getUser();
-//            options.add(sessionUser);
-//
-//            for (UserSubstitution substitution : substitutions) {
-//                User substitutedUser = substitution.getSubstitutedUser();
-//                options.add(substitutedUser);
-//            }
-//
-//            userComboBox.setItems(options);
-//
-//            userComboBox.setValue(currentOrSubstitutedUser);
-//            userComboBox.addValueChangeListener(this::substitutedUserChanged);
-//
-//            component.addComponent(userComboBox);
-//            component.setDescription(null);
-//        }
-//
-//        adjustWidth();
-//        adjustHeight();
-//    }
-//
-//    protected void substitutedUserChanged(ValueChangeEvent<User> event) {
-//        UserSessionSource uss = beanLocator.get(UserSessionSource.NAME);
-//
-//        User newUser = event.getValue();
-//        UserSession userSession = uss.getUserSession();
-//        if (userSession == null) {
-//            throw new RuntimeException("No user session found");
-//        }
-//
-//        User oldUser = userSession.getSubstitutedUser() == null ? userSession.getUser() : userSession.getSubstitutedUser();
-//
-//        if (!oldUser.equals(newUser)) {
-//            String newUserName = StringUtils.isBlank(newUser.getName()) ? newUser.getLogin() : newUser.getName();
-//
-//            Messages messages = beanLocator.get(Messages.NAME);
-//
-//            Dialogs dialogs = getScreenContext(this).getDialogs();
-//
-//            dialogs.createOptionDialog()
-//                    .withCaption(messages.getMainMessage("substUserSelectDialog.title"))
-//                    .withMessage(messages.formatMainMessage("substUserSelectDialog.msg", newUserName))
-//                    .withType(Dialogs.MessageType.WARNING)
-//                    .withActions(
-//                            new ChangeSubstUserAction(userComboBox.getValue()) {
-//                                @Override
-//                                public void doRevert() {
-//                                    super.doRevert();
-//
-//                                    revertToCurrentUser();
-//                                }
-//                            }, new DoNotChangeSubstUserAction() {
-//                                @Override
-//                                public void actionPerform(io.jmix.ui.component.Component component) {
-//                                    super.actionPerform(component);
-//
-//                                    revertToCurrentUser();
-//                                }
-//                            })
-//                    .show();
-//        }
-//    }
-//
-//    protected String getSubstitutedUserCaption(User user) {
-//        return userNameFormatter.apply(user);
-//    }
-//
-//    protected String getDefaultUserCaption(User user) {
-//        return isNotEmpty(user.getName())
-//                ? user.getName()
-//                : metadataTools.getInstanceName(user);
-//    }
-//
-//    protected List<UserSubstitution> getUserSubstitutions() {
-//        UserManagementService userManagementService = beanLocator.get(UserManagementService.NAME);
-//        UserSessionSource uss = beanLocator.get(UserSessionSource.NAME);
-//
-//        return userManagementService.getSubstitutedUsers(uss.getUserSession().getUser().getId());
-//    }
-//
-//    protected void revertToCurrentUser() {
-//        UserSessionSource uss = beanLocator.get(UserSessionSource.NAME);
-//        UserSession us = uss.getUserSession();
-//
-//        userComboBox.setValue(us.getCurrentOrSubstitutedUser());
-//    }
+    @Override
+    public void refreshUser() {
+        root.removeAll();
+
+        CurrentAuthentication authentication = applicationContext.getBean(CurrentAuthentication.class);
+        UserDetails user = authentication.getUser();
+
+        userNameLabel = uiComponents.create(Label.of(UserDetails.class));
+        userNameLabel.setStyleName("c-user-select-label");
+        userNameLabel.setFormatter(this::generateUserCaption);
+        userNameLabel.setValue(user);
+
+        AppUI ui = AppUI.getCurrent();
+        if (ui != null && ui.isTestMode()) {
+            userNameLabel.unwrap(Component.class).setJTestId("currentUserLabel");
+        }
+
+        root.add(userNameLabel);
+        root.setDescription(generateUserCaption(user));
+
+        adjustWidth();
+        adjustHeight();
+    }
+
+    protected String generateUserCaption(UserDetails user) {
+        return userNameFormatter != null
+                ? userNameFormatter.apply(user)
+                : metadataTools.getInstanceName(user);
+    }
 
     @Override
     public void setWidth(@Nullable String width) {
@@ -201,15 +116,11 @@ public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements U
     protected void adjustWidth() {
         if (getWidth() < 0) {
             if (userNameLabel != null) {
-                userNameLabel.setWidth(-1, Unit.PIXELS);
-            } else if (userComboBox != null) {
-                userComboBox.setWidthUndefined();
+                userNameLabel.setWidthAuto();
             }
         } else {
             if (userNameLabel != null) {
-                userNameLabel.setWidth(100, Unit.PERCENTAGE);
-            } else if (userComboBox != null) {
-                userComboBox.setWidth(100, Unit.PERCENTAGE);
+                userNameLabel.setWidthFull();
             }
         }
     }
@@ -217,28 +128,25 @@ public class UserIndicatorImpl extends AbstractComponent<CssLayout> implements U
     protected void adjustHeight() {
         if (getHeight() < 0) {
             if (userNameLabel != null) {
-                userNameLabel.setHeight(-1, Unit.PIXELS);
-            } else if (userComboBox != null) {
-                userComboBox.setHeight(-1, Unit.PIXELS);
+                userNameLabel.setHeightAuto();
             }
         } else {
             if (userNameLabel != null) {
-                userNameLabel.setHeight(100, Unit.PERCENTAGE);
-            } else if (userComboBox != null) {
-                userComboBox.setHeight(100, Unit.PERCENTAGE);
+                userNameLabel.setHeightFull();
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Nullable
     @Override
-    public void setUserNameFormatter(Function<? super UserDetails, String> userNameFormatter) {
-        this.userNameFormatter = userNameFormatter;
-//        refreshUserSubstitutions();
+    public Formatter<UserDetails> getFormatter() {
+        return (Formatter<UserDetails>) userNameFormatter;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Function<UserDetails, String> getUserNameFormatter() {
-        return (Function<UserDetails, String>) userNameFormatter;
+    public void setFormatter(@Nullable Formatter<? super UserDetails> formatter) {
+        this.userNameFormatter = formatter;
+        refreshUser();
     }
 }

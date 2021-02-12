@@ -17,26 +17,15 @@
 package io.jmix.ui.component.mainwindow;
 
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.HasFormatter;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.function.Function;
-
-public interface UserIndicator extends Component.BelongToFrame {
+public interface UserIndicator extends Component.BelongToFrame, HasFormatter<UserDetails> {
 
     String NAME = "userIndicator";
 
-    // todo user substitutions
-//    void refreshUserSubstitutions();
-
     /**
-     * Assign a formatter that change user name caption.
-     *
-     * @param userNameFormatter formatter to be executed.
+     * Informs this component that the current user may be changed and refresh is needed.
      */
-    void setUserNameFormatter(Function<? super UserDetails, String> userNameFormatter);
-
-    /**
-     * @return formatter that is used or null.
-     */
-    Function<UserDetails, String> getUserNameFormatter();
+    void refreshUser();
 }

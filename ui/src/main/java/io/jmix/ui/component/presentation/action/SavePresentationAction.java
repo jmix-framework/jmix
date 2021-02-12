@@ -57,13 +57,13 @@ public class SavePresentationAction extends AbstractPresentationAction {
 
         String settingsString = presentations.getSettingsString(current);
         if (settingsString != null) {
-            ComponentSettings convertedSettings = userSettingsTools.toComponentSettings(settingsString, settingsBinder.getSettingsClass());
+            ComponentSettings convertedSettings = userSettingsTools.convertToComponentSettings(settingsString, settingsBinder.getSettingsClass());
             if (convertedSettings != null) {
                 settings = convertedSettings;
             }
         }
 
         settingsBinder.saveSettings(table, new SettingsWrapperImpl(settings));
-        presentations.setSettings(current, userSettingsTools.toSettingsString(settings));
+        presentations.setSettings(current, userSettingsTools.convertSettingsToString(settings));
     }
 }

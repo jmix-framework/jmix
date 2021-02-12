@@ -239,7 +239,7 @@ public class PresentationEditor extends JmixWindow implements InitializingBean {
         ComponentSettings componentSettings = SettingsHelper.createSettings(settingsBinder.getSettingsClass());
         settingsBinder.saveSettings((Component) component, new SettingsWrapperImpl(componentSettings));
 
-        return userSettingsTools.toSettingsString(componentSettings);
+        return userSettingsTools.convertSettingsToString(componentSettings);
     }
 
     protected String getPresentationCaption() {

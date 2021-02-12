@@ -22,7 +22,7 @@ import io.jmix.ui.component.Table
 import io.jmix.ui.settings.component.TableSettings
 import io.jmix.ui.settings.component.binder.TableSettingsBinder
 import io.jmix.uidata.entity.UiTablePresentation
-import io.jmix.uidata.settings.ScreenSettings
+import io.jmix.ui.settings.ScreenSettings
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.UiDataTestSpecification
 import uitest.table_settings.screen.TableSettingsTestScreen

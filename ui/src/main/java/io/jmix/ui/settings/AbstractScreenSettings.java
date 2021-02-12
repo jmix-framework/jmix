@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings;
+package io.jmix.ui.settings;
+
+import io.jmix.core.annotation.Internal;
 
 public abstract class AbstractScreenSettings implements ScreenSettings {
 
@@ -36,5 +38,11 @@ public abstract class AbstractScreenSettings implements ScreenSettings {
         return modified;
     }
 
-    protected abstract void commit();
+    /**
+     * INTERNAL. Used by the framework.
+     * <p>
+     * Commits screen settings to the store.
+     */
+    @Internal
+    public abstract void commit();
 }

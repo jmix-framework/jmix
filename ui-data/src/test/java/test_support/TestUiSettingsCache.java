@@ -16,13 +16,13 @@
 
 package test_support;
 
-import io.jmix.uidata.UiSettingsCache;
+import io.jmix.uidata.UiSettingsCacheImpl;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TestUiSettingsCache extends UiSettingsCache {
+public class TestUiSettingsCache extends UiSettingsCacheImpl {
 
     protected Map<String, Optional<String>> cache = new ConcurrentHashMap<>();
 

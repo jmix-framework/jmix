@@ -17,7 +17,7 @@
 package screen_settings
 
 import io.jmix.ui.settings.component.TableSettings
-import io.jmix.uidata.settings.ScreenSettings
+import io.jmix.ui.settings.ScreenSettings
 import test_support.UiDataTestSpecification
 
 class ScreenSettingsTest extends UiDataTestSpecification {

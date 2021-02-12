@@ -35,6 +35,7 @@ public interface ComponentSettings {
 
     interface HasSettingsPresentation {
 
+        @Nullable
         UUID getPresentationId();
     }
 }

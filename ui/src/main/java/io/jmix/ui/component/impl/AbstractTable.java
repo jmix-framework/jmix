@@ -2871,7 +2871,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
             ComponentSettings settings = getSettingsFromPresentation(p.getCurrent());
             getSettingsBinder().saveSettings(this, new SettingsWrapperImpl(settings));
 
-            String rawSettings = userSettingsTools.toSettingsString(settings);
+            String rawSettings = userSettingsTools.convertSettingsToString(settings);
             p.setSettings(p.getCurrent(), rawSettings);
         }
     }
@@ -2997,7 +2997,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         String settingsString = presentations.getSettingsString(p);
         if (settingsString != null && userSettingsTools != null) {
-            ComponentSettings convertedSettings = userSettingsTools.toComponentSettings(settingsString, settingsClass);
+            ComponentSettings convertedSettings = userSettingsTools.convertToComponentSettings(settingsString, settingsClass);
             if (convertedSettings != null) {
                 settings = convertedSettings;
             }

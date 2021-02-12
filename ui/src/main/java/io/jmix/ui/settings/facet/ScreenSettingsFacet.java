@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings.facet;
+package io.jmix.ui.settings.facet;
 
 import io.jmix.ui.component.Accordion;
 import io.jmix.ui.component.Component;
@@ -24,7 +24,7 @@ import io.jmix.ui.component.Window;
 import io.jmix.ui.screen.Screen.AfterDetachEvent;
 import io.jmix.ui.screen.Screen.AfterShowEvent;
 import io.jmix.ui.screen.Screen.BeforeShowEvent;
-import io.jmix.uidata.settings.ScreenSettings;
+import io.jmix.ui.settings.ScreenSettings;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 

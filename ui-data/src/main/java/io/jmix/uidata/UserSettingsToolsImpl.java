@@ -26,8 +26,8 @@ import io.jmix.ui.component.Window;
 import io.jmix.ui.settings.UserSettingService;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.ComponentSettings;
-import io.jmix.uidata.settings.ScreenSettings;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -76,14 +76,14 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
     }
 
     @Override
-    public <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass) {
+    public <T extends ComponentSettings> T convertToComponentSettings(String settings, Class<T> settingsClass) {
         // screen id is empty as we won't commit any changes
         ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
         return screenSettings.toComponentSettings(settings, settingsClass);
     }
 
     @Override
-    public String toSettingsString(ComponentSettings settings) {
+    public String convertSettingsToString(ComponentSettings settings) {
         // screen id is empty as we won't commit any changes
         ScreenSettings screenSettings = applicationContext.getBean(ScreenSettings.class, "");
         return screenSettings.toSettingsString(settings);

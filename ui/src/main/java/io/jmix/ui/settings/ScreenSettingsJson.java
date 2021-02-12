@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings;
+package io.jmix.ui.settings;
 
 import com.google.gson.*;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.settings.component.ComponentSettings;
-import io.jmix.uidata.UiSettingsCache;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +41,7 @@ public class ScreenSettingsJson extends AbstractScreenSettings {
 
     private static final Logger log = LoggerFactory.getLogger(ScreenSettingsJson.class);
 
-    @Autowired
+    @Autowired(required = false)
     protected UiSettingsCache settingsCache;
 
     protected JsonArray root;
@@ -317,18 +316,29 @@ public class ScreenSettingsJson extends AbstractScreenSettings {
 
     protected void loadSettings() {
         if (root == null) {
-            String jsonArray = settingsCache.getSetting(screenId);
+            String jsonArray = "";
+
+            if (settingsCache != null) {
+                jsonArray = settingsCache.getSetting(screenId);
+            } else {
+                log.debug("Cannot load screen settings for {} due to add-on"
+                        + " that provides the ability to work with settings is not added", screenId);
+            }
 
             root = StringUtils.isNotBlank(jsonArray) ?
                     gson.fromJson(jsonArray, JsonArray.class) : new JsonArray();
         }
     }
 
-    protected void commit() {
+    public void commit() {
         if (isModified() && root != null) {
-            settingsCache.setSetting(screenId, gson.toJson(root));
-
-            setModified(false);
+            if (settingsCache != null) {
+                settingsCache.setSetting(screenId, gson.toJson(root));
+                setModified(false);
+            } else {
+                log.debug("Cannot commit screen settings for '{}' due to add-on"
+                        + " that provides the ability to work with settings is not added", screenId);
+            }
         }
     }
 

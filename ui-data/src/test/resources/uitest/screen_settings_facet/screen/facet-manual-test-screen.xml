@@ -16,8 +16,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
-        xmlns:c="http://jmix.io/schema/ui/jpql-condition"
-        xmlns:uidata="http://jmix.io/schema/ui/ui-data">
+        xmlns:c="http://jmix.io/schema/ui/jpql-condition">
     <data readOnly="true">
         <collection id="projectsDc"
                     class="test_support.entity.Project">
@@ -26,7 +25,7 @@
         </collection>
     </data>
     <facets>
-        <uidata:screenSettings id="facet"/>
+        <screenSettings id="facet"/>
     </facets>
     <layout spacing="true">
         <groupTable id="projectsTable"

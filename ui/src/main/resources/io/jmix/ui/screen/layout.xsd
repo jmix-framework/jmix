@@ -3683,6 +3683,20 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <!-- ScreenSettingsFacet -->
+    <xs:complexType name="screenSettingsType">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:element name="component" type="screenSettingsComponentType" minOccurs="0"/>
+        </xs:sequence>
+
+        <xs:attribute name="id" type="xs:string"/>
+        <xs:attribute name="auto" type="xs:boolean"/>
+    </xs:complexType>
+
+    <xs:complexType name="screenSettingsComponentType">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
+
     <xs:complexType name="facets">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -3699,6 +3713,8 @@
                 <xs:element name="screen" type="screenType" minOccurs="0"/>
                 <xs:element name="editorScreen" type="editorScreenType" minOccurs="0"/>
                 <xs:element name="lookupScreen" type="lookupScreenType" minOccurs="0"/>
+
+                <xs:element name="screenSettings" type="screenSettingsType" minOccurs="0"/>
 
                 <!-- allow custom facets from any namespace -->
                 <xs:any/>

@@ -49,7 +49,7 @@ public interface UserSettingsTools {
      * @return component settings instance
      */
     @Nullable
-    <T extends ComponentSettings> T toComponentSettings(String settings, Class<T> settingsClass);
+    <T extends ComponentSettings> T convertToComponentSettings(String settings, Class<T> settingsClass);
 
     /**
      * Converts component settings to a string representation.
@@ -57,7 +57,7 @@ public interface UserSettingsTools {
      * @param settings component settings
      * @return string representation of settings
      */
-    String toSettingsString(ComponentSettings settings);
+    String convertSettingsToString(ComponentSettings settings);
 
     /**
      * Helps to apply settings for the components in a lazy tab e.g. {@link TabSheet} or {@link Accordion}.

@@ -20,9 +20,9 @@ import com.vaadin.server.VaadinSession;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.executor.IllegalConcurrentAccessException;
+import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.settings.UserSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -33,8 +33,7 @@ import java.util.Optional;
  * User settings provider. Caches settings in HTTP session.
  */
 @Internal
-@Component("ui_UiSettingsCache")
-public class UiSettingsCache {
+public class UiSettingsCacheImpl implements UiSettingsCache {
 
     public static final String ATTR_NAME = "ui_UiSettingsCache";
 
@@ -42,13 +41,14 @@ public class UiSettingsCache {
     protected UserSettingService userSettingService;
 
     @Nullable
+    @Override
     public String getSetting(String name) {
         Preconditions.checkNotNullArgument(name);
 
         Map<String, Optional<String>> settings = getCache();
-        Optional<String> cached = settings.get(name);
-        if (cached != null) {
-            return cached.orElse(null);
+        Optional<String> cached = settings.getOrDefault(name, Optional.empty());
+        if (cached.isPresent()) {
+            return cached.get();
         }
 
         String setting = userSettingService.loadSetting(name);
@@ -57,6 +57,7 @@ public class UiSettingsCache {
         return setting;
     }
 
+    @Override
     public void setSetting(String name, @Nullable String value) {
         Preconditions.checkNotNullArgument(name);
 
@@ -64,6 +65,7 @@ public class UiSettingsCache {
         userSettingService.saveSetting(name, value);
     }
 
+    @Override
     public void deleteSettings(String name) {
         Preconditions.checkNotNullArgument(name);
 
@@ -71,9 +73,7 @@ public class UiSettingsCache {
         userSettingService.deleteSettings(name);
     }
 
-    /**
-     * Clears cache.
-     */
+    @Override
     public void clear() {
         VaadinSession session = VaadinSession.getCurrent();
         if (session == null || !session.hasLock()) {

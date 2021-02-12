@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings.facet;
+package io.jmix.ui.settings.facet;
 
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.EventHub;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.impl.AbstractFacet;
@@ -26,9 +27,11 @@ import io.jmix.ui.screen.Screen.AfterDetachEvent;
 import io.jmix.ui.screen.Screen.AfterShowEvent;
 import io.jmix.ui.screen.Screen.BeforeShowEvent;
 import io.jmix.ui.screen.UiControllerUtils;
-import io.jmix.uidata.settings.ScreenSettings;
-import io.jmix.uidata.settings.ScreenSettingsManager;
+import io.jmix.ui.settings.ScreenSettingsManager;
+import io.jmix.ui.settings.ScreenSettings;
 import org.apache.commons.collections4.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
 @Internal
 public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSettingsFacet {
 
+    private static final Logger log = LoggerFactory.getLogger(ScreenSettingsFacetImpl.class);
+
     protected Set<String> componentIds;
 
     protected boolean auto = false;
@@ -50,7 +55,11 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     protected Consumer<SettingsContext> applyDataLoadingSettingsDelegate;
     protected Consumer<SettingsContext> saveSettingsDelegate;
 
-    @Autowired
+    protected Subscription beforeShowSubscription;
+    protected Subscription afterShowSubscription;
+    protected Subscription afterDetachedSubscription;
+
+    @Autowired(required = false)
     protected ScreenSettingsManager settingsManager;
 
     @Autowired
@@ -65,42 +74,42 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     public void applySettings(ScreenSettings settings) {
         Collection<Component> components = getComponents();
 
-        settingsManager.applySettings(components, settings);
+        applyScreenSettings(components, settings);
     }
 
     @Override
     public void applySettings(Collection<Component> components, ScreenSettings settings) {
         Collection<Component> componentsToApply = filterByManagedComponents(components);
 
-        settingsManager.applySettings(componentsToApply, settings);
+        applyScreenSettings(componentsToApply, settings);
     }
 
     @Override
     public void applyDataLoadingSettings(ScreenSettings settings) {
         Collection<Component> components = getComponents();
 
-        settingsManager.applyDataLoadingSettings(components, settings);
+        applyDataLoadingScreenSettings(components, settings);
     }
 
     @Override
     public void applyDataLoadingSettings(Collection<Component> components, ScreenSettings settings) {
         Collection<Component> componentsToApply = filterByManagedComponents(components);
 
-        settingsManager.applyDataLoadingSettings(componentsToApply, settings);
+        applyDataLoadingScreenSettings(componentsToApply, settings);
     }
 
     @Override
     public void saveSettings(ScreenSettings settings) {
         Collection<Component> components = getComponents();
 
-        settingsManager.saveSettings(components, screenSettings);
+        saveScreenSettings(components, settings);
     }
 
     @Override
     public void saveSettings(Collection<Component> components, ScreenSettings settings) {
         Collection<Component> componentsToSave = filterByManagedComponents(components);
 
-        settingsManager.saveSettings(componentsToSave, screenSettings);
+        saveScreenSettings(componentsToSave, settings);
     }
 
     @Override
@@ -183,23 +192,45 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     public void setOwner(@Nullable Frame owner) {
         super.setOwner(owner);
 
-        if (getScreenOwner() != null)
+        unsubscribe();
+        screenSettings = null;
+
+        if (getScreenOwner() != null) {
             screenSettings = beanFactory.getBean(ScreenSettings.class, getScreenOwner().getId());
 
-        subscribe();
+            subscribe();
+
+            if (!isSettingsEnabled()) {
+                log.warn("ScreenSettingsFacet does not work for '{}' due to add-on "
+                        + "that provides the ability to work with settings is not added", getScreenOwner().getId());
+            }
+        }
     }
 
     protected void subscribe() {
-        Frame frame = getOwner();
-        if (frame == null) {
-            throw new IllegalStateException("ScreenSettingsFacet is not attached to Frame");
+        checkAttachedFrame();
+
+        //noinspection ConstantConditions
+        EventHub screenEvents = UiControllerUtils.getEventHub(getScreenOwner());
+
+        beforeShowSubscription = screenEvents.subscribe(BeforeShowEvent.class, this::onScreenBeforeShow);
+        afterShowSubscription = screenEvents.subscribe(AfterShowEvent.class, this::onScreenAfterShow);
+        afterDetachedSubscription = screenEvents.subscribe(AfterDetachEvent.class, this::onScreenAfterDetach);
+    }
+
+    protected void unsubscribe() {
+        if (beforeShowSubscription != null) {
+            beforeShowSubscription.remove();
+            beforeShowSubscription = null;
         }
-
-        EventHub screenEvents = UiControllerUtils.getEventHub(frame.getFrameOwner());
-
-        screenEvents.subscribe(BeforeShowEvent.class, this::onScreenBeforeShow);
-        screenEvents.subscribe(AfterShowEvent.class, this::onScreenAfterShow);
-        screenEvents.subscribe(AfterDetachEvent.class, this::onScreenAfterDetach);
+        if (afterShowSubscription != null) {
+            afterShowSubscription.remove();
+            afterShowSubscription = null;
+        }
+        if (afterDetachedSubscription != null) {
+            afterDetachedSubscription.remove();
+            afterDetachedSubscription = null;
+        }
     }
 
     @Nullable
@@ -208,7 +239,10 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     }
 
     protected void onScreenBeforeShow(BeforeShowEvent event) {
+        checkAttachedFrame();
+
         if (applyDataLoadingSettingsDelegate != null) {
+            //noinspection ConstantConditions
             applyDataLoadingSettingsDelegate.accept(new SettingsContext(
                     getScreenOwner().getWindow(),
                     getComponents(),
@@ -219,7 +253,10 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     }
 
     protected void onScreenAfterShow(AfterShowEvent event) {
+        checkAttachedFrame();
+
         if (applySettingsDelegate != null) {
+            //noinspection ConstantConditions
             applySettingsDelegate.accept(new SettingsContext(
                     getScreenOwner().getWindow(),
                     getComponents(),
@@ -230,7 +267,10 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     }
 
     protected void onScreenAfterDetach(AfterDetachEvent event) {
+        checkAttachedFrame();
+
         if (saveSettingsDelegate != null) {
+            //noinspection ConstantConditions
             saveSettingsDelegate.accept(new SettingsContext(
                     getScreenOwner().getWindow(),
                     getComponents(),
@@ -238,6 +278,28 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         } else {
             saveSettings(screenSettings);
         }
+    }
+
+    protected void applyScreenSettings(Collection<Component> components, ScreenSettings settings) {
+        if (isSettingsEnabled()) {
+            settingsManager.applySettings(components, settings);
+        }
+    }
+
+    protected void applyDataLoadingScreenSettings(Collection<Component> components, ScreenSettings settings) {
+        if (isSettingsEnabled()) {
+            settingsManager.applyDataLoadingSettings(components, settings);
+        }
+    }
+
+    protected void saveScreenSettings(Collection<Component> components, ScreenSettings settings) {
+        if (isSettingsEnabled()) {
+            settingsManager.saveSettings(components, settings);
+        }
+    }
+
+    protected boolean isSettingsEnabled() {
+        return settingsManager != null;
     }
 
     protected Collection<Component> filterByManagedComponents(Collection<Component> components) {

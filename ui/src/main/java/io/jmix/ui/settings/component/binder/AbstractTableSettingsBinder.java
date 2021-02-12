@@ -273,7 +273,7 @@ public abstract class AbstractTableSettingsBinder implements DataLoadingSettings
             }
 
             boolean visible = !vTable.isColumnCollapsed(columnId);
-            boolean settingsVisible = settingsColumn.getVisible() == null ? true : settingsColumn.getVisible();
+            boolean settingsVisible = !Boolean.FALSE.equals(settingsColumn.getVisible());
 
             if (visible != settingsVisible) {
                 return true;

@@ -18,7 +18,7 @@ package uitest.screen_settings_facet.screen;
 
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.screen.*;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 import test_support.entity.Project;
 

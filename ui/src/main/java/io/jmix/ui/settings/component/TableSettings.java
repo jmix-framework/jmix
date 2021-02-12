@@ -72,12 +72,13 @@ public class TableSettings implements ComponentSettings, ComponentSettings.HasSe
         this.sortAscending = sortAscending;
     }
 
+    @Nullable
     @Override
     public UUID getPresentationId() {
         return presentationId;
     }
 
-    public void setPresentationId(UUID presentationId) {
+    public void setPresentationId(@Nullable UUID presentationId) {
         this.presentationId = presentationId;
     }
 

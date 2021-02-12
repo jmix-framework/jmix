@@ -22,7 +22,7 @@ import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @UiController

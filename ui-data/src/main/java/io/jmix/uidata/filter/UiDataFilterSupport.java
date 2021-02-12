@@ -46,8 +46,8 @@ import io.jmix.uidata.action.filter.FilterSaveAsAction;
 import io.jmix.uidata.action.filter.FilterSaveWithValuesAction;
 import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFragment;
 import io.jmix.uidata.entity.FilterConfiguration;
-import io.jmix.uidata.settings.ScreenSettings;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;

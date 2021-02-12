@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings;
+package io.jmix.ui.settings;
 
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.TableSettings;

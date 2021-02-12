@@ -15,6 +15,6 @@
  */
 
 @NonNullApi
-package io.jmix.uidata.settings.facet;
+package io.jmix.ui.settings.facet;
 
 import org.springframework.lang.NonNullApi;

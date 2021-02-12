@@ -36,9 +36,9 @@ import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import io.jmix.ui.screen.Screen
+import io.jmix.ui.settings.ScreenSettingsManager
 import io.jmix.ui.testassist.spec.ScreenSpecification
 import io.jmix.uidata.UiDataConfiguration
-import io.jmix.uidata.settings.ScreenSettingsManager
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration

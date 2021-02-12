@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.settings.facet;
+package io.jmix.ui.settings.facet;
 
 import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;

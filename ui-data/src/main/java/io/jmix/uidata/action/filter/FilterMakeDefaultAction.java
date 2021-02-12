@@ -22,8 +22,8 @@ import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.component.FilterSettings;
-import io.jmix.uidata.settings.ScreenSettings;
-import io.jmix.uidata.settings.facet.ScreenSettingsFacet;
+import io.jmix.ui.settings.ScreenSettings;
+import io.jmix.ui.settings.facet.ScreenSettingsFacet;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;

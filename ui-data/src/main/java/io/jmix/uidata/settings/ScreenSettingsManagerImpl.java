@@ -16,17 +16,18 @@
 
 package io.jmix.uidata.settings;
 
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.settings.AbstractScreenSettings;
+import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.ComponentSettings.HasSettingsPresentation;
 import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
-import io.jmix.ui.settings.component.binder.TableSettingsBinder;
+import io.jmix.ui.settings.ScreenSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,14 +38,10 @@ import java.util.UUID;
 
 import static io.jmix.ui.component.ComponentsHelper.getComponentPath;
 
-/**
- * Provides functionality for applying and saving component settings.
- */
-@Internal
-@org.springframework.stereotype.Component("ui_ScreenSettingsManager")
-public class ScreenSettingsManager {
+@SuppressWarnings({"unchecked", "rawtypes"})
+public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
-    private static final Logger log = LoggerFactory.getLogger(ScreenSettingsManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ScreenSettingsManagerImpl.class);
 
     @Autowired
     protected ComponentSettingsRegistry settingsRegistry;
@@ -52,13 +49,7 @@ public class ScreenSettingsManager {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    /**
-     * Applies settings for component if {@link ComponentSettingsBinder} is created for it. See
-     * {@link TableSettingsBinder} as an example.
-     *
-     * @param components     components to apply settings
-     * @param screenSettings screen settings
-     */
+    @Override
     public void applySettings(Collection<Component> components, ScreenSettings screenSettings) {
         Preconditions.checkNotNullArgument(components);
         Preconditions.checkNotNullArgument(screenSettings);
@@ -94,13 +85,7 @@ public class ScreenSettingsManager {
         }
     }
 
-    /**
-     * Applies data loading settings for component if {@link ComponentSettingsBinder} is created for it. See
-     * {@link TableSettingsBinder} as an example.
-     *
-     * @param components     components to apply settings
-     * @param screenSettings screen settings
-     */
+    @Override
     public void applyDataLoadingSettings(Collection<Component> components, ScreenSettings screenSettings) {
         Preconditions.checkNotNullArgument(components);
         Preconditions.checkNotNullArgument(screenSettings);
@@ -124,13 +109,7 @@ public class ScreenSettingsManager {
         }
     }
 
-    /**
-     * Saves settings and persist if they are changed or screen settings is modified. {@link ComponentSettingsBinder}
-     * must be created for component. See {@link TableSettingsBinder} as an example.
-     *
-     * @param components     components to save settings
-     * @param screenSettings screen settings
-     */
+    @Override
     public void saveSettings(Collection<Component> components, ScreenSettings screenSettings) {
         Preconditions.checkNotNullArgument(components);
         Preconditions.checkNotNullArgument(screenSettings);

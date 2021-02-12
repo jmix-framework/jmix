@@ -14,10 +14,9 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
-        xmlns:uidata="http://jmix.io/schema/ui/ui-data">
+<window xmlns="http://jmix.io/schema/ui/window">
     <facets>
-        <uidata:screenSettings id="facet" auto="true"/>
+        <screenSettings id="facet" auto="true"/>
     </facets>
     <layout>
         <groupBox id="groupBox" collapsable="true"/>

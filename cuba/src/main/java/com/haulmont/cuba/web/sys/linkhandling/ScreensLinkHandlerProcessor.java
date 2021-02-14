@@ -17,11 +17,13 @@
 package com.haulmont.cuba.web.sys.linkhandling;
 
 import com.haulmont.cuba.core.global.EntityLoadInfo;
+import com.haulmont.cuba.gui.WindowManager;
 import io.jmix.core.*;
+import io.jmix.core.security.AccessDeniedException;
 import io.jmix.ui.*;
-import io.jmix.ui.exception.AccessDeniedHandler;
-import io.jmix.ui.exception.EntityAccessExceptionHandler;
-import io.jmix.ui.exception.NoSuchScreenHandler;
+import com.haulmont.cuba.gui.exception.AccessDeniedHandler;
+import com.haulmont.cuba.gui.exception.EntityAccessExceptionHandler;
+import com.haulmont.cuba.gui.exception.NoSuchScreenHandler;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.MapScreenOptions;
 import io.jmix.ui.screen.Screen;
@@ -84,17 +86,15 @@ public class ScreensLinkHandlerProcessor implements LinkHandlerProcessor, Ordere
             return;
         }
 
-        /*
-        TODO: legacy-ui
         try {
             openWindow(windowInfo, linkContext);
         } catch (EntityAccessException e) {
-            entityAccessExceptionHandler.handle(e, app.getWindowManager());
+            entityAccessExceptionHandler.handle(e, (WindowManager) app.getWindowManager());
         } catch (AccessDeniedException e) {
-            accessDeniedHandler.handle(e, app.getWindowManager());
+            accessDeniedHandler.handle(e, (WindowManager) app.getWindowManager());
         } catch (NoSuchScreenException e) {
-            noSuchScreenHandler.handle(e, app.getWindowManager());
-        }*/
+            noSuchScreenHandler.handle(e, (WindowManager) app.getWindowManager());
+        }
     }
 
     protected void openWindow(WindowInfo windowInfo, ExternalLinkContext linkContext) {

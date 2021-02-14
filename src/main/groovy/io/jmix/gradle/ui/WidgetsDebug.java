@@ -34,19 +34,25 @@ import java.util.stream.StreamSupport;
 
 public class WidgetsDebug extends WidgetsTask {
 
-    protected String widgetSetsDir;
     @Input
-    protected String widgetSetClass;
+    protected String widgetSetsDir = "";
+    @Input
+    protected String widgetSetClass = "";
     @Input
     protected Map<String, Object> compilerArgs = new HashMap<>();
 
+    @Input
     protected boolean printCompilerClassPath = false;
 
+    @Input
     protected boolean shortClassPath = true;
 
+    @Input
     protected String logLevel = "INFO";
 
+    @Input
     protected String xmx = "-Xmx768m";
+    @Input
     protected String xss = "-Xss8m";
 
     public WidgetsDebug() {
@@ -118,6 +124,7 @@ public class WidgetsDebug extends WidgetsTask {
         return new File(widgetSetsDir);
     }
 
+    @Internal
     protected File getDefaultBuildDir() {
         return new File(getProject().getBuildDir(), "/web-debug/VAADIN/widgetsets");
     }

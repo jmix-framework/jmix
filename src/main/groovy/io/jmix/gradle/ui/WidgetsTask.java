@@ -24,6 +24,7 @@ import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.artifacts.ResolvedArtifact;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.plugins.JavaPluginConvention;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.SourceSet;
 
 import java.io.File;
@@ -33,8 +34,10 @@ public abstract class WidgetsTask extends DefaultTask {
 
     protected static final String MAIN_SOURCE_SET = "main";
 
+    @Internal
     protected List<String> excludes = new ArrayList<>();
 
+    @Internal
     protected Set<String> compilerJvmArgs = new LinkedHashSet<>(Collections.singleton("-Djava.awt.headless=true"));
 
     public void excludeJars(String... artifacts) {
@@ -103,6 +106,7 @@ public abstract class WidgetsTask extends DefaultTask {
         return !excludes.contains(name);
     }
 
+    @Internal
     public FileCollection getSourceFiles() {
         getProject().getLogger().info("Analyze source projects for widgetset building in {}", getProject().getName());
 

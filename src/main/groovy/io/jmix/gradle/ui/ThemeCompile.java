@@ -59,7 +59,9 @@ public class ThemeCompile extends DefaultTask {
 
     @Input
     protected String scssDir = "src/main/themes";
-    protected String destDir;
+
+    @Input
+    protected String destDir = "";
 
     @Input
     protected boolean compress = true;
@@ -85,7 +87,7 @@ public class ThemeCompile extends DefaultTask {
 
     @OutputDirectory
     public File getOutputDirectory() {
-        if (destDir == null) {
+        if (destDir == null || destDir.isEmpty()) {
             return new File(getProject().getBuildDir(), "themes");
         }
         return new File(getProject().getProjectDir(), destDir);

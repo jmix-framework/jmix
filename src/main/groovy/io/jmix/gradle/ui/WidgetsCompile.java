@@ -70,15 +70,21 @@ public class WidgetsCompile extends WidgetsTask {
 
     protected boolean generateWidgetSetFile = false;
 
+    @Input
     protected String xmx = "-Xmx768m";
+    @Input
     protected String xss = "-Xss8m";
 
+    @Input
     protected String logLevel = "ERROR";
 
+    @Input
     protected boolean shortClassPath = true;
 
+    @Input
     protected int workers = Math.max(Runtime.getRuntime().availableProcessors() - 1, 1);
 
+    @Input
     protected boolean printCompilerClassPath = false;
 
     public WidgetsCompile() {
@@ -244,6 +250,7 @@ public class WidgetsCompile extends WidgetsTask {
         return null;
     }
 
+    @Internal
     protected String getDefaultWidgetSet() {
         SourceSetContainer sourceSets = getProject().getConvention()
                 .getPlugin(JavaPluginConvention.class)
@@ -297,6 +304,7 @@ public class WidgetsCompile extends WidgetsTask {
         return new File(widgetSetsDir);
     }
 
+    @Internal
     protected String getDefaultBuildDir() {
         return new File(getProject().getBuildDir(), "widgets").getAbsolutePath();
     }

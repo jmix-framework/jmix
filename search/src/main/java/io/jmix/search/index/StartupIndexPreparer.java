@@ -16,16 +16,12 @@
 
 package io.jmix.search.index;
 
-import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.Collection;
+import javax.annotation.PostConstruct;
 
 @Component(StartupIndexPreparer.NAME)
 public class StartupIndexPreparer {
@@ -37,36 +33,12 @@ public class StartupIndexPreparer {
     @Autowired
     protected IndexManager indexManager;
 
-    @Autowired
-    protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
-
-    @EventListener(ApplicationReadyEvent.class) //todo Prepare indexes during initialization
-    public void prepareIndexes() {
-        log.info("[IVGA] Prepare indexes");
-        Collection<IndexDefinition> indexDefinitions = indexDefinitionsProvider.getIndexDefinitions();
-        indexDefinitions.forEach(this::prepareIndex);
-    }
-
-    protected void prepareIndex(IndexDefinition indexDefinition) {
-        log.info("[IVGA] Prepare index '{}'", indexDefinition.getIndexName());
+    @PostConstruct
+    protected void postConstruct() {
         try {
-            boolean indexExist = indexManager.isIndexExist(indexDefinition.getIndexName());
-            if (indexExist) {
-                log.info("[IVGA] Index '{}' already exists", indexDefinition.getIndexName());
-                //todo compare mapping & settings
-                if(indexManager.isIndexActual(indexDefinition)) {
-                    log.info("[IVGA] Index '{}' has actual configuration", indexDefinition.getIndexName());
-                } else {
-                    log.info("[IVGA] Index '{}' has irrelevant configuration", indexDefinition.getIndexName());
-                    indexManager.dropIndex(indexDefinition.getIndexName());
-                    indexManager.createIndex(indexDefinition);
-                }
-            } else {
-                log.info("[IVGA] Index '{}' does not exists. Create", indexDefinition.getIndexName());
-                indexManager.createIndex(indexDefinition);
-            }
-        } catch (IOException e) {
-            log.error("[IVGA] Unable to prepare index '{}'", indexDefinition.getIndexName(), e);
+            indexManager.prepareIndexes();
+        } catch (Exception e) {
+            log.error("Failed to setup indexes", e);
         }
     }
 }

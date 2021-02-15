@@ -16,10 +16,10 @@
 
 package io.jmix.search.index;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 @Component("search_IndexManager")
@@ -45,6 +46,8 @@ public class IndexManager {
 
     @Autowired
     protected RestHighLevelClient esClient;
+    @Autowired
+    protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,19 +56,19 @@ public class IndexManager {
         String mappingBody;
         try {
             mappingBody = objectMapper.writeValueAsString(indexDefinition.getMapping());
-            log.info("[IVGA] Mapping for index '{}': {}", indexDefinition.getIndexName(), mappingBody);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Unable to create index '" + indexDefinition.getIndexName() + "': Failed to parse index definition", e);
         }
         request.mapping(mappingBody, XContentType.JSON);
-        CreateIndexResponse createIndexResponse = esClient.indices().create(request, RequestOptions.DEFAULT);
-        log.info("[IVGA] Result of index '{}' creation (ack={}): {}", indexDefinition.getIndexName(), createIndexResponse.isAcknowledged(), createIndexResponse);
+        log.info("Create index '{}' with mapping {}", indexDefinition.getIndexName(), mappingBody);
+        CreateIndexResponse response = esClient.indices().create(request, RequestOptions.DEFAULT);
+        log.info("Result of index '{}' creation: {}", indexDefinition.getIndexName(), response.isAcknowledged() ? "Success" : "Failure");
     }
 
     public void dropIndex(String indexName) throws IOException {
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         AcknowledgedResponse response = esClient.indices().delete(request, RequestOptions.DEFAULT);
-        log.info("[IVGA] Delete Index Response = {}", response);
+        log.info("Result of index '{}' creation: {}", indexName, response.isAcknowledged() ? "Success" : "Failure");
     }
 
     public boolean isIndexExist(String indexName) throws IOException {
@@ -78,10 +81,10 @@ public class IndexManager {
         Map<String, MappingMetadata> mappings = index.getMappings();
         MappingMetadata mappingMetadata = mappings.get(indexDefinition.getIndexName());
         Map<String, Object> currentMapping = mappingMetadata.getSourceAsMap();
-        log.info("[IVGA] Current mapping of index '{}': {}", indexDefinition.getIndexName(), currentMapping);
+        log.debug("Current mapping of index '{}': {}", indexDefinition.getIndexName(), currentMapping);
 
         Map<String, Object> actualMapping = objectMapper.convertValue(indexDefinition.getMapping(), new TypeReference<Map<String, Object>>(){});
-        log.info("[IVGA] Actual mapping of index '{}': {}", indexDefinition.getIndexName(), actualMapping);
+        log.debug("Actual mapping of index '{}': {}", indexDefinition.getIndexName(), actualMapping);
 
         return actualMapping.equals(currentMapping);
     }
@@ -89,5 +92,34 @@ public class IndexManager {
     public GetIndexResponse getIndex(String indexName) throws IOException {
         GetIndexRequest request = new GetIndexRequest(indexName);
         return esClient.indices().get(request, RequestOptions.DEFAULT);
+    }
+
+    public void prepareIndexes() {
+        log.info("Prepare search indexes");
+        Collection<IndexDefinition> indexDefinitions = indexDefinitionsProvider.getIndexDefinitions();
+        indexDefinitions.forEach(this::prepareIndex);
+    }
+
+    public void prepareIndex(IndexDefinition indexDefinition) {
+        log.info("Prepare search index '{}'", indexDefinition.getIndexName());
+        try {
+            boolean indexExist = isIndexExist(indexDefinition.getIndexName());
+            if (indexExist) {
+                log.info("Index '{}' already exists", indexDefinition.getIndexName());
+                //todo compare mapping & settings
+                if(isIndexActual(indexDefinition)) {
+                    log.info("Index '{}' has actual configuration", indexDefinition.getIndexName());
+                } else {
+                    log.info("Index '{}' has irrelevant configuration", indexDefinition.getIndexName());
+                    dropIndex(indexDefinition.getIndexName());
+                    createIndex(indexDefinition);
+                }
+            } else {
+                log.info("Index '{}' does not exists. Create", indexDefinition.getIndexName());
+                createIndex(indexDefinition);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to prepare index '" + indexDefinition.getIndexName() + "'", e);
+        }
     }
 }

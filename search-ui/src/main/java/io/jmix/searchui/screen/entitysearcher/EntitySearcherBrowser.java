@@ -20,6 +20,7 @@ import com.google.common.collect.EvictingQueue;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchService;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
@@ -56,6 +57,8 @@ public class EntitySearcherBrowser extends Screen {
     protected ScreenBuilders screenBuilders;
     @Autowired
     protected DataManager dataManager;
+    @Autowired
+    protected SearchProperties searchProperties;
 
     @Autowired
     protected TextField<String> searchInput;
@@ -115,9 +118,8 @@ public class EntitySearcherBrowser extends Screen {
 
     protected void initSearchResults(SearchResult searchResult) {
         //todo paging
-        int maxPageCount = 5; //todo property
         //noinspection UnstableApiUsage
-        pages = EvictingQueue.create(maxPageCount);
+        pages = EvictingQueue.create(searchProperties.getMaxSearchPageCount());
         currentPage = new Page(0);
         currentPage.setSearchResult(searchResult);
         pages.add(currentPage);

@@ -50,14 +50,16 @@ public class SearchService {
     @Autowired
     protected RestHighLevelClient esClient;
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
     @Autowired
     @Qualifier("core_SecureDataManager")
-    private DataManager dataManager;
+    protected DataManager dataManager;
     @Autowired
-    private InstanceNameProvider instanceNameProvider;
+    protected InstanceNameProvider instanceNameProvider;
+    @Autowired
+    protected SearchProperties searchProperties;
 
     public SearchResult search(String searchTerm) {
         //todo Currently it's a simple search over all fields of all search indices without any paging
@@ -65,7 +67,7 @@ public class SearchService {
         SearchRequest searchRequest = new SearchRequest("*_search_index");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.multiMatchQuery(searchTerm, "*"));
-        searchSourceBuilder.size(100); //todo property
+        searchSourceBuilder.size(searchProperties.getEsSearchSize());
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
@@ -83,7 +85,7 @@ public class SearchService {
 
     //todo Use this on indexing step. Move to some utils class?
     public String getPrimaryKeyPropertyNameForSearch(MetaClass metaClass) {
-        //todo
+        //todo are all cases handled
         String primaryKeyPropertyName = metadataTools.getPrimaryKeyName(metaClass);
         if(primaryKeyPropertyName == null) {
             if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
@@ -135,8 +137,7 @@ public class SearchService {
     protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<String> entityIds) {
         String primaryKeyProperty = getPrimaryKeyPropertyNameForSearch(metaClass);
         Map<String, String> result = new HashMap<>();
-        int loadEntityInstanceNamesBatchSize = 100; //todo property
-        for (List<String> partition : Lists.partition(entityIds, loadEntityInstanceNamesBatchSize)) {
+        for (List<String> partition : Lists.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", partition);
             List<Object> partitionResult = dataManager
                     .load(metaClass.getJavaClass())
@@ -232,9 +233,5 @@ public class SearchService {
         public Collection<String> getEntityClassNames() {
             return entriesByEntityClassName.keySet();
         }
-    }
-
-    protected class EntityMetadata {
-
     }
 }

@@ -24,7 +24,7 @@
     <changeSet id="1" author="cuba" context="!cuba">
 
         <createTable tableName="SYS_FOLDER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -42,14 +42,14 @@
             <column name="NAME" type="varchar(100)"/>
             <column name="SORT_ORDER" type="int"/>
             <column name="TAB_NAME" type="varchar(255)"/>
-            <column name="PARENT_ID" type="uuid">
+            <column name="PARENT_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_SYS_FOLDER_PARENT"
                              references="SYS_FOLDER(ID)"/>
             </column>
         </createTable>
 
         <createTable tableName="SYS_APP_FOLDER">
-            <column name="FOLDER_ID" type="uuid">
+            <column name="FOLDER_ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"
                              foreignKeyName="FK_SYS_APP_FOLDER_FOLDER"
                              references="SYS_FOLDER(ID)"/>
@@ -62,7 +62,7 @@
         </createTable>
 
         <createTable tableName="SEC_SEARCH_FOLDER">
-            <column name="FOLDER_ID" type="uuid">
+            <column name="FOLDER_ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"
                              foreignKeyName="FK_SEC_SEARCH_FOLDER_FOLDER"
                              references="SYS_FOLDER(ID)"/>
@@ -70,7 +70,7 @@
             <column name="FILTER_COMPONENT" type="varchar(200)"/>
             <column name="FILTER_XML" type="varchar(7000)"/>
             <column name="USERNAME" type="varchar(255)"/>
-            <column name="PRESENTATION_ID" type="uuid"/>
+            <column name="PRESENTATION_ID" type="${uuid.type}"/>
             <column name="APPLY_DEFAULT" type="boolean"/>
             <column name="IS_SET" type="boolean"/>
             <column name="ENTITY_TYPE" type="varchar(50)"/>
@@ -81,7 +81,7 @@
     <changeSet id="2" author="cuba" context="!cuba">
 
         <createTable tableName="SEC_FILTER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -108,7 +108,7 @@
     <changeSet id="3" author="cuba" context="!cuba">
 
         <createTable tableName="SYS_SCHEDULED_TASK">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -148,14 +148,14 @@
     <changeSet id="4-oracle-hsqldb" author="cuba" context="!cuba" dbms="oracle, hsqldb">
 
         <createTable tableName="SYS_SCHEDULED_EXECUTION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
 
-            <column name="TASK_ID" type="uuid"/>
+            <column name="TASK_ID" type="${uuid.type}"/>
             <column name="SERVER" type="varchar(512)"/>
             <column name="START_TIME" type="timestamp"/>
             <column name="FINISH_TIME" type="timestamp"/>
@@ -177,14 +177,14 @@
     <changeSet id="4-mssql-mysql" author="cuba" context="!cuba" dbms="mssql, mysql">
 
         <createTable tableName="SYS_SCHEDULED_EXECUTION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
 
-            <column name="TASK_ID" type="uuid"/>
+            <column name="TASK_ID" type="${uuid.type}"/>
             <column name="SERVER" type="varchar(512)"/>
             <column name="START_TIME" type="datetime"/>
             <column name="FINISH_TIME" type="datetime"/>
@@ -206,14 +206,14 @@
     <changeSet id="4-postgres" author="cuba" context="!cuba" dbms="postgresql">
 
         <createTable tableName="SYS_SCHEDULED_EXECUTION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
 
-            <column name="TASK_ID" type="uuid"/>
+            <column name="TASK_ID" type="${uuid.type}"/>
             <column name="SERVER" type="varchar(512)"/>
             <column name="START_TIME" type="timestamp with time zone"/>
             <column name="FINISH_TIME" type="timestamp with time zone"/>
@@ -235,7 +235,7 @@
     <changeSet id="5" author="cuba" context="!cuba">
 
         <createTable tableName="SYS_SERVER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -257,7 +257,7 @@
     <changeSet id="6" author="cuba" context="!cuba">
 
         <createTable tableName="SYS_CONFIG">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>

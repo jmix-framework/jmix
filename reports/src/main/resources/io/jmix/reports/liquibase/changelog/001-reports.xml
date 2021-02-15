@@ -23,7 +23,7 @@
     <changeSet author="reports" id="1">
 
         <createTable tableName="REPORT_GROUP">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -50,7 +50,7 @@
         />
 
         <createTable tableName="REPORT_REPORT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -69,13 +69,13 @@
             <column name="CODE" type="varchar(255)"/>
             <column name="DESCRIPTION" type="varchar(500)"/>
             <column name="LOCALE_NAMES" type="varchar(50)"/>
-            <column name="GROUP_ID" type="uuid">
+            <column name="GROUP_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_REPORT_REPORT_TO_REPORT_GROUP"
                              references="REPORT_GROUP(ID)"/>
             </column>
             <column name="REPORT_TYPE" type="integer"/>
-            <column name="DEFAULT_TEMPLATE_ID" type="uuid"/>
+            <column name="DEFAULT_TEMPLATE_ID" type="${uuid.type}"/>
             <column name="XML" type="longvarchar"/>
             <column name="ROLES_IDX" type="varchar(1000)"/>
             <column name="SCREENS_IDX" type="varchar(1000)"/>
@@ -92,7 +92,7 @@
         />
 
         <createTable tableName="REPORT_TEMPLATE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -105,9 +105,9 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="REPORT_ID" type="uuid"/>
+            <column name="REPORT_ID" type="${uuid.type}"/>
             <!--todo-->
-            <!--            <column name="REPORT_ID" type="uuid">-->
+            <!--            <column name="REPORT_ID" type="${uuid.type}">-->
             <!--                <constraints nullable="false"-->
             <!--                             foreignKeyName="FK_REPORT_TEMPLATE_TO_REPORT"-->
             <!--                             references="REPORT_REPORT(ID)"/>-->
@@ -133,13 +133,13 @@
                                  referencedColumnNames="ID"/>
 
         <createTable tableName="REPORT_EXECUTION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
 
-            <column name="REPORT_ID" type="uuid">
+            <column name="REPORT_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_REPORT_EXECUTION_TO_REPORT"
                              references="REPORT_REPORT(ID)"/>

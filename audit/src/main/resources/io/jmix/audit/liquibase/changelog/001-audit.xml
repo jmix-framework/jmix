@@ -8,7 +8,7 @@
     <changeSet author="audit" id="1">
 
         <createTable tableName="AUDIT_LOGGED_ENTITY">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -21,12 +21,12 @@
         </createTable>
 
         <createTable tableName="AUDIT_LOGGED_ATTR">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="ENTITY_ID" type="uuid">
+            <column name="ENTITY_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_AUDIT_LOGGED_ATTR_ENTITY"
                              references="AUDIT_LOGGED_ENTITY(ID)"/>
@@ -41,7 +41,7 @@
         />
 
         <createTable tableName="AUDIT_ENTITY_LOG">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -51,7 +51,7 @@
             <column name="CHANGE_TYPE" type="varchar(1)"/>
             <column name="ENTITY" type="varchar(100)"/>
             <column name="ENTITY_INSTANCE_NAME" type="varchar(1000)"/>
-            <column name="ENTITY_ID" type="uuid"/>
+            <column name="ENTITY_ID" type="${uuid.type}"/>
             <column name="STRING_ENTITY_ID" type="varchar(255)"/>
             <column name="INT_ENTITY_ID" type="int"/>
             <column name="LONG_ENTITY_ID" type="bigint"/>

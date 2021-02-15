@@ -90,7 +90,7 @@ public abstract class AbstractDataStore implements DataStore {
 
             entity = loadEvent.getResultEntity();
 
-            beforeCommitLoadTransaction(context,
+            beforeLoadTransactionCommit(context,
                     entity == null ? Collections.emptyList() : Collections.singletonList(entity));
             commitTransaction(transaction);
         } finally {
@@ -146,7 +146,7 @@ public abstract class AbstractDataStore implements DataStore {
                 resultList = checkAndReorderLoadedEntities(context, loadEvent.getResultEntities());
             }
 
-            beforeCommitLoadTransaction(context, resultList);
+            beforeLoadTransactionCommit(context, resultList);
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -196,7 +196,7 @@ public abstract class AbstractDataStore implements DataStore {
                 count = countAll(context);
             }
 
-            beforeCommitLoadTransaction(context, Collections.emptyList());
+            beforeLoadTransactionCommit(context, Collections.emptyList());
             commitTransaction(transaction);
         } finally {
             rollbackTransaction(transaction);
@@ -226,10 +226,10 @@ public abstract class AbstractDataStore implements DataStore {
             DataStoreEntityDeletingEvent deletingEvent = new DataStoreEntityDeletingEvent(context, savedEntities, saveState);
             fireEvent(deletingEvent);
 
-            beforeCommitSaveTransaction(context, savedEntities, deletedEntities);
+            beforeSaveTransactionCommit(context, savedEntities, deletedEntities);
             commitTransaction(transaction);
         } finally {
-            beforeRollbackSaveTransaction(context);
+            beforeSaveTransactionRollback(context);
             rollbackTransaction(transaction);
         }
 
@@ -291,14 +291,14 @@ public abstract class AbstractDataStore implements DataStore {
 
     protected abstract void rollbackTransaction(Object transaction);
 
-    protected void beforeCommitLoadTransaction(LoadContext<?> context, Collection<Object> entities) {
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
     }
 
-    protected void beforeCommitSaveTransaction(SaveContext context, Collection<Object> savedEntities,
+    protected void beforeSaveTransactionCommit(SaveContext context, Collection<Object> savedEntities,
                                                Collection<Object> removedEntities) {
     }
 
-    protected void beforeRollbackSaveTransaction(SaveContext context) {
+    protected void beforeSaveTransactionRollback(SaveContext context) {
     }
 
     public void registerInterceptor(DataStoreEventListener listener) {
@@ -414,7 +414,7 @@ public abstract class AbstractDataStore implements DataStore {
 
             for (Object entity : loadedEntities) {
                 EntityLoadInfo loadInfo = loadInfoMap.get(entity);
-                beforeCommitLoadTransaction(loadInfo.loadContext, Collections.singletonList(entity));
+                beforeLoadTransactionCommit(loadInfo.loadContext, Collections.singletonList(entity));
             }
             commitTransaction(loadTransaction);
         } finally {

@@ -21,10 +21,13 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
+    <property name="uuid.type" dbms="!oracle" value="uuid"/>
+
     <changeSet author="sample-rest" id="1.0">
 
         <createTable tableName="SAMPLE_REST_SEC_GROUP">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">
@@ -39,13 +42,13 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="PARENT_ID" type="uuid">
+            <column name="PARENT_ID" type="${uuid.type}">
                 <constraints foreignKeyName="SAMPLE_REST_SEC_GROUP_PARENT" references="SAMPLE_REST_SEC_GROUP(ID)"/>
             </column>
         </createTable>
 
         <createTable tableName="SAMPLE_REST_SEC_ROLE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">
@@ -68,7 +71,7 @@
 
 
         <createTable tableName="SAMPLE_REST_SEC_USER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">
@@ -99,14 +102,14 @@
             <column name="TIME_ZONE_AUTO" type="boolean"/>
             <column name="ACTIVE" type="boolean"/>
             <column name="CHANGE_PASSWORD_AT_LOGON" type="boolean"/>
-            <column name="GROUP_ID" type="uuid">
+            <column name="GROUP_ID" type="${uuid.type}">
                 <constraints foreignKeyName="SAMPLE_REST_SEC_USER_GROUP" references="SAMPLE_REST_SEC_GROUP(ID)"/>
             </column>
             <column name="IP_MASK" type="varchar(200)"/>
         </createTable>
 
         <createTable tableName="SAMPLE_REST_SEC_USER_ROLE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">
@@ -118,11 +121,11 @@
             <column name="UPDATED_BY" type="varchar(50)"/>
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
-            <column name="USER_ID" type="uuid">
+            <column name="USER_ID" type="${uuid.type}">
                 <constraints foreignKeyName="SAMPLE_REST_SEC_USER_ROLE_USER" references="SAMPLE_REST_SEC_USER(ID)"
                              nullable="false"/>
             </column>
-            <column name="ROLE_ID" type="uuid">
+            <column name="ROLE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="SAMPLE_REST_SEC_USER_ROLE_ROLE" references="SAMPLE_REST_SEC_ROLE(ID)"
                              nullable="false"/>
             </column>

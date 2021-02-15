@@ -22,7 +22,7 @@
     <changeSet author="imap" id="1">
         <!-- IMAP_SIMPLE_AUTHENTICATION -->
         <createTable tableName="IMAP_SIMPLE_AUTHENTICATION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -46,7 +46,7 @@
 
         <!-- IMAP_PROXY -->
         <createTable tableName="IMAP_PROXY">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -67,7 +67,7 @@
 
         <!-- IMAP_MAIL_BOX -->
         <createTable tableName="IMAP_MAIL_BOX">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -94,11 +94,11 @@
             <column name="AUTHENTICATION_METHOD" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="AUTHENTICATION_ID" type="uuid">
+            <column name="AUTHENTICATION_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_IMAP_MAILBOX_AUTHEN"
                              references="IMAP_SIMPLE_AUTHENTICATION(ID)"/>
             </column>
-            <column name="PROXY_ID" type="uuid">
+            <column name="PROXY_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_IMAP_MAIL_BOX_PROXY"
                              references="IMAP_PROXY(ID)"/>
             </column>
@@ -120,7 +120,7 @@
 
         <!-- IMAP_FOLDER -->
         <createTable tableName="IMAP_FOLDER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -136,7 +136,7 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="MAIL_BOX_ID" type="uuid">
+            <column name="MAIL_BOX_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_FOLDER_MAIL_BOX"
                              references="IMAP_MAIL_BOX(ID)"/>
@@ -148,7 +148,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="DELETED" type="boolean"/>
-            <column name="PARENT_FOLDER_ID" type="uuid">
+            <column name="PARENT_FOLDER_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_IMAP_FOLDER_PARENT_FOLDER"
                              references="IMAP_FOLDER(ID)"/>
             </column>
@@ -163,7 +163,7 @@
 
         <!-- IMAP_MESSAGE -->
         <createTable tableName="IMAP_MESSAGE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -176,7 +176,7 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="FOLDER_ID" type="uuid">
+            <column name="FOLDER_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_IMAP_MESSAGE_FOLDER"
                              references="IMAP_FOLDER(ID)"/>
             </column>
@@ -206,7 +206,7 @@
 
         <!-- IMAP_MESSAGE_ATTACHMENT -->
         <createTable tableName="IMAP_MESSAGE_ATTACHMENT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -219,7 +219,7 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="IMAP_MESSAGE_ID" type="uuid">
+            <column name="IMAP_MESSAGE_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_MESSATTACH_IMAPMESSA"
                              references="IMAP_MESSAGE(ID)"/>
@@ -246,7 +246,7 @@
 
         <!-- IMAP_MESSAGE_SYNC -->
         <createTable tableName="IMAP_MESSAGE_SYNC">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -257,13 +257,13 @@
             <column name="UPDATE_TS" type="datetime"/>
             <column name="UPDATED_BY" type="varchar(50)"/>
 
-            <column name="MESSAGE_ID" type="uuid">
+            <column name="MESSAGE_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_MESSAGE_SYNC_MESSAGE"
                              references="IMAP_MESSAGE(ID)"/>
             </column>
             <column name="FLAGS" type="clob"/>
-            <column name="FOLDER_ID" type="uuid">
+            <column name="FOLDER_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_MESSAGE_SYNC_FOLDER"
                              references="IMAP_FOLDER(ID)"/>
@@ -271,7 +271,7 @@
             <column name="STATUS" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="OLD_FOLDER_ID" type="uuid">
+            <column name="OLD_FOLDER_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_IMAP_MESSASYNC_OLD_FOLDER"
                              references="IMAP_FOLDER(ID)"/>
             </column>
@@ -290,7 +290,7 @@
 
         <!-- IMAP_FOLDER_EVENT -->
         <createTable tableName="IMAP_FOLDER_EVENT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -303,7 +303,7 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="FOLDER_ID" type="uuid">
+            <column name="FOLDER_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_FOLDER_EVENT_FOLDER"
                              references="IMAP_FOLDER(ID)"/>
@@ -321,7 +321,7 @@
 
         <!-- IMAP_EVENT_HANDLER -->
         <createTable tableName="IMAP_EVENT_HANDLER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -334,7 +334,7 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="EVENT_ID" type="uuid">
+            <column name="EVENT_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_IMAP_EVENT_HANDLER_EVENT"
                              references="IMAP_FOLDER_EVENT(ID)"/>

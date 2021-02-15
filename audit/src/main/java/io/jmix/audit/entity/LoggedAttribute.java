@@ -50,7 +50,7 @@ public class LoggedAttribute implements Serializable {
     @CreatedDate
     private Date createTs;
 
-    @Column(name = "CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY")
     @CreatedBy
     private String createdBy;
 

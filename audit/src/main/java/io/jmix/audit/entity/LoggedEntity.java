@@ -53,7 +53,7 @@ public class LoggedEntity implements Serializable {
     private Date createTs;
 
     @CreatedBy
-    @Column(name = "CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY")
     private String createdBy;
 
     @Column(name = "NAME", length = 100, unique = true)

@@ -12,7 +12,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
             <column name="NAME" type="varchar(100)">
                 <constraints unique="true"/>
             </column>
@@ -25,7 +25,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
             <column name="ENTITY_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_AUDIT_LOGGED_ATTR_ENTITY"
@@ -37,16 +37,15 @@
         <addUniqueConstraint
                 columnNames="ENTITY_ID, NAME"
                 constraintName="AUDIT_LOGGED_ATTR_UNIQ_NAME"
-                tableName="AUDIT_LOGGED_ATTR"
-        />
+                tableName="AUDIT_LOGGED_ATTR"/>
 
         <createTable tableName="AUDIT_ENTITY_LOG">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
-            <column name="CREATED_BY" type="varchar(50)"/>
-            <column name="USER_LOGIN" type="varchar(50)"/>
+            <column name="CREATED_BY" type="varchar(255)"/>
+            <column name="USER_LOGIN" type="varchar(255)"/>
             <column name="EVENT_TS" type="datetime"/>
             <column name="CHANGE_TYPE" type="varchar(1)"/>
             <column name="ENTITY" type="varchar(100)"/>

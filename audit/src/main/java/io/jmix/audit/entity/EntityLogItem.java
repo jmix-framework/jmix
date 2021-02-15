@@ -89,14 +89,14 @@ public class EntityLogItem implements Serializable {
     @CreatedDate
     private Date createTs;
 
-    @Column(name = "CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY")
     @CreatedBy
     private String createdBy;
 
     @Column(name = "EVENT_TS")
     private Date eventTs;
 
-    @Column(name = "USER_LOGIN", length = 50)
+    @Column(name = "USER_LOGIN")
     private String userLogin;
 
     @Column(name = "CHANGE_TYPE", length = 1)

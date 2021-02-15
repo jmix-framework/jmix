@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.Authenticator;
 import io.jmix.data.EntityChangeType;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import io.jmix.search.index.queue.QueueItem;
@@ -101,7 +100,7 @@ public class EntityIndexer {
 
             BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
             loaded.forEach(object -> {
-                ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
+                ObjectNode entityIndexContent = JsonNodeFactory.instance.objectNode();
                 indexDefinition.getMapping().getFields().values().stream()
                         .filter(field -> !field.isStandalone())
                         .forEach(field -> {
@@ -112,9 +111,14 @@ public class EntityIndexer {
 
                                 ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
                                 log.trace("[IVGA] objectNodeForField = {}", objectNodeForField);
-                                merge(objectNodeForField, resultObject);
+                                merge(objectNodeForField, entityIndexContent);
                             }
                         });
+
+                ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
+                resultObject.putObject("meta").put("entityClass", metaClass.getName());
+                resultObject.set("content", entityIndexContent);
+
                 log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", object, resultObject);
                 try {
                     request.add(new IndexRequest()

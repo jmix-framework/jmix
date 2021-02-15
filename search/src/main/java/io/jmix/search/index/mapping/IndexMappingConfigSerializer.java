@@ -51,12 +51,17 @@ public class IndexMappingConfigSerializer extends StdSerializer<IndexMappingConf
     protected ObjectNode mergeFields(Collection<MappingFieldDescriptor> fields) {
         ObjectNode root = JsonNodeFactory.instance.objectNode();
         ObjectNode rootProperties = root.putObject("properties");
+        rootProperties.putObject("meta")
+                .putObject("properties")
+                .putObject("entityClass")
+                .put("type", "keyword");
+        ObjectNode contentProperties = rootProperties.putObject("content").putObject("properties");
 
         for(MappingFieldDescriptor field : fields) {
             String path = field.getIndexPropertyFullName();
             ObjectNode config = field.getFieldConfiguration().asJson();
             log.info("[IVGA] Merge field '{}' with value: {}. Current root: {}", path, config, root);
-            mergeField(rootProperties, path, config);
+            mergeField(contentProperties, path, config);
         }
 
         return root;

@@ -18,6 +18,7 @@ package io.jmix.ui.component.mainwindow.impl;
 
 import com.vaadin.ui.Component;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.UiComponents;
@@ -94,9 +95,13 @@ public class UserIndicatorImpl extends CompositeComponent<CssLayout> implements 
     }
 
     protected String generateUserCaption(UserDetails user) {
-        return userNameFormatter != null
-                ? userNameFormatter.apply(user)
-                : metadataTools.getInstanceName(user);
+        if (userNameFormatter != null) {
+            return userNameFormatter.apply(user);
+        } else if (EntityValues.isEntity(user)) {
+            return metadataTools.getInstanceName(user);
+        } else {
+            return user.getUsername();
+        }
     }
 
     @Override

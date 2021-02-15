@@ -285,7 +285,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
     }
 
     @Override
-    protected void beforeCommitLoadTransaction(LoadContext<?> context, Collection<Object> entities) {
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
         if (context.isJoinTransaction()) {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object entity : entities) {
@@ -324,7 +324,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
     }
 
     @Override
-    protected void beforeCommitSaveTransaction(SaveContext context, Collection<Object> savedEntities, Collection<Object> removedEntities) {
+    protected void beforeSaveTransactionCommit(SaveContext context, Collection<Object> savedEntities, Collection<Object> removedEntities) {
         if (context.isJoinTransaction()) {
             List<Object> entities = new ArrayList<>(savedEntities);
             entities.addAll(removedEntities);

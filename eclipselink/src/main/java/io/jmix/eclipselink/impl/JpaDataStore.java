@@ -281,7 +281,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     @Override
-    protected void beforeCommitLoadTransaction(LoadContext<?> context, Collection<Object> entities) {
+    protected void beforeLoadTransactionCommit(LoadContext<?> context, Collection<Object> entities) {
         if (context.isJoinTransaction()) {
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
             for (Object entity : entities) {
@@ -322,7 +322,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     @Override
-    protected void beforeCommitSaveTransaction(SaveContext context, Collection<Object> savedEntities, Collection<Object> removedEntities) {
+    protected void beforeSaveTransactionCommit(SaveContext context, Collection<Object> savedEntities, Collection<Object> removedEntities) {
         if (context.isJoinTransaction()) {
             List<Object> entities = new ArrayList<>(savedEntities);
             entities.addAll(removedEntities);
@@ -356,9 +356,9 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
     }
 
     @Override
-    protected void beforeRollbackSaveTransaction(SaveContext context) {
+    protected void beforeSaveTransactionRollback(SaveContext context) {
         LazyLoadingContext.setEnabled();
-        super.beforeRollbackSaveTransaction(context);
+        super.beforeSaveTransactionRollback(context);
     }
 
     protected Query createQuery(EntityManager em, LoadContext<?> context, boolean countQuery) {

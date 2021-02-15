@@ -103,7 +103,7 @@
             <column name="DELETED_BY" type="varchar(50)"/>
 
             <column name="CATEGORY_ATTR_ID" type="${uuid.type}">
-                <constraints foreignKeyName="SYS_ATTR_VALUE_CATEGORY_ATTR_ID" references="SYS_CATEGORY_ATTR(ID)" nullable="false"/>
+                <constraints foreignKeyName="SYS_ATTR_VALUE_ATTR_ID" references="SYS_CATEGORY_ATTR(ID)" nullable="false"/>
             </column>
             <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -127,7 +127,7 @@
             <column name="LONG_ENTITY_VALUE" type="number"/>
 
             <column name="PARENT_ID" type="${uuid.type}">
-                <constraints foreignKeyName="SYS_ATTR_VALUE_ATTR_VALUE_PARENT_ID" references="SYS_ATTR_VALUE(ID)"/>
+                <constraints foreignKeyName="SYS_ATTR_VALUE_VAL_PARENT_ID" references="SYS_ATTR_VALUE(ID)"/>
             </column>
         </createTable>
     </changeSet>

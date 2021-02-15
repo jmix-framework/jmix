@@ -24,7 +24,7 @@
     <changeSet author="security-data" id="1">
 
         <createTable tableName="SEC_RESOURCE_ROLE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -48,7 +48,7 @@
         </createTable>
 
         <createTable tableName="SEC_ROW_LVL_ROLE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -72,7 +72,7 @@
         </createTable>
 
         <createTable tableName="SEC_RESOURCE_POLICY">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -99,7 +99,7 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="ROLE_ID" type="uuid">
+            <column name="ROLE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_RES_POLICY_ROLE"
                              references="SEC_RESOURCE_ROLE(ID)" nullable="false"/>
             </column>
@@ -107,7 +107,7 @@
         </createTable>
 
         <createTable tableName="SEC_ROW_LVL_POLICY">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -133,14 +133,14 @@
             <column name="JOIN_CLAUSE" type="CLOB"/>
             <column name="SCRIPT_" type="CLOB"/>
 
-            <column name="ROLE_ID" type="uuid">
+            <column name="ROLE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ROW_LVL_POL_ROLE"
                              references="SEC_ROW_LVL_ROLE(ID)" nullable="false"/>
             </column>
         </createTable>
 
         <createTable tableName="SEC_ROLE_ASSIGNMENT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">

@@ -8,7 +8,7 @@
     <changeSet id="1" author="${project_name}">
 
         <createTable tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">
@@ -35,8 +35,16 @@
 
     <changeSet id="3" author="${project_name}">
 
-        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
+        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
+            <column name="VERSION" value="1"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="PASSWORD" value="{noop}admin"/>
+            <column name="ENABLED" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="608859871b61424794c7dff348347f93"/>
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="PASSWORD" value="{noop}admin"/>
@@ -47,8 +55,16 @@
 
     <changeSet id="4" author="${project_name}">
 
-        <insert tableName="SEC_ROLE_ASSIGNMENT">
+        <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="6c9e420a-2b7a-4c42-8654-a9027ee14083"/>
+            <column name="VERSION" value="1"/>
+            <column name="USERNAME" value="admin"/>
+            <column name="ROLE_CODE" value="system-full-access"/>
+            <column name="ROLE_TYPE" value="resource"/>
+        </insert>
+
+        <insert tableName="SEC_ROLE_ASSIGNMENT" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="6c9e420a2b7a4c428654a9027ee14083"/>
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
             <column name="ROLE_CODE" value="system-full-access"/>

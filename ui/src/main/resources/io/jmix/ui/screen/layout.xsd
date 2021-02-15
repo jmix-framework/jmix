@@ -2909,6 +2909,10 @@
     <xs:complexType name="tagFieldComponent">
         <xs:complexContent>
             <xs:extension base="suggestionFieldComponent">
+                <xs:all>
+                    <xs:element name="query" minOccurs="0" type="suggestionFieldQuery"/>
+                </xs:all>
+
                 <xs:attribute name="clearAllVisible" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>

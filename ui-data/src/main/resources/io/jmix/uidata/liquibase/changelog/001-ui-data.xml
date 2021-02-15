@@ -24,7 +24,7 @@
     <changeSet author="ui-data" id="1">
 
         <createTable tableName="UI_SETTING">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -35,7 +35,7 @@
         </createTable>
 
         <createTable tableName="UI_TABLE_PRESENTATION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="CREATE_TS" type="datetime"/>
@@ -52,7 +52,7 @@
 
     <changeSet author="ui-data" id="2">
         <createTable tableName="UI_FILTER_CONFIGURATION">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="COMPONENT_ID" type="varchar(255)">

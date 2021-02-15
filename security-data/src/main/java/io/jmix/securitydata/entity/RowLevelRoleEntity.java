@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Table(name = "SEC_ROW_LVL_ROLE")
+@Table(name = "SEC_ROW_LEVEL_ROLE")
 @Entity(name = "sec_RowLevelRoleEntity")
 @JmixEntity
 public class RowLevelRoleEntity implements Serializable {

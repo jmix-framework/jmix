@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "SEC_ROW_LVL_POLICY")
+@Table(name = "SEC_ROW_LEVEL_POLICY")
 @Entity(name = "sec_RowLevelPolicyEntity")
 @JmixEntity
 public class RowLevelPolicyEntity implements Serializable {

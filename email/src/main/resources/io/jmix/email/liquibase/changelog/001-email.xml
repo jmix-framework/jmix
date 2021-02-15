@@ -8,7 +8,7 @@
     <changeSet author="email" id="1">
 
         <createTable tableName="EMAIL_SENDING_MESSAGE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -39,7 +39,7 @@
         </createTable>
 
         <createTable tableName="EMAIL_SENDING_ATTACHMENT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -52,7 +52,7 @@
             <column name="DELETE_TS" type="datetime"/>
             <column name="DELETED_BY" type="varchar(50)"/>
 
-            <column name="MESSAGE_ID" type="uuid">
+            <column name="MESSAGE_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_EMAIL_SENDING_ATTACHMENT_SENDING_MESSAGE"
                              references="EMAIL_SENDING_MESSAGE(ID)"/>

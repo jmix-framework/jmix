@@ -54,7 +54,7 @@
 
             <column name="MESSAGE_ID" type="${uuid.type}">
                 <constraints nullable="false"
-                             foreignKeyName="FK_EMAIL_SENDING_ATTACHMENT_SENDING_MESSAGE"
+                             foreignKeyName="FK_EMAIL_ATTACHMENT_MESSAGE"
                              references="EMAIL_SENDING_MESSAGE(ID)"/>
             </column>
 
@@ -66,7 +66,7 @@
             <column name="TEXT_ENCODING" type="varchar(50)"/>
         </createTable>
         
-        <createIndex tableName="EMAIL_SENDING_ATTACHMENT" indexName="EMAIL_SENDING_ATTACHMENT_MESSAGE_IDX">
+        <createIndex tableName="EMAIL_SENDING_ATTACHMENT" indexName="EMAIL_ATTACHMENT_MESSAGE_IDX">
             <column name="MESSAGE_ID"/>
         </createIndex>
     </changeSet>

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index;
+package io.jmix.search.index.queue;
 
-import io.jmix.search.SearchService;
-import io.jmix.search.index.queue.QueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +29,13 @@ public class QueueTracker {
 
     @Autowired
     protected QueueService queueService;
-    @Autowired
-    protected SearchService searchService; //todo remove
 
-    @Scheduled(fixedDelay = 5000L) //TODO Property for timing. Schedule by executor explicitly?
+    //TODO Property for timing. Schedule by executor explicitly?
+    // Make internal monitoring of non-empty queue to reduce database requests?
+    // (e.g. keep timestamps of last queuing and last start of processing queue to detect necessity of request to database)
+    @Scheduled(fixedDelay = 5000L)
     public void scheduleQueueTracking() {
         log.trace("[IVGA] Track Queue");
         queueService.processQueue();
-        //searchService.search("findme");
     }
 }

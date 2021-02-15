@@ -71,7 +71,7 @@
             <column name="LOCALE_NAMES" type="varchar(50)"/>
             <column name="GROUP_ID" type="${uuid.type}">
                 <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_REPORT_TO_REPORT_GROUP"
+                             foreignKeyName="FK_REPORT_TO_REPORT_GROUP"
                              references="REPORT_GROUP(ID)"/>
             </column>
             <column name="REPORT_TYPE" type="integer"/>
@@ -87,7 +87,7 @@
 
         <addUniqueConstraint
                 columnNames="NAME, SYS_TENANT_ID, DELETE_TS"
-                constraintName="IDX_REPORT_REPORT_UNIQ_NAME_SYS_TENANT_ID_NN"
+                constraintName="IDX_REPORT_UN_NAME_TENANT_ID"
                 tableName="REPORT_REPORT"
         />
 
@@ -128,7 +128,7 @@
 
         <addForeignKeyConstraint baseTableName="REPORT_REPORT"
                                  baseColumnNames="DEFAULT_TEMPLATE_ID"
-                                 constraintName="FK_REPORT_REPORT_TO_DEF_TEMPLATE"
+                                 constraintName="FK_REPORT_TO_DEF_TEMPLATE"
                                  referencedTableName="REPORT_TEMPLATE"
                                  referencedColumnNames="ID"/>
 
@@ -141,7 +141,7 @@
 
             <column name="REPORT_ID" type="${uuid.type}">
                 <constraints nullable="false"
-                             foreignKeyName="FK_REPORT_EXECUTION_TO_REPORT"
+                             foreignKeyName="FK_REPORT_EXEC_TO_REPORT"
                              references="REPORT_REPORT(ID)"/>
             </column>
             <column name="REPORT_NAME" type="varchar(255)">
@@ -163,16 +163,27 @@
             <column name="OUTPUT_DOCUMENT" type="varchar(255)"/>
         </createTable>
 
-        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXECUTION_REPORT_ID">
+        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXEC_REPORT_ID">
             <column name="REPORT_ID"/>
         </createIndex>
 
-        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXECUTION_START_TIME">
+        <createIndex tableName="REPORT_EXECUTION" indexName="IDX_REPORT_EXEC_START_TIME">
             <column name="START_TIME"/>
         </createIndex>
 
-        <insert tableName="REPORT_GROUP">
+        <insert tableName="REPORT_GROUP" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="4e083530-0b9c-11e1-9b41-6bdaa41bff94"/>
+            <column name="CREATE_TS" valueDate="current_timestamp"/>
+            <column name="CREATED_BY" value="admin"/>
+            <column name="VERSION" value="0"/>
+            <column name="VERSION" value="0"/>
+            <column name="TITLE" value="General"/>
+            <column name="CODE" value="ReportGroup.default"/>
+            <column name="LOCALE_NAMES" value="'en=General\nru=Общие'"/>
+        </insert>
+
+        <insert tableName="REPORT_GROUP" dbms="oracle, mysql, mariadb">
+            <column name="ID" value="4e0835300b9c11e19b416bdaa41bff94"/>
             <column name="CREATE_TS" valueDate="current_timestamp"/>
             <column name="CREATED_BY" value="admin"/>
             <column name="VERSION" value="0"/>

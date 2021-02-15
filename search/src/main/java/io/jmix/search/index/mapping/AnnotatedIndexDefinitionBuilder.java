@@ -57,7 +57,7 @@ public class AnnotatedIndexDefinitionBuilder {
     protected InstanceNameProvider instanceNameProvider;
 
     public IndexDefinition createIndexDefinition(String className) {
-        log.info("[IVGA] Create Index Definition for class {}", className);
+        log.debug("Create Index Definition for class {}", className);
 
         Class<?> indexDefClass = resolveClass(className);
 
@@ -65,15 +65,15 @@ public class AnnotatedIndexDefinitionBuilder {
         Class<?> entityJavaClass = indexAnnotation.entity();
         MetaClass entityMetaClass = metadata.findClass(entityJavaClass);
         if(entityMetaClass == null) {
-            throw new RuntimeException("[IVGA] MetaClass for '" + className + "' not found");
+            throw new RuntimeException("MetaClass for '" + entityJavaClass + "' not found");
         }
         String indexName = createIndexName(indexAnnotation, entityMetaClass);
-        log.info("[IVGA] Index name for class {}: {}", className, indexName);
+        log.debug("Index name for entity {}: {}", entityMetaClass, indexName);
 
         IndexMappingConfig indexMappingConfig = createIndexMappingConfig(entityMetaClass, indexDefClass);
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfig);
 
-        log.info("[IVGA] Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
+        log.debug("Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
         affectedEntityClasses.forEach(entityClass -> entityListenerManager.addListener(entityClass, EntityTracker.NAME));
 
         return new IndexDefinition(entityJavaClass, indexName, indexMappingConfig, affectedEntityClasses);
@@ -103,16 +103,13 @@ public class AnnotatedIndexDefinitionBuilder {
 
         if(methods.length > 0) { //todo handle multiple methods?
             Method method = methods[0];
-            log.info("[IVGA] Check method '{}'", method.getName());
+            log.debug("Check method '{}' of Index Definition class for entity '{}'", method.getName(), entityMetaClass);
             if(method.isDefault() || IndexMappingConfig.class.equals(method.getReturnType())) {
-                indexMappingConfig = new IndexMappingConfig(entityMetaClass, Collections.emptyMap()); //todo call method
+                indexMappingConfig = new IndexMappingConfig(entityMetaClass, Collections.emptyMap()); //todo Call method. Switch default to static?
             } else {
                 Map<String, MappingFieldDescriptor> fieldDescriptors = Arrays.stream(method.getAnnotations())
-                        .map(annotation -> {
-                            Class<? extends Annotation> aClass = annotation.annotationType();
-                            Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
-                            return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
-                        }).filter(Optional::isPresent)
+                        .map(annotation -> processAnnotation(annotation, entityMetaClass))
+                        .filter(Optional::isPresent)
                         .map(Optional::get)
                         .flatMap(template -> processIndexMappingConfigTemplate(template).stream())
                         .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
@@ -130,6 +127,12 @@ public class AnnotatedIndexDefinitionBuilder {
             indexMappingConfig = new IndexMappingConfig(entityMetaClass, Collections.emptyMap());
         }
         return indexMappingConfig;
+    }
+
+    private Optional<IndexMappingConfigTemplate> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
+        Class<? extends Annotation> aClass = annotation.annotationType();
+        Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
+        return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
     }
 
     private Set<Class<?>> getAffectedEntityClasses(IndexMappingConfig indexMappingConfig) {
@@ -191,17 +194,15 @@ public class AnnotatedIndexDefinitionBuilder {
                         })
                         .collect(Collectors.toList());
 
-                log.info("[IVGA] instanceNameRelatedProperties={}", instanceNameRelatedProperties);
+                log.debug("Properties related to Instance Name ({}): {}", propertyPath, instanceNameRelatedProperties);
             } else {
                 instanceNameRelatedProperties = Collections.emptyList();
             }
-
 
             MappingFieldDescriptor fieldDescriptor = new MappingFieldDescriptor();
             fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setMetaPropertyPath(propertyPath);
-            //fieldDescriptor.setRootEntityMetaClass(descriptor.getRootEntityMetaClass());
             fieldDescriptor.setStandalone(false);
             fieldDescriptor.setOrder(fieldMappingStrategy.getOrder());
             fieldDescriptor.setValueMapper(fieldMappingStrategy.getValueMapper(propertyPath));

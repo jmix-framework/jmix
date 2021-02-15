@@ -18,8 +18,7 @@ package io.jmix.search.index.mapping;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.index.annotation.AutoMappedField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -27,8 +26,6 @@ import java.util.Map;
 
 @Component("search_AutoMappedFieldAnnotationProcessor")
 public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationProcessor<AutoMappedField> {
-
-    private static final Logger log = LoggerFactory.getLogger(AutoMappedFieldAnnotationProcessor.class);
 
     @Override
     public Class<AutoMappedField> getAnnotationClass() {
@@ -49,8 +46,15 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
 
     @Override
     protected Map<String, Object> createParameters(AutoMappedField specificAnnotation) {
-        //todo
-        return new HashMap<>();
+        HashMap<String, Object> parameters = new HashMap<>();
+        //todo move validation to Field Mappers?
+        if(StringUtils.isNotBlank(specificAnnotation.analyzer())) {
+            parameters.put("analyzer", specificAnnotation.analyzer());
+        }
+        if(StringUtils.isNotBlank(specificAnnotation.normalizer())) {
+            parameters.put("normalizer", specificAnnotation.normalizer());
+        }
+        return parameters;
     }
 
     @Override

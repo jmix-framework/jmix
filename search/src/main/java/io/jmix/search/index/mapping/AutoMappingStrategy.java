@@ -24,11 +24,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component("search_AutoMappingStrategy")
-public class AutoMappingStrategy extends EntityPropertyMappingStrategy {
+public class AutoMappingStrategy implements FieldMappingStrategy {
+
+    protected AutoMapFieldMapperResolver autoMapFieldMapperResolver;
 
     @Autowired
     public AutoMappingStrategy(AutoMapFieldMapperResolver autoMapFieldMapperResolver) {
-        super(autoMapFieldMapperResolver);
+       this.autoMapFieldMapperResolver = autoMapFieldMapperResolver;
     }
 
     @Override

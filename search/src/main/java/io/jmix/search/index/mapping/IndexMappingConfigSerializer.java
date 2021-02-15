@@ -40,10 +40,10 @@ public class IndexMappingConfigSerializer extends StdSerializer<IndexMappingConf
 
     @Override
     public void serialize(IndexMappingConfig value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        log.info("[IVGA] Start serialize Index Mapping Config: {}", value);
+        log.trace("Start serialize Index Mapping Config: {}", value);
 
         ObjectNode mergedMappingStructure = mergeFields(value.getFields().values());
-        log.info("[IVGA] mergedMappingStructure = {}", mergedMappingStructure);
+        log.trace("Result mapping structure = {}", mergedMappingStructure);
         gen.writeTree(mergedMappingStructure);
     }
 
@@ -60,7 +60,6 @@ public class IndexMappingConfigSerializer extends StdSerializer<IndexMappingConf
         for(MappingFieldDescriptor field : fields) {
             String path = field.getIndexPropertyFullName();
             ObjectNode config = field.getFieldConfiguration().asJson();
-            log.info("[IVGA] Merge field '{}' with value: {}. Current root: {}", path, config, root);
             mergeField(contentProperties, path, config);
         }
 
@@ -68,7 +67,7 @@ public class IndexMappingConfigSerializer extends StdSerializer<IndexMappingConf
     }
 
     protected void mergeField(ObjectNode root, String fieldName, ObjectNode configValue) {
-        log.info("[IVGA] Merge field '{}' with current object {}", fieldName, root);
+        log.trace("Merge field '{}' ({}) with object {}", fieldName, configValue, root);
         String[] parts = fieldName.split("\\.", 2);
 
         String localFieldName = parts[0];

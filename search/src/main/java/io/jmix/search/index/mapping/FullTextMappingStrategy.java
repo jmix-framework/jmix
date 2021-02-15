@@ -22,11 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component("search_FullTextMappingStrategy")
-public class FullTextMappingStrategy extends EntityPropertyMappingStrategy {
-
-    public FullTextMappingStrategy(AutoMapFieldMapperResolver autoMapFieldMapperResolver) {
-        super(autoMapFieldMapperResolver);
-    }
+public class FullTextMappingStrategy implements FieldMappingStrategy {
 
     @Override
     public int getOrder() {

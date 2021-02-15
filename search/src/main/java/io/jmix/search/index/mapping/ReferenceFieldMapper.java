@@ -16,24 +16,31 @@
 
 package io.jmix.search.index.mapping;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Sets;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class ReferenceFieldMapper extends BaseFieldMapper {
 
+    protected static final Set<String> supportedParameters = Sets.newHashSet("analyzer");
+
     @Override
     public Set<String> getSupportedParameters() {
-        return new HashSet<>();
+        return supportedParameters;
     }
 
     @Override
     public ObjectNode createJsonConfiguration(Map<String, Object> parameters) {
+        Map<String, Object> effectiveParameters = createEffectiveParameters(parameters);
+        effectiveParameters.put("type", "text");
+
         ObjectNode root = JsonNodeFactory.instance.objectNode();
-        root.putObject("properties").putObject("_instance_name").put("type", "text");
+        JsonNode config = objectMapper.valueToTree(effectiveParameters);
+        root.putObject("properties").set("_instance_name", config);
         return root;
     }
 }

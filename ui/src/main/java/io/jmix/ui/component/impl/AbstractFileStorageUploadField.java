@@ -46,7 +46,7 @@ public abstract class AbstractFileStorageUploadField<T> extends AbstractSingleFi
     protected FileStorage fileStorage;
     protected String fileStorageName;
 
-    protected FileStoragePutMode mode = FileStoragePutMode.MANUAL;
+    protected FileStoragePutMode mode = FileStoragePutMode.IMMEDIATE;
 
     protected UUID fileId;
     protected UUID tempFileId;

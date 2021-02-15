@@ -76,7 +76,7 @@ public interface FileStorageUploadField extends SingleFileUploadField, Field<Fil
      * Sets mode which determines when file will be put into FileStorage.
      */
     @StudioProperty(name = "fileStoragePutMode", type = PropertyType.ENUMERATION,
-            defaultValue = "MANUAL", required = true)
+            defaultValue = "IMMEDIATE", required = true)
     void setMode(FileStoragePutMode mode);
 
     /**

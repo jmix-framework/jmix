@@ -64,7 +64,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="GROUP_ID" type="uuid">
-                <constraints foreignKeyName="FK_EMAILTEMPLATES_EMATEM_GRO" references="EMAILTEMPLATES_TEMPLATE_GROUP(ID)"/>
+                <constraints foreignKeyName="FK_ET_EMAILTEMPLATE_GROUP" references="EMAILTEMPLATES_TEMPLATE_GROUP(ID)"/>
             </column>
             <column name="TYPE_" type="varchar(50)">
                 <constraints nullable="false"/>
@@ -83,14 +83,14 @@
 
             <!-- from emailtemplates_JsonEmailTemplate-->
             <column name="HTML" type="clob"/>
-            <column name="REPORT_XML" type="clob"/>
+            <column name="REPORT_JSON" type="clob"/>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_EMAILTEMPLATES_TEMP_UK_CO" unique="true">
+        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_UK_CODE" unique="true">
             <column name="CODE"/>
             <column name="DELETE_TS"/>
         </createIndex>
-        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_EMAILTEMPLATES_TEMP_GROUP">
+        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_GROUP">
             <column name="GROUP_ID"/>
         </createIndex>
         <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
@@ -113,31 +113,31 @@
             <column name="NAME" type="varchar(255)"/>
             <column name="REPORT_ID" type="uuid">
                 <constraints nullable="false"
-                             foreignKeyName="FK_EMAILTEMPLATES_TEMREP_REP"
+                             foreignKeyName="FK_ET_TEMPLATEREPORT_REPORT"
                              references="REPORT_REPORT(ID)"/>
             </column>
             <column name="EMAIL_TEMPLATE_ID" type="uuid">
-                <constraints foreignKeyName="FK_EMAILTEMPLATES_TERE_EMTE"
+                <constraints foreignKeyName="FK_ET_TEMPLATEREPORT_TEMPLATE"
                              references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_EMAILTEMPLATES_TEMREP_REP">
+        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_REPORT">
             <column name="REPORT_ID"/>
         </createIndex>
 
-        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_EMAILTEMPLATES_TERE_EMTE">
+        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_TEMPLATE">
             <column name="EMAIL_TEMPLATE_ID"/>
         </createIndex>
         <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
 
 
         <addForeignKeyConstraint baseTableName="EMAILTEMPLATES_EMAIL_TEMPLATE" baseColumnNames="EMAIL_BODY_REPORT_ID"
-                                 constraintName="FK_EMAILTEMPLATES_TEMP_BODYRE" referencedTableName="EMAILTEMPLATES_TEMPLATE_REPORT"
+                                 constraintName="FK_ET_EMTEMPLATE_BODYREPORT" referencedTableName="EMAILTEMPLATES_TEMPLATE_REPORT"
                                  referencedColumnNames="ID"/>
 
-        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT -->
-        <createTable tableName="EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT">
+        <!-- EMAILTEMPLATES_TEMPLATE_ATTACHMENT -->
+        <createTable tableName="EMAILTEMPLATES_TEMPLATE_ATTACHMENT">
             <column name="ID" type="uuid">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -158,10 +158,10 @@
                 <constraints nullable="false"/>
             </column>
             <column name="EMAIL_TEMPLATE_ID" type="uuid">
-                <constraints foreignKeyName="FK_EMAILTEMPLATES_ATTACH_TEMP" references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
+                <constraints foreignKeyName="FK_ET_ATTACHMENT_EMTEMPLATE" references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
             </column>
         </createTable>
-        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT -->
+        <!-- EMAILTEMPLATES_TEMPLATE_ATTACHMENT -->
 
         <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
         <createTable tableName="EMAILTEMPLATES_PARAMETER_VALUE">
@@ -187,12 +187,12 @@
             <column name="DEFAULT_VALUE" type="varchar(255)"/>
 
             <column name="TEMPLATE_REPORT_ID" type="uuid">
-                <constraints foreignKeyName="FK_EMAILTEMPLATES_PAVA_TEPA"
+                <constraints foreignKeyName="FK_ET_PARAMVALUE_TEMPREPORT"
                              references="EMAILTEMPLATES_TEMPLATE_REPORT(ID)"/>
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_PARAMETER_VALUE" indexName="IDX_EMAILTEMPLATES_PAVA_TEPA">
+        <createIndex tableName="EMAILTEMPLATES_PARAMETER_VALUE" indexName="IDX_ET_PARAMVALUE_TEMPREPORT">
             <column name="TEMPLATE_REPORT_ID"/>
         </createIndex>
         <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
@@ -217,7 +217,7 @@
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_BLOCK_GROUP" indexName="IDX_EMAILTEMPLATES_CTB_U_NAME"
+        <createIndex tableName="EMAILTEMPLATES_BLOCK_GROUP" indexName="IDX_ET_BLOCKGROUP_UNIQ_NAME"
                      unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>
@@ -246,19 +246,19 @@
                 <constraints nullable="false"/>
             </column>
             <column name="CATEGORY_ID" type="uuid">
-                <constraints foreignKeyName="FK_EMAILTEMPLATES_TEMBLO_CAT"
+                <constraints foreignKeyName="FK_ET_TEMPLATEBLOCK_CATEGORY"
                              references="EMAILTEMPLATES_BLOCK_GROUP(ID)"/>
             </column>
             <column name="CONTENT" type="clob"/>
             <column name="ICON" type="varchar(50)"/>
         </createTable>
 
-        <createIndex indexName="IDX_EMAILTEMPLATES_TEBL_UK_NA" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK"
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_UK_NAME" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK"
                      unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>
         </createIndex>
-        <createIndex indexName="IDX_EMAILTEMPLATES_TEMBLO_CAT" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK" >
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_CATEGORY" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK" >
             <column name="CATEGORY_ID"/>
         </createIndex>
         <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->

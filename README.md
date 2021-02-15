@@ -34,14 +34,6 @@ The add-on can be added to your project by adding the following dependencies:
 implementation 'io.jmix.emailtemplates:jmix-emailtemplates-starter'
 implementation 'io.jmix.emailtemplates:jmix-emailtemplates-ui-starter'
 ```
-Because the Email templates add-on depends on the reports and there is an ability to send an email using an email template, it is required to have the following dependencies:
-```
-  implementation 'io.jmix.email:jmix-email-starter'
-  implementation 'io.jmix.email:jmix-email-ui-starter'
-  
-  implementation 'io.jmix.reports:jmix-reports-starter'
-  implementation 'io.jmix.reports:jmix-reports-ui-starter'
-```
 
 # 3. Usage <a name="usage"></a>
 

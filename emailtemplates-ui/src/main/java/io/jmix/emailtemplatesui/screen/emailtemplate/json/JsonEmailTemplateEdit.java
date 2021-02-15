@@ -210,7 +210,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
 
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreCommitEvent event) {
-        getEditedEntity().setReportXml(getReportXml(reportDc.getItem()));
+        getEditedEntity().setReportJson(getReportJson(reportDc.getItem()));
 
         List<Object> excludedEntities = new ArrayList<>();
 
@@ -226,7 +226,7 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         return modifiedInstance instanceof Report || modifiedInstance instanceof ReportTemplate;
     }
 
-    protected String getReportXml(Report report) {
+    protected String getReportJson(Report report) {
         return reports.convertToString(report);
     }
 }

@@ -31,7 +31,7 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE_ATTACHMENT")
+@Table(name = "EMAILTEMPLATES_TEMPLATE_ATTACHMENT")
 @Entity(name = "emailtemplates_EmailTemplateAttachment")
 @JmixEntity
 public class EmailTemplateAttachment {

@@ -45,11 +45,11 @@ public class TemplateConverterImpl implements TemplateConverter {
 
     @Override
     public Report convertToReport(JsonEmailTemplate template) {
-        String reportXml = template.getReportXml();
+        String reportJson = template.getReportJson();
         Report report = null;
-        if (StringUtils.isNotBlank(reportXml)) {
-            report = reports.convertToReport(reportXml);
-            report.setXml(reportXml);
+        if (StringUtils.isNotBlank(reportJson)) {
+            report = reports.convertToReport(reportJson);
+            report.setXml(reportJson);
         } else {
             report = initReport(template);
         }

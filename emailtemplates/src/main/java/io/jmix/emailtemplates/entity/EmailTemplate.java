@@ -42,7 +42,7 @@ import java.util.UUID;
 @Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
 @Entity(name = "emailtemplates_EmailTemplate")
 @JmixEntity
-@DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING, length = 100)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class EmailTemplate {
 

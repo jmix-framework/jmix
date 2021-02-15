@@ -42,7 +42,7 @@ public class JsonEmailTemplateDetachListener implements BeforeDetachEntityListen
 
     @Override
     public void onBeforeDetach(JsonEmailTemplate entity) {
-        if (persistenceTools.isLoaded(entity, "reportXml") && StringUtils.isNotBlank(entity.getReportXml())) {
+        if (persistenceTools.isLoaded(entity, "reportJson") && StringUtils.isNotBlank(entity.getReportJson())) {
             Report reportFromXml = templateConverter.convertToReport(entity);
             entity.setReport(reportFromXml);
 

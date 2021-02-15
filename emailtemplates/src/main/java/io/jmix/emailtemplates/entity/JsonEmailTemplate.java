@@ -25,7 +25,7 @@ import javax.persistence.*;
 
 @Entity(name = "emailtemplates_JsonEmailTemplate")
 @JmixEntity
-@DiscriminatorValue("emailtemplates_JsonEmailTemplate")
+@DiscriminatorValue("J")
 @Listeners("emailtemplates_JsonEmailTemplateDetachListener")
 public class JsonEmailTemplate extends EmailTemplate {
 
@@ -34,8 +34,8 @@ public class JsonEmailTemplate extends EmailTemplate {
     protected String html;
 
     @Lob
-    @Column(name = "REPORT_XML")
-    protected String reportXml;
+    @Column(name = "REPORT_JSON")
+    protected String reportJson;
 
     @Transient
     private TemplateReport templateReport;
@@ -51,12 +51,12 @@ public class JsonEmailTemplate extends EmailTemplate {
         return html;
     }
 
-    public void setReportXml(String reportXml) {
-        this.reportXml = reportXml;
+    public void setReportJson(String reportJson) {
+        this.reportJson = reportJson;
     }
 
-    public String getReportXml() {
-        return reportXml;
+    public String getReportJson() {
+        return reportJson;
     }
 
     public JsonEmailTemplate() {

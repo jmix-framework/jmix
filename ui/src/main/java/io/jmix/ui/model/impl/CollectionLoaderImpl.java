@@ -17,6 +17,7 @@
 package io.jmix.ui.model.impl;
 
 import io.jmix.core.*;
+import io.jmix.core.annotation.Secure;
 import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
@@ -35,15 +36,15 @@ import java.util.function.Function;
 public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
 
     @Autowired
+    @Secure
     protected DataManager dataManager;
+
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
     @Autowired
     protected SorterFactory sorterFactory;
     @Autowired
     protected List<QueryStringProcessor> queryStringProcessors;
-    @Autowired
-    protected AccessConstraintsRegistry accessConstraintsRegistry;
 
     protected DataContext dataContext;
     protected CollectionContainer<E> container;
@@ -129,7 +130,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
         loadContext.setFetchPlan(resolveFetchPlan());
         loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
-        loadContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
 
         return loadContext;
     }

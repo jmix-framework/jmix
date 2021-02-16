@@ -140,10 +140,10 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
         loggedEntityDl.load();
 
         Map<String, Object> changeTypeMap = new LinkedHashMap<>();
-        changeTypeMap.put(messages.getMessage("createField"), "C");
-        changeTypeMap.put(messages.getMessage("modifyField"), "M");
-        changeTypeMap.put(messages.getMessage("deleteField"), "D");
-        changeTypeMap.put(messages.getMessage("restoreField"), "R");
+        changeTypeMap.put(messages.getMessage(EntityLogBrowser.class, "createField"), "C");
+        changeTypeMap.put(messages.getMessage(EntityLogBrowser.class, "modifyField"), "M");
+        changeTypeMap.put(messages.getMessage(EntityLogBrowser.class, "deleteField"), "D");
+        changeTypeMap.put(messages.getMessage(EntityLogBrowser.class, "restoreField"), "R");
 
         entityMetaClassesMap = getEntityMetaClasses();
         entityNameField.setOptionsMap(entityMetaClassesMap);
@@ -563,7 +563,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     public void onReloadBtnClick(Button.ClickEvent event) {
         entityLog.invalidateCache();
         notifications.create()
-                .withCaption(messages.getMessage("changesApplied"))
+                .withCaption(messages.getMessage(EntityLogBrowser.class, "changesApplied"))
                 .withType(Notifications.NotificationType.HUMANIZED)
                 .show();
     }

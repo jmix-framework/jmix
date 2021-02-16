@@ -141,7 +141,6 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         notLoggedAttribute.category = firstCategory
         notLoggedAttribute.defaultEntity = new ReferenceToEntity()
     }
-
     private void createSecondEntityAttributes() {
         entityAttribute = metadata.create(CategoryAttribute)
         entityAttribute.name = 'Entity Attribute'
@@ -238,6 +237,10 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         when: 'entity created'
         SecondEntity secondEntity = metadata.create(SecondEntity)
+        EntityValues.setValue(secondEntity, '+dotted.attribute', true)
+        EntityValues.setValue(secondEntity, '+dotted.attribute', false)
+        //dottes.attribute has status "UPDATED" now but it is still should be persisted as other "CREATED" attributes because of absence in db
+
         dataManager.save(secondEntity)
         def creationRecord = getLatestEntityLogItem('dynaudit$SecondEntity', secondEntity.getId())
 
@@ -247,7 +250,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         loggedValueMatches(creationRecord, "id", secondEntity.id.toString())
         loggedValueMatches(creationRecord, "+entityAttribute", "")
         loggedValueMatches(creationRecord, "+entityCollectionAttribute", "")
-        loggedValueMatches(creationRecord, "+dotted.attribute", "")
+        loggedValueMatches(creationRecord, "+dotted.attribute", "false")
 
         when: 'Entity modified'
 

@@ -16,6 +16,7 @@
 
 package io.jmix.data.persistence;
 
+import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.data.SequenceSupport;
@@ -25,8 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Factory for obtaining implementations of DBMS-specific objects, particularly {@link DbmsFeatures},
@@ -40,6 +43,9 @@ public class DbmsSpecifics {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    @Autowired
+    protected JmixModulesAwareBeanSelector beanSelector;
 
     protected Map<String, DbmsFeatures> dbmsFeaturesByStore = new ConcurrentHashMap<>(4);
     protected Map<String, SequenceSupport> sequenceSupportByStore = new ConcurrentHashMap<>(4);
@@ -81,8 +87,21 @@ public class DbmsSpecifics {
     public <T> T get(Class<T> intf, String dbmsType, String dbmsVersion) {
         T bean;
         try {
-            String name = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
-            bean = (T) applicationContext.getBean(name);
+            String typeVersion = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion);
+            if (DbmsFeatures.class.isAssignableFrom(intf)) {
+                Collection<T> beans = applicationContext.getBeansOfType(intf).values().stream()
+                        .filter(features -> ((DbmsFeatures) features).getTypeAndVersion().equals(typeVersion))
+                        .collect(Collectors.toList());
+                bean = beanSelector.selectFrom(beans);
+            } else if (DbTypeConverter.class.isAssignableFrom(intf)) {
+                Collection<T> beans = applicationContext.getBeansOfType(intf).values().stream()
+                        .filter(features -> ((DbTypeConverter) features).getTypeAndVersion().equals(typeVersion))
+                        .collect(Collectors.toList());
+                bean = beanSelector.selectFrom(beans);
+            } else {
+                String name = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
+                bean = (T) applicationContext.getBean(name);
+            }
         } catch (NoSuchBeanDefinitionException e) {
             String name = StringHelper.underscoreToCamelCase(dbmsType) + intf.getSimpleName();
             bean = (T) applicationContext.getBean(name);

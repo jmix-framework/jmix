@@ -52,4 +52,9 @@ public interface DbTypeConverter {
      * @see java.sql.Types
      */
     int getSqlType(Class<?> javaClass);
+
+    /**
+     * Provides information about {@code jmix.data.dbmsType} and {@code jmix.data.dbmsVersion} this bean designed for. Version can be empty.
+     */
+    String getTypeAndVersion();
 }

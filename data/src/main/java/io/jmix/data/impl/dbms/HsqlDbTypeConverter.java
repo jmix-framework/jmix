@@ -61,4 +61,9 @@ public class HsqlDbTypeConverter implements DbTypeConverter {
             return Types.VARCHAR;
         return Types.OTHER;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "hsql";
+    }
 }

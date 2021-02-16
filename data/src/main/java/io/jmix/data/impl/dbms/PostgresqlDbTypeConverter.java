@@ -83,4 +83,9 @@ public class PostgresqlDbTypeConverter implements DbTypeConverter {
             return Types.TIMESTAMP;
         return Types.OTHER;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "postgresql";
+    }
 }

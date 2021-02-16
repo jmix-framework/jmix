@@ -70,4 +70,9 @@ public class MysqlDbTypeConverter implements DbTypeConverter {
             return Types.BIGINT;
         return Types.OTHER;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "mysql";
+    }
 }

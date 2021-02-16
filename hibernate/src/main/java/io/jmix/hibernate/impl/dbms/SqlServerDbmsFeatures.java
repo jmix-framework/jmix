@@ -64,4 +64,9 @@ public class SqlServerDbmsFeatures implements DbmsFeatures {
     public boolean supportsLobSortingAndFiltering() {
         return true;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "sqlServer";
+    }
 }

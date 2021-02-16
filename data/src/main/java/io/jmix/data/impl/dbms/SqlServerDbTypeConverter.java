@@ -92,4 +92,9 @@ public class SqlServerDbTypeConverter implements DbTypeConverter {
             return Types.BIGINT;
         return Types.OTHER;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "sqlServer";
+    }
 }

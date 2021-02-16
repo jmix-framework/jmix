@@ -72,4 +72,9 @@ public class OracleDbTypeConverter implements DbTypeConverter {
             return Types.BIGINT;
         return Types.OTHER;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "oracle";
+    }
 }

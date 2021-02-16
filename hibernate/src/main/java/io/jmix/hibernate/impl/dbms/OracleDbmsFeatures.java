@@ -73,4 +73,9 @@ public class OracleDbmsFeatures implements DbmsFeatures {
     public Integer getMaxIdsBatchSize() {
         return 1000;
     }
+
+    @Override
+    public String getTypeAndVersion() {
+        return "oracle";
+    }
 }

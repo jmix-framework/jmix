@@ -56,7 +56,6 @@ import org.springframework.util.CollectionUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static io.jmix.dynattr.AttributeType.*;
@@ -443,11 +442,11 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                         ComboBox<String> screenField = uiComponents.create(ComboBox.class);
                         screenField.setValueSource(new ContainerValueSource<>(targetScreensTable.getInstanceContainer(entity), "screen"));
                         screenField.setOptionsMap(availableScreensMap);
-                        //noinspection RedundantCast
-                        screenField.setNewOptionHandler((Consumer<String>) caption -> {
-                            if (caption != null && !availableScreensMap.containsKey(caption)) {
-                                availableScreensMap.put(caption, caption);
-                                screenField.setValue(caption);
+                        screenField.setEnterPressHandler(enterPressEvent -> {
+                            String text = enterPressEvent.getText();
+                            if (!availableScreensMap.containsKey(text)) {
+                                availableScreensMap.put(text, text);
+                                screenField.setValue(text);
                             }
                         });
                         screenField.setRequired(true);

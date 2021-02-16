@@ -43,9 +43,8 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
         } else if (String.class.isAssignableFrom(parameterClass)) {
             return (String) paramValue;
         } else if (Entity.class.isAssignableFrom(parameterClass)) {
-            //todo
-            //return EntityLoadInfo.create((Entity) paramValue).toString();
-            return paramValue.toString();
+            Entity entity = (Entity) paramValue;
+            return String.valueOf(entity.__getEntityEntry().getEntityId());
         } else {
             Datatype datatype = datatypeRegistry.find(parameterClass);
             if (datatype != null) {
@@ -63,20 +62,11 @@ public class JmixObjectToStringConverter extends AbstractObjectToStringConverter
         } else if (String.class.isAssignableFrom(parameterClass)) {
             return paramValueStr;
         } else if (Entity.class.isAssignableFrom(parameterClass)) {
-            //todo
-//            EntityLoadInfo entityLoadInfo = EntityLoadInfo.parse(paramValueStr);
-//            if (entityLoadInfo != null) {
-//                return dataManager.load(entityLoadInfo.getClass())
-//                        .id(entityLoadInfo.getId())
-//                        .fetchPlan(FetchPlan.BASE)
-//                        .one();
-//            } else {
-                UUID id = UUID.fromString(paramValueStr);
-                return dataManager.load(parameterClass)
-                        .id(id)
-                        .fetchPlan(FetchPlan.BASE)
-                        .one();
-//            }
+            UUID id = UUID.fromString(paramValueStr);
+            return dataManager.load(parameterClass)
+                    .id(id)
+                    .fetchPlan(FetchPlan.BASE)
+                    .one();
         } else {
             Datatype datatype = datatypeRegistry.find(parameterClass);
             if (datatype != null) {

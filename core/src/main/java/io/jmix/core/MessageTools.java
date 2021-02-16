@@ -411,7 +411,7 @@ public class MessageTools {
      * @param temporalType a temporal type
      * @return default date format string for passed temporal type
      */
-    public String getDefaultDateFormat(TemporalType temporalType) {
+    public String getDefaultDateFormat(@Nullable TemporalType temporalType) {
         return temporalType == TemporalType.DATE
                 ? messages.getMessage("dateFormat")
                 : messages.getMessage("dateTimeFormat");

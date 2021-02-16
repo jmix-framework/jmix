@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static test_support.RestTestUtils.parseResponse;
-import static test_support.RestTestUtils.sendGet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static test_support.RestTestUtils.parseResponse;
+import static test_support.RestTestUtils.sendGet;
 
 /**
  *

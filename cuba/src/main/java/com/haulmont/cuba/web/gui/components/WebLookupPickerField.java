@@ -18,9 +18,11 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.LookupPickerField;
 import com.haulmont.cuba.gui.components.PickerField;
+import com.haulmont.cuba.gui.components.compatibility.LookupFieldNewOptionHandlerAdapter;
 import io.jmix.core.Entity;
 import io.jmix.ui.component.impl.EntityComboBoxImpl;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -76,13 +78,29 @@ public class WebLookupPickerField<V extends Entity> extends EntityComboBoxImpl<V
     public void setNewOptionAllowed(boolean newItemAllowed) {
         if (newItemAllowed
                 && getComponent().getNewItemHandler() == null) {
-            getComponent().setNewItemHandler(this::onNewItemEntered);
+            getComponent().setNewItemHandler(this::onEnterPressed);
         }
 
         if (!newItemAllowed
                 && getComponent().getNewItemHandler() != null) {
             getComponent().setNewItemHandler(null);
         }
+    }
+
+    @Nullable
+    @Override
+    public Consumer<String> getNewOptionHandler() {
+        Consumer<EnterPressEvent> enterPressHandler = getEnterPressHandler();
+        if (enterPressHandler instanceof LookupFieldNewOptionHandlerAdapter) {
+            return ((LookupFieldNewOptionHandlerAdapter) enterPressHandler).getNewOptionHandler();
+        }
+
+        return null;
+    }
+
+    @Override
+    public void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler) {
+        setEnterPressHandler(new LookupFieldNewOptionHandlerAdapter(newOptionHandler));
     }
 
     @Override

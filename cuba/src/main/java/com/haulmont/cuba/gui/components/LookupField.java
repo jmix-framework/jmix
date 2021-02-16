@@ -72,6 +72,23 @@ public interface LookupField<V> extends OptionsField<V, V>, ComboBox<V>, LookupC
     void setNewOptionAllowed(boolean newOptionAllowed);
 
     /**
+     * @return current handler
+     * @deprecated Use {@link #getEnterPressHandler()} instead
+     */
+    @Nullable
+    @Deprecated
+    Consumer<String> getNewOptionHandler();
+
+    /**
+     * Sets the handler that is called when user types a new item.
+     *
+     * @param newOptionHandler handler instance
+     * @deprecated Use {@link #setEnterPressHandler(Consumer)} instead
+     */
+    @Deprecated
+    void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler);
+
+    /**
      * Set the icon provider for LookupField.
      *
      * @param optionClass        class of the option

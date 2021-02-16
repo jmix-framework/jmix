@@ -359,6 +359,19 @@ public class WebSearchPickerField<V extends Entity> extends WebPickerField<V>
         }
     }
 
+    @Nullable
+    @Override
+    public Consumer<EnterPressEvent> getEnterPressHandler() {
+        return null;
+    }
+
+    @Override
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent> handler) {
+        if (handler != null) {
+            throw new UnsupportedOperationException("EnterPress handler is not allowed for SearchPickerField");
+        }
+    }
+
     @Override
     public int getPageLength() {
         return getComponent().getPageLength();

@@ -21,6 +21,7 @@ import io.jmix.ui.component.ComboBox;
 
 import java.util.function.Predicate;
 
+@Deprecated
 public class LookupFieldFilterPredicateAdapter implements Predicate<ComboBox.OptionsCaptionFilteringContext> {
 
     protected LookupField.FilterPredicate filterPredicate;

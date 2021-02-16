@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -55,7 +56,7 @@ public class SearchService {
     protected Metadata metadata;
     @Autowired
     @Qualifier("core_SecureDataManager")
-    protected DataManager dataManager;
+    protected DataManager secureDataManager;
     @Autowired
     protected InstanceNameProvider instanceNameProvider;
     @Autowired
@@ -116,18 +117,20 @@ public class SearchService {
             String entityClass = entry.getKey();
             List<SearchHit> entityHits = entry.getValue();
             List<String> entityIds = entityHits.stream().map(SearchHit::getId).collect(Collectors.toList());
-            Map<String, String> idNames = loadEntityInstanceNames(metadata.getClass(entityClass), entityIds);
+            Map<String, String> reloadedIdNames = loadEntityInstanceNames(metadata.getClass(entityClass), entityIds);
 
             for(SearchHit searchHit : entityHits) {
                 String entityId = searchHit.getId();
-                String instanceName = idNames.get(entityId);
-                Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
-                List<FieldHit> fieldHits = new ArrayList<>();
-                highlightFields.forEach((f, h) -> {
-                    String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
-                    fieldHits.add(new FieldHit(f.substring(8), highlight)); //todo substring - remove leading 'content.'
-                });
-                searchResult.addEntry(new SearchResultEntry(entityId, instanceName, entityClass, fieldHits));
+                if(reloadedIdNames.containsKey(entityId)) {
+                    String instanceName = reloadedIdNames.get(entityId);
+                    Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
+                    List<FieldHit> fieldHits = new ArrayList<>();
+                    highlightFields.forEach((f, h) -> {
+                        String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
+                        fieldHits.add(new FieldHit(formatFieldName(f), highlight));
+                    });
+                    searchResult.addEntry(new SearchResultEntry(entityId, instanceName, entityClass, fieldHits));
+                }
             }
         }
 
@@ -139,7 +142,7 @@ public class SearchService {
         Map<String, String> result = new HashMap<>();
         for (List<String> partition : Lists.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", partition);
-            List<Object> partitionResult = dataManager
+            List<Object> partitionResult = secureDataManager
                     .load(metaClass.getJavaClass())
                     .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyProperty))
                     .parameter("ids", partition)
@@ -156,6 +159,10 @@ public class SearchService {
             });
         }
         return result;
+    }
+
+    protected String formatFieldName(String fieldName) {
+        return StringUtils.removeStart(StringUtils.removeEnd(fieldName,"._instance_name"), "content.");
     }
 
     public static class SearchResultEntry {

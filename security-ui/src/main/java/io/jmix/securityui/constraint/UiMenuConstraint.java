@@ -18,6 +18,7 @@ package io.jmix.securityui.constraint;
 
 import io.jmix.core.constraint.AccessConstraint;
 import io.jmix.ui.accesscontext.UiMenuContext;
+import io.jmix.ui.menu.MenuItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -47,8 +48,27 @@ public class UiMenuConstraint implements AccessConstraint<UiMenuContext> {
 
     @Override
     public void applyTo(UiMenuContext context) {
-        if (!uiOperations.isMenuItemPermitted(context.getMenuItemId(), policyStore)) {
-            context.setDenied();
+        MenuItem menuItem = context.getMenuItem();
+        if (!uiOperations.isMenuItemPermitted(menuItem.getId(), policyStore)) {
+            if (!hasPermittedChild(menuItem)) {
+                context.setDenied();
+            }
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    protected boolean hasPermittedChild(MenuItem menuItem) {
+        if (menuItem.getChildren() != null && !menuItem.getChildren().isEmpty()) {
+            for (MenuItem child : menuItem.getChildren()) {
+                if (uiOperations.isMenuItemPermitted(child.getId(), policyStore)) {
+                    return true;
+                } else {
+                    if (hasPermittedChild(child)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

@@ -244,17 +244,7 @@ public class EmailTemplateParametersFragment extends ScreenFragment {
             }
         }
 
-        if (field instanceof TagPicker) {
-            TagPicker tagPicker = (TagPicker) field;
-            ContainerOptions options = (ContainerOptions) tagPicker.getOptions();
-
-            if (value instanceof Collection) {
-                Collection collection = (Collection) value;
-                options.getContainer().getMutableItems().addAll(collection);
-            }
-        } else {
-            field.setValue(value);
-        }
+        field.setValue(value);
 
         if (BooleanUtils.isTrue(parameter.getValidationOn())) {
             field.addValidator(new ReportParamFieldValidator(parameter));

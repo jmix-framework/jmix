@@ -24,7 +24,7 @@
 
         <!-- EMAILTEMPLATES_TEMPLATE_GROUP -->
         <createTable tableName="EMAILTEMPLATES_TEMPLATE_GROUP">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -45,7 +45,7 @@
 
         <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
         <createTable tableName="EMAILTEMPLATES_EMAIL_TEMPLATE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -63,7 +63,7 @@
             <column name="NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="GROUP_ID" type="uuid">
+            <column name="GROUP_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_EMAILTEMPLATE_GROUP" references="EMAILTEMPLATES_TEMPLATE_GROUP(ID)"/>
             </column>
             <column name="TYPE_" type="varchar(50)">
@@ -79,7 +79,7 @@
             <column name="SUBJECT" type="varchar(255)"/>
 
             <!-- from emailtemplates_ReportEmailTemplate-->
-            <column name="EMAIL_BODY_REPORT_ID" type="uuid"/>
+            <column name="EMAIL_BODY_REPORT_ID" type="${uuid.type}"/>
 
             <!-- from emailtemplates_JsonEmailTemplate-->
             <column name="HTML" type="clob"/>
@@ -97,7 +97,7 @@
 
         <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
         <createTable tableName="EMAILTEMPLATES_TEMPLATE_REPORT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -111,12 +111,12 @@
             <column name="DELETED_BY" type="varchar(50)"/>
 
             <column name="NAME" type="varchar(255)"/>
-            <column name="REPORT_ID" type="uuid">
+            <column name="REPORT_ID" type="${uuid.type}">
                 <constraints nullable="false"
                              foreignKeyName="FK_ET_TEMPLATEREPORT_REPORT"
                              references="REPORT_REPORT(ID)"/>
             </column>
-            <column name="EMAIL_TEMPLATE_ID" type="uuid">
+            <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_TEMPLATEREPORT_TEMPLATE"
                              references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
             </column>
@@ -138,7 +138,7 @@
 
         <!-- EMAILTEMPLATES_TEMPLATE_ATTACHMENT -->
         <createTable tableName="EMAILTEMPLATES_TEMPLATE_ATTACHMENT">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -157,7 +157,7 @@
             <column name="CONTENT_FILE" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="EMAIL_TEMPLATE_ID" type="uuid">
+            <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_ATTACHMENT_EMTEMPLATE" references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
             </column>
         </createTable>
@@ -165,7 +165,7 @@
 
         <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
         <createTable tableName="EMAILTEMPLATES_PARAMETER_VALUE">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -186,7 +186,7 @@
             </column>
             <column name="DEFAULT_VALUE" type="varchar(255)"/>
 
-            <column name="TEMPLATE_REPORT_ID" type="uuid">
+            <column name="TEMPLATE_REPORT_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_PARAMVALUE_TEMPREPORT"
                              references="EMAILTEMPLATES_TEMPLATE_REPORT(ID)"/>
             </column>
@@ -199,7 +199,7 @@
 
         <!-- EMAILTEMPLATES_BLOCK_GROUP -->
         <createTable tableName="EMAILTEMPLATES_BLOCK_GROUP">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -226,7 +226,7 @@
 
         <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->
         <createTable tableName="EMAILTEMPLATES_TEMPLATE_BLOCK">
-            <column name="ID" type="uuid">
+            <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int" defaultValue="1">
@@ -245,7 +245,7 @@
             <column name="LABEL" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CATEGORY_ID" type="uuid">
+            <column name="CATEGORY_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_TEMPLATEBLOCK_CATEGORY"
                              references="EMAILTEMPLATES_BLOCK_GROUP(ID)"/>
             </column>

@@ -110,7 +110,7 @@ public class UserSettingsToolsImpl implements UserSettingsTools {
                             tabContent.getComponents(),
                             settings));
                 } else {
-                    settingsFacet.applySettings(settings);
+                    settingsFacet.applySettings();
                 }
             }
         });

@@ -84,51 +84,42 @@ public interface ScreenSettingsFacet extends Facet {
 
     /**
      * Applies screen settings. By default facet applies setting on {@link AfterShowEvent}.
-     *
-     * @param settings screen settings
      */
-    void applySettings(ScreenSettings settings);
+    void applySettings();
 
     /**
      * Applies screen settings for the components collection. Window must contains these components, otherwise they
      * will be ignored.
      *
      * @param components components to apply
-     * @param settings   screen settings
      */
-    void applySettings(Collection<Component> components, ScreenSettings settings);
+    void applySettings(Collection<Component> components);
 
     /**
      * Applies data loading settings. By default facet applies data loading settings on {@link BeforeShowEvent}.
-     *
-     * @param settings screen settings
      */
-    void applyDataLoadingSettings(ScreenSettings settings);
+    void applyDataLoadingSettings();
 
     /**
      * Applies data loading settings for the components collection. Window must contains these components, otherwise
      * they will be ignored.
      *
      * @param components components to apply
-     * @param settings   screen settings
      */
-    void applyDataLoadingSettings(Collection<Component> components, ScreenSettings settings);
+    void applyDataLoadingSettings(Collection<Component> components);
 
     /**
      * Saves and persist settings. By default facet saves settings on {@link AfterDetachEvent}.
-     *
-     * @param settings screen settings
      */
-    void saveSettings(ScreenSettings settings);
+    void saveSettings();
 
     /**
      * Saves and persist settings for the components collection. Window must contains these components, otherwise
      * they will be ignored.
      *
      * @param components components to save
-     * @param settings   screen settings
      */
-    void saveSettings(Collection<Component> components, ScreenSettings settings);
+    void saveSettings(Collection<Component> components);
 
     /**
      * @return apply settings delegate or null if not set

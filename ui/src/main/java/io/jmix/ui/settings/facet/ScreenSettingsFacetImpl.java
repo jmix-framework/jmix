@@ -71,45 +71,45 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
     }
 
     @Override
-    public void applySettings(ScreenSettings settings) {
+    public void applySettings() {
         Collection<Component> components = getComponents();
 
-        applyScreenSettings(components, settings);
+        applyScreenSettings(components);
     }
 
     @Override
-    public void applySettings(Collection<Component> components, ScreenSettings settings) {
+    public void applySettings(Collection<Component> components) {
         Collection<Component> componentsToApply = filterByManagedComponents(components);
 
-        applyScreenSettings(componentsToApply, settings);
+        applyScreenSettings(componentsToApply);
     }
 
     @Override
-    public void applyDataLoadingSettings(ScreenSettings settings) {
+    public void applyDataLoadingSettings() {
         Collection<Component> components = getComponents();
 
-        applyDataLoadingScreenSettings(components, settings);
+        applyDataLoadingScreenSettings(components);
     }
 
     @Override
-    public void applyDataLoadingSettings(Collection<Component> components, ScreenSettings settings) {
+    public void applyDataLoadingSettings(Collection<Component> components) {
         Collection<Component> componentsToApply = filterByManagedComponents(components);
 
-        applyDataLoadingScreenSettings(componentsToApply, settings);
+        applyDataLoadingScreenSettings(componentsToApply);
     }
 
     @Override
-    public void saveSettings(ScreenSettings settings) {
+    public void saveSettings() {
         Collection<Component> components = getComponents();
 
-        saveScreenSettings(components, settings);
+        saveScreenSettings(components);
     }
 
     @Override
-    public void saveSettings(Collection<Component> components, ScreenSettings settings) {
+    public void saveSettings(Collection<Component> components) {
         Collection<Component> componentsToSave = filterByManagedComponents(components);
 
-        saveScreenSettings(componentsToSave, settings);
+        saveScreenSettings(componentsToSave);
     }
 
     @Override
@@ -248,7 +248,7 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
                     getComponents(),
                     screenSettings));
         } else {
-            applyDataLoadingSettings(screenSettings);
+            applyDataLoadingSettings();
         }
     }
 
@@ -262,7 +262,7 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
                     getComponents(),
                     screenSettings));
         } else {
-            applySettings(screenSettings);
+            applySettings();
         }
     }
 
@@ -276,25 +276,25 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
                     getComponents(),
                     screenSettings));
         } else {
-            saveSettings(screenSettings);
+            saveSettings();
         }
     }
 
-    protected void applyScreenSettings(Collection<Component> components, ScreenSettings settings) {
+    protected void applyScreenSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.applySettings(components, settings);
+            settingsManager.applySettings(components, screenSettings);
         }
     }
 
-    protected void applyDataLoadingScreenSettings(Collection<Component> components, ScreenSettings settings) {
+    protected void applyDataLoadingScreenSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.applyDataLoadingSettings(components, settings);
+            settingsManager.applyDataLoadingSettings(components, screenSettings);
         }
     }
 
-    protected void saveScreenSettings(Collection<Component> components, ScreenSettings settings) {
+    protected void saveScreenSettings(Collection<Component> components) {
         if (isSettingsEnabled()) {
-            settingsManager.saveSettings(components, settings);
+            settingsManager.saveSettings(components, screenSettings);
         }
     }
 

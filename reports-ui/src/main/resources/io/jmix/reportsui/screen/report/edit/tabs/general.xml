@@ -42,7 +42,8 @@
                 <column>
                     <textField id="name" required="true" property="name"
                                requiredMessage="msg://report.nameMsg"/>
-                    <entityComboBox id="defaultTemplateField" property="defaultTemplate" required="true">
+                    <entityComboBox id="defaultTemplateField" property="defaultTemplate" optionsContainer="templatesDc"
+                                    required="true">
                         <actions>
                             <action id="create" description="msg://description.createTemplate" icon="PLUS"/>
                             <action id="download" description="msg://description.downloadTemplate" icon="DOWNLOAD"/>

@@ -90,10 +90,6 @@ public class UiProperties {
     Integer defaultMaxFetchSize;
     Map<String, Integer> entityPageSize;
     Map<String, Integer> entityMaxFetchSize;
-    boolean filterAutoApply;
-    int filterPropertiesHierarchyDepth;
-    int filterColumnsCount;
-    boolean showFilterConfigurationIdField;
     int jmxConsoleMBeanOperationTimeoutSec;
     String uniqueConstraintViolationPattern;
     long backgroundTaskTimeoutCheckInterval;
@@ -155,10 +151,6 @@ public class UiProperties {
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityPageSize,
             @Nullable Map<String, Integer> entityMaxFetchSize,
-            @DefaultValue("true") boolean filterAutoApply,
-            @DefaultValue("2") int filterPropertiesHierarchyDepth,
-            @DefaultValue("3") int filterColumnsCount,
-            @DefaultValue("false") boolean showFilterConfigurationIdField,
             @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
             @DefaultValue("5000") long backgroundTaskTimeoutCheckInterval,
             @Nullable String uniqueConstraintViolationPattern) {
@@ -218,10 +210,6 @@ public class UiProperties {
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityPageSize = entityPageSize == null ? Collections.emptyMap() : entityPageSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
-        this.filterAutoApply = filterAutoApply;
-        this.filterPropertiesHierarchyDepth = filterPropertiesHierarchyDepth;
-        this.filterColumnsCount = filterColumnsCount;
-        this.showFilterConfigurationIdField = showFilterConfigurationIdField;
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
         this.backgroundTaskTimeoutCheckInterval = backgroundTaskTimeoutCheckInterval;
@@ -525,36 +513,6 @@ public class UiProperties {
         if (forEntity != null)
             return forEntity;
         return defaultMaxFetchSize;
-    }
-
-    /**
-     * @return default value for the autoApply attribute of the {@link io.jmix.ui.component.Filter} component
-     */
-    public boolean isFilterAutoApply() {
-        return filterAutoApply;
-    }
-
-    /**
-     * @return a number of nested properties in the {@link io.jmix.ui.app.filter.condition.AddConditionScreen}.
-     * I.e. if the depth is 2, then you'll be able to select a property "contractor.city.country",
-     * if the value is 3, then "contractor.city.country.name", etc.
-     */
-    public int getFilterPropertiesHierarchyDepth() {
-        return filterPropertiesHierarchyDepth;
-    }
-
-    /**
-     * @return the number of columns to be displayed on one row in {@link io.jmix.ui.component.Filter}
-     */
-    public int getFilterColumnsCount() {
-        return filterColumnsCount;
-    }
-
-    /**
-     * Defines whether field for filter configuration id should be visible in the filter configuration edit screens.
-     */
-    public boolean isShowFilterConfigurationIdField() {
-        return showFilterConfigurationIdField;
     }
 
     /**

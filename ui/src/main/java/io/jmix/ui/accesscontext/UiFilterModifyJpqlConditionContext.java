@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.uidata.accesscontext;
+package io.jmix.ui.accesscontext;
 
 import io.jmix.core.accesscontext.SpecificOperationAccessContext;
 
-public class UiDataGlobalFilterContext extends SpecificOperationAccessContext {
+public class UiFilterModifyJpqlConditionContext extends SpecificOperationAccessContext {
 
-    public static final String NAME = "uidata.filter.global";
+    public static final String NAME = "ui.filter.modifyJpqlCondition";
 
-    public UiDataGlobalFilterContext() {
+    public UiFilterModifyJpqlConditionContext() {
         super(NAME);
     }
 }

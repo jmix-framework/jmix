@@ -74,12 +74,12 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
         loadEnum(element, SupportsCaptionPosition.CaptionPosition.class, "captionPosition",
                 resultComponent::setCaptionPosition);
 
-        loadActions(resultComponent, element);
-
         loadProperties(resultComponent, element);
 
         loadConditions(resultComponent, element);
         loadConfigurations(resultComponent, element);
+
+        loadActions(resultComponent, element);
     }
 
     @Override
@@ -96,6 +96,7 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                 ((FilterAction) action).setFilter(resultComponent);
             }
             actionsHolder.addAction(action);
+            action.refreshState();
         }
     }
 
@@ -138,6 +139,8 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
     }
 
     protected void loadConfigurations(Filter component, Element element) {
+        getComponentContext().addPostInitTask((context1, window) -> component.loadConfigurationsAndApplyDefault());
+
         Element configurationsElement = element.element("configurations");
         if (configurationsElement != null) {
             for (Element configurationElement : configurationsElement.elements("configuration")) {
@@ -159,9 +162,12 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
         loadConfigurationComponents(configuration, configurationElement);
 
         loadBoolean(configurationElement, "default", defaultValue -> {
-            if (defaultValue
-                    && component.getCurrentConfiguration() == component.getEmptyConfiguration()) {
-                component.setCurrentConfiguration(configuration);
+            if (defaultValue) {
+                getComponentContext().addPostInitTask((context1, window) -> {
+                    if (component.getCurrentConfiguration() == component.getEmptyConfiguration()) {
+                        component.setCurrentConfiguration(configuration);
+                    }
+                });
             }
         });
     }
@@ -173,7 +179,8 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
             rootGroupFilterComponent.add(filterComponent);
 
             if (filterComponent instanceof SingleFilterComponent) {
-                configuration.setDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                configuration.setFilterComponentDefaultValue(
+                        ((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
             }
         }

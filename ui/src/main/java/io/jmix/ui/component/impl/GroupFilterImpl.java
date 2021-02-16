@@ -20,9 +20,9 @@ import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.property.UiFilterProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -66,9 +66,9 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.columnsCount = uiProperties.getFilterColumnsCount();
-        this.autoApply = uiProperties.isFilterAutoApply();
+    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
+        this.columnsCount = uiFilterProperties.getColumnsCount();
+        this.autoApply = uiFilterProperties.isAutoApply();
     }
 
     @Override

@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.action.filter.FilterAction;
 import io.jmix.ui.app.filter.condition.LogicalFilterConditionEdit;
@@ -43,6 +42,7 @@ import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
+import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.uidata.app.filter.configuration.UiDataFilterConfigurationModelFragment;
 import io.jmix.uidata.entity.FilterConfiguration;
 import io.jmix.uidata.filter.UiDataFilterSupport;
@@ -67,7 +67,7 @@ public class FilterSaveAsAction extends FilterAction {
     protected FilterSupport filterSupport;
     protected FilterComponents filterComponents;
     protected UiComponents uiComponents;
-    protected UiProperties uiProperties;
+    protected UiFilterProperties uiFilterProperties;
 
     protected Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener;
 
@@ -113,8 +113,8 @@ public class FilterSaveAsAction extends FilterAction {
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.uiProperties = uiProperties;
+    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
+        this.uiFilterProperties = uiFilterProperties;
     }
 
     public void setInputDialogCloseListener(Consumer<InputDialog.InputDialogCloseEvent> inputDialogCloseListener) {
@@ -215,8 +215,8 @@ public class FilterSaveAsAction extends FilterAction {
             }
         });
 
-        generatedIdField.setVisible(uiProperties.isShowFilterConfigurationIdField());
-        idField.setVisible(uiProperties.isShowFilterConfigurationIdField());
+        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        idField.setVisible(uiFilterProperties.isShowConfigurationIdField());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

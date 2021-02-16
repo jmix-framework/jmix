@@ -17,9 +17,14 @@
 package io.jmix.ui.app.filter.condition;
 
 import io.jmix.core.ClassManager;
+import io.jmix.core.Entity;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.SourceCodeEditor;
@@ -37,7 +42,14 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.UUID;
 
 @UiController("ui_JpqlFilterCondition.edit")
 @UiDescriptor("jpql-filter-condition-edit.xml")
@@ -57,6 +69,12 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     @Autowired
     protected Metadata metadata;
     @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Messages messages;
+    @Autowired
+    protected MessageTools messageTools;
+    @Autowired
     protected ClassManager classManager;
     @Autowired
     protected UiComponents uiComponents;
@@ -66,13 +84,16 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     @Autowired
     protected SourceCodeEditor joinField;
-
     @Autowired
     protected SourceCodeEditor whereField;
     @Autowired
-    protected TextField<String> parameterClassField;
-    @Autowired
     protected HBoxLayout defaultValueBox;
+    @Autowired
+    protected ComboBox<Class> parameterClassField;
+    @Autowired
+    protected ComboBox<Class> entityClassField;
+    @Autowired
+    protected ComboBox<Class> enumClassField;
 
     protected MetaClass filterMetaClass = null;
     protected HasValue defaultValueField;
@@ -84,19 +105,105 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     @Subscribe
     protected void onInit(InitEvent event) {
+        initSuggesters();
+        initParameterClassFieldOptionsMap();
+        initEntityClassField();
+        initEnumClassField();
+    }
+
+    protected void initSuggesters() {
         joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
         whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
+    }
+
+    protected void initParameterClassFieldOptionsMap() {
+        Map<String, Class> optionsMap = new TreeMap<>();
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.string"), String.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.dateWithoutTime"), LocalDate.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.date"), Date.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.boolean"), Boolean.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.double"), Double.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.decimal"), BigDecimal.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.integer"), Integer.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.long"), Long.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.uuid"), UUID.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.entity"), Entity.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.enum"), Enum.class);
+        parameterClassField.setOptionsMap(optionsMap);
+    }
+
+    protected void initEntityClassField() {
+        Map<String, Class> optionsMap = new TreeMap<>();
+        for (MetaClass metaClass : metadataTools.getAllJpaEntityMetaClasses()) {
+            if (!metadataTools.isSystemLevel(metaClass)) {
+                optionsMap.put(messageTools.getEntityCaption(metaClass) + " (" + metaClass.getName() + ")",
+                        metaClass.getJavaClass());
+            }
+        }
+        entityClassField.setOptionsMap(optionsMap);
+    }
+
+    protected void initEnumClassField() {
+        Map<String, Class> optionsMap = new TreeMap<>();
+        for (Class enumClass : metadataTools.getAllEnums()) {
+            optionsMap.put(getEnumClassName(enumClass), enumClass);
+        }
+        enumClassField.setOptionsMap(optionsMap);
+    }
+
+    protected String getEnumClassName(Class enumClass) {
+        return enumClass.getSimpleName() + " (" + messages.getMessage(enumClass, enumClass.getSimpleName()) + ")";
+    }
+
+    @Subscribe("entityClassField")
+    protected void onEntityClassFieldValueChange(HasValue.ValueChangeEvent<Class> event) {
+        if (event.isUserOriginated()) {
+            updateDefaultValueByClass(event.getValue());
+        }
+    }
+
+    @Subscribe("enumClassField")
+    protected void onEnumClassFieldValueChange(HasValue.ValueChangeEvent<Class> event) {
+        if (event.isUserOriginated()) {
+            updateDefaultValueByClass(event.getValue());
+        }
+    }
+
+    protected void updateDefaultValueByClass(@Nullable Class parameterClass) {
+        if (parameterClass != null) {
+            getEditedEntity().setParameterClass(parameterClass.getCanonicalName());
+            updateParameterName(parameterClass);
+        } else {
+            getEditedEntity().setParameterClass(null);
+        }
+        initDefaultValueField();
     }
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
         initFilterMetaClass();
+        initParameterClassField();
         initDefaultValueField();
     }
 
     protected void initFilterMetaClass() {
         if (getEditedEntity().getMetaClass() != null) {
             filterMetaClass = metadata.getClass(getEditedEntity().getMetaClass());
+        }
+    }
+
+    protected void initParameterClassField() {
+        if (getEditedEntity().getParameterClass() != null) {
+            Class parameterClass = classManager.loadClass(getEditedEntity().getParameterClass());
+            if (Entity.class.isAssignableFrom(parameterClass)) {
+                parameterClassField.setValue(Entity.class);
+                entityClassField.setValue(parameterClass);
+            } else if (Enum.class.isAssignableFrom(parameterClass)) {
+                parameterClassField.setValue(Enum.class);
+                enumClassField.setValue(parameterClass);
+            } else {
+                parameterClassField.setValue(parameterClass);
+            }
         }
     }
 
@@ -162,15 +269,35 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     }
 
     @Subscribe("parameterClassField")
-    protected void onParameterClassFieldValueChange(HasValue.ValueChangeEvent<String> event) {
-        String parameterClass = event.getValue();
-        if (event.isUserOriginated() && StringUtils.isNotEmpty(parameterClass)) {
-            String parameterName = jpqlFilterSupport.generateParameterName(getEditedEntity().getComponentId(),
-                    parameterClass);
-            getEditedEntity().setParameterName(parameterName);
+    protected void onParameterClassFieldValueChange(HasValue.ValueChangeEvent<Class> event) {
+        Class parameterClass = event.getValue();
+        entityClassField.setVisible(parameterClass == Entity.class);
+        if (parameterClass != Entity.class) {
+            entityClassField.setValue(null);
+        }
 
+        enumClassField.setVisible(parameterClass == Enum.class);
+        if (parameterClass != Enum.class) {
+            enumClassField.setValue(null);
+        }
+
+        if (event.isUserOriginated()) {
+            if (parameterClass != null
+                    && parameterClass != Entity.class
+                    && parameterClass != Enum.class) {
+                getEditedEntity().setParameterClass(parameterClass.getCanonicalName());
+                updateParameterName(parameterClass);
+            } else {
+                getEditedEntity().setParameterClass(null);
+            }
             initDefaultValueField();
         }
+    }
+
+    protected void updateParameterName(Class parameterClass) {
+        String parameterName = jpqlFilterSupport.generateParameterName(getEditedEntity().getComponentId(),
+                parameterClass.getSimpleName());
+        getEditedEntity().setParameterName(parameterName);
     }
 
     @Subscribe("hasInExpressionField")

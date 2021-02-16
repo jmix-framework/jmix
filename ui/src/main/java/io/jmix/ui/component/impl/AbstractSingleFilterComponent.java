@@ -22,10 +22,10 @@ import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.property.UiFilterProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -65,8 +65,8 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.autoApply = uiProperties.isFilterAutoApply();
+    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
+        this.autoApply = uiFilterProperties.isAutoApply();
     }
 
     protected void onCreate(CreateEvent createEvent) {

@@ -42,9 +42,9 @@
                       caption="msg://groupFilterConditionEdit.groupConditionBox">
                 <form id="groupConditionForm" dataContainer="filterConditionDc" width="100%">
                     <column width="100%">
-                        <checkBox id="visibleField" property="visible"/>
-                        <textField id="captionField" property="caption"/>
                         <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                        <textField id="captionField" property="caption"/>
+                        <checkBox id="visibleField" property="visible"/>
                     </column>
                 </form>
             </groupBox>

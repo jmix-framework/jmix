@@ -96,18 +96,18 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public boolean isModified(FilterComponent filterComponent) {
+    public boolean isFilterComponentModified(FilterComponent filterComponent) {
         return false;
     }
 
     @Override
-    public void setModified(FilterComponent filterComponent, boolean modified) {
+    public void setFilterComponentModified(FilterComponent filterComponent, boolean modified) {
         throw new UnsupportedOperationException("You cannot set modified attribute for design-time configuration. " +
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
     @Override
-    public void setDefaultValue(String parameterName, @Nullable Object defaultValue) {
+    public void setFilterComponentDefaultValue(String parameterName, @Nullable Object defaultValue) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             defaultValuesMap.put(parameterName, defaultValue);
@@ -115,14 +115,14 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public void removeDefaultValue(String parameterName) {
+    public void resetFilterComponentDefaultValue(String parameterName) {
         throw new UnsupportedOperationException("You cannot remove default value for design-time configuration. " +
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }
 
     @Nullable
     @Override
-    public Object getDefaultValue(String parameterName) {
+    public Object getFilterComponentDefaultValue(String parameterName) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             return defaultValuesMap.get(parameterName);
@@ -132,7 +132,7 @@ public class DesignTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public void removeAllDefaultValues() {
+    public void resetAllDefaultValues() {
         throw new UnsupportedOperationException("You cannot remove default values for design-time configuration. " +
                 "Use FilterCopyAction to create a modifiable copy of configuration");
     }

@@ -18,11 +18,11 @@ package io.jmix.uidata.app.filter.configuration;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.security.CurrentAuthentication;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.model.InstanceContainer;
+import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.StandardOutcome;
@@ -30,7 +30,7 @@ import io.jmix.ui.screen.Subscribe;
 import io.jmix.ui.screen.Target;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
-import io.jmix.uidata.accesscontext.UiDataGlobalFilterContext;
+import io.jmix.uidata.accesscontext.UiFilterModifyGlobalConfigurationContext;
 import io.jmix.uidata.entity.FilterConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +45,7 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     @Autowired
     protected CurrentAuthentication currentAuthentication;
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiFilterProperties uiFilterProperties;
     @Autowired
     protected AccessManager accessManager;
 
@@ -62,36 +62,36 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     @Autowired
     protected CheckBox defaultForMeField;
 
-    protected boolean defaultForMeFieldEnabled = true;
+    protected boolean defaultForMeFieldVisible = true;
 
-    public void setDefaultForMeFieldEnabled(boolean visible) {
-        defaultForMeFieldEnabled = visible;
+    public void setDefaultForMeFieldVisible(boolean visible) {
+        defaultForMeFieldVisible = visible;
     }
 
-    public boolean getDefaultForMeFieldEnabled() {
-        return defaultForMeFieldEnabled;
+    public boolean getDefaultForMeFieldVisible() {
+        return defaultForMeFieldVisible;
     }
 
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
         FilterConfiguration editedConfigurationModel = configurationDc.getItem();
-        boolean isAvailableForAll = StringUtils.isEmpty(editedConfigurationModel.getUsername());
-        availableForAllField.setValue(isAvailableForAll);
-        defaultForAllField.setEnabled(isAvailableForAll);
-
         generatedIdField.setValue(true);
 
-        defaultForMeField.setEnabled(defaultForMeFieldEnabled);
+        defaultForMeField.setVisible(defaultForMeFieldVisible);
 
         configurationIdField.setEnabled(StringUtils.isEmpty(editedConfigurationModel.getConfigurationId()));
-        configurationIdField.setVisible(uiProperties.isShowFilterConfigurationIdField());
-        generatedIdField.setVisible(uiProperties.isShowFilterConfigurationIdField());
+        configurationIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
 
-        UiDataGlobalFilterContext globalFilterContext = new UiDataGlobalFilterContext();
+        UiFilterModifyGlobalConfigurationContext globalFilterContext = new UiFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         boolean allowGlobalFilters = globalFilterContext.isPermitted();
         availableForAllField.setVisible(allowGlobalFilters);
         defaultForAllField.setVisible(allowGlobalFilters);
+
+        boolean isAvailableForAll = StringUtils.isEmpty(editedConfigurationModel.getUsername());
+        availableForAllField.setValue(isAvailableForAll);
+        defaultForAllField.setEnabled(isAvailableForAll);
     }
 
     @Subscribe("availableForAllField")

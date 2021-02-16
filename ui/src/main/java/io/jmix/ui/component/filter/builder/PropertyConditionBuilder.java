@@ -20,11 +20,12 @@ import io.jmix.core.AccessManager;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
@@ -37,6 +38,7 @@ import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.HeaderFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
+import io.jmix.ui.property.UiFilterProperties;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,13 +61,15 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     @Autowired
     protected MessageTools messageTools;
     @Autowired
-    protected UiProperties uiProperties;
+    protected UiFilterProperties uiFilterProperties;
     @Autowired
     protected AccessManager accessManager;
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
     @Autowired
     protected SingleFilterSupport singleFilterSupport;
+    @Autowired
+    protected MetadataTools metadataTools;
 
     @Override
     public List<FilterCondition> build(Filter filter) {
@@ -124,7 +128,7 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
             FilterCondition condition = createFilterConditionByMetaClass(metaPropertyPath, parent);
             conditions.add(condition);
 
-            if (currentDepth < uiProperties.getFilterPropertiesHierarchyDepth()
+            if (currentDepth < uiFilterProperties.getPropertiesHierarchyDepth()
                     && property.getRange().isClass()) {
                 MetaClass childMetaClass = property.getRange().asClass();
                 List<FilterCondition> children =
@@ -140,7 +144,11 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath) {
         UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
         accessManager.applyRegisteredConstraints(context);
-        return context.canView();
+        return context.canView()
+                && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
+                && metadataTools.isJpa(propertyPath)
+                && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
+                && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
 
     protected FilterCondition createFilterConditionByMetaClass(MetaPropertyPath metaPropertyPath,
@@ -165,11 +173,22 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
                     propertyFilterSupport.getPropertyFilterPrefix(null, property);
             filterCondition.setComponentId(propertyFilterPrefix.substring(0, propertyFilterPrefix.length() - 1));
 
+            PropertyFilter.Operation operation;
+            Range range = metaPropertyPath.getMetaProperty().getRange();
+            if (range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass())) {
+                operation = PropertyFilter.Operation.CONTAINS;
+            } else {
+                operation = PropertyFilter.Operation.EQUAL;
+            }
+
             EnumSet<PropertyFilter.Operation> availableOperations =
                     propertyFilterSupport.getAvailableOperations(metaClass, property);
-            PropertyFilter.Operation operation = availableOperations.stream()
-                    .findFirst()
-                    .orElse(PropertyFilter.Operation.EQUAL);
+            if (!availableOperations.contains(operation)) {
+                operation = availableOperations.stream()
+                        .findFirst()
+                        .orElse(PropertyFilter.Operation.EQUAL);
+            }
+
             ((PropertyFilterCondition) filterCondition).setOperation(operation);
 
             FilterValueComponent modelValueComponent = metadata.create(FilterValueComponent.class);

@@ -191,12 +191,14 @@ public class FilterEditAction extends FilterAction {
         resultConfiguration.setModified(false);
         filterSupport.resetConfigurationValuesMap(resultConfiguration, valuesMap);
 
-        if (isNewConfiguration) {
+        if (isNewConfiguration || !currentConfiguration.getId().equals(resultConfiguration.getId())) {
             filter.addConfiguration(resultConfiguration);
-            filter.setCurrentConfiguration(resultConfiguration);
+        }
+
+        filter.setCurrentConfiguration(resultConfiguration);
+
+        if (isNewConfiguration) {
             filter.getEmptyConfiguration().getRootLogicalFilterComponent().removeAll();
-        } else {
-            filter.setCurrentConfiguration(resultConfiguration);
         }
     }
 }

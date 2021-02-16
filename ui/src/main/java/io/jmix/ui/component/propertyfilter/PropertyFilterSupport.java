@@ -177,7 +177,7 @@ public class PropertyFilterSupport {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
             if (String.class.equals(type)) {
-                return EnumSet.of(EQUAL, NOT_EQUAL, CONTAINS, NOT_CONTAINS, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
+                return EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
                         NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, GREATER, GREATER_OR_EQUAL, LESS, LESS_OR_EQUAL, IS_SET, IN_LIST,
@@ -192,7 +192,6 @@ public class PropertyFilterSupport {
             } else if (UUID.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
             }
-
         }
 
         throw new UnsupportedOperationException("Unsupported attribute type: " + mpp.getMetaProperty().getJavaType());

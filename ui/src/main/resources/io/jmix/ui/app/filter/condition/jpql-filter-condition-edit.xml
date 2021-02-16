@@ -34,16 +34,17 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
             <column width="100%">
-                <checkBox id="visibleField" property="visible"/>
-                <checkBox id="requiredField" property="required"/>
-                <textField id="parameterClassField" property="parameterClass" required="true">
-                    <validators>
-                        <custom bean="ui_FilterParameterClassValidator"/>
-                    </validators>
-                </textField>
+                <comboBox id="parameterClassField" required="true" nullOptionVisible="false"
+                          caption="msg://parameterClassField.caption"/>
+                <comboBox id="entityClassField" required="true" nullOptionVisible="false" visible="false"
+                          caption="msg://parameterClassField.entity"/>
+                <comboBox id="enumClassField" required="true" nullOptionVisible="false" visible="false"
+                          caption="msg://parameterClassField.enum"/>
                 <textField id="captionField" property="caption" required="true"/>
-                <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
+                <textField id="parameterNameField" property="parameterName" required="true"
+                           contextHelpText="msg://jpqlFilterConditionEdit.parameterNameFieldContextHelp"/>
                 <checkBox id="hasInExpressionField" property="hasInExpression"/>
+                <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
                 <sourceCodeEditor id="joinField" property="join"
                                   contextHelpText="msg://jpqlFilterConditionEdit.joinFieldContextHelp"
                                   contextHelpTextHtmlEnabled="true"
@@ -57,7 +58,7 @@
                                   highlightActiveLine="false"
                                   showGutter="false"
                                   height="theme://jmix.ui.filter.jpqlFilterConditionEdit.whereField.height"/>
-                <textField id="parameterNameField" property="parameterName" required="true"/>
+                <checkBox id="visibleField" property="visible"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

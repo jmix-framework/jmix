@@ -17,13 +17,17 @@
 package io.jmix.uidata.action.filter;
 
 import io.jmix.core.Messages;
+import io.jmix.ui.Dialogs;
 import io.jmix.ui.action.ActionType;
+import io.jmix.ui.action.DialogAction;
 import io.jmix.ui.action.filter.FilterAction;
+import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.meta.StudioAction;
+import io.jmix.ui.screen.ScreenContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @StudioAction(target = "io.jmix.ui.component.Filter", description = "Removes current run-time filter configuration")
@@ -33,6 +37,7 @@ public class FilterRemoveAction extends FilterAction {
     public static final String ID = "filter_remove";
 
     protected FilterSupport filterSupport;
+    protected Messages messages;
 
     public FilterRemoveAction() {
         this(ID);
@@ -45,6 +50,7 @@ public class FilterRemoveAction extends FilterAction {
     @Autowired
     protected void setMessages(Messages messages) {
         this.caption = messages.getMessage("actions.Filter.Remove");
+        this.messages = messages;
     }
 
     @Autowired
@@ -66,6 +72,15 @@ public class FilterRemoveAction extends FilterAction {
 
     @Override
     public void execute() {
-        filterSupport.removeCurrentFilterConfiguration(filter);
+        ScreenContext screenContext = ComponentsHelper.getScreenContext(filter);
+        Dialogs dialogs = screenContext.getDialogs();
+        dialogs.createOptionDialog()
+                .withCaption(messages.getMessage(FilterRemoveAction.class, "confirmationDialog.caption"))
+                .withMessage(messages.getMessage(FilterRemoveAction.class, "confirmationDialog.message"))
+                .withActions(new DialogAction(DialogAction.Type.YES)
+                                .withHandler(actionPerformedEvent ->
+                                        filterSupport.removeCurrentFilterConfiguration(filter)),
+                        new DialogAction(DialogAction.Type.NO))
+                .show();
     }
 }

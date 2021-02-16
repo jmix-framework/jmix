@@ -39,7 +39,7 @@ public class JpqlFilterCondition extends AbstractSingleFilterCondition {
     protected String join;
 
     @JmixProperty
-    protected Boolean hasInExpression;
+    protected Boolean hasInExpression = false;
 
     public String getParameterName() {
         return parameterName;

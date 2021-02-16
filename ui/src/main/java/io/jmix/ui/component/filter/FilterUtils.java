@@ -33,7 +33,7 @@ public class FilterUtils {
                 + RandomStringUtils.randomAlphabetic(8);
     }
 
-    public static String generateFilterComponentId(Filter filter) {
+    public static String generateFilterPath(Filter filter) {
         StringBuilder sb = new StringBuilder();
         Frame frame = filter.getFrame();
         while (frame != null) {

@@ -29,15 +29,13 @@
                     <textField id="nameField" property="name" required="true"/>
                     <checkBox id="availableForAllField"
                               caption="msg://uiDataFilterConfigurationModelFragment.availableForAllField"/>
-                </column>
-                <column width="100%">
                     <checkBox id="generatedIdField"
                               caption="msg://uiDataFilterConfigurationModelFragment.generatedIdField"/>
-                    <textField id="configurationIdField" property="configurationId" required="true" enable="false"/>
                 </column>
                 <column width="100%">
                     <checkBox id="defaultForMeField" property="defaultForMe"/>
                     <checkBox id="defaultForAllField" property="defaultForAll"/>
+                    <textField id="configurationIdField" property="configurationId" required="true"/>
                 </column>
             </form>
         </groupBox>

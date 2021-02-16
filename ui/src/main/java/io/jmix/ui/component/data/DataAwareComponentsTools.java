@@ -35,14 +35,21 @@ import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.component.data.options.EnumOptions;
 import org.apache.commons.collections4.MapUtils;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.stereotype.Component;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.*;
-import java.time.*;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -66,7 +73,7 @@ public class DataAwareComponentsTools {
     /**
      * Sets case conversion using {@link CaseConversion} annotation on entity property.
      *
-     * @param component UI component
+     * @param component   UI component
      * @param valueSource value source
      */
     public void setupCaseConversion(TextInputField.CaseConversionSupported component, EntityValueSource valueSource) {
@@ -87,7 +94,7 @@ public class DataAwareComponentsTools {
     /**
      * Sets max length for textual UI component using Entity metadata.
      *
-     * @param component UI component
+     * @param component   UI component
      * @param valueSource value source
      */
     public void setupMaxLength(TextInputField.MaxLengthLimited component, EntityValueSource valueSource) {
@@ -160,26 +167,34 @@ public class DataAwareComponentsTools {
 
     public void setupDateFormat(DateField component, MetaProperty metaProperty) {
         Class javaType = metaProperty.getRange().asDatatype().getJavaClass();
-
         TemporalType temporalType = getTemporalType(metaProperty, javaType);
+        setupTemporalType(component, temporalType);
+    }
 
+    public void setupDateFormat(DateField component, Class valueType) {
+        TemporalType temporalType = getTemporalType(null, valueType);
+        setupTemporalType(component, temporalType);
+    }
+
+    @Nullable
+    protected TemporalType getTemporalType(@Nullable MetaProperty metaProperty, Class javaType) {
+        TemporalType temporalType = null;
+
+        if (java.sql.Date.class.equals(javaType) || LocalDate.class.equals(javaType)) {
+            temporalType = TemporalType.DATE;
+        } else if (metaProperty != null) {
+            temporalType = (TemporalType) metaProperty.getAnnotations().get(MetadataTools.TEMPORAL_ANN_NAME);
+        }
+        return temporalType;
+    }
+
+    protected void setupTemporalType(DateField component, @Nullable TemporalType temporalType) {
         component.setResolution(temporalType == TemporalType.DATE
                 ? DateField.Resolution.DAY
                 : DateField.Resolution.MIN);
 
         String formatStr = messageTools.getDefaultDateFormat(temporalType);
         component.setDateFormat(formatStr);
-    }
-
-    protected TemporalType getTemporalType(MetaProperty metaProperty, Class javaType) {
-        TemporalType temporalType = null;
-
-        if (java.sql.Date.class.equals(javaType) || LocalDate.class.equals(javaType)) {
-            temporalType = TemporalType.DATE;
-        } else if (metaProperty.getAnnotations() != null) {
-            temporalType = (TemporalType) metaProperty.getAnnotations().get(MetadataTools.TEMPORAL_ANN_NAME);
-        }
-        return temporalType;
     }
 
     /**

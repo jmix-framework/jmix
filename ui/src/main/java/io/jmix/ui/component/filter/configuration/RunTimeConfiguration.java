@@ -90,17 +90,17 @@ public class RunTimeConfiguration implements Filter.Configuration {
     @Override
     public void setModified(boolean modified) {
         for (FilterComponent filterComponent : rootLogicalFilterComponent.getOwnFilterComponents()) {
-            setModified(filterComponent, modified);
+            setFilterComponentModified(filterComponent, modified);
         }
     }
 
     @Override
-    public boolean isModified(FilterComponent filterComponent) {
+    public boolean isFilterComponentModified(FilterComponent filterComponent) {
         return modifiedFilterComponents.contains(filterComponent);
     }
 
     @Override
-    public void setModified(FilterComponent filterComponent, boolean modified) {
+    public void setFilterComponentModified(FilterComponent filterComponent, boolean modified) {
         if (modified) {
             modifiedFilterComponents.add(filterComponent);
         } else {
@@ -109,13 +109,13 @@ public class RunTimeConfiguration implements Filter.Configuration {
 
         if (filterComponent instanceof LogicalFilterComponent) {
             for (FilterComponent ownFilterComponent : ((LogicalFilterComponent) filterComponent).getOwnFilterComponents()) {
-                setModified(ownFilterComponent, modified);
+                setFilterComponentModified(ownFilterComponent, modified);
             }
         }
     }
 
     @Override
-    public void setDefaultValue(String parameterName, @Nullable Object defaultValue) {
+    public void setFilterComponentDefaultValue(String parameterName, @Nullable Object defaultValue) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             defaultValuesMap.put(parameterName, defaultValue);
@@ -123,7 +123,7 @@ public class RunTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public void removeDefaultValue(String parameterName) {
+    public void resetFilterComponentDefaultValue(String parameterName) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             defaultValuesMap.remove(parameterName);
@@ -132,7 +132,7 @@ public class RunTimeConfiguration implements Filter.Configuration {
 
     @Nullable
     @Override
-    public Object getDefaultValue(String parameterName) {
+    public Object getFilterComponentDefaultValue(String parameterName) {
         Preconditions.checkNotNullArgument(parameterName);
         if (isFilterComponentExist(parameterName)) {
             return defaultValuesMap.get(parameterName);
@@ -142,7 +142,7 @@ public class RunTimeConfiguration implements Filter.Configuration {
     }
 
     @Override
-    public void removeAllDefaultValues() {
+    public void resetAllDefaultValues() {
         defaultValuesMap = new HashMap<>();
     }
 

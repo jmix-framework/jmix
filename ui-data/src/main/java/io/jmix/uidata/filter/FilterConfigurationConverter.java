@@ -31,7 +31,7 @@ import io.jmix.uidata.entity.FilterConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static io.jmix.ui.component.filter.FilterUtils.generateFilterComponentId;
+import static io.jmix.ui.component.filter.FilterUtils.generateFilterPath;
 
 @Internal
 @Component("ui_FilterConfigurationConverter")
@@ -42,8 +42,8 @@ public class FilterConfigurationConverter {
 
     public FilterConfiguration toConfigurationModel(Filter.Configuration configuration,
                                                     FilterConfiguration configurationModel) {
-        Filter filterComponent = configuration.getOwner();
-        String filterComponentId = generateFilterComponentId(filterComponent);
+        Filter filter = configuration.getOwner();
+        String filterComponentId = generateFilterPath(filter);
         configurationModel.setComponentId(filterComponentId);
 
         LogicalFilterComponent rootLogicalFilterComponent = configuration.getRootLogicalFilterComponent();
@@ -65,7 +65,7 @@ public class FilterConfigurationConverter {
 
         for (FilterComponent filterComponent : logicalFilterComponent.getFilterComponents()) {
             if (filterComponent instanceof SingleFilterComponent) {
-                configuration.setDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                configuration.setFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
             }
         }

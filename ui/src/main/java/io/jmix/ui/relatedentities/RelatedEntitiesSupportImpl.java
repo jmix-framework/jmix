@@ -35,6 +35,7 @@ import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.JpqlFilter;
 import io.jmix.ui.component.filter.FilterUtils;
+import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
 import io.jmix.ui.model.DataLoader;
@@ -110,12 +111,13 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
                             : builder.getSelectedEntities();
 
                     String configurationName = generateConfigurationName(builder, metaProperty);
-                    Filter.Configuration configuration = createFilterConfiguration((Filter) screenComponent,
+                    DesignTimeConfiguration configuration = createFilterConfiguration((Filter) screenComponent,
                             configurationName);
 
                     JpqlFilter jpqlFilter = createJpqlFilter(filter.getDataLoader(), metaProperty, metaClass,
                             selectedEntities);
                     configuration.getRootLogicalFilterComponent().add(jpqlFilter);
+                    configuration.setFilterComponentDefaultValue(jpqlFilter.getParameterName(), jpqlFilter.getValue());
 
                     filter.setCurrentConfiguration(configuration);
 
@@ -189,7 +191,7 @@ public class RelatedEntitiesSupportImpl implements RelatedEntitiesSupport {
         }
     }
 
-    protected Filter.Configuration createFilterConfiguration(Filter filter, String configurationName) {
+    protected DesignTimeConfiguration createFilterConfiguration(Filter filter, String configurationName) {
         String configurationId = FilterUtils.generateConfigurationId(configurationName);
         return filter.addConfiguration(configurationId, configurationName);
     }

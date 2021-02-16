@@ -16,8 +16,8 @@
 
 package io.jmix.ui.component;
 
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.property.UiFilterProperties;
 
 /**
  * GroupFilter is a UI component that has a {@link GroupBoxLayout} with a {@link ResponsiveGridLayout}
@@ -53,7 +53,7 @@ public interface GroupFilter extends LogicalFilterComponent, Component.BelongToF
 
     /**
      * Returns the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
      *
      * @return the number of columns to be displayed on one row
      */
@@ -62,7 +62,7 @@ public interface GroupFilter extends LogicalFilterComponent, Component.BelongToF
 
     /**
      * Sets the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
      *
      * @param columnsCount the number of columns to be displayed on one row
      */

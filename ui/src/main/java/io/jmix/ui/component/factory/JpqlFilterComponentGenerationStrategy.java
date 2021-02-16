@@ -34,6 +34,7 @@ import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.screen.OpenMode;
@@ -57,6 +58,7 @@ import java.util.UUID;
 public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
 
     protected DatatypeRegistry datatypeRegistry;
+    protected DataAwareComponentsTools dataAwareComponentsTools;
 
     @Autowired
     public JpqlFilterComponentGenerationStrategy(Messages messages,
@@ -66,9 +68,11 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
                                                  MetadataTools metadataTools,
                                                  Icons icons,
                                                  Actions actions,
-                                                 DatatypeRegistry datatypeRegistry) {
+                                                 DatatypeRegistry datatypeRegistry,
+                                                 DataAwareComponentsTools dataAwareComponentsTools) {
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
         this.datatypeRegistry = datatypeRegistry;
+        this.dataAwareComponentsTools = dataAwareComponentsTools;
     }
 
     @Nullable
@@ -229,6 +233,17 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         }
 
         return textField;
+    }
+
+    @Override
+    protected Component createDateField(ComponentGenerationContext context) {
+        DateField dateField = (DateField) super.createDateField(context);
+
+        JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
+        Class parameterClass = cfContext.getParameterClass();
+        dataAwareComponentsTools.setupDateFormat(dateField, parameterClass);
+
+        return dateField;
     }
 
     @Override

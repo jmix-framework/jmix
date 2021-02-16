@@ -19,11 +19,12 @@ package io.jmix.ui.component;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.LogicalCondition;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.app.filter.condition.AddConditionScreen;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.property.UiFilterProperties;
+import io.jmix.ui.xml.layout.ComponentLoader;
 
 import javax.annotation.Nullable;
 import java.util.EventObject;
@@ -42,7 +43,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
 
     /**
      * Returns the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
      *
      * @return the number of columns to be displayed on one row
      */
@@ -51,7 +52,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
 
     /**
      * Sets the number of columns to be displayed on one row.
-     * The default value is taken from {@link UiProperties#getFilterColumnsCount()}.
+     * The default value is taken from {@link UiFilterProperties#getColumnsCount()}.
      *
      * @param columnsCount the number of columns to be displayed on one row
      */
@@ -148,10 +149,9 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * @param id   a configuration id. Must be unique within this filter
      * @param name a configuration name
      * @return {@link DesignTimeConfiguration}
-     * @see DesignTimeConfiguration
      * @see LogicalFilterComponent
      */
-    Configuration addConfiguration(String id, @Nullable String name);
+    DesignTimeConfiguration addConfiguration(String id, @Nullable String name);
 
     /**
      * Adds design-time configuration with given id and name. A configuration is a set
@@ -166,10 +166,9 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
      * @param name          a configuration name
      * @param rootOperation an operation of root {@link LogicalFilterComponent}
      * @return {@link DesignTimeConfiguration}
-     * @see DesignTimeConfiguration
      */
-    Configuration addConfiguration(String id, @Nullable String name,
-                                   LogicalFilterComponent.Operation rootOperation);
+    DesignTimeConfiguration addConfiguration(String id, @Nullable String name,
+                                             LogicalFilterComponent.Operation rootOperation);
 
     /**
      * Adds a configuration to the filter.
@@ -258,6 +257,20 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
     Subscription addConfigurationChangeListener(Consumer<ConfigurationChangeEvent> listener);
 
     /**
+     * Loads configurations for {@link Filter} and apply default.
+     *
+     * <em>NOTE:</em> call this method after the frame is fully initialized
+     * (for example, in {@link ComponentLoader.PostInitTask} in a loader).
+     */
+    void loadConfigurationsAndApplyDefault();
+
+    /**
+     * Refreshes the display of the current configuration. Allows the user to
+     * refresh the display after changing the current configuration.
+     */
+    void refreshCurrentConfigurationLayout();
+
+    /**
      * A configuration is a set of filter components.
      */
     interface Configuration extends Comparable<Configuration> {
@@ -328,7 +341,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
          * @param filterComponent the filter component to check
          * @return whether the filter component of configuration is modified
          */
-        boolean isModified(FilterComponent filterComponent);
+        boolean isFilterComponentModified(FilterComponent filterComponent);
 
         /**
          * Sets whether the {@link FilterComponent} of configuration is modified.
@@ -337,16 +350,38 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
          * @param filterComponent a filter component
          * @param modified        whether the filter component of configuration is modified
          */
-        void setModified(FilterComponent filterComponent, boolean modified);
+        void setFilterComponentModified(FilterComponent filterComponent, boolean modified);
 
-        void setDefaultValue(String parameterName, @Nullable Object defaultValue);
+        /**
+         * Sets a default value of {@link FilterComponent} for the configuration by the parameter name.
+         * This allows the default values to be saved and displayed in the configuration editor.
+         *
+         * @param parameterName a parameter name of filter component
+         * @param defaultValue a default value
+         */
+        void setFilterComponentDefaultValue(String parameterName, @Nullable Object defaultValue);
 
-        void removeDefaultValue(String parameterName);
+        /**
+         * Resets a default value of {@link FilterComponent}. The default value for the filter
+         * component becomes null.
+         *
+         * @param parameterName a parameter name of filter component
+         */
+        void resetFilterComponentDefaultValue(String parameterName);
 
+        /**
+         * Returns a default value of {@link FilterComponent} by parameter name.
+         *
+         * @param parameterName a parameter name of filter component
+         * @return a default value of filter component by parameter name
+         */
         @Nullable
-        Object getDefaultValue(String parameterName);
+        Object getFilterComponentDefaultValue(String parameterName);
 
-        void removeAllDefaultValues();
+        /**
+         * Sets null as the default value for all configuration filter components.
+         */
+        void resetAllDefaultValues();
     }
 
     /**

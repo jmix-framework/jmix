@@ -34,14 +34,14 @@
     <layout spacing="true" expand="editActions">
         <form id="form" dataContainer="filterConditionDc" width="100%" height="100%">
             <column width="100%">
-                <checkBox id="visibleField" property="visible"/>
-                <checkBox id="requiredField" property="required"/>
                 <textField id="propertyField" property="property" required="true"/>
-                <textField id="captionField" property="caption"/>
                 <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
+                <textField id="parameterNameField" property="parameterName" required="true"
+                           contextHelpText="msg://propertyFilterConditionEdit.parameterNameFieldContextHelp"/>
+                <textField id="captionField" property="caption"/>
                 <checkBox id="operationEditableField" property="operationEditable"/>
                 <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
-                <textField id="parameterNameField" property="parameterName" required="true"/>
+                <checkBox id="visibleField" property="visible"/>
             </column>
         </form>
         <hbox id="editActions" spacing="true">

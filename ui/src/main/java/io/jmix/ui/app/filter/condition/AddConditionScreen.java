@@ -24,7 +24,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.accesscontext.UiJpqlFilterConditionsContext;
+import io.jmix.ui.accesscontext.UiFilterModifyJpqlConditionContext;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Filter;
@@ -148,7 +148,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
         for (Class<? extends FilterCondition> modelClass : filterComponents.getRegisteredModelClasses()) {
             try {
                 if (JpqlFilterCondition.class.isAssignableFrom(modelClass)) {
-                    UiJpqlFilterConditionsContext jpqlConditionsContext = new UiJpqlFilterConditionsContext();
+                    UiFilterModifyJpqlConditionContext jpqlConditionsContext = new UiFilterModifyJpqlConditionContext();
                     accessManager.applyRegisteredConstraints(jpqlConditionsContext);
                     if (!jpqlConditionsContext.isPermitted()) {
                         continue;

@@ -67,18 +67,13 @@ public class FilterSupport {
                                                                LogicalFilterComponent rootFilterComponent,
                                                                ScreenFragment configurationFragment) {
         String id = "";
+        String name = "";
         if (configurationFragment instanceof FilterConfigurationModelFragment) {
             id = ((FilterConfigurationModelFragment) configurationFragment).getConfigurationId();
+            name = ((FilterConfigurationModelFragment) configurationFragment).getConfigurationName();
         }
 
-        Filter.Configuration resultConfiguration = initFilterConfiguration(id, configuration, isNewConfiguration,
-                rootFilterComponent);
-
-        if (configurationFragment instanceof FilterConfigurationModelFragment) {
-            resultConfiguration.setName(((FilterConfigurationModelFragment) configurationFragment).getConfigurationName());
-        }
-
-        return resultConfiguration;
+        return initFilterConfiguration(id, name, configuration, isNewConfiguration, rootFilterComponent);
     }
 
     public void removeCurrentFilterConfiguration(Filter filter) {
@@ -102,7 +97,7 @@ public class FilterSupport {
             if (filterComponent instanceof SingleFilterComponent) {
                 String parameterName = ((SingleFilterComponent<?>) filterComponent).getParameterName();
                 valuesMap.put(parameterName, ((SingleFilterComponent<?>) filterComponent).getValue());
-                ((SingleFilterComponent) filterComponent).setValue(configuration.getDefaultValue(parameterName));
+                ((SingleFilterComponent) filterComponent).setValue(configuration.getFilterComponentDefaultValue(parameterName));
             }
         }
 
@@ -121,27 +116,33 @@ public class FilterSupport {
     }
 
     public void refreshConfigurationDefaultValues(Filter.Configuration configuration) {
-        configuration.removeAllDefaultValues();
+        configuration.resetAllDefaultValues();
         LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
         for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
             if (filterComponent instanceof SingleFilterComponent) {
-                configuration.setDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                configuration.setFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
             }
         }
     }
 
     protected Filter.Configuration initFilterConfiguration(String id,
+                                                           String name,
                                                            Filter.Configuration existedConfiguration,
                                                            boolean isNewConfiguration,
                                                            LogicalFilterComponent rootFilterComponent) {
         Filter.Configuration resultConfiguration;
         if (isNewConfiguration) {
             resultConfiguration = new RunTimeConfiguration(id, rootFilterComponent, existedConfiguration.getOwner());
+        } else if (!existedConfiguration.getId().equals(id)) {
+            Filter owner = existedConfiguration.getOwner();
+            resultConfiguration = new RunTimeConfiguration(id, rootFilterComponent, owner);
+            owner.removeConfiguration(existedConfiguration);
         } else {
             resultConfiguration = existedConfiguration;
             resultConfiguration.setRootLogicalFilterComponent(rootFilterComponent);
         }
+        resultConfiguration.setName(name);
 
         return resultConfiguration;
     }

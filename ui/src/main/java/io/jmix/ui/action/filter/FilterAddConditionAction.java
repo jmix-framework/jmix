@@ -145,6 +145,7 @@ public class FilterAddConditionAction extends FilterAction {
             if (!selectedConditions.isEmpty()) {
                 Filter.Configuration currentConfiguration = filter.getCurrentConfiguration();
 
+                boolean dataLoadNeeded = false;
                 for (FilterCondition selectedCondition : selectedConditions) {
                     FilterConverter converter = filterComponents.getConverterByModelClass(
                             selectedCondition.getClass(), filter);
@@ -156,16 +157,23 @@ public class FilterAddConditionAction extends FilterAction {
 
                     FilterComponent filterComponent = converter.convertToComponent(selectedCondition);
                     currentConfiguration.getRootLogicalFilterComponent().add(filterComponent);
-                    currentConfiguration.setModified(filterComponent, true);
+                    currentConfiguration.setFilterComponentModified(filterComponent, true);
                     if (filterComponent instanceof SingleFilterComponent) {
-                        currentConfiguration.setDefaultValue(
+                        currentConfiguration.setFilterComponentDefaultValue(
                                 ((SingleFilterComponent<?>) filterComponent).getParameterName(),
                                 ((SingleFilterComponent<?>) filterComponent).getValue());
+
+                        if (((SingleFilterComponent<?>) filterComponent).getValue() != null) {
+                            dataLoadNeeded = true;
+                        }
                     }
                 }
 
                 filter.setCurrentConfiguration(currentConfiguration);
-                filter.apply();
+
+                if (dataLoadNeeded) {
+                    filter.apply();
+                }
             }
         };
     }

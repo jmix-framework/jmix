@@ -57,7 +57,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static io.jmix.ui.component.filter.FilterUtils.generateFilterComponentId;
+import static io.jmix.ui.component.filter.FilterUtils.generateFilterPath;
 
 @Internal
 public class UiDataFilterSupport extends FilterSupport {
@@ -104,29 +104,28 @@ public class UiDataFilterSupport extends FilterSupport {
                                                             boolean isNewConfiguration,
                                                             Filter.Configuration currentConfiguration) {
         FilterConfiguration configurationModel = loadFilterConfigurationModel(isNewConfiguration, currentConfiguration);
-        boolean defaultForMeFieldEnabled = isDefaultForMeFieldEnabled(currentConfiguration, configurationModel);
+        boolean defaultForMeFieldVisible = isDefaultForMeFieldVisible(currentConfiguration, configurationModel);
         registerConfigurationDc(configurationModel, owner);
 
         Fragments fragments = UiControllerUtils.getScreenContext(owner).getFragments();
         UiDataFilterConfigurationModelFragment fragment = fragments.create(owner,
                 UiDataFilterConfigurationModelFragment.class);
 
-        fragment.setDefaultForMeFieldEnabled(defaultForMeFieldEnabled);
+        fragment.setDefaultForMeFieldVisible(defaultForMeFieldVisible);
 
         return fragment;
     }
 
     @Nullable
     public FilterConfiguration loadFilterConfigurationModel(Filter filter, String configurationId) {
-        String componentId = generateFilterComponentId(filter);
+        String componentId = generateFilterPath(filter);
         String username = currentAuthentication.getUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("configurationId", configurationId))
                         .add(PropertyCondition.equal("componentId", componentId))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.createWithValue("username",
-                                        PropertyCondition.Operation.IS_SET, false))
+                                .add(PropertyCondition.isSet("username", false))
                                 .add(PropertyCondition.equal("username", username))))
                 .optional()
                 .orElse(null);
@@ -140,8 +139,7 @@ public class UiDataFilterSupport extends FilterSupport {
         FilterConfiguration configurationModel = getFragmentFilterConfigurationModel(configuration, configurationFragment);
 
         Filter.Configuration resultConfiguration = initFilterConfiguration(configurationModel.getConfigurationId(),
-                configuration, isNewConfiguration, rootFilterComponent);
-        resultConfiguration.setName(configurationModel.getName());
+                configurationModel.getName(), configuration, isNewConfiguration, rootFilterComponent);
 
         saveConfigurationModel(resultConfiguration, configurationModel);
         return resultConfiguration;
@@ -171,14 +169,13 @@ public class UiDataFilterSupport extends FilterSupport {
     }
 
     protected List<FilterConfiguration> loadFilterConfigurationModels(Filter filter) {
-        String filterComponentId = generateFilterComponentId(filter);
+        String filterComponentId = generateFilterPath(filter);
         String username = currentAuthentication.getUser().getUsername();
         return dataManager.load(FilterConfiguration.class)
                 .condition(LogicalCondition.and()
                         .add(PropertyCondition.equal("componentId", filterComponentId))
                         .add(LogicalCondition.or()
-                                .add(PropertyCondition.createWithValue("username",
-                                        PropertyCondition.Operation.IS_SET, false))
+                                .add(PropertyCondition.isSet("username", false))
                                 .add(PropertyCondition.equal("username", username))))
                 .list();
     }
@@ -199,7 +196,7 @@ public class UiDataFilterSupport extends FilterSupport {
         return configurationModel;
     }
 
-    protected boolean isDefaultForMeFieldEnabled(Filter.Configuration currentConfiguration,
+    protected boolean isDefaultForMeFieldVisible(Filter.Configuration currentConfiguration,
                                                  FilterConfiguration configurationModel) {
         Frame filterFrame = currentConfiguration.getOwner().getFrame();
         if (currentConfiguration.getOwner().getId() != null && filterFrame != null) {
@@ -246,7 +243,7 @@ public class UiDataFilterSupport extends FilterSupport {
 
             if (filter.getId() != null
                     && filter.getFrame() != null
-                    && ((UiDataFilterConfigurationModelFragment) configurationFragment).getDefaultForMeFieldEnabled()) {
+                    && ((UiDataFilterConfigurationModelFragment) configurationFragment).getDefaultForMeFieldVisible()) {
                 ScreenSettingsFacet settingsFacet = UiControllerUtils
                         .getFacet(filter.getFrame(), ScreenSettingsFacet.class);
 

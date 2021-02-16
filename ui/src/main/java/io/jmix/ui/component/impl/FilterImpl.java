@@ -26,7 +26,6 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.ui.Actions;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.UiComponents;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.action.filter.FilterAction;
@@ -37,6 +36,7 @@ import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.configuration.RunTimeConfiguration;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.DataLoader;
+import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.ui.theme.ThemeClassNames;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -127,9 +127,9 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     }
 
     @Autowired
-    public void setUiProperties(UiProperties uiProperties) {
-        this.columnsCount = uiProperties.getFilterColumnsCount();
-        this.autoApply = uiProperties.isFilterAutoApply();
+    public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
+        this.columnsCount = uiFilterProperties.getColumnsCount();
+        this.autoApply = uiFilterProperties.isAutoApply();
     }
 
     @Override
@@ -171,7 +171,6 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         this.initialDataLoaderCondition = dataLoader.getCondition();
 
         initEmptyConfiguration();
-        initDataLoader();
     }
 
     @Override
@@ -263,10 +262,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             Configuration previousConfiguration = this.currentConfiguration;
             this.currentConfiguration = currentConfiguration;
 
-            updateConditionsLayout();
+            refreshCurrentConfigurationLayout();
             updateSelectConfigurationButton();
 
-            if (previousConfiguration != null) {
+            if (previousConfiguration != null && currentConfiguration != previousConfiguration) {
                 ConfigurationChangeEvent configurationChangeEvent =
                         new ConfigurationChangeEvent(this, currentConfiguration, previousConfiguration);
                 publish(ConfigurationChangeEvent.class, configurationChangeEvent);
@@ -298,16 +297,16 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     }
 
     @Override
-    public Configuration addConfiguration(String id, @Nullable String name) {
+    public DesignTimeConfiguration addConfiguration(String id, @Nullable String name) {
         return addConfiguration(id, name, LogicalFilterComponent.Operation.AND);
     }
 
     @Override
-    public Configuration addConfiguration(String id, @Nullable String name,
-                                          LogicalFilterComponent.Operation rootOperation) {
+    public DesignTimeConfiguration addConfiguration(String id, @Nullable String name,
+                                                    LogicalFilterComponent.Operation rootOperation) {
         LogicalFilterComponent rootComponent = createConfigurationRootLogicalFilterComponent(rootOperation);
 
-        Configuration newConfiguration =
+        DesignTimeConfiguration newConfiguration =
                 new DesignTimeConfiguration(id, name, rootComponent, this);
 
         addConfiguration(newConfiguration);
@@ -355,6 +354,41 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     @Override
     public Subscription addConfigurationChangeListener(Consumer<ConfigurationChangeEvent> listener) {
         return getEventHub().subscribe(ConfigurationChangeEvent.class, listener);
+    }
+
+    @Override
+    public void loadConfigurationsAndApplyDefault() {
+        Map<Configuration, Boolean> configurationsMap = filterSupport.getConfigurationsMap(this);
+        for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
+            addConfiguration(entry.getKey());
+            if (currentConfiguration == null && entry.getValue()) {
+                setCurrentConfiguration(entry.getKey());
+            }
+        }
+
+        if (currentConfiguration == null) {
+            setCurrentConfiguration(getEmptyConfiguration());
+        }
+    }
+
+    @Override
+    public void refreshCurrentConfigurationLayout() {
+        if (rootLogicalFilterComponent != null) {
+            getComposition().remove(rootLogicalFilterComponent);
+        }
+
+        LogicalFilterComponent rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
+        boolean isAnyFilterComponentVisible = rootComponent.getFilterComponents().stream()
+                .anyMatch(Component::isVisible);
+        if (isAnyFilterComponentVisible) {
+            updateRootLogicalFilterComponent(getCurrentConfiguration().getRootLogicalFilterComponent());
+        } else {
+            rootLogicalFilterComponent = rootComponent;
+        }
+
+        updateDataLoaderCondition();
+        updateRootLayoutCaption();
+        updateActionsState();
     }
 
     @Override
@@ -450,20 +484,6 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         }
     }
 
-    protected void initDataLoader() {
-        Map<Configuration, Boolean> configurationsMap = filterSupport.getConfigurationsMap(this);
-        for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
-            addConfiguration(entry.getKey());
-            if (currentConfiguration == null && entry.getValue()) {
-                setCurrentConfiguration(entry.getKey());
-            }
-        }
-
-        if (currentConfiguration == null) {
-            setCurrentConfiguration(getEmptyConfiguration());
-        }
-    }
-
     protected LinkButton createConditionRemoveButton(SingleFilterComponent<?> singleFilter, String removeButtonId) {
         LinkButton conditionRemoveButton = uiComponents.create(LinkButton.NAME);
         conditionRemoveButton.setId(removeButtonId);
@@ -473,7 +493,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
         conditionRemoveButton.addClickListener(clickEvent -> {
             removeFilterComponent(singleFilter);
-            updateConditionsLayout();
+            refreshCurrentConfigurationLayout();
             apply();
         });
 
@@ -483,10 +503,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     protected void removeFilterComponent(FilterComponent filterComponent) {
         LogicalFilterComponent rootLogicalComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
         if (filterComponent instanceof SingleFilterComponent) {
-            getCurrentConfiguration().removeDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName());
+            getCurrentConfiguration().resetFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName());
         }
         rootLogicalComponent.remove(filterComponent);
-        getCurrentConfiguration().setModified(filterComponent, false);
+        getCurrentConfiguration().setFilterComponentModified(filterComponent, false);
     }
 
     protected Action createResetFilterAction() {
@@ -552,25 +572,6 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 ? messages.getMessage("filter.searchButton.autoApply")
                 : messages.getMessage("filter.searchButton");
         searchButton.setCaption(caption);
-    }
-
-    protected void updateConditionsLayout() {
-        if (rootLogicalFilterComponent != null) {
-            getComposition().remove(rootLogicalFilterComponent);
-        }
-
-        LogicalFilterComponent rootComponent = getCurrentConfiguration().getRootLogicalFilterComponent();
-        boolean isAnyFilterComponentVisible = rootComponent.getFilterComponents().stream()
-                .anyMatch(Component::isVisible);
-        if (isAnyFilterComponentVisible) {
-            updateRootLogicalFilterComponent(getCurrentConfiguration().getRootLogicalFilterComponent());
-        } else {
-            rootLogicalFilterComponent = rootComponent;
-        }
-
-        updateDataLoaderCondition();
-        updateRootLayoutCaption();
-        updateActionsState();
     }
 
     protected void updateDataLoaderCondition() {
@@ -646,7 +647,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         HBoxLayout singleFilterLayout = ((AbstractSingleFilterComponent<?>) singleFilter).getComposition();
         LinkButton removeButton = (LinkButton) singleFilterLayout.getComponent(removeButtonId);
 
-        if (getCurrentConfiguration().isModified(singleFilter)) {
+        if (getCurrentConfiguration().isFilterComponentModified(singleFilter)) {
             // If the removeButton is added to the singleFilterLayout
             // but is not located at the end, then we delete it and
             // re-add it to the end.
@@ -683,7 +684,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 if (component instanceof SingleFilterComponent) {
                     SingleFilterComponent singleFilterComponent = (SingleFilterComponent) component;
                     singleFilterComponent.setValue(
-                            currentConfiguration.getDefaultValue(singleFilterComponent.getParameterName()));
+                            currentConfiguration.getFilterComponentDefaultValue(singleFilterComponent.getParameterName()));
                     getDataLoader().removeParameter(singleFilterComponent.getParameterName());
                 }
             }

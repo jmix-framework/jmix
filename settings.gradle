@@ -2,6 +2,8 @@ rootProject.name = 'jmix-search'
 
 include 'search'
 include 'search-starter'
+include 'search-ui'
+include 'search-ui-starter'
 
 rootProject.children.each { p1 ->
     p1.buildFileName = "${p1.name}.gradle"

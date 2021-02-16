@@ -20,7 +20,13 @@ import io.jmix.core.TimeSource;
 import io.jmix.ui.executor.WatchDog;
 
 import javax.annotation.concurrent.ThreadSafe;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.EventListener;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -43,11 +49,27 @@ public abstract class TasksWatchDog implements WatchDog {
 
     private final Set<TaskHandlerImpl> watches = new LinkedHashSet<>();
 
+    protected volatile boolean initialized;
+
     public TasksWatchDog() {
+    }
+
+    @EventListener(classes = {ContextRefreshedEvent.class, ContextStartedEvent.class})
+    public void onContextRefreshed() {
+        initialized = true;
+    }
+
+    @EventListener(ContextStoppedEvent.class)
+    public void onContextStopped() {
+        initialized = false;
     }
 
     @Override
     public synchronized void cleanupTasks() {
+        if (!initialized) {
+            return;
+        }
+
         long actual = timeSource.currentTimestamp().getTime();
 
         List<TaskHandlerImpl> forRemove = new ArrayList<>();

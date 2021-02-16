@@ -34,10 +34,7 @@ import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 import java.util.Collections;
 
@@ -46,6 +43,7 @@ import java.util.Collections;
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = CoreConfiguration.class)
 @PropertySource(name = "io.jmix.ui", value = "classpath:/io/jmix/ui/module.properties")
+@Import(UiScheduleConfiguration.class)
 public class UiConfiguration {
 
     @Bean("ui_UiControllers")

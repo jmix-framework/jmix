@@ -96,6 +96,7 @@ public class UiProperties {
     boolean showFilterConfigurationIdField;
     int jmxConsoleMBeanOperationTimeoutSec;
     String uniqueConstraintViolationPattern;
+    long backgroundTaskTimeoutCheckInterval;
 
     public UiProperties(
             boolean testMode,
@@ -159,6 +160,7 @@ public class UiProperties {
             @DefaultValue("3") int filterColumnsCount,
             @DefaultValue("false") boolean showFilterConfigurationIdField,
             @DefaultValue("600") int jmxConsoleMBeanOperationTimeoutSec,
+            @DefaultValue("5000") long backgroundTaskTimeoutCheckInterval,
             @Nullable String uniqueConstraintViolationPattern) {
         this.testMode = testMode;
         this.performanceTestMode = performanceTestMode;
@@ -222,6 +224,7 @@ public class UiProperties {
         this.showFilterConfigurationIdField = showFilterConfigurationIdField;
         this.jmxConsoleMBeanOperationTimeoutSec = jmxConsoleMBeanOperationTimeoutSec;
         this.uniqueConstraintViolationPattern = uniqueConstraintViolationPattern;
+        this.backgroundTaskTimeoutCheckInterval = backgroundTaskTimeoutCheckInterval;
     }
 
     public boolean isCreateActionAddsFirst() {
@@ -567,5 +570,14 @@ public class UiProperties {
     @Nullable
     public String getUniqueConstraintViolationPattern() {
         return uniqueConstraintViolationPattern;
+    }
+
+    /**
+     * Interval for checking timeout of a BackgroundTask.
+     *
+     * @return timeout in ms
+     */
+    public long getBackgroundTaskTimeoutCheckInterval() {
+        return backgroundTaskTimeoutCheckInterval;
     }
 }

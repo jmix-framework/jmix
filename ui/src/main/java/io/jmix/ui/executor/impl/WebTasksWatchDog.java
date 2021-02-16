@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.concurrent.TimeUnit;
 
-@Component("ui_BackgroundWorker_WatchDog")
 public class WebTasksWatchDog extends TasksWatchDog {
 
     @Autowired

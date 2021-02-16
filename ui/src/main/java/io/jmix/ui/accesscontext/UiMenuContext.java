@@ -31,6 +31,10 @@ public class UiMenuContext implements AccessContext {
         return menuItem.getId();
     }
 
+    public MenuItem getMenuItem() {
+        return menuItem;
+    }
+
     public boolean isPermitted() {
         return permitted;
     }

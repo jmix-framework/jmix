@@ -8,7 +8,7 @@
     <changeSet id="1" author="${project_name}">
 
         <createTable tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
-            <column name="ID" type="${uuid.type}">
+            <column name="ID" type="\${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="VERSION" type="int">

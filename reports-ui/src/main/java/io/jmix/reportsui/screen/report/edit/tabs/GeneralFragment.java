@@ -240,11 +240,6 @@ public class GeneralFragment extends ScreenFragment {
         }
     }
 
-    @Subscribe("defaultTemplateField")
-    protected void onDefaultTemplateFieldValueChange(HasValue.ValueChangeEvent<ReportTemplate> event) {
-        setupDropZoneForTemplate();
-    }
-
     @Subscribe("defaultTemplateField.upload")
     protected void onDefaultTemplateUpload(Action.ActionPerformedEvent event) {
         final ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
@@ -330,7 +325,7 @@ public class GeneralFragment extends ScreenFragment {
         return isDownButtonEnabled();
     }
 
-    protected void sortBandDefinitionsTableByPosition() {
+    public void sortBandDefinitionsTableByPosition() {
         bandsDc.getSorter().sort(Sort.by(Sort.Direction.ASC, "position"));
     }
 
@@ -514,7 +509,7 @@ public class GeneralFragment extends ScreenFragment {
         }
     }
 
-    protected void setupDropZoneForTemplate() {
+    public void setupDropZoneForTemplate() {
         final ReportTemplate defaultTemplate = reportDc.getItem().getDefaultTemplate();
         if (defaultTemplate != null) {
             invisibleFileUpload.setDropZone(new UploadField.DropZone(reportFields));

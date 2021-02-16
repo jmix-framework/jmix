@@ -26,6 +26,7 @@ import io.jmix.reports.ReportPrintHelper;
 import io.jmix.reports.Reports;
 import io.jmix.reports.entity.*;
 import io.jmix.reportsui.screen.definition.edit.BandDefinitionEditor;
+import io.jmix.reportsui.screen.report.edit.tabs.GeneralFragment;
 import io.jmix.reportsui.screen.report.run.InputParametersDialog;
 import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
@@ -134,6 +135,9 @@ public class ReportEditor extends StandardEditor<Report> {
     @Autowired
     protected Actions actions;
 
+    @Autowired
+    protected GeneralFragment generalFragment;
+
     @Subscribe
     protected void initNewItem(InitEntityEvent<Report> event) {
         Report report = event.getEntity();
@@ -166,11 +170,13 @@ public class ReportEditor extends StandardEditor<Report> {
     }
 
     @Subscribe
-    protected void onBeforeShow(BeforeShowEvent event) {
+    public void onAfterShow(AfterShowEvent event) {
         bandTree.expandTree();
         bandTree.setSelected(getEditedEntity().getRootBandDefinition());
 
-        //setupDropZoneForTemplate();
+        generalFragment.setupDropZoneForTemplate();
+        generalFragment.sortBandDefinitionsTableByPosition();
+
         setScreenCaption();
     }
 

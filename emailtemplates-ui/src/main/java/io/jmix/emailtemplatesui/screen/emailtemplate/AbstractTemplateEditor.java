@@ -17,44 +17,9 @@
 package io.jmix.emailtemplatesui.screen.emailtemplate;
 
 
-import io.jmix.core.EntityStates;
 import io.jmix.emailtemplates.entity.EmailTemplate;
 import io.jmix.ui.screen.StandardEditor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class AbstractTemplateEditor<T extends EmailTemplate> extends StandardEditor<T> {
 
-    protected List<Object> entitiesToRemove = new ArrayList<>();
-    protected List<Object> entitiesToUpdate = new ArrayList<>();
-
-    protected boolean preCommit() {
-        entitiesToRemove = new ArrayList<>();
-        entitiesToUpdate = new ArrayList<>();
-        if (!getEntityStates().isNew(getEditedEntity())) {
-           /* todo: EmailTemplate original = getScreenData().reload(getItem(), "emailTemplate-view");
-            EmailTemplate current = getEditedEntity();
-            List<TemplateReport> obsoleteTemplateReports = original.getAttachedTemplateReports().stream()
-                    .filter(e -> !current.getAttachedTemplateReports().contains(e))
-                    .collect(Collectors.toList());
-            entitiesToRemove.addAll(obsoleteTemplateReports);*/
-        }
-        return true;
-    }
-
-    private EntityStates getEntityStates() {
-        return getApplicationContext().getBean(EntityStates.class);
-    }
-
-    protected boolean postCommit(boolean committed, boolean close) {
-       /* todo: if (committed) {
-            CommitContext commitContext = new CommitContext();
-            entitiesToRemove.forEach(commitContext::addInstanceToRemove);
-            entitiesToUpdate.forEach(commitContext::addInstanceToCommit);
-            getDsContext().getDataSupplier().commit(commitContext);
-        }
-        return super.postCommit(committed, close);*/
-        return true;
-    }
 }

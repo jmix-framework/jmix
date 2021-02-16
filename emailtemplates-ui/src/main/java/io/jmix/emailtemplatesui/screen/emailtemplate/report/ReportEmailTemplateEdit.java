@@ -18,6 +18,7 @@ package io.jmix.emailtemplatesui.screen.emailtemplate.report;
 
 
 import io.jmix.core.DataManager;
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.emailtemplates.entity.ReportEmailTemplate;
 import io.jmix.emailtemplates.entity.TemplateReport;
@@ -38,8 +39,8 @@ import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.inject.Named;
 import java.util.ArrayList;
 
 @UiController("emailtemplates_ReportEmailTemplate.edit")
@@ -47,7 +48,8 @@ import java.util.ArrayList;
 @EditedEntityContainer("emailTemplateDc")
 public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailTemplate> {
 
-    @Named("defaultGroup.subject")
+    @Autowired
+    @Qualifier("defaultGroup.subject")
     private TextField<String> subjectField;
 
     @Autowired
@@ -84,6 +86,9 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     @Autowired
     protected DataLoader emailTemplateDl;
+
+    @Autowired
+    private EntityStates entityStates;
 
     @Subscribe
     protected void onBeforeShow(BeforeShowEvent e) {
@@ -153,8 +158,19 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
     @Subscribe(target = Target.DATA_CONTEXT)
     protected void onPreCommit(DataContext.PreCommitEvent event) {
         TemplateReport templateReport = emailBodyReportDc.getItemOrNull();
-        if (templateReport != null) {
-            event.getModifiedInstances().add(templateReport);
+        if (entityStates.isNew(getEditedEntity())) {
+            if (templateReport != null) {
+                event.getSource().merge(templateReport);
+            }
+        } else {
+            ReportEmailTemplate original = dataManager.load(ReportEmailTemplate.class)
+                    .id(getEditedEntity().getId())
+                    .fetchPlan( "emailTemplate-fetchPlan")
+                    .one();
+            TemplateReport originalEmailBodyReport = original.getEmailBodyReport();
+            if (originalEmailBodyReport != null && !originalEmailBodyReport.equals(templateReport)) {
+                event.getSource().remove(originalEmailBodyReport);
+            }
         }
     }
 
@@ -166,24 +182,6 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     public void setSubjectVisibility() {
         subjectField.setVisible(BooleanUtils.isNotTrue(getEditedEntity().getUseReportSubject()));
-    }
-
-    @Override
-    protected boolean preCommit() {
-        super.preCommit();
-       /* todo: if (!PersistenceHelper.isNew(getEditedEntity())) {
-            ReportEmailTemplate original = getDsContext().getDataSupplier().reload(getEditedEntity(), "emailTemplate-fetchPlan");
-            ReportEmailTemplate current = getEditedEntity();
-            TemplateReport originalEmailBodyReport = original.getEmailBodyReport();
-            if (originalEmailBodyReport != null && !originalEmailBodyReport.equals(current.getEmailBodyReport())) {
-                entitiesToRemove.addAll(originalEmailBodyReport.getParameterValues());
-                entitiesToRemove.add(originalEmailBodyReport);
-            }
-            if (current.getEmailBodyReport() != null) {
-                bodyParameterValuesDc.setModified(true);
-            }
-        }*/
-        return true;
     }
 
     public void runReport() {

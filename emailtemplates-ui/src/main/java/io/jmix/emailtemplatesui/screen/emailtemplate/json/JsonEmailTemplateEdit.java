@@ -158,22 +158,6 @@ public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTempl
         }
     }
 
-    //todo:  check method needs
-    @Override
-    protected boolean preCommit() {
-        initTemplateReport();
-        return super.preCommit();
-    }
-
-    //todo: check method needs
-    private void initTemplateReport() {
-        getEditedEntity().setHtml(templateEditor.getValue());
-        getEditedEntity().setReport(report);
-        report = templateConverter.convertToReport(getEditedEntity());
-        reportDc.setItem(report);
-        getEditedEntity().setReport(report);
-    }
-
     @Subscribe("exportHtml")
     public void exportHtml(Button.ClickEvent event) {
         HtmlSourceCodeScreen sourceCodeWindow = screens.create(HtmlSourceCodeScreen.class,

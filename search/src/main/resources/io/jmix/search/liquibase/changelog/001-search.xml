@@ -23,7 +23,7 @@
 
     <changeSet author="search" id="1">
         <createTable tableName="SEARCH_QUEUE">
-            <column name="ID" type="UUID">
+            <column name="ID" type="${uuid.type}">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="PK_SEARCH_QUEUE"/>
             </column>
             <column name="ENTITY_CLASS" type="VARCHAR(1000)">

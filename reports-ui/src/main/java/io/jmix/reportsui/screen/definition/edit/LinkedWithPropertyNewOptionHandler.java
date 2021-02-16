@@ -17,6 +17,7 @@
 package io.jmix.reportsui.screen.definition.edit;
 
 import io.jmix.core.entity.EntityValues;
+import io.jmix.ui.component.HasEnterPressHandler.EnterPressEvent;
 import io.jmix.ui.model.InstanceContainer;
 
 import java.util.function.Consumer;
@@ -24,7 +25,7 @@ import java.util.function.Consumer;
 /**
  *
  */
-class LinkedWithPropertyNewOptionHandler implements Consumer<String> {
+class LinkedWithPropertyNewOptionHandler implements Consumer<EnterPressEvent> {
     protected InstanceContainer datasource;
     protected String fieldName;
 
@@ -38,7 +39,7 @@ class LinkedWithPropertyNewOptionHandler implements Consumer<String> {
     }
 
     @Override
-    public void accept(String caption) {
-        EntityValues.setValue(datasource.getItem(), fieldName, caption);
+    public void accept(EnterPressEvent event) {
+        EntityValues.setValue(datasource.getItem(), fieldName, event.getText());
     }
 }

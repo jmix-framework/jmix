@@ -146,9 +146,10 @@ public class ValueFormatEditor extends StandardEditor<ReportValueFormat> {
     protected void initFormatComboBox() {
         formatField.setOptionsList(Arrays.asList(defaultFormats));
 
-        formatField.setNewOptionHandler(caption -> {
-            addFormatItem(caption);
-            formatField.setValue(caption);
+        formatField.setEnterPressHandler(enterPressEvent -> {
+            String text = enterPressEvent.getText();
+            addFormatItem(text);
+            formatField.setValue(text);
         });
 
         formatField.setEditable(secureOperations.isEntityUpdatePermitted(metadata.getClass(ReportValueFormat.class), policyStore));

@@ -326,9 +326,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
         viewNameField.setOptionsMap(new HashMap<>());
 
-        entitiesParamField.setNewOptionHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "listEntitiesParamName"));
-        entityParamField.setNewOptionHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "entityParamName"));
-        viewNameField.setNewOptionHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "viewName"));
+        entitiesParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "listEntitiesParamName"));
+        entityParamField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "entityParamName"));
+        viewNameField.setEnterPressHandler(LinkedWithPropertyNewOptionHandler.handler(dataSetsDc, "viewName"));
     }
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)

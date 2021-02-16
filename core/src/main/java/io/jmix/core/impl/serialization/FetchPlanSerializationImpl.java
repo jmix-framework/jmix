@@ -46,6 +46,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
     protected Metadata metadata;
     @Autowired
     protected FetchPlans fetchPlans;
+    @Autowired
+    protected CoreProperties coreProperties;
 
     private static final Logger log = LoggerFactory.getLogger(FetchPlanSerializationImpl.class);
 
@@ -72,6 +74,8 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
 
         protected boolean includeFetchMode = false;
 
+        protected String fetchPlanAttributeName = "fetchPlan";
+
         protected List<FetchPlan> processedFetchPlans = new ArrayList<>();
 
         public FetchPlanSerializer(FetchPlanSerializationOption[] options) {
@@ -82,6 +86,9 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                 if (option == INCLUDE_FETCH_MODE) {
                     includeFetchMode = true;
                 }
+            }
+            if (coreProperties.isFetchPlanSerializationUseView()) {
+                fetchPlanAttributeName = "view";
             }
         }
 
@@ -115,16 +122,16 @@ public class FetchPlanSerializationImpl implements FetchPlanSerialization {
                             FetchPlan processedFetchPlan = findProcessedFetchPlan(processedFetchPlans, nestedFetchPlan.getEntityClass(), nestedFetchPlanName);
                             if (processedFetchPlan == null) {
                                 processedFetchPlans.add(nestedFetchPlan);
-                                propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                                propertyObject.add(fetchPlanAttributeName, createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                             } else {
                                 //if we already processed this fetchPlan, just add its name as a string
-                                propertyObject.addProperty("fetchPlan", nestedFetchPlanName);
+                                propertyObject.addProperty(fetchPlanAttributeName, nestedFetchPlanName);
                             }
                         } else {
-                            propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                            propertyObject.add(fetchPlanAttributeName, createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                         }
                     } else {
-                        propertyObject.add("fetchPlan", createJsonObjectForNestedFetchPlan(nestedFetchPlan));
+                        propertyObject.add(fetchPlanAttributeName, createJsonObjectForNestedFetchPlan(nestedFetchPlan));
                     }
 
                     if (includeFetchMode && fetchPlanProperty.getFetchMode() != null && fetchPlanProperty.getFetchMode() != FetchMode.AUTO) {

@@ -48,6 +48,7 @@ public class CoreProperties {
     int dom4jMaxBorrowWaitMillis;
     boolean entitySerializationTokenRequired;
     String entitySerializationTokenEncryptionKey;
+    boolean fetchPlanSerializationUseView;
 
     public CoreProperties(
             String webHostName,
@@ -65,9 +66,11 @@ public class CoreProperties {
             @DefaultValue("de72c623-6d3d-458c-a187-c526de515ecd") String anonymousAuthenticationTokenKey,
             String defaultFileStorage,
             @DefaultValue("false")
-            boolean entitySerializationTokenRequired,
+                    boolean entitySerializationTokenRequired,
             @DefaultValue("KEY")
-            String entitySerializationTokenEncryptionKey) {
+                    String entitySerializationTokenEncryptionKey,
+            @DefaultValue("false")
+                    boolean fetchPlanSerializationUseView) {
         this.webHostName = webHostName;
         this.webPort = webPort;
         this.confDir = confDir;
@@ -94,6 +97,7 @@ public class CoreProperties {
 
         this.entitySerializationTokenRequired = entitySerializationTokenRequired;
         this.entitySerializationTokenEncryptionKey = entitySerializationTokenEncryptionKey;
+        this.fetchPlanSerializationUseView = fetchPlanSerializationUseView;
     }
 
     /**
@@ -182,5 +186,9 @@ public class CoreProperties {
 
     public String getEntitySerializationTokenEncryptionKey() {
         return entitySerializationTokenEncryptionKey;
+    }
+
+    public boolean isFetchPlanSerializationUseView() {
+        return fetchPlanSerializationUseView;
     }
 }

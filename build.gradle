@@ -31,13 +31,13 @@ repositories {
                 }
             }
         }
-        jcenter()
+        mavenCentral()
     } else {
         mavenLocal()
         maven {
             url "https://nexus.jmix.io/repository/public"
         }
-        jcenter()
+        mavenCentral()
     }
 }
 

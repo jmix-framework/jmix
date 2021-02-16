@@ -24,7 +24,7 @@ plugins {
 group = 'io.jmix.build'
 
 repositories {
-    jcenter()
+    mavenCentral()
     gradlePluginPortal()
 }
 

@@ -41,7 +41,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                             }
                         }
                     }
-                    jcenter()
+                    mavenCentral()
                 }
             } else {
                 repositories {
@@ -49,7 +49,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                     maven {
                         url('https://nexus.jmix.io/repository/public')
                     }
-                    jcenter()
+                    mavenCentral()
                 }
             }
         }

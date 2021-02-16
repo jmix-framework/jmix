@@ -29,7 +29,7 @@ import java.util.function.Predicate;
  */
 public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffered,
         Component.Focusable, HasOptionStyleProvider<V>, HasOptionIconProvider<V>, HasOptionImageProvider<V>,
-        HasFilterMode {
+        HasFilterMode, HasEnterPressHandler {
 
     String NAME = "comboBox";
 
@@ -76,19 +76,6 @@ public interface ComboBox<V> extends OptionsField<V, V>, HasInputPrompt, Buffere
      * @return whether popup is automatically shows on focus.
      */
     boolean isAutomaticPopupOnFocus();
-
-    /**
-     * @return current handler
-     */
-    @Nullable
-    Consumer<String> getNewOptionHandler();
-
-    /**
-     * Sets the handler that is called when user types a new item.
-     *
-     * @param newOptionHandler handler instance
-     */
-    void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler);
 
     /**
      * @return the page length of the suggestion popup.

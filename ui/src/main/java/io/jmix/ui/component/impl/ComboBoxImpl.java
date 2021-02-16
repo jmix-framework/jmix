@@ -56,7 +56,7 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
 
     protected boolean nullOptionVisible = true;
 
-    protected Consumer<String> newOptionHandler;
+    protected Consumer<EnterPressEvent> enterPressHandler;
 
     protected Function<? super V, String> optionIconProvider;
     protected Function<? super V, io.jmix.ui.component.Resource> optionImageProvider;
@@ -245,13 +245,6 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
         return optionCaptionProvider;
     }
 
-    protected void onNewItemEntered(String newItemCaption) {
-        if (newOptionHandler == null) {
-            throw new IllegalStateException("New item handler cannot be NULL");
-        }
-        newOptionHandler.accept(newItemCaption);
-    }
-
     @Override
     public boolean isTextInputAllowed() {
         return component.isTextInputAllowed();
@@ -272,23 +265,30 @@ public class ComboBoxImpl<V> extends AbstractField<JmixComboBox<V>, V, V>
 
     @Nullable
     @Override
-    public Consumer<String> getNewOptionHandler() {
-        return newOptionHandler;
+    public Consumer<EnterPressEvent> getEnterPressHandler() {
+        return enterPressHandler;
     }
 
     @Override
-    public void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler) {
-        this.newOptionHandler = newOptionHandler;
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent> handler) {
+        this.enterPressHandler = handler;
 
-        if (newOptionHandler != null
+        if (handler != null
                 && component.getNewItemHandler() == null) {
-            component.setNewItemHandler(this::onNewItemEntered);
+            component.setNewItemHandler(this::onEnterPressed);
         }
 
-        if (newOptionHandler == null
+        if (handler == null
                 && component.getNewItemHandler() != null) {
             component.setNewItemHandler(null);
         }
+    }
+
+    protected void onEnterPressed(String text) {
+        if (enterPressHandler == null) {
+            throw new IllegalStateException("EnterPress handler cannot be NULL");
+        }
+        enterPressHandler.accept(new EnterPressEvent(this, text));
     }
 
     @Override

@@ -56,7 +56,7 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
     protected FilterMode filterMode = FilterMode.CONTAINS;
     protected Predicate<OptionsCaptionFilteringContext> optionsCaptionFilter;
 
-    protected Consumer<String> newOptionHandler;
+    protected Consumer<EnterPressEvent> enterPressHandler;
 
     protected Function<? super V, String> optionCaptionProvider;
     protected Function<? super V, String> optionIconProvider;
@@ -163,13 +163,6 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
         this.filterMode = filterMode;
     }
 
-    protected void onNewItemEntered(String newItemCaption) {
-        if (newOptionHandler == null) {
-            throw new IllegalStateException("New item handler cannot be NULL");
-        }
-        newOptionHandler.accept(newItemCaption);
-    }
-
     @Override
     public Subscription addFieldValueChangeListener(Consumer<FieldValueChangeEvent<V>> listener) {
         throw new UnsupportedOperationException();
@@ -217,23 +210,30 @@ public class EntityComboBoxImpl<V> extends EntityPickerImpl<V>
 
     @Nullable
     @Override
-    public Consumer<String> getNewOptionHandler() {
-        return newOptionHandler;
+    public Consumer<EnterPressEvent> getEnterPressHandler() {
+        return enterPressHandler;
     }
 
     @Override
-    public void setNewOptionHandler(@Nullable Consumer<String> newOptionHandler) {
-        this.newOptionHandler = newOptionHandler;
+    public void setEnterPressHandler(@Nullable Consumer<EnterPressEvent> handler) {
+        this.enterPressHandler = handler;
 
-        if (newOptionHandler != null
+        if (handler != null
                 && getComponent().getNewItemHandler() == null) {
-            getComponent().setNewItemHandler(this::onNewItemEntered);
+            getComponent().setNewItemHandler(this::onEnterPressed);
         }
 
-        if (newOptionHandler == null
+        if (handler == null
                 && getComponent().getNewItemHandler() != null) {
             getComponent().setNewItemHandler(null);
         }
+    }
+
+    protected void onEnterPressed(String text) {
+        if (enterPressHandler == null) {
+            throw new IllegalStateException("EnterPress handler cannot be NULL");
+        }
+        enterPressHandler.accept(new EnterPressEvent(this, text));
     }
 
     @Override

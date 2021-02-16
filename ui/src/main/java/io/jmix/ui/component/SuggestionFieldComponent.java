@@ -29,7 +29,7 @@ import java.util.function.Consumer;
  * @param <I> item type
  */
 public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focusable, HasInputPrompt,
-        HasOptionStyleProvider<I>, HasFormatter<I> {
+        HasOptionStyleProvider<I>, HasFormatter<I>, HasEnterPressHandler {
 
     String POPUP_AUTO_WIDTH = "auto";
     String POPUP_PARENT_WIDTH = "parent";
@@ -58,19 +58,6 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
      * @param searchExecutor SearchExecutor instance
      */
     void setSearchExecutor(@Nullable SearchExecutor<I> searchExecutor);
-
-    /**
-     * @return an ENTER press handler
-     */
-    @Nullable
-    Consumer<EnterPressEvent> getEnterPressHandler();
-
-    /**
-     * Sets an ENTER press handler.
-     *
-     * @param handler an ENTER press handler to set
-     */
-    void setEnterPressHandler(@Nullable Consumer<EnterPressEvent> handler);
 
     /**
      * @return an ARROW_DOWN press handler
@@ -159,30 +146,6 @@ public interface SuggestionFieldComponent<V, I> extends Field<V>, Component.Focu
          * @return map with parameters
          */
         Map<String, Object> getParams();
-    }
-
-    /**
-     * Event is fired when the user presses the enter key when the text field is on focus.
-     */
-    @SuppressWarnings("rawtypes")
-    class EnterPressEvent extends EventObject {
-
-        protected String text;
-
-        public EnterPressEvent(SuggestionFieldComponent source, String text) {
-            super(source);
-
-            this.text = text;
-        }
-
-        @Override
-        public SuggestionFieldComponent getSource() {
-            return (SuggestionFieldComponent) super.getSource();
-        }
-
-        public String getText() {
-            return text;
-        }
     }
 
     /**

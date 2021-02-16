@@ -93,6 +93,12 @@
       flex-shrink: 1;
     }
 
+    .c-user-timezone-label {
+      font-weight: $cuba-sidemenu-timezone-font-weight;
+      padding: round($v-layout-spacing-vertical / 2) $v-layout-spacing-vertical;
+      text-align: center;
+    }
+
     .jmix-drawer-footer {
       background: $cuba-sidemenu-title-background-color;
 
@@ -129,6 +135,7 @@
       }
 
       .c-userindicator {
+        font-weight: $cuba-sidemenu-userindicator-font-weight;
         width: $cuba-sidemenu-layout-expanded-width - $cuba-sidemenu-layout-collapsed-width - 2 * $v-unit-size;
         padding: 0 round($v-layout-spacing-horizontal / 2);
 

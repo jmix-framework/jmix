@@ -52,6 +52,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,6 +63,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Component(Reports.NAME)
 public class ReportsImpl implements Reports {
+
     public static final String REPORT_EDIT_VIEW_NAME = "report.edit";
     protected static final int MAX_REPORT_NAME_LENGTH = 255;
     protected static final String IDX_SEPARATOR = ",";
@@ -85,13 +87,10 @@ public class ReportsImpl implements Reports {
     @Autowired
     protected PolicyStore policyStore;
 
-    protected FileStorage fileStorage;
-
-    //    @Autowired
-//    protected UserSessionSource userSessionSource;
     //TODO global config
 //    @Autowired
 //    protected GlobalConfig globalConfig;
+
     @Autowired
     protected ReportsProperties reportsProperties;
 
@@ -100,15 +99,15 @@ public class ReportsImpl implements Reports {
 
     @Autowired
     protected MetadataTools metadataTools;
+
     //TODO Dynamic attributes manager API
 //    @Autowired
 //    protected DynamicAttributesManagerAPI dynamicAttributesManagerAPI;
+
     //TODO executions
 //    @Autowired
 //    protected Executions executions;
-    //TODO persistence security
-//    @Autowired
-//    protected PersistenceSecurity security;
+
     @Autowired
     protected EntityStates entityStates;
 
@@ -129,14 +128,26 @@ public class ReportsImpl implements Reports {
     @PersistenceContext
     protected EntityManager em;
 
+    protected FileStorage fileStorage;
 
     //todo eude try to simplify report save logic
     @Override
     public Report storeReportEntity(Report report) {
-        Report savedReport = null;
         checkPermission(report);
-//        Transaction tx = persistence.createTransaction();
-//        try {
+
+        Report savedReport = transaction.execute(action -> saveReport(report));
+
+        FetchPlan reportEditView = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_VIEW_NAME);
+        return dataManager.load(Id.of(savedReport))
+                .fetchPlan(reportEditView)
+                .one();
+
+        //TODO Dynamic attributes manager
+        //return dataManager.reload(savedReport, reportEditView, metadata.getClass(savedReport), true);
+    }
+
+    @NotNull
+    protected Report saveReport(Report report) {
         ReportTemplate defaultTemplate = report.getDefaultTemplate();
         List<ReportTemplate> loadedTemplates = report.getTemplates();
         List<ReportTemplate> savedTemplates = new ArrayList<>();
@@ -221,19 +232,7 @@ public class ReportsImpl implements Reports {
         }
         report.setDefaultTemplate(defaultTemplate);
         report.setTemplates(savedTemplates);
-        savedReport = report;
-
-//            tx.commit();
-//        } finally {
-//            tx.end();
-//        }
-
-        FetchPlan reportEditView = fetchPlanRepository.getFetchPlan(metadata.getClass(savedReport), REPORT_EDIT_VIEW_NAME);
-        return dataManager.load(Id.of(savedReport))
-                .fetchPlan(reportEditView)
-                .one();
-        //TODO Dynamic attributes manager
-        //return dataManager.reload(savedReport, reportEditView, metadata.getClass(savedReport), true);
+        return report;
     }
 
     @Override

@@ -63,7 +63,7 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
     private MessageBundle messageBundle;
 
     @Autowired
-    protected VBoxLayout defaultValuesBox;
+    protected VBoxLayout bodyDefaultValuesBox;
 
     @Autowired
     protected Fragments fragments;
@@ -77,7 +77,7 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
     @Autowired
     protected DataLoader emailBodiesDl;
 
-    protected EmailTemplateParametersFragment parametersFragment;
+    protected EmailTemplateParametersFragment bodyParametersFragment;
 
     @Autowired
     protected InstanceContainer<TemplateReport> emailBodyReportDc;
@@ -90,17 +90,17 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
         emailBodiesDl.load();
         emailTemplateDl.load();
 
-        parametersFragment = fragments.create(this, EmailTemplateParametersFragment.class)
+        bodyParametersFragment = fragments.create(this, EmailTemplateParametersFragment.class)
                 .setIsDefaultValues(true)
                 .setHideReportCaption(true);
-        defaultValuesBox.add(parametersFragment.getFragment());
+        bodyDefaultValuesBox.add(bodyParametersFragment.getFragment());
 
-        parametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
+        bodyParametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
 
         if (getEditedEntity().getEmailBodyReport() != null) {
-            parametersFragment.createComponents();
+            bodyParametersFragment.createComponents();
         } else {
-            parametersFragment.clearComponents();
+            bodyParametersFragment.clearComponents();
         }
 
         emailBody.setValue(getEditedEntity().getReport());
@@ -120,21 +120,17 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
     private void updateParametersComponents() {
         Report value = emailBody.getValue();
         if (value != null) {
-            Report report = dataManager.load(Report.class)
-                    .id(value.getId())
-                    .fetchPlan("emailTemplate-fetchPlan")
-                    .one();
-            if (report.getDefaultTemplate() != null) {
-                if (ReportOutputType.HTML == report.getDefaultTemplate().getReportOutputType()) {
+            if (value.getDefaultTemplate() != null) {
+                if (ReportOutputType.HTML == value.getDefaultTemplate().getReportOutputType()) {
                     TemplateReport templateReport = metadata.create(TemplateReport.class);
                     templateReport.setParameterValues(new ArrayList<>());
-                    templateReport.setReport(report);
+                    templateReport.setReport(value);
                     emailBodyReportDc.setItem(templateReport);
 
                     getEditedEntity().setEmailBodyReport(templateReport);
 
-                    parametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
-                    parametersFragment.createComponents();
+                    bodyParametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
+                    bodyParametersFragment.createComponents();
                 } else {
                     resetTemplateReport();
                     emailBody.setValue(null);
@@ -164,8 +160,8 @@ public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailT
 
     protected void resetTemplateReport() {
         emailBodyReportDc.setItem(null);
-        parametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
-        parametersFragment.clearComponents();
+        bodyParametersFragment.setTemplateReport(getEditedEntity().getEmailBodyReport());
+        bodyParametersFragment.clearComponents();
     }
 
     public void setSubjectVisibility() {

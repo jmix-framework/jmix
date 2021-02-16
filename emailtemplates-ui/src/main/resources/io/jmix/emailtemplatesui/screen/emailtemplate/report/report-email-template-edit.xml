@@ -47,7 +47,7 @@
         </collection>
         <collection id="emailBodiesDc"
                     class="io.jmix.reports.entity.Report"
-                    fetchPlan="_instance_name">
+                    fetchPlan="emailTemplate-fetchPlan">
             <loader id="emailBodiesDl">
                 <query>
                     <![CDATA[select e from report_Report e where e.defaultTemplate.reportOutputType = 30]]>
@@ -142,7 +142,7 @@
                                     <label value="msg://defaultParameters"/>
                                     <scrollBox id="propertiesScrollBox"
                                                height="100%">
-                                        <vbox id="defaultValuesBox"/>
+                                        <vbox id="bodyDefaultValuesBox"/>
                                     </scrollBox>
                                 </vbox>
                             </groupBox>

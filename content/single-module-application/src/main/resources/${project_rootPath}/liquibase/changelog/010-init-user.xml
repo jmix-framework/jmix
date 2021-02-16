@@ -7,7 +7,7 @@
 
     <changeSet id="1" author="${project_name}">
 
-        <createTable tableName="${normalizedPrefix_underscore.toUpperCase()}USER">
+        <createTable tableName="${userTable}">
             <column name="ID" type="\${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -27,15 +27,15 @@
     </changeSet>
 
     <changeSet id="2" author="${project_name}">
-        <createIndex indexName="IDX_${normalizedPrefix_underscore.toUpperCase()}USER_ON_USERNAME"
-                     tableName="${normalizedPrefix_underscore.toUpperCase()}USER" unique="true">
+        <createIndex indexName="IDX_${userTable}_ON_USERNAME"
+                     tableName="${userTable}" unique="true">
             <column name="USERNAME"/>
         </createIndex>
     </changeSet>
 
     <changeSet id="3" author="${project_name}">
 
-        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER" dbms="postgresql, mssql, hsqldb">
+        <insert tableName="${userTable}" dbms="postgresql, mssql, hsqldb">
             <column name="ID" value="60885987-1b61-4247-94c7-dff348347f93"/>
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>
@@ -43,7 +43,7 @@
             <column name="ENABLED" valueBoolean="true"/>
         </insert>
 
-        <insert tableName="${normalizedPrefix_underscore.toUpperCase()}USER" dbms="oracle, mysql, mariadb">
+        <insert tableName="${userTable}" dbms="oracle, mysql, mariadb">
             <column name="ID" value="608859871b61424794c7dff348347f93"/>
             <column name="VERSION" value="1"/>
             <column name="USERNAME" value="admin"/>

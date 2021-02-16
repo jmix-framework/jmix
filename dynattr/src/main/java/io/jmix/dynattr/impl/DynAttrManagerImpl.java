@@ -44,6 +44,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.jmix.core.entity.EntitySystemAccess.*;
 
@@ -128,23 +129,27 @@ public class DynAttrManagerImpl implements DynAttrManager {
                     }
                 }
 
-                for (String attributeName : changes.getCreated().keySet()) {
-                    if (changes.isCreated(attributeName)) {
-                        dynAttrMetadata.getAttributeByCode(metaClass, attributeName)
-                                .ifPresent(attribute -> {
-                                    CategoryAttributeValue attributeValue = metadata.create(CategoryAttributeValue.class);
-                                    setValueToCategoryAttributeValue(attributeValue, dynamicModel.getValue(attributeName));
-                                    attributeValue.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
-                                    attributeValue.setCode(attributeName);
-                                    attributeValue.setCategoryAttribute((CategoryAttribute) attribute.getSource());
+                List<String> existing = attributeValues.stream().map(CategoryAttributeValue::getCode).collect(Collectors.toList());
+                List<String> toPersist = Stream.concat(
+                        changes.getCreated().keySet().stream(),
+                        changes.getUpdated().keySet().stream().filter(a -> !existing.contains(a))) //Haulmont/jmix-data#43
+                        .collect(Collectors.toList());
 
-                                    entityManager.persist(attributeValue);
+                for (String attributeName : toPersist) {
+                    dynAttrMetadata.getAttributeByCode(metaClass, attributeName)
+                            .ifPresent(attribute -> {
+                                CategoryAttributeValue attributeValue = metadata.create(CategoryAttributeValue.class);
+                                setValueToCategoryAttributeValue(attributeValue, dynamicModel.getValue(attributeName));
+                                attributeValue.setObjectEntityId(referenceToEntitySupport.getReferenceId(entity));
+                                attributeValue.setCode(attributeName);
+                                attributeValue.setCategoryAttribute((CategoryAttribute) attribute.getSource());
 
-                                    if (attribute.isCollection()) {
-                                        doStoreCollectionValue(attributeValue);
-                                    }
-                                });
-                    }
+                                entityManager.persist(attributeValue);
+
+                                if (attribute.isCollection()) {
+                                    doStoreCollectionValue(attributeValue);
+                                }
+                            });
                 }
             }
             //todo: refresh state

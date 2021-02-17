@@ -3,6 +3,6 @@ globals["normalizedPrefix_underscore"] = (project_idPrefix == null || project_id
 if(globals["normalizedPrefix_underscore"].isEmpty()) {
     globals["userTable"] = "USER_"
 } else {
-    globals["userTable"] = globals["normalizedPrefix_underscore"] + "USER"
+    globals["userTable"] = globals["normalizedPrefix_underscore"].toUpperCase() + "USER"
 }
 %>

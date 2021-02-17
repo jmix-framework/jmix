@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -85,27 +86,52 @@ public class DbmsSpecifics {
 
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> intf, String dbmsType, String dbmsVersion) {
-        T bean;
-        try {
-            String typeVersion = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion);
-            if (DbmsFeatures.class.isAssignableFrom(intf)) {
-                Collection<T> beans = applicationContext.getBeansOfType(intf).values().stream()
-                        .filter(features -> ((DbmsFeatures) features).getTypeAndVersion().equals(typeVersion))
-                        .collect(Collectors.toList());
-                bean = beanSelector.selectFrom(beans);
-            } else if (DbTypeConverter.class.isAssignableFrom(intf)) {
-                Collection<T> beans = applicationContext.getBeansOfType(intf).values().stream()
-                        .filter(features -> ((DbTypeConverter) features).getTypeAndVersion().equals(typeVersion))
-                        .collect(Collectors.toList());
-                bean = beanSelector.selectFrom(beans);
-            } else {
-                String name = StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion) + intf.getSimpleName();
+        T bean = null;
+        String typeVersionId = getTypeVersionId(dbmsType, dbmsVersion);
+        String typeId = getTypeId(dbmsType);
+        if (DbmsFeatures.class.isAssignableFrom(intf)) {
+            bean = (T) findDbmsFeatures(typeVersionId);
+            if (bean == null) {
+                bean = (T) findDbmsFeatures(typeId);
+            }
+        } else if (DbTypeConverter.class.isAssignableFrom(intf)) {
+            bean = (T) findDbTypeConverter(typeVersionId);
+            if (bean == null) {
+                bean = (T) findDbTypeConverter(typeId);
+            }
+        } else {
+            try {
+                String name = typeVersionId + intf.getSimpleName();
+                bean = (T) applicationContext.getBean(name);
+            } catch (NoSuchBeanDefinitionException e) {
+                String name = typeId + intf.getSimpleName();
                 bean = (T) applicationContext.getBean(name);
             }
-        } catch (NoSuchBeanDefinitionException e) {
-            String name = StringHelper.underscoreToCamelCase(dbmsType) + intf.getSimpleName();
-            bean = (T) applicationContext.getBean(name);
         }
         return bean;
+    }
+
+    protected String getTypeVersionId(String dbmsType, String dbmsVersion) {
+        return StringHelper.underscoreToCamelCase(dbmsType) + StringUtils.capitalize(dbmsVersion);
+    }
+
+    protected String getTypeId(String dbmsType) {
+        return StringHelper.underscoreToCamelCase(dbmsType);
+    }
+
+    @Nullable
+    protected DbmsFeatures findDbmsFeatures(String typeVersion) {
+        Collection<DbmsFeatures> beans = applicationContext.getBeansOfType(DbmsFeatures.class).values().stream()
+                .filter(features -> features.getTypeAndVersion().equals(typeVersion))
+                .collect(Collectors.toList());
+        return beanSelector.selectFrom(beans);
+    }
+
+    @Nullable
+    protected DbTypeConverter findDbTypeConverter(String typeVersion) {
+        Collection<DbTypeConverter> beans = applicationContext.getBeansOfType(DbTypeConverter.class).values().stream()
+                .filter(converter -> converter.getTypeAndVersion().equals(typeVersion))
+                .collect(Collectors.toList());
+        return beanSelector.selectFrom(beans);
     }
 }

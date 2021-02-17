@@ -40,7 +40,7 @@
                       caption="msg://resourceRoles"
                       height="100%"
                       expand="resourceRoleAssignmentsTable">
-                <groupTable id="resourceRoleAssignmentsTable"
+                <table id="resourceRoleAssignmentsTable"
                             width="100%"
                             dataContainer="resourceRoleAssignmentEntitiesDc"
                             multiselect="true">
@@ -63,13 +63,13 @@
                         <button id="addResourceRoleBtn" action="resourceRoleAssignmentsTable.addResourceRole"/>
                         <button id="removeResourceRoleBtn" action="resourceRoleAssignmentsTable.remove"/>
                     </buttonsPanel>
-                </groupTable>
+                </table>
             </groupBox>
             <groupBox spacing="true"
                       caption="msg://rowLevelRoles"
                       height="100%"
                       expand="rowLevelRoleAssignmentsTable">
-                <groupTable id="rowLevelRoleAssignmentsTable"
+                <table id="rowLevelRoleAssignmentsTable"
                             width="100%"
                             dataContainer="rowLevelRoleAssignmentEntitiesDc"
                             multiselect="true">
@@ -93,7 +93,7 @@
                         <button id="addRowLevelRoleBtn" action="rowLevelRoleAssignmentsTable.addRowLevelRole"/>
                         <button id="removeRowLevelRoleBtn" action="rowLevelRoleAssignmentsTable.remove"/>
                     </buttonsPanel>
-                </groupTable>
+                </table>
             </groupBox>
         </hbox>
     </layout>

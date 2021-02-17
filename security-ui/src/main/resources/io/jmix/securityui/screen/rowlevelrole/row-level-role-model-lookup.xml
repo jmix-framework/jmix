@@ -26,7 +26,7 @@
     <dialogMode height="600"
                 width="800"/>
     <layout spacing="true" expand="roleModelsTable">
-        <groupTable id="roleModelsTable"
+        <table id="roleModelsTable"
                     width="100%"
                     dataContainer="roleModelsDc"
                     multiselect="true"
@@ -36,7 +36,7 @@
                 <column id="code"/>
             </columns>
             <simplePagination/>
-        </groupTable>
+        </table>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>
             <button action="lookupCancelAction"/>

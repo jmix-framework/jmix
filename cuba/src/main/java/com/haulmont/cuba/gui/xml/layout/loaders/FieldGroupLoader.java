@@ -25,6 +25,7 @@ import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
+import com.haulmont.cuba.gui.data.EmbeddedDatasource;
 import com.haulmont.cuba.gui.dynamicattributes.DynamicAttributesGuiTools;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.xml.DeclarativeFieldGenerator;
@@ -34,6 +35,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -668,10 +670,23 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
             MetaClass metaClass = getMetaClass(resultComponent, field);
             MetaPropertyPath propertyPath = getMetadataTools().resolveMetaPropertyPath(metaClass, field.getProperty());
 
+            boolean permittedIfEmbedded = true;
             Security security = applicationContext.getBean(Security.class);
-            if (!security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) ||
-                    (getMetadataTools().isJpaEmbeddable(metaClass) &&
-                            !security.isEntityOpPermitted(getParentEntityMetaClass(resultComponent), EntityOp.UPDATE))) {
+            if (getMetadataTools().isJpaEmbeddable(metaClass)) {
+                MetaClass parentMetaClass = getParentEntityMetaClass(resultComponent);
+                MetaProperty embeddedProperty = ((EmbeddedDatasource) field.getTargetDatasource()).getProperty();
+                permittedIfEmbedded = security.isEntityOpPermitted(parentMetaClass, EntityOp.UPDATE)
+                        && security.isEntityAttrPermitted(parentMetaClass, embeddedProperty.getName(), EntityAttrAccess.MODIFY);
+                if (permittedIfEmbedded && propertyPath.length() > 1) {
+                    for (MetaProperty property : propertyPath.getMetaProperties()) {
+                        if (!security.isEntityAttrUpdatePermitted(property.getDomain(), property.getName())) {
+                            permittedIfEmbedded = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!security.isEntityAttrUpdatePermitted(metaClass, propertyPath.toString()) || !permittedIfEmbedded) {
                 field.setEditable(false);
             }
         }
@@ -698,7 +713,12 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
     }
 
     protected MetaClass getParentEntityMetaClass(FieldGroup resultComponent) {
-        return resultComponent.getDatasource().getMetaClass();
+        Datasource datasource = resultComponent.getDatasource();
+        if (datasource instanceof EmbeddedDatasource) {
+            return ((EmbeddedDatasource<?>) datasource).getMaster().getMetaClass();
+        } else {
+            return datasource.getMetaClass();
+        }
     }
 
     protected void loadEnable(FieldGroup resultComponent, FieldGroup.FieldConfig field) {

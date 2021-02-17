@@ -47,7 +47,6 @@
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
                 <action id="remove" type="remove"/>
-                <action id="refresh" type="refresh"/>
                 <action id="showRoleAssignments" type="showRoleAssignments"/>
                 <action id="changePassword" type="changePassword"/>
                 <action id="resetRememberMeToken" type="resetRememberMeToken"/>
@@ -72,7 +71,6 @@
                         <action id="usersTable.resetRememberMeToken"/>
                     </actions>
                 </popupButton>
-                <button id="refreshBtn" action="usersTable.refresh"/>
             </buttonsPanel>
         </groupTable>
         <hbox id="lookupActions" spacing="true" visible="false">

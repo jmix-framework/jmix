@@ -1,4 +1,4 @@
-# Email Templates
+# Jmix Email Templates
 
 - [1. Overview](#Overview)
 - [2. Installation](#installation)
@@ -30,7 +30,7 @@ Key features:
 # 2. Installation <a name="installation"></a>
 
 The add-on can be added to your project by adding the following dependencies:
-```
+```groovy
 implementation 'io.jmix.emailtemplates:jmix-emailtemplates-starter'
 implementation 'io.jmix.emailtemplates:jmix-emailtemplates-ui-starter'
 ```

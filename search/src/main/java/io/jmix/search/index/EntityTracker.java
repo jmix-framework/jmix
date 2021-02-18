@@ -17,7 +17,7 @@
 package io.jmix.search.index;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
+import io.jmix.core.Id;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -29,12 +29,12 @@ import io.jmix.data.listener.BeforeInsertEntityListener;
 import io.jmix.data.listener.BeforeUpdateEntityListener;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import io.jmix.search.index.queue.QueueService;
+import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +58,8 @@ public class EntityTracker implements
     protected DataManager dataManager;
     @Autowired
     protected QueueService queueService;
+    @Autowired
+    protected PropertyTools propertyTools;
 
     @Override
     public void onBeforeInsert(Object entity) {
@@ -84,28 +86,29 @@ public class EntityTracker implements
 
             if (isDirectlyIndexed(metaClass.getName())) { //todo check dirty fields
                 log.info("[IVGA] {} is directly indexed", entityClass);
-                String entityId = getEntityIdAsString(entity); //todo use PK property
-                queueService.enqueue(metaClass, entityId, entityChangeType);
+                Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
+                log.info("[IVGA] Primary Key of tracked entity: {}", primaryKey);
+                primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityChangeType));
             }
 
-            Map<MetaClass, Set<String>> dependentEntityIds;
+            Map<MetaClass, Set<String>> dependentEntityPks;
             switch (entityChangeType) {
                 case CREATE:
                 case UPDATE:
-                    dependentEntityIds = getDependentEntityIdsForUpdate(entity, entityClass);
-                    log.info("[IVGA] Dependent entities for Create/Update: {}", dependentEntityIds);
+                    dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass);
+                    log.info("[IVGA] Dependent entities for Create/Update: {}", dependentEntityPks);
                     break;
                 case DELETE:
-                    dependentEntityIds = getDependentEntityIdsForDelete(entity, entityClass);
-                    log.info("[IVGA] Dependent entities for Delete: {}", dependentEntityIds);
+                    dependentEntityPks = getDependentEntityPksForDelete(entity, entityClass);
+                    log.info("[IVGA] Dependent entities for Delete: {}", dependentEntityPks);
                     break;
                 default:
-                    dependentEntityIds = Collections.emptyMap();
+                    dependentEntityPks = Collections.emptyMap();
                     break;
             }
 
-            dependentEntityIds.forEach(
-                    ((dependentEntityClass, ids) -> queueService.enqueue(dependentEntityClass, ids, EntityChangeType.UPDATE))
+            dependentEntityPks.forEach(
+                    ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityChangeType.UPDATE))
             );
         } catch (Exception e) {
             log.error("[IVGA] Failed to enqueue data for entity {} and change type '{}'", entity, entityChangeType, e);
@@ -116,21 +119,21 @@ public class EntityTracker implements
         return indexDefinitionsProvider.isDirectlyIndexed(entityName);
     }
 
-    protected Map<MetaClass, Set<String>> getDependentEntityIdsForUpdate(Object entity, Class<?> entityClass) {
+    protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass) {
         log.info("[IVGA] getDependentEntityIdsForUpdate: {} ({})", entity, entityClass);
         Set<String> dirtyFields = persistenceTools.getDirtyFields(entity);
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, dirtyFields);
-        return loadDependentEntityIds(entity, dependencies);
+        return loadDependentEntityPks(entity, dependencies);
     }
 
-    protected Map<MetaClass, Set<String>> getDependentEntityIdsForDelete(Object entity, Class<?> entityClass) {
+    protected Map<MetaClass, Set<String>> getDependentEntityPksForDelete(Object entity, Class<?> entityClass) {
         log.info("[IVGA] getDependentEntityIdsForDelete: {} ({})", entity, entityClass);
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForDelete(entityClass);
-        return loadDependentEntityIds(entity, dependencies);
+        return loadDependentEntityPks(entity, dependencies);
     }
 
     //todo improve loading
-    protected Map<MetaClass, Set<String>> loadDependentEntityIds(Object entity, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
+    protected Map<MetaClass, Set<String>> loadDependentEntityPks(Object entity, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
         log.info("[IVGA] Load Dependencies for entity {}: {}", entity, dependencyMetaData);
 
         Map<MetaClass, Set<String>> result = new HashMap<>();
@@ -139,43 +142,37 @@ public class EntityTracker implements
             if(properties.isEmpty()) {
                 continue;
             }
-            Set<String> entityIds = new HashSet<>();
+            Set<String> entityPks = new HashSet<>();
             for(MetaPropertyPath property : properties) {
-                LoadContext.Query query = new LoadContext.Query(
-                        "select e from " + entry.getKey().getName() + " e where e." + property.toPathString()  + " = :refObject"
-                );
-                query.setParameter("refObject", entity);
-                log.info("[IVGA] Query = {}", query);
-
-                LoadContext<Object> loadContext = new LoadContext<>(entry.getKey());
-                loadContext.setQuery(query);
-
-                List<String> loadedEntityIds = dataManager.loadList(loadContext).stream()
-                        .map(this::getEntityIdAsStringOrNull)
-                        .filter(Objects::nonNull)
+                MetaClass metaClass = entry.getKey();
+                String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+                List<String> refObjectPks = dataManager.load(metaClass.getJavaClass())
+                        .query("select e from " + entry.getKey().getName() + " e where e." + property.toPathString() + " = :refObject")
+                        .parameter("refObject", entity)
+                        .fetchPlanProperties(primaryKeyPropertyName)
+                        .list()
+                        .stream()
+                        .map(loadedEntity -> getPrimaryKey(metaClass, loadedEntity))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
                         .collect(Collectors.toList());
-                log.info("[IVGA] Loaded dependent references = {}", loadedEntityIds);
-                entityIds.addAll(loadedEntityIds);
+
+                log.info("[IVGA] Loaded primary keys of dependent references = {}", refObjectPks);
+                entityPks.addAll(refObjectPks);
             }
-            result.put(entry.getKey(), entityIds);
+            result.put(entry.getKey(), entityPks);
         }
 
         log.info("[IVGA] LoadDependentEntities result = {}", result);
         return result;
     }
 
-    protected String getEntityIdAsString(Object entity) {
-        String id = getEntityIdAsStringOrNull(entity);
-        if(id == null) {
-            throw new RuntimeException("Entity ID is null");
-        }
-        return id;
-    }
-
-    @Nullable
-    protected String getEntityIdAsStringOrNull(Object entity) {
-        Object id = EntityValues.getId(entity);
-        return id == null ? null : id.toString();
-        //todo cases of complex id?
+    protected Optional<String> getPrimaryKey(MetaClass metaClass, Object entity) {
+        //todo is UUID property available without reloading?
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        Id<Object> entityId = Id.of(entity);
+        Object reloadedEntity = dataManager.load(entityId).fetchPlanProperties(primaryKeyPropertyName).one();
+        Object pk = EntityValues.getValue(reloadedEntity, primaryKeyPropertyName);
+        return Optional.ofNullable(pk).map(Object::toString);
     }
 }

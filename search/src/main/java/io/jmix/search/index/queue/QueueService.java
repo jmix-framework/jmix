@@ -23,9 +23,9 @@ import java.util.Collection;
 
 public interface QueueService {
 
-    void enqueue(MetaClass entityMetaClass, String entityId, EntityChangeType entityChangeType);
+    void enqueue(MetaClass entityMetaClass, String entityPk, EntityChangeType entityChangeType);
 
-    void enqueue(MetaClass entityMetaClass, Collection<String> entityIds, EntityChangeType entityChangeType);
+    void enqueue(MetaClass entityMetaClass, Collection<String> entityPks, EntityChangeType entityChangeType);
 
     void enqueue(QueueItem queueItem);
 

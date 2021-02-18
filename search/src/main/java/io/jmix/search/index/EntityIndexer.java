@@ -64,41 +64,43 @@ public class EntityIndexer {
 
     public void indexEntities(Collection<QueueItem> queueItems) {
         log.trace("[IVGA] Index items: {}", queueItems);
-        Map<MetaClass, Map<EntityChangeType, Set<Object>>> indexScope = new HashMap<>();
+        Map<MetaClass, Map<EntityChangeType, Set<String>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
             MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
-            Map<EntityChangeType, Set<Object>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
-            Set<Object> changesByType = changesByClass.computeIfAbsent(EntityChangeType.fromId(queueItem.getChangeType()), k -> new HashSet<>());
-            changesByType.add(getEntityIdFromString(queueItem.getEntityId()));
+            Map<EntityChangeType, Set<String>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
+            Set<String> changesByChangeType = changesByClass.computeIfAbsent(EntityChangeType.fromId(queueItem.getChangeType()), k -> new HashSet<>());
+            changesByChangeType.add(queueItem.getEntityId());
         });
 
         indexScope.forEach(
                 (metaClass, changes) -> changes.forEach(
-                        (entityChangeType, ids) -> indexEntitiesByIds(metaClass, ids, entityChangeType)
+                        (entityChangeType, pks) -> indexEntitiesByPks(metaClass, pks, entityChangeType)
                 )
         );
     }
 
-    public void indexEntityById(MetaClass metaClass, Object entityId, EntityChangeType changeType) {
-        indexEntitiesByIds(metaClass, Collections.singletonList(entityId), changeType);
+    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityChangeType changeType) {
+        indexEntitiesByPks(metaClass, Collections.singletonList(entityPk), changeType);
     }
 
-    public void indexEntitiesByIds(MetaClass metaClass, Collection<Object> entityIds, EntityChangeType changeType) {
-        log.info("[IVGA] Index entities: Class={}, changeType={}, ids={}", metaClass, changeType, entityIds);
+    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityChangeType changeType) {
+        log.info("[IVGA] Index entities: Class={}, changeType={}, pks={}", metaClass, changeType, entityPks);
         IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName());
         if(indexDefinition == null) {
-            log.warn("[IVGA] Index Definition not found for entity {}", metaClass);
+            log.error("[IVGA] Index Definition not found for entity '{}'", metaClass);
             return;
         }
         log.info("[IVGA] Mapping Fields for entity '{}': {}", metaClass, indexDefinition.getMapping().getFields());
 
         if(EntityChangeType.UPDATE.equals(changeType) || EntityChangeType.CREATE.equals(changeType)) {
-            LoadContext<Object> loadContext = new LoadContext<>(metaClass);
-
+            String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
             FetchPlan fetchPlan = createFetchPlan(indexDefinition);
             log.info("[IVGA] Fetch plan for class {}: {}", metaClass, fetchPlan.getProperties());
-            loadContext.setIds(entityIds).setFetchPlan(fetchPlan);
-            List<Object> loaded = dataManager.loadList(loadContext);
+            List<Object> loaded = dataManager.load(metaClass.getJavaClass())
+                    .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyPropertyName))
+                    .parameter("ids", entityPks)
+                    .fetchPlan(fetchPlan)
+                    .list();
             log.info("[IVGA] Loaded entities: {}", loaded);
 
             BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
@@ -124,10 +126,9 @@ public class EntityIndexer {
 
                 log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", entity, resultObject);
                 try {
-                    String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
                     Object primaryKey = EntityValues.getValue(entity, primaryKeyPropertyName);
                     if(primaryKey == null) {
-                        log.trace("[IVGA] Unable to index instance '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
+                        log.error("[IVGA] Unable to index instance '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
                     } else {
                         request.add(new IndexRequest()
                                 .id(primaryKey.toString())
@@ -147,9 +148,7 @@ public class EntityIndexer {
             }
         } else if(EntityChangeType.DELETE.equals(changeType)) {
             BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
-            entityIds.stream()
-                    .map(this::formatEntityIdAsString) //todo use PK property
-                    .forEach(id -> request.add(new DeleteRequest().id(id)));
+            entityPks.forEach(id -> request.add(new DeleteRequest().id(id)));
 
             try {
                 BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
@@ -177,22 +176,6 @@ public class EntityIndexer {
             });
         });
         return fetchPlanBuilder.build();
-    }
-
-    /*protected String getEntityIdAsString(Object entity) {
-        Object entityId = EntityValues.getId(entity);
-        if(entityId == null) {
-            throw new RuntimeException("Entity ID is null");
-        }
-        return formatEntityIdAsString(entityId); //todo cases of complex id?
-    }*/
-
-    protected String formatEntityIdAsString(Object entityId) {
-        return entityId.toString();
-    }
-
-    protected Object getEntityIdFromString(String stringId) {
-        return UUID.fromString(stringId); //todo cases of complex id?
     }
 
     protected ObjectNode createObjectNodeForField(String key, JsonNode value) {

@@ -57,14 +57,14 @@ public class JpaQueueService implements QueueService {
     protected PropertyTools propertyTools;
 
     @Override
-    public void enqueue(MetaClass entityClass, String entityId, EntityChangeType entityChangeType) {
-        QueueItem queueItem = createQueueItem(entityClass.getName(), entityId, entityChangeType);
+    public void enqueue(MetaClass entityClass, String entityPk, EntityChangeType entityChangeType) {
+        QueueItem queueItem = createQueueItem(entityClass.getName(), entityPk, entityChangeType);
         enqueue(queueItem);
     }
 
     @Override
-    public void enqueue(MetaClass entityClass, Collection<String> entityIds, EntityChangeType entityChangeType) {
-        List<QueueItem> queueItems = entityIds.stream()
+    public void enqueue(MetaClass entityClass, Collection<String> entityPks, EntityChangeType entityChangeType) {
+        List<QueueItem> queueItems = entityPks.stream()
                 .map(id -> createQueueItem(entityClass.getName(), id, entityChangeType))
                 .collect(Collectors.toList());
 
@@ -81,10 +81,9 @@ public class JpaQueueService implements QueueService {
         log.trace("Enqueue items: {}", queueItems);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        transactionTemplate.execute(status -> {
+        transactionTemplate.executeWithoutResult(status -> {
             EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
             queueItems.forEach(entityManager::persist);
-            return null;
         });
     }
 
@@ -162,10 +161,10 @@ public class JpaQueueService implements QueueService {
         });
     }
 
-    protected QueueItem createQueueItem(String entityName, String entityId, EntityChangeType entityChangeType) {
+    protected QueueItem createQueueItem(String entityName, String entityPk, EntityChangeType entityChangeType) {
         QueueItem queueItem = metadata.create(QueueItem.class);
         queueItem.setChangeType(entityChangeType.getId());
-        queueItem.setEntityId(entityId);
+        queueItem.setEntityId(entityPk);
         queueItem.setEntityName(entityName);
 
         return queueItem;

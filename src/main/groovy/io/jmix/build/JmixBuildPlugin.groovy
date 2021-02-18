@@ -147,11 +147,29 @@ class JmixBuildPlugin implements Plugin<Project> {
                 apply plugin: 'com.github.spotbugs'
 
                 project.afterEvaluate {
+                    //check that spotbugs-exclude-filter.xml is defined in the project. If not then copy the file from plugin resources
+                    def excludeFilterFilePath = '../etc/spotbugs/spotbugs-exclude-filter.xml'
+                    if (!file(excludeFilterFilePath).exists()) {
+                        excludeFilterFilePath = "$project.buildDir/spotbugs/spotbugs-exclude-filter.xml"
+                        def pluginExcludeFilterFileContent = getClass().getClassLoader().getResource('spotbugs/spotbugs-exclude-filter.xml').text
+                        tasks.register('initSpotbugsExcludeFilter') {
+                            doLast {
+                                def excludeFilterFile = new File(excludeFilterFilePath)
+                                excludeFilterFile.getParentFile().mkdirs()
+                                excludeFilterFile.createNewFile()
+                                excludeFilterFile.withWriter('utf-8') { writer ->
+                                    writer.write pluginExcludeFilterFileContent
+                                }
+                            }
+                        }
+                        tasks.named('spotbugsMain').get().dependsOn('initSpotbugsExcludeFilter')
+                    }
+
                     spotbugs {
                         toolVersion = '4.0.1'
                         ignoreFailures = false
                         omitVisitors = ['FindDoubleCheck']
-                        excludeFilter = project.file("../etc/spotbugs/spotbugs-exclude-filter.xml")
+                        excludeFilter = project.file(excludeFilterFilePath)
                         effort = "max"
                         reportLevel = "medium"
                     }

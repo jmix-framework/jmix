@@ -1,6 +1,7 @@
-# IMAP
+# Jmix IMAP
 
 - [Overview](#overview)
+- [Installation](#installation)
 - [Add-on Configuration](#add-on-configuration)
 - [Usage](#usage)
   - [Predefined Roles](#predefined-roles)
@@ -26,6 +27,16 @@ The component includes the following set of functionalities:
     * Operating custom flags.
 * Predefined events for implementing custom business logic and processing various updates.
 * User interface for configuring IMAP connection settings and events.
+
+
+# Installation
+
+Add to your project's `build.gradle` dependencies:
+
+```groovy
+implementation 'io.jmix.imap:jmix-imap-starter'
+implementation 'io.jmix.imap:jmix-imap-ui-starter'
+```
 
 # Add-on Configuration
 

@@ -136,6 +136,10 @@ public class JpaQueueService implements QueueService {
                     .list();
             log.trace("Dequeued {} items", queueItems.size());
 
+            if(queueItems.isEmpty()) {
+                break;
+            }
+
             count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexer.indexEntities'
             entityIndexer.indexEntities(queueItems); //todo handle failed commands of bulk request
 

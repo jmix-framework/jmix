@@ -31,6 +31,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+//todo review 'find' methods naming
 @Component("search_PropertyTools")
 public class PropertyTools {
 

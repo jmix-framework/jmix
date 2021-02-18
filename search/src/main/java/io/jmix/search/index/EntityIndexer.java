@@ -25,6 +25,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.EntityChangeType;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
+import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.queue.QueueItem;
 import io.jmix.search.utils.PropertyTools;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -63,7 +64,7 @@ public class EntityIndexer {
     protected ObjectMapper objectMapper = new ObjectMapper();
 
     public void indexEntities(Collection<QueueItem> queueItems) {
-        log.trace("[IVGA] Index items: {}", queueItems);
+        log.debug("Index Queue Items: {}", queueItems);
         Map<MetaClass, Map<EntityChangeType, Set<String>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
             MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
@@ -84,81 +85,89 @@ public class EntityIndexer {
     }
 
     public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityChangeType changeType) {
-        log.info("[IVGA] Index entities: Class={}, changeType={}, pks={}", metaClass, changeType, entityPks);
+        log.debug("Index entities: Class={}, Change Type={}, Pks={}", metaClass, changeType, entityPks);
         IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName());
         if(indexDefinition == null) {
-            log.error("[IVGA] Index Definition not found for entity '{}'", metaClass);
+            log.error("Index Definition not found for entity '{}'", metaClass);
             return;
         }
-        log.info("[IVGA] Mapping Fields for entity '{}': {}", metaClass, indexDefinition.getMapping().getFields());
+        log.debug("Mapping Fields for entity '{}': {}", metaClass, indexDefinition.getMapping().getFields());
 
         if(EntityChangeType.UPDATE.equals(changeType) || EntityChangeType.CREATE.equals(changeType)) {
-            String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
-            FetchPlan fetchPlan = createFetchPlan(indexDefinition);
-            log.info("[IVGA] Fetch plan for class {}: {}", metaClass, fetchPlan.getProperties());
-            List<Object> loaded = dataManager.load(metaClass.getJavaClass())
-                    .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyPropertyName))
-                    .parameter("ids", entityPks)
-                    .fetchPlan(fetchPlan)
-                    .list();
-            log.info("[IVGA] Loaded entities: {}", loaded);
-
-            BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
-            loaded.forEach(entity -> {
-                ObjectNode entityIndexContent = JsonNodeFactory.instance.objectNode();
-                indexDefinition.getMapping().getFields().values().stream()
-                        .filter(field -> !field.isStandalone())
-                        .forEach(field -> {
-                            log.trace("[IVGA] Extract value of property {}", field.getMetaPropertyPath());
-                            JsonNode propertyValue = field.getValue(entity);
-                            if(!propertyValue.isNull()) {
-                                String indexPropertyFullName = field.getIndexPropertyFullName();
-
-                                ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
-                                log.trace("[IVGA] objectNodeForField = {}", objectNodeForField);
-                                merge(objectNodeForField, entityIndexContent);
-                            }
-                        });
-
-                ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
-                resultObject.putObject("meta").put("entityClass", metaClass.getName());
-                resultObject.set("content", entityIndexContent);
-
-                log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", entity, resultObject);
-                try {
-                    Object primaryKey = EntityValues.getValue(entity, primaryKeyPropertyName);
-                    if(primaryKey == null) {
-                        log.error("[IVGA] Unable to index instance '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
-                    } else {
-                        request.add(new IndexRequest()
-                                .id(primaryKey.toString())
-                                .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
-                    }
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException("Failed to create index request: unable to parse source object", e);
-                }
-            });
-
-            try {
-                BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-                log.info("[IVGA] Bulk Response (Index): Took {}, Status = {}, With Failures = {}",
-                        bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
-            } catch (IOException e) {
-                throw new RuntimeException("Bulk request failed", e);
-            }
+            indexDocuments(indexDefinition, metaClass, entityPks);
         } else if(EntityChangeType.DELETE.equals(changeType)) {
-            BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
-            entityPks.forEach(id -> request.add(new DeleteRequest().id(id)));
-
-            try {
-                BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
-                log.info("[IVGA] Bulk Response (Delete): Took {}, Status = {}, With Failures = {}",
-                        bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
-            } catch (IOException e) {
-                throw new RuntimeException("Bulk request failed", e);
-            }
+            deleteDocuments(indexDefinition, entityPks);
         } else {
             throw new UnsupportedOperationException("Entity Change Type '" + changeType + "' is not supported");
+        }
+    }
+
+    protected void indexDocuments(IndexDefinition indexDefinition, MetaClass metaClass, Collection<String> entityPks) {
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        List<Object> loaded = reloadEntities(indexDefinition, metaClass, entityPks, primaryKeyPropertyName);
+        log.debug("Loaded {} entities", loaded.size());
+
+        BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
+        loaded.forEach(entity -> addIndexActionToBulkRequest(request, indexDefinition, metaClass, entity, primaryKeyPropertyName));
+
+        try {
+            BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
+            log.debug("Bulk Response (Index): Took {}, Status = {}, With Failures = {}",
+                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+        } catch (IOException e) {
+            throw new RuntimeException("Bulk request failed", e);
+        }
+    }
+
+    protected List<Object> reloadEntities(IndexDefinition indexDefinition,
+                                          MetaClass metaClass,
+                                          Collection<String> entityPks,
+                                          String primaryKeyPropertyName) {
+        FetchPlan fetchPlan = createFetchPlan(indexDefinition);
+        log.debug("Fetch plan for entity {}: {}", metaClass, fetchPlan.getProperties());
+        return dataManager.load(metaClass.getJavaClass())
+                .query(String.format("select e from %s e where e.%s in :ids", metaClass.getName(), primaryKeyPropertyName))
+                .parameter("ids", entityPks)
+                .fetchPlan(fetchPlan)
+                .list();
+    }
+
+    protected void addIndexActionToBulkRequest(BulkRequest request,
+                                               IndexDefinition indexDefinition,
+                                               MetaClass metaClass,
+                                               Object entity,
+                                               String primaryKeyPropertyName) {
+        ObjectNode entityIndexContent = JsonNodeFactory.instance.objectNode();
+        indexDefinition.getMapping().getFields().values().stream()
+                .filter(field -> !field.isStandalone())
+                .forEach(field -> addFieldValueToEntityIndexContent(entityIndexContent, field, entity));
+
+        ObjectNode resultObject = createResultIndexDocument(metaClass, entityIndexContent);
+        log.debug("Result object: {}", resultObject);
+        try {
+            Object primaryKey = EntityValues.getValue(entity, primaryKeyPropertyName);
+            if(primaryKey == null) {
+                log.error("Unable to create Index Request for '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
+            } else {
+                request.add(new IndexRequest()
+                        .id(primaryKey.toString())
+                        .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to create index request: unable to parse source object", e);
+        }
+    }
+
+    protected void deleteDocuments(IndexDefinition indexDefinition, Collection<String> entityPks) {
+        BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
+        entityPks.forEach(id -> request.add(new DeleteRequest().id(id)));
+
+        try {
+            BulkResponse bulkResponse = esClient.bulk(request, RequestOptions.DEFAULT);
+            log.debug("Bulk Response (Delete): Took {}, Status = {}, With Failures = {}",
+                    bulkResponse.getTook(), bulkResponse.status(), bulkResponse.hasFailures());
+        } catch (IOException e) {
+            throw new RuntimeException("Bulk request failed", e);
         }
     }
 
@@ -168,10 +177,10 @@ public class EntityIndexer {
         String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
         fetchPlanBuilder.add(primaryKeyPropertyName);
         indexDefinition.getMapping().getFields().values().forEach(field -> {
-            log.info("[IVGA] Add property to fetch plan: {}", field.getEntityPropertyFullName());
+            log.trace("Add property to fetch plan: {}", field.getEntityPropertyFullName());
             fetchPlanBuilder.add(field.getEntityPropertyFullName());
             field.getInstanceNameRelatedProperties().forEach(instanceNameRelatedProperty -> {
-                log.info("[IVGA] Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
+                log.trace("Add instance name related property to fetch plan: {}", instanceNameRelatedProperty.toPathString());
                 fetchPlanBuilder.add(instanceNameRelatedProperty.toPathString());
             });
         });
@@ -193,9 +202,27 @@ public class EntityIndexer {
         return root;
     }
 
+    protected void addFieldValueToEntityIndexContent(ObjectNode entityIndexContent, MappingFieldDescriptor field, Object entity) {
+        log.trace("Extract value of property '{}' from entity {}", field.getMetaPropertyPath(), entity);
+        JsonNode propertyValue = field.getValue(entity);
+        if(!propertyValue.isNull()) {
+            String indexPropertyFullName = field.getIndexPropertyFullName();
+            ObjectNode objectNodeForField = createObjectNodeForField(indexPropertyFullName, propertyValue);
+            log.trace("Field value tree: {}", objectNodeForField);
+            merge(objectNodeForField, entityIndexContent);
+        }
+    }
+
+    protected ObjectNode createResultIndexDocument(MetaClass metaClass, ObjectNode entityIndexContent) {
+        ObjectNode resultObject = JsonNodeFactory.instance.objectNode();
+        resultObject.putObject("meta").put("entityClass", metaClass.getName());
+        resultObject.set("content", entityIndexContent);
+        return resultObject;
+    }
+
     //todo move to tools?
     public void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
-        log.trace("[IVGA] Merge object {} into {}", toBeMerged, mergedInTo);
+        log.trace("Merge object {} into {}", toBeMerged, mergedInTo);
         Iterator<Map.Entry<String, JsonNode>> incomingFieldsIterator = toBeMerged.fields();
         Iterator<Map.Entry<String, JsonNode>> mergedIterator;
 

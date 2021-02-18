@@ -40,135 +40,42 @@ public class AnnotatedIndexDefinitionsProvider {
 
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionsProvider.class);
 
-    protected InstanceNameProvider instanceNameProvider;
-
-    protected final Map<String, IndexDefinition> indexDefinitionsByEntityName;
-    protected final Map<String, IndexDefinition> indexDefinitionsByIndexName;
-
-    protected final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate;
-    protected final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete;
+    protected final Registry registry;
 
     @Autowired
     public AnnotatedIndexDefinitionsProvider(JmixModulesClasspathScanner classpathScanner,
                                              AnnotatedIndexDefinitionBuilder builder,
                                              InstanceNameProvider instanceNameProvider) {
-        this.instanceNameProvider = instanceNameProvider;
-
         Set<String> classNames = classpathScanner.getClassNames(IndexDefinitionDetector.class);
         log.debug("Create Index definitions");
-        Map<String, IndexDefinition> tmpIndexDefinitionsByEntityName = new HashMap<>();
-        Map<String, IndexDefinition> tmpIndexDefinitionByIndexName = new HashMap<>();
-        Map<Class<?>, Map<String, Set<MetaPropertyPath>>> tmpReferentiallyAffectedPropertiesForUpdate = new HashMap<>();
-        Map<Class<?>, Set<MetaPropertyPath>> tmpReferentiallyAffectedPropertiesForDelete = new HashMap<>();
 
-        //todo refactor
-        classNames.stream().map(builder::createIndexDefinition).forEach(indexDefinition -> {
-            String entityName = indexDefinition.getEntityName();
+        Registry registry = new Registry(instanceNameProvider);
+        classNames.stream().map(builder::createIndexDefinition).forEach(registry::registerIndexDefinition);
 
-            if(tmpIndexDefinitionsByEntityName.containsKey(entityName)) {
-                log.warn("[IVGA] Multiple Index Definitions are detected for entity '{}'", entityName);
-            } else {
-                tmpIndexDefinitionsByEntityName.put(entityName, indexDefinition);
-                tmpIndexDefinitionByIndexName.put(indexDefinition.getIndexName(), indexDefinition);
-            }
-
-            Collection<MappingFieldDescriptor> fields = indexDefinition.getMapping().getFields().values();
-            fields.stream()
-                    .filter(f -> {
-                        return !f.isStandalone();//todo
-                    })
-                    .forEach(f -> {
-                        List<MetaPropertyPath> extendedProperties;
-                        // Extend properties with instance-name-affected properties for simple 'refEntity' field declaration case
-                        if(f.getMetaPropertyPath().getRange().isClass()) {
-                            Collection<MetaProperty> instanceNameRelatedProperties = instanceNameProvider.getInstanceNameRelatedProperties(
-                                    f.getMetaPropertyPath().getRange().asClass(), true
-                            );
-                            log.info("[IVGA] instanceNameRelatedProperties={}", instanceNameRelatedProperties);
-                            MetaProperty[] metaProperties = f.getMetaPropertyPath().getMetaProperties();
-
-                            extendedProperties = instanceNameRelatedProperties.stream()
-                                    .map(instanceNameRelatedProperty -> {
-                                        MetaProperty[] extendedPropertyArray = Arrays.copyOf(metaProperties, metaProperties.length + 1);
-                                        extendedPropertyArray[extendedPropertyArray.length - 1] = instanceNameRelatedProperty;
-                                        return new MetaPropertyPath(f.getMetaPropertyPath().getMetaClass(), extendedPropertyArray);
-                                    })
-                                    .collect(Collectors.toList());
-
-                            log.info("[IVGA] Extended Properties = {}", extendedProperties);
-                        } else {
-                            extendedProperties = Collections.singletonList(f.getMetaPropertyPath());
-                        }
-
-                        List<PropertyTrackingDetail> propertyTrackingDetails = extendedProperties.stream()
-                                .flatMap(p -> createPropertyTrackingDetails(p.getMetaClass(), p).stream())
-                                .collect(Collectors.toList());
-                        log.info("[IVGA] Property Tracking Details = {}", propertyTrackingDetails);
-
-                        propertyTrackingDetails.forEach(trackingDetail -> {
-                            log.info("[IVGA] Process Property Tracking Detail: {}", trackingDetail);
-                            Map<String, Set<MetaPropertyPath>> refTrackedProperties = tmpReferentiallyAffectedPropertiesForUpdate.computeIfAbsent(
-                                    trackingDetail.getTrackedClassUpdate(), k -> new HashMap<>()
-                            );
-                            Set<MetaPropertyPath> refPropertyPaths = refTrackedProperties.computeIfAbsent(
-                                    trackingDetail.getLocalPropertyName(), k -> new HashSet<>()
-                            );
-                            log.info("[IVGA] Update: Tracked Class = {}, Local Property = {}, Back Ref Global Property = {}",
-                                    trackingDetail.getTrackedClassUpdate(),
-                                    trackingDetail.getLocalPropertyName(),
-                                    trackingDetail.getBackRefGlobalPropertyUpdate());
-                            if(trackingDetail.getBackRefGlobalPropertyUpdate() != null) {
-                                log.info("[IVGA] Add update back-ref property");
-                                refPropertyPaths.add(trackingDetail.getBackRefGlobalPropertyUpdate());
-                            }
-
-                            log.info("[IVGA] Delete: Tracked Class = {}, Back Ref Global Property = {}",
-                                    trackingDetail.getTrackedClassDelete(), trackingDetail.getBackRefGlobalPropertyDelete());
-                            if(trackingDetail.getTrackedClassDelete() != null && trackingDetail.getBackRefGlobalPropertyDelete() != null) {
-                                Set<MetaPropertyPath> refTrackedPropertiesDelete =
-                                        tmpReferentiallyAffectedPropertiesForDelete.computeIfAbsent(
-                                                trackingDetail.getTrackedClassDelete(), k -> new HashSet<>()
-                                        );
-                                log.info("[IVGA] Add delete back-ref property");
-                                refTrackedPropertiesDelete.add(trackingDetail.getBackRefGlobalPropertyDelete());
-                            }
-                        });
-
-                    });
-        });
-
-        indexDefinitionsByEntityName = tmpIndexDefinitionsByEntityName;
-        indexDefinitionsByIndexName = tmpIndexDefinitionByIndexName;
-        referentiallyAffectedPropertiesForDelete = tmpReferentiallyAffectedPropertiesForDelete;
-        referentiallyAffectedPropertiesForUpdate = tmpReferentiallyAffectedPropertiesForUpdate;
-
-        log.debug("Index definitions by entity name: {}", indexDefinitionsByEntityName);
-        log.debug("Index definitions by index name = {}", indexDefinitionsByIndexName);
-        log.debug("Referentially affected properties for update = {}", referentiallyAffectedPropertiesForUpdate);
-        log.debug("Referentially affected properties for delete = {}", referentiallyAffectedPropertiesForDelete);
+        this.registry = registry;
     }
 
     public Collection<IndexDefinition> getIndexDefinitions() {
-        return indexDefinitionsByEntityName.values();
+        return registry.getIndexDefinitions();
     }
 
     @Nullable
     public IndexDefinition getIndexDefinitionByEntityName(String entityName) {
-        return indexDefinitionsByEntityName.get(entityName);
+        return registry.getIndexDefinitionByEntityName(entityName);
     }
 
     @Nullable
     public IndexDefinition getIndexDefinitionByIndexName(String indexName) {
-        return indexDefinitionsByIndexName.get(indexName);
+        return registry.getIndexDefinitionByIndexName(indexName);
     }
 
     public boolean isDirectlyIndexed(String entityName) {
-        return indexDefinitionsByEntityName.containsKey(entityName);
+        return registry.hasDefinitionForEntity(entityName);
     }
 
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForUpdate(Class<?> entityClass, Set<String> changedProperties) {
-        log.info("[IVGA] Get dependencies for class {} with changed properties: {}", entityClass, changedProperties);
-        Map<String, Set<MetaPropertyPath>> backRefProperties = referentiallyAffectedPropertiesForUpdate.get(entityClass);
+        log.debug("Get dependencies metadata for class {} with changed properties: {}", entityClass, changedProperties);
+        Map<String, Set<MetaPropertyPath>> backRefProperties = registry.getBackRefPropertiesForUpdate(entityClass);
         if(MapUtils.isEmpty(backRefProperties)) {
             return Collections.emptyMap();
         }
@@ -189,8 +96,8 @@ public class AnnotatedIndexDefinitionsProvider {
     }
 
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForDelete(Class<?> deletedEntityClass) {
-        log.info("[IVGA] Get delete dependencies for class {}", deletedEntityClass);
-        Set<MetaPropertyPath> backRefPropertiesDelete = referentiallyAffectedPropertiesForDelete.get(deletedEntityClass);
+        log.debug("Get dependencies metadata for class {} deletion", deletedEntityClass);
+        Set<MetaPropertyPath> backRefPropertiesDelete = registry.getBackRefPropertiesForDelete(deletedEntityClass);
         if(CollectionUtils.isEmpty(backRefPropertiesDelete)) {
             return Collections.emptyMap();
         }
@@ -206,39 +113,7 @@ public class AnnotatedIndexDefinitionsProvider {
         return result;
     }
 
-    protected List<PropertyTrackingDetail> createPropertyTrackingDetails(MetaClass rootClass, MetaPropertyPath propertyPath) {
-        log.info("[IVGA] Process property for MetaClass={}: {}", rootClass, propertyPath);
-        List<PropertyTrackingDetail> result = new ArrayList<>();
-        String localPropertyName = propertyPath.getMetaProperty().getName();
-        MetaClass domain = propertyPath.getMetaProperty().getDomain();
-        log.info("[IVGA] Create Property Tracking Detail: Class={}, LocalProperty={}, GlobalProperty={}",
-                domain.getJavaClass(), localPropertyName, propertyPath);
-        if(propertyPath.getMetaProperties().length == 1) {
-            result.add(new PropertyTrackingDetail( //todo refactor constructor
-                    domain.getJavaClass(),
-                    propertyPath.getRange().isClass() ? propertyPath.getRangeJavaClass() : null,
-                    localPropertyName,
-                    null,
-                    propertyPath.getRange().isClass() ? propertyPath : null));
-        } else {
-            MetaProperty[] metaProperties = propertyPath.getMetaProperties();
-            MetaProperty[] newProperties = Arrays.copyOf(metaProperties, metaProperties.length - 1);
-            MetaPropertyPath refPropertyPath = new MetaPropertyPath(rootClass, newProperties);
-            result.add(new PropertyTrackingDetail(
-                    domain.getJavaClass(),
-                    propertyPath.getRange().isClass() ? propertyPath.getRangeJavaClass() : null,
-                    localPropertyName,
-                    refPropertyPath,
-                    propertyPath.getRange().isClass() ? propertyPath : null));
-            result.addAll(createPropertyTrackingDetails(rootClass, refPropertyPath));
-        }
-
-        log.info("[IVGA] Input: RootClass={}, PropertyPath={}. Result={}", rootClass, propertyPath, result);
-
-        return result;
-    }
-
-    protected static class PropertyTrackingDetail {
+    protected static class PropertyTrackingInfo {
 
         protected final Class<?> trackedClassUpdate; //todo change both tracked class to their entity names?
         protected final Class<?> trackedClassDelete;
@@ -246,16 +121,37 @@ public class AnnotatedIndexDefinitionsProvider {
         protected final MetaPropertyPath backRefGlobalPropertyUpdate;
         protected final MetaPropertyPath backRefGlobalPropertyDelete;
 
-        public PropertyTrackingDetail(Class<?> trackedClassUpdate,
-                                      @Nullable Class<?> trackedClassDelete,
-                                      String localPropertyName,
-                                      @Nullable MetaPropertyPath backRefGlobalPropertyUpdate,
-                                      @Nullable MetaPropertyPath backRefGlobalPropertyDelete) {
+        private PropertyTrackingInfo(Class<?> trackedClassUpdate,
+                                    @Nullable Class<?> trackedClassDelete,
+                                    String localPropertyName,
+                                    @Nullable MetaPropertyPath backRefGlobalPropertyUpdate,
+                                    @Nullable MetaPropertyPath backRefGlobalPropertyDelete) {
             this.trackedClassUpdate = trackedClassUpdate;
             this.trackedClassDelete = trackedClassDelete;
             this.localPropertyName = localPropertyName;
             this.backRefGlobalPropertyUpdate = backRefGlobalPropertyUpdate;
             this.backRefGlobalPropertyDelete = backRefGlobalPropertyDelete;
+        }
+
+        public static PropertyTrackingInfo of(MetaClass rootClass, MetaPropertyPath propertyPath) {
+            Class<?> trackedClassUpdate = propertyPath.getMetaProperty().getDomain().getJavaClass();
+            Class<?> trackedClassDelete = propertyPath.getRange().isClass() ? propertyPath.getRangeJavaClass() : null;
+            String localPropertyName = propertyPath.getMetaProperty().getName();
+            MetaPropertyPath backRefGlobalPropertyDelete = propertyPath.getRange().isClass() ? propertyPath : null;
+            MetaPropertyPath backRefGlobalPropertyUpdate = null;
+
+            if(propertyPath.getMetaProperties().length > 1) {
+                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+                MetaProperty[] newProperties = Arrays.copyOf(metaProperties, metaProperties.length - 1);
+                backRefGlobalPropertyUpdate = new MetaPropertyPath(rootClass, newProperties);
+            }
+
+            return new PropertyTrackingInfo(trackedClassUpdate,
+                                            trackedClassDelete,
+                                            localPropertyName,
+                                            backRefGlobalPropertyUpdate,
+                                            backRefGlobalPropertyDelete
+            );
         }
 
         public Class<?> getTrackedClassUpdate() {
@@ -283,13 +179,155 @@ public class AnnotatedIndexDefinitionsProvider {
 
         @Override
         public String toString() {
-            return "PropertyGraphItem{" +
+            return "PropertyTrackingInfo{" +
                     "trackedClassUpdate=" + trackedClassUpdate +
                     ", trackedClassDelete=" + trackedClassDelete +
                     ", localPropertyName='" + localPropertyName + '\'' +
                     ", backRefGlobalPropertyUpdate=" + backRefGlobalPropertyUpdate +
                     ", backRefGlobalPropertyDelete=" + backRefGlobalPropertyDelete +
                     '}';
+        }
+    }
+
+    private static class Registry {
+        private final InstanceNameProvider instanceNameProvider;
+
+        private final Map<String, IndexDefinition> indexDefinitionsByEntityName = new HashMap<>();
+        private final Map<String, IndexDefinition> indexDefinitionsByIndexName = new HashMap<>();
+        private final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate = new HashMap<>();
+        private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
+
+        public Registry(InstanceNameProvider instanceNameProvider) {
+            this.instanceNameProvider = instanceNameProvider;
+        }
+
+        void registerIndexDefinition(IndexDefinition indexDefinition) {
+            registerInMainRegistries(indexDefinition);
+
+            indexDefinition.getMapping().getFields().values()
+                    .stream()
+                    .filter(f -> {
+                        return !f.isStandalone();//todo
+                    })
+                    .forEach(this::processEntityFieldDescriptor);
+        }
+
+        IndexDefinition getIndexDefinitionByEntityName(String entityName) {
+            return indexDefinitionsByEntityName.get(entityName);
+        }
+
+        IndexDefinition getIndexDefinitionByIndexName(String indexName) {
+            return indexDefinitionsByIndexName.get(indexName);
+        }
+
+        Collection<IndexDefinition> getIndexDefinitions() {
+            return indexDefinitionsByEntityName.values();
+        }
+
+        Map<String, Set<MetaPropertyPath>> getBackRefPropertiesForUpdate(Class<?> entityClass) {
+            return referentiallyAffectedPropertiesForUpdate.get(entityClass);
+        }
+
+        Set<MetaPropertyPath> getBackRefPropertiesForDelete(Class<?> entityClass) {
+            return referentiallyAffectedPropertiesForDelete.get(entityClass);
+        }
+
+        public boolean hasDefinitionForEntity(String entityName) {
+            return indexDefinitionsByEntityName.containsKey(entityName);
+        }
+
+        private void registerInMainRegistries(IndexDefinition indexDefinition) {
+            String entityName = indexDefinition.getEntityName();
+            if(indexDefinitionsByEntityName.containsKey(entityName)) {
+                log.warn("Multiple Index Definitions are detected for entity '{}'", entityName);
+            } else {
+                indexDefinitionsByEntityName.put(entityName, indexDefinition);
+                indexDefinitionsByIndexName.put(indexDefinition.getIndexName(), indexDefinition);
+            }
+        }
+
+        private void processEntityFieldDescriptor(MappingFieldDescriptor fieldDescriptor) {
+            List<MetaPropertyPath> effectiveProperties;
+            if(fieldDescriptor.getMetaPropertyPath().getRange().isClass()) {
+                // Extend properties with instance-name-affected properties for simple 'refEntity' field declaration case
+                effectiveProperties = createExtendedPropertiesForClassField(fieldDescriptor);
+            } else {
+                effectiveProperties = Collections.singletonList(fieldDescriptor.getMetaPropertyPath());
+            }
+            log.debug("Effective properties = {}", effectiveProperties);
+
+            List<PropertyTrackingInfo> propertyTrackingInfoList = effectiveProperties.stream()
+                    .flatMap(p -> createPropertyTrackingInfoList(p.getMetaClass(), p).stream())
+                    .collect(Collectors.toList());
+            log.debug("Properties tracking info = {}", propertyTrackingInfoList);
+
+            propertyTrackingInfoList.forEach(this::processPropertyTrackingInfo);
+        }
+
+        private List<MetaPropertyPath> createExtendedPropertiesForClassField(MappingFieldDescriptor fieldDescriptor) {
+            Collection<MetaProperty> instanceNameRelatedProperties = instanceNameProvider.getInstanceNameRelatedProperties(
+                    fieldDescriptor.getMetaPropertyPath().getRange().asClass(), true
+            );
+            log.debug("Instance Name related properties: {}", instanceNameRelatedProperties);
+            MetaProperty[] metaProperties = fieldDescriptor.getMetaPropertyPath().getMetaProperties();
+
+            return instanceNameRelatedProperties.stream()
+                    .map(instanceNameRelatedProperty -> {
+                        MetaProperty[] extendedPropertyArray = Arrays.copyOf(metaProperties, metaProperties.length + 1);
+                        extendedPropertyArray[extendedPropertyArray.length - 1] = instanceNameRelatedProperty;
+                        return new MetaPropertyPath(fieldDescriptor.getMetaPropertyPath().getMetaClass(), extendedPropertyArray);
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        private void processPropertyTrackingInfo(PropertyTrackingInfo trackingInfo) {
+            log.debug("Process Property Tracking Info: {}", trackingInfo);
+            registerBackRefPropertyForUpdate(trackingInfo);
+            registerBackRefPropertyForDelete(trackingInfo);
+        }
+
+        private void registerBackRefPropertyForUpdate(PropertyTrackingInfo trackingInfo) {
+            Map<String, Set<MetaPropertyPath>> refTrackedProperties = referentiallyAffectedPropertiesForUpdate.computeIfAbsent(
+                    trackingInfo.getTrackedClassUpdate(), k -> new HashMap<>()
+            );
+            Set<MetaPropertyPath> refPropertyPaths = refTrackedProperties.computeIfAbsent(
+                    trackingInfo.getLocalPropertyName(), k -> new HashSet<>()
+            );
+            log.debug("Update info: Tracked Class = {}, Local Property = {}, Back Ref Global Property = {}",
+                    trackingInfo.getTrackedClassUpdate(),
+                    trackingInfo.getLocalPropertyName(),
+                    trackingInfo.getBackRefGlobalPropertyUpdate());
+            if(trackingInfo.getBackRefGlobalPropertyUpdate() != null) {
+                log.debug("Add Update back-ref property");
+                refPropertyPaths.add(trackingInfo.getBackRefGlobalPropertyUpdate());
+            }
+        }
+
+        private void registerBackRefPropertyForDelete(PropertyTrackingInfo trackingInfo) {
+            log.debug("Delete info: Tracked Class = {}, Back Ref Global Property = {}",
+                    trackingInfo.getTrackedClassDelete(), trackingInfo.getBackRefGlobalPropertyDelete());
+            if(trackingInfo.getTrackedClassDelete() != null && trackingInfo.getBackRefGlobalPropertyDelete() != null) {
+                Set<MetaPropertyPath> refTrackedPropertiesDelete =
+                        referentiallyAffectedPropertiesForDelete.computeIfAbsent(
+                                trackingInfo.getTrackedClassDelete(), k -> new HashSet<>()
+                        );
+                log.debug("Add Delete back-ref property");
+                refTrackedPropertiesDelete.add(trackingInfo.getBackRefGlobalPropertyDelete());
+            }
+        }
+
+        private List<PropertyTrackingInfo> createPropertyTrackingInfoList(MetaClass rootClass, MetaPropertyPath propertyPath) {
+            log.debug("Process property for MetaClass={}: {}", rootClass, propertyPath);
+            List<PropertyTrackingInfo> result = new ArrayList<>();
+            PropertyTrackingInfo propertyTrackingInfo = PropertyTrackingInfo.of(rootClass, propertyPath);
+            result.add(propertyTrackingInfo);
+
+            MetaPropertyPath refPropertyPath = propertyTrackingInfo.getBackRefGlobalPropertyUpdate();
+            if(refPropertyPath != null) {
+                result.addAll(createPropertyTrackingInfoList(rootClass, refPropertyPath));
+            }
+
+            return result;
         }
     }
 }

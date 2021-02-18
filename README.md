@@ -1,4 +1,4 @@
-# GrapesJS HTML Editor
+# Jmix GrapesJS HTML Editor
 
 - [Overview](#overview)
 - [Installation](#installation)
@@ -30,11 +30,8 @@ Key features:
 # Installation <a name="installation"></a>
 
 The add-on can be added to your project using dependencies :
-```
-dependencies {
-    //...
-    implementation 'io.jmix.grapesjs:jmix-grapesjs-starter'
-    //...
+```groovy
+implementation 'io.jmix.grapesjs:jmix-grapesjs-starter'
 }
 ```
 

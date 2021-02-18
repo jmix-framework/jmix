@@ -81,7 +81,7 @@ public class JpqlFilterLoader extends AbstractSingleFilterComponentLoader<JpqlFi
     protected void loadCondition(JpqlFilter<?> component, Element element) {
         List<Element> conditions = element.elements("condition");
         if (conditions.size() != 1) {
-            throw new GuiDevelopmentException("Jpql filter element must have exactly one 'condition' nested element",
+            throw new GuiDevelopmentException("JPQL filter element must have exactly one 'condition' nested element",
                     context);
         }
 

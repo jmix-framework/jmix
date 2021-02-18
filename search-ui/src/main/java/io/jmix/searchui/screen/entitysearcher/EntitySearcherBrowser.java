@@ -20,8 +20,10 @@ import com.google.common.collect.EvictingQueue;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.SearchManager;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchService;
+import io.jmix.search.utils.PropertyTools;
 import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -46,6 +48,8 @@ public class EntitySearcherBrowser extends Screen {
     @Autowired
     protected SearchService searchService;
     @Autowired
+    protected SearchManager searchManager;
+    @Autowired
     protected UiComponents uiComponents;
     @Autowired
     protected Metadata metadata;
@@ -59,6 +63,8 @@ public class EntitySearcherBrowser extends Screen {
     protected DataManager dataManager;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected PropertyTools propertyTools;
 
     @Autowired
     protected TextField<String> searchInput;
@@ -114,6 +120,11 @@ public class EntitySearcherBrowser extends Screen {
             SearchResult searchResult = searchService.search(searchTerm);
             initSearchResults(searchResult);
         }
+    }
+
+    @Subscribe("reindexAllAction")
+    public void onReindexAllAction(Action.ActionPerformedEvent event) {
+        searchManager.asyncReindexAll();
     }
 
     protected void initSearchResults(SearchResult searchResult) {
@@ -261,11 +272,11 @@ public class EntitySearcherBrowser extends Screen {
     }
 
     protected Object reloadEntity(MetaClass metaClass, Object entityId) {
-        String primaryKeyProperty = searchService.getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
         return dataManager
                 .load(metaClass.getJavaClass())
                 .query(String.format("select e from %s e where e.%s in :id", metaClass.getName(), primaryKeyProperty))
-                .parameter("id", Collections.singleton(entityId)) //todo Convert stringId to object and use '=' operator in query?
+                .parameter("id", Collections.singleton(entityId))
                 .fetchPlan(FetchPlan.LOCAL)
                 .one();
     }

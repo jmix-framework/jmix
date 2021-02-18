@@ -61,19 +61,19 @@ public class EntityTracker implements
 
     @Override
     public void onBeforeInsert(Object entity) {
-        log.info("[IVGA] Track insertion of entity {}", entity);
+        log.trace("Track insertion of entity {}", entity);
         handleEntityChange(entity, EntityChangeType.CREATE);
     }
 
     @Override
     public void onBeforeUpdate(Object entity) {
-        log.info("[IVGA] Track update of entity {}", entity);
+        log.trace("Track update of entity {}", entity);
         handleEntityChange(entity, EntityChangeType.UPDATE);
     }
 
     @Override
     public void onBeforeDelete(Object entity) {
-        log.info("[IVGA] Track deletion of entity {}", entity);
+        log.trace("Track deletion of entity {}", entity);
         handleEntityChange(entity, EntityChangeType.DELETE);
     }
 
@@ -82,9 +82,9 @@ public class EntityTracker implements
             MetaClass metaClass = metadata.getClass(entity);
             Class<?> entityClass = metaClass.getJavaClass();
 
-            if (isDirectlyIndexed(entityClass)) { //todo check dirty fields
+            if (isDirectlyIndexed(metaClass.getName())) { //todo check dirty fields
                 log.info("[IVGA] {} is directly indexed", entityClass);
-                String entityId = getEntityIdAsString(entity);
+                String entityId = getEntityIdAsString(entity); //todo use PK property
                 queueService.enqueue(metaClass, entityId, entityChangeType);
             }
 
@@ -104,21 +104,21 @@ public class EntityTracker implements
                     break;
             }
 
-            dependentEntityIds.forEach(((dependentEntityClass, ids) -> {
-                queueService.enqueue(dependentEntityClass, ids, EntityChangeType.UPDATE);
-            }));
+            dependentEntityIds.forEach(
+                    ((dependentEntityClass, ids) -> queueService.enqueue(dependentEntityClass, ids, EntityChangeType.UPDATE))
+            );
         } catch (Exception e) {
             log.error("[IVGA] Failed to enqueue data for entity {} and change type '{}'", entity, entityChangeType, e);
         }
     }
 
-    protected boolean isDirectlyIndexed(Class<?> entityClass) {
-        return indexDefinitionsProvider.isDirectlyIndexed(entityClass);
+    protected boolean isDirectlyIndexed(String entityName) {
+        return indexDefinitionsProvider.isDirectlyIndexed(entityName);
     }
 
     protected Map<MetaClass, Set<String>> getDependentEntityIdsForUpdate(Object entity, Class<?> entityClass) {
         log.info("[IVGA] getDependentEntityIdsForUpdate: {} ({})", entity, entityClass);
-        Set<String> dirtyFields = persistenceTools.getDirtyFields(entity); //TODO Doesn't work during BeforeUpdateEntityListener firing (?)
+        Set<String> dirtyFields = persistenceTools.getDirtyFields(entity);
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, dirtyFields);
         return loadDependentEntityIds(entity, dependencies);
     }

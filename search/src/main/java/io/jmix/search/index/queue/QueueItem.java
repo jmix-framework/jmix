@@ -17,20 +17,21 @@
 package io.jmix.search.index.queue;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
+import io.jmix.core.metamodel.annotation.DependsOnProperties;
+import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
-@Table(name = "SEARCH_QUEUE")
+@Table(name = "SEARCH_QUEUE", indexes = {
+        @Index(name = "IDX_SEARCH_QUEUE_ENTITY_NAME", columnList = "ENTITY_NAME")
+})
 @Entity(name = "search_Queue")
 public class QueueItem {
 
@@ -38,10 +39,6 @@ public class QueueItem {
     @Id
     @Column(name = "ID", nullable = false)
     private UUID id;
-
-    @Column(name = "ENTITY_CLASS", nullable = false, length = 1000)
-    @NotNull
-    private String entityClass;
 
     @NotNull
     @Column(name = "CHANGE_TYPE", nullable = false)
@@ -61,14 +58,6 @@ public class QueueItem {
     @CreatedDate
     @Column(name = "CREATED_DATE")
     private Date createdDate;
-
-    public String getEntityClass() {
-        return entityClass;
-    }
-
-    public void setEntityClass(String entityClass) {
-        this.entityClass = entityClass;
-    }
 
     public String getEntityName() {
         return entityName;
@@ -122,10 +111,16 @@ public class QueueItem {
     public String toString() {
         return "QueueItem{" +
                 "id=" + id +
-                ", entityClass='" + entityClass + '\'' +
+                ", entityName='" + entityName + '\'' +
                 ", changeType='" + changeType + '\'' +
                 ", entityId='" + entityId + '\'' +
                 ", createdDate=" + createdDate +
                 '}';
+    }
+
+    @InstanceName
+    @DependsOnProperties({"entityId", "entityName"})
+    public String getInstanceName() {
+        return String.format("Queue Item[%s : %s]", entityName, entityId);
     }
 }

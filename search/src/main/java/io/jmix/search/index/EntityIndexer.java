@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.data.EntityChangeType;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import io.jmix.search.index.queue.QueueItem;
+import io.jmix.search.utils.PropertyTools;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -56,6 +57,8 @@ public class EntityIndexer {
     protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
     @Autowired
     protected Metadata metadata;
+    @Autowired
+    protected PropertyTools propertyTools;
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
@@ -63,7 +66,7 @@ public class EntityIndexer {
         log.trace("[IVGA] Index items: {}", queueItems);
         Map<MetaClass, Map<EntityChangeType, Set<Object>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
-            MetaClass metaClass = metadata.getClass(queueItem.getEntityClass());
+            MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
             Map<EntityChangeType, Set<Object>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
             Set<Object> changesByType = changesByClass.computeIfAbsent(EntityChangeType.fromId(queueItem.getChangeType()), k -> new HashSet<>());
             changesByType.add(getEntityIdFromString(queueItem.getEntityId()));
@@ -82,7 +85,7 @@ public class EntityIndexer {
 
     public void indexEntitiesByIds(MetaClass metaClass, Collection<Object> entityIds, EntityChangeType changeType) {
         log.info("[IVGA] Index entities: Class={}, changeType={}, ids={}", metaClass, changeType, entityIds);
-        IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionForEntityClass(metaClass.getJavaClass());
+        IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName());
         if(indexDefinition == null) {
             log.warn("[IVGA] Index Definition not found for entity {}", metaClass);
             return;
@@ -99,13 +102,13 @@ public class EntityIndexer {
             log.info("[IVGA] Loaded entities: {}", loaded);
 
             BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
-            loaded.forEach(object -> {
+            loaded.forEach(entity -> {
                 ObjectNode entityIndexContent = JsonNodeFactory.instance.objectNode();
                 indexDefinition.getMapping().getFields().values().stream()
                         .filter(field -> !field.isStandalone())
                         .forEach(field -> {
                             log.trace("[IVGA] Extract value of property {}", field.getMetaPropertyPath());
-                            JsonNode propertyValue = field.getValue(object);
+                            JsonNode propertyValue = field.getValue(entity);
                             if(!propertyValue.isNull()) {
                                 String indexPropertyFullName = field.getIndexPropertyFullName();
 
@@ -119,11 +122,17 @@ public class EntityIndexer {
                 resultObject.putObject("meta").put("entityClass", metaClass.getName());
                 resultObject.set("content", entityIndexContent);
 
-                log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", object, resultObject);
+                log.info("[IVGA] INDEX OBJECT {}: Result Json = {}", entity, resultObject);
                 try {
-                    request.add(new IndexRequest()
-                            .id(getEntityIdAsString(object))
-                            .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
+                    String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+                    Object primaryKey = EntityValues.getValue(entity, primaryKeyPropertyName);
+                    if(primaryKey == null) {
+                        log.trace("[IVGA] Unable to index instance '{}({})': Primary key not found", metaClass.getName(), EntityValues.getId(entity));
+                    } else {
+                        request.add(new IndexRequest()
+                                .id(primaryKey.toString())
+                                .source(objectMapper.writeValueAsString(resultObject), XContentType.JSON));
+                    }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to create index request: unable to parse source object", e);
                 }
@@ -139,7 +148,7 @@ public class EntityIndexer {
         } else if(EntityChangeType.DELETE.equals(changeType)) {
             BulkRequest request = new BulkRequest(indexDefinition.getIndexName());
             entityIds.stream()
-                    .map(this::formatEntityIdAsString)
+                    .map(this::formatEntityIdAsString) //todo use PK property
                     .forEach(id -> request.add(new DeleteRequest().id(id)));
 
             try {
@@ -156,6 +165,9 @@ public class EntityIndexer {
 
     protected FetchPlan createFetchPlan(IndexDefinition indexDefinition) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(indexDefinition.getEntityClass());
+        MetaClass metaClass = metadata.getClass(indexDefinition.getEntityName());
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        fetchPlanBuilder.add(primaryKeyPropertyName);
         indexDefinition.getMapping().getFields().values().forEach(field -> {
             log.info("[IVGA] Add property to fetch plan: {}", field.getEntityPropertyFullName());
             fetchPlanBuilder.add(field.getEntityPropertyFullName());
@@ -167,13 +179,13 @@ public class EntityIndexer {
         return fetchPlanBuilder.build();
     }
 
-    protected String getEntityIdAsString(Object entity) {
+    /*protected String getEntityIdAsString(Object entity) {
         Object entityId = EntityValues.getId(entity);
         if(entityId == null) {
             throw new RuntimeException("Entity ID is null");
         }
         return formatEntityIdAsString(entityId); //todo cases of complex id?
-    }
+    }*/
 
     protected String formatEntityIdAsString(Object entityId) {
         return entityId.toString();

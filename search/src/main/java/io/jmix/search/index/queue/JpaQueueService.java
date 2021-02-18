@@ -16,15 +16,13 @@
 
 package io.jmix.search.index.queue;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Metadata;
-import io.jmix.core.SaveContext;
-import io.jmix.core.Stores;
+import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.Authenticator;
 import io.jmix.data.EntityChangeType;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.EntityIndexer;
+import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +31,11 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component("search_JpaQueueService")
@@ -50,22 +50,22 @@ public class JpaQueueService implements QueueService {
     @Autowired
     protected EntityIndexer entityIndexer;
     @Autowired
-    protected Authenticator authenticator;
-    @Autowired
     protected StoreAwareLocator storeAwareLocator;
+    @Autowired
+    protected FetchPlans fetchPlans;
+    @Autowired
+    protected PropertyTools propertyTools;
 
     @Override
     public void enqueue(MetaClass entityClass, String entityId, EntityChangeType entityChangeType) {
-        log.info("[IVGA] Enqueue entity: CLass={}, ID={}, ChangeType={}", entityClass, entityId, entityChangeType);
-        QueueItem queueItem = createQueueItem(entityClass, entityId, null, entityChangeType);
+        QueueItem queueItem = createQueueItem(entityClass.getName(), entityId, entityChangeType);
         enqueue(queueItem);
     }
 
     @Override
     public void enqueue(MetaClass entityClass, Collection<String> entityIds, EntityChangeType entityChangeType) {
-        log.info("[IVGA] Enqueue entities: CLass={}, IDs={}, ChangeType={}", entityClass, entityIds, entityChangeType);
         List<QueueItem> queueItems = entityIds.stream()
-                .map(id -> createQueueItem(entityClass, id, null, entityChangeType))
+                .map(id -> createQueueItem(entityClass.getName(), id, entityChangeType))
                 .collect(Collectors.toList());
 
         enqueue(queueItems);
@@ -78,46 +78,93 @@ public class JpaQueueService implements QueueService {
 
     @Override
     public void enqueue(Collection<QueueItem> queueItems) {
-        EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
+        log.trace("Enqueue items: {}", queueItems);
         TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         transactionTemplate.execute(status -> {
-            log.info("[IVGA] Persist {}", queueItems);
+            EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
             queueItems.forEach(entityManager::persist);
             return null;
         });
     }
 
     @Override
-    public void processQueue() {
-        log.trace("[IVGA] Process queue");
-        int batchSize = 100; //todo
-        List<QueueItem> queueItems;
-
-        try {
-            authenticator.begin();
-            do {
-                queueItems = dataManager.load(QueueItem.class)
-                        .query("select q from search_Queue q order by q.createdDate asc")
-                        .maxResults(batchSize)
-                        .list();
-                log.trace("[IVGA] Dequeued items: {}", queueItems);
-
-                entityIndexer.indexEntities(queueItems); //todo handle failed commands of bulk request
-
-                SaveContext saveContext = new SaveContext();
-                saveContext.removing(queueItems);
-                dataManager.save(saveContext);
-            } while (queueItems.size() == batchSize);
-        } finally {
-            authenticator.end();
+    public void enqueue(String entityName, int batchSize) {
+        if(batchSize <= 0) {
+            log.error("Size of enqueuing batch during reindex entity must be positive");
         }
+
+        MetaClass metaClass = metadata.getClass(entityName);
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        FetchPlan fetchPlan = fetchPlans.builder(metaClass.getJavaClass())
+                .add(primaryKeyPropertyName)
+                .build();
+        int batchOffset = 0;
+        int batchLoaded;
+        do {
+            List<Object> entities = dataManager.load(metaClass.getJavaClass())
+                    .all()
+                    .firstResult(batchOffset) //todo integer limit?
+                    .maxResults(batchSize)
+                    .fetchPlan(fetchPlan)
+                    .list();
+
+            List<QueueItem> queueItems = entities.stream()
+                    .map(entity -> EntityValues.getValue(entity, primaryKeyPropertyName))
+                    .filter(Objects::nonNull)
+                    .map(pk -> createQueueItem(entityName, pk.toString(), EntityChangeType.UPDATE))
+                    .collect(Collectors.toList());
+
+            enqueue(queueItems);
+
+            batchLoaded = entities.size();
+            batchOffset += batchLoaded;
+        } while (batchLoaded == batchSize);
     }
 
-    protected QueueItem createQueueItem(MetaClass entityClass, String entityId, String entityName, EntityChangeType entityChangeType) {
+    @Override
+    public int processQueue(int batchSize, int maxProcessedPerExecution) {
+        if(batchSize <= 0) {
+            log.error("Size of batch during queue processing must be positive");
+        }
+
+        List<QueueItem> queueItems;
+        int count = 0;
+        do {
+            queueItems = dataManager.load(QueueItem.class)
+                    .query("select q from search_Queue q order by q.createdDate asc")
+                    .maxResults(batchSize)
+                    .list();
+            log.trace("Dequeued {} items", queueItems.size());
+
+            count += queueItems.size(); //todo Return actual amount of indexed entities from 'entityIndexer.indexEntities'
+            entityIndexer.indexEntities(queueItems); //todo handle failed commands of bulk request
+
+            SaveContext saveContext = new SaveContext();
+            saveContext.removing(queueItems);
+            dataManager.save(saveContext);
+        } while (queueItems.size() == batchSize && (maxProcessedPerExecution <= 0 || count < maxProcessedPerExecution));
+
+        return count;
+    }
+
+    @Override
+    public void emptyQueue(String entityName) {
+        TransactionTemplate transactionTemplate = storeAwareLocator.getTransactionTemplate(Stores.MAIN);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        transactionTemplate.executeWithoutResult(status -> {
+            log.debug("Empty queue for entity '{}'", entityName);
+            EntityManager entityManager = storeAwareLocator.getEntityManager(Stores.MAIN);
+            Query query = entityManager.createQuery("delete from search_Queue q where q.entityName = ?1");
+            query.setParameter(1, entityName);
+            int deleted = query.executeUpdate();
+            log.debug("{} records for entity '{}' have been deleted from queue", entityName, deleted);
+        });
+    }
+
+    protected QueueItem createQueueItem(String entityName, String entityId, EntityChangeType entityChangeType) {
         QueueItem queueItem = metadata.create(QueueItem.class);
         queueItem.setChangeType(entityChangeType.getId());
-        queueItem.setEntityClass(entityClass.getName());
         queueItem.setEntityId(entityId);
         queueItem.setEntityName(entityName);
 

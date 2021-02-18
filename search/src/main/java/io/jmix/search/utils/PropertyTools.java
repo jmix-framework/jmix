@@ -16,12 +16,14 @@
 
 package io.jmix.search.utils;
 
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -33,6 +35,9 @@ import java.util.stream.Collectors;
 public class PropertyTools {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyTools.class);
+
+    @Autowired
+    private MetadataTools metadataTools;
 
     public Map<String, MetaPropertyPath> findPropertyPaths(MetaClass metaClass, String pathString) {
         log.info("[IVGA] findPropertyPaths: MetaClass={}, PathString={}", metaClass, pathString);
@@ -47,6 +52,19 @@ public class PropertyTools {
                 return Collections.singletonMap(pathString, propertyPath);
             }
         }
+    }
+
+    public String getPrimaryKeyPropertyNameForSearch(MetaClass metaClass) {
+        String primaryKeyPropertyName;
+        if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
+            primaryKeyPropertyName = metadataTools.getUuidPropertyName(metaClass.getJavaClass());
+        } else {
+            primaryKeyPropertyName = metadataTools.getPrimaryKeyName(metaClass);
+        }
+        if(primaryKeyPropertyName == null) {
+            throw new RuntimeException("Proper primary key property not found for entity " + metaClass.getName());
+        }
+        return primaryKeyPropertyName;
     }
 
     private Map<String, MetaPropertyPath> findPropertiesByWildcardPath(MetaClass metaClass, String path) {

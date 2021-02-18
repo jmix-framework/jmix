@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.search.utils.PropertyTools;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -61,6 +62,8 @@ public class SearchService {
     protected InstanceNameProvider instanceNameProvider;
     @Autowired
     protected SearchProperties searchProperties;
+    @Autowired
+    protected PropertyTools propertyTools;
 
     public SearchResult search(String searchTerm) {
         //todo Currently it's a simple search over all fields of all search indices without any paging
@@ -82,23 +85,6 @@ public class SearchService {
         } catch (IOException e) {
             throw new RuntimeException("Search failed", e);
         }
-    }
-
-    //todo Use this on indexing step. Move to some utils class?
-    public String getPrimaryKeyPropertyNameForSearch(MetaClass metaClass) {
-        //todo are all cases handled
-        String primaryKeyPropertyName = metadataTools.getPrimaryKeyName(metaClass);
-        if(primaryKeyPropertyName == null) {
-            if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
-                primaryKeyPropertyName = metadataTools.getUuidPropertyName(metaClass.getJavaClass());
-                if(primaryKeyPropertyName == null) {
-                    throw new RuntimeException("Primary key property is null");
-                }
-            } else {
-                throw new RuntimeException("Proper primary key property not found for entity " + metaClass.getName());
-            }
-        }
-        return primaryKeyPropertyName;
     }
 
     protected SearchResult processHits(String searchTerm, SearchHits searchHits) {
@@ -138,7 +124,7 @@ public class SearchService {
     }
 
     protected Map<String, String> loadEntityInstanceNames(MetaClass metaClass, List<String> entityIds) {
-        String primaryKeyProperty = getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
         Map<String, String> result = new HashMap<>();
         for (List<String> partition : Lists.partition(entityIds, searchProperties.getSearchReloadEntitiesBatchSize())) {
             log.debug("Load instance names for ids: {}", partition);

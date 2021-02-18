@@ -19,9 +19,15 @@
         caption="msg://entitySearcherBrowser.caption">
     <actions>
         <action id="performSearchAction"/>
+        <action id="reindexAllAction"/>
     </actions>
     <layout spacing="true">
         <vbox spacing="true">
+            <groupBox orientation="horizontal" spacing="true" caption="Index">
+                <buttonsPanel>
+                    <button id="reindexAllButton" action="reindexAllAction" caption="Reindex All"/>
+                </buttonsPanel>
+            </groupBox>
             <hbox id="searchInputBox" spacing="true">
                 <textField id="searchInput"/>
                 <button id="searchButton" action="performSearchAction" icon="SEARCH"/>
@@ -30,6 +36,7 @@
             <hbox width="100%" >
                 <hbox id="navigationBox" align="MIDDLE_CENTER"/>
             </hbox>
+
         </vbox>
     </layout>
 </window>

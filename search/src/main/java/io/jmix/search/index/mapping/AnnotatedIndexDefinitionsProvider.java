@@ -42,7 +42,8 @@ public class AnnotatedIndexDefinitionsProvider {
 
     protected InstanceNameProvider instanceNameProvider;
 
-    protected final Map<Class<?>, IndexDefinition> indexDefinitions;
+    protected final Map<String, IndexDefinition> indexDefinitionsByEntityName;
+    protected final Map<String, IndexDefinition> indexDefinitionsByIndexName;
 
     protected final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate;
     protected final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete;
@@ -54,19 +55,21 @@ public class AnnotatedIndexDefinitionsProvider {
         this.instanceNameProvider = instanceNameProvider;
 
         Set<String> classNames = classpathScanner.getClassNames(IndexDefinitionDetector.class);
-        log.info("[IVGA] Create Index Definitions");
-        Map<Class<?>, IndexDefinition> tmpIndexDefinitions = new HashMap<>();
+        log.debug("Create Index definitions");
+        Map<String, IndexDefinition> tmpIndexDefinitionsByEntityName = new HashMap<>();
+        Map<String, IndexDefinition> tmpIndexDefinitionByIndexName = new HashMap<>();
         Map<Class<?>, Map<String, Set<MetaPropertyPath>>> tmpReferentiallyAffectedPropertiesForUpdate = new HashMap<>();
         Map<Class<?>, Set<MetaPropertyPath>> tmpReferentiallyAffectedPropertiesForDelete = new HashMap<>();
 
         //todo refactor
         classNames.stream().map(builder::createIndexDefinition).forEach(indexDefinition -> {
-            Class<?> entityClass = indexDefinition.getEntityClass();
+            String entityName = indexDefinition.getEntityName();
 
-            if(tmpIndexDefinitions.containsKey(entityClass)) {
-                log.warn("[IVGA] Multiple Index Definitions are detected for entity '{}'", entityClass);
+            if(tmpIndexDefinitionsByEntityName.containsKey(entityName)) {
+                log.warn("[IVGA] Multiple Index Definitions are detected for entity '{}'", entityName);
             } else {
-                tmpIndexDefinitions.put(entityClass, indexDefinition);
+                tmpIndexDefinitionsByEntityName.put(entityName, indexDefinition);
+                tmpIndexDefinitionByIndexName.put(indexDefinition.getIndexName(), indexDefinition);
             }
 
             Collection<MappingFieldDescriptor> fields = indexDefinition.getMapping().getFields().values();
@@ -134,26 +137,33 @@ public class AnnotatedIndexDefinitionsProvider {
                     });
         });
 
-        indexDefinitions = tmpIndexDefinitions;
+        indexDefinitionsByEntityName = tmpIndexDefinitionsByEntityName;
+        indexDefinitionsByIndexName = tmpIndexDefinitionByIndexName;
         referentiallyAffectedPropertiesForDelete = tmpReferentiallyAffectedPropertiesForDelete;
         referentiallyAffectedPropertiesForUpdate = tmpReferentiallyAffectedPropertiesForUpdate;
 
-        log.info("[IVGA] Initialized indexDefinitions = {}", indexDefinitions);
-        log.info("[IVGA] Initialized referentiallyAffectedPropertiesForUpdate = {}", referentiallyAffectedPropertiesForUpdate);
-        log.info("[IVGA] Initialized referentiallyAffectedPropertiesForDelete = {}", referentiallyAffectedPropertiesForDelete);
+        log.debug("Index definitions by entity name: {}", indexDefinitionsByEntityName);
+        log.debug("Index definitions by index name = {}", indexDefinitionsByIndexName);
+        log.debug("Referentially affected properties for update = {}", referentiallyAffectedPropertiesForUpdate);
+        log.debug("Referentially affected properties for delete = {}", referentiallyAffectedPropertiesForDelete);
     }
 
     public Collection<IndexDefinition> getIndexDefinitions() {
-        return indexDefinitions.values();
+        return indexDefinitionsByEntityName.values();
     }
 
     @Nullable
-    public IndexDefinition getIndexDefinitionForEntityClass(Class<?> entityClass) {
-        return indexDefinitions.get(entityClass);
+    public IndexDefinition getIndexDefinitionByEntityName(String entityName) {
+        return indexDefinitionsByEntityName.get(entityName);
     }
 
-    public boolean isDirectlyIndexed(Class<?> entityClass) {
-        return indexDefinitions.containsKey(entityClass);
+    @Nullable
+    public IndexDefinition getIndexDefinitionByIndexName(String indexName) {
+        return indexDefinitionsByIndexName.get(indexName);
+    }
+
+    public boolean isDirectlyIndexed(String entityName) {
+        return indexDefinitionsByEntityName.containsKey(entityName);
     }
 
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForUpdate(Class<?> entityClass, Set<String> changedProperties) {
@@ -230,7 +240,7 @@ public class AnnotatedIndexDefinitionsProvider {
 
     protected static class PropertyTrackingDetail {
 
-        protected final Class<?> trackedClassUpdate;
+        protected final Class<?> trackedClassUpdate; //todo change both tracked class to their entity names?
         protected final Class<?> trackedClassDelete;
         protected final String localPropertyName;
         protected final MetaPropertyPath backRefGlobalPropertyUpdate;

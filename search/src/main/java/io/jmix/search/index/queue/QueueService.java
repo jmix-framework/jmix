@@ -31,5 +31,9 @@ public interface QueueService {
 
     void enqueue(Collection<QueueItem> queueItems);
 
-    void processQueue();
+    void enqueue(String entityName, int batchSize);
+
+    int processQueue(int batchSize, int maxProcessedPerExecution);
+
+    void emptyQueue(String entityName);
 }

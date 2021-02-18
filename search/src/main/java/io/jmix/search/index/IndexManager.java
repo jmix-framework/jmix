@@ -51,7 +51,7 @@ public class IndexManager {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 
-    public void createIndex(IndexDefinition indexDefinition) throws IOException {
+    public boolean createIndex(IndexDefinition indexDefinition) throws IOException {
         CreateIndexRequest request = new CreateIndexRequest(indexDefinition.getIndexName());
         String mappingBody;
         try {
@@ -63,12 +63,26 @@ public class IndexManager {
         log.info("Create index '{}' with mapping {}", indexDefinition.getIndexName(), mappingBody);
         CreateIndexResponse response = esClient.indices().create(request, RequestOptions.DEFAULT);
         log.info("Result of index '{}' creation: {}", indexDefinition.getIndexName(), response.isAcknowledged() ? "Success" : "Failure");
+        return response.isAcknowledged();
     }
 
-    public void dropIndex(String indexName) throws IOException {
+    public boolean dropIndex(String indexName) throws IOException {
         DeleteIndexRequest request = new DeleteIndexRequest(indexName);
         AcknowledgedResponse response = esClient.indices().delete(request, RequestOptions.DEFAULT);
-        log.info("Result of index '{}' creation: {}", indexName, response.isAcknowledged() ? "Success" : "Failure");
+        log.info("Result of index '{}' deletion: {}", indexName, response.isAcknowledged() ? "Success" : "Failure");
+        return response.isAcknowledged();
+    }
+
+    public boolean recreateIndex(String indexName) throws IOException {
+        IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionByIndexName(indexName);
+        if(indexDefinition == null) {
+            log.error("Unable to recreate index '{}': there is no index definition for it", indexName);
+            return false;
+        }
+        if(isIndexExist(indexName)) {
+            dropIndex(indexName);
+        }
+        return createIndex(indexDefinition);
     }
 
     public boolean isIndexExist(String indexName) throws IOException {

@@ -22,21 +22,28 @@ import java.util.Set;
 
 public class IndexDefinition {
 
-    protected Class<?> entityClass;
+    protected final String entityName;
 
-    protected Set<Class<?>> affectedEntityClasses;
+    protected final Class<?> entityClass;
 
-    protected String indexName;
+    protected final Set<Class<?>> affectedEntityClasses;
 
-    protected IndexMappingConfig mapping;
+    protected final String indexName;
+
+    protected final IndexMappingConfig mapping;
 
     //todo settings
 
-    public IndexDefinition(Class<?> entityClass, String indexName, IndexMappingConfig mapping, Set<Class<?>> affectedEntityClasses) {
+    public IndexDefinition(String entityName, Class<?> entityClass, String indexName, IndexMappingConfig mapping, Set<Class<?>> affectedEntityClasses) {
+        this.entityName = entityName;
         this.entityClass = entityClass;
         this.indexName = indexName;
         this.mapping = mapping;
         this.affectedEntityClasses = affectedEntityClasses;
+    }
+
+    public String getEntityName() {
+        return entityName;
     }
 
     public Class<?> getEntityClass() {

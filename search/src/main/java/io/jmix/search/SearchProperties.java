@@ -24,17 +24,26 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @ConstructorBinding
 public class SearchProperties {
 
-    protected int esSearchSize;
-    protected int maxSearchPageCount;
-    protected int searchReloadEntitiesBatchSize;
+    protected final int esSearchSize;
+    protected final int maxSearchPageCount;
+    protected final int searchReloadEntitiesBatchSize;
+    protected final int processQueueBatchSize;
+    protected final int maxProcessedQueueItemsPerExecution;
+    protected final int reindexEntityEnqueueBatchSize;
 
     public SearchProperties(
             @DefaultValue("100") int esSearchSize,
             @DefaultValue("100") int maxSearchPageCount,
-            @DefaultValue("100") int searchReloadEntitiesBatchSize) {
+            @DefaultValue("100") int searchReloadEntitiesBatchSize,
+            @DefaultValue("100") int processQueueBatchSize,
+            @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
+            @DefaultValue("100") int reindexEntityEnqueueBatchSize) {
         this.esSearchSize = esSearchSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
+        this.processQueueBatchSize = processQueueBatchSize;
+        this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
+        this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
     }
 
     public int getEsSearchSize() {
@@ -47,5 +56,17 @@ public class SearchProperties {
 
     public int getSearchReloadEntitiesBatchSize() {
         return searchReloadEntitiesBatchSize;
+    }
+
+    public int getProcessQueueBatchSize() {
+        return processQueueBatchSize;
+    }
+
+    public int getMaxProcessedQueueItemsPerExecution() {
+        return maxProcessedQueueItemsPerExecution;
+    }
+
+    public int getReindexEntityEnqueueBatchSize() {
+        return reindexEntityEnqueueBatchSize;
     }
 }

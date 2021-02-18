@@ -76,7 +76,7 @@ public class AnnotatedIndexDefinitionBuilder {
         log.debug("Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
         affectedEntityClasses.forEach(entityClass -> entityListenerManager.addListener(entityClass, EntityTracker.NAME));
 
-        return new IndexDefinition(entityJavaClass, indexName, indexMappingConfig, affectedEntityClasses);
+        return new IndexDefinition(entityMetaClass.getName(), entityJavaClass, indexName, indexMappingConfig, affectedEntityClasses);
     }
 
     protected Class<?> resolveClass(String className) {

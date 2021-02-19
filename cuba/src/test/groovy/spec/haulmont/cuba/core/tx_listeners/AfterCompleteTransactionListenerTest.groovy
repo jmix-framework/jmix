@@ -64,16 +64,16 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = persistence.callInTransaction { em ->
+        def reloadedUser = persistence.callInTransaction { em ->
             em.find(User, user.id)
         }
 
         then:
 
-        entityStates.isLoaded(user, 'login')
-        entityStates.isLoaded(user, 'name')
-        entityStates.isLoaded(user, 'group')
-        user.group != null
+        entityStates.isLoaded(reloadedUser, 'login')
+        entityStates.isLoaded(reloadedUser, 'name')
+        entityStates.isLoaded(reloadedUser, 'group')
+        reloadedUser.group != null
 
         cleanup:
 
@@ -87,16 +87,16 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = persistence.callInTransaction { em ->
+        def reloadedUser = persistence.callInTransaction { em ->
             em.find(User, user.id)
         }
 
         then:
 
-        entityStates.isLoaded(user, 'login')
-        entityStates.isLoaded(user, 'name')
-        entityStates.isLoaded(user, 'userRoles')
-        user.userRoles.size() == 1
+        entityStates.isLoaded(reloadedUser, 'login')
+        entityStates.isLoaded(reloadedUser, 'name')
+        entityStates.isLoaded(reloadedUser, 'userRoles')
+        reloadedUser.userRoles.size() == 1
 
         cleanup:
 
@@ -115,16 +115,16 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = persistence.callInTransaction { em ->
+        def reloadedUser = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 
         then:
 
-        entityStates.isLoaded(user, 'login')
-        entityStates.isLoaded(user, 'group')
-        entityStates.isLoaded(user.group, 'name')
-        !entityStates.isLoaded(user, 'name')
+        entityStates.isLoaded(reloadedUser, 'login')
+        entityStates.isLoaded(reloadedUser, 'group')
+        entityStates.isLoaded(reloadedUser.group, 'name')
+        !entityStates.isLoaded(reloadedUser, 'name')
 
         cleanup:
 
@@ -147,15 +147,15 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = persistence.callInTransaction { em ->
+        def reloadedUser = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 
         then:
 
-        entityStates.isLoaded(user, 'login')
-        entityStates.isLoaded(user, 'userRoles')
-        !entityStates.isLoaded(user, 'group')
+        entityStates.isLoaded(reloadedUser, 'login')
+        entityStates.isLoaded(reloadedUser, 'userRoles')
+        !entityStates.isLoaded(reloadedUser, 'group')
 
         cleanup:
 
@@ -175,14 +175,14 @@ class AfterCompleteTransactionListenerTest extends CoreTestSpecification {
 
         when:
 
-        def user = persistence.callInTransaction { em ->
+        def reloadedUser = persistence.callInTransaction { em ->
             em.find(User, user.id, view)
         }
 
         then:
 
-        entityStates.isLoaded(user, 'login')
-        !entityStates.isLoaded(user, 'userRoles')
+        entityStates.isLoaded(reloadedUser, 'login')
+        !entityStates.isLoaded(reloadedUser, 'userRoles')
 
         cleanup:
 

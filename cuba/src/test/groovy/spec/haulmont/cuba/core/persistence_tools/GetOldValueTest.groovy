@@ -201,8 +201,8 @@ class GetOldValueTest extends CoreTestSpecification {
         persistence.runInTransaction { em ->
             order = persistence.getEntityManager().find(Order, order1.id, view)
 
-            def orderLine = order.orderLines.find { it.productName == 'prod11' }
-            em.remove(orderLine)
+            def foundOrderLine = order.orderLines.find { it.productName == 'prod11' }
+            em.remove(foundOrderLine)
 
             oldValue = persistenceTools.getOldValue(order, 'orderLines')
         }

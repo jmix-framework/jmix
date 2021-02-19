@@ -103,18 +103,24 @@ public class AnnotatedIndexDefinitionBuilder {
         Method[] methods = indexDefClass.getDeclaredMethods();
         IndexMappingConfig indexMappingConfig;
 
-        if(methods.length > 0) { //todo handle multiple methods?
-            Method method = methods[0];
-            log.debug("Check method '{}' of Index Definition class for entity '{}'", method.getName(), entityMetaClass);
-            IndexMappingConfigTemplate indexMappingConfigTemplate;
-            if(Modifier.isStatic(method.getModifiers()) && IndexMappingConfigTemplate.class.equals(method.getReturnType())) {
-                try {
-                    indexMappingConfigTemplate = (IndexMappingConfigTemplate)method.invoke(null);
-                } catch (IllegalAccessException | InvocationTargetException e) {
-                    throw new RuntimeException("Failed to call method '" + method + "'", e);
+        if(methods.length > 0) {
+            List<Annotation> fieldAnnotations = new ArrayList<>();
+            Method methodWithDefinitionImplementation = null;
+            for (Method method : methods) {
+                if (isDefinitionImplementationMethod(method)) {
+                    if (methodWithDefinitionImplementation == null) {
+                        methodWithDefinitionImplementation = method;
+                    } else {
+                        throw new RuntimeException("There can be only one method with body in Index Definition interface '" + indexDefClass + "'");
+                    }
+                } else {
+                    fieldAnnotations.addAll(Arrays.asList(method.getAnnotations()));
                 }
-            } else {
-                List<IndexMappingConfigTemplateItem> items = Arrays.stream(method.getAnnotations())
+            }
+
+            IndexMappingConfigTemplate indexMappingConfigTemplate;
+            if (methodWithDefinitionImplementation == null) {
+                List<IndexMappingConfigTemplateItem> items = fieldAnnotations.stream()
                         .map(annotation -> processAnnotation(annotation, entityMetaClass))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
@@ -122,8 +128,13 @@ public class AnnotatedIndexDefinitionBuilder {
 
                 indexMappingConfigTemplate = new IndexMappingConfigTemplate();
                 indexMappingConfigTemplate.setItems(items);
+            } else {
+                try {
+                    indexMappingConfigTemplate = (IndexMappingConfigTemplate) methodWithDefinitionImplementation.invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Failed to call method '" + methodWithDefinitionImplementation + "'", e);
+                }
             }
-
             Map<String, MappingFieldDescriptor> fieldDescriptors = processIndexMappingConfigTemplate(entityMetaClass, indexMappingConfigTemplate);
             indexMappingConfig = new IndexMappingConfig(entityMetaClass, fieldDescriptors);
         } else {
@@ -132,13 +143,19 @@ public class AnnotatedIndexDefinitionBuilder {
         return indexMappingConfig;
     }
 
-    private Optional<IndexMappingConfigTemplateItem> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
+    protected boolean isDefinitionImplementationMethod(Method method) {
+        return Modifier.isStatic(method.getModifiers())
+                && IndexMappingConfigTemplate.class.equals(method.getReturnType())
+                && method.getParameterCount() == 0;
+    }
+
+    protected Optional<IndexMappingConfigTemplateItem> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
         return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
     }
 
-    private Set<Class<?>> getAffectedEntityClasses(IndexMappingConfig indexMappingConfig) {
+    protected Set<Class<?>> getAffectedEntityClasses(IndexMappingConfig indexMappingConfig) {
         Set<Class<?>> affectedClasses = indexMappingConfig.getFields().values().stream()
                 .flatMap(d -> Arrays.stream(d.getMetaPropertyPath().getMetaProperties()))
                 .filter(p -> p.getRange().isClass())

@@ -33,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -104,8 +106,12 @@ public class AnnotatedIndexDefinitionBuilder {
         if(methods.length > 0) { //todo handle multiple methods?
             Method method = methods[0];
             log.debug("Check method '{}' of Index Definition class for entity '{}'", method.getName(), entityMetaClass);
-            if(method.isDefault() || IndexMappingConfig.class.equals(method.getReturnType())) {
-                indexMappingConfig = new IndexMappingConfig(entityMetaClass, Collections.emptyMap()); //todo Call method. Switch default to static?
+            if(Modifier.isStatic(method.getModifiers()) && IndexMappingConfig.class.equals(method.getReturnType())) {
+                try {
+                    indexMappingConfig = (IndexMappingConfig)method.invoke(null);
+                } catch (IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException("Failed to call method '" + method + "'", e);
+                }
             } else {
                 Map<String, MappingFieldDescriptor> fieldDescriptors = Arrays.stream(method.getAnnotations())
                         .map(annotation -> processAnnotation(annotation, entityMetaClass))

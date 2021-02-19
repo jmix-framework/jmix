@@ -49,6 +49,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static io.jmix.core.EntitySerializationOption.*;
@@ -622,7 +623,12 @@ public class EntitiesControllerManager {
             } else if (Long.class.isAssignableFrom(idClass)) {
                 return Long.valueOf(entityId);
             } else {
-                return entityId;
+                if (metadataTools.hasCompositePrimaryKey(metaClass)) {
+                    String entityIdJson = new String(Base64.getUrlDecoder().decode(entityId), StandardCharsets.UTF_8);
+                    return entitySerialization.entityFromJson(entityIdJson, metadata.getClass(idClass));
+                } else {
+                    return entityId;
+                }
             }
         } catch (Exception e) {
             throw new RestAPIException("Invalid entity ID",

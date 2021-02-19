@@ -26,7 +26,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
-
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -50,6 +50,8 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
     private String driverUuidString;
     private String debtorUuidString;
     private String plantUuidString;
+    private String compositeKeyEntityIdString;
+    private String compositeKeyEntityTenantIdString;
 
     private String modelName = "Audi A3";
     private String model2Name = "BMW X5";
@@ -81,6 +83,19 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
                 fail();
             } catch (PathNotFoundException ignored) {
             }
+        }
+    }
+
+    @Test
+    public void loadEntityWithCompositeId() throws Exception {
+        String id = String.format("{tenant : %s, entityId: %s}", compositeKeyEntityTenantIdString,
+                compositeKeyEntityIdString);
+        String base64Id = Base64.getUrlEncoder().encodeToString(id.getBytes(StandardCharsets.UTF_8));
+        String url = baseUrl + "/entities/rest_CompositeKeyEntity/" + base64Id;
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals("compositeEntity", ctx.read("$.name"));
         }
     }
 
@@ -1862,6 +1877,34 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         }
     }
 
+    @Test
+    public void updateEntityWithCompositeId() throws Exception {
+        String id = String.format("{tenant : %s, entityId: %s}", compositeKeyEntityTenantIdString,
+                compositeKeyEntityIdString);
+        String base64Id = Base64.getUrlEncoder().encodeToString(id.getBytes(StandardCharsets.UTF_8));
+        String json = getFileContent("updateEntityWithCompositeId.json", new HashMap<>());
+
+        String url = baseUrl + "/entities/rest_CompositeKeyEntity/" + base64Id;
+
+        Map<String, String> params = new HashMap<>();
+
+        try (CloseableHttpResponse response = sendPut(url, oauthToken, json, params)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+        }
+
+        try (PreparedStatement stmt = conn.prepareStatement("select NAME, EMAIL from REST_COMPOSITE_KEY " +
+                "where ENTITY_ID = ? and TENANT = ?")) {
+            stmt.setLong(1, Long.valueOf(compositeKeyEntityIdString));
+            stmt.setInt(2, Integer.valueOf(compositeKeyEntityTenantIdString));
+            ResultSet rs = stmt.executeQuery();
+            assertTrue(rs.next());
+            String name = rs.getString("NAME");
+            assertEquals("modified name", name);
+            Object email = rs.getObject("EMAIL");
+            assertEquals("modified email", email);
+        }
+    }
+
 
     @Test
     void deleteCar() throws Exception {
@@ -2481,6 +2524,16 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
                 carUuid,
                 "10"
         );
+
+        Long compositeKeyEntityId = dirtyData.createCompositeKeyEntityId();
+        Integer compositeKeyEntityTenantId = dirtyData.createCompositeKeyEntityTenantId();
+        compositeKeyEntityIdString = compositeKeyEntityId.toString();
+        compositeKeyEntityTenantIdString = compositeKeyEntityTenantId.toString();
+
+        executePrepared("insert into rest_composite_key(entity_id, tenant, name) values (?, ?, ?)",
+                compositeKeyEntityId,
+                compositeKeyEntityTenantId,
+                "compositeEntity");
 
         dynAttrMetadata.reload();
     }

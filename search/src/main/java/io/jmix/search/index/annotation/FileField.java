@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 @Repeatable(FileField.Container.class)
 public @interface FileField {
 
-    String[] include() default "";
+    String[] includeProperty() default "";
 
-    String[] exclude() default "";
+    String[] excludeProperty() default "";
 
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)

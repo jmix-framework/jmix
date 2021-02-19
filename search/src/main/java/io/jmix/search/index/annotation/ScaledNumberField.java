@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 @Repeatable(ScaledNumberField.Container.class)
 public @interface ScaledNumberField {
 
-    String[] include() default "";
+    String[] includeProperty() default "";
 
-    String[] exclude() default "";
+    String[] excludeProperty() default "";
 
     int scale() default 0;
 

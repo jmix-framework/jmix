@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 @Repeatable(FullTextField.Container.class)
 public @interface FullTextField {
 
-    String[] include() default "";
+    String[] includeProperty() default "";
 
-    String[] exclude() default "";
+    String[] excludeProperty() default "";
 
     String analyzer() default "";
 

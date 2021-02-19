@@ -23,9 +23,9 @@ import java.lang.annotation.*;
 @Repeatable(KeywordField.Container.class)
 public @interface KeywordField {
 
-    String[] include() default "";
+    String[] includeProperty() default "";
 
-    String[] exclude() default "";
+    String[] excludeProperty() default "";
 
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)

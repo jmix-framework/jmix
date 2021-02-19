@@ -26,6 +26,7 @@ import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Screen.AfterDetachEvent;
 import io.jmix.ui.screen.Screen.AfterShowEvent;
 import io.jmix.ui.screen.Screen.BeforeShowEvent;
+import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.ScreenSettings;
@@ -235,7 +236,15 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
 
     @Nullable
     protected Screen getScreenOwner() {
-        return getOwner() == null ? null : (Screen) getOwner().getFrameOwner();
+        Frame frame = getOwner();
+        if (frame == null) {
+            return null;
+        }
+        if (frame.getFrameOwner() instanceof ScreenFragment) {
+            throw new IllegalStateException("ScreenSettingsFacet does not work in fragments");
+        }
+
+        return  (Screen) getOwner().getFrameOwner();
     }
 
     protected void onScreenBeforeShow(BeforeShowEvent event) {

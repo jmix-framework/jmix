@@ -16,12 +16,8 @@
 
 package io.jmix.data.impl.liquibase;
 
-import liquibase.exception.UnexpectedLiquibaseException;
 import liquibase.integration.spring.SpringLiquibase;
 import liquibase.integration.spring.SpringResourceAccessor;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.ContextResource;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.ByteArrayInputStream;
@@ -65,50 +61,5 @@ public class JmixLiquibase extends SpringLiquibase {
             }
             return super.openStream(relativeTo, streamPath);
         }
-
-        // Workaround for https://github.com/liquibase/liquibase/issues/1657 based on https://github.com/liquibase/liquibase/pull/1665
-        //---- START ----
-
-        /**
-         * Returns the lookup path to the given resource.
-         */
-        @Override
-        protected String getResourcePath(Resource resource) {
-            if (resource instanceof ContextResource) {
-                return ((ContextResource) resource).getPathWithinContext();
-            }
-            if (resource instanceof ClassPathResource) {
-                return ((ClassPathResource) resource).getPath();
-            }
-
-            //have to fall back to figuring out the path as best we can
-            try {
-                String url = resource.getURL().toExternalForm();
-                if (url.contains("!")) {
-                    return url.replaceFirst(".*!", "");
-                } else {
-                    while (!resourceLoader.getResource("classpath:" + url).exists()) {
-                        String newUrl = url.replaceFirst("^/?.*?/", "");
-                        if (newUrl.equals(url)) {
-                            throw new UnexpectedLiquibaseException("Could determine path for " + resource.getURL().toExternalForm());
-                        }
-                        url = newUrl;
-                    }
-
-                    return url;
-                }
-            } catch (IOException e) {
-                //the path gets stored in the databasechangelog table, so if it gets returned incorrectly it will cause future problems.
-                //so throw a breaking error now rather than wait for bigger problems down the line
-                throw new UnexpectedLiquibaseException("Cannot determine resource path for " + resource.getDescription());
-            }
-        }
-
-        @Override
-        protected String finalizeSearchPath(String searchPath) {
-            return super.finalizeSearchPath(searchPath.replaceAll("classpath\\*:", "classpath:"));
-        }
-
-        //---- END ----
     }
 }

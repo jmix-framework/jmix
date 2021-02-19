@@ -16,58 +16,20 @@
 
 package io.jmix.search.index.mapping;
 
-import io.jmix.core.metamodel.model.MetaClass;
-
-import java.util.Map;
+import java.util.List;
 
 public class IndexMappingConfigTemplate { //todo create builder
 
-    protected MetaClass rootEntityMetaClass;
-    protected String[] includedProperties;
-    protected String[] excludedProperties;
-    protected Class<? extends FieldMappingStrategy> fieldMappingStrategyClass;
-    protected Map<String, Object> parameters;
+    protected List<IndexMappingConfigTemplateItem> items;
 
     public IndexMappingConfigTemplate() {
     }
 
-    public MetaClass getRootEntityMetaClass() {
-        return rootEntityMetaClass;
+    public List<IndexMappingConfigTemplateItem> getItems() {
+        return items;
     }
 
-    public void setRootEntityMetaClass(MetaClass rootEntityMetaClass) {
-        this.rootEntityMetaClass = rootEntityMetaClass;
-    }
-
-    public String[] getIncludedProperties() {
-        return includedProperties;
-    }
-
-    public void setIncludedProperties(String[] includedProperties) {
-        this.includedProperties = includedProperties;
-    }
-
-    public String[] getExcludedProperties() {
-        return excludedProperties;
-    }
-
-    public void setExcludedProperties(String[] excludedProperties) {
-        this.excludedProperties = excludedProperties;
-    }
-
-    public Class<? extends FieldMappingStrategy> getFieldMappingStrategyClass() {
-        return fieldMappingStrategyClass;
-    }
-
-    public void setFieldMappingStrategyClass(Class<? extends FieldMappingStrategy> fieldMappingStrategyClass) {
-        this.fieldMappingStrategyClass = fieldMappingStrategyClass;
-    }
-
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
+    public void setItems(List<IndexMappingConfigTemplateItem> items) {
+        this.items = items;
     }
 }

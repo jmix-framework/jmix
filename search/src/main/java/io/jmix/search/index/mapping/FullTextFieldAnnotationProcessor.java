@@ -36,7 +36,7 @@ public class FullTextFieldAnnotationProcessor extends AbstractFieldAnnotationPro
     }
 
     @Override
-    public IndexMappingConfigTemplate createIndexMappingConfigTemplate(MetaClass rootEntityMetaClass, FullTextField annotation) {
+    public IndexMappingConfigTemplateItem createIndexMappingConfigTemplateItem(MetaClass rootEntityMetaClass, FullTextField annotation) {
         //todo
         return null;
     }

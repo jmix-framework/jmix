@@ -28,15 +28,15 @@ public abstract class AbstractFieldAnnotationProcessor<T extends Annotation> imp
     private static final Logger log = LoggerFactory.getLogger(AbstractFieldAnnotationProcessor.class);
 
     @Override
-    public IndexMappingConfigTemplate process(MetaClass rootEntityMetaClass, Annotation annotation) {
+    public IndexMappingConfigTemplateItem process(MetaClass rootEntityMetaClass, Annotation annotation) {
         log.info("[IVGA] Start process annotation '{}' for entity class '{}'", annotation, rootEntityMetaClass);
         T specificAnnotation = getAnnotationClass().cast(annotation);
-        return createIndexMappingConfigTemplate(rootEntityMetaClass, specificAnnotation);
+        return createIndexMappingConfigTemplateItem(rootEntityMetaClass, specificAnnotation);
     }
 
     protected abstract Map<String, Object> createParameters(T specificAnnotation);
 
-    protected abstract IndexMappingConfigTemplate createIndexMappingConfigTemplate(MetaClass rootEntityMetaClass, T specificAnnotation);
+    protected abstract IndexMappingConfigTemplateItem createIndexMappingConfigTemplateItem(MetaClass rootEntityMetaClass, T specificAnnotation);
 
     protected abstract Class<? extends FieldMappingStrategy> getFieldMappingStrategyClass();
 

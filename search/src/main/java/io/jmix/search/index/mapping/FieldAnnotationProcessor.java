@@ -22,7 +22,7 @@ import java.lang.annotation.Annotation;
 
 public interface FieldAnnotationProcessor<T extends Annotation> {
 
-    IndexMappingConfigTemplate process(MetaClass rootEntityMetaClass, Annotation annotation);
+    IndexMappingConfigTemplateItem process(MetaClass rootEntityMetaClass, Annotation annotation);
 
     Class<T> getAnnotationClass();
 }

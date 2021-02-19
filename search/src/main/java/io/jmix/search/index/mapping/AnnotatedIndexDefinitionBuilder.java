@@ -106,36 +106,33 @@ public class AnnotatedIndexDefinitionBuilder {
         if(methods.length > 0) { //todo handle multiple methods?
             Method method = methods[0];
             log.debug("Check method '{}' of Index Definition class for entity '{}'", method.getName(), entityMetaClass);
-            if(Modifier.isStatic(method.getModifiers()) && IndexMappingConfig.class.equals(method.getReturnType())) {
+            IndexMappingConfigTemplate indexMappingConfigTemplate;
+            if(Modifier.isStatic(method.getModifiers()) && IndexMappingConfigTemplate.class.equals(method.getReturnType())) {
                 try {
-                    indexMappingConfig = (IndexMappingConfig)method.invoke(null);
+                    indexMappingConfigTemplate = (IndexMappingConfigTemplate)method.invoke(null);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     throw new RuntimeException("Failed to call method '" + method + "'", e);
                 }
             } else {
-                Map<String, MappingFieldDescriptor> fieldDescriptors = Arrays.stream(method.getAnnotations())
+                List<IndexMappingConfigTemplateItem> items = Arrays.stream(method.getAnnotations())
                         .map(annotation -> processAnnotation(annotation, entityMetaClass))
                         .filter(Optional::isPresent)
                         .map(Optional::get)
-                        .flatMap(template -> processIndexMappingConfigTemplate(template).stream())
-                        .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
-                            int order1 = v1.getOrder();
-                            int order2 = v2.getOrder();
-                            if (order1 == order2) {
-                                throw new RuntimeException("Conflicted mapping fields: '" + v1.getIndexPropertyFullName() + "' and '" + v2.getIndexPropertyFullName() + "'");
-                            }
-                            return order1 < order2 ? v2 : v1;
-                        }));
+                        .collect(Collectors.toList());
 
-                indexMappingConfig = new IndexMappingConfig(entityMetaClass, fieldDescriptors);
+                indexMappingConfigTemplate = new IndexMappingConfigTemplate();
+                indexMappingConfigTemplate.setItems(items);
             }
+
+            Map<String, MappingFieldDescriptor> fieldDescriptors = processIndexMappingConfigTemplate(entityMetaClass, indexMappingConfigTemplate);
+            indexMappingConfig = new IndexMappingConfig(entityMetaClass, fieldDescriptors);
         } else {
             indexMappingConfig = new IndexMappingConfig(entityMetaClass, Collections.emptyMap());
         }
         return indexMappingConfig;
     }
 
-    private Optional<IndexMappingConfigTemplate> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
+    private Optional<IndexMappingConfigTemplateItem> processAnnotation(Annotation annotation, MetaClass entityMetaClass) {
         Class<? extends Annotation> aClass = annotation.annotationType();
         Optional<FieldAnnotationProcessor<? extends Annotation>> processor = mappingFieldAnnotationProcessorsRegistry.getProcessorForAnnotationClass(aClass);
         return processor.map(fieldAnnotationProcessor -> fieldAnnotationProcessor.process(entityMetaClass, annotation));
@@ -152,9 +149,23 @@ public class AnnotatedIndexDefinitionBuilder {
         return affectedClasses;
     }
 
-    protected List<MappingFieldDescriptor> processIndexMappingConfigTemplate(IndexMappingConfigTemplate template) {
+    protected Map<String, MappingFieldDescriptor> processIndexMappingConfigTemplate(MetaClass metaClass, IndexMappingConfigTemplate template) {
+        return template.getItems().stream()
+                .map(item -> processIndexMappingConfigTemplateItem(metaClass, item))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toMap(MappingFieldDescriptor::getIndexPropertyFullName, Function.identity(), (v1, v2) -> {
+                    int order1 = v1.getOrder();
+                    int order2 = v2.getOrder();
+                    if (order1 == order2) {
+                        throw new RuntimeException("Conflicted mapping fields: '" + v1.getIndexPropertyFullName() + "' and '" + v2.getIndexPropertyFullName() + "'");
+                    }
+                    return order1 < order2 ? v2 : v1;
+                }));
+    }
+
+    protected List<MappingFieldDescriptor> processIndexMappingConfigTemplateItem(MetaClass metaClass, IndexMappingConfigTemplateItem template) {
         Map<String, MetaPropertyPath> effectiveProperties = resolveEffectiveProperties(
-                template.getRootEntityMetaClass(), template.getIncludedProperties(), template.getExcludedProperties()
+                metaClass, template.getIncludedProperties(), template.getExcludedProperties()
         );
 
         return effectiveProperties.values().stream()
@@ -182,7 +193,7 @@ public class AnnotatedIndexDefinitionBuilder {
         return effectiveProperties;
     }
 
-    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, IndexMappingConfigTemplate template) {
+    protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, IndexMappingConfigTemplateItem template) {
         FieldMappingStrategy fieldMappingStrategy = resolveFieldMappingStrategy(template.getFieldMappingStrategyClass());
         if(fieldMappingStrategy.isSupported(propertyPath)) {
             List<MetaPropertyPath> instanceNameRelatedProperties;
@@ -209,7 +220,7 @@ public class AnnotatedIndexDefinitionBuilder {
             fieldDescriptor.setEntityPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setIndexPropertyFullName(propertyPath.toPathString());
             fieldDescriptor.setMetaPropertyPath(propertyPath);
-            fieldDescriptor.setStandalone(false);
+            fieldDescriptor.setStandalone(false); //todo implement standalone properties
             fieldDescriptor.setOrder(fieldMappingStrategy.getOrder());
             fieldDescriptor.setValueMapper(fieldMappingStrategy.getValueMapper(propertyPath));
             fieldDescriptor.setInstanceNameRelatedProperties(instanceNameRelatedProperties);

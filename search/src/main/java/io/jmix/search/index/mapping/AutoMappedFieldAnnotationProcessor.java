@@ -33,15 +33,14 @@ public class AutoMappedFieldAnnotationProcessor extends AbstractFieldAnnotationP
     }
 
     @Override
-    public IndexMappingConfigTemplate createIndexMappingConfigTemplate(MetaClass rootEntityMetaClass, AutoMappedField annotation) {
-        IndexMappingConfigTemplate template = new IndexMappingConfigTemplate(); //todo use builder
-        template.setRootEntityMetaClass(rootEntityMetaClass);
-        template.setIncludedProperties(annotation.includeProperty());
-        template.setExcludedProperties(annotation.excludeProperty());
-        template.setFieldMappingStrategyClass(getFieldMappingStrategyClass());
-        template.setParameters(createParameters(annotation));
+    public IndexMappingConfigTemplateItem createIndexMappingConfigTemplateItem(MetaClass rootEntityMetaClass, AutoMappedField annotation) {
+        IndexMappingConfigTemplateItem item = new IndexMappingConfigTemplateItem(); //todo use builder
+        item.setIncludedProperties(annotation.includeProperty());
+        item.setExcludedProperties(annotation.excludeProperty());
+        item.setFieldMappingStrategyClass(getFieldMappingStrategyClass());
+        item.setParameters(createParameters(annotation));
 
-        return template;
+        return item;
     }
 
     @Override

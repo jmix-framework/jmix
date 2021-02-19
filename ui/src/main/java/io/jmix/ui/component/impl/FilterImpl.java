@@ -265,7 +265,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
             refreshCurrentConfigurationLayout();
             updateSelectConfigurationButton();
 
-            if (previousConfiguration != null && currentConfiguration != previousConfiguration) {
+            if (currentConfiguration != previousConfiguration) {
                 ConfigurationChangeEvent configurationChangeEvent =
                         new ConfigurationChangeEvent(this, currentConfiguration, previousConfiguration);
                 publish(ConfigurationChangeEvent.class, configurationChangeEvent);
@@ -359,15 +359,13 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
     @Override
     public void loadConfigurationsAndApplyDefault() {
         Map<Configuration, Boolean> configurationsMap = filterSupport.getConfigurationsMap(this);
+        boolean defaultForAllConfigurationApplied = false;
         for (Map.Entry<Configuration, Boolean> entry : configurationsMap.entrySet()) {
             addConfiguration(entry.getKey());
-            if (currentConfiguration == null && entry.getValue()) {
+            if (!defaultForAllConfigurationApplied && entry.getValue()) {
                 setCurrentConfiguration(entry.getKey());
+                defaultForAllConfigurationApplied = true;
             }
-        }
-
-        if (currentConfiguration == null) {
-            setCurrentConfiguration(getEmptyConfiguration());
         }
     }
 
@@ -457,6 +455,7 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         emptyConfiguration =
                 new RunTimeConfiguration("empty_configuration", configurationLogicalComponent, this);
         emptyConfiguration.setName(messages.getMessage("filter.emptyConfiguration.name"));
+        setCurrentConfiguration(emptyConfiguration);
     }
 
     protected void initAddConditionButton() {

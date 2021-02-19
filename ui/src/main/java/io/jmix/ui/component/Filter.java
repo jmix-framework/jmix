@@ -394,7 +394,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
 
         public ConfigurationChangeEvent(Filter source,
                                         Configuration newConfiguration,
-                                        Configuration previousConfiguration) {
+                                        @Nullable Configuration previousConfiguration) {
             super(source);
             this.newConfiguration = newConfiguration;
             this.previousConfiguration = previousConfiguration;
@@ -415,6 +415,7 @@ public interface Filter extends Component, Component.BelongToFrame, Component.Ha
         /**
          * @return previous configuration value
          */
+        @Nullable
         public Configuration getPreviousConfiguration() {
             return previousConfiguration;
         }

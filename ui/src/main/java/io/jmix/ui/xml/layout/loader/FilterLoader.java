@@ -96,8 +96,10 @@ public class FilterLoader extends ActionsHolderLoader<Filter> {
                 ((FilterAction) action).setFilter(resultComponent);
             }
             actionsHolder.addAction(action);
-            action.refreshState();
         }
+
+        getComponentContext().addPostInitTask((context1, window) ->
+                actionsHolder.getActions().forEach(Action::refreshState));
     }
 
     protected void loadDataLoader(Filter component, Element element) {

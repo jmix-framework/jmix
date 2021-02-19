@@ -16,8 +16,7 @@
 
 package user_session_log
 
-
-import org.junit.Ignore
+import spock.lang.Ignore
 import spock.lang.Specification
 
 @Ignore

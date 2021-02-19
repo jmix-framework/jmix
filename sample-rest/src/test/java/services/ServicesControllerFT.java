@@ -29,7 +29,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 
-import static junit.framework.TestCase.assertNull;
 import static org.junit.jupiter.api.Assertions.*;
 import static test_support.RestTestUtils.*;
 

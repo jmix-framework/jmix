@@ -18,21 +18,20 @@ package queries;
 
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.ReadContext;
-import test_support.AbstractRestControllerFT;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import test_support.AbstractRestControllerFT;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import static test_support.RestTestUtils.*;
-import static junit.framework.TestCase.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
+import static test_support.RestTestUtils.*;
 
 /**
  *

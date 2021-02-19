@@ -9,10 +9,10 @@ import io.jmix.core.Metadata
 import io.jmix.core.Stores
 import io.jmix.data.StoreAwareLocator
 import org.apache.commons.lang3.RandomStringUtils
-import org.junit.Ignore
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.support.TransactionTemplate
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestBeforeCommitTransactionListener
 import test_support.TestService

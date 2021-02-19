@@ -18,9 +18,8 @@ package jpql_macros
 
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlan
-import org.junit.Ignore
-import org.junit.jupiter.api.Disabled
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.TestDateTimeEntity
 

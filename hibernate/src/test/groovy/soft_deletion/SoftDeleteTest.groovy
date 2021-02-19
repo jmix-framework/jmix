@@ -16,13 +16,12 @@
 
 package soft_deletion
 
-import org.junit.Ignore
-import test_support.entity.TestAppEntity
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
-import test_support.DataSpec
-
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
+import test_support.DataSpec
+import test_support.entity.TestAppEntity
 
 //todo: hibernate merge
 @Ignore

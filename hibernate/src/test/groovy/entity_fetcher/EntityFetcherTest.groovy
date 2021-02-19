@@ -19,12 +19,12 @@ package entity_fetcher
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
 import io.jmix.core.FetchPlans
+import org.junit.jupiter.api.Disabled
+import org.springframework.beans.factory.annotation.Autowired
+import test_support.DataSpec
 
 //import io.jmix.data.impl.JmixEntityFetchGroup
 //import org.eclipse.persistence.queries.FetchGroupTracker
-import org.junit.Ignore
-import org.springframework.beans.factory.annotation.Autowired
-import test_support.DataSpec
 
 // ToDo: Hibernate change - hibernate fetching?
 class EntityFetcherTest extends DataSpec {
@@ -36,7 +36,7 @@ class EntityFetcherTest extends DataSpec {
     @Autowired
     FetchPlans fetchPlans
 
-    @Ignore
+    @Disabled
     def "fetching entity with non-persistent reference"() {
         // setup the entity like it is stored in a custom datastore and linked as transient property
 //        def npCustomer = dataManager.create(Customer)

@@ -22,7 +22,6 @@ import io.jmix.data.DataConfiguration;
 import io.jmix.data.PersistenceHints;
 import io.jmix.hibernate.HibernateConfiguration;
 import io.jmix.hibernate.impl.JmixHibernateQuery;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

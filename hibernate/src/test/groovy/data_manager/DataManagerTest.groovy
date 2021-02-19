@@ -18,8 +18,8 @@ package data_manager
 
 import io.jmix.core.*
 import io.jmix.core.querycondition.PropertyCondition
-import org.junit.Ignore
 import org.springframework.beans.factory.annotation.Autowired
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.TestAppEntity
 import test_support.entity.TestCompositeKeyEntity

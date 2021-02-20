@@ -19,15 +19,20 @@ package io.jmix.securitydata.constraint;
 
 import io.jmix.core.security.CurrentAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 @Component("sec_PredefinedQueryParameters")
 public class PredefinedQueryParameters {
 
-    public static final String PARAM_SESSION_ATTR = "session$";
-    public static final String PARAM_USER_LOGIN = "username";
+    public static final String CURRENT_USER_PREFIX = "current_user_";
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;
@@ -38,12 +43,25 @@ public class PredefinedQueryParameters {
      * @param paramName parameter to set in a query
      * @return parameter value
      */
-    public @Nullable
-    Object getParameterValue(String paramName) {
-        if (paramName.startsWith(PARAM_SESSION_ATTR)) {
-            String attrName = paramName.substring(PARAM_SESSION_ATTR.length());
-            if (PARAM_USER_LOGIN.equals(attrName)) {
-                return currentAuthentication.getUser().getUsername();
+     @Nullable
+     public Object getParameterValue(String paramName) {
+        if (paramName.startsWith(CURRENT_USER_PREFIX)) {
+            String attrName = paramName.substring(CURRENT_USER_PREFIX.length());
+
+            UserDetails user = currentAuthentication.getUser();
+            BeanInfo info;
+            try {
+                info = Introspector.getBeanInfo(user.getClass());
+                return Arrays.stream(info.getPropertyDescriptors())
+                        .filter(pd -> pd.getName().equals(attrName))
+                        .findAny()
+                        .orElseThrow(() ->
+                                new RuntimeException(String.format("Property %s not found in the user class", attrName)))
+                        .getReadMethod()
+                        .invoke(user);
+            } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(
+                        String.format("Error getting %s property from the current user object", attrName), e);
             }
         }
         return null;

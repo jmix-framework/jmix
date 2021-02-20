@@ -19,7 +19,8 @@ package io.jmix.dynattr.model;
 /**
  * Interface to be implemented by entities which can be separated by categories and hence have several sets of
  * dynamic attributes.
- * Such entities can be displayed in RuntimePropertiesFrame.
+ * <p>
+ * Such entities can be displayed in {@code DynamicAttributesPanel}.
  */
 public interface Categorized {
     Category getCategory();

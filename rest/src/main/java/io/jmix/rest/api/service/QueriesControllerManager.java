@@ -122,7 +122,7 @@ public class QueriesControllerManager {
         } catch (ClassNotFoundException | ParseException e) {
             throw new RestAPIException("Error on executing the query", e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
-        ctx.setHint("load_dyn_attr", BooleanUtils.isTrue(dynamicAttributes));
+        ctx.setHint("dynattr.load", BooleanUtils.isTrue(dynamicAttributes));
 
         //override default view defined in queries config
         if (!Strings.isNullOrEmpty(viewName)) {

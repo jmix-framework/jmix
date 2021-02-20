@@ -38,6 +38,7 @@ import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.ui.theme.ThemeClassNames;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -425,6 +426,15 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
         return settingsButton.getAction(id);
     }
 
+    @Override
+    public void setCaption(@Nullable String caption) {
+        getComposition().setCaption(caption);
+
+        if (emptyConfiguration != null) {
+            emptyConfiguration.setName(caption);
+        }
+    }
+
     public Condition getQueryCondition() {
         return currentConfiguration.getQueryCondition();
     }
@@ -454,7 +464,12 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 createConfigurationRootLogicalFilterComponent(LogicalFilterComponent.Operation.AND);
         emptyConfiguration =
                 new RunTimeConfiguration("empty_configuration", configurationLogicalComponent, this);
-        emptyConfiguration.setName(messages.getMessage("filter.emptyConfiguration.name"));
+
+        String emptyConfigurationName = StringUtils.isNotEmpty(getCaption())
+                ? getCaption()
+                : messages.getMessage("filter.emptyConfiguration.name");
+        emptyConfiguration.setName(emptyConfigurationName);
+
         setCurrentConfiguration(emptyConfiguration);
     }
 

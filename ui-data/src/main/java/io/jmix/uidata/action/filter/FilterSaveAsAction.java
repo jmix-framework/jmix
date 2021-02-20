@@ -155,7 +155,6 @@ public class FilterSaveAsAction extends FilterAction {
             throw new IllegalStateException("Filter component is not attached to the Frame");
         }
 
-        Filter.Configuration configuration = filter.getCurrentConfiguration();
         InputDialog inputDialog = dialogs.createInputDialog(filter.getFrame().getFrameOwner())
                 .withCaption(messages.getMessage(FilterSaveAction.class,
                         "saveFilterConfigurationInputDialog.caption"))
@@ -163,15 +162,13 @@ public class FilterSaveAsAction extends FilterAction {
                         InputParameter.stringParameter("nameField")
                                 .withCaption(messages.getMessage(FilterConfiguration.class,
                                         "FilterConfiguration.name"))
-                                .withRequired(true)
-                                .withDefaultValue(configuration.getName()),
+                                .withRequired(true),
                         InputParameter.booleanParameter("generatedIdField")
                                 .withCaption(messages.getMessage(UiDataFilterConfigurationModelFragment.class,
                                         "uiDataFilterConfigurationModelFragment.generatedIdField"))
                                 .withDefaultValue(true),
                         InputParameter.stringParameter("idField")
                                 .withRequired(true)
-                                .withDefaultValue(generateConfigurationId(configuration.getName()))
                                 .withCaption(messages.getMessage(FilterConfiguration.class,
                                         "FilterConfiguration.configurationId"))
                 )

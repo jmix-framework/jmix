@@ -18,14 +18,16 @@ package io.jmix.uiexport.action;
 
 import io.jmix.core.Messages;
 import io.jmix.ui.Dialogs;
-import io.jmix.ui.action.*;
+import io.jmix.ui.action.AbstractAction;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.action.DialogAction;
+import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
 import io.jmix.ui.download.Downloader;
-import io.jmix.ui.meta.StudioAction;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.uiexport.exporter.ExportMode;
 import io.jmix.uiexport.exporter.TableExporter;
@@ -42,11 +44,6 @@ import javax.annotation.Nullable;
  * Should be defined for a list component ({@code Table}, {@code DataGrid}, etc.) in a screen XML descriptor.
  */
 @SuppressWarnings("rawtypes")
-@StudioAction(
-        target = "io.jmix.ui.component.ListComponent",
-        description = "Export selected entities",
-        availableInScreenWizard = true)
-@ActionType(ExportAction.ID)
 public class ExportAction extends ListAction implements ApplicationContextAware {
 
     public static final String ID = "export";

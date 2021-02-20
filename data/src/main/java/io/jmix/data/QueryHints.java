@@ -17,7 +17,7 @@
 package io.jmix.data;
 
 /**
- * Defines a set of CUBA query hints which enable customization of generated SQL statements.
+ * Defines a set of Jmix query hints which enable customization of generated SQL statements.
  *
  * <p>Usage examples:
  * <pre>

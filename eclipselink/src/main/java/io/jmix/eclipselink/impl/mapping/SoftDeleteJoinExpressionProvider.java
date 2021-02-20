@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.OneToOne;
 
 /**
- * Generates expression to support soft delete feature in CUBA.
+ * Generates expression to support soft delete feature in Jmix.
  */
 @Component("eclipselink_SoftDeleteJoinExpressionProvider")
 public class SoftDeleteJoinExpressionProvider extends AbstractJoinExpressionProvider {

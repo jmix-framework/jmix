@@ -52,7 +52,7 @@ public class VersionControllerManager {
             // Standalone REST API
             apiVersion = buildProperties.getVersion();
         } else {
-            // REST API as part of a Cuba application
+            // REST API as part of a Jmix application
             //TODO app components
 //            for (String component : buildProperties.getAppComponents()) {
 //                if (component.trim().startsWith("io.jmix.rest:")) {

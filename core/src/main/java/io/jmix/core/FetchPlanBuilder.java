@@ -95,7 +95,7 @@ public class FetchPlanBuilder {
         return result;
     }
 
-    //extended in CUBA module for legacy support
+    //extended in Jmix module for legacy support
     protected FetchPlan createFetchPlan(Class<?> entityClass,
                                         String name,
                                         List<FetchPlanProperty> properties,

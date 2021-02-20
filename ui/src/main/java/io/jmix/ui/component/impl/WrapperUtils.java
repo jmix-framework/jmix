@@ -49,7 +49,7 @@ import static com.vaadin.v7.ui.AbstractTextField.TextChangeEventMode;
 import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 
 /**
- * Convenient class for methods that converts values from Vaadin to CUBA instances and vice versa.
+ * Convenient class for methods that converts values from Vaadin to Jmix instances and vice versa.
  */
 @Internal
 public final class WrapperUtils {

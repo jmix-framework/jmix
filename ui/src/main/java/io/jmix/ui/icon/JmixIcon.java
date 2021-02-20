@@ -17,7 +17,7 @@
 package io.jmix.ui.icon;
 
 /**
- * Default icon set. It includes almost full FontAwesome icon set and CUBA-specific icons.
+ * Default icon set. It includes almost full FontAwesome icon set and Jmix-specific icons.
  */
 public enum JmixIcon implements Icons.Icon {
     OK("font-icon:CHECK"),

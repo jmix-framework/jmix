@@ -27,7 +27,7 @@ import com.vaadin.ui.LegacyComponent;
 import java.util.Map;
 
 /**
- * Ordered layout with CUBA features:
+ * Ordered layout with Jmix features:
  * <ul>
  *  <li>separate action manager for shortcuts</li>
  *  <li>description icon support</li>

@@ -31,6 +31,7 @@ import io.jmix.core.impl.jpql.DomainModel;
 import io.jmix.core.impl.jpql.DomainModelBuilder;
 import io.jmix.core.impl.jpql.DomainModelWithCaptionsBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.securitydata.constraint.PredefinedQueryParameters;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
@@ -340,7 +341,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
             Matcher matcher = PARAM_PATTERN.matcher(res);
             StringBuffer sb = new StringBuffer();
             while (matcher.find()) {
-                if (!matcher.group().startsWith(":session$"))
+                if (!matcher.group().startsWith(":" + PredefinedQueryParameters.CURRENT_USER_PREFIX))
                     matcher.appendReplacement(sb, "?");
             }
             matcher.appendTail(sb);

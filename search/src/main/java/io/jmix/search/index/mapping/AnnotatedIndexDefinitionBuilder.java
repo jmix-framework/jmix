@@ -18,6 +18,7 @@ package io.jmix.search.index.mapping;
 
 import io.jmix.core.InstanceNameProvider;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -39,6 +40,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component("search_AnnotatedIndexDefinitionBuilder")
 public class AnnotatedIndexDefinitionBuilder {
@@ -46,7 +48,9 @@ public class AnnotatedIndexDefinitionBuilder {
     private static final Logger log = LoggerFactory.getLogger(AnnotatedIndexDefinitionBuilder.class);
 
     @Autowired
-    private Metadata metadata;
+    protected Metadata metadata;
+    @Autowired
+    protected MetadataTools metadataTools;
     @Autowired
     protected MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
     @Autowired
@@ -196,18 +200,43 @@ public class AnnotatedIndexDefinitionBuilder {
                                                                        String[] includes,
                                                                        String[] excludes) {
         Map<String, MetaPropertyPath> effectiveProperties = new HashMap<>();
-
-        Arrays.stream(includes).forEach(included -> {
-            Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertyPaths(rootEntityMetaClass, included);
-            effectiveProperties.putAll(propertyPaths);
-        });
+        Arrays.stream(includes)
+                .filter(StringUtils::isNotBlank)
+                .forEach(included -> {
+                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertyPaths(rootEntityMetaClass, included);
+                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
+                    effectiveProperties.putAll(expandedPropertyPaths);
+                });
 
         Arrays.stream(excludes)
                 .filter(StringUtils::isNotBlank)
-                .flatMap(excluded -> propertyTools.findPropertyPaths(rootEntityMetaClass, excluded).keySet().stream())
+                .flatMap(excluded -> {
+                    Map<String, MetaPropertyPath> propertyPaths = propertyTools.findPropertyPaths(rootEntityMetaClass, excluded);
+                    Map<String, MetaPropertyPath> expandedPropertyPaths = expandEmbeddedProperties(rootEntityMetaClass, propertyPaths);
+                    return expandedPropertyPaths.keySet().stream();
+                })
                 .forEach(effectiveProperties::remove);
 
         return effectiveProperties;
+    }
+
+    protected Map<String, MetaPropertyPath> expandEmbeddedProperties(MetaClass rootEntityMetaClass, Map<String, MetaPropertyPath> propertyPaths) {
+        return propertyPaths.entrySet().stream()
+                .flatMap(entry -> {
+                    String propertyFullName = entry.getKey();
+                    MetaPropertyPath propertyPath = entry.getValue();
+                    if (metadataTools.isEmbedded(propertyPath.getMetaProperty())) {
+                        log.trace("Property '{}' is embedded. Expand", propertyFullName);
+                        Map<String, MetaPropertyPath> expandedEmbeddedProperties = propertyTools.findPropertyPaths(rootEntityMetaClass, propertyFullName + ".*");
+                        log.trace("Property '{}' was expanded to {}", propertyFullName, expandedEmbeddedProperties.values());
+                        Map<String, MetaPropertyPath> result = expandEmbeddedProperties(rootEntityMetaClass, expandedEmbeddedProperties);
+                        return result.entrySet().stream();
+                    } else {
+                        log.trace("Property '{}' is not embedded", propertyFullName);
+                        return Stream.of(entry);
+                    }
+                })
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     protected Optional<MappingFieldDescriptor> createMappingFieldDescriptor(MetaPropertyPath propertyPath, IndexMappingConfigTemplateItem template) {

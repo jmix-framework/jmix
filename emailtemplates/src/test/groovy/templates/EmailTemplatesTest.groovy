@@ -17,7 +17,7 @@
 package templates
 
 import io.jmix.core.Metadata
-import io.jmix.core.security.impl.AuthenticatorImpl
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.email.EmailInfo
 import io.jmix.emailtemplates.EmailTemplates
 import io.jmix.emailtemplates.TemplateConverter
@@ -55,7 +55,7 @@ class EmailTemplatesTest extends Specification {
     TemplateConverter templateConverter
 
     @Autowired
-    AuthenticatorImpl authenticator
+    SystemAuthenticator authenticator
 
 
     @Autowired

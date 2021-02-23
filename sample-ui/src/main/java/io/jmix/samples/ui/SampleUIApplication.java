@@ -17,7 +17,7 @@
 package io.jmix.samples.ui;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.samples.ui.entity.SampleUser;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -38,7 +38,7 @@ public class SampleUIApplication extends CoreSecurityConfiguration {
 	private DataManager dataManager;
 
 	@Autowired
-	private Authenticator authenticator;
+	private SystemAuthenticator authenticator;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleUIApplication.class, args);

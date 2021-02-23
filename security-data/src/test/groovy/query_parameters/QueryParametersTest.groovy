@@ -16,6 +16,7 @@
 
 package query_parameters
 
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.securitydata.constraint.PredefinedQueryParameters
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.SecurityDataSpecification
@@ -23,7 +24,7 @@ import test_support.SecurityDataSpecification
 class QueryParametersTest extends SecurityDataSpecification {
 
     @Autowired
-    io.jmix.core.security.Authenticator authenticator
+    SystemAuthenticator authenticator
 
     @Autowired
     PredefinedQueryParameters predefinedQueryParameters

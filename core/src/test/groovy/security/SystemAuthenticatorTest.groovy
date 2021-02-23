@@ -19,7 +19,7 @@ package security
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticationToken
-import io.jmix.core.security.impl.AuthenticatorImpl
+import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -30,10 +30,10 @@ import spock.lang.Specification
 import test_support.base.TestBaseConfiguration
 
 @ContextConfiguration(classes = [CoreConfiguration, TestBaseConfiguration])
-class AuthenticatorTest extends Specification {
+class SystemAuthenticatorTest extends Specification {
 
     @Autowired
-    AuthenticatorImpl authenticator
+    SystemAuthenticator authenticator
 
     @Autowired
     InMemoryUserRepository userRepository

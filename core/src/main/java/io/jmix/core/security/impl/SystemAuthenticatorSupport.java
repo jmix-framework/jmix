@@ -25,15 +25,15 @@ import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public abstract class AuthenticatorSupport {
+public abstract class SystemAuthenticatorSupport {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticatorSupport.class);
+    private static final Logger log = LoggerFactory.getLogger(SystemAuthenticatorSupport.class);
 
     protected static final Authentication NULL_AUTHENTICATION = new NullAuthentication();
 
     protected ThreadLocal<Deque<Authentication>> threadLocalStack = new ThreadLocal<>();
 
-    public AuthenticatorSupport() {
+    public SystemAuthenticatorSupport() {
     }
 
     protected void pushAuthentication(@Nullable Authentication authentication) {

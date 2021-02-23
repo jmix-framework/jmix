@@ -20,7 +20,7 @@ import io.jmix.core.CoreConfiguration
 import io.jmix.core.Metadata
 import io.jmix.core.pessimisticlocking.LockInfo
 import io.jmix.core.pessimisticlocking.LockManager
-import io.jmix.core.security.impl.AuthenticatorImpl
+import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -42,7 +42,7 @@ class LockManagerTest extends Specification {
     LockManager lockManager
 
     @Autowired
-    AuthenticatorImpl authenticator
+    SystemAuthenticator authenticator
 
     void setup() {
         authenticator.begin()

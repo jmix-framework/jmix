@@ -31,7 +31,7 @@ import test_support.addon1.TestAddon1Configuration
 import test_support.app.TestAppConfiguration
 import test_support.app.entity.Address
 import test_support.app.entity.Owner
-import io.jmix.core.security.Authenticator
+import io.jmix.core.security.SystemAuthenticator
 
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.base.TestBaseConfiguration
@@ -51,7 +51,7 @@ class InstanceNameTest extends Specification {
     AuthenticationManager authenticationManager
 
     @Autowired
-    Authenticator authenticator
+    SystemAuthenticator authenticator
 
     def "instance name method with injected Locale"() {
 

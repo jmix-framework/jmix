@@ -17,7 +17,7 @@
 package io.jmix.core.security.impl;
 
 import io.jmix.core.annotation.Internal;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -33,10 +33,10 @@ public class AuthenticatedAspect {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticatedAspect.class);
 
-    private Authenticator authenticator;
+    private SystemAuthenticator authenticator;
 
     @Autowired
-    public void setAuthentication(Authenticator authenticator) {
+    public void setAuthenticator(SystemAuthenticator authenticator) {
         this.authenticator = authenticator;
     }
 

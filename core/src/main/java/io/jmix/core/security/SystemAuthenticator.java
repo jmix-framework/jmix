@@ -27,13 +27,16 @@ import javax.annotation.Nullable;
  * <pre>
  *     authenticator.begin();
  *     try {
- *         // valid current thread's user session presents here
+ *         // valid current thread's authentication presents here
  *     } finally {
  *         authenticator.end();
  *     }
  * </pre>
+ *
+ * @see #begin()
+ * @see #begin(String)
  */
-public interface Authenticator {
+public interface SystemAuthenticator {
 
     /**
      * Begins an authenticated code block.
@@ -41,13 +44,13 @@ public interface Authenticator {
      * Saves the current thread session on a stack to get it back on {@link #end()}.
      * Subsequent {@link #end()} method must be called in "finally" section.
      *
-     * @param login user login. If null, the 'server' system session is started
-     * @return new or cached instance of system user session
+     * @param login user login. If null, authenticates as the 'system' user.
+     * @return populated {@code Authentication} object
      */
     Authentication begin(@Nullable String login);
 
     /**
-     * Authenticate with the system session.
+     * Authenticate as the 'system' user.
      * <br>
      * Same as {@link #begin(String)} with null parameter.
      */
@@ -71,7 +74,7 @@ public interface Authenticator {
     <T> T withUser(@Nullable String login, AuthenticatedOperation<T> operation);
 
     /**
-     * Execute code as the system user.
+     * Execute code as the 'system' user.
      *
      * @param operation code to execute
      * @return result of the execution

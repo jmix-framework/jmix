@@ -20,7 +20,7 @@ import com.google.common.base.Strings;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.impl.logging.LogMdc;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.core.security.SecurityContextHelper;
 import io.jmix.core.security.SystemAuthenticationToken;
 import org.slf4j.Logger;
@@ -36,11 +36,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 
-@Component("core_Authenticator")
+@Component("core_SystemAuthenticator")
 @Internal
-public class AuthenticatorImpl extends AuthenticatorSupport implements Authenticator {
+public class SystemAuthenticatorImpl extends SystemAuthenticatorSupport implements SystemAuthenticator {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticatorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(SystemAuthenticatorImpl.class);
 
     @Autowired(required = false)
     protected AuthenticationManager authenticationManager;

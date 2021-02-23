@@ -19,7 +19,7 @@ package entity_annotations
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.security.Authenticator
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,7 +39,7 @@ class AuditingTest extends DataSpec {
     TimeSource timeSource
 
     @Autowired
-    Authenticator authenticator
+    SystemAuthenticator authenticator
 
     @Autowired
     private CurrentAuthentication currentAuthentication;

@@ -27,7 +27,7 @@ import com.haulmont.cuba.core.global.Configuration;
 import com.haulmont.cuba.core.global.RunTaskOnceException;
 import com.haulmont.cuba.core.sys.AppContext;
 import io.jmix.core.TimeSource;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.perf4j.StopWatch;
@@ -62,7 +62,7 @@ public class Scheduling implements SchedulingAPI {
     protected TimeSource timeSource;
 
     @Inject
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
 
     @Inject
     protected Coordinator coordinator;

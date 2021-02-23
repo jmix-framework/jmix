@@ -20,7 +20,7 @@ import com.haulmont.cuba.core.model.entity_annotations.LegacyAuditableEntity
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.security.Authenticator
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,7 +37,7 @@ class LegacyAuditingTest extends CoreTestSpecification {
     TimeSource timeSource
 
     @Autowired
-    Authenticator authenticator
+    SystemAuthenticator authenticator
 
     @Autowired
     private CurrentAuthentication currentAuthentication;

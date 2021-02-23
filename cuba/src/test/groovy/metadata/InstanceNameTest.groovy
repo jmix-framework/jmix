@@ -21,7 +21,7 @@ import com.haulmont.cuba.core.model.Foo
 import com.haulmont.cuba.core.model.Owner
 import io.jmix.core.InstanceNameProvider
 import io.jmix.core.Metadata
-import io.jmix.core.security.impl.AuthenticatorImpl
+import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification
 
@@ -52,7 +52,7 @@ class InstanceNameTest extends CoreTestSpecification {
     InstanceNameProvider instanceNameProvider
 
     @Autowired
-    AuthenticatorImpl authenticator
+    SystemAuthenticator authenticator
 
     def "test name pattern annotation"() {
         setup:

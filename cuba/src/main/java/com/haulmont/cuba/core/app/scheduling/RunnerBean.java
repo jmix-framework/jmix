@@ -32,7 +32,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.core.sys.events.AppContextStoppedEvent;
 import io.jmix.core.TimeSource;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class RunnerBean implements Runner {
     protected TimeSource timeSource;
 
     @Inject
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
 
     @Inject
     protected Scripting scripting;

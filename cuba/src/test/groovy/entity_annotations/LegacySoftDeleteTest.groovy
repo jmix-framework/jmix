@@ -22,7 +22,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.entity.EntityValues
-import io.jmix.core.security.Authenticator
+import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.InMemoryUserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
@@ -34,7 +34,7 @@ class LegacySoftDeleteTest extends CoreTestSpecification {
     DataManager dataManager
 
     @Autowired
-    Authenticator authenticator
+    SystemAuthenticator authenticator
 
     @Autowired
     InMemoryUserRepository userRepository

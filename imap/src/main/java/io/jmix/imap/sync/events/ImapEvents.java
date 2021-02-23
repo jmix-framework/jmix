@@ -17,7 +17,7 @@
 package io.jmix.imap.sync.events;
 
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.ImapEventsGenerator;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.entity.*;
@@ -46,7 +46,7 @@ public class ImapEvents {
     protected ApplicationEventPublisher events;
 
     @Autowired
-    protected Authenticator authentication;
+    protected SystemAuthenticator authentication;
 
     @Autowired
     protected ImapDataProvider imapDataProvider;

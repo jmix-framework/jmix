@@ -17,7 +17,7 @@
 package io.jmix.imap.sync.events;
 
 import io.jmix.core.TimeSource;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.ImapProperties;
 import io.jmix.imap.data.ImapMessageSyncDataProvider;
 import io.jmix.imap.entity.*;
@@ -49,7 +49,7 @@ public class ImapStandardEventsGenerator extends ImapEventsBatchedGenerator {
     protected ImapMessageSyncDataProvider imapMessageSyncDataProvider;
 
     @Autowired
-    protected Authenticator authentication;
+    protected SystemAuthenticator authentication;
 
     @PersistenceContext
     protected EntityManager entityManager;

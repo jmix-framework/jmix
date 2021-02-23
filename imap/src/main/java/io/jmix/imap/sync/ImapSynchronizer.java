@@ -21,7 +21,7 @@ import com.sun.mail.imap.IMAPMessage;
 import com.sun.mail.imap.IMAPStore;
 import io.jmix.core.Metadata;
 import io.jmix.core.TimeSource;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.ImapProperties;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.data.ImapMessageSyncDataProvider;
@@ -71,7 +71,7 @@ public class ImapSynchronizer {
     protected ImapProperties imapProperties;
 
     @Autowired
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
 
     @Autowired
     protected ImapDataProvider imapDataProvider;

@@ -17,7 +17,7 @@
 package io.jmix.samples.rest;
 
 import io.jmix.core.DataManager;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -36,7 +36,7 @@ public class SampleRestApplication {
     protected DataManager dataManager;
 
     @Autowired
-    Authenticator authenticator;
+    SystemAuthenticator authenticator;
 
     public static void main(String[] args) {
         SpringApplication.run(SampleRestApplication.class, args);

@@ -33,8 +33,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.AuditInfoProvider;
-import io.jmix.data.EntityChangeType;
 import io.jmix.data.impl.EntityAttributeChanges;
 import io.jmix.data.impl.JpaDataStoreListener;
 import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges;
@@ -128,11 +128,11 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     @Override
-    public void onEntityChange(Object entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    public void onEntityChange(Object entity, EntityOp entityOp, @Nullable EntityAttributeChanges changes) {
         if (entity instanceof EntityLogItem) {
             return;
         }
-        switch (type) {
+        switch (entityOp) {
             case CREATE:
                 registerCreate(entity, true);
                 break;

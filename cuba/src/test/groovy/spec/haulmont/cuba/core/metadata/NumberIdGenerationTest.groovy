@@ -21,7 +21,7 @@ import com.haulmont.bali.db.QueryRunner
 import com.haulmont.cuba.core.global.Metadata
 import com.haulmont.cuba.core.model.number_id.NumberIdSeqNameFirst
 import com.haulmont.cuba.core.model.number_id.NumberIdSeqNameSecond
-import io.jmix.data.SequenceSupport
+import io.jmix.data.persistence.SequenceSupport
 import io.jmix.data.persistence.DbmsSpecifics
 import org.springframework.beans.factory.annotation.Autowired
 import spec.haulmont.cuba.core.CoreTestSpecification

@@ -22,7 +22,6 @@ import io.jmix.core.common.util.ParamsMap;
 import io.jmix.emailtemplates.TemplateConverter;
 import io.jmix.emailtemplates.entity.JsonEmailTemplate;
 import io.jmix.emailtemplates.entity.TemplateBlock;
-import io.jmix.emailtemplatesui.screen.emailtemplate.AbstractTemplateEditor;
 import io.jmix.emailtemplatesui.screen.html.HtmlSourceCodeScreen;
 import io.jmix.grapesjs.component.GjsBlock;
 import io.jmix.grapesjs.component.GrapesJsHtmlEditor;
@@ -51,7 +50,7 @@ import java.util.stream.Collectors;
 @UiController("emailtemplates_JsonEmailTemplate.edit")
 @UiDescriptor("json-email-template-edit.xml")
 @EditedEntityContainer("emailTemplateDc")
-public class JsonEmailTemplateEdit extends AbstractTemplateEditor<JsonEmailTemplate> {
+public class JsonEmailTemplateEdit extends StandardEditor<JsonEmailTemplate> {
 
     @Autowired
     private CollectionContainer<TemplateBlock> templateBlocksDc;

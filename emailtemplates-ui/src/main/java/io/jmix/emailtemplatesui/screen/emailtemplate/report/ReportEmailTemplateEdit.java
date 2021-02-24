@@ -22,7 +22,6 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.emailtemplates.entity.ReportEmailTemplate;
 import io.jmix.emailtemplates.entity.TemplateReport;
-import io.jmix.emailtemplatesui.screen.emailtemplate.AbstractTemplateEditor;
 import io.jmix.emailtemplatesui.screen.emailtemplate.parameters.EmailTemplateParametersFragment;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportOutputType;
@@ -46,7 +45,7 @@ import java.util.ArrayList;
 @UiController("emailtemplates_ReportEmailTemplate.edit")
 @UiDescriptor("report-email-template-edit.xml")
 @EditedEntityContainer("emailTemplateDc")
-public class ReportEmailTemplateEdit extends AbstractTemplateEditor<ReportEmailTemplate> {
+public class ReportEmailTemplateEdit extends StandardEditor<ReportEmailTemplate> {
 
     @Autowired
     @Qualifier("defaultGroup.subject")

@@ -19,7 +19,7 @@ package io.jmix.eclipselink.impl.support;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.AuditInfoProvider;
-import io.jmix.data.EntityAuditInfoProvider;
+import io.jmix.data.impl.EntityAuditValues;
 import io.jmix.eclipselink.impl.EclipselinkPersistenceTools;
 import io.jmix.eclipselink.impl.EclipselinkPersistenceSupport;
 import io.jmix.eclipselink.impl.JmixEntityFetchGroup;
@@ -54,7 +54,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Autowired
     protected AuditInfoProvider auditInfoProvider;
     @Autowired
-    protected EntityAuditInfoProvider entityAuditInfoProvider;
+    protected EntityAuditValues entityAuditInfoProvider;
     @Autowired
     protected TimeSource timeSource;
     @Autowired

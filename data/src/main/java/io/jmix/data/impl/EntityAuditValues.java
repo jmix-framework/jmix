@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+package io.jmix.data.impl;
 
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
@@ -27,10 +27,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.util.Date;
 
-@Component("data_EntityAuditInfoProvider")
-public class EntityAuditInfoProvider {
+@Component("data_EntityAuditValues")
+public class EntityAuditValues {
 
-    private final Logger logger = LoggerFactory.getLogger(EntityAuditInfoProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(EntityAuditValues.class);
 
     @Autowired
     protected AuditConversionService auditConversionService;

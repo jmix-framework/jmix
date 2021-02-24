@@ -22,7 +22,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.EntityChangedEvent;
-import io.jmix.data.EntityChangeType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
@@ -308,12 +308,12 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    protected void fireEntityChange(Object entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    protected void fireEntityChange(Object entity, EntityOp entityOp, @Nullable EntityAttributeChanges changes) {
         if (lifecycleListeners == null) {
             return;
         }
         for (JpaDataStoreListener listener : lifecycleListeners) {
-            listener.onEntityChange(entity, type, changes);
+            listener.onEntityChange(entity, entityOp, changes);
         }
     }
 
@@ -556,10 +556,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
 
-                fireEntityChange(entity, EntityChangeType.CREATE, null);
-
-                // todo fts
-//                enqueueForFts(entity, FtsChangeType.INSERT);
+                fireEntityChange(entity, EntityOp.CREATE, null);
 
                 jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
@@ -579,13 +576,10 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
 
-                fireEntityChange(entity, EntityChangeType.DELETE, null);
+                fireEntityChange(entity, EntityOp.DELETE, null);
 
                 if (EntityValues.isSoftDeletionSupported(entity))
                     processDeletePolicy(entity);
-
-                // todo fts
-//                enqueueForFts(entity, FtsChangeType.DELETE);
 
                 jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
@@ -601,15 +595,9 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 if (getEntityEntry(entity).isNew()) {
 
                     // it can happen if flush was performed, so the entity is still New but was saved
-                    fireEntityChange(entity, EntityChangeType.CREATE, null);
-
-                    // todo fts
-//                    enqueueForFts(entity, FtsChangeType.INSERT);
+                    fireEntityChange(entity, EntityOp.CREATE, null);
                 } else {
-                    fireEntityChange(entity, EntityChangeType.UPDATE, changes);
-
-                    // todo fts
-//                    enqueueForFts(entity, FtsChangeType.UPDATE);
+                    fireEntityChange(entity, EntityOp.UPDATE, changes);
                 }
 
                 jpaCacheSupport.evictMasterEntity(entity, changes);
@@ -618,25 +606,6 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
 
             return false;
         }
-
-        // todo fts
-//        protected void enqueueForFts(Entity entity, FtsChangeType changeType) {
-//            if (!FtsConfigHelper.getEnabled())
-//                return;
-//            try {
-//                if (ftsSender == null) {
-//                    if (AppBeans.containsBean(FtsSender.NAME)) {
-//                        ftsSender = AppBeans.get(FtsSender.NAME);
-//                    } else {
-//                        log.error("Error enqueueing changes for FTS: " + FtsSender.NAME + " bean not found");
-//                    }
-//                }
-//                if (ftsSender != null)
-//                    ftsSender.enqueue(entity, changeType);
-//            } catch (Exception e) {
-//                log.error("Error enqueueing changes for FTS", e);
-//            }
-//        }
 
         protected void processDeletePolicy(Object entity) {
             DeletePolicyProcessor processor = deletePolicyProcessorProvider.getObject(); // prototype

@@ -19,7 +19,7 @@
  * Created: 15.05.2009 22:25:05
  * 
  */
-package io.jmix.data;
+package io.jmix.data.persistence;
 
 /**
  * Interface defining methods for managing database sequences.

@@ -19,7 +19,6 @@ package io.jmix.data.persistence;
 import io.jmix.core.JmixModulesAwareBeanSelector;
 import io.jmix.core.Stores;
 import io.jmix.core.common.util.StringHelper;
-import io.jmix.data.SequenceSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;

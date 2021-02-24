@@ -25,7 +25,7 @@ import test_support.entity.number_id_generation.NumberIdSingleTableGrandChild
 import test_support.entity.number_id_generation.NumberIdSingleTableRoot
 import io.jmix.core.Metadata
 import io.jmix.core.Stores
-import io.jmix.data.SequenceSupport
+import io.jmix.data.persistence.SequenceSupport
 import io.jmix.data.StoreAwareLocator
 import io.jmix.data.persistence.DbmsSpecifics
 import org.springframework.jdbc.core.JdbcTemplate

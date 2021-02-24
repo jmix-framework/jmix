@@ -19,7 +19,7 @@ package io.jmix.data.impl;
 import com.google.common.base.Preconditions;
 import io.jmix.core.Stores;
 import io.jmix.data.Sequence;
-import io.jmix.data.SequenceSupport;
+import io.jmix.data.persistence.SequenceSupport;
 import io.jmix.data.Sequences;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.persistence.DbmsSpecifics;

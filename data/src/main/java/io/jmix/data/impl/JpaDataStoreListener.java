@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl;
 
-import io.jmix.data.EntityChangeType;
+import io.jmix.core.security.EntityOp;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +34,7 @@ public interface JpaDataStoreListener {
      * @param changes object describing changes in the entity attributes - null for {@code CREATE} and {@code DELETE}
      *                change types
      */
-    default void onEntityChange(Object entity, EntityChangeType type, @Nullable EntityAttributeChanges changes) {
+    default void onEntityChange(Object entity, EntityOp type, @Nullable EntityAttributeChanges changes) {
     }
 
     /**

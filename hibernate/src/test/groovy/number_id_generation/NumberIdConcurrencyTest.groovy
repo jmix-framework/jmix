@@ -20,7 +20,7 @@ import io.jmix.core.DataManager
 import io.jmix.core.Metadata
 import io.jmix.data.DataConfigPropertiesAccess
 import io.jmix.data.DataProperties
-import io.jmix.data.SequenceSupport
+import io.jmix.data.persistence.SequenceSupport
 import io.jmix.data.impl.NumberIdCache
 import io.jmix.data.impl.NumberIdWorker
 import io.jmix.data.persistence.DbmsSpecifics

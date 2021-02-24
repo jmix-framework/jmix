@@ -16,7 +16,7 @@
 
 package io.jmix.data.impl.dbms;
 
-import io.jmix.data.SequenceSupport;
+import io.jmix.data.persistence.SequenceSupport;
 import org.springframework.stereotype.Component;
 
 @Component("hsqlSequenceSupport")

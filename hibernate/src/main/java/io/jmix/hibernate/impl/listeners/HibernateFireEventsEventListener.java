@@ -20,7 +20,7 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.data.AuditInfoProvider;
-import io.jmix.data.EntityAuditInfoProvider;
+import io.jmix.data.impl.EntityAuditValues;
 import io.jmix.hibernate.impl.HibernatePersistenceTools;
 import io.jmix.hibernate.impl.HibernatePersistenceSupport;
 import io.jmix.data.impl.EntityListenerManager;
@@ -68,7 +68,7 @@ public class HibernateFireEventsEventListener implements PreInsertEventListener,
     protected AuditInfoProvider auditInfoProvider;
 
     @Autowired
-    protected EntityAuditInfoProvider entityAuditInfoProvider;
+    protected EntityAuditValues entityAuditInfoProvider;
 
     protected boolean isJustSoftDeleted(Object entity) {
         if (EntityValues.isSoftDeletionSupported(entity)) {

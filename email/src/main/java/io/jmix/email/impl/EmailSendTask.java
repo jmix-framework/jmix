@@ -16,7 +16,7 @@
 
 package io.jmix.email.impl;
 
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.EmailerProperties;
 import io.jmix.email.entity.SendingMessage;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class EmailSendTask implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(EmailSendTask.class);
 
     @Autowired
-    private Authenticator authenticator;
+    private SystemAuthenticator authenticator;
 
     @Autowired
     private EmailerImpl emailer;

@@ -20,7 +20,7 @@ import com.sun.mail.smtp.SMTPAddressFailedException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.Resources;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
 import io.jmix.email.entity.SendingMessage;
@@ -63,7 +63,7 @@ public class EmailerImpl implements Emailer {
     protected Metadata metadata;
 
     @Autowired
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
 
     @Autowired
     protected EmailSender emailSender;

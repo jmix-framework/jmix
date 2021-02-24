@@ -17,7 +17,7 @@
 package io.jmix.imap;
 
 
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.entity.ImapMailBox;
 import io.jmix.imap.sync.events.ImapEvents;
@@ -43,7 +43,7 @@ public class ImapSyncManager {
     @Autowired
     protected ImapEvents imapEvents;
     @Autowired
-    protected Authenticator authentication;
+    protected SystemAuthenticator authentication;
 
     private final ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
         private final AtomicInteger threadNumber = new AtomicInteger(1);

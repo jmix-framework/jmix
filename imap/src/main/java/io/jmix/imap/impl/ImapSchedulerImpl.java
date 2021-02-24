@@ -16,7 +16,7 @@
 
 package io.jmix.imap.impl;
 
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.imap.ImapScheduler;
 import io.jmix.imap.data.ImapDataProvider;
 import io.jmix.imap.entity.ImapMailBox;
@@ -56,7 +56,7 @@ public class ImapSchedulerImpl implements ImapScheduler {
     protected ImapSynchronizer imapSynchronizer;
 
     @Autowired
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
 
     protected final ExecutorService executor = Executors.newCachedThreadPool(new ThreadFactory() {
         private final AtomicInteger threadNumber = new AtomicInteger(1);

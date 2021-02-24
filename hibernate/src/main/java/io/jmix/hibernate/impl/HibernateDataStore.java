@@ -19,6 +19,7 @@ package io.jmix.hibernate.impl;
 import com.google.common.collect.Lists;
 import io.jmix.core.*;
 import io.jmix.core.datastore.AbstractDataStore;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -31,6 +32,8 @@ import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.impl.QueryResultsManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.hibernate.impl.topology.DirectedGraph;
+import io.jmix.hibernate.impl.topology.TopologicalSort;
 import org.hibernate.QueryException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.slf4j.Logger;
@@ -217,15 +220,16 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
 
     @Override
     protected Set<Object> saveAll(SaveContext context) {
-        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        SessionImplementor em = (SessionImplementor) storeAwareLocator.getEntityManager(storeName);
 
         Set<Object> result = new HashSet<>();
-        for (Object entity : context.getEntitiesToSave()) {
-            if (entityStates.isNew(entity)) {
-                entityEventManager.publishEntitySavingEvent(entity, true);
-                em.persist(entity);
-                result.add(entity);
-            }
+
+        List<Object> sorted = getSortedEntitiesToPersist(context);
+
+        for (Object entity : sorted) {
+            entityEventManager.publishEntitySavingEvent(entity, true);
+            em.persist(entity);
+            result.add(entity);
         }
 
         for (Object entity : context.getEntitiesToSave()) {
@@ -237,6 +241,27 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         }
 
         return result;
+    }
+
+    private List<Object> getSortedEntitiesToPersist(SaveContext context) {
+        DirectedGraph<Object> entitiesToSave = new DirectedGraph<>();
+
+        for (Object entity : context.getEntitiesToSave()) {
+            if (entityStates.isNew(entity)) {
+                entitiesToSave.addNode(entity);
+                for (MetaProperty metaProperty : metadata.getClass(entity.getClass()).getProperties()) {
+                    if (metaProperty.getRange().isClass()) {
+                        Object value = EntityValues.getValue(entity, metaProperty.getName());
+                        if (value != null && context.getEntitiesToSave().contains(value) && entityStates.isNew(value)) {
+                            entitiesToSave.addEdge(value, entity);
+                        }
+                    }
+                }
+            }
+        }
+
+        List<Object> sorded = TopologicalSort.sort(entitiesToSave);
+        return sorded;
     }
 
     @Override

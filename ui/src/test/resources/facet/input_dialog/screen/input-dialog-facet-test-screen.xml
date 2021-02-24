@@ -40,7 +40,7 @@
                                      defaultValue="1234567890"/>
                 <enumParameter id="enumParam"
                                caption="Enum param"
-                               enumClass="io.jmix.data.EntityChangeType"/>
+                               enumClass="test_support.entity.EntityChangeType"/>
                 <entityParameter id="entityParam"
                                  caption="Order Entity param"
                                  entityClass="test_support.entity.sales.Order"/>

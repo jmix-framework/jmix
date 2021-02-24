@@ -150,4 +150,17 @@ class AnnotatedRoleBuilderTest extends SecuritySpecification {
         resourcePolicies.find { it.action == EntityPolicyAction.UPDATE.id }
         resourcePolicies.find { it.action == EntityPolicyAction.DELETE.id }
     }
+
+    def "test role inheritance"() {
+        when:
+
+        ResourceRole role = annotatedRoleBuilder.createResourceRole(TestChildRole.class.getCanonicalName())
+        def resourcePolicies = role.resourcePolicies
+
+        then:
+
+        resourcePolicies.size() == 2
+        resourcePolicies.find { it.action == EntityPolicyAction.CREATE.id }
+        resourcePolicies.find { it.action == EntityPolicyAction.UPDATE.id }
+    }
 }

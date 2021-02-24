@@ -16,10 +16,12 @@
 
 package io.jmix.securityui.impl.role.extractor;
 
+import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
-import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
 import io.jmix.securityui.role.annotation.MenuPolicy;
+import io.jmix.securityui.role.annotation.MenuPolicyContainer;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -33,9 +35,10 @@ public class MenuPolicyExtractor implements ResourcePolicyExtractor {
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        MenuPolicy[] menuPolicyAnnotations = method.getAnnotationsByType(MenuPolicy.class);
-        for (MenuPolicy menuPolicyAnnotation : menuPolicyAnnotations) {
-            for (String menuId : menuPolicyAnnotation.menuIds()) {
+        Set<MenuPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                MenuPolicy.class, MenuPolicyContainer.class);
+        for (MenuPolicy annotation : annotations) {
+            for (String menuId : annotation.menuIds()) {
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.MENU, menuId)
                         .withPolicyGroup(method.getName())
                         .build();

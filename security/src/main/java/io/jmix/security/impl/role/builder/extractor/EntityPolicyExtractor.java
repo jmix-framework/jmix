@@ -23,10 +23,12 @@ import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.EntityPolicy;
+import io.jmix.security.role.annotation.EntityPolicyContainer;
 import io.jmix.security.role.annotation.NullEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -57,10 +59,11 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        EntityPolicy[] entityPolicyAnnotations = method.getAnnotationsByType(EntityPolicy.class);
-        for (EntityPolicy entityPolicyAnnotation : entityPolicyAnnotations) {
-            Class<?> entityClass = entityPolicyAnnotation.entityClass();
-            String entityName = entityPolicyAnnotation.entityName();
+        Set<EntityPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                EntityPolicy.class, EntityPolicyContainer.class);
+        for (EntityPolicy annotation : annotations) {
+            Class<?> entityClass = annotation.entityClass();
+            String entityName = annotation.entityName();
             if (entityClass != NullEntity.class) {
                 MetaClass metaClass = metadata.getClass(entityClass);
                 entityName = metaClass.getName();
@@ -69,7 +72,7 @@ public class EntityPolicyExtractor implements ResourcePolicyExtractor {
                         "Class: {}, method: {}", method.getClass().getName(), method.getName());
                 continue;
             }
-            EntityPolicyAction[] actions = entityPolicyAnnotation.actions();
+            EntityPolicyAction[] actions = annotation.actions();
             if (Arrays.asList(actions).contains(EntityPolicyAction.ALL)) {
                 actions = ALL_CRUD_ACTIONS;
             }

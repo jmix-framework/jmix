@@ -21,11 +21,11 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
-import io.jmix.security.role.annotation.EntityAttributePolicy;
-import io.jmix.security.role.annotation.NullEntity;
+import io.jmix.security.role.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -48,10 +48,11 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        EntityAttributePolicy[] policyAnnotations = method.getAnnotationsByType(EntityAttributePolicy.class);
-        for (EntityAttributePolicy policyAnnotation : policyAnnotations) {
-            Class<?> entityClass = policyAnnotation.entityClass();
-            String entityName = policyAnnotation.entityName();
+        Set<EntityAttributePolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                EntityAttributePolicy.class, EntityAttributePolicyContainer.class);
+        for (EntityAttributePolicy annotation : annotations) {
+            Class<?> entityClass = annotation.entityClass();
+            String entityName = annotation.entityName();
             if (entityClass != NullEntity.class) {
                 MetaClass metaClass = metadata.getClass(entityClass);
                 entityName = metaClass.getName();
@@ -60,10 +61,10 @@ public class EntityAttributePolicyExtractor implements ResourcePolicyExtractor {
                         "Class: {}, method: {}", method.getClass().getName(), method.getName());
                 continue;
             }
-            for (String attribute : policyAnnotation.attributes()) {
+            for (String attribute : annotation.attributes()) {
                 String resource = entityName + "." + attribute;
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.ENTITY_ATTRIBUTE, resource)
-                        .withAction(policyAnnotation.action().getId())
+                        .withAction(annotation.action().getId())
                         .withPolicyGroup(method.getName())
                         .build();
                 resourcePolicies.add(resourcePolicy);

@@ -19,6 +19,8 @@ package io.jmix.security.impl.role.builder.extractor;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.role.annotation.SpecificPolicy;
+import io.jmix.security.role.annotation.SpecificPolicyContainer;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -30,9 +32,10 @@ public class SpecificPolicyExtractor implements ResourcePolicyExtractor {
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        SpecificPolicy[] policyAnnotations = method.getAnnotationsByType(SpecificPolicy.class);
-        for (SpecificPolicy policyAnnotation : policyAnnotations) {
-            for (String resource : policyAnnotation.resources()) {
+        Set<SpecificPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                SpecificPolicy.class, SpecificPolicyContainer.class);
+        for (SpecificPolicy annotation : annotations) {
+            for (String resource : annotation.resources()) {
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SPECIFIC, resource)
                         .withPolicyGroup(method.getName())
                         .withCustomProperties(Collections.singletonMap("uniqueKey", UUID.randomUUID().toString()))

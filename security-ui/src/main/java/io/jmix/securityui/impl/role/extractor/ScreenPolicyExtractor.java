@@ -19,8 +19,12 @@ package io.jmix.securityui.impl.role.extractor;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.impl.role.builder.extractor.ResourcePolicyExtractor;
+import io.jmix.security.role.annotation.EntityAttributePolicy;
+import io.jmix.security.role.annotation.EntityAttributePolicyContainer;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
+import io.jmix.securityui.role.annotation.ScreenPolicyContainer;
 import io.jmix.ui.screen.UiController;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -34,8 +38,9 @@ public class ScreenPolicyExtractor implements ResourcePolicyExtractor {
     @Override
     public Collection<ResourcePolicy> extractResourcePolicies(Method method) {
         Set<ResourcePolicy> resourcePolicies = new HashSet<>();
-        ScreenPolicy[] screenPolicyAnnotations = method.getAnnotationsByType(ScreenPolicy.class);
-        for (ScreenPolicy screenPolicyAnnotation : screenPolicyAnnotations) {
+        Set<ScreenPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                ScreenPolicy.class, ScreenPolicyContainer.class);
+        for (ScreenPolicy screenPolicyAnnotation : annotations) {
             for (String screenId : screenPolicyAnnotation.screenIds()) {
                 ResourcePolicy resourcePolicy = ResourcePolicy.builder(ResourcePolicyType.SCREEN, screenId)
                         .withPolicyGroup(method.getName())

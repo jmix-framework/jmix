@@ -20,7 +20,9 @@ import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.role.annotation.JpqlRowLevelPolicy;
+import io.jmix.security.role.annotation.JpqlRowLevelPolicyContainer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -39,7 +41,8 @@ public class JpqlRowLevelPolicyExtractor implements RowLevelPolicyExtractor {
     @Override
     public Collection<RowLevelPolicy> extractRowLevelPolicies(Method method) {
         Set<RowLevelPolicy> policies = new HashSet<>();
-        JpqlRowLevelPolicy[] annotations = method.getAnnotationsByType(JpqlRowLevelPolicy.class);
+        Set<JpqlRowLevelPolicy> annotations = AnnotatedElementUtils.findMergedRepeatableAnnotations(method,
+                JpqlRowLevelPolicy.class, JpqlRowLevelPolicyContainer.class);
         for (JpqlRowLevelPolicy annotation : annotations) {
             Class<?> entityClass = annotation.entityClass();
             MetaClass metaClass = metadata.getClass(entityClass);

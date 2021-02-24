@@ -142,6 +142,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
             case DELETE:
                 registerDelete(entity, true);
                 break;
+            default:
+                //do nothing
         }
     }
 

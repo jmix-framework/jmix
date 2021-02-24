@@ -27,6 +27,8 @@ dependencies {
 
     api 'io.jmix.ui:jmix-ui'
 
+    compileOnly 'io.jmix.security:jmix-security-ui'
+
     testImplementation 'org.springframework:spring-test'
     testImplementation 'org.spockframework:spock-core'
     testImplementation 'org.spockframework:spock-spring'

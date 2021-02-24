@@ -28,6 +28,8 @@ dependencies {
 
     api 'com.sun.mail:jakarta.mail'
 
+    compileOnly 'io.jmix.security:jmix-security'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-engine'
     testImplementation 'org.junit.vintage:junit-vintage-engine'
     testImplementation 'org.springframework:spring-test'

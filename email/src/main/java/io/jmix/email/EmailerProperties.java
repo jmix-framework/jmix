@@ -33,7 +33,7 @@ public class EmailerProperties {
     int sendingTimeoutSec;
     String adminAddress;
     boolean sendAllToAdmin;
-    boolean isFileStorageUsed;
+    boolean useFileStorage;
     String asyncSendingUsername;
 
     public EmailerProperties(@DefaultValue("DoNotReply@localhost") String fromAddress,
@@ -43,7 +43,7 @@ public class EmailerProperties {
                              @DefaultValue("240") int sendingTimeoutSec,
                              @DefaultValue("admin@localhost") String adminAddress,
                              @DefaultValue("false") boolean sendAllToAdmin,
-                             @DefaultValue("false") boolean isFileStorageUsed,
+                             @DefaultValue("false") boolean useFileStorage,
                              @DefaultValue("admin") String asyncSendingUsername) {
         this.fromAddress = fromAddress;
         this.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
@@ -52,7 +52,7 @@ public class EmailerProperties {
         this.sendingTimeoutSec = sendingTimeoutSec;
         this.adminAddress = adminAddress;
         this.sendAllToAdmin = sendAllToAdmin;
-        this.isFileStorageUsed = isFileStorageUsed;
+        this.useFileStorage = useFileStorage;
         this.asyncSendingUsername = asyncSendingUsername;
     }
 
@@ -126,8 +126,8 @@ public class EmailerProperties {
      * @return true if email body text and attachments are stored in file storage instead of BLOB columns in database.
      * 
      */
-    public boolean isFileStorageUsed() {
-        return isFileStorageUsed;
+    public boolean isUseFileStorage() {
+        return useFileStorage;
     }
 
     /**

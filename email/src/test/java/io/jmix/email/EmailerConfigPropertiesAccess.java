@@ -20,8 +20,8 @@ public class EmailerConfigPropertiesAccess {
     public static void setScheduledSendingDelayCallCount(EmailerProperties properties, int scheduledSendingDelayCallCount) {
         properties.scheduledSendingDelayCallCount = scheduledSendingDelayCallCount;
     }
-    public static void setFileStorageUsed(EmailerProperties properties, boolean fileStorageUsed) {
-        properties.isFileStorageUsed = fileStorageUsed;
+    public static void setUseFileStorage(EmailerProperties properties, boolean useFileStorage) {
+        properties.useFileStorage = useFileStorage;
     }
 
     public static void setFromAddress(EmailerProperties properties, String fromAddress) {

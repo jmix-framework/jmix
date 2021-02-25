@@ -108,7 +108,7 @@ public class EmailerTest {
      * Test single recipient, text body, subject.
      */
     private void doTestSynchronous(boolean useFs) throws Exception {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         EmailInfo myInfo = EmailInfoBuilder.create()
@@ -133,7 +133,7 @@ public class EmailerTest {
      * Test single recipient, text body, subject.
      */
     private void doTestWithMultipleRecipientsSynchronous(boolean useFs) throws Exception {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         EmailInfo myInfo = EmailInfoBuilder.create()
@@ -198,7 +198,7 @@ public class EmailerTest {
 
     @Test
     public void testFileStorageEmailBodyReturningToDbColumn() {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, true);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, true);
         testMailSender.clearBuffer();
 
         String body = "Test Email Body";
@@ -224,7 +224,7 @@ public class EmailerTest {
     }
 
     private void doTestAsynchronous(boolean useFs) throws Exception {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         String body = "Test Email Body";
@@ -405,7 +405,7 @@ public class EmailerTest {
     }
 
     private void doTestSentFromSecondAttempt(boolean useFs) {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         String body = "Test Email Body";
@@ -452,7 +452,7 @@ public class EmailerTest {
     }
 
     private void doTestSeveralRecipients(boolean useFs) throws MessagingException {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         String body = "Test Email Body";
@@ -535,7 +535,7 @@ public class EmailerTest {
     }
 
     private void doTestTextAttachment(boolean useFs) throws IOException, MessagingException {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         String attachmentText = "Test Attachment Text";
@@ -579,7 +579,7 @@ public class EmailerTest {
     }
 
     private void doTestInlineImage(boolean useFs) throws IOException, MessagingException {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         byte[] imageBytes = new byte[]{1, 2, 3, 4, 5};
@@ -623,7 +623,7 @@ public class EmailerTest {
     }
 
     private void doTestPdfAttachment(boolean useFs) throws IOException, MessagingException {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
         testMailSender.clearBuffer();
 
         byte[] pdfBytes = new byte[]{1, 2, 3, 4, 6};
@@ -667,7 +667,7 @@ public class EmailerTest {
     }
 
     private void doTestLoadBody(boolean useFs) throws Exception {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, useFs);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, useFs);
 
         String body = "Hi! This is test email. Bye.";
         EmailInfo emailInfo = EmailInfoBuilder.create()
@@ -685,7 +685,7 @@ public class EmailerTest {
 
     @Test
     public void testMigration() throws Exception {
-        EmailerConfigPropertiesAccess.setFileStorageUsed(emailerProperties, false);
+        EmailerConfigPropertiesAccess.setUseFileStorage(emailerProperties, false);
 
         byte[] expectedBytes = new byte[]{1, 2, 3, 4, 6};
         EmailAttachment fileAttachment = new EmailAttachment(expectedBytes, "invoice.pdf");

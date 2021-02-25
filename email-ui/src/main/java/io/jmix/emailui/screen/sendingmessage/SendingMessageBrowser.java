@@ -214,7 +214,7 @@ public class SendingMessageBrowser extends Screen {
             fileStorage = fileStorageLocator.getDefault();
         }
 
-        if (emailerProperties.isFileStorageUsed()
+        if (emailerProperties.isUseFileStorage()
                 && attachment.getContentFile() != null
                 && fileStorage.fileExists(attachment.getContentFile())) {
             fileRef = attachment.getContentFile();

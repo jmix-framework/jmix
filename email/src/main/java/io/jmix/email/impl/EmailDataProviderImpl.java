@@ -121,7 +121,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
                 if (status == SendingStatus.SENT) {
                     msg.setDateSent(timeSource.currentTimestamp());
                 }
-                if (emailerProperties.isFileStorageUsed()) {
+                if (emailerProperties.isUseFileStorage()) {
                     msg.setContentText(null);
                 }
             });
@@ -237,7 +237,7 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     }
 
     protected void persistSendingMessage(SendingMessage message, MessagePersistingContext context) {
-        boolean useFileStorage = emailerProperties.isFileStorageUsed();
+        boolean useFileStorage = emailerProperties.isUseFileStorage();
 
         if (useFileStorage) {
             byte[] bodyBytes = bodyTextToBytes(message);

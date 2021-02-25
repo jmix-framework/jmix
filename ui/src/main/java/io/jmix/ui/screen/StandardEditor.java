@@ -399,9 +399,16 @@ public abstract class StandardEditor<T> extends Screen
         Runnable standardCommitAction = () -> {
             EntitySet committedEntities = getScreenData().getDataContext().commit();
 
-            if (getEditedEntityLoader().getEntityId() == null) {
-                committedEntities.optional(getEditedEntity())
-                        .ifPresent(entity -> getEditedEntityLoader().setEntityId(EntityValues.getId(entity)));
+            InstanceContainer<T> container = getEditedEntityContainer();
+            if (container instanceof HasLoader) {
+                DataLoader loader = ((HasLoader) container).getLoader();
+                if (loader instanceof InstanceLoader) {
+                    @SuppressWarnings("rawtypes") InstanceLoader instanceLoader = (InstanceLoader) loader;
+                    if (instanceLoader.getEntityId() == null) {
+                        committedEntities.optional(getEditedEntity())
+                                .ifPresent(entity -> instanceLoader.setEntityId(EntityValues.getId(entity)));
+                    }
+                }
             }
 
             fireEvent(AfterCommitChangesEvent.class, new AfterCommitChangesEvent(this));

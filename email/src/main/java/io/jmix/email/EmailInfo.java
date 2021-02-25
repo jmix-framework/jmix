@@ -19,7 +19,6 @@ package io.jmix.email;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Contains email details: list of recipients, from address, subject, body and attachments.
@@ -45,8 +44,6 @@ public class EmailInfo implements Serializable {
     private String bcc;
     private String subject;
     private String from;
-    private String templatePath;
-    private Map<String, Serializable> templateParameters;
     private String body;
     private String bodyContentType;
     private List<EmailAttachment> attachments;
@@ -61,8 +58,6 @@ public class EmailInfo implements Serializable {
               String bcc,
               String subject,
               String from,
-              String templatePath,
-              Map<String, Serializable> templateParameters,
               String body,
               String bodyContentType,
               List<EmailHeader> headers,
@@ -72,8 +67,6 @@ public class EmailInfo implements Serializable {
         this.bcc = bcc;
         this.subject = subject;
         this.from = from;
-        this.templatePath = templatePath;
-        this.templateParameters = templateParameters;
         this.body = body;
         this.bodyContentType = bodyContentType;
         this.headers = headers;
@@ -97,14 +90,6 @@ public class EmailInfo implements Serializable {
         this.subject = subject;
     }
 
-    public String getTemplatePath() {
-        return templatePath;
-    }
-
-    public void setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-    }
-
     public String getBody() {
         return body;
     }
@@ -119,14 +104,6 @@ public class EmailInfo implements Serializable {
 
     public void setAttachments(List<EmailAttachment> attachments) {
         this.attachments = attachments;
-    }
-
-    public Map<String, Serializable> getTemplateParameters() {
-        return templateParameters;
-    }
-
-    public void setTemplateParameters(Map<String, Serializable> templateParameters) {
-        this.templateParameters = templateParameters;
     }
 
     public String getFrom() {

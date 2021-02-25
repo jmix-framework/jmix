@@ -19,7 +19,6 @@ import com.google.common.base.Strings;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.Resources;
 import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.email.*;
 import io.jmix.email.entity.SendingAttachment;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.mail.internet.AddressException;
-import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,9 +65,6 @@ public class EmailerImpl implements Emailer {
 
     @Autowired
     protected EmailSender emailSender;
-
-    @Autowired
-    protected Resources resources;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -113,8 +108,6 @@ public class EmailerImpl implements Emailer {
             throw new IllegalArgumentException("Addresses are not specified");
         }
 
-        processBodyTemplate(emailInfo);
-
         if (emailInfo.getFrom() == null) {
             String defaultFromAddress = emailerProperties.getFromAddress();
             if (defaultFromAddress == null) {
@@ -122,24 +115,6 @@ public class EmailerImpl implements Emailer {
             }
             emailInfo.setFrom(defaultFromAddress);
         }
-    }
-
-    protected void processBodyTemplate(EmailInfo info) {
-        String templatePath = info.getTemplatePath();
-        if (templatePath == null) {
-            return;
-        }
-
-        Map<String, Serializable> params = info.getTemplateParameters() == null
-                ? Collections.emptyMap()
-                : info.getTemplateParameters();
-        String templateContents = resources.getResourceAsString(templatePath);
-        if (templateContents == null) {
-            throw new IllegalArgumentException("Could not find template by path: " + templatePath);
-        }
-        //todo: template helper is not implemented yet
-        /*String body = TemplateHelper.processTemplate(templateContents, params);
-        info.setBody(body);*/
     }
 
     protected SendingMessage convertToSendingMessage(EmailInfo info, @Nullable Integer attemptsCount, @Nullable Date deadline) {

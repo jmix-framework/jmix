@@ -16,8 +16,9 @@
 
 package io.jmix.email;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * EmailInfo builder.
@@ -38,8 +39,6 @@ public class EmailInfoBuilder {
     private String bcc;
     private String subject;
     private String from;
-    private String templatePath;
-    private Map<String, Serializable> templateParameters;
     private String body;
     private String bodyContentType;
     private List<EmailAttachment> attachments;
@@ -142,39 +141,6 @@ public class EmailInfoBuilder {
         return this;
     }
 
-    public String getTemplatePath() {
-        return templatePath;
-    }
-
-    /**
-     * @param templatePath path to a Freemarker template which is used to create the message body. The template
-     *                     is loaded through {@link } in the <b>core</b> module.
-     */
-    public EmailInfoBuilder setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-        return this;
-    }
-
-    public Map<String, Serializable> getTemplateParameters() {
-        return templateParameters;
-    }
-
-    /**
-     * @param templateParameters map of parameters to be passed to the template
-     */
-    public EmailInfoBuilder setTemplateParameters(Map<String, Serializable> templateParameters) {
-        this.templateParameters = templateParameters;
-        return this;
-    }
-
-    public EmailInfoBuilder addTemplateParameter(String name, Serializable value) {
-        if (templateParameters == null) {
-            templateParameters = new HashMap<>();
-        }
-        templateParameters.put(name, value);
-        return this;
-    }
-
     public String getBody() {
         return body;
     }
@@ -243,7 +209,6 @@ public class EmailInfoBuilder {
     }
 
     public EmailInfo build() {
-        return new EmailInfo(addresses, cc, bcc, subject, from, templatePath, templateParameters,
-                body, bodyContentType, headers, attachments);
+        return new EmailInfo(addresses, cc, bcc, subject, from, body, bodyContentType, headers, attachments);
     }
 }

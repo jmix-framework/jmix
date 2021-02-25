@@ -40,12 +40,8 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -499,29 +495,6 @@ public class EmailerTest {
         } finally {
             EmailerConfigPropertiesAccess.setSendAllToAdmin(emailerProperties, false);
         }
-    }
-
-    //@Test todo: Test depends on TemplateHelper implementation
-    public void testEmailTemplate() throws Exception {
-        testMailSender.clearBuffer();
-
-        String templateFileName = "/test_support/testEmailTemplate.ftl";
-
-        Map<String, Serializable> params = new HashMap<>();
-        params.put("userName", "Bob");
-        params.put("dateParam", new SimpleDateFormat("dd/MM/yyyy").parse("01/05/2013"));
-
-        EmailInfo info = EmailInfoBuilder.create()
-                .setAddresses("bob@example.com")
-                .setSubject("Test")
-                .setTemplatePath(templateFileName)
-                .setTemplateParameters(params)
-                .build();
-        emailer.sendEmailAsync(info);
-        emailer.processQueuedEmails();
-
-        String body = getBody(testMailSender.fetchSentEmail());
-        assertEquals("Greetings, Bob! 01-05-2013", body.trim());
     }
 
     @Test

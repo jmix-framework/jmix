@@ -26,9 +26,15 @@ public interface ScreenData {
 
     /**
      * Returns screen's {@code DataContext}.
+     * @throws IllegalStateException if the DataContext is not defined
+     */
+    DataContext getDataContext();
+
+    /**
+     * Returns screen's {@code DataContext} or null if it is not defined.
      */
     @Nullable
-    DataContext getDataContext();
+    DataContext getDataContextOrNull();
 
     /**
      * Sets {@code DataContext} instance for the screen.

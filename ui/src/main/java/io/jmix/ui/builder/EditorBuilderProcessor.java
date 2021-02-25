@@ -196,7 +196,7 @@ public class EditorBuilderProcessor {
 
     protected <E> E merge(E entity, FrameOwner screen, @Nullable DataContext parentDataContext) {
         if (parentDataContext == null) {
-            DataContext thisDataContext = UiControllerUtils.getScreenData(screen).getDataContext();
+            DataContext thisDataContext = UiControllerUtils.getScreenData(screen).getDataContextOrNull();
             if (thisDataContext != null) {
                 return thisDataContext.merge(entity);
             }
@@ -365,11 +365,11 @@ public class EditorBuilderProcessor {
             MetaProperty metaProperty = masterMetaClass.getProperty(property);
 
             if (metaProperty.getType() == MetaProperty.Type.COMPOSITION) {
-                dataContext = UiControllerUtils.getScreenData(origin).getDataContext();
+                dataContext = UiControllerUtils.getScreenData(origin).getDataContextOrNull();
             }
         }
         if (dataContext != null) {
-            DataContext childContext = UiControllerUtils.getScreenData(screen).getDataContext();
+            DataContext childContext = UiControllerUtils.getScreenData(screen).getDataContextOrNull();
             checkDataContext(screen, childContext);
             childContext.setParent(dataContext);
         }

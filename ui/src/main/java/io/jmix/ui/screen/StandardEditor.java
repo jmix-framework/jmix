@@ -204,7 +204,7 @@ public abstract class StandardEditor<T> extends Screen
     }
 
     protected void setupEntityToEdit() {
-        if (getScreenData().getDataContext() == null) {
+        if (getScreenData().getDataContextOrNull() == null) {
             throw new IllegalStateException("No DataContext defined. Make sure the editor screen XML descriptor has <data> element");
         }
 

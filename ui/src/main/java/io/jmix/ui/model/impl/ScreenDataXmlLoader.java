@@ -308,7 +308,7 @@ public class ScreenDataXmlLoader {
             loader = hostScreenData.getLoader(loaderId);
         } else {
             loader = factory.createCollectionLoader();
-            loader.setDataContext(screenData.getDataContext());
+            loader.setDataContext(screenData.getDataContextOrNull());
             loader.setContainer(container);
 
             loadQuery(element, loader);

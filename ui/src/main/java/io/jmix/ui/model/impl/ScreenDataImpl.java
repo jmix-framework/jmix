@@ -36,9 +36,16 @@ public class ScreenDataImpl implements ScreenData {
 
     protected Map<String, DataLoader> loaders = new HashMap<>();
 
-    @Nullable
     @Override
     public DataContext getDataContext() {
+        if (dataContext == null) {
+            throw new IllegalStateException("DataContext is not defined");
+        }
+        return dataContext;
+    }
+
+    @Override
+    public DataContext getDataContextOrNull() {
         return dataContext;
     }
 

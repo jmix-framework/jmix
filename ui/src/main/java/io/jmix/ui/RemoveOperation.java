@@ -27,10 +27,7 @@ import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.data.DataUnit;
 import io.jmix.ui.component.data.meta.ContainerDataUnit;
-import io.jmix.ui.model.CollectionContainer;
-import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.Nested;
-import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.model.*;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -208,6 +205,7 @@ public class RemoveOperation {
             needCommit = needCommit && (metaProperty.getType() != MetaProperty.Type.COMPOSITION);
         }
 
+        DataContext dataContext = screenData.getDataContextOrNull();
         if (needCommit) {
             SaveContext saveContext = new SaveContext();
             for (Object entity : entitiesToCommit) {
@@ -215,14 +213,14 @@ public class RemoveOperation {
             }
             dataManager.save(saveContext);
             for (Object entity : entitiesToRemove) {
-                if (screenData.getDataContext() != null) {
-                    screenData.getDataContext().evict(entity);
+                if (dataContext != null) {
+                    dataContext.evict(entity);
                 }
             }
         } else {
             for (Object entity : entitiesToRemove) {
-                if (screenData.getDataContext() != null) {
-                    screenData.getDataContext().remove(entity);
+                if (dataContext != null) {
+                    dataContext.remove(entity);
                 }
             }
         }

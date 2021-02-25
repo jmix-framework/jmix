@@ -397,7 +397,13 @@ public abstract class StandardEditor<T> extends Screen
         }
 
         Runnable standardCommitAction = () -> {
-            getScreenData().getDataContext().commit();
+            EntitySet committedEntities = getScreenData().getDataContext().commit();
+
+            if (getEditedEntityLoader().getEntityId() == null) {
+                committedEntities.optional(getEditedEntity())
+                        .ifPresent(entity -> getEditedEntityLoader().setEntityId(EntityValues.getId(entity)));
+            }
+
             fireEvent(AfterCommitChangesEvent.class, new AfterCommitChangesEvent(this));
         };
 

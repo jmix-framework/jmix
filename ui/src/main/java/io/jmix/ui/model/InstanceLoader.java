@@ -48,6 +48,7 @@ public interface InstanceLoader<E> extends DataLoader {
     /**
      * Returns id of the entity to load.
      */
+    @Nullable
     Object getEntityId();
 
     /**

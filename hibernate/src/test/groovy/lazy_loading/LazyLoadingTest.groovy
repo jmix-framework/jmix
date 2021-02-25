@@ -25,8 +25,6 @@ import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.lazyloading.*
 
-//todo: hibernate merge
-@Ignore
 class LazyLoadingTest extends DataSpec {
 
     @Autowired
@@ -201,6 +199,8 @@ class LazyLoadingTest extends DataSpec {
         result.getManyToManyFirstEntities().size() == 5
     }
 
+    //todo: hibernate merge
+    @Ignore
     def "OneToOne duplicate test"() {
         setup:
 
@@ -233,6 +233,8 @@ class LazyLoadingTest extends DataSpec {
         noFieldEntity.is(noFieldEntity.getOneToOneFieldEntity().getOneToOneNoFieldEntity())
     }
 
+    //todo: hibernate merge
+    @Ignore
     def "ManyToMany duplicate test"() {
         setup:
 

@@ -16,8 +16,8 @@
 
 package io.jmix.emailtemplates.entity.listener;
 
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
-import io.jmix.data.PersistenceTools;
 import io.jmix.data.listener.BeforeDetachEntityListener;
 import io.jmix.emailtemplates.TemplateConverter;
 import io.jmix.emailtemplates.entity.JsonEmailTemplate;
@@ -35,14 +35,14 @@ public class JsonEmailTemplateDetachListener implements BeforeDetachEntityListen
     protected TemplateConverter templateConverter;
 
     @Autowired
-    protected PersistenceTools persistenceTools;
+    protected EntityStates entityStates;
 
     @Autowired
     protected Metadata metadata;
 
     @Override
     public void onBeforeDetach(JsonEmailTemplate entity) {
-        if (persistenceTools.isLoaded(entity, "reportJson") && StringUtils.isNotBlank(entity.getReportJson())) {
+        if (entityStates.isLoaded(entity, "reportJson") && StringUtils.isNotBlank(entity.getReportJson())) {
             Report reportFromXml = templateConverter.convertToReport(entity);
             entity.setReport(reportFromXml);
 

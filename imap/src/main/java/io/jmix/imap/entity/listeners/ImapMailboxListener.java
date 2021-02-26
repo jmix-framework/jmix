@@ -16,7 +16,7 @@
 
 package io.jmix.imap.entity.listeners;
 
-import io.jmix.data.PersistenceTools;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.listener.*;
 import io.jmix.imap.crypto.Encryptor;
 import io.jmix.imap.entity.ImapMailBox;
@@ -31,10 +31,10 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Component("imap_MailboxListener")
 public class ImapMailboxListener implements BeforeInsertEntityListener<ImapMailBox>,
-                                            BeforeUpdateEntityListener<ImapMailBox>,
-                                            AfterInsertEntityListener<ImapMailBox>,
-                                            AfterUpdateEntityListener<ImapMailBox>,
-                                            BeforeDeleteEntityListener<ImapMailBox> {
+        BeforeUpdateEntityListener<ImapMailBox>,
+        AfterInsertEntityListener<ImapMailBox>,
+        AfterUpdateEntityListener<ImapMailBox>,
+        BeforeDeleteEntityListener<ImapMailBox> {
 
     private final static Logger log = LoggerFactory.getLogger(ImapMailboxListener.class);
 
@@ -42,7 +42,7 @@ public class ImapMailboxListener implements BeforeInsertEntityListener<ImapMailB
     protected Encryptor encryptor;
 
     @Autowired
-    protected PersistenceTools persistenceTools;
+    protected AttributeChangesProvider attributeChangesProvider;
 
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
@@ -54,7 +54,7 @@ public class ImapMailboxListener implements BeforeInsertEntityListener<ImapMailB
 
     @Override
     public void onBeforeUpdate(ImapMailBox entity) {
-        if (persistenceTools.isDirty(entity.getAuthentication(), "password")) {
+        if (attributeChangesProvider.isChanged(entity.getAuthentication(), "password")) {
             setEncryptedPassword(entity);
         }
         applicationEventPublisher.publishEvent(createDeactivationEvent(entity));

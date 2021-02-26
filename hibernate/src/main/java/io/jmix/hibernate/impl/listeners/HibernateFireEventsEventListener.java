@@ -19,12 +19,12 @@ package io.jmix.hibernate.impl.listeners;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.TimeSource;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.impl.EntityAuditValues;
-import io.jmix.hibernate.impl.HibernatePersistenceTools;
-import io.jmix.hibernate.impl.HibernatePersistenceSupport;
 import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.impl.EntityListenerType;
+import io.jmix.hibernate.impl.HibernatePersistenceSupport;
 import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.event.spi.*;
@@ -56,7 +56,7 @@ public class HibernateFireEventsEventListener implements PreInsertEventListener,
 
     @Lazy
     @Autowired
-    protected HibernatePersistenceTools persistenceTools;
+    protected AttributeChangesProvider attributeChangesProvider;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -73,7 +73,7 @@ public class HibernateFireEventsEventListener implements PreInsertEventListener,
     protected boolean isJustSoftDeleted(Object entity) {
         if (EntityValues.isSoftDeletionSupported(entity)) {
             return EntityValues.isSoftDeleted(entity)
-                    && persistenceTools.isDirty(entity, metadataTools.getDeletedDateProperty(entity));
+                    && attributeChangesProvider.isChanged(entity, metadataTools.getDeletedDateProperty(entity));
         }
         return false;
     }

@@ -27,7 +27,7 @@ public class EntityChangedEventInfo {
     private final Object source;
     private final Object entity;
     private EntityChangedEvent.Type type;
-    private final AttributeChanges changes;
+    private AttributeChanges changes;
     private MetaClass originalMetaClass;
 
     public EntityChangedEventInfo(Object source,
@@ -68,7 +68,9 @@ public class EntityChangedEventInfo {
         else if (otherInfo.type == CREATED)
             type = CREATED;
 
-        changes.mergeWith(otherInfo.getChanges());
+        changes = AttributeChanges.Builder.ofChanges(changes)
+                .mergeChanges(otherInfo.changes)
+                .build();
     }
 
     @Override

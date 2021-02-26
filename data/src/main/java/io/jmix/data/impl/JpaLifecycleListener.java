@@ -16,15 +16,16 @@
 
 package io.jmix.data.impl;
 
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.security.EntityOp;
 
 import javax.annotation.Nullable;
 
 /**
- * Beans implementing this interface are notified by DataStore on their
+ * Beans implementing this interface are notified by JPA implementation on their
  * specific events.
  */
-public interface JpaDataStoreListener {
+public interface JpaLifecycleListener {
 
     /**
      * Invoked before entity commit.
@@ -34,7 +35,7 @@ public interface JpaDataStoreListener {
      * @param changes object describing changes in the entity attributes - null for {@code CREATE} and {@code DELETE}
      *                change types
      */
-    default void onEntityChange(Object entity, EntityOp type, @Nullable EntityAttributeChanges changes) {
+    default void onEntityChange(Object entity, EntityOp type, @Nullable AttributeChanges changes) {
     }
 
     /**

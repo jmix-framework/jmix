@@ -17,15 +17,15 @@
 package io.jmix.search.index.queue;
 
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.EntityChangeType;
+import io.jmix.core.security.EntityOp;
 
 import java.util.Collection;
 
 public interface QueueService {
 
-    void enqueue(MetaClass entityMetaClass, String entityPk, EntityChangeType entityChangeType);
+    void enqueue(MetaClass entityMetaClass, String entityPk, EntityOp entityChangeType);
 
-    void enqueue(MetaClass entityMetaClass, Collection<String> entityPks, EntityChangeType entityChangeType);
+    void enqueue(MetaClass entityMetaClass, Collection<String> entityPks, EntityOp entityChangeType);
 
     void enqueue(QueueItem queueItem);
 

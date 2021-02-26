@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.node.*;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.EntityChangeType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import io.jmix.search.index.mapping.MappingFieldDescriptor;
 import io.jmix.search.index.queue.QueueItem;
@@ -65,11 +65,11 @@ public class EntityIndexer {
 
     public void indexEntities(Collection<QueueItem> queueItems) {
         log.debug("Index Queue Items: {}", queueItems);
-        Map<MetaClass, Map<EntityChangeType, Set<String>>> indexScope = new HashMap<>();
+        Map<MetaClass, Map<EntityOp, Set<String>>> indexScope = new HashMap<>();
         queueItems.forEach(queueItem -> {
             MetaClass metaClass = metadata.getClass(queueItem.getEntityName());
-            Map<EntityChangeType, Set<String>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
-            Set<String> changesByChangeType = changesByClass.computeIfAbsent(EntityChangeType.fromId(queueItem.getChangeType()), k -> new HashSet<>());
+            Map<EntityOp, Set<String>> changesByClass = indexScope.computeIfAbsent(metaClass, k -> new HashMap<>());
+            Set<String> changesByChangeType = changesByClass.computeIfAbsent(EntityOp.fromId(queueItem.getChangeType()), k -> new HashSet<>());
             changesByChangeType.add(queueItem.getEntityId());
         });
 
@@ -80,11 +80,11 @@ public class EntityIndexer {
         );
     }
 
-    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityChangeType changeType) {
+    public void indexEntityByPk(MetaClass metaClass, String entityPk, EntityOp changeType) {
         indexEntitiesByPks(metaClass, Collections.singletonList(entityPk), changeType);
     }
 
-    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityChangeType changeType) {
+    public void indexEntitiesByPks(MetaClass metaClass, Collection<String> entityPks, EntityOp changeType) {
         log.debug("Index entities: Class={}, Change Type={}, Pks={}", metaClass, changeType, entityPks);
         IndexDefinition indexDefinition = indexDefinitionsProvider.getIndexDefinitionByEntityName(metaClass.getName());
         if(indexDefinition == null) {
@@ -93,9 +93,9 @@ public class EntityIndexer {
         }
         log.debug("Mapping Fields for entity '{}': {}", metaClass, indexDefinition.getMapping().getFields());
 
-        if(EntityChangeType.UPDATE.equals(changeType) || EntityChangeType.CREATE.equals(changeType)) {
+        if(EntityOp.UPDATE.equals(changeType) || EntityOp.CREATE.equals(changeType)) {
             indexDocuments(indexDefinition, metaClass, entityPks);
-        } else if(EntityChangeType.DELETE.equals(changeType)) {
+        } else if(EntityOp.DELETE.equals(changeType)) {
             deleteDocuments(indexDefinition, entityPks);
         } else {
             throw new UnsupportedOperationException("Entity Change Type '" + changeType + "' is not supported");

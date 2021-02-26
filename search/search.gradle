@@ -30,4 +30,34 @@ dependencies {
     implementation 'com.fasterxml.jackson.module:jackson-module-jaxb-annotations'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.2'
+
+    implementation ('org.apache.tika:tika-parsers:1.23') {
+        exclude(group: 'junit', module: 'junit')
+        exclude(group: 'org.apache.poi', module: 'poi')
+        exclude (group: 'edu.ucar', module: 'netcdf4')
+        exclude (group: 'edu.ucar', module: 'grib')
+        exclude (group: 'edu.ucar', module: 'cdm')
+        exclude (group: 'edu.ucar', module: 'httpservices')
+        exclude (group: 'com.github.junrar', module: 'junrar')
+        exclude (group: 'edu.usc.ir', module: 'sentiment-analysis-parser')
+        exclude (group: 'org.apache.cxf', module: 'cxf-rt-rs-client')
+        exclude (group: 'org.apache.sis.core', module: 'sis-utility')
+        exclude (group: 'org.apache.sis.core', module: 'sis-metadata')
+        exclude (group: 'org.apache.sis.storage', module: 'sis-netcdf')
+        exclude (group: 'org.gagravarr', module: 'vorbis-java-tika')
+        exclude (group: 'org.gagravarr', module: 'vorbis-java-core')
+        exclude (group: 'org.opengis', module: 'geoapi')
+        exclude (group: 'com.healthmarketscience.jackcess', module: 'jackcess')
+        exclude (group: 'com.healthmarketscience.jackcess', module: 'jackcess-encrypt')
+        exclude (group: 'org.tallison', module: 'jmatio')
+        exclude (group: 'org.codelibs', module: 'jhighlight')
+        exclude (group: 'com.pff', module: 'java-libpst')
+        exclude (group: 'org.apache.opennlp', module: 'opennlp-tools')
+        exclude (group: 'com.rometools', module: 'rome')
+        exclude (group: 'com.googlecode.mp4parser', module: 'isoparser')
+        exclude (group: 'org.bouncycastle', module: 'bcmail-jdk15on')
+        exclude (group: 'org.bouncycastle', module: 'bcprov-jdk15on')
+    }
+
+    implementation 'org.apache.poi:poi:4.1.2'
 }

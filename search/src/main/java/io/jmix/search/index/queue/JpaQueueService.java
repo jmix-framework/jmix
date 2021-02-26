@@ -19,7 +19,7 @@ package io.jmix.search.index.queue;
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.EntityChangeType;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.EntityIndexer;
 import io.jmix.search.utils.PropertyTools;
@@ -57,13 +57,13 @@ public class JpaQueueService implements QueueService {
     protected PropertyTools propertyTools;
 
     @Override
-    public void enqueue(MetaClass entityClass, String entityPk, EntityChangeType entityChangeType) {
+    public void enqueue(MetaClass entityClass, String entityPk, EntityOp entityChangeType) {
         QueueItem queueItem = createQueueItem(entityClass.getName(), entityPk, entityChangeType);
         enqueue(queueItem);
     }
 
     @Override
-    public void enqueue(MetaClass entityClass, Collection<String> entityPks, EntityChangeType entityChangeType) {
+    public void enqueue(MetaClass entityClass, Collection<String> entityPks, EntityOp entityChangeType) {
         List<QueueItem> queueItems = entityPks.stream()
                 .map(id -> createQueueItem(entityClass.getName(), id, entityChangeType))
                 .collect(Collectors.toList());
@@ -111,7 +111,7 @@ public class JpaQueueService implements QueueService {
             List<QueueItem> queueItems = entities.stream()
                     .map(entity -> EntityValues.getValue(entity, primaryKeyPropertyName))
                     .filter(Objects::nonNull)
-                    .map(pk -> createQueueItem(entityName, pk.toString(), EntityChangeType.UPDATE))
+                    .map(pk -> createQueueItem(entityName, pk.toString(), EntityOp.UPDATE))
                     .collect(Collectors.toList());
 
             enqueue(queueItems);
@@ -165,7 +165,7 @@ public class JpaQueueService implements QueueService {
         });
     }
 
-    protected QueueItem createQueueItem(String entityName, String entityPk, EntityChangeType entityChangeType) {
+    protected QueueItem createQueueItem(String entityName, String entityPk, EntityOp entityChangeType) {
         QueueItem queueItem = metadata.create(QueueItem.class);
         queueItem.setChangeType(entityChangeType.getId());
         queueItem.setEntityId(entityPk);

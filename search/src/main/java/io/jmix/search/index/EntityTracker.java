@@ -21,8 +21,8 @@ import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.data.EntityChangeType;
-import io.jmix.data.PersistenceTools;
+import io.jmix.core.security.EntityOp;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.listener.BeforeDeleteEntityListener;
 import io.jmix.data.listener.BeforeInsertEntityListener;
 import io.jmix.data.listener.BeforeUpdateEntityListener;
@@ -50,7 +50,7 @@ public class EntityTracker implements
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected PersistenceTools persistenceTools;
+    protected AttributeChangesProvider attributeChangesProvider;
     @Autowired
     protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
     @Autowired
@@ -63,22 +63,22 @@ public class EntityTracker implements
     @Override
     public void onBeforeInsert(Object entity) {
         log.debug("Track insertion of entity {}", entity);
-        handleEntityChange(entity, EntityChangeType.CREATE);
+        handleEntityChange(entity, EntityOp.CREATE);
     }
 
     @Override
     public void onBeforeUpdate(Object entity) {
         log.debug("Track update of entity {}", entity);
-        handleEntityChange(entity, EntityChangeType.UPDATE);
+        handleEntityChange(entity, EntityOp.UPDATE);
     }
 
     @Override
     public void onBeforeDelete(Object entity) {
         log.debug("Track deletion of entity {}", entity);
-        handleEntityChange(entity, EntityChangeType.DELETE);
+        handleEntityChange(entity, EntityOp.DELETE);
     }
 
-    protected void handleEntityChange(Object entity, EntityChangeType entityChangeType) {
+    protected void handleEntityChange(Object entity, EntityOp entityOperation) {
         try {
             MetaClass metaClass = metadata.getClass(entity);
             Class<?> entityClass = metaClass.getJavaClass();
@@ -87,11 +87,11 @@ public class EntityTracker implements
                 log.debug("{} is directly indexed", entity);
                 Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
                 log.debug("Primary Key of tracked entity: {}", primaryKey);
-                primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityChangeType));
+                primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
             }
 
             Map<MetaClass, Set<String>> dependentEntityPks;
-            switch (entityChangeType) {
+            switch (entityOperation) {
                 case CREATE:
                 case UPDATE:
                     dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass);
@@ -107,10 +107,10 @@ public class EntityTracker implements
             }
 
             dependentEntityPks.forEach(
-                    ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityChangeType.UPDATE))
+                    ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
             );
         } catch (Exception e) {
-            log.error("Failed to enqueue data for entity {} and change type '{}'", entity, entityChangeType, e);
+            log.error("Failed to enqueue data for entity {} and change type '{}'", entity, entityOperation, e);
         }
     }
 
@@ -120,7 +120,7 @@ public class EntityTracker implements
 
     protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass) {
         log.debug("Get dependent entity primary keys for updated entity: {}", entity);
-        Set<String> dirtyFields = persistenceTools.getDirtyFields(entity);
+        Set<String> dirtyFields = attributeChangesProvider.getChangedAttributeNames(entity);
         Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, dirtyFields);
         return loadDependentEntityPks(entity, dependencies);
     }

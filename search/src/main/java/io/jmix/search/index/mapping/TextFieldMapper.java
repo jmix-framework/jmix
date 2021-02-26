@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 
 import java.util.Set;
 
-public class TextMapper extends SimpleFieldMapper {
+public class TextFieldMapper extends SimpleFieldMapper {
 
     protected static final Set<String> supportedParameters = Sets.newHashSet("analyzer");
 

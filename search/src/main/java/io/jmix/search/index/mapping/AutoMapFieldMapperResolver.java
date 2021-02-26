@@ -18,8 +18,10 @@ package io.jmix.search.index.mapping;
 
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
+import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.datatype.impl.StringDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.SearchProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,27 +32,31 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
 
     @Autowired
     protected MetadataTools metadataTools;
+    @Autowired
+    protected SearchProperties searchProperties;
+    @Autowired
+    protected FileProcessor fileProcessor;
 
     public Optional<FieldMapper> getFieldMapper(MetaPropertyPath propertyPath) {
-        Optional<FieldMapper> result = Optional.empty();
-
+        FieldMapper fieldMapper = null;
         if(propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();
             if(datatype instanceof StringDatatype) {
-                result = Optional.of(new TextMapper());
+                fieldMapper = new TextFieldMapper();
+            } else if (datatype instanceof FileRefDatatype) {
+                fieldMapper = new FileFieldMapper();
             } else {
                 //todo
             }
-
         } else if(propertyPath.getRange().isClass()) {
-            result = Optional.of(new ReferenceFieldMapper());
+            fieldMapper = new ReferenceFieldMapper();
         } else if(propertyPath.getRange().isEnum()) {
             // todo
         } else {
             // todo
         }
 
-        return result;
+        return Optional.ofNullable(fieldMapper);
     }
 
     public boolean hasFieldMapper(MetaPropertyPath propertyPath) {
@@ -58,7 +64,18 @@ public class AutoMapFieldMapperResolver { //todo move to automap strategy?
     }
 
     public Optional<ValueMapper> getValueMapper(MetaPropertyPath propertyPath) {
-        return Optional.of(new SimpleValueMapper(metadataTools)); //todo check availability?
+        ValueMapper valueMapper = null;
+        if(propertyPath.getRange().isDatatype()) {
+            Datatype<?> datatype = propertyPath.getRange().asDatatype();
+            if(datatype instanceof FileRefDatatype) {
+                valueMapper = new FileValueMapper(searchProperties.isAutoMapIndexFileContent(), fileProcessor);
+            } else {
+                valueMapper = new SimpleValueMapper();
+            }
+        } else if(propertyPath.getRange().isClass()) {
+            valueMapper = new ReferenceValueMapper(metadataTools);
+        }
+        return Optional.ofNullable(valueMapper);
     }
 
     public boolean hasValueMapper(MetaPropertyPath propertyPath) {

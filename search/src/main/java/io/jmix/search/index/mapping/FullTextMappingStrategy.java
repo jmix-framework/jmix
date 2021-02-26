@@ -39,7 +39,7 @@ public class FullTextMappingStrategy implements FieldMappingStrategy {
 
     @Override
     public FieldConfiguration createFieldConfiguration(MetaPropertyPath propertyPath, Map<String, Object> parameters) {
-        return new NativeFieldConfiguration(new TextMapper().createJsonConfiguration(parameters));
+        return new NativeFieldConfiguration(new TextFieldMapper().createJsonConfiguration(parameters));
     }
 
     @Override

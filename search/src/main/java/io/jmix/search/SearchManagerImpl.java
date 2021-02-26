@@ -19,7 +19,7 @@ package io.jmix.search;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.security.Authenticator;
+import io.jmix.core.security.SystemAuthenticator;
 import io.jmix.search.index.IndexDefinition;
 import io.jmix.search.index.IndexManager;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
@@ -50,7 +50,7 @@ public class SearchManagerImpl implements SearchManager {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected Authenticator authenticator;
+    protected SystemAuthenticator authenticator;
     @Autowired
     protected SearchProperties searchProperties;
 

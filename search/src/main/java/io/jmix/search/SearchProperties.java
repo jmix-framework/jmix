@@ -31,19 +31,23 @@ public class SearchProperties {
     protected final int maxProcessedQueueItemsPerExecution;
     protected final int reindexEntityEnqueueBatchSize;
 
+    protected final boolean autoMapIndexFileContent;
+
     public SearchProperties(
             @DefaultValue("100") int esSearchSize,
             @DefaultValue("100") int maxSearchPageCount,
             @DefaultValue("100") int searchReloadEntitiesBatchSize,
             @DefaultValue("100") int processQueueBatchSize,
             @DefaultValue("1000") int maxProcessedQueueItemsPerExecution,
-            @DefaultValue("100") int reindexEntityEnqueueBatchSize) {
+            @DefaultValue("100") int reindexEntityEnqueueBatchSize,
+            @DefaultValue("false") boolean autoMapIndexFileContent) {
         this.esSearchSize = esSearchSize;
         this.maxSearchPageCount = maxSearchPageCount;
         this.searchReloadEntitiesBatchSize = searchReloadEntitiesBatchSize;
         this.processQueueBatchSize = processQueueBatchSize;
         this.maxProcessedQueueItemsPerExecution = maxProcessedQueueItemsPerExecution;
         this.reindexEntityEnqueueBatchSize = reindexEntityEnqueueBatchSize;
+        this.autoMapIndexFileContent = autoMapIndexFileContent;
     }
 
     public int getEsSearchSize() {
@@ -68,5 +72,9 @@ public class SearchProperties {
 
     public int getReindexEntityEnqueueBatchSize() {
         return reindexEntityEnqueueBatchSize;
+    }
+
+    public boolean isAutoMapIndexFileContent() {
+        return autoMapIndexFileContent;
     }
 }

@@ -35,10 +35,9 @@
                 resizable="true"/>
 
     <layout spacing="true" expand="table">
-        <!-- todo generic filter-->
-        <!--<filter id="genericFilter" dataLoader="sendingAttachmentsDl" applyTo="table">
-            <properties include=".*"/>
-        </filter>-->
+        <filter id="genericFilter" dataLoader="sendingAttachmentsDl">
+            <properties include=".*" excludeProperties="contentFile, message.contentTextFile"/>
+        </filter>
         <table id="table" width="100%" dataContainer="attachmentsDc">
             <columns>
                 <column id="name"/>

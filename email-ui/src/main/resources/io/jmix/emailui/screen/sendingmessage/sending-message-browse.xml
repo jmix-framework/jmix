@@ -40,10 +40,9 @@
     <layout>
         <split width="100%" height="100%" orientation="horizontal" pos="70">
             <vbox id="leftBox" expand="sendingMessageTable" spacing="true" height="100%" margin="false,true,false,false">
-                <!-- todo: filter -->
-                <!--<filter id="genericFilter" dataLoader="sendingMessagesDl" applyTo="sendingMessageTable">
-                    <properties include=".*"/>
-                </filter>-->
+                <filter id="genericFilter" dataLoader="sendingMessagesDl">
+                    <properties include=".*" excludeProperties="contentTextFile"/>
+                </filter>
                 <table id="sendingMessageTable" width="100%" dataContainer="sendingMessageDc">
                     <actions>
                         <action id="downloadAttachment" caption="msg://downloadAttachments" trackSelection="true"/>

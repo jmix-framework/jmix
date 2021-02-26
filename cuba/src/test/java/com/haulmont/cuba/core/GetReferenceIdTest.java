@@ -25,7 +25,7 @@ import com.haulmont.cuba.core.model.common.UserRole;
 import com.haulmont.cuba.core.testsupport.CoreTest;
 import com.haulmont.cuba.core.testsupport.TestSupport;
 import io.jmix.core.Metadata;
-import io.jmix.data.PersistenceTools;
+import io.jmix.data.ReferenceIdProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,7 +91,7 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
+                ReferenceIdProvider.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertFalse(refId.isLoaded());
                 try {
                     refId.getValue();
@@ -127,7 +127,7 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
+                ReferenceIdProvider.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertTrue(refId.isLoaded());
                 assertEquals(group.getId(), refId.getValue());
             }
@@ -153,7 +153,7 @@ public class GetReferenceIdTest {
             if (!list.isEmpty()) {
                 user = list.get(0);
 
-                PersistenceTools.RefId refId = persistence.getTools().getReferenceId(user, "group");
+                ReferenceIdProvider.RefId refId = persistence.getTools().getReferenceId(user, "group");
                 assertTrue(refId.isLoaded());
                 assertEquals(group.getId(), refId.getValue());
             }

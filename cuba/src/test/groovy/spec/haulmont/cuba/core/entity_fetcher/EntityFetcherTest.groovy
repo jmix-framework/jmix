@@ -24,7 +24,7 @@ import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.DataManager
 import io.jmix.core.FetchPlans
 import io.jmix.core.Id
-import io.jmix.data.EntityFetcher
+import io.jmix.data.impl.EntityFetcher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification

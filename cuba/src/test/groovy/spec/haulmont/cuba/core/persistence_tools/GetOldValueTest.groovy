@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.core.persistence_tools
 
 import com.haulmont.cuba.core.Persistence
+import com.haulmont.cuba.core.PersistenceTools
 import com.haulmont.cuba.core.global.View
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Order
@@ -24,7 +25,6 @@ import com.haulmont.cuba.core.model.sales.OrderLine
 import com.haulmont.cuba.core.model.sales.Status
 import com.haulmont.cuba.core.testsupport.TestSupport
 import io.jmix.core.Metadata
-import io.jmix.data.PersistenceTools
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import spec.haulmont.cuba.core.CoreTestSpecification

@@ -15,7 +15,7 @@
  */
 package io.jmix.reports.listener;
 
-import io.jmix.data.PersistenceTools;
+import io.jmix.core.EntityStates;
 import io.jmix.data.listener.BeforeDetachEntityListener;
 import io.jmix.reports.Reports;
 import io.jmix.reports.entity.*;
@@ -36,11 +36,11 @@ public class ReportDetachListener implements BeforeDetachEntityListener<Report> 
     protected Reports reports;
 
     @Autowired
-    protected PersistenceTools persistenceTools;
+    protected EntityStates entityStates;
 
     @Override
     public void onBeforeDetach(Report entity) {
-        if (persistenceTools.isLoaded(entity, "xml") && StringUtils.isNotBlank(entity.getXml())) {
+        if (entityStates.isLoaded(entity, "xml") && StringUtils.isNotBlank(entity.getXml())) {
             Report reportFromXml = reports.convertToReport(entity.getXml());
             entity.setBands(reportFromXml.getBands());
             entity.setInputParameters(reportFromXml.getInputParameters());

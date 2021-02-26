@@ -308,11 +308,6 @@ public class ReportRestControllerManager {
 
     protected String transformDefaultValue(ReportInputParameter parameter) {
         switch (parameter.getType()) {
-            case ENTITY:
-                //todo
-//                EntityLoadInfo info = EntityLoadInfo.parse(parameter.getDefaultValue());
-//                if (info != null) return info.getId().toString();
-                break;
             case DATE:
             case TIME:
                 Object defParamValue = reports.convertFromString(parameter.getParameterClass(), parameter.getDefaultValue());

@@ -44,6 +44,7 @@ public class RichTextAreaImpl extends AbstractField<JmixRichTextArea, String, St
         component = createComponent();
 
         attachValueChangeListener(this.component);
+        setHtmlSanitizerEnabled(false);
     }
 
     protected JmixRichTextArea createComponent() {

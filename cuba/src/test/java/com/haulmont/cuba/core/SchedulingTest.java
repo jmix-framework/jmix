@@ -24,6 +24,7 @@ import com.haulmont.cuba.core.entity.SchedulingType;
 import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.model.service.TestingService;
 import com.haulmont.cuba.core.testsupport.CoreTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @CoreTest
+@Tag("slowTests")
 public class SchedulingTest {
     public static final String SERVER1 = "localhost:8080/cuba";
 

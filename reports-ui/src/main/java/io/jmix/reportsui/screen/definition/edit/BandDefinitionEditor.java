@@ -15,6 +15,8 @@
  */
 package io.jmix.reportsui.screen.definition.edit;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import io.jmix.core.*;
 import io.jmix.core.common.util.ParamsMap;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -36,6 +38,7 @@ import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
 import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggester;
 import io.jmix.ui.component.autocomplete.Suggestion;
+import io.jmix.ui.component.data.options.MapOptions;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
@@ -97,9 +100,9 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected ComboBox<String> viewNameField;
     @Autowired
-    protected ComboBox entitiesParamField;
+    protected ComboBox<String> entitiesParamField;
     @Autowired
-    protected ComboBox entityParamField;
+    protected ComboBox<String> entityParamField;
     @Autowired
     protected ComboBox dataStoreField;
     @Autowired
@@ -333,14 +336,18 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
 
     @Subscribe(id = "parametersDc", target = Target.DATA_CONTAINER)
     protected void onParametersDcCollectionChange(CollectionContainer.CollectionChangeEvent<ReportInputParameter> event) {
-
-        Map<String, Object> paramAliases = new HashMap<>();
+        Map<String, String> paramAliases = new HashMap<>();
 
         for (ReportInputParameter item : event.getSource().getItems()) {
             paramAliases.put(item.getName(), item.getAlias());
         }
-        entitiesParamField.setOptionsMap(paramAliases);
-        entityParamField.setOptionsMap(paramAliases);
+        BiMap<String, String> biMap = ImmutableBiMap.copyOf(paramAliases);
+
+        entitiesParamField.setOptions(new MapOptions<>(biMap));
+        entitiesParamField.setOptionCaptionProvider(o -> biMap.inverse().getOrDefault(o, o));
+
+        entityParamField.setOptions(new MapOptions<>(biMap));
+        entityParamField.setOptionCaptionProvider(o -> biMap.inverse().getOrDefault(o, o));
     }
 
     @Subscribe(id = "bandsDc", target = Target.DATA_CONTAINER)

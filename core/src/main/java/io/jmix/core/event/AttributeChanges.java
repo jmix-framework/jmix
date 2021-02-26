@@ -18,12 +18,11 @@ package io.jmix.core.event;
 
 import io.jmix.core.Id;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -33,14 +32,78 @@ import java.util.stream.Collectors;
  */
 public class AttributeChanges {
 
-    private Set<Change> changes;
-    private Map<String, AttributeChanges> embeddedChanges;
+    private final Set<Change> changes;
+    private final Map<String, AttributeChanges> embeddedChanges;
+
+    public static class Builder {
+        private Set<Change> changes;
+        private Map<String, Builder> embeddedChanges;
+
+        private Builder() {
+        }
+
+        public static Builder create() {
+            Builder builder = new Builder();
+            builder.changes = new HashSet<>();
+            builder.embeddedChanges = new HashMap<>();
+            return builder;
+        }
+
+        public static Builder ofChanges(AttributeChanges attributeChanges) {
+            Builder builder = new Builder();
+            builder.changes = new HashSet<>(attributeChanges.changes);
+
+            builder.embeddedChanges = new HashMap<>();
+            for (Map.Entry<String, AttributeChanges> entry : attributeChanges.embeddedChanges.entrySet()) {
+                builder.embeddedChanges.put(entry.getKey(), ofChanges(entry.getValue()));
+            }
+
+            return builder;
+        }
+
+        public Builder withChange(String attribute, @Nullable Object value) {
+            changes.add(new Change(attribute, value));
+            return this;
+        }
+
+        public Builder withEmbedded(String attribute, Consumer<Builder> consumer) {
+            Builder builder = embeddedChanges.computeIfAbsent(attribute, key -> create());
+            consumer.accept(builder);
+            return this;
+        }
+
+        public Builder withEmbedded(String attribute, @Nullable Builder builder) {
+            if (builder == null) {
+                embeddedChanges.remove(attribute);
+            } else {
+                embeddedChanges.put(attribute, builder);
+            }
+            return this;
+        }
+
+        public Builder mergeChanges(@Nullable AttributeChanges attributeChanges) {
+            if (attributeChanges != null) {
+                changes.addAll(attributeChanges.changes);
+                for (Map.Entry<String, AttributeChanges> entry : attributeChanges.embeddedChanges.entrySet()) {
+                    Builder builder = embeddedChanges.computeIfAbsent(entry.getKey(), key -> new Builder());
+                    builder.mergeChanges(entry.getValue());
+                }
+            }
+            return this;
+        }
+
+        public AttributeChanges build() {
+            Map<String, AttributeChanges> embeddedResultChanges = embeddedChanges.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build()));
+            return new AttributeChanges(new HashSet<>(changes), embeddedResultChanges);
+        }
+    }
 
     /**
      * INTERNAL.
      */
     @Internal
-    public AttributeChanges(Set<Change> changes, Map<String, AttributeChanges> embeddedChanges) {
+    private AttributeChanges(Set<Change> changes, Map<String, AttributeChanges> embeddedChanges) {
         this.changes = changes;
         this.embeddedChanges = embeddedChanges;
     }
@@ -99,7 +162,10 @@ public class AttributeChanges {
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T getOldValue(String attributeName) {
-        String[] properties = attributeName.split("\\.");
+        String[] properties = ObjectPathUtils.isSpecialPath(attributeName)
+                ? new String[]{attributeName}
+                : attributeName.split("\\.");
+
         if (properties.length == 1) {
             for (Change change : changes) {
                 if (change.name.equals(attributeName))
@@ -145,9 +211,17 @@ public class AttributeChanges {
         return getOldValue(attributeName);
     }
 
-    public void mergeWith(AttributeChanges other) {
-        changes.addAll(other.changes);
-        embeddedChanges.putAll(other.embeddedChanges);
+    /**
+     * @return true if changes is not empty
+     */
+    public boolean hasChanges() {
+        if (!changes.isEmpty())
+            return true;
+        for (AttributeChanges embedded : embeddedChanges.values()) {
+            if (embedded.hasChanges())
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -174,6 +248,10 @@ public class AttributeChanges {
             this.oldValue = oldValue;
         }
 
+        public String getName() {
+            return name;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -182,7 +260,6 @@ public class AttributeChanges {
             Change that = (Change) o;
 
             return name.equals(that.name);
-
         }
 
         @Override

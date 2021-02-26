@@ -124,7 +124,14 @@ class JmixBuildPlugin implements Plugin<Project> {
         project.with {
             afterEvaluate {
                 test {
-                    useJUnitPlatform()
+                    useJUnitPlatform {
+                        boolean result = project.hasProperty("includeSlowTests") ? project.getProperty("includeSlowTests") : false
+                        if (!result) {
+                            excludeTags 'slowTests'
+                        } else {
+                            environment "slowTests", "true"
+                        }
+                    }
                 }
             }
         }

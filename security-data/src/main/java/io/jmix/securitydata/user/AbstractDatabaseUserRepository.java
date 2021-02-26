@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.ObjectUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
@@ -67,6 +67,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     private RowLevelRoleRepository rowLevelRoleRepository;
     @Autowired
     private RoleAssignmentRepository roleAssignmentRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Helps create authorities from roles.
@@ -186,12 +188,18 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     @Override
     public void changePassword(@Nullable String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException {
         Preconditions.checkNotNullArgument(userName, "Null userName");
-        Preconditions.checkNotNullArgument(newPassword, "Null new password hash");
+        Preconditions.checkNotNullArgument(newPassword, "Null new password");
         T userDetails = loadUserByUsername(userName);
-        if (!ObjectUtils.isEmpty(oldPassword) && oldPassword.equals(userDetails.getPassword())) {
-            throw new PasswordNotMatchException();
+        if (oldPassword != null) {
+            if (passwordEncoder.matches(oldPassword, userDetails.getPassword())) {
+                throw new PasswordNotMatchException();
+            }
+        } else {
+            if (passwordEncoder.matches(newPassword, userDetails.getPassword())) {
+                throw new PasswordNotMatchException();
+            }
         }
-        EntityValues.setValue(userDetails, "password", newPassword);
+        EntityValues.setValue(userDetails, "password", passwordEncoder.encode(newPassword));
         dataManager.save(userDetails);
     }
 

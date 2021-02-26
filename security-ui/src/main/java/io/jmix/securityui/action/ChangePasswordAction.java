@@ -38,7 +38,6 @@ import io.jmix.ui.component.data.meta.EntityDataUnit;
 import io.jmix.ui.screen.UiControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Objects;
 
@@ -50,7 +49,6 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     protected UiComponents uiComponents;
     // Set default caption only once
     protected boolean currentPasswordRequired = false;
-    protected PasswordEncoder passwordEncoder;
     protected Messages messages;
     protected UserManager userManager;
     protected Notifications notifications;
@@ -67,11 +65,6 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
     protected void setMessages(Messages messages) {
         this.messages = messages;
         this.caption = messages.getMessage("actions.changePassword");
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Autowired
@@ -211,7 +204,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
             String newPassword = result.getValue("password");
             String oldPassword = result.getValue("currentPassword");
             try {
-                userManager.changePassword(userName, oldPassword != null ? passwordEncoder.encode(oldPassword) : null, passwordEncoder.encode(newPassword));
+                userManager.changePassword(userName, oldPassword, newPassword);
             } catch (PasswordNotMatchException e) {
                 if (currentPasswordRequired) {
                     notifications.create()
@@ -225,6 +218,7 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
                             .show();
 
                 }
+                return;
             }
             notifications.create()
                     .withType(Notifications.NotificationType.HUMANIZED)

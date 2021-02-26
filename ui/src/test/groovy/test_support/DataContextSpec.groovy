@@ -19,16 +19,20 @@ package test_support
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.EntityStates
 import io.jmix.core.Entity
+import io.jmix.core.Metadata
+import io.jmix.core.MetadataTools
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.entity.EntityValues
 import io.jmix.core.impl.StandardSerialization
+import io.jmix.core.metamodel.model.MetaClass
 import io.jmix.data.DataConfiguration
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.ui.UiConfiguration
 import org.eclipse.persistence.internal.queries.EntityFetchGroup
 import org.eclipse.persistence.queries.FetchGroupTracker
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.support.TransactionTemplate
@@ -51,6 +55,10 @@ class DataContextSpec extends Specification {
     TimeSource timeSource
     @Autowired
     StandardSerialization standardSerialization
+    @Autowired
+    Metadata metadata
+    @Autowired
+    MetadataTools metadataTools
 
     void setup() {
         transaction.executeWithoutResult {}
@@ -96,6 +104,40 @@ class DataContextSpec extends Specification {
         }
 
         return (T) standardSerialization.deserialize(standardSerialization.serialize(object))
+    }
+
+    void deleteRecord(String table, String primaryKeyCol, Object... ids) {
+        for (Object id : ids) {
+            String sql = "delete from " + table + " where " + primaryKeyCol + " = '" + id.toString() + "'";
+            try {
+                jdbc.update(sql);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(
+                        String.format("Unable to delete record %s from %s", id.toString(), table), e);
+            }
+        }
+    }
+
+    void deleteRecord(Object... entities) {
+        if (entities == null) {
+            return;
+        }
+
+        for (Object entity : entities) {
+            if (entity == null) {
+                continue;
+            }
+
+            MetaClass metaClass = metadata.getClass(entity.getClass());
+
+            String table = metadataTools.getDatabaseTable(metaClass);
+            String primaryKey = metadataTools.getPrimaryKeyName(metaClass);
+            if (table == null || primaryKey == null) {
+                throw new RuntimeException("Unable to determine table or primary key name for " + entity);
+            }
+
+            deleteRecord(table, primaryKey, EntityValues.getId(entity));
+        }
     }
 
     def <T extends Serializable> T makeSaved(T entity) {

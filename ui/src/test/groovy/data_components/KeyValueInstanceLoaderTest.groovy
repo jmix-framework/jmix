@@ -19,7 +19,6 @@ package data_components
 import io.jmix.core.DataManager
 import io.jmix.core.ValueLoadContext
 import io.jmix.core.entity.KeyValueEntity
-import io.jmix.data.PersistenceTools
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.KeyValueContainer
 import io.jmix.ui.model.KeyValueInstanceLoader
@@ -36,8 +35,6 @@ class KeyValueInstanceLoaderTest extends DataContextSpec {
     DataManager dataManager
     @Autowired
     DataComponents factory
-    @Autowired
-    PersistenceTools persistenceTools
 
     def "successful load"() {
         KeyValueInstanceLoader loader = factory.createKeyValueInstanceLoader()
@@ -74,7 +71,7 @@ class KeyValueInstanceLoaderTest extends DataContextSpec {
 
         cleanup:
 
-        persistenceTools.deleteRecord(foo)
+        deleteRecord(foo)
     }
 
     def "fail if query is null and loader is null"() {
@@ -140,6 +137,6 @@ class KeyValueInstanceLoaderTest extends DataContextSpec {
 
         cleanup:
 
-        persistenceTools.deleteRecord(foo)
+        deleteRecord(foo)
     }
 }

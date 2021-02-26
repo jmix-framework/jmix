@@ -17,21 +17,21 @@
 package data_components
 
 import io.jmix.core.DataManager
-import io.jmix.data.PersistenceTools
 import io.jmix.ui.model.DataComponents
 import io.jmix.ui.model.InstanceContainer
 import io.jmix.ui.model.InstanceLoader
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataContextSpec
 import test_support.entity.Foo
 
-import org.springframework.beans.factory.annotation.Autowired
 import java.util.function.Consumer
 
 class InstanceLoaderTest extends DataContextSpec {
 
-    @Autowired DataManager dataManager
-    @Autowired DataComponents factory
-    @Autowired PersistenceTools persistenceTools
+    @Autowired
+    DataManager dataManager
+    @Autowired
+    DataComponents factory
 
     def "successful load"() {
         InstanceLoader<Foo> loader = factory.createInstanceLoader()
@@ -61,7 +61,7 @@ class InstanceLoaderTest extends DataContextSpec {
 
         cleanup:
 
-        persistenceTools.deleteRecord(foo)
+        deleteRecord(foo)
     }
 
     def "prevent load by PreLoadEvent"() {
@@ -91,6 +91,6 @@ class InstanceLoaderTest extends DataContextSpec {
 
         cleanup:
 
-        persistenceTools.deleteRecord(foo)
+        deleteRecord(foo)
     }
 }

@@ -9,7 +9,7 @@ import io.jmix.core.Metadata
 import io.jmix.core.MetadataTools
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
-import io.jmix.data.PersistenceTools
+
 import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.dynattr.DynAttrConfiguration
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,8 +49,6 @@ import javax.persistence.TypedQuery
 class AbstractEntityLogTest extends Specification {
     @Autowired
     protected EntityLog entityLog
-    @Autowired
-    protected PersistenceTools persistenceTools
     @Autowired
     protected MetadataTools metadataTools
     @Autowired

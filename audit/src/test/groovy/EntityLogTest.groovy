@@ -1,8 +1,9 @@
 import io.jmix.audit.entity.EntityLogItem
 import io.jmix.core.Entity
 import io.jmix.core.entity.EntityValues
-import io.jmix.data.impl.EntityAttributeChanges
-import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges
+import io.jmix.core.event.AttributeChanges
+import io.jmix.data.AttributeChangesProvider
+import org.springframework.beans.factory.annotation.Autowired
 import test_support.testmodel.IdentityEntity
 import test_support.testmodel.IntIdentityEntity
 import test_support.testmodel.StringKeyEntity
@@ -24,6 +25,9 @@ import test_support.testmodel.StringKeyEntity
  */
 
 class EntityLogTest extends AbstractEntityLogTest {
+
+    @Autowired
+    protected AttributeChangesProvider attributeChangesProvider
 
     void setup() {
         clearTables("AUDIT_LOGGED_ATTR", "AUDIT_LOGGED_ENTITY")
@@ -192,9 +196,10 @@ class EntityLogTest extends AbstractEntityLogTest {
             e.name = 'test2'
             e.description = 'description2'
 
-            EntityAttributeChanges changes = new EclipselinkEntityAttributeChanges()
-            changes.addChanges(e)
-            changes.addChange('description', 'description1')
+            AttributeChanges changes = AttributeChanges.Builder.ofChanges(attributeChangesProvider.getAttributeChanges(e))
+                    .withChange('description', 'description1')
+                    .build()
+
             entityLog.registerModify(e, false, changes)
         }
 

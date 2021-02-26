@@ -26,6 +26,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
@@ -34,12 +35,10 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.AuditInfoProvider;
-import io.jmix.data.impl.EntityAttributeChanges;
-import io.jmix.data.impl.JpaDataStoreListener;
-import io.jmix.eclipselink.impl.EclipselinkEntityAttributeChanges;
+import io.jmix.data.impl.JpaLifecycleListener;
 import org.apache.commons.lang3.BooleanUtils;
-import org.eclipse.persistence.descriptors.changetracking.ChangeTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component("audit_EntityLog")
-public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
+public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
 
     private static final Logger log = LoggerFactory.getLogger(EntityLogImpl.class);
 
@@ -86,6 +85,8 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     protected Stores stores;
     @Autowired
     protected DatatypeRegistry datatypeRegistry;
+    @Autowired
+    protected AttributeChangesProvider attributeChangesProvider;
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -128,7 +129,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     @Override
-    public void onEntityChange(Object entity, EntityOp entityOp, @Nullable EntityAttributeChanges changes) {
+    public void onEntityChange(Object entity, EntityOp entityOp, @Nullable AttributeChanges changes) {
         if (entity instanceof EntityLogItem) {
             return;
         }
@@ -475,7 +476,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     @Override
-    public void registerModify(Object entity, boolean auto, @Nullable EntityAttributeChanges changes) {
+    public void registerModify(Object entity, boolean auto, @Nullable AttributeChanges changes) {
         try {
             if (doNotRegister(entity))
                 return;
@@ -508,7 +509,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         }
     }
 
-    protected void internalRegisterModify(Object entity, @Nullable EntityAttributeChanges changes, MetaClass metaClass,
+    protected void internalRegisterModify(Object entity, @Nullable AttributeChanges changes, MetaClass metaClass,
                                           String storeName, Set<String> attributes) {
         EntityLogItem item = null;
 
@@ -562,7 +563,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
     }
 
     protected Set<EntityLogAttr> createLogAttributes(Object entity, Set<String> attributes,
-                                                     @Nullable EntityAttributeChanges changes) {
+                                                     @Nullable AttributeChanges changes) {
         Set<EntityLogAttr> result = new HashSet<>();
         for (String name : attributes) {
 
@@ -580,7 +581,7 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
                 attr.setValueId(valueId.toString());
 
             if (changes != null) {
-                Object oldValue = changes.getOldValueEx(name);
+                Object oldValue = changes.getOldValue(name);
                 attr.setOldValue(stringify(oldValue, metaProperty));
                 Object oldValueId = getValueId(oldValue);
                 if (oldValueId != null) {
@@ -745,14 +746,16 @@ public class EntityLogImpl implements EntityLog, JpaDataStoreListener {
         }
     }
 
-    protected Set<String> calculateDirtyFields(Object entity, @Nullable EntityAttributeChanges changes) {
+    protected Set<String> calculateDirtyFields(Object entity, @Nullable AttributeChanges changes) {
         if (changes == null) {
-            if (!(entity instanceof ChangeTracker) || !entityStates.isManaged(entity))
+            if (!entityStates.isManaged(entity)) {
                 return Collections.emptySet();
-            changes = new EclipselinkEntityAttributeChanges();
-            ((EclipselinkEntityAttributeChanges) changes).addChanges(entity);
+            }
+            AttributeChanges calculatedChanges = attributeChangesProvider.getAttributeChanges(entity);
+            return calculatedChanges.getAttributes();
+        } else {
+            return changes.getAttributes();
         }
-        return changes.getAttributes();
     }
 
     @Nullable

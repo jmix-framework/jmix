@@ -16,7 +16,7 @@
 
 package io.jmix.audit;
 
-import io.jmix.data.impl.EntityAttributeChanges;
+import io.jmix.core.event.AttributeChanges;
 
 import javax.annotation.Nullable;
 
@@ -61,7 +61,7 @@ public interface EntityLog {
      *
      * @param changes attribute changes provided by caller
      */
-    void registerModify(Object entity, boolean auto, @Nullable EntityAttributeChanges changes);
+    void registerModify(Object entity, boolean auto, @Nullable AttributeChanges changes);
 
     /**
      * Logs deletion of an entity which is configured for manual logging (LoggedEntity.auto == false).

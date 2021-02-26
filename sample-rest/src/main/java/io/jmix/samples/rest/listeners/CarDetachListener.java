@@ -7,7 +7,7 @@ package io.jmix.samples.rest.listeners;
 
 import io.jmix.core.DataManager;
 import io.jmix.core.EntityStates;
-import io.jmix.data.PersistenceTools;
+import io.jmix.data.ReferenceIdProvider;
 import io.jmix.data.listener.BeforeAttachEntityListener;
 import io.jmix.data.listener.BeforeDetachEntityListener;
 import io.jmix.samples.rest.entity.driver.Car;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class CarDetachListener implements BeforeDetachEntityListener<Car>, BeforeAttachEntityListener<Car> {
 
     @Autowired
-    private PersistenceTools persistenceTools;
+    private ReferenceIdProvider referenceIdProvider;
 
     @Autowired
     private EntityStates entityStates;
@@ -30,7 +30,7 @@ public class CarDetachListener implements BeforeDetachEntityListener<Car>, Befor
     @Override
     public void onBeforeDetach(Car entity) {
         // This is for testing the listener only. Usage of persistenceTools.getReferenceId() does not make sense here.
-        PersistenceTools.RefId refId = persistenceTools.getReferenceId(entity, "currency");
+        ReferenceIdProvider.RefId refId = referenceIdProvider.getReferenceId(entity, "currency");
         if (refId.isLoaded() && entityStates.isLoaded(entity, "currencyCode")) {
             entity.setCurrencyCode((String) refId.getValue());
         }

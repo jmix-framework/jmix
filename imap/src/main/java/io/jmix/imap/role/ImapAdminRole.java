@@ -23,8 +23,10 @@ import io.jmix.security.role.annotation.EntityAttributePolicy;
 import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 
-@ResourceRole(code = "imap-admin-core-role", name = "IMAP Admin Core Role")
-public interface ImapAdminCoreRole {
+@ResourceRole(code = ImapAdminRole.CODE, name = "IMAP: administration")
+public interface ImapAdminRole {
+
+    String CODE = "imap-admin";
 
     @EntityPolicy(entityClass = ImapSimpleAuthentication.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ImapProxy.class, actions = {EntityPolicyAction.ALL})

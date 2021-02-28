@@ -16,13 +16,15 @@
 
 package io.jmix.imapui.role;
 
-import io.jmix.imap.role.ImapAdminCoreRole;
+import io.jmix.imap.role.ImapAdminRole;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = "imap-admin-role", name = "IMAP Admin Role")
-public interface ImapAdminRole extends ImapAdminCoreRole {
+@ResourceRole(code = ImapAdminUiRole.CODE, name = "IMAP: administration UI")
+public interface ImapAdminUiRole extends ImapAdminRole {
+
+    String CODE = "imap-admin-ui";
 
     @ScreenPolicy(screenIds = {
             "imap_Folder.lookup",

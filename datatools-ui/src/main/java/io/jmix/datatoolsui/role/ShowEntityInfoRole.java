@@ -28,10 +28,10 @@ import io.jmix.securityui.role.annotation.ScreenPolicy;
 /**
  * System role that grants permissions for the entity info functionality.
  */
-@ResourceRole(name = ShowEntityInfoRoleDefinition.ROLE_NAME, code = ShowEntityInfoRoleDefinition.ROLE_NAME)
-public interface ShowEntityInfoRoleDefinition {
+@ResourceRole(name = "Data Tools: Entity Information window", code = ShowEntityInfoRole.CODE)
+public interface ShowEntityInfoRole {
 
-    String ROLE_NAME = "show-entity-info-access";
+    String CODE = "datatools-entity-info";
 
     @ScreenPolicy(screenIds = {"entityInfoWindow"})
     @EntityPolicy(entityClass = InfoValue.class, actions = {EntityPolicyAction.ALL})

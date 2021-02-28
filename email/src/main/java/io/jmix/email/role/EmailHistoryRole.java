@@ -26,8 +26,10 @@ import io.jmix.security.role.annotation.ResourceRole;
 /**
  * System role that grants permissions to work with email history.
  */
-@ResourceRole(code = "system-email-history-core-role", name = "Email history access (Core)")
-public interface EmailHistoryCoreRoleDefinition {
+@ResourceRole(code = EmailHistoryRole.CODE, name = "Email: read email history")
+public interface EmailHistoryRole {
+
+    String CODE = "email-history";
 
     @EntityPolicy(entityClass = SendingMessage.class, actions = {EntityPolicyAction.READ})
     void entities();

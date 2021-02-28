@@ -16,13 +16,14 @@
 
 package io.jmix.emailui.role;
 
-import io.jmix.email.role.EmailHistoryCoreRoleDefinition;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = "system-email-history-role", name = "Email history access")
-public interface EmailHistoryRoleDefinition extends EmailHistoryCoreRoleDefinition {
+@ResourceRole(code = EmailHistoryUiRole.CODE, name = "Email: view history in UI")
+public interface EmailHistoryUiRole extends io.jmix.email.role.EmailHistoryRole {
+
+    String CODE = "email-history-ui";
 
     @MenuPolicy(menuIds = {"administration", "email_SendingMessage.browse"})
     void menus();

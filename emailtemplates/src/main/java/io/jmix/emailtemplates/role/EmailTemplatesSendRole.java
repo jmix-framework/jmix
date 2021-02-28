@@ -25,8 +25,10 @@ import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 
 
-@ResourceRole(code = "email-templates-can-send-templates-core", name = "Can send email templates (Core)")
-public interface EmailTemplatesViewCoreRole {
+@ResourceRole(code = EmailTemplatesSendRole.CODE, name = "Email Templates: sending")
+public interface EmailTemplatesSendRole {
+
+    String CODE = "emailtemplates-send";
 
     @EntityPolicy(entityClass = TemplateReport.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportEmailTemplate.class, actions = {EntityPolicyAction.READ})

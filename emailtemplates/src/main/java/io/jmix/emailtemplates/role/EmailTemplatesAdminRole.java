@@ -21,7 +21,7 @@ import io.jmix.emailtemplates.entity.*;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
 import io.jmix.reports.entity.ReportValueFormat;
-import io.jmix.reports.role.ReportsMinimalRoleDefinition;
+import io.jmix.reports.role.ReportsRunRole;
 import io.jmix.security.model.EntityAttributePolicyAction;
 import io.jmix.security.model.EntityPolicyAction;
 import io.jmix.security.role.annotation.EntityAttributePolicy;
@@ -29,8 +29,10 @@ import io.jmix.security.role.annotation.EntityPolicy;
 import io.jmix.security.role.annotation.ResourceRole;
 
 
-@ResourceRole(code = "email-templates-core-admin", name = "Email Templates Core Admin")
-public interface EmailTemplatesAdminCoreRole extends ReportsMinimalRoleDefinition {
+@ResourceRole(code = EmailTemplatesAdminRole.CODE, name = "Email Templates: administration")
+public interface EmailTemplatesAdminRole extends ReportsRunRole {
+
+    String CODE = "emailtemplates-admin";
 
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportValueFormat.class, actions = {EntityPolicyAction.ALL})

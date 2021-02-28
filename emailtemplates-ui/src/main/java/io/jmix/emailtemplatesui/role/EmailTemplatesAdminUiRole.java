@@ -17,15 +17,17 @@
 package io.jmix.emailtemplatesui.role;
 
 
-import io.jmix.emailtemplates.role.EmailTemplatesAdminCoreRole;
-import io.jmix.reportsui.role.ReportsUiMinimalRoleDefinition;
+import io.jmix.emailtemplates.role.EmailTemplatesAdminRole;
+import io.jmix.reportsui.role.ReportsRunUiRole;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.security.role.annotation.SpecificPolicy;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = "email-templates-admin", name = "Email templates admin")
-public interface EmailTemplatesAdminRole extends EmailTemplatesAdminCoreRole, ReportsUiMinimalRoleDefinition {
+@ResourceRole(code = EmailTemplatesAdminUiRole.CODE, name = "Email Templates: administration UI")
+public interface EmailTemplatesAdminUiRole extends EmailTemplatesAdminRole, ReportsRunUiRole {
+
+    String CODE = "emailtemplates-admin-ui";
 
     @ScreenPolicy(screenIds = {
             "emailtemplates_TemplateGroup.edit",

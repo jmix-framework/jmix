@@ -17,13 +17,15 @@
 package io.jmix.emailtemplatesui.role;
 
 
-import io.jmix.emailtemplates.role.EmailTemplatesViewCoreRole;
+import io.jmix.emailtemplates.role.EmailTemplatesSendRole;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.MenuPolicy;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
-@ResourceRole(code = "email-templates-can-send-templates", name = "Can send email templates")
-public interface EmailTemplatesViewRole extends EmailTemplatesViewCoreRole {
+@ResourceRole(code = EmailTemplatesSendUiRole.CODE, name = "Email Templates: sending UI")
+public interface EmailTemplatesSendUiRole extends EmailTemplatesSendRole {
+
+    String CODE = "emailtemplates-send-ui";
 
     @ScreenPolicy(screenIds = {"emailtemplates_EmailTemplate.send", "emailtemplates_EmailTemplate.browse"})
     void screens();

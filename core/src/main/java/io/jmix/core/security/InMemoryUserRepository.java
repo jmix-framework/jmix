@@ -73,9 +73,9 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public List<UserDetails> getByUsernameLike(String username) {
+    public List<UserDetails> getByUsernameLike(String substring) {
         return users.stream()
-                .filter(user -> user.getUsername().contains(username))
+                .filter(user -> user.getUsername().contains(substring))
                 .collect(Collectors.toList());
     }
 

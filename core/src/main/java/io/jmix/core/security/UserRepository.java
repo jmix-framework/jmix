@@ -21,11 +21,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
+/**
+ * An extended {@link UserDetailsService} defining methods specific to Jmix.
+ */
 public interface UserRepository extends UserDetailsService {
 
+    /**
+     * Returns the built-in 'system' user.
+     */
     UserDetails getSystemUser();
 
+    /**
+     * Returns the built-in 'anonymous' user.
+     */
     UserDetails getAnonymousUser();
 
-    List<? extends UserDetails> getByUsernameLike(String username);
+    /**
+     * Returns the list of users whose username contains the given substring.
+     */
+    List<? extends UserDetails> getByUsernameLike(String substring);
 }

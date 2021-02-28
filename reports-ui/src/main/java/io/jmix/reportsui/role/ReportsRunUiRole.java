@@ -1,16 +1,16 @@
 package io.jmix.reportsui.role;
 
-import io.jmix.reports.role.ReportsMinimalRoleDefinition;
+import io.jmix.reports.role.ReportsRunRole;
 import io.jmix.security.role.annotation.ResourceRole;
 import io.jmix.securityui.role.annotation.ScreenPolicy;
 
 /**
- * System role that grants minimal permissions for run reports required for all users of generic UI client.
+ * Role that grants minimal permissions to run reports in UI.
  */
-@ResourceRole(name = ReportsUiMinimalRoleDefinition.ROLE_NAME, code = ReportsUiMinimalRoleDefinition.ROLE_NAME)
-public interface ReportsUiMinimalRoleDefinition extends ReportsMinimalRoleDefinition {
+@ResourceRole(name = "Reports: run reports in UI", code = ReportsRunUiRole.CODE)
+public interface ReportsRunUiRole extends ReportsRunRole {
 
-    String ROLE_NAME = "ui-reports-minimal";
+    String CODE = "report-run-ui";
 
     @ScreenPolicy(screenIds = {
             "report_inputParameters",

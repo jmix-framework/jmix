@@ -27,12 +27,12 @@ import io.jmix.security.role.annotation.ResourceRole;
 import static io.jmix.security.model.EntityAttributePolicyAction.MODIFY;
 
 /**
- * System role that grants minimal permissions for run reports required for all users of generic UI client.
+ * Role that grants minimal permissions to run reports.
  */
-@ResourceRole(name = ReportsMinimalRoleDefinition.ROLE_NAME, code = ReportsMinimalRoleDefinition.ROLE_NAME)
-public interface ReportsMinimalRoleDefinition {
+@ResourceRole(name = "Reports: run reports", code = ReportsRunRole.CODE)
+public interface ReportsRunRole {
 
-    String ROLE_NAME = "system-reports-minimal";
+    String CODE = "report-run";
 
     @EntityPolicy(entityClass = Report.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = ReportGroup.class, actions = {EntityPolicyAction.READ})

@@ -20,10 +20,10 @@ import io.jmix.core.DataManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.EntityValues;
-import io.jmix.security.authentication.GrantedAuthorityContainer;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
+import io.jmix.security.authentication.GrantedAuthorityContainer;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
@@ -40,51 +40,67 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * Abstract {@link UserRepository} that loads User entity from the database. A {@link UserRepository} generated in the
- * project may extend this class. It must override the {@link #getUserClass()} method.
+ * Base implementation of {@link UserRepository} that loads users from the database.
+ * The type of entity representing users is specified in the {@link #getUserClass()} method.
  *
- * @param <T>
+ * @param <T> type of entity representing users
  */
 public abstract class AbstractDatabaseUserRepository<T extends UserDetails> implements UserRepository, UserManager {
 
-    protected T systemUser;
-    protected T anonymousUser;
-
-    protected DataManager dataManager;
-    protected Metadata metadata;
-    protected ResourceRoleRepository resourceRoleRepository;
-    protected RowLevelRoleRepository rowLevelRoleRepository;
-    protected RoleAssignmentRepository roleAssignmentRepository;
+    private T systemUser;
+    private T anonymousUser;
 
     @Autowired
-    public void setDataManager(DataManager dataManager) {
-        this.dataManager = dataManager;
-    }
-
+    private DataManager dataManager;
     @Autowired
-    public void setMetadata(Metadata metadata) {
-        this.metadata = metadata;
-    }
-
+    private Metadata metadata;
     @Autowired
-    public void setRoleAssignmentRepository(RoleAssignmentRepository roleAssignmentRepository) {
-        this.roleAssignmentRepository = roleAssignmentRepository;
-    }
-
+    private ResourceRoleRepository resourceRoleRepository;
     @Autowired
-    public void setResourceRoleRepository(ResourceRoleRepository resourceRoleRepository) {
-        this.resourceRoleRepository = resourceRoleRepository;
-    }
-
+    private RowLevelRoleRepository rowLevelRoleRepository;
     @Autowired
-    public void setRowLevelRoleRepository(RowLevelRoleRepository rowLevelRoleRepository) {
-        this.rowLevelRoleRepository = rowLevelRoleRepository;
+    private RoleAssignmentRepository roleAssignmentRepository;
+
+    /**
+     * Helps create authorities from roles.
+     */
+    public class GrantedAuthoritiesBuilder {
+
+        private List<GrantedAuthority> authorities = new ArrayList<>();
+
+        /**
+         * Adds a resource role by its code.
+         */
+        public GrantedAuthoritiesBuilder addResourceRole(String code) {
+            ResourceRole role = resourceRoleRepository.getRoleByCode(code);
+            RoleGrantedAuthority authority = RoleGrantedAuthority.ofResourceRole(role);
+            authorities.add(authority);
+            return this;
+        }
+
+        /**
+         * Adds a row-level role by its code.
+         */
+        public GrantedAuthoritiesBuilder addRowLevelRole(String code) {
+            RowLevelRole role = rowLevelRoleRepository.getRoleByCode(code);
+            RoleGrantedAuthority authority = RoleGrantedAuthority.ofRowLevelRole(role);
+            authorities.add(authority);
+            return this;
+        }
+
+        /**
+         * Builds a collection of authorities.
+         */
+        public Collection<GrantedAuthority> build() {
+            return authorities;
+        }
     }
 
     @PostConstruct
@@ -94,23 +110,42 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     /**
-     * Method returns an actual class of the User entity used in the project
+     * Returns the class of a JPA entity representing users in the application.
      */
     protected abstract Class<T> getUserClass();
 
+    /**
+     * Creates the built-in 'system' user.
+     */
     protected T createSystemUser() {
         T systemUser = metadata.create(getUserClass());
         EntityValues.setValue(systemUser, "username", "system");
+        initSystemUser(systemUser);
         return systemUser;
     }
 
+    /**
+     * Initializes the built-in 'system' user.
+     * Override in the application to grant authorities or initialize attributes.
+     */
+    protected void initSystemUser(T systemUser) {
+    }
+
+    /**
+     * Creates the built-in 'anonymous' user.
+     */
     protected T createAnonymousUser() {
         T anonymousUser = metadata.create(getUserClass());
         EntityValues.setValue(anonymousUser, "username", "anonymous");
-        if (anonymousUser instanceof GrantedAuthorityContainer) {
-            ((GrantedAuthorityContainer) anonymousUser).setAuthorities(createAuthorities("anonymous"));
-        }
+        initAnonymousUser(anonymousUser);
         return anonymousUser;
+    }
+
+    /**
+     * Initializes the built-in 'anonymous' user.
+     * Override in the application to grant authorities or initialize attributes.
+     */
+    protected void initAnonymousUser(T anonymousUser) {
     }
 
     @Override
@@ -124,17 +159,15 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
     }
 
     @Override
-    public List<T> getByUsernameLike(String username) {
-        //todo view
+    public List<T> getByUsernameLike(String substring) {
         return dataManager.load(getUserClass())
                 .query("where e.username like :username")
-                .parameter("username", "%" + username + "%")
+                .parameter("username", "%" + substring + "%")
                 .list();
     }
 
     @Override
     public T loadUserByUsername(String username) throws UsernameNotFoundException {
-        //todo view
         List<T> users = dataManager.load(getUserClass())
                 .query("where e.username = :username")
                 .parameter("username", username)
@@ -162,14 +195,14 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
         dataManager.save(userDetails);
     }
 
-    protected Collection<? extends GrantedAuthority> createAuthorities(String username) {
+    private Collection<? extends GrantedAuthority> createAuthorities(String username) {
         return roleAssignmentRepository.getAssignmentsByUsername(username).stream()
                 .map(this::createAuthority)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    protected GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
+    private GrantedAuthority createAuthority(RoleAssignment roleAssignment) {
         GrantedAuthority authority = null;
         if (RoleAssignmentRoleType.RESOURCE.equals(roleAssignment.getRoleType())) {
             ResourceRole role = resourceRoleRepository.findRoleByCode(roleAssignment.getRoleCode());
@@ -183,5 +216,12 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
             }
         }
         return authority;
+    }
+
+    /**
+     * Returns a builder that helps create authorities from roles.
+     */
+    protected GrantedAuthoritiesBuilder getGrantedAuthoritiesBuilder() {
+        return new GrantedAuthoritiesBuilder();
     }
 }

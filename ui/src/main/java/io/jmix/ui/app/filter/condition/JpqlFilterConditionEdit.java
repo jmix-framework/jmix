@@ -29,7 +29,7 @@ import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.SourceCodeEditor;
 import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
+import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
@@ -62,7 +62,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     protected static final String PLACEHOLDER = "{E}";
 
     @Autowired
-    protected JpqlSuggestionFactory jpqlSuggestionFactory;
+    protected JpqlUiSuggestionProvider jpqlSuggestionFactory;
     @Autowired
     protected JpqlFilterSupport jpqlFilterSupport;
     @Autowired
@@ -266,8 +266,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         String query = queryBuilder.toString();
         query = query.replace(PLACEHOLDER, entityAlias);
 
-        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(),
-                senderCursorPosition);
+        return jpqlSuggestionFactory.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
     }
 
     @Subscribe("parameterClassField")

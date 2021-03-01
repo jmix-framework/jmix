@@ -18,6 +18,5 @@ package io.jmix.ui.component.autocomplete;
 import java.util.List;
 
 public interface Suggester {
-
     List<Suggestion> getSuggestions(AutoCompleteSupport source, String text, int cursorPosition);
 }

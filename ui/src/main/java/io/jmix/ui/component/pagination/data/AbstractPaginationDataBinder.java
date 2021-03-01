@@ -16,8 +16,9 @@
 
 package io.jmix.ui.component.pagination.data;
 
-import io.jmix.core.*;
-import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.core.DataManager;
+import io.jmix.core.LoadContext;
+import io.jmix.core.ValueLoadContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.model.*;
 import io.jmix.ui.model.impl.WeakCollectionChangeListener;
@@ -25,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class AbstractPaginationDataBinder implements PaginationDataBinder {
@@ -34,7 +33,6 @@ public abstract class AbstractPaginationDataBinder implements PaginationDataBind
     private static final Logger log = LoggerFactory.getLogger(PaginationLoaderBinder.class);
 
     protected DataManager dataManager;
-    protected QueryTransformerFactory queryTransformerFactory;
 
     protected CollectionContainer container;
     protected Consumer<CollectionChangeType> refreshListener;
@@ -58,11 +56,6 @@ public abstract class AbstractPaginationDataBinder implements PaginationDataBind
     @Autowired
     public void setDataManager(DataManager dataManager) {
         this.dataManager = dataManager;
-    }
-
-    @Autowired
-    public void setQueryTransformerFactory(QueryTransformerFactory queryTransformerFactory) {
-        this.queryTransformerFactory = queryTransformerFactory;
     }
 
     @Override
@@ -104,15 +97,7 @@ public abstract class AbstractPaginationDataBinder implements PaginationDataBind
             return (int) dataManager.getCount(context);
         } else if (loader instanceof KeyValueCollectionLoader) {
             ValueLoadContext context = ((KeyValueCollectionLoader) loader).createLoadContext();
-
-            QueryTransformer transformer = queryTransformerFactory.transformer(context.getQuery().getQueryString());
-            // TODO it doesn't work for query containing scalars in select
-            transformer.replaceWithCount();
-            context.getQuery().setQueryString(transformer.getResult());
-            context.setProperties(Collections.singletonList("cnt"));
-            List<KeyValueEntity> list = dataManager.loadValues(context);
-            Number count = list.get(0).getValue("cnt");
-            return count == null ? 0 : count.intValue();
+            return (int) dataManager.getCount(context);
         } else {
             log.warn("Unsupported loader type: {}", loader.getClass().getName());
             return 0;

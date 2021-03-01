@@ -255,11 +255,6 @@ $cuba-menubar-submenu-item-font-weight: $v-font-weight !default;
   }
 
   .c-app-menubar {
-    background: $cuba-menubar-background-color;
-    border: 1px solid $cuba-menubar-border-color;
-
-    @include box-shadow(none);
-
     .c-main-menu {
       .v-menubar-menuitem-more-item,
       .v-menubar-menuitem-caption,

@@ -26,18 +26,26 @@ public class HibernateDataProperties {
 
     boolean useDateInsteadOfTimestamp;
 
+    boolean storeUuidAsString;
+
     boolean runtimeEntityEnhancement;
 
     public HibernateDataProperties(
             @DefaultValue("true") boolean useDateInsteadOfTimestamp,
+            @DefaultValue("true") boolean storeUuidAsString,
             @DefaultValue("false") boolean runtimeEntityEnhancement
     ) {
         this.useDateInsteadOfTimestamp = useDateInsteadOfTimestamp;
+        this.storeUuidAsString = storeUuidAsString;
         this.runtimeEntityEnhancement = runtimeEntityEnhancement;
     }
 
     public boolean isUseDateInsteadOfTimestamp() {
         return useDateInsteadOfTimestamp;
+    }
+
+    public boolean isStoreUuidAsString() {
+        return storeUuidAsString;
     }
 
     public boolean isRuntimeEntityEnhancement() {

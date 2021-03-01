@@ -16,7 +16,9 @@
 
 package io.jmix.hibernate.impl;
 
+import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.hibernate.impl.types.date.JmixDateType;
+import io.jmix.hibernate.impl.types.uuid.JmixUUIDCharType;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.spi.AbstractDelegatingMetadataBuilderImplementor;
 import org.hibernate.boot.spi.BootstrapContext;
@@ -38,6 +40,10 @@ public class JmixDelegatingMetadataBuilder extends AbstractDelegatingMetadataBui
 
         if (beanFactory.getBean(HibernateDataProperties.class).isUseDateInsteadOfTimestamp()) {
             getBootstrapContext().getTypeConfiguration().getTypeResolver().registerTypeOverride(JmixDateType.INSTANCE);
+        }
+
+        if (beanFactory.getBean(HibernateDataProperties.class).isStoreUuidAsString()) {
+            getBootstrapContext().getTypeConfiguration().getTypeResolver().registerTypeOverride(JmixUUIDCharType.INSTANCE);
         }
     }
 

@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 public class NamingUtils {
 
     public static final String SYS_ATTR_TYPENAME = "__typename";
-    public static final String SYS_ATTR_INSTANCE_NAME = "instanceName";
+    public static final String SYS_ATTR_INSTANCE_NAME = "_instanceName";
 
     public static final String FILTER = "filter";
     public static final String LIMIT = "limit";

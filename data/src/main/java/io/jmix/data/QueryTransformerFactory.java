@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 /**
  * Factory to get {@link QueryParser} and {@link QueryTransformer} instances.
  */
-@Component("core_QueryTransformerFactory")
+@Component("data_QueryTransformerFactory")
 public class QueryTransformerFactory {
 
     protected volatile DomainModel domainModel;

@@ -142,7 +142,8 @@ public class FilterSupport {
         LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
         for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
             if (filterComponent instanceof SingleFilterComponent) {
-                configuration.setFilterComponentDefaultValue(((SingleFilterComponent<?>) filterComponent).getParameterName(),
+                configuration.setFilterComponentDefaultValue(
+                        ((SingleFilterComponent<?>) filterComponent).getParameterName(),
                         ((SingleFilterComponent<?>) filterComponent).getValue());
             }
         }

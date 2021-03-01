@@ -33,6 +33,7 @@ import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.jpqlfilter.JpqlFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.JpqlFilterCondition;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
@@ -224,6 +225,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             }
         } else {
             defaultValueField = uiComponents.create(TextField.TYPE_STRING);
+            defaultValueField.setEnabled(false);
         }
 
         defaultValueBox.removeAll();
@@ -316,7 +318,10 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             Class parameterClass = classManager.loadClass(getEditedEntity().getParameterClass());
             String modelDefaultValue = jpqlFilterSupport.formatDefaultValue(parameterClass,
                     getEditedEntity().getHasInExpression(), defaultValueField.getValue());
-            getEditedEntity().getValueComponent().setDefaultValue(modelDefaultValue);
+
+            FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+            valueComponent.setDefaultValue(modelDefaultValue);
+            valueComponent.setComponentName(singleFilterSupport.getValueComponentName(defaultValueField));
         }
     }
 }

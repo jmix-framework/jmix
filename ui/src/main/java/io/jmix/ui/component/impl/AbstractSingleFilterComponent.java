@@ -19,7 +19,6 @@ package io.jmix.ui.component.impl;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.querycondition.Condition;
-import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
@@ -123,14 +122,12 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
             dataLoader.setCondition(rootCondition);
         }
 
-        if (rootCondition instanceof JpqlCondition) {
+        if (!(rootCondition instanceof LogicalCondition)) {
             rootCondition = LogicalCondition.and().add(rootCondition);
             dataLoader.setCondition(rootCondition);
         }
 
-        if (rootCondition instanceof LogicalCondition) {
-            ((LogicalCondition) rootCondition).add(queryCondition);
-        }
+        ((LogicalCondition) rootCondition).add(queryCondition);
     }
 
     @Override

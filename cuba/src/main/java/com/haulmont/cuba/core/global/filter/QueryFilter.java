@@ -16,8 +16,8 @@
 package com.haulmont.cuba.core.global.filter;
 
 import com.haulmont.cuba.core.global.TemplateHelper;
-import io.jmix.core.QueryTransformer;
-import io.jmix.core.QueryTransformerFactory;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.querycondition.JpqlCondition;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;

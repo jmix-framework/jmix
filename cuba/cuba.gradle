@@ -51,6 +51,7 @@ dependencies {
     testImplementation 'cglib:cglib-nodep:3.3.0'
     testImplementation 'org.objenesis:objenesis:3.1'
     testImplementation 'org.codehaus.groovy:groovy-sql'
+    testImplementation 'org.antlr:antlr-runtime'
 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
     testRuntimeOnly 'org.slf4j:slf4j-simple'

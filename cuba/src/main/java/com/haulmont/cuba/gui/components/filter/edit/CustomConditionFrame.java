@@ -27,19 +27,14 @@ import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
 import com.haulmont.cuba.security.global.UserSession;
 import io.jmix.core.MessageTools;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.impl.jpql.DomainModel;
-import io.jmix.core.impl.jpql.DomainModelBuilder;
-import io.jmix.core.impl.jpql.DomainModelWithCaptionsBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.impl.jpql.DomainModel;
+import io.jmix.data.impl.jpql.DomainModelBuilder;
+import io.jmix.data.impl.jpql.DomainModelWithCaptionsBuilder;
 import io.jmix.securitydata.constraint.PredefinedQueryParameters;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
+import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
-import io.jmix.ui.component.autocomplete.impl.HintProvider;
-import io.jmix.ui.component.autocomplete.impl.HintRequest;
-import io.jmix.ui.component.autocomplete.impl.HintResponse;
-import io.jmix.ui.component.autocomplete.impl.Option;
-import org.antlr.runtime.RecognitionException;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +44,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
 
@@ -92,7 +88,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
     protected UserSessionSource userSessionSource;
 
     @Autowired
-    protected JpqlSuggestionFactory jpqlSuggestionFactory;
+    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
 
     protected boolean initializing;
 
@@ -478,7 +474,7 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
+        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
     }
 
     protected List<Suggestion> requestHintParamWhere(SourceCodeEditor sender, String text, int senderCursorPosition) {
@@ -505,7 +501,8 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
         DomainModelBuilder builder = AppBeans.get(DomainModelWithCaptionsBuilder.class);
         DomainModel domainModel = builder.produce();
 
-        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition, new ExtHintProvider(domainModel));
+        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport(),
+                this::buildParameterOptions);
     }
 
     public void getJoinClauseHelp() {
@@ -532,37 +529,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
                         .width("600px"));
     }
 
-
-    /**
-     * Extended hint provider is used for displaying other filter component names.
-     * If last word in JPQL query is ':' then parameter names are suggested. They
-     * are taken from {@code conditionsTree} screen parameter.
-     */
-    protected class ExtHintProvider extends HintProvider {
-
-        public ExtHintProvider(DomainModel domainModel) {
-            super(domainModel);
-        }
-
-        @Override
-        public HintResponse requestHint(HintRequest hintRequest) throws RecognitionException {
-            String input = hintRequest.getQuery();
-            int cursorPos = hintRequest.getPosition();
-            String lastWord = getLastWord(input, cursorPos);
-            return (":".equals(lastWord)) ?
-                    hintParameterNames(lastWord) :
-                    super.requestHint(hintRequest);
-        }
-
-        protected HintResponse hintParameterNames(String lastWord) {
-            List<Option> options = new ArrayList<>();
-            for (AbstractCondition _condition : conditionsTree.toConditionsList()) {
-                Param param = _condition.getParam();
-                if (param != null) {
-                    options.add(new Option(param.getName(), _condition.getLocCaption()));
-                }
-            }
-            return new HintResponse(options, lastWord);
-        }
+    protected Map<String, String> buildParameterOptions() {
+        return conditionsTree.toConditionsList().stream()
+                .filter(c -> Objects.nonNull(c.getParam()))
+                .collect(Collectors.toMap(c -> c.getParam().getName(), AbstractCondition::getLocCaption));
     }
 }

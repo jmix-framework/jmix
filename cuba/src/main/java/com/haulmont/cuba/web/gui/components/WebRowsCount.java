@@ -24,7 +24,7 @@ import com.haulmont.cuba.gui.data.impl.WeakCollectionChangeListener;
 import com.vaadin.shared.Registration;
 import io.jmix.core.*;
 import io.jmix.core.common.event.Subscription;
-import io.jmix.core.entity.KeyValueEntity;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.Table;
 import io.jmix.ui.component.VisibilityChangeNotifier;
@@ -50,8 +50,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -642,14 +640,7 @@ public class WebRowsCount extends AbstractComponent<JmixRowsCount> implements Ro
             } else if (loader instanceof KeyValueCollectionLoader) {
                 ValueLoadContext context = ((KeyValueCollectionLoader) loader).createLoadContext();
                 if (totalCountDelegate == null) {
-                    QueryTransformer transformer = queryTransformerFactory.transformer(context.getQuery().getQueryString());
-                    // TODO it doesn't work for query containing scalars in select
-                    transformer.replaceWithCount();
-                    context.getQuery().setQueryString(transformer.getResult());
-                    context.setProperties(Collections.singletonList("cnt"));
-                    List<KeyValueEntity> list = dataManager.loadValues(context);
-                    Number count = list.get(0).getValue("cnt");
-                    return count == null ? 0 : count.intValue();
+                    return (int) dataManager.getCount(context);
                 } else {
                     return Math.toIntExact(totalCountDelegate.apply(context));
                 }

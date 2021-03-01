@@ -17,14 +17,14 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.QueryParser;
-import io.jmix.core.QueryTransformer;
-import io.jmix.core.impl.jpql.DomainModel;
-import io.jmix.core.impl.jpql.JpqlSyntaxException;
-import io.jmix.core.impl.jpql.QueryParserAstBased;
-import io.jmix.core.impl.jpql.model.EntityBuilder;
-import io.jmix.core.impl.jpql.model.JpqlEntityModel;
-import io.jmix.core.impl.jpql.transform.QueryTransformerAstBased;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.impl.jpql.DomainModel;
+import io.jmix.data.impl.jpql.JpqlSyntaxException;
+import io.jmix.data.impl.jpql.QueryParserAstBased;
+import io.jmix.data.impl.jpql.model.EntityBuilder;
+import io.jmix.data.impl.jpql.model.JpqlEntityModel;
+import io.jmix.data.impl.jpql.transform.QueryTransformerAstBased;
 import org.antlr.runtime.RecognitionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

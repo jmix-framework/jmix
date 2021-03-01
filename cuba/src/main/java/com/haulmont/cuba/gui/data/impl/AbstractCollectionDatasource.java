@@ -35,6 +35,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.utils.ObjectPathUtils;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.component.FrameContext;

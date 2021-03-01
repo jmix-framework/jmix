@@ -17,10 +17,10 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.impl.jpql.DomainModel;
-import io.jmix.core.impl.jpql.model.EntityBuilder;
-import io.jmix.core.impl.jpql.model.JpqlEntityModel;
-import io.jmix.core.impl.jpql.transform.QueryTransformerAstBased;
+import io.jmix.data.impl.jpql.DomainModel;
+import io.jmix.data.impl.jpql.model.EntityBuilder;
+import io.jmix.data.impl.jpql.model.JpqlEntityModel;
+import io.jmix.data.impl.jpql.transform.QueryTransformerAstBased;
 import junit.framework.TestCase;
 import org.antlr.runtime.RecognitionException;
 

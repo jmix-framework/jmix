@@ -16,10 +16,10 @@
 
 package com.haulmont.cuba.core;
 
-import io.jmix.core.impl.jpql.DomainModel;
-import io.jmix.core.impl.jpql.QueryParserAstBased;
-import io.jmix.core.impl.jpql.model.EntityBuilder;
-import io.jmix.core.impl.jpql.model.JpqlEntityModel;
+import io.jmix.data.impl.jpql.DomainModel;
+import io.jmix.data.impl.jpql.QueryParserAstBased;
+import io.jmix.data.impl.jpql.model.EntityBuilder;
+import io.jmix.data.impl.jpql.model.JpqlEntityModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

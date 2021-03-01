@@ -21,7 +21,9 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
+import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
@@ -32,6 +34,7 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -44,9 +47,9 @@ import org.springframework.transaction.support.ResourceHolderSynchronization;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
@@ -66,6 +69,9 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
     @Autowired
     protected MetadataTools metadataTools;
+
+    @Autowired
+    protected ListableBeanFactory listableBeanFactory;
 
     @Autowired
     protected EntityListenerManager entityListenerManager;
@@ -199,11 +205,9 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
     protected void fireBeforeDetachEntityListener(Object entity, String storeName) {
         if (!getEntityEntry(entity).isDetached()) {
-//            JmixEntityFetchGroup.setAccessLocalUnfetched(false);
             try {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DETACH, storeName);
             } finally {
-//                JmixEntityFetchGroup.setAccessLocalUnfetched(true);
             }
         }
     }
@@ -231,9 +235,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
         for (Object entity : instances) {
             processed.add(entity);
 
-//            if (!(entity instanceof ChangeTracker))
-//                continue;
-
             boolean result = visitor.visit(entity);
             if (!result) {
                 withoutPossibleChanges.add(entity);
@@ -259,14 +260,7 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
         }
 
         if (!withoutPossibleChanges.isEmpty()) {
-            afterProcessing = withoutPossibleChanges.stream()
-                    .filter(instance -> {
-//                        ChangeTracker changeTracker = (ChangeTracker) instance;
-//                        AttributeChangeListener changeListener =
-//                                (AttributeChangeListener) changeTracker._persistence_getPropertyChangeListener();
-                        return true;
-                    })
-                    .collect(Collectors.toList());
+            afterProcessing = new ArrayList<>(withoutPossibleChanges);
             if (!afterProcessing.isEmpty()) {
                 beforeStore(container, visitor, afterProcessing, processed, false);
             }
@@ -294,21 +288,26 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             getUncheckedEntityEntry(instance).setManaged(false);
             getUncheckedEntityEntry(instance).setDetached(true);
         }
-//        if (instance instanceof FetchGroupTracker) {
-//            ((FetchGroupTracker) instance)._persistence_setSession(null);
-//        }
-//        if (instance instanceof ChangeTracker) {
-//            ((ChangeTracker) instance)._persistence_setPropertyChangeListener(null);
-//        }
     }
 
     protected void fireFlush(String storeName) {
-//        if (lifecycleListeners == null) {
-//            return;
-//        }
-//        for (JpaDataStoreListener listener : lifecycleListeners) {
-//            listener.onFlush(storeName);
-//        }
+        Collection<JpaLifecycleListener> lifecycleListeners = listableBeanFactory.getBeansOfType(JpaLifecycleListener.class).values();
+        if (lifecycleListeners.isEmpty()) {
+            return;
+        }
+        for (JpaLifecycleListener listener : lifecycleListeners) {
+            listener.onFlush(storeName);
+        }
+    }
+
+    protected void fireEntityChange(Object entity, EntityOp entityOp, @Nullable AttributeChanges changes) {
+        Collection<JpaLifecycleListener> lifecycleListeners = listableBeanFactory.getBeansOfType(JpaLifecycleListener.class).values();
+        if (lifecycleListeners.isEmpty()) {
+            return;
+        }
+        for (JpaLifecycleListener listener : lifecycleListeners) {
+            listener.onEntityChange(entity, entityOp, changes);
+        }
     }
 
     public boolean isDeleted(Object entity, EntityEntry entry) {
@@ -432,19 +431,11 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
                 if (instance instanceof Entity) {
 
                     if (readOnly) {
-//                        AttributeChangeListener changeListener =
-//                                (AttributeChangeListener) ((ChangeTracker) instance)._persistence_getPropertyChangeListener();
-//                        if (changeListener != null && changeListener.hasChanges())
-//                            throw new IllegalStateException("Changed instance " + instance + " in read-only transaction");
+                        EntityEntry entry = HibernateUtils.getEntityEntry(
+                                (SessionImplementor) storeAwareLocator.getEntityManager(container.getStoreName()), instance);
+                        if (changesProvider.getEntityAttributeChanges(instance, entry).hasChanges())
+                            throw new IllegalStateException("Changed instance " + instance + " in read-only transaction");
                     }
-
-                    // if cache is enabled, the entity can have EntityFetchGroup instead of JmixEntityFetchGroup
-//                    if (instance instanceof FetchGroupTracker) {
-//                        FetchGroupTracker fetchGroupTracker = (FetchGroupTracker) instance;
-//                        FetchGroup fetchGroup = fetchGroupTracker._persistence_getFetchGroup();
-//                        if (fetchGroup != null && !(fetchGroup instanceof JmixEntityFetchGroup))
-//                            fetchGroupTracker._persistence_setFetchGroup(new JmixEntityFetchGroup(fetchGroup, entityStates));
-//                    }
                     fireBeforeDetachEntityListener(instance, container.getStoreName());
                 }
             }
@@ -558,6 +549,7 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             if (getEntityEntry(entity).isNew()
                     && !getSavedInstances(storeName).contains(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_INSERT, storeName);
+                fireEntityChange(entity, EntityOp.CREATE, null);
                 return true;
             }
 
@@ -566,8 +558,11 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             if (entry == null)
                 return false;
 
+            AttributeChanges changes = changesProvider.getEntityAttributeChanges(entity, entry);
+
             if (isDeleted(entity, entry)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
+                fireEntityChange(entity, EntityOp.DELETE, null);
 
                 if (EntityValues.isSoftDeletionSupported(entity))
                     processDeletePolicy(entity);
@@ -576,6 +571,18 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
             } else if (changesProvider.hasChanges(entity, entry)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
+                // add changes after listener
+                changes = AttributeChanges.Builder.ofChanges(changes)
+                        .mergeChanges(changesProvider.getEntityAttributeChanges(entity, entry))
+                        .build();
+
+                if (getEntityEntry(entity).isNew()) {
+
+                    // it can happen if flush was performed, so the entity is still New but was saved
+                    fireEntityChange(entity, EntityOp.CREATE, null);
+                } else {
+                    fireEntityChange(entity, EntityOp.UPDATE, changes);
+                }
                 return true;
             }
 

@@ -76,6 +76,15 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
     }
 
     @Test
+    public void serviceWithJavaTimeParams() throws Exception {
+        String requestBody = getFileContent("serviceWithJavaTimeParams.json", null);
+        try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testJavaTimeParam", oauthToken, requestBody, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            assertEquals("2021-02-24,2021-02-24T15:15:15.053,15:15:15,2021-02-24T15:15:15.053+04:00,15:15:15+04:00", responseToString(response));
+        }
+    }
+
+    @Test
     public void serviceWithDateParameter() throws Exception {
         String requestBody = getFileContent("serviceWithDateParameter.json", null);
         try (CloseableHttpResponse response = sendPost(baseUrl + "/services/" + RestTestService.NAME + "/testDateParam", oauthToken, requestBody, null)) {

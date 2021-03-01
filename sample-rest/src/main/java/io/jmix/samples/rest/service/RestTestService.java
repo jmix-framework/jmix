@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.time.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,8 @@ public interface RestTestService {
     String testNullParam(UUID uuid);
 
     Date testDateParam(Date param);
+
+    String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime);
 
     BigDecimal testBigDecimalParam(BigDecimal param);
 

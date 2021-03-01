@@ -35,6 +35,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.text.ParseException;
+import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
@@ -91,6 +92,21 @@ public class RestParseUtils {
                     return datatypeRegistry.get(Time.class).parse(value);
                 }
             }
+        }
+        if (LocalDate.class == clazz) {
+            return datatypeRegistry.get(LocalDate.class).parse(value);
+        }
+        if (LocalDateTime.class == clazz) {
+            return datatypeRegistry.get(LocalDateTime.class).parse(value);
+        }
+        if (LocalTime.class == clazz) {
+            return datatypeRegistry.get(LocalTime.class).parse(value);
+        }
+        if (OffsetDateTime.class == clazz) {
+            return datatypeRegistry.get(OffsetDateTime.class).parse(value);
+        }
+        if (OffsetTime.class == clazz) {
+            return datatypeRegistry.get(OffsetTime.class).parse(value);
         }
         if (BigDecimal.class == clazz) return datatypeRegistry.get(BigDecimal.class).parse(value);
         if (Boolean.class == clazz || Boolean.TYPE == clazz) return datatypeRegistry.get(Boolean.class).parse(value);

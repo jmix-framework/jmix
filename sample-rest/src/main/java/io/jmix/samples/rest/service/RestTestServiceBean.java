@@ -22,10 +22,10 @@ import io.jmix.core.FetchPlanRepository;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.validation.CustomValidationException;
+import io.jmix.samples.rest.controller.CustomHttpClientErrorException;
 import io.jmix.samples.rest.entity.ModelEntity;
 import io.jmix.samples.rest.entity.driver.Car;
 import io.jmix.samples.rest.entity.driver.NotPersistentStringIdEntity;
-import io.jmix.samples.rest.controller.CustomHttpClientErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -129,6 +130,16 @@ public class RestTestServiceBean implements RestTestService {
     @Override
     public Date testDateParam(Date param) {
         return param;
+    }
+
+    @Override
+    public String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime) {
+        StringBuilder builder = new StringBuilder(localDate.toString()).append(",");
+        builder.append(localDateTime.toString()).append(",");
+        builder.append(localTime.toString()).append(",");
+        builder.append(offsetDateTime.toString()).append(",");
+        builder.append(offsetTime.toString());
+        return builder.toString();
     }
 
     @Override

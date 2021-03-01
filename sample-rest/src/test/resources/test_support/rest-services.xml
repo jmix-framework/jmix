@@ -49,6 +49,14 @@
             <param name="vin"/>
         </method>
 
+        <method name="testJavaTimeParam">
+            <param name="localDate" type="java.time.LocalDate"/>
+            <param name="localDateTime" type="java.time.LocalDateTime"/>
+            <param name="localTime" type="java.time.LocalTime"/>
+            <param name="offsetDateTime" type="java.time.OffsetDateTime"/>
+            <param name="offsetTime" type="java.time.OffsetTime"/>
+        </method>
+
         <method name="testDateParam">
             <param name="param"/>
         </method>

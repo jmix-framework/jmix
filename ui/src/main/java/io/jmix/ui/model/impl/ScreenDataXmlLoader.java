@@ -69,7 +69,7 @@ public class ScreenDataXmlLoader {
 
         DataContext hostDataContext = null;
         if (hostScreenData != null) {
-            hostDataContext = hostScreenData.getDataContext();
+            hostDataContext = hostScreenData.getDataContextOrNull();
         }
         if (hostDataContext != null) {
             screenData.setDataContext(hostDataContext);

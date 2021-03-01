@@ -115,6 +115,28 @@ public class FilterSupport {
         }
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void refreshConfigurationValuesMap(Filter.Configuration configuration, Map<String, Object> valuesMap) {
+        LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();
+        for (FilterComponent filterComponent : rootLogicalComponent.getFilterComponents()) {
+            if (filterComponent instanceof SingleFilterComponent) {
+                String parameterName = ((SingleFilterComponent<?>) filterComponent).getParameterName();
+                Object value = valuesMap.get(parameterName);
+                Object defaultValue = configuration.getFilterComponentDefaultValue(parameterName);
+
+                if (value == null && defaultValue != null) {
+                    ((SingleFilterComponent) filterComponent).setValue(defaultValue);
+                } else {
+                    try {
+                        ((SingleFilterComponent) filterComponent).setValue(value);
+                    } catch (ClassCastException e) {
+                        ((SingleFilterComponent) filterComponent).setValue(defaultValue);
+                    }
+                }
+            }
+        }
+    }
+
     public void refreshConfigurationDefaultValues(Filter.Configuration configuration) {
         configuration.resetAllDefaultValues();
         LogicalFilterComponent rootLogicalComponent = configuration.getRootLogicalFilterComponent();

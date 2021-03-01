@@ -189,7 +189,7 @@ public class FilterEditAction extends FilterAction {
 
         filterSupport.refreshConfigurationDefaultValues(resultConfiguration);
         resultConfiguration.setModified(false);
-        filterSupport.resetConfigurationValuesMap(resultConfiguration, valuesMap);
+        filterSupport.refreshConfigurationValuesMap(resultConfiguration, valuesMap);
 
         if (isNewConfiguration || !currentConfiguration.getId().equals(resultConfiguration.getId())) {
             filter.addConfiguration(resultConfiguration);
@@ -200,5 +200,7 @@ public class FilterEditAction extends FilterAction {
         if (isNewConfiguration) {
             filter.getEmptyConfiguration().getRootLogicalFilterComponent().removeAll();
         }
+
+        filter.apply();
     }
 }

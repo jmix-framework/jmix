@@ -29,6 +29,7 @@ import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.component.propertyfilter.SingleFilterSupport;
+import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
@@ -40,7 +41,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 @UiController("ui_PropertyFilterCondition.edit")
 @UiDescriptor("property-filter-condition-edit.xml")
@@ -93,12 +96,18 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void initOperationField() {
+        List<PropertyFilter.Operation> operations;
         if (getEditedEntity().getProperty() != null && getEditedEntity().getMetaClass() != null) {
             EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
                     .getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
-            operationField.setOptionsList(new ArrayList<>(availableOperations));
+            operations = new ArrayList<>(availableOperations);
+        } else {
+            operations = Collections.EMPTY_LIST;
         }
+
+        operationField.setOptionsList(operations);
     }
 
     @SuppressWarnings("unchecked")
@@ -121,6 +130,7 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
             }
         } else {
             defaultValueField = uiComponents.create(TextField.TYPE_STRING);
+            defaultValueField.setEnabled(false);
         }
 
         defaultValueBox.removeAll();
@@ -146,6 +156,9 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
             EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
                     .getAvailableOperations(filterMetaClass, property);
             operationField.setOptionsList(new ArrayList<>(availableOperations));
+            if (operationField.getValue() != null && !availableOperations.contains(operationField.getValue())) {
+                operationField.setValue(null);
+            }
 
             initDefaultValueField();
         }
@@ -171,7 +184,10 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
                 modelDefaultValue = propertyFilterSupport.formatDefaultValue(metaProperty,
                         getEditedEntity().getOperation().getType(), defaultValueField.getValue());
             }
-            getEditedEntity().getValueComponent().setDefaultValue(modelDefaultValue);
+
+            FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+            valueComponent.setDefaultValue(modelDefaultValue);
+            valueComponent.setComponentName(singleFilterSupport.getValueComponentName(defaultValueField));
         }
     }
 }

@@ -14,43 +14,39 @@
  * limitations under the License.
  */
 
-package io.jmix.search.index;
+package io.jmix.search.listener;
 
 import io.jmix.core.DataManager;
+import io.jmix.core.Id;
 import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
+import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
-import io.jmix.data.AttributeChangesProvider;
-import io.jmix.data.listener.BeforeDeleteEntityListener;
-import io.jmix.data.listener.BeforeInsertEntityListener;
-import io.jmix.data.listener.BeforeUpdateEntityListener;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
+import io.jmix.search.index.queue.QueueItem;
 import io.jmix.search.index.queue.QueueService;
 import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component(EntityTracker.NAME)
-public class EntityTracker implements
-        BeforeInsertEntityListener<Object>,
-        BeforeUpdateEntityListener<Object>,
-        BeforeDeleteEntityListener<Object> {
+@Component(EntityTrackingListener.NAME)
+public class EntityTrackingListener {
 
-    private static final Logger log = LoggerFactory.getLogger(EntityTracker.class);
+    private static final Logger log = LoggerFactory.getLogger(EntityTrackingListener.class);
 
-    public static final String NAME = "search_EntityTracker";
+    public static final String NAME = "search_EntityTrackingListener";
 
     @Autowired
     protected Metadata metadata;
-    @Autowired
-    protected AttributeChangesProvider attributeChangesProvider;
     @Autowired
     protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
     @Autowired
@@ -60,68 +56,61 @@ public class EntityTracker implements
     @Autowired
     protected PropertyTools propertyTools;
 
-    @Override
-    public void onBeforeInsert(Object entity) {
-        log.debug("Track insertion of entity {}", entity);
-        handleEntityChange(entity, EntityOp.CREATE);
-    }
-
-    @Override
-    public void onBeforeUpdate(Object entity) {
-        log.debug("Track update of entity {}", entity);
-        handleEntityChange(entity, EntityOp.UPDATE);
-    }
-
-    @Override
-    public void onBeforeDelete(Object entity) {
-        log.debug("Track deletion of entity {}", entity);
-        handleEntityChange(entity, EntityOp.DELETE);
-    }
-
-    protected void handleEntityChange(Object entity, EntityOp entityOperation) {
+    @EventListener
+    public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
         try {
-            MetaClass metaClass = metadata.getClass(entity);
-            Class<?> entityClass = metaClass.getJavaClass();
+            Id<?> entityId = event.getEntityId();
+            Class<?> entityClass = entityId.getEntityClass();
+            MetaClass metaClass = metadata.getClass(entityClass);
 
-            if (isDirectlyIndexed(metaClass.getName())) { //todo check dirty fields
-                log.debug("{} is directly indexed", entity);
-                Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
-                log.debug("Primary Key of tracked entity: {}", primaryKey);
-                primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
+            if (isProcessingRequired(entityClass)) {
+                EntityOp entityOperation = resolveEntityOperation(event);
+                String entityName = metaClass.getName();
+                String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+                Object entity = dataManager.load(entityId)
+                        .fetchPlanProperties(primaryKeyPropertyName)
+                        .softDeletion(false)
+                        .one();
+
+                if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+                    log.debug("{} is directly indexed", entityId);
+                    Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
+                    log.debug("Primary Key of tracked entity: {}", primaryKey);
+                    primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
+                }
+
+                Map<MetaClass, Set<String>> dependentEntityPks;
+                switch (entityOperation) {
+                    case CREATE:
+                    case UPDATE:
+                        AttributeChanges changes = event.getChanges();
+                        dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass, changes);
+                        log.debug("Dependent entities for Create/Update: {}", dependentEntityPks);
+                        break;
+                    case DELETE:
+                        dependentEntityPks = getDependentEntityPksForDelete(entity, entityClass);
+                        log.debug("Dependent entities for Delete: {}", dependentEntityPks);
+                        break;
+                    default:
+                        dependentEntityPks = Collections.emptyMap();
+                        break;
+                }
+                dependentEntityPks.forEach(
+                        ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
+                );
             }
-
-            Map<MetaClass, Set<String>> dependentEntityPks;
-            switch (entityOperation) {
-                case CREATE:
-                case UPDATE:
-                    dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass);
-                    log.debug("Dependent entities for Create/Update: {}", dependentEntityPks);
-                    break;
-                case DELETE:
-                    dependentEntityPks = getDependentEntityPksForDelete(entity, entityClass);
-                    log.debug("Dependent entities for Delete: {}", dependentEntityPks);
-                    break;
-                default:
-                    dependentEntityPks = Collections.emptyMap();
-                    break;
-            }
-
-            dependentEntityPks.forEach(
-                    ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
-            );
-        } catch (Exception e) {
-            log.error("Failed to enqueue data for entity {} and change type '{}'", entity, entityOperation, e);
+        } catch(Exception e){
+            log.error("Failed to enqueue data for entity {} and change type '{}'", event.getEntityId(), event.getType(), e);
         }
     }
 
-    protected boolean isDirectlyIndexed(String entityName) {
-        return indexDefinitionsProvider.isDirectlyIndexed(entityName);
+    protected boolean isProcessingRequired(Class<?> entityClass) {
+        return !QueueItem.class.equals(entityClass) && indexDefinitionsProvider.isAffectedEntityClass(entityClass);
     }
 
-    protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass) {
+    protected Map<MetaClass, Set<String>> getDependentEntityPksForUpdate(Object entity, Class<?> entityClass, AttributeChanges changes) {
         log.debug("Get dependent entity primary keys for updated entity: {}", entity);
-        Set<String> dirtyFields = attributeChangesProvider.getChangedAttributeNames(entity);
-        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, dirtyFields);
+        Map<MetaClass, Set<MetaPropertyPath>> dependencies = indexDefinitionsProvider.getDependenciesMetaDataForUpdate(entityClass, changes.getAttributes());
         return loadDependentEntityPks(entity, dependencies);
     }
 
@@ -162,6 +151,19 @@ public class EntityTracker implements
             result.put(entry.getKey(), entityPks);
         }
         return result;
+    }
+
+    protected EntityOp resolveEntityOperation(EntityChangedEvent<?> event) {
+        switch (event.getType()) {
+            case CREATED:
+                return EntityOp.CREATE;
+            case UPDATED:
+                return EntityOp.UPDATE;
+            case DELETED:
+                return EntityOp.DELETE;
+            default:
+                throw new RuntimeException("Unsupported event type '" + event.getType() + "'");
+        }
     }
 
     protected Optional<String> getPrimaryKey(MetaClass metaClass, Object entity) {

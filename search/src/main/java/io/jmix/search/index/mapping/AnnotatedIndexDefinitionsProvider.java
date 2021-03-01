@@ -73,6 +73,10 @@ public class AnnotatedIndexDefinitionsProvider {
         return registry.hasDefinitionForEntity(entityName);
     }
 
+    public boolean isAffectedEntityClass(Class<?> entityClass) {
+        return registry.isEntityClassRegistered(entityClass);
+    }
+
     public Map<MetaClass, Set<MetaPropertyPath>> getDependenciesMetaDataForUpdate(Class<?> entityClass, Set<String> changedProperties) {
         log.debug("Get dependencies metadata for class {} with changed properties: {}", entityClass, changedProperties);
         Map<String, Set<MetaPropertyPath>> backRefProperties = registry.getBackRefPropertiesForUpdate(entityClass);
@@ -196,6 +200,7 @@ public class AnnotatedIndexDefinitionsProvider {
         private final Map<String, IndexDefinition> indexDefinitionsByIndexName = new HashMap<>();
         private final Map<Class<?>, Map<String, Set<MetaPropertyPath>>> referentiallyAffectedPropertiesForUpdate = new HashMap<>();
         private final Map<Class<?>, Set<MetaPropertyPath>> referentiallyAffectedPropertiesForDelete = new HashMap<>();
+        private final Set<Class<?>> registeredEntityClasses = new HashSet<>();
 
         public Registry(InstanceNameProvider instanceNameProvider) {
             this.instanceNameProvider = instanceNameProvider;
@@ -232,8 +237,12 @@ public class AnnotatedIndexDefinitionsProvider {
             return referentiallyAffectedPropertiesForDelete.get(entityClass);
         }
 
-        public boolean hasDefinitionForEntity(String entityName) {
+        boolean hasDefinitionForEntity(String entityName) {
             return indexDefinitionsByEntityName.containsKey(entityName);
+        }
+
+        boolean isEntityClassRegistered(Class<?> entityClass) {
+            return registeredEntityClasses.contains(entityClass);
         }
 
         private void registerInMainRegistries(IndexDefinition indexDefinition) {
@@ -243,6 +252,7 @@ public class AnnotatedIndexDefinitionsProvider {
             } else {
                 indexDefinitionsByEntityName.put(entityName, indexDefinition);
                 indexDefinitionsByIndexName.put(indexDefinition.getIndexName(), indexDefinition);
+                registeredEntityClasses.addAll(indexDefinition.getAffectedEntityClasses());
             }
         }
 

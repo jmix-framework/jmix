@@ -55,17 +55,26 @@ public class PropertyTools {
         }
     }
 
+    public boolean isEntityIdUsedAsSearchPrimaryKey(MetaClass metaClass) {
+        return getPrimaryKeyPropertyNameForSearchOpt(metaClass)
+                .map(searchPk -> searchPk.equals(metadataTools.getPrimaryKeyName(metaClass)))
+                .orElse(false);
+    }
+
     public String getPrimaryKeyPropertyNameForSearch(MetaClass metaClass) {
+        return getPrimaryKeyPropertyNameForSearchOpt(metaClass).orElseThrow(
+                () -> new RuntimeException("Proper primary key property not found for entity " + metaClass.getName())
+        );
+    }
+
+    public Optional<String> getPrimaryKeyPropertyNameForSearchOpt(MetaClass metaClass) {
         String primaryKeyPropertyName;
         if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
             primaryKeyPropertyName = metadataTools.getUuidPropertyName(metaClass.getJavaClass());
         } else {
             primaryKeyPropertyName = metadataTools.getPrimaryKeyName(metaClass);
         }
-        if(primaryKeyPropertyName == null) {
-            throw new RuntimeException("Proper primary key property not found for entity " + metaClass.getName());
-        }
-        return primaryKeyPropertyName;
+        return Optional.ofNullable(primaryKeyPropertyName);
     }
 
     private Map<String, MetaPropertyPath> findPropertiesByWildcardPath(MetaClass metaClass, String path) {

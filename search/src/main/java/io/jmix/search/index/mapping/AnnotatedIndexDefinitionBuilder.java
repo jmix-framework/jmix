@@ -22,8 +22,6 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.data.impl.EntityListenerManager;
-import io.jmix.search.index.EntityTracker;
 import io.jmix.search.index.IndexDefinition;
 import io.jmix.search.index.annotation.JmixEntitySearchIndex;
 import io.jmix.search.utils.PropertyTools;
@@ -54,8 +52,6 @@ public class AnnotatedIndexDefinitionBuilder {
     @Autowired
     protected MappingFieldAnnotationProcessorsRegistry mappingFieldAnnotationProcessorsRegistry;
     @Autowired
-    protected EntityListenerManager entityListenerManager;
-    @Autowired
     protected PropertyTools propertyTools;
     @Autowired
     protected FieldMappingStrategyProvider fieldMappingStrategyProvider;
@@ -80,7 +76,6 @@ public class AnnotatedIndexDefinitionBuilder {
         Set<Class<?>> affectedEntityClasses = getAffectedEntityClasses(indexMappingConfig);
 
         log.debug("Definition class {}. Affected entity classes = {}", className, affectedEntityClasses);
-        affectedEntityClasses.forEach(entityClass -> entityListenerManager.addListener(entityClass, EntityTracker.NAME));
 
         return new IndexDefinition(entityMetaClass.getName(), entityJavaClass, indexName, indexMappingConfig, affectedEntityClasses);
     }

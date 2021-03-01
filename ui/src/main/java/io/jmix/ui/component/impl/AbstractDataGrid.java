@@ -2956,7 +2956,7 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
         // set changed values from editor to copied entity
         E copiedItem = metadataTools.deepCopy(item);
         for (Map.Entry<String, Object> property : properties.entrySet()) {
-            EntityValues.setValue(copiedItem, property.getKey(), property.getValue());
+            EntityValues.setValueEx(copiedItem, property.getKey(), property.getValue());
         }
 
         // validate copy

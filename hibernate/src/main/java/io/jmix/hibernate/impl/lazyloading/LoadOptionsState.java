@@ -27,6 +27,7 @@ import java.util.Map;
 
 public class LoadOptionsState implements EntityEntryExtraState {
 
+    private static final long serialVersionUID = 6577127703388608509L;
     protected EntityEntry entityEntry;
     protected boolean softDeletion;
     protected Map<String, Serializable> hints;

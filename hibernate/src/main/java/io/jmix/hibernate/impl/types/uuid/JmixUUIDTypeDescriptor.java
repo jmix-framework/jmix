@@ -72,6 +72,7 @@ public class JmixUUIDTypeDescriptor extends UUIDTypeDescriptor {
         }
 
         protected String prepareForUUID(String value) {
+            value = value.replace("-", "");
             char[] uuidArr = new char[36];
             char[] uuid = value.toCharArray();
 

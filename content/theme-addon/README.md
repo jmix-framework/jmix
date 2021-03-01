@@ -7,7 +7,7 @@ Theme add-on may provide SCSS files for a theme compilation.
 * Build publish add-on to `.m2`:
 
 ```
-./gradlew clean assemble install
+./gradlew clean assemble publishToMavenLocal
 ```
 
 * Include add-on dependency to a project:

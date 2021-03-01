@@ -68,11 +68,15 @@ public class JmixUUIDTypeDescriptor extends UUIDTypeDescriptor {
         }
 
         public UUID parse(Object value) {
-            return UUID.fromString(prepareForUUID((String) value));
+            String uuid = (String) value;
+            if (uuid.contains("-")) {
+                return UUID.fromString(uuid);
+            } else {
+                return UUID.fromString(prepareForUUID(uuid));
+            }
         }
 
         protected String prepareForUUID(String value) {
-            value = value.replace("-", "");
             char[] uuidArr = new char[36];
             char[] uuid = value.toCharArray();
 

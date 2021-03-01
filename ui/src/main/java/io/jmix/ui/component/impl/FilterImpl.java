@@ -643,8 +643,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
 
                 if (filterComponent instanceof PropertyFilter) {
                     PropertyFilter<?> propertyFilter = (PropertyFilter<?>) filterComponent;
-                    propertyFilter.addOperationChangeListener(operationChangeEvent ->
-                            updateConditionRemoveButton(propertyFilter));
+                    propertyFilter.addOperationChangeListener(operationChangeEvent -> {
+                        updateConditionRemoveButton(propertyFilter);
+                        resetFilterComponentDefaultValue(propertyFilter);
+                    });
                 }
 
                 if (filterComponent instanceof BelongToFrame) {
@@ -681,6 +683,10 @@ public class FilterImpl extends CompositeComponent<GroupBoxLayout> implements Fi
                 singleFilterLayout.remove(removeButton);
             }
         }
+    }
+
+    protected void resetFilterComponentDefaultValue(PropertyFilter<?> propertyFilter) {
+        getCurrentConfiguration().resetFilterComponentDefaultValue(propertyFilter.getParameterName());
     }
 
     protected void updateSelectConfigurationButton() {

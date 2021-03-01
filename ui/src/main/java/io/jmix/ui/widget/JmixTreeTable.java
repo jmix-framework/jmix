@@ -38,6 +38,7 @@ import com.vaadin.v7.ui.Field;
 import io.jmix.ui.widget.client.table.JmixTableClientRpc;
 import io.jmix.ui.widget.client.table.JmixTableServerRpc;
 import io.jmix.ui.widget.client.treetable.JmixTreeTableState;
+import io.jmix.ui.widget.compatibility.JmixValueChangeEvent;
 import io.jmix.ui.widget.data.AggregationContainer;
 import io.jmix.ui.widget.data.TableSortableContainer;
 import io.jmix.ui.widget.data.TreeTableContainer;
@@ -1208,5 +1209,13 @@ public class JmixTreeTable extends com.vaadin.v7.ui.TreeTable implements TreeTab
     @Override
     protected int updateNewIndexOnLastPage(int newIndex, int indexOnLastPage) {
         return indexOnLastPage >= 0 ? newIndex + 1 : newIndex;
+    }
+
+    @Override
+    protected void fireValueChange(boolean repaintIsNotNeeded) {
+        fireEvent(new JmixValueChangeEvent(this, repaintIsNotNeeded));
+        if (!repaintIsNotNeeded) {
+            markAsDirty();
+        }
     }
 }

@@ -35,7 +35,7 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.autocomplete.AutoCompleteSupport;
-import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
+import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggester;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.data.options.MapOptions;
@@ -136,7 +136,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
     @Autowired
     protected TextArea<String> jsonPathQueryTextAreaField;
     @Autowired
-    protected JpqlSuggestionFactory jpqlSuggestionFactory;
+    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
     @Autowired
     protected Stores stores;
     @Autowired
@@ -228,7 +228,7 @@ public class BandDefinitionEditor extends ScreenFragment implements Suggester {
         }
         int queryPosition = cursorPosition - 1;
 
-        return jpqlSuggestionFactory.requestHint(text, queryPosition, source, cursorPosition);
+        return jpqlUiSuggestionProvider.getSuggestions(text, queryPosition, source);
     }
 
     @Subscribe

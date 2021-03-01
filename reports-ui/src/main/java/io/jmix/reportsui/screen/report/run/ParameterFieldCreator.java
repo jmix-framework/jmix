@@ -21,6 +21,8 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.reports.Reports;
 import io.jmix.reports.entity.ParameterType;
 import io.jmix.reports.entity.ReportInputParameter;

@@ -27,7 +27,7 @@ import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
+import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.*;
@@ -137,7 +137,7 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     protected TextArea<String> localeField;
 
     @Autowired
-    protected JpqlSuggestionFactory jpqlSuggestionFactory;
+    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
 
     @Autowired
     protected MetadataTools metadataTools;
@@ -472,6 +472,6 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
+        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
     }
 }

@@ -37,6 +37,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Component("hibernate_HibernateFireEventsEventListener")
 public class HibernateFireEventsEventListener implements PreInsertEventListener,
@@ -116,27 +119,43 @@ public class HibernateFireEventsEventListener implements PreInsertEventListener,
         UserDetails currentUser = auditInfoProvider.getCurrentUser();
 
         if (EntityValues.isAuditSupported(entity)) {
+            Map<Integer, Object> preUpdatedValues = getPreUpdatedValues(event.getSession(), entity, event.getState());
             entityAuditInfoProvider.setCreateInfo(entity, currentDate, currentUser);
             entityAuditInfoProvider.setUpdateInfo(entity, currentDate, currentUser, true);
-            updateStateFields(event.getSession(), entity, event.getState());
+            updateStateFields(event.getSession(), entity, event.getState(), preUpdatedValues);
         }
         return false;
     }
 
-    private void updateStateFields(SessionImplementor session, Object entity, Object[] currentState) {
+    private void updateStateFields(SessionImplementor session, Object entity, Object[] currentState, Map<Integer, Object> preUpdatedValues) {
         EntityEntry entry = session.getPersistenceContextInternal().getEntry(entity);
         Object[] valuesToInsert = entry.getPersister().getPropertyValuesToInsert(entity, null, session);
         for (int i = 0; i < currentState.length; i++) {
-            currentState[i] = valuesToInsert[i];
+            if (!preUpdatedValues.containsKey(i)) {
+                currentState[i] = valuesToInsert[i];
+            }
         }
+    }
+
+    private Map<Integer, Object> getPreUpdatedValues(SessionImplementor session, Object entity, Object[] currentState) {
+        Map<Integer, Object> preUpdatedValues = new HashMap<>();
+        EntityEntry entry = session.getPersistenceContextInternal().getEntry(entity);
+        Object[] valuesToInsert = entry.getPersister().getPropertyValuesToInsert(entity, null, session);
+        for (int i = 0; i < currentState.length; i++) {
+            if (!Objects.equals(currentState[i], valuesToInsert[i])) {
+                preUpdatedValues.put(i, currentState[i]);
+            }
+        }
+        return preUpdatedValues;
     }
 
     @Override
     public boolean onPreUpdate(PreUpdateEvent event) {
         Object entity = event.getEntity();
         if (!(isJustSoftDeleted(entity)) && EntityValues.isAuditSupported(entity)) {
+            Map<Integer, Object> preUpdatedValues = getPreUpdatedValues(event.getSession(), entity, event.getState());
             entityAuditInfoProvider.setUpdateInfo(entity, timeSource.currentTimestamp(), auditInfoProvider.getCurrentUser(), false);
-            updateStateFields(event.getSession(), entity, event.getState());
+            updateStateFields(event.getSession(), entity, event.getState(), preUpdatedValues);
         }
         return false;
     }

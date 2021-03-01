@@ -1,0 +1,62 @@
+/*
+ * Copyright 2019 Haulmont.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.jmix.data.impl.jpql;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class JpqlSyntaxException extends RuntimeException {
+
+    protected List<ErrorRec> errorRecs;
+
+    public JpqlSyntaxException() {
+    }
+
+    public JpqlSyntaxException(String message) {
+        this(message, null);
+    }
+
+    public JpqlSyntaxException(String message, List<ErrorRec> errorRecs) {
+        super(message);
+        if (errorRecs != null) {
+            this.errorRecs = new ArrayList<>(errorRecs);
+        }
+    }
+
+    public List<ErrorRec> getErrorRecs() {
+        if (errorRecs == null) {
+            return Collections.emptyList();
+        }
+
+        return errorRecs;
+    }
+
+    @Override
+    public String getMessage() {
+        String message = super.getMessage();
+        if (errorRecs != null) {
+            StringBuilder builder = new StringBuilder(message);
+            for (ErrorRec rec : errorRecs) {
+                builder.append("\n")
+                        .append(rec);
+            }
+            message = builder.toString();
+        }
+        return message;
+    }
+}

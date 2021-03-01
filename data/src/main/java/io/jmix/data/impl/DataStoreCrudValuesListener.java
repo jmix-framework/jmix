@@ -18,7 +18,7 @@ package io.jmix.data.impl;
 
 import io.jmix.core.AccessManager;
 import io.jmix.core.Metadata;
-import io.jmix.core.QueryTransformerFactory;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.ValueLoadContext;
 import io.jmix.core.datastore.DataStoreBeforeValueLoadEvent;
 import io.jmix.core.datastore.DataStoreEventListener;

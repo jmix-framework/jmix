@@ -16,9 +16,9 @@
 
 package jpql_transform
 
-import io.jmix.core.impl.jpql.DomainModel
-import io.jmix.core.impl.jpql.model.EntityBuilder
-import io.jmix.core.impl.jpql.transform.QueryTransformerAstBased
+import io.jmix.data.impl.jpql.DomainModel
+import io.jmix.data.impl.jpql.model.EntityBuilder
+import io.jmix.data.impl.jpql.transform.QueryTransformerAstBased
 import spock.lang.Specification
 
 class JpqlQueryTransformationTest extends Specification {

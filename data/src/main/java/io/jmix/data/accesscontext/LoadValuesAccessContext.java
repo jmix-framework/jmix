@@ -17,8 +17,8 @@
 package io.jmix.data.accesscontext;
 
 import io.jmix.core.Metadata;
-import io.jmix.core.QueryParser;
-import io.jmix.core.QueryTransformerFactory;
+import io.jmix.data.QueryParser;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;

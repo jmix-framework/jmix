@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.DataProperties;
 import io.jmix.data.PersistenceHints;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.data.impl.EntityChangedEventInfo;
@@ -289,6 +290,11 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
 
         Query query = createLoadQuery(em, context);
         return executeQuery(query, false);
+    }
+
+    @Override
+    protected long countAllValues(ValueLoadContext context) {
+        return 0;
     }
 
     @Override

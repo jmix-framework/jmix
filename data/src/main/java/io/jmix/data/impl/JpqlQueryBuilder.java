@@ -25,6 +25,8 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.querycondition.*;
 import io.jmix.data.JmixQuery;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

@@ -108,6 +108,11 @@ public class TestInMemoryDataStore implements DataStore {
         return new ArrayList<>();
     }
 
+    @Override
+    public long getCount(ValueLoadContext context) {
+        return 0;
+    }
+
     public void clear() {
         entities.clear();
     }

@@ -76,4 +76,12 @@ public interface DataStore {
      * @return list of KeyValueEntity instances
      */
     List<KeyValueEntity> loadValues(ValueLoadContext context);
+
+    /**
+     * Returns the number of key-value pairs for the given query passed in the {@link ValueLoadContext}.
+     *
+     * @param context defines the query
+     * @return number of key-value pairs in the data store
+     */
+    long getCount(ValueLoadContext context);
 }

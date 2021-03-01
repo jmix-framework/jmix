@@ -195,6 +195,12 @@ public class DataManagerImpl implements DataManager {
     }
 
     @Override
+    public long getCount(ValueLoadContext context) {
+        DataStore store = dataStoreFactory.get(getStoreName(context.getStoreName()));
+        return store.getCount(context);
+    }
+
+    @Override
     public <E> FluentLoader<E> load(Class<E> entityClass) {
         return fluentLoaderProvider.getObject(entityClass);
     }

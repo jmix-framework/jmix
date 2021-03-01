@@ -104,6 +104,14 @@ public interface DataManager {
     List<KeyValueEntity> loadValues(ValueLoadContext context);
 
     /**
+     * Returns the number of key-value pairs for the given query passed in the {@link ValueLoadContext}.
+     *
+     * @param context defines the query
+     * @return number of key-value pairs in the data store
+     */
+    long getCount(ValueLoadContext context);
+
+    /**
      * Entry point to the fluent API for loading entities.
      * <p>
      * Usage examples:

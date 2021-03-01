@@ -270,6 +270,36 @@ public abstract class AbstractDataStore implements DataStore {
         return keyValueEntities;
     }
 
+    @Override
+    public long getCount(ValueLoadContext context) {
+        Preconditions.checkNotNull(context, "context is null");
+        Preconditions.checkNotNull(context.getQuery(), "query is null");
+
+        if (log.isDebugEnabled()) {
+            log.debug("getCountValues: store={}, query={}", getName(), context.getQuery());
+        }
+
+        EventSharedState eventState = new EventSharedState();
+
+        DataStoreBeforeValueLoadEvent beforeLoadEvent = new DataStoreBeforeValueLoadEvent(context, eventState);
+        fireEvent(beforeLoadEvent);
+
+        if (beforeLoadEvent.loadPrevented()) {
+            return 0;
+        }
+
+        long count = 0L;
+        Object transaction = beginLoadTransaction(context.isJoinTransaction());
+        try {
+            count = countAllValues(context);
+            commitTransaction(transaction);
+        } finally {
+            rollbackTransaction(transaction);
+        }
+
+        return count;
+    }
+
     @Nullable
     protected abstract Object loadOne(LoadContext<?> context);
 
@@ -282,6 +312,8 @@ public abstract class AbstractDataStore implements DataStore {
     protected abstract Set<Object> deleteAll(SaveContext context);
 
     protected abstract List<Object> loadAllValues(ValueLoadContext context);
+
+    protected abstract long countAllValues(ValueLoadContext context);
 
     protected abstract Object beginLoadTransaction(boolean joinTransaction);
 

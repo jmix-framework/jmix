@@ -81,4 +81,9 @@ public class NoopDataStore implements DataStore {
     public List<KeyValueEntity> loadValues(ValueLoadContext context) {
         return Collections.emptyList();
     }
+
+    @Override
+    public long getCount(ValueLoadContext context) {
+        return 0;
+    }
 }

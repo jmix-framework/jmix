@@ -98,6 +98,12 @@ public class SecureDataManagerImpl implements DataManager {
     }
 
     @Override
+    public long getCount(ValueLoadContext context) {
+        context.setAccessConstraints(mergeConstraints(context.getAccessConstraints()));
+        return dataManager.getCount(context);
+    }
+
+    @Override
     public <E> FluentLoader<E> load(Class<E> entityClass) {
         FluentLoader<E> loader = dataManager.load(entityClass);
         loader.setDataManager(this);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.core.impl.jpql.tree;
+package io.jmix.core.suggestion;
 
-import io.jmix.core.impl.jpql.ErrorRec;
-import io.jmix.core.impl.jpql.QueryBuilder;
-import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTree;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import javax.annotation.Nullable;
 
-public class UpdateSetNode extends BaseCustomNode {
-    public UpdateSetNode(Token t) {
-        super(t);
-    }
-
+@Component("core_DefaultQuerySuggestionProvider")
+public class DefaultQuerySuggestionProvider implements QuerySuggestionProvider {
+    @Nullable
     @Override
-    public CommonTree treeToQueryPre(QueryBuilder sb, List<ErrorRec> invalidNodes) {
-        sb.appendString(" ");
-        sb.appendString(getText());
-        sb.appendString(" ");
-        return this;
+    public QuerySuggestions getSuggestions(QuerySuggestionsContext context) {
+        return null;
     }
 }

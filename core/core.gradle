@@ -55,7 +55,6 @@ dependencies {
     api 'javax.annotation:javax.annotation-api'
 
     api 'org.eclipse.persistence:jakarta.persistence'
-    api 'org.antlr:antlr-runtime'
 
     api 'javax.cache:cache-api'
 

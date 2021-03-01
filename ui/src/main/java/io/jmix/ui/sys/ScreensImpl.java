@@ -466,6 +466,9 @@ public class ScreensImpl implements Screens {
     }
 
     protected void checkOpened(Screen screen) {
+        if (getConfiguredWorkAreaOrNull() == null) {
+            return;
+        }
         // In case of 'managedMainTabSheetMode = UNLOAD_TABS',
         // inactive screens are detached, so we need to skip this check
         AppWorkAreaImpl workArea = getConfiguredWorkArea();

@@ -18,13 +18,13 @@ package io.jmix.eclipselink.impl.support;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.AuditInfoProvider;
 import io.jmix.data.impl.EntityAuditValues;
-import io.jmix.eclipselink.impl.EclipselinkPersistenceTools;
-import io.jmix.eclipselink.impl.EclipselinkPersistenceSupport;
-import io.jmix.eclipselink.impl.JmixEntityFetchGroup;
 import io.jmix.data.impl.EntityListenerManager;
 import io.jmix.data.impl.EntityListenerType;
+import io.jmix.eclipselink.impl.EclipselinkPersistenceSupport;
+import io.jmix.eclipselink.impl.JmixEntityFetchGroup;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
 import org.eclipse.persistence.descriptors.DescriptorEventListener;
 import org.eclipse.persistence.descriptors.DescriptorEventManager;
@@ -60,7 +60,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     @Autowired
     protected EclipselinkPersistenceSupport persistenceSupport;
     @Autowired
-    protected EclipselinkPersistenceTools persistenceTools;
+    protected AttributeChangesProvider attributeChangesProvider;
     @Autowired
     protected EntityStates entityStates;
     @Autowired
@@ -69,7 +69,7 @@ public class JmixEclipseLinkDescriptorEventListener implements DescriptorEventLi
     protected boolean isJustSoftDeleted(Object entity) {
         if (EntityValues.isSoftDeletionSupported(entity)) {
             return EntityValues.isSoftDeleted(entity)
-                    && persistenceTools.isDirty(entity, metadataTools.getDeletedDateProperty(entity));
+                    && attributeChangesProvider.isChanged(entity, metadataTools.getDeletedDateProperty(entity));
         }
         return false;
     }

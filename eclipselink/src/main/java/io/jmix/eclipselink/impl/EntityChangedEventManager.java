@@ -127,10 +127,10 @@ public class EntityChangedEventManager {
         for (Object entity : entities) {
 
             EntityChangedEvent.Type type = null;
-            AttributeChanges attributeChanges = null;
+            AttributeChanges.Builder attributeChangesBuilder = null;
             if (getEntityEntry(entity).isNew()) {
                 type = EntityChangedEvent.Type.CREATED;
-                attributeChanges = getEntityAttributeChanges(entity, false);
+                attributeChangesBuilder = getEntityAttributeChanges(entity, false);
             } else {
                 AttributeChangeListener changeListener =
                         (AttributeChangeListener) ((ChangeTracker) entity)._persistence_getPropertyChangeListener();
@@ -140,17 +140,17 @@ public class EntityChangedEventManager {
                 }
                 if (persistenceSupport.isDeleted(entity, changeListener)) {
                     type = EntityChangedEvent.Type.DELETED;
-                    attributeChanges = getEntityAttributeChanges(entity, true);
+                    attributeChangesBuilder = getEntityAttributeChanges(entity, true);
                 } else if (changeListener.hasChanges()) {
                     type = EntityChangedEvent.Type.UPDATED;
-                    attributeChanges = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
+                    attributeChangesBuilder = getEntityAttributeChanges(entity, changeListener.getObjectChangeSet());
                 }
             }
-            if (type != null && attributeChanges != null) {
+            if (type != null && attributeChangesBuilder != null) {
                 MetaClass originalMetaClass = extendedEntities.getOriginalOrThisMetaClass(metadata.getClass(entity));
 
                 EntityChangedEventInfo eventData = new EntityChangedEventInfo(this, entity, type,
-                        attributeChanges, originalMetaClass);
+                        attributeChangesBuilder.build(), originalMetaClass);
                 list.add(eventData);
             }
         }
@@ -167,20 +167,20 @@ public class EntityChangedEventManager {
 
     @SuppressWarnings("unchecked")
     @Nullable
-    private AttributeChanges getEntityAttributeChanges(@Nullable Object entity, @Nullable ObjectChangeSet changeSet) {
+    private AttributeChanges.Builder getEntityAttributeChanges(@Nullable Object entity, @Nullable ObjectChangeSet changeSet) {
         if (changeSet == null)
             return null;
-        Set<AttributeChanges.Change> changes = new HashSet<>();
-        Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
+
+        AttributeChanges.Builder builder = AttributeChanges.Builder.create();
 
         for (ChangeRecord changeRecord : changeSet.getChanges()) {
             if (changeRecord instanceof AggregateChangeRecord) {
-                embeddedChanges.computeIfAbsent(changeRecord.getAttribute(), s ->
+                builder.withEmbedded(changeRecord.getAttribute(),
                         getEntityAttributeChanges(null, ((AggregateChangeRecord) changeRecord).getChangedObject()));
             } else {
                 Object oldValue = changeRecord.getOldValue();
                 if (oldValue instanceof Entity) {
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), Id.of(oldValue)));
+                    builder.withChange(changeRecord.getAttribute(), Id.of(oldValue));
                 } else if (oldValue instanceof Collection) {
                     Collection<Object> coll = (Collection<Object>) oldValue;
                     Collection<Object> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
@@ -191,7 +191,7 @@ public class EntityChangedEventManager {
                             idColl.add(item);
                         }
                     }
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), idColl));
+                    builder.withChange(changeRecord.getAttribute(), idColl);
                 } else {
                     Object convertedValue;
                     if (entity != null) {
@@ -200,7 +200,7 @@ public class EntityChangedEventManager {
                     } else {
                         convertedValue = oldValue;
                     }
-                    changes.add(new AttributeChanges.Change(changeRecord.getAttribute(), convertedValue));
+                    builder.withChange(changeRecord.getAttribute(), convertedValue);
                 }
             }
         }
@@ -208,7 +208,7 @@ public class EntityChangedEventManager {
         // todo dynamic attributes
 //        addDynamicAttributeChanges(entity, changes, false);
 
-        return new AttributeChanges(changes, embeddedChanges);
+        return builder;
     }
 
     // todo dynamic attributes
@@ -285,19 +285,17 @@ public class EntityChangedEventManager {
 //    }
 
     @SuppressWarnings("unchecked")
-    private AttributeChanges getEntityAttributeChanges(Object entity, boolean deleted) {
-        Set<AttributeChanges.Change> changes = new HashSet<>();
-        Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
-
+    private AttributeChanges.Builder getEntityAttributeChanges(Object entity, boolean deleted) {
+        AttributeChanges.Builder builder = AttributeChanges.Builder.create();
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!property.isReadOnly()) {
                 Object value = EntityValues.getValue(entity, property.getName());
                 if (deleted) {
                     if (value instanceof Entity) {
                         if (EntitySystemAccess.isEmbeddable(entity)) {
-                            embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
+                            builder.withEmbedded(property.getName(), getEntityAttributeChanges(value, true));
                         } else {
-                            changes.add(new AttributeChanges.Change(property.getName(), Id.of(value)));
+                            builder.withChange(property.getName(), Id.of(value));
                         }
                     } else if (value instanceof Collection) {
                         Collection<Object> coll = (Collection<Object>) value;
@@ -305,14 +303,14 @@ public class EntityChangedEventManager {
                         for (Object item : coll) {
                             idColl.add(Id.of(item));
                         }
-                        changes.add(new AttributeChanges.Change(property.getName(), idColl));
+                        builder.withChange(property.getName(), idColl);
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), convertValueIfNeeded(property, value)));
+                        builder.withChange(property.getName(), convertValueIfNeeded(property, value));
                     }
 
                 } else {
                     if (value != null) {
-                        changes.add(new AttributeChanges.Change(property.getName(), null));
+                        builder.withChange(property.getName(), null);
                     }
                 }
             }
@@ -323,7 +321,7 @@ public class EntityChangedEventManager {
 //            addDynamicAttributeChanges(entity, changes, true);
         }
 
-        return new AttributeChanges(changes, embeddedChanges);
+        return builder;
     }
 
     private Object convertValueIfNeeded(MetaProperty property, Object value) {

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.data;
+package io.jmix.data.impl;
 
 import io.jmix.core.*;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.StoreAwareLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

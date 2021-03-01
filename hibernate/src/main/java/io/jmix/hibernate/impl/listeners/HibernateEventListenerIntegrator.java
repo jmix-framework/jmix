@@ -16,6 +16,7 @@
 
 package io.jmix.hibernate.impl.listeners;
 
+import io.jmix.hibernate.impl.lazyloading.JmixInitializeCollectionEventListener;
 import org.hibernate.boot.Metadata;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.event.service.spi.EventListenerRegistry;
@@ -30,6 +31,8 @@ public class HibernateEventListenerIntegrator implements Integrator {
 
     @Autowired
     protected HibernateFireEventsEventListener eventListener;
+    @Autowired
+    protected JmixInitializeCollectionEventListener collectionEventListener;
 
     @Override
     public void integrate(Metadata metadata, SessionFactoryImplementor sessionFactoryImplementor, SessionFactoryServiceRegistry sessionFactoryServiceRegistry) {
@@ -42,6 +45,7 @@ public class HibernateEventListenerIntegrator implements Integrator {
         eventListenerRegistry.getEventListenerGroup(EventType.POST_UPDATE).prependListener(eventListener);
         eventListenerRegistry.getEventListenerGroup(EventType.PRE_DELETE).prependListener(eventListener);
         eventListenerRegistry.getEventListenerGroup(EventType.POST_DELETE).prependListener(eventListener);
+        eventListenerRegistry.getEventListenerGroup(EventType.INIT_COLLECTION).prependListener(collectionEventListener);
     }
 
     @Override

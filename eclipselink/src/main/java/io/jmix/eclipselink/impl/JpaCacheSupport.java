@@ -21,10 +21,10 @@ import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.data.impl.EntityAttributeChanges;
 import org.eclipse.persistence.jpa.JpaCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,7 +53,7 @@ public class JpaCacheSupport {
      * @param entity  which is being updated and can potentially be an element of a collection
      * @param changes changes in the entity. Null when creating and removing the entity.
      */
-    public void evictMasterEntity(Object entity, @Nullable EntityAttributeChanges changes) {
+    public void evictMasterEntity(Object entity, @Nullable AttributeChanges changes) {
         MetaClass metaClass = metadata.getClass(entity.getClass());
         for (MetaProperty property : metaClass.getProperties()) {
             if (!property.getRange().isClass() || property.getRange().getCardinality().isMany())

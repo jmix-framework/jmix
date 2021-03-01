@@ -57,20 +57,20 @@ public class HibernateChangesProvider {
     public AttributeChanges getEntityAttributeChanges(@Nullable Object entity, @Nullable EntityEntry entry) {
         if (entry == null)
             return null;
-        Set<AttributeChanges.Change> changes = new HashSet<>();
-        Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
+
+        AttributeChanges.Builder builder = AttributeChanges.Builder.create();
 
         for (String property : dirtyFields(entity, entry)) {
             Object oldValue = entry.getLoadedValue(property);
             if (oldValue instanceof Entity) {
-                changes.add(new AttributeChanges.Change(property, Id.of(oldValue)));
+                builder.withChange(property, Id.of(oldValue));
             } else if (oldValue instanceof Collection) {
                 Collection<Object> coll = (Collection<Object>) oldValue;
                 Collection<Id> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
                 for (Object item : coll) {
                     idColl.add(Id.of(item));
                 }
-                changes.add(new AttributeChanges.Change(property, idColl));
+                builder.withChange(property, idColl);
             } else {
                 Object convertedValue;
                 if (entity != null) {
@@ -79,11 +79,11 @@ public class HibernateChangesProvider {
                 } else {
                     convertedValue = oldValue;
                 }
-                changes.add(new AttributeChanges.Change(property, convertedValue));
+                builder.withChange(property, convertedValue);
             }
         }
 
-        return new AttributeChanges(changes, embeddedChanges);
+        return builder.build();
     }
 
     private Object convertValueIfNeeded(MetaProperty property, Object value) {
@@ -99,8 +99,7 @@ public class HibernateChangesProvider {
 
     @SuppressWarnings("unchecked")
     public AttributeChanges getEntityAttributeChanges(Object entity, boolean deleted) {
-        Set<AttributeChanges.Change> changes = new HashSet<>();
-        Map<String, AttributeChanges> embeddedChanges = new HashMap<>();
+        AttributeChanges.Builder builder = AttributeChanges.Builder.create();
 
         for (MetaProperty property : metadata.getClass(entity.getClass()).getProperties()) {
             if (!property.isReadOnly()) {
@@ -108,9 +107,10 @@ public class HibernateChangesProvider {
                 if (deleted) {
                     if (value instanceof Entity) {
                         if (EntitySystemAccess.isEmbeddable(entity)) {
-                            embeddedChanges.computeIfAbsent(property.getName(), s -> getEntityAttributeChanges(value, true));
+                            builder.withEmbedded(property.getName(),
+                                    b -> builder.mergeChanges(getEntityAttributeChanges(value, true)));
                         } else {
-                            changes.add(new AttributeChanges.Change(property.getName(), Id.of(value)));
+                            builder.withChange(property.getName(), Id.of(value));
                         }
                     } else if (value instanceof Collection) {
                         Collection<Object> coll = (Collection<Object>) value;
@@ -118,14 +118,13 @@ public class HibernateChangesProvider {
                         for (Object item : coll) {
                             idColl.add(Id.of(item));
                         }
-                        changes.add(new AttributeChanges.Change(property.getName(), idColl));
+                        builder.withChange(property.getName(), idColl);
                     } else {
-                        changes.add(new AttributeChanges.Change(property.getName(), value));
+                        builder.withChange(property.getName(), value);
                     }
-
                 } else {
                     if (value != null) {
-                        changes.add(new AttributeChanges.Change(property.getName(), null));
+                        builder.withChange(property.getName(), null);
                     }
                 }
             }
@@ -136,6 +135,6 @@ public class HibernateChangesProvider {
 //            addDynamicAttributeChanges(entity, changes, true);
         }
 
-        return new AttributeChanges(changes, embeddedChanges);
+        return builder.build();
     }
 }

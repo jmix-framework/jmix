@@ -20,7 +20,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.EntityFetcher;
+import io.jmix.data.impl.EntityFetcher;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.QueryMacroHandler;

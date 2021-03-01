@@ -26,7 +26,7 @@ import io.jmix.core.common.util.ReflectionHelper;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.data.EntityFetcher;
+import io.jmix.data.impl.EntityFetcher;
 import io.jmix.data.JmixQuery;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.QueryMacroHandler;

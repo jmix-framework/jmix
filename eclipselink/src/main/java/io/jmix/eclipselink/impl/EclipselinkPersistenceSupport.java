@@ -21,8 +21,10 @@ import com.google.common.collect.Sets;
 import io.jmix.core.*;
 import io.jmix.core.common.util.StackTrace;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.AttributeChangesProvider;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.data.impl.*;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
@@ -89,8 +91,11 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
     @Autowired
     protected EntityStates entityStates;
 
+    @Autowired
+    protected AttributeChangesProvider attributeChangesProvider;
+
     @Autowired(required = false)
-    protected List<JpaDataStoreListener> lifecycleListeners = new ArrayList<>();
+    protected List<JpaLifecycleListener> lifecycleListeners = new ArrayList<>();
 
     @Autowired
     protected ObjectProvider<DeletePolicyProcessor> deletePolicyProcessorProvider;
@@ -303,16 +308,16 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
         if (lifecycleListeners == null) {
             return;
         }
-        for (JpaDataStoreListener listener : lifecycleListeners) {
+        for (JpaLifecycleListener listener : lifecycleListeners) {
             listener.onFlush(storeName);
         }
     }
 
-    protected void fireEntityChange(Object entity, EntityOp entityOp, @Nullable EntityAttributeChanges changes) {
+    protected void fireEntityChange(Object entity, EntityOp entityOp, @Nullable AttributeChanges changes) {
         if (lifecycleListeners == null) {
             return;
         }
-        for (JpaDataStoreListener listener : lifecycleListeners) {
+        for (JpaLifecycleListener listener : lifecycleListeners) {
             listener.onEntityChange(entity, entityOp, changes);
         }
     }
@@ -569,9 +574,7 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
             if (changeListener == null)
                 return false;
 
-            EclipselinkEntityAttributeChanges changes = new EclipselinkEntityAttributeChanges();
-            // add changes before listener
-            changes.addChanges(entity);
+            AttributeChanges changes = attributeChangesProvider.getAttributeChanges(entity);
 
             if (isDeleted(entity, changeListener)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
@@ -584,13 +587,15 @@ public class EclipselinkPersistenceSupport implements ApplicationContextAware {
                 jpaCacheSupport.evictMasterEntity(entity, null);
                 return true;
 
-            } else if (changes.hasChanges()) {//changeListener.hasChanges()
+            } else if (changes.hasChanges()) {
                 if (changeListener.hasChanges()) {
                     entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
                 }
 
                 // add changes after listener
-                changes.addChanges(entity);
+                changes = AttributeChanges.Builder.ofChanges(changes)
+                        .mergeChanges(attributeChangesProvider.getAttributeChanges(entity))
+                        .build();
 
                 if (getEntityEntry(entity).isNew()) {
 

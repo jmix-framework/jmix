@@ -23,6 +23,7 @@ import io.jmix.core.datastore.DataStoreCustomizer;
 import io.jmix.data.impl.DataStoreCrudListener;
 import io.jmix.data.impl.DataStoreCrudValuesListener;
 import io.jmix.data.impl.DataStoreInMemoryCrudListener;
+import io.jmix.hibernate.impl.lazyloading.HibernateLazyLoadingListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -37,6 +38,8 @@ public class HibernateStoreCustomizer implements DataStoreCustomizer {
     protected DataStoreInMemoryCrudListener inMemoryCrudListener;
     @Autowired
     protected DataStoreCrudValuesListener crudValuesListener;
+    @Autowired
+    protected HibernateLazyLoadingListener lazyLoadingListener;
 
     @Override
     public void customize(DataStore dataStore) {
@@ -45,6 +48,7 @@ public class HibernateStoreCustomizer implements DataStoreCustomizer {
             abstractStore.registerInterceptor(crudListener);
             abstractStore.registerInterceptor(inMemoryCrudListener);
             abstractStore.registerInterceptor(crudValuesListener);
+            abstractStore.registerInterceptor(lazyLoadingListener);
         }
     }
 }

@@ -39,7 +39,7 @@ import io.jmix.ui.*;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.valuespicker.ValuesSelectAction;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.autocomplete.JpqlSuggestionFactory;
+import io.jmix.ui.component.autocomplete.JpqlUiSuggestionProvider;
 import io.jmix.ui.component.autocomplete.Suggestion;
 import io.jmix.ui.component.data.options.ListEntityOptions;
 import io.jmix.ui.component.data.options.MapOptions;
@@ -224,7 +224,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
     @Autowired
     protected FormatStringsRegistry formatStringsRegistry;
     @Autowired
-    protected JpqlSuggestionFactory jpqlSuggestionFactory;
+    protected JpqlUiSuggestionProvider jpqlUiSuggestionProvider;
 
     protected AttributeLocalizationFragment localizationFragment;
 
@@ -830,7 +830,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
         String query = queryBuilder.toString();
         query = query.replace("{E}", entityAlias);
 
-        return jpqlSuggestionFactory.requestHint(query, queryPosition, sender.getAutoCompleteSupport(), senderCursorPosition);
+        return jpqlUiSuggestionProvider.getSuggestions(query, queryPosition, sender.getAutoCompleteSupport());
     }
 
     protected void centerDialogWindow() {

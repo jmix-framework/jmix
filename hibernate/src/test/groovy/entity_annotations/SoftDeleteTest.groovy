@@ -112,6 +112,9 @@ class SoftDeleteTest extends DataSpec {
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).getDeletedBy() == null
         beforeOrEquals(beforeDelete, tsOnly.timeOfDeletion)
         afterOrEquals(afterDelete, tsOnly.timeOfDeletion)
+        !dataManager.load(tsOnly.class).id(tsOnly.id).optional().isPresent()
+        dataManager.load(tsOnly.class).id(tsOnly.id).softDeletion(false).optional().isPresent()
+
 
         cleanup:
         authenticator.end()

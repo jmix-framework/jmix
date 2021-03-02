@@ -20,6 +20,7 @@ import com.haulmont.cuba.core.entity.FileDescriptor;
 import com.haulmont.cuba.gui.components.FileUploadField;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
@@ -49,6 +50,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
     public CubaDynAttrComponentGenerationStrategy(Messages messages,
                                                   UiComponents uiComponents,
                                                   DynAttrMetadata dynamicModelMetadata,
+                                                  Metadata metadata,
                                                   MsgBundleTools msgBundleTools,
                                                   AttributeOptionsLoader optionsLoader,
                                                   AttributeValidators attributeValidators,
@@ -59,7 +61,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                                                   FormatStringsRegistry formatStringsRegistry,
                                                   Icons icons,
                                                   ApplicationContext applicationContext) {
-        super(messages, uiComponents, dynamicModelMetadata, msgBundleTools, optionsLoader, attributeValidators,
+        super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader, attributeValidators,
                 windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, applicationContext);
 
         this.icons = icons;

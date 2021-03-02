@@ -41,7 +41,8 @@ public class EntityAuditValues {
             if (auditConversionService.canConvert(currentDate.getClass(), createdDateClass)) {
                 EntityValues.setCreatedDate(entity, auditConversionService.convert(currentDate, createdDateClass));
             } else {
-                logger.debug("Cannot find converter from java.util.Date to {}", createdDateClass);
+                logger.warn("Cannot set @CreatedDate for {}. Unsupported field type '{}': no converter found.",
+                        entity.getClass().getName(), createdDateClass.getName());
             }
         }
 
@@ -51,7 +52,8 @@ public class EntityAuditValues {
                 if (auditConversionService.canConvert(currentUser.getClass(), createdByClass)) {
                     EntityValues.setCreatedBy(entity, auditConversionService.convert(currentUser, createdByClass));
                 } else {
-                    logger.debug("Cannot find converter from {} to {}", currentUser.getClass().getName(), createdByClass);
+                    logger.warn("Cannot set @CreatedBy for {}. Unsupported field type '{}': no converter found.",
+                            entity.getClass().getName(), createdByClass.getName());
                 }
             } else {
                 EntityValues.setCreatedBy(entity, null);
@@ -65,7 +67,8 @@ public class EntityAuditValues {
             if (auditConversionService.canConvert(currentDate.getClass(), lastModifiedDateClass)) {
                 EntityValues.setLastModifiedDate(entity, auditConversionService.convert(currentDate, lastModifiedDateClass));
             } else {
-                logger.debug("Cannot find converter from java.util.Date to {}", lastModifiedDateClass.getName());
+                logger.warn("Cannot set @LastModifiedDate for {}. Unsupported field type '{}': no converter found.",
+                        entity.getClass().getName(), lastModifiedDateClass.getName());
             }
         }
 
@@ -75,7 +78,8 @@ public class EntityAuditValues {
                 if (auditConversionService.canConvert(user.getClass(), lastModifiedByClass)) {
                     EntityValues.setLastModifiedBy(entity, auditConversionService.convert(user, lastModifiedByClass));
                 } else {
-                    logger.debug("Cannot find converter from {} to {}", user.getClass().getName(), lastModifiedByClass);
+                    logger.warn("Cannot set @LastModifiedBy for {}. Unsupported field type '{}': no converter found.",
+                            entity.getClass().getName(), lastModifiedByClass);
                 }
             } else {
                 EntityValues.setLastModifiedBy(entity, null);

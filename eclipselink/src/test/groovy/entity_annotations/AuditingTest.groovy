@@ -19,33 +19,43 @@ package entity_annotations
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntryAuditable
-import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SystemAuthenticator
+import io.jmix.data.impl.converters.AuditConversionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.DataSpec
 import test_support.entity.auditing.AuditableSubclass
 import test_support.entity.auditing.CreatableSubclass
+import test_support.entity.auditing.IrregularAuditTypesEntity
 import test_support.entity.auditing.NotAuditableSubclass
+
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
 
 class AuditingTest extends DataSpec {
 
     @Autowired
-    DataManager dataManager
+    protected DataManager dataManager
 
     @Autowired
-    TimeSource timeSource
+    protected TimeSource timeSource
 
     @Autowired
-    SystemAuthenticator authenticator
+    protected SystemAuthenticator authenticator
 
     @Autowired
-    private CurrentAuthentication currentAuthentication;
+    protected CurrentAuthentication currentAuthentication;
 
     @Autowired
-    InMemoryUserRepository userRepository
+    protected InMemoryUserRepository userRepository
+
+    @Autowired
+    protected AuditConversionService auditConversion
 
     UserDetails admin
 
@@ -137,6 +147,29 @@ class AuditingTest extends DataSpec {
 
         cleanup:
         authenticator.end()
+    }
+
+    def "Irregular timestamp type should work"() {
+        expect:
+        auditConversion.canConvert(Date, Date)
+        auditConversion.canConvert(Date, LocalTime)
+        auditConversion.canConvert(Date, LocalDate)
+        auditConversion.canConvert(Date, LocalDateTime)
+        auditConversion.canConvert(Date, OffsetDateTime)
+
+
+        when:
+        IrregularAuditTypesEntity irregularEntity = dataManager.create(IrregularAuditTypesEntity)
+        irregularEntity = dataManager.save(irregularEntity)
+        irregularEntity.setName("test")
+        irregularEntity = dataManager.save(irregularEntity)
+        dataManager.remove(irregularEntity)
+        irregularEntity = dataManager.load(IrregularAuditTypesEntity).id(irregularEntity.id).softDeletion(false).one()
+
+        then:
+        irregularEntity.createdDate != null
+        irregularEntity.touchDate != null
+        irregularEntity.whenDeleted != null
     }
 
     static boolean beforeOrEquals(Date first, Date second) {

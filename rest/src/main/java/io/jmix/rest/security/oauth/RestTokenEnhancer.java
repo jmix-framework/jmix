@@ -16,7 +16,6 @@
 
 package io.jmix.rest.security.oauth;
 
-import io.jmix.core.session.SessionData;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
@@ -35,21 +34,20 @@ import java.util.Map;
 @Component
 public class RestTokenEnhancer implements TokenEnhancer {
     @Autowired
-    private ObjectFactory<SessionData> sessionDataFactory;
+    private ObjectFactory<HttpSession> httpSessionObjectFactory;
 
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         Map<String, Object> additionalInformation = new HashMap<>(accessToken.getAdditionalInformation());
 
-        SessionData sessionData = sessionDataFactory.getObject();
-        HttpSession session = sessionData.getHttpSession();
+        HttpSession session = httpSessionObjectFactory.getObject();
 
         additionalInformation.put("OAuth2.SESSION_ID", session.getId());
 
         DefaultOAuth2AccessToken mutableAccessToken = (DefaultOAuth2AccessToken) accessToken;
         mutableAccessToken.setAdditionalInformation(additionalInformation);
 
-        sessionData.setAttribute("OAuth2.ACCESS_TOKEN", accessToken.getValue());
+        session.setAttribute("OAuth2.ACCESS_TOKEN", accessToken.getValue());
 
         return accessToken;
     }

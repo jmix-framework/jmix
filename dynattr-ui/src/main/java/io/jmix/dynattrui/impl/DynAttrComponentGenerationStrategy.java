@@ -72,6 +72,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
     @Autowired
     public DynAttrComponentGenerationStrategy(Messages messages, UiComponents uiComponents,
                                               DynAttrMetadata dynamicModelMetadata,
+                                              Metadata metadata,
                                               MsgBundleTools msgBundleTools,
                                               AttributeOptionsLoader optionsLoader,
                                               AttributeValidators attributeValidators,
@@ -84,6 +85,7 @@ public class DynAttrComponentGenerationStrategy implements ComponentGenerationSt
         this.messages = messages;
         this.uiComponents = uiComponents;
         this.dynamicModelMetadata = dynamicModelMetadata;
+        this.metadata = metadata;
         this.msgBundleTools = msgBundleTools;
         this.optionsLoader = optionsLoader;
         this.attributeValidators = attributeValidators;

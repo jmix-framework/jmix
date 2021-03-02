@@ -19,6 +19,9 @@ package io.jmix.dynattr;
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 public enum AttributeType implements EnumClass<String> {
     STRING,
     INTEGER,
@@ -35,7 +38,13 @@ public enum AttributeType implements EnumClass<String> {
         return name();
     }
 
+    @Nullable
     public static AttributeType fromId(String id) {
-        return EnumUtils.fromIdSafe(AttributeType.class, id, null);
+        for (AttributeType attributeType : AttributeType.values()) {
+            if (Objects.equals(attributeType.getId(), id)) {
+                return attributeType;
+            }
+        }
+        return null;
     }
 }

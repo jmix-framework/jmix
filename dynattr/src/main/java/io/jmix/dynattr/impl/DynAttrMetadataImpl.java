@@ -110,8 +110,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
 
         TransactionTemplate template = storeAwareLocator.getTransactionTemplate(dynamicAttributesStore);
         template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-        //noinspection ConstantConditions
-        return template.execute(transactionStatus -> {
+
+        List<CategoryDefinition> result = template.execute(transactionStatus -> {
             EntityManager entityManager = storeAwareLocator.getEntityManager(dynamicAttributesStore);
 
             FetchPlan fetchPlan = fetchPlans.builder(Category.class)
@@ -130,6 +130,8 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
                     .map(this::buildCategoryDefinition)
                     .collect(Collectors.toList());
         });
+
+        return result == null ? Collections.emptyList() : result;
     }
 
     protected CategoryDefinition buildCategoryDefinition(Category category) {

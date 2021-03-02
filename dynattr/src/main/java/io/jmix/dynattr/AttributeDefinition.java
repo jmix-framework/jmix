@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface AttributeDefinition extends Serializable {
-    interface Configuration {
+    interface Configuration extends Serializable {
         boolean isLookup();
 
         @Nullable

@@ -359,9 +359,8 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
             return;
         }
 
-        MetaClass metaClass = metadata.getClass(entityClass);
-
         /* todo: filter support
+        MetaClass metaClass = metadata.getClass(entityClass);
         FakeFilterSupport filterSupport = new FakeFilterSupport(this, metaClass);
         Filter fakeFilter = filterSupport.createFakeFilter();
         FilterEntity filterEntity = filterSupport.createFakeFilterEntity(attribute.getFilterXml());

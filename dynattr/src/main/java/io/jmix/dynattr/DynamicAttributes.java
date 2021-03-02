@@ -151,6 +151,7 @@ public class DynamicAttributes implements Serializable {
         }
     }
 
+    @Nullable
     public Object getValue(String code) {
         ValueHolder holder = values.get(code);
         return holder == null ? null : holder.getValue();

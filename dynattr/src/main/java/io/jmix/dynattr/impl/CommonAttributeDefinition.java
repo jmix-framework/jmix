@@ -39,6 +39,8 @@ public class CommonAttributeDefinition implements AttributeDefinition {
     protected final MetaProperty metaProperty;
 
     protected static class CommonAttributeConfiguration implements AttributeDefinition.Configuration {
+        private static final long serialVersionUID = 3088284638117897678L;
+
         protected final CategoryAttribute attribute;
 
         public CommonAttributeConfiguration(CategoryAttribute attribute) {

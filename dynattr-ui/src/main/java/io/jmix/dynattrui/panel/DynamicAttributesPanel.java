@@ -171,7 +171,6 @@ public class DynamicAttributesPanel extends CompositeComponent<VBoxLayout> imple
     }
 
     protected List<AttributeDefinition> getAttributesByCategory() {
-        MetaClass metaClass = instanceContainer.getEntityMetaClass();
         Category category = categoryField.getValue();
         if (category == null) {
             return Collections.emptyList();

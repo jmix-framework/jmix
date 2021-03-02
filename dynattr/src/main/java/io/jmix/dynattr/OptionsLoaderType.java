@@ -18,9 +18,9 @@ package io.jmix.dynattr;
 
 
 import io.jmix.core.metamodel.datatype.impl.EnumClass;
-import io.jmix.core.metamodel.datatype.impl.EnumUtils;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public enum OptionsLoaderType implements EnumClass<String> {
     JPQL,
@@ -34,6 +34,11 @@ public enum OptionsLoaderType implements EnumClass<String> {
 
     @Nullable
     public static OptionsLoaderType fromId(String id) {
-        return EnumUtils.fromIdSafe(OptionsLoaderType.class, id, null);
+        for (OptionsLoaderType type : OptionsLoaderType.values()) {
+            if (Objects.equals(type.getId(), id)) {
+                return type;
+            }
+        }
+        return null;
     }
 }

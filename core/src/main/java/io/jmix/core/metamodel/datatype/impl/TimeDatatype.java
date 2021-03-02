@@ -55,7 +55,7 @@ public class TimeDatatype implements Datatype<Date>, ParameterizedDatatype {
             Date date = (Date) value;
             return Instant.ofEpochMilli(date.getTime())
                     .atZone(ZoneId.systemDefault())
-                    .toLocalDate().format(DateTimeFormatter.ISO_TIME);
+                    .toLocalTime().format(DateTimeFormatter.ISO_TIME);
         }
     }
 

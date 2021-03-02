@@ -173,7 +173,7 @@ class JmixBuildPlugin implements Plugin<Project> {
                     }
 
                     spotbugs {
-                        toolVersion = '4.0.1'
+                        toolVersion = '4.2.1'
                         ignoreFailures = false
                         omitVisitors = ['FindDoubleCheck']
                         excludeFilter = project.file(excludeFilterFilePath)

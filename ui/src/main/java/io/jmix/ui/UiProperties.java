@@ -83,7 +83,7 @@ public class UiProperties {
     int saveExportedByteArrayDataThresholdBytes;
     long webJarResourcesCacheTime;
     boolean productionMode;
-    String paginationItemsPerPageOptions;
+    List<Integer> paginationItemsPerPageOptions;
     Map<String, String> entityFieldType;
     Map<String, List<String>> entityFieldActions;
     Integer defaultPageSize;
@@ -125,7 +125,7 @@ public class UiProperties {
             @DefaultValue("URL_ROUTES") UrlHandlingMode urlHandlingMode,
             @DefaultValue("helium") String theme,
             String embeddedResourcesRoot,
-            @DefaultValue("open,o") List<String> linkHandlerActions,
+            @DefaultValue({"open", "o"}) List<String> linkHandlerActions,
             @DefaultValue("15") int tablePageLength,
             @DefaultValue("2") double tableCacheRate,
             @DefaultValue("DEFAULT") MainTabSheetMode mainTabSheetMode,
@@ -140,11 +140,11 @@ public class UiProperties {
             @DefaultValue("true") boolean htmlSanitizerEnabled,
             @DefaultValue("io.jmix.ui.icon.JmixIcon") String iconsConfig,
             @DefaultValue("true") boolean compositeMenu,
-            @DefaultValue("htm,html,jpg,png,jpeg,pdf") List<String> viewFileExtensions,
+            @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
             @DefaultValue("31536000") long webJarResourcesCacheTime, // 60 * 60 * 24 * 365
             @DefaultValue("true") boolean productionMode,
-            @DefaultValue("20, 50, 100, 500, 1000, 5000") String paginationItemsPerPageOptions,
+            @DefaultValue({"20", "50", "100", "500", "1000", "5000"}) List<Integer> paginationItemsPerPageOptions,
             @Nullable Map<String, String> entityFieldType,
             @Nullable Map<String, List<String>> entityFieldActions,
             @DefaultValue("50") Integer defaultPageSize,
@@ -479,9 +479,9 @@ public class UiProperties {
     }
 
     /**
-     * @return string that contains separated by comma options for rows per page ComboBox.
+     * @return options for rows per page ComboBox.
      */
-    public String getPaginationItemsPerPageOptions() {
+    public List<Integer> getPaginationItemsPerPageOptions() {
         return paginationItemsPerPageOptions;
     }
 

@@ -217,7 +217,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
         if (CollectionUtils.isNotEmpty(itemsPerPageOptions)) {
             processedOptions = processOptions(itemsPerPageOptions, dataBinder.getEntityMetaClass());
         } else {
-            processedOptions = processOptions(getItemsPerPageOptionsFromProperty(),
+            processedOptions = processOptions(uiProperties.getPaginationItemsPerPageOptions(),
                     dataBinder.getEntityMetaClass());
         }
 
@@ -308,22 +308,6 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
 
     protected ComboBox<Integer> getItemsPerPageComboBox() {
         return component.getItemsPerPageComboBox();
-    }
-
-    protected List<Integer> getItemsPerPageOptionsFromProperty() {
-        String maxResultsProperty = uiProperties.getPaginationItemsPerPageOptions();
-        Iterable<String> split = Splitter.on(",").trimResults().split(maxResultsProperty);
-
-        List<Integer> result = new ArrayList<>();
-        for (String option : split) {
-            try {
-                result.add(Integer.parseInt(option));
-            } catch (NumberFormatException e) {
-                throw new IllegalStateException("Cannot parse to Integer: " + option);
-            }
-        }
-
-        return result;
     }
 
     protected int getEntityMaxFetchSize(MetaClass metaClass) {

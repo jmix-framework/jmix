@@ -30,8 +30,8 @@ import io.jmix.ui.sys.ScreensHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Nullable;
 import java.io.FileNotFoundException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -59,30 +59,32 @@ public class ResourcePolicyEditorUtils {
     private ScreensHelper screensHelper;
 
     public Map<String, String> getEntityOptionsMap() {
-        TreeMap<String, String> map = metadata.getClasses().stream()
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allEntities"), "*");
+        result.putAll(metadata.getClasses().stream()
                 .collect(Collectors.toMap(
                         this::getEntityCaption,
                         MetaClass::getName,
                         (v1, v2) -> {
                             throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
                         },
-                        TreeMap::new));
-        map.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allEntities"), "*");
-        return map;
+                        TreeMap::new)));
+        return result;
     }
 
     public Map<String, String> getEntityAttributeOptionsMap(String entityName) {
         MetaClass metaClass = metadata.getClass(entityName);
-        TreeMap<String, String> map = metaClass.getProperties().stream()
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allAttributes"), "*");
+        result.putAll(metaClass.getProperties().stream()
                 .collect(Collectors.toMap(
                         this::getEntityAttributeCaption,
                         MetaProperty::getName,
                         (v1, v2) -> {
                             throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
                         },
-                        TreeMap::new));
-        map.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allAttributes"), "*");
-        return map;
+                        TreeMap::new)));
+        return result;
     }
 
     public Map<String, String> getMenuItemOptionsMap() {
@@ -95,6 +97,8 @@ public class ResourcePolicyEditorUtils {
     }
 
     public Map<String, String> getScreenOptionsMap() {
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allScreens"), "*");
         TreeMap<String, String> map = windowConfig.getWindows().stream()
                 .collect(Collectors.toMap(
                         this::getScreenCaption,
@@ -103,8 +107,8 @@ public class ResourcePolicyEditorUtils {
                             throw new RuntimeException(String.format("Duplicate key for values %s and %s", v1, v2));
                         },
                         TreeMap::new));
-        map.put(messages.getMessage(ResourcePolicyEditorUtils.class, "allScreens"), "*");
-        return map;
+        result.putAll(map);
+        return result;
     }
 
     public MenuItem findMenuItemById(String menuItemId) {

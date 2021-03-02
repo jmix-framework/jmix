@@ -25,9 +25,7 @@ public interface EmailHistoryUiRole extends io.jmix.email.role.EmailHistoryRole 
 
     String CODE = "email-history-ui";
 
-    @MenuPolicy(menuIds = {"administration", "email_SendingMessage.browse"})
-    void menus();
-
     @ScreenPolicy(screenIds = {"email_SendingMessage.browse", "ResendMessage"})
-    void screens();
+    @MenuPolicy(menuIds = {"email_SendingMessage.browse"})
+    void emailHistoryUi();
 }

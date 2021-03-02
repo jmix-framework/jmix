@@ -32,9 +32,6 @@ public interface EmailHistoryRole {
     String CODE = "email-history";
 
     @EntityPolicy(entityClass = SendingMessage.class, actions = {EntityPolicyAction.READ})
-    void entities();
-
-
     @EntityAttributePolicy(entityClass = SendingMessage.class, attributes = "*", action = EntityAttributePolicyAction.VIEW)
-    void entityAttributes();
+    void emailHistory();
 }

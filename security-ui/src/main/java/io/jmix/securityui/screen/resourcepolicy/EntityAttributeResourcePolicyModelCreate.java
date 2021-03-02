@@ -91,13 +91,15 @@ public class EntityAttributeResourcePolicyModelCreate extends MultipleResourcePo
 
         attributesDc.getMutableItems().clear();
 
-        for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
-            String attributeCaption = entry.getKey();
-            String attributeName = entry.getValue();
-            AttributeResourceModel attribute = metadata.create(AttributeResourceModel.class);
-            attribute.setName(attributeName);
-            attribute.setCaption(attributeCaption);
-            attributesDc.getMutableItems().add(attribute);
+        if (optionsMap != null) {
+            for (Map.Entry<String, String> entry : optionsMap.entrySet()) {
+                String attributeCaption = entry.getKey();
+                String attributeName = entry.getValue();
+                AttributeResourceModel attribute = metadata.create(AttributeResourceModel.class);
+                attribute.setName(attributeName);
+                attribute.setCaption(attributeCaption);
+                attributesDc.getMutableItems().add(attribute);
+            }
         }
     }
 

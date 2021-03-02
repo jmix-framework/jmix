@@ -34,7 +34,6 @@ public class ShowRoleAssignmentsAction extends SecuredListAction implements Acti
     public static final String ID = "showRoleAssignments";
 
     protected ScreenBuilders screenBuilders;
-    protected Messages messages;
 
     public ShowRoleAssignmentsAction() {
         this(ID);
@@ -51,7 +50,6 @@ public class ShowRoleAssignmentsAction extends SecuredListAction implements Acti
 
     @Autowired
     protected void setMessages(Messages messages) {
-        this.messages = messages;
         this.caption = messages.getMessage("actions.showRoleAssignments");
     }
 

@@ -28,6 +28,7 @@ import java.util.function.Predicate;
  * and JPQL.
  */
 public class RowLevelPolicy implements Serializable {
+    private static final long serialVersionUID = -2332931381828513664L;
 
     private String entityName;
 

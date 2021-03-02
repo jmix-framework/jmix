@@ -373,7 +373,7 @@ public class FetchGroupManager {
         return result;
     }
 
-    private void processFetchPlan(FetchPlan fetchPlan, FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
+    private void processFetchPlan(FetchPlan fetchPlan, @Nullable FetchGroupField parentField, Set<FetchGroupField> fetchGroupFields, boolean useFetchGroup) {
         Class<?> entityClass = fetchPlan.getEntityClass();
         MetaClass entityMetaClass = metadata.getClass(entityClass);
 
@@ -459,20 +459,20 @@ public class FetchGroupManager {
     }
 
     private FetchGroupField createFetchGroupField(Class<?> entityClass,
-                                                  FetchGroupField parentField,
+                                                  @Nullable FetchGroupField parentField,
                                                   String property) {
         return createFetchGroupField(entityClass, parentField, property, FetchMode.AUTO);
     }
 
     private FetchGroupField createFetchGroupField(Class<?> entityClass,
-                                                  FetchGroupField parentField,
+                                                  @Nullable FetchGroupField parentField,
                                                   String property,
                                                   FetchMode fetchMode) {
         return createFetchGroupField(entityClass, parentField, property, fetchMode, false);
     }
 
     private FetchGroupField createFetchGroupField(Class<?> entityClass,
-                                                  FetchGroupField parentField,
+                                                  @Nullable FetchGroupField parentField,
                                                   String property,
                                                   FetchMode fetchMode,
                                                   boolean lazyLoad) {
@@ -502,7 +502,7 @@ public class FetchGroupManager {
             this(metaClass, parentField, property, fetchMode, cacheable, false);
         }
 
-        public FetchGroupField(MetaClass metaClass, FetchGroupField parentField, String property, FetchMode fetchMode,
+        public FetchGroupField(MetaClass metaClass, @Nullable FetchGroupField parentField, String property, FetchMode fetchMode,
                                boolean cacheable, boolean lazyLoad) {
             this.metaClass = metaClass;
             this.fetchMode = fetchMode;

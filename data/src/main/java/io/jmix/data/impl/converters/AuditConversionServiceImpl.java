@@ -22,6 +22,7 @@ import org.springframework.data.convert.Jsr310Converters;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 
 /**
  * Default implementation to support common types.
@@ -35,11 +36,11 @@ public class AuditConversionServiceImpl implements AuditConversionService {
     public AuditConversionServiceImpl() {
         conversionService = new GenericConversionService();
 
-        conversionService.addConverter(Jsr310Converters.DateToLocalDateTimeConverter.INSTANCE);
-        conversionService.addConverter(Jsr310Converters.LocalDateTimeToDateConverter.INSTANCE);
+        addConverters(Jsr310Converters.getConvertersToRegister());
 
-        conversionService.addConverter(AuditConverters.DateToLongConverter.INSTANCE);
-        conversionService.addConverter(AuditConverters.LongToDateConverter.INSTANCE);
+        addConverter(AuditConverters.DateToLongConverter.INSTANCE);
+        addConverter(AuditConverters.LongToDateConverter.INSTANCE);
+        addConverter(AuditConverters.DateToOffsetDateTimeConverter.INSTANCE);
 
         conversionService.addConverter(AuditConverters.UserToStringConverter.INSTANCE);
     }
@@ -57,6 +58,12 @@ public class AuditConversionServiceImpl implements AuditConversionService {
 
     public void addConverter(Converter<?, ?> converter) {
         conversionService.addConverter(converter);
+    }
+
+    public void addConverters(Collection<Converter<?, ?>> converters) {
+        for (Converter<?, ?> converter : converters) {
+            conversionService.addConverter(converter);
+        }
     }
 
     public GenericConversionService getConversionService() {

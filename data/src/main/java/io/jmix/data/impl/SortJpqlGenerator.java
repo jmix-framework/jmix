@@ -17,6 +17,8 @@
 package io.jmix.data.impl;
 
 import com.google.common.collect.Iterables;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
 import io.jmix.core.*;

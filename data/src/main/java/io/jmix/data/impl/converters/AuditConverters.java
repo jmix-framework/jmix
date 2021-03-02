@@ -19,13 +19,17 @@ package io.jmix.data.impl.converters;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
+
+import static java.time.ZoneId.systemDefault;
 
 public class AuditConverters {
 
     public enum DateToLongConverter implements Converter<Date, Long> {
         INSTANCE;
 
+        @Override
         public Long convert(Date source) {
             return source.getTime();
         }
@@ -34,6 +38,7 @@ public class AuditConverters {
     public enum LongToDateConverter implements Converter<Long, Date> {
         INSTANCE;
 
+        @Override
         public Date convert(Long source) {
             return new Date(source);
         }
@@ -42,10 +47,19 @@ public class AuditConverters {
     public enum UserToStringConverter implements Converter<UserDetails, String> {
         INSTANCE;
 
+        @Override
         public String convert(UserDetails source) {
             return source.getUsername();
         }
     }
 
+    public enum DateToOffsetDateTimeConverter implements Converter<Date, OffsetDateTime> {
+        INSTANCE;
+
+        @Override
+        public OffsetDateTime convert(Date source) {
+            return OffsetDateTime.ofInstant(source.toInstant(), systemDefault());
+        }
+    }
 
 }

@@ -22,16 +22,14 @@ import io.jmix.core.datastore.AbstractDataStore;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.data.DataProperties;
-import io.jmix.data.PersistenceHints;
-import io.jmix.data.StoreAwareLocator;
+import io.jmix.data.*;
 import io.jmix.data.accesscontext.ReadEntityQueryContext;
 import io.jmix.data.impl.EntityChangedEventInfo;
 import io.jmix.data.impl.EntityEventManager;
 import io.jmix.data.impl.JpqlQueryBuilder;
 import io.jmix.data.impl.QueryResultsManager;
-import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.eclipselink.impl.lazyloading.LazyLoadingContext;
 import org.eclipse.persistence.exceptions.QueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,8 +256,19 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
         em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
 
-        Query query = createLoadQuery(em, context);
+        Query query = createLoadQuery(em, context, false);
         return executeQuery(query, false);
+    }
+
+    @Override
+    protected long countAllValues(ValueLoadContext context) {
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+
+        Query query = createLoadQuery(em, context, true);
+        Number result = (Number) query.getSingleResult();
+
+        return result.longValue();
     }
 
     @Override
@@ -419,7 +428,7 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         return query;
     }
 
-    protected Query createLoadQuery(EntityManager em, ValueLoadContext context) {
+    protected Query createLoadQuery(EntityManager em, ValueLoadContext context, boolean count) {
         JpqlQueryBuilder queryBuilder = jpqlQueryBuilderProvider.getObject();
 
         ValueLoadContext.Query contextQuery = context.getQuery();
@@ -427,8 +436,13 @@ public class JpaDataStore extends AbstractDataStore implements DataSortingOption
         queryBuilder.setValueProperties(context.getProperties())
                 .setQueryString(contextQuery.getQueryString())
                 .setCondition(contextQuery.getCondition())
-                .setSort(contextQuery.getSort())
                 .setQueryParameters(contextQuery.getParameters());
+
+        if (!count) {
+            queryBuilder.setSort(contextQuery.getSort());
+        } else {
+            queryBuilder.setCountQuery();
+        }
 
         Query query = queryBuilder.getQuery(em);
 

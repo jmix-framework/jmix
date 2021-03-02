@@ -2,8 +2,8 @@ package io.jmix.data.accesscontext;
 
 
 import com.google.common.base.Strings;
-import io.jmix.core.QueryTransformer;
-import io.jmix.core.QueryTransformerFactory;
+import io.jmix.data.QueryTransformer;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.core.accesscontext.AccessContext;
 import io.jmix.core.common.util.StringHelper;
 import io.jmix.core.metamodel.model.MetaClass;

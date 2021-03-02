@@ -20,5 +20,5 @@ import javax.annotation.Nullable;
 
 public interface UserManager {
 
-    void changePassword(@Nullable String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException;
+    void changePassword(String userName, @Nullable String oldPassword, @Nullable String newPassword) throws PasswordNotMatchException;
 }

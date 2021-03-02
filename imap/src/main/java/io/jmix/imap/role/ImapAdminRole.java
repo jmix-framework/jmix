@@ -37,8 +37,6 @@ public interface ImapAdminRole {
     @EntityPolicy(entityClass = ImapFolder.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ImapEventHandler.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = ImapMailBox.class, actions = {EntityPolicyAction.ALL})
-    void entities();
-
     @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapSimpleAuthentication.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapProxy.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
@@ -49,5 +47,5 @@ public interface ImapAdminRole {
     @EntityAttributePolicy(entityClass = ImapFolder.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapEventHandler.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ImapMailBox.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    void entityAttributes();
+    void imapAdmin();
 }

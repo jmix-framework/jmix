@@ -33,11 +33,9 @@ public interface ImapAdminUiRole extends ImapAdminRole {
             "imap_Message.browse",
             "imap_Message.edit",
             "imap_FolderEvent.edit"})
-    void screens();
-
-    @MenuPolicy(menuIds = {"administration",
+    @MenuPolicy(menuIds = {
             "imap-component",
             "imap_MailBox.browse",
             "imap_Message.browse"})
-    void menus();
+    void imapAdminUi();
 }

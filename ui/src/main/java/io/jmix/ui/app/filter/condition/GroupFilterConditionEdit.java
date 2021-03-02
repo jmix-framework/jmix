@@ -16,7 +16,6 @@
 
 package io.jmix.ui.app.filter.condition;
 
-import io.jmix.ui.Notifications;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.action.list.EditAction;
@@ -32,7 +31,6 @@ import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.model.InstanceLoader;
 import io.jmix.ui.screen.EditedEntityContainer;
 import io.jmix.ui.screen.Install;
 import io.jmix.ui.screen.Subscribe;
@@ -53,8 +51,6 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     @Autowired
     protected InstanceContainer<GroupFilterCondition> filterConditionDc;
     @Autowired
-    protected InstanceLoader<GroupFilterCondition> filterConditionDl;
-    @Autowired
     protected CollectionContainer<FilterCondition> filterConditionsDc;
 
     @Autowired
@@ -65,8 +61,6 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     protected Tree<FilterCondition> conditionsTree;
     @Autowired
     protected TextField<String> captionField;
-    @Autowired
-    protected Notifications notifications;
 
     @Override
     public InstanceContainer<GroupFilterCondition> getInstanceContainer() {
@@ -106,15 +100,13 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
-        conditionsTree.expandTree();
+        expandItems();
     }
 
-    @SuppressWarnings("unchecked")
     @Install(to = "conditionsTree", subject = "lookupSelectHandler")
     protected void conditionsTreeLookupSelectHandler(Collection<FilterCondition> collection) {
-        EditAction<FilterCondition> editAction = (EditAction<FilterCondition>) conditionsTree.getAction("edit");
-        if (editAction != null) {
-            editAction.execute();
+        if (getEditAction() != null) {
+            getEditAction().execute();
         }
     }
 
@@ -129,15 +121,16 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
         if (selectedCondition != null) {
             FilterCondition parent = selectedCondition.getParent();
             if (parent instanceof LogicalFilterCondition) {
-                List<FilterCondition> items = filterConditionsDc.getMutableItems();
+                List<FilterCondition> items = getCollectionContainer().getMutableItems();
                 List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
 
                 int selectedItemIndex = items.indexOf(selectedCondition);
                 int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
+                FilterCondition replacedCondition = ownConditions.get(selectedOwnItemIndex - 1);
 
-                Collections.swap(items, selectedItemIndex, selectedItemIndex - 1);
+                Collections.swap(items, selectedItemIndex, items.indexOf(replacedCondition));
                 Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex - 1);
-                updateMoveButtonsState(selectedCondition);
+                refreshMoveButtonsState(selectedCondition);
             }
         }
     }
@@ -148,15 +141,16 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
         if (selectedCondition != null) {
             FilterCondition parent = selectedCondition.getParent();
             if (parent instanceof LogicalFilterCondition) {
-                List<FilterCondition> items = filterConditionsDc.getMutableItems();
+                List<FilterCondition> items = getCollectionContainer().getMutableItems();
                 List<FilterCondition> ownConditions = ((LogicalFilterCondition) parent).getOwnFilterConditions();
 
                 int selectedItemIndex = items.indexOf(selectedCondition);
                 int selectedOwnItemIndex = ownConditions.indexOf(selectedCondition);
+                FilterCondition replacedCondition = ownConditions.get(selectedOwnItemIndex + 1);
 
-                Collections.swap(items, selectedItemIndex, selectedItemIndex + 1);
+                Collections.swap(items, selectedItemIndex, items.indexOf(replacedCondition));
                 Collections.swap(ownConditions, selectedOwnItemIndex, selectedOwnItemIndex + 1);
-                updateMoveButtonsState(selectedCondition);
+                refreshMoveButtonsState(selectedCondition);
             }
         }
     }
@@ -165,11 +159,11 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     protected void onConditionsTreeSelection(Tree.SelectionEvent<FilterCondition> event) {
         if (!event.getSelected().isEmpty()) {
             FilterCondition selectedCondition = event.getSelected().iterator().next();
-            updateMoveButtonsState(selectedCondition);
+            refreshMoveButtonsState(selectedCondition);
         }
     }
 
-    protected void updateMoveButtonsState(FilterCondition selectedCondition) {
+    protected void refreshMoveButtonsState(FilterCondition selectedCondition) {
         boolean moveUpButtonEnabled = false;
         boolean moveDownButtonEnabled = false;
         FilterCondition parent = selectedCondition.getParent();

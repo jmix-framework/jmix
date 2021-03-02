@@ -17,12 +17,13 @@
 package io.jmix.ui.app.filter.condition;
 
 import io.jmix.core.Messages;
+import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.ListComponent;
-import io.jmix.ui.component.LookupComponent;
+import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.filter.registration.FilterComponents;
 import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
@@ -67,14 +68,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     @Nullable
     public abstract ListComponent<FilterCondition> getListComponent();
 
-    public List<FilterCondition> getFilterConditions() {
-        return getCollectionContainer().getMutableItems();
-    }
-
-    public void setFilterConditions(List<FilterCondition> filterConditions) {
-        getCollectionContainer().setItems(filterConditions);
-    }
-
     public Filter.Configuration getConfiguration() {
         return configuration;
     }
@@ -85,9 +78,14 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
 
     @Subscribe
     protected void onBeforeShowEvent(BeforeShowEvent event) {
+        refreshChildrenConditions();
         initAddAction();
         initEditAction();
         initRemoveAction();
+    }
+
+    protected void refreshChildrenConditions() {
+        getCollectionContainer().setItems(logicalFilterSupport.getChildrenConditions(getEditedEntity()));
     }
 
     protected void initAddAction() {
@@ -119,17 +117,16 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
                     parent.getOwnFilterConditions().add(selectedCondition);
                     selectedCondition.setParent(parent);
 
-                    List<FilterCondition> items = getCollectionContainer().getMutableItems();
-                    items.add(selectedCondition);
-                    if (selectedCondition instanceof LogicalFilterCondition) {
-                        List<FilterCondition> childrenConditions =
-                                logicalFilterSupport.getChildrenConditions((LogicalFilterCondition) selectedCondition);
-                        items.addAll(childrenConditions);
-                    }
-
-                    refreshParentItems(selectedCondition);
+                    refreshChildrenConditions();
+                    expandItems();
                 }
             }
+        }
+    }
+
+    protected void expandItems() {
+        if (getListComponent() instanceof Tree) {
+            ((Tree<FilterCondition>) getListComponent()).expandTree();
         }
     }
 
@@ -146,11 +143,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
                     editAction.setScreenId(filterComponents.getEditScreenId(item.getClass()));
                 }
             });
-
-            if (getListComponent() instanceof LookupComponent) {
-                ((LookupComponent<?>) getListComponent())
-                        .setLookupSelectHandler(collection -> getEditAction().execute());
-            }
         }
     }
 
@@ -160,8 +152,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
             if (screen instanceof LogicalFilterConditionEdit
                     && selectedCondition instanceof LogicalFilterCondition) {
                 ((LogicalFilterConditionEdit<?>) screen).setConfiguration(configuration);
-                ((LogicalFilterConditionEdit<?>) screen).setFilterConditions(
-                        getChildrenConditionsFromContainer((LogicalFilterCondition) selectedCondition));
             }
         }
     }
@@ -169,17 +159,19 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     protected void editActionAfterCloseHandler(AfterCloseEvent afterCloseEvent) {
         Screen screen = afterCloseEvent.getScreen();
         if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)
-                && screen instanceof EditorScreen) {
-            FilterCondition filterCondition = (FilterCondition) ((EditorScreen<?>) screen).getEditedEntity();
-            refreshParentItems(filterCondition);
+                && screen instanceof EditorScreen
+                && getListComponent() != null) {
+            FilterCondition selectedCondition = getListComponent().getSingleSelected();
+            FilterCondition editedCondition = (FilterCondition) ((EditorScreen<?>) screen).getEditedEntity();
 
-            if (filterCondition instanceof LogicalFilterCondition
-                    && screen instanceof LogicalFilterConditionEdit) {
-                List<FilterCondition> mutableItems = getCollectionContainer().getMutableItems();
-                List<FilterCondition> editedConditions =
-                        getChildrenConditionsFromContainer((LogicalFilterCondition) filterCondition);
-                mutableItems.removeAll(editedConditions);
-                mutableItems.addAll(((LogicalFilterConditionEdit<?>) screen).getFilterConditions());
+            if (selectedCondition != null
+                    && selectedCondition.getParent() instanceof LogicalFilterCondition) {
+                LogicalFilterCondition parent = (LogicalFilterCondition) selectedCondition.getParent();
+                int index = parent.getOwnFilterConditions().indexOf(selectedCondition);
+                parent.getOwnFilterConditions().set(index, editedCondition);
+
+                refreshChildrenConditions();
+                expandItems();
             }
         }
     }
@@ -188,55 +180,19 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         RemoveAction<FilterCondition> removeAction = getRemoveAction();
         if (removeAction != null && getListComponent() != null) {
             removeAction.setIcon(null);
-            removeAction.setAfterActionPerformedHandler(event ->
-                    event.getItems().forEach(this::removeItemFromOwnFilterConditions));
+            removeAction.setAfterActionPerformedHandler(this::afterActionPerformedHandler);
         }
     }
 
-    protected void removeItemFromOwnFilterConditions(FilterCondition filterCondition) {
-        FilterCondition parent = filterCondition.getParent();
-        if (containerContainsParentCondition(parent)) {
-            ((LogicalFilterCondition) parent).getOwnFilterConditions().remove(filterCondition);
-        }
-    }
-
-    protected List<FilterCondition> getChildrenConditionsFromContainer(LogicalFilterCondition parent) {
-        List<FilterCondition> filterConditions = new ArrayList<>();
-        getCollectionContainer().getMutableItems().stream()
-                .filter(filterCondition -> Objects.equals(filterCondition.getParent(), parent))
-                .forEach(filterCondition -> {
-                    filterConditions.add(filterCondition);
-                    if (filterCondition instanceof LogicalFilterCondition) {
-                        filterConditions.addAll(
-                                getChildrenConditionsFromContainer((LogicalFilterCondition) filterCondition));
-                    }
-                });
-
-        return filterConditions;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void refreshParentItems(FilterCondition filterCondition) {
-        FilterCondition parent = filterCondition.getParent();
-        if (containerContainsParentCondition(parent)) {
-            int index = ((LogicalFilterCondition) parent).getOwnFilterConditions().indexOf(filterCondition);
-            if (index > -1) {
-                ((LogicalFilterCondition) parent).getOwnFilterConditions().set(index, filterCondition);
-
-                if (getInstanceContainer().getItem().equals(parent)) {
-                    getInstanceContainer().setItem((E) parent);
-                } else {
-                    getCollectionContainer().replaceItem(parent);
-                    refreshParentItems(parent);
-                }
+    protected void afterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<FilterCondition> event) {
+        event.getItems().forEach(filterCondition -> {
+            FilterCondition parent = filterCondition.getParent();
+            if (parent instanceof LogicalFilterCondition) {
+                ((LogicalFilterCondition) parent).getOwnFilterConditions().remove(filterCondition);
             }
-        }
-    }
+        });
 
-    protected boolean containerContainsParentCondition(FilterCondition parent) {
-        return parent instanceof LogicalFilterCondition
-                && (getInstanceContainer().getItem().equals(parent)
-                || getCollectionContainer().containsItem(parent));
+        refreshChildrenConditions();
     }
 
     @Subscribe

@@ -57,7 +57,6 @@ public class FilterEditAction extends FilterAction {
     protected FilterSupport filterSupport;
     protected ScreenBuilders screenBuilders;
     protected Fragments fragments;
-    protected LogicalFilterSupport logicalFilterSupport;
     protected Messages messages;
 
     public FilterEditAction() {
@@ -99,11 +98,6 @@ public class FilterEditAction extends FilterAction {
         this.fragments = fragments;
     }
 
-    @Autowired
-    public void setLogicalFilterSupport(LogicalFilterSupport logicalFilterSupport) {
-        this.logicalFilterSupport = logicalFilterSupport;
-    }
-
     @Override
     protected boolean isApplicable() {
         return super.isApplicable()
@@ -131,8 +125,6 @@ public class FilterEditAction extends FilterAction {
 
         if (editScreen instanceof LogicalFilterConditionEdit) {
             ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(currentConfiguration);
-            List<FilterCondition> filterConditions = logicalFilterSupport.getChildrenConditions(model);
-            ((LogicalFilterConditionEdit<?>) editScreen).setFilterConditions(filterConditions);
         }
 
         ScreenFragment screenFragment = filterSupport.createFilterConfigurationFragment(

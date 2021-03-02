@@ -46,8 +46,6 @@ public interface EmailTemplatesAdminRole extends ReportsRunRole {
     @EntityPolicy(entityClass = ReportEmailTemplate.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = EmailTemplate.class, actions = {EntityPolicyAction.ALL})
     @EntityPolicy(entityClass = JsonEmailTemplate.class, actions = {EntityPolicyAction.ALL})
-    void entities();
-
     @EntityAttributePolicy(entityClass = ReportValueFormat.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = ReportInputParameter.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = Report.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
@@ -60,5 +58,5 @@ public interface EmailTemplatesAdminRole extends ReportsRunRole {
     @EntityAttributePolicy(entityClass = ReportEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = EmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @EntityAttributePolicy(entityClass = JsonEmailTemplate.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
-    void entityAttributes();
+    void emailTemplatesAdmin();
 }

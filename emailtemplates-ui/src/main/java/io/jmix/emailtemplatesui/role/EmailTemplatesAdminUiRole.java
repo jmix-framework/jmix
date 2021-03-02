@@ -47,12 +47,7 @@ public interface EmailTemplatesAdminUiRole extends EmailTemplatesAdminRole, Repo
             "report_InputParametersFragment",
             "report_ReportInputParameter.edit",
             "report_ReportValueFormat.edit"})
-    void screens();
-
-    @MenuPolicy(menuIds = {"administration", "emailtemplates_EmailTemplate.browse"})
-    void menus();
-
-
+    @MenuPolicy(menuIds = {"emailtemplates_EmailTemplate.browse"})
     @SpecificPolicy(resources = {"groupsButton", "blocksButton"})
-    void specific();
+    void emailTemplatesAdminUi();
 }

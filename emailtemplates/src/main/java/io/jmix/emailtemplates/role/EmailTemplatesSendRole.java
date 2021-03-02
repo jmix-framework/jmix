@@ -36,13 +36,11 @@ public interface EmailTemplatesSendRole {
     @EntityPolicy(entityClass = EmailTemplate.class, actions = {EntityPolicyAction.READ, EntityPolicyAction.UPDATE})
     @EntityPolicy(entityClass = ParameterValue.class, actions = {EntityPolicyAction.READ})
     @EntityPolicy(entityClass = TemplateGroup.class, actions = {EntityPolicyAction.READ})
-    void entities();
-
     @EntityAttributePolicy(entityClass = TemplateReport.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
     @EntityAttributePolicy(entityClass = ReportEmailTemplate.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
     @EntityAttributePolicy(entityClass = JsonEmailTemplate.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
     @EntityAttributePolicy(entityClass = EmailTemplate.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
     @EntityAttributePolicy(entityClass = ParameterValue.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
     @EntityAttributePolicy(entityClass = TemplateGroup.class, action = EntityAttributePolicyAction.VIEW, attributes = "*")
-    void entityAttributes();
+    void emailTemplatesSend();
 }

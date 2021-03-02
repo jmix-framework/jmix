@@ -28,8 +28,6 @@ public interface EmailTemplatesSendUiRole extends EmailTemplatesSendRole {
     String CODE = "emailtemplates-send-ui";
 
     @ScreenPolicy(screenIds = {"emailtemplates_EmailTemplate.send", "emailtemplates_EmailTemplate.browse"})
-    void screens();
-
-    @MenuPolicy(menuIds = {"administration", "emailtemplates_EmailTemplate.browse"})
-    void menus();
+    @MenuPolicy(menuIds = {"emailtemplates_EmailTemplate.browse"})
+    void emailTemplatesSendUi();
 }

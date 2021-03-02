@@ -639,7 +639,7 @@ public class ServicesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext readContext = parseResponse(response);
             assertEquals("jmix_RestTestService", readContext.read("$.name"));
-            assertEquals(28, readContext.<Collection>read("$.methods").size());
+            assertEquals(29, readContext.<Collection>read("$.methods").size());
             assertEquals(2, readContext.read("$.methods[?(@.name == 'sum')].params.length()", List.class).get(0));
 
             assertEquals("number1", readContext.read("$.methods[?(@.name == 'sum')].params[0].name", List.class).get(0));

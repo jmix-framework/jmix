@@ -16,6 +16,10 @@ include 'sample-ui-widgets-addon'
 include 'sample-ui-custom-widgets'
 include 'sample-ui-theme-addon'
 include 'sample-ui-custom-theme'
+include 'charts'
+include 'charts-starter'
+include 'pivot-table'
+include 'pivot-table-starter'
 
 rootProject.children.each { p1 ->
 	p1.buildFileName = "${p1.name}.gradle"

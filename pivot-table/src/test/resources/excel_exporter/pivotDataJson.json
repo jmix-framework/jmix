@@ -1,0 +1,512 @@
+{
+  "dataNumRows": "4",
+  "dataNumCols": "6",
+  "headRows": [
+    {
+      "tableRowNumber": 0,
+      "cells": [
+        {
+          "isBold": true,
+          "colSpan": 2,
+          "rowSpan": 2,
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtAxisLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Day",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "Thu",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "Fri",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Sat",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Sun",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotalLabel pvtRowTotalLabel",
+          "colSpan": 1,
+          "rowSpan": 3,
+          "value": "Totals",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 1,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtAxisLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Time",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Dinner",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Lunch",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Dinner",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Lunch",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Dinner",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtColLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Dinner",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 2,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtAxisLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Sex",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtAxisLabel",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "Smoker",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "colSpan": 1,
+          "rowSpan": 1,
+          "type": "STRING"
+        }
+      ]
+    }
+  ],
+  "bodyRows": [
+    {
+      "tableRowNumber": 3,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Female",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "No",
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col0",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1597444089456869",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col1",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15328371507940666",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col2",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.14285714285714285",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col3",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.18773466833541927",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col4",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.14337178708763412",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row0 col5",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15987514577759485",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal rowTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15318918255461914",
+          "type": "NUMERIC"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 4,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "Yes",
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col0",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col1",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15557868133501823",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col2",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.22131147540983606",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col3",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.20060331825037708",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col4",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.14154605263157896",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row1 col5",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.21160822249093109",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal rowTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.16306234935189712",
+          "type": "NUMERIC"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 5,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 1,
+          "rowSpan": 2,
+          "value": "Male",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "No",
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col0",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col1",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15911611175722826",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col2",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.14306151645207438",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col3",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col4",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1634077117275336",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row2 col5",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15268880935555204",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal rowTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1573121500195338",
+          "type": "NUMERIC"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 6,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtRowLabel",
+          "colSpan": 2,
+          "rowSpan": 1,
+          "value": "Yes",
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col0",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "type": "STRING"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col1",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15951176255803035",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col2",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.12536690869766723",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col3",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.16686182669789226",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col4",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1318476306773854",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": false,
+          "className": "pvtVal row3 col5",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.13470366214424154",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal rowTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.13691878510474392",
+          "type": "NUMERIC"
+        }
+      ]
+    },
+    {
+      "tableRowNumber": 7,
+      "cells": [
+        {
+          "isBold": true,
+          "className": "pvtTotalLabel pvtColTotalLabel",
+          "colSpan": 3,
+          "rowSpan": 1,
+          "value": "Totals",
+          "type": "STRING"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1597444089456869",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15667950443134895",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.14951686726563826",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1854982206405694",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1464237516869096",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtTotal colTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.1520379065365422",
+          "type": "NUMERIC"
+        },
+        {
+          "isBold": true,
+          "className": "pvtGrandTotal",
+          "colSpan": 1,
+          "rowSpan": 1,
+          "value": "0.15153580224410024",
+          "type": "NUMERIC"
+        }
+      ]
+    }
+  ]
+}

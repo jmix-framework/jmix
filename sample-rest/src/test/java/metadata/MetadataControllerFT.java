@@ -55,7 +55,7 @@ public class MetadataControllerFT extends AbstractRestControllerFT {
             assertEquals("ASSOCIATION", groupFields.get("attributeType"));
             assertEquals(true, groupFields.get("mandatory"));
             assertEquals(false, groupFields.get("readOnly"));
-            assertEquals(false, groupFields.get("transient"));
+            assertEquals(true, groupFields.get("persistent"));
 
             Map<String, Object> userRolesFields = (Map<String, Object>) ctx.read("$.properties[?(@.name == 'userRoles')]", List.class).get(0);
             assertEquals("ONE_TO_MANY", userRolesFields.get("cardinality"));

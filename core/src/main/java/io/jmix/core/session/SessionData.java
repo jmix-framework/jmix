@@ -16,48 +16,32 @@
 
 package io.jmix.core.session;
 
-import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.util.Enumeration;
+import java.util.Collection;
 
 /**
- * Session scoped bean to provide {@link HttpSession} with attributes.
- **/
+ * Interface to work with current session and its attributes.
+ */
 public interface SessionData extends Serializable {
 
     /**
-     * Return all session attributes
-     **/
-    Enumeration<String> getAttributeNames();
+     * Returns all session attributes.
+     */
+    Collection<String> getAttributeNames();
 
     /**
-     * Get session attribute
-     *
-     * @param name attribute name
-     * @return attribute value
-     **/
+     * Get session attribute value.
+     */
     Object getAttribute(String name);
 
     /**
-     * Set session attribute
-     *
-     * @param name      attribute name
-     * @param attribute attribute value
-     **/
+     * Set session attribute value.
+     */
     void setAttribute(String name, Object attribute);
 
     /**
-     * Provide current session id
-     *
-     * @return current session id
-     **/
+     * Returns current session id.
+     */
     String getSessionId();
-
-    /**
-     * Provide current http session
-     *
-     * @return current http session
-     **/
-    HttpSession getHttpSession();
 }
 

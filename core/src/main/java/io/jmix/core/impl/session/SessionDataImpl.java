@@ -25,7 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpSession;
-import java.util.Enumeration;
+import java.util.Collection;
+import java.util.Collections;
 
 @Component("core_SessionData")
 @Scope(value = WebApplicationContext.SCOPE_SESSION)
@@ -37,8 +38,8 @@ public class SessionDataImpl implements SessionData {
     private ObjectFactory<HttpSession> httpSessionFactory;
 
     @Override
-    public Enumeration<String> getAttributeNames() {
-        return getHttpSession().getAttributeNames();
+    public Collection<String> getAttributeNames() {
+        return Collections.unmodifiableList(Collections.list(getHttpSession().getAttributeNames()));
     }
 
     @Nullable
@@ -57,8 +58,7 @@ public class SessionDataImpl implements SessionData {
         return getHttpSession().getId();
     }
 
-    @Override
-    public HttpSession getHttpSession() {
+    private HttpSession getHttpSession() {
         return httpSessionFactory.getObject();
     }
 }

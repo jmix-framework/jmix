@@ -160,6 +160,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * LEFT.
      *
      * @param align align
+     * @return legend
      */
     public T setAlign(Align align) {
         this.align = align;
@@ -178,6 +179,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Used if chart is Serial or XY. If not set the default value is true.
      *
      * @param autoMargins autoMargins option
+     * @return legend
      */
     public T setAutoMargins(Boolean autoMargins) {
         this.autoMargins = autoMargins;
@@ -195,6 +197,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets opacity of legend's background. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param backgroundAlpha opacity
+     * @return legend
      */
     public T setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -213,6 +216,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * If not set the default value is #FFFFFF.
      *
      * @param backgroundColor background color
+     * @return legend
      */
     public T setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -230,6 +234,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets opacity of chart's border. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param borderAlpha opacity
+     * @return legend
      */
     public T setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
@@ -248,6 +253,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * not set the default value is #000000.
      *
      * @param borderColor border color
+     * @return legend
      */
     public T setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
@@ -265,6 +271,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets distance from bottom of the chart, in pixels if legend position is set to "absolute".
      *
      * @param bottom bottom
+     * @return legend
      */
     public T setBottom(Integer bottom) {
         this.bottom = bottom;
@@ -282,6 +289,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets text color. If not set the default value is #000000.
      *
      * @param color text color
+     * @return legend
      */
     public T setColor(Color color) {
         this.color = color;
@@ -299,6 +307,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets list of legend items.
      *
      * @param data list of legend items
+     * @return legend
      */
     public T setData(List<LegendItem> data) {
         this.data = data;
@@ -309,6 +318,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Adds items.
      *
      * @param items items
+     * @return legend
      */
     public T addItems(LegendItem... items) {
         if (items != null) {
@@ -332,6 +342,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * if legend has more than one line. If not set the default value is true.
      *
      * @param equalWidths equals widths option
+     * @return legend
      */
     public T setEqualWidths(Boolean equalWidths) {
         this.equalWidths = equalWidths;
@@ -349,6 +360,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets font size. If not set the default value is 11.
      *
      * @param fontSize font size
+     * @return legend
      */
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -366,6 +378,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets horizontal space between legend item and left/right border. If not set the default value is 0.
      *
      * @param horizontalGap horizontal gap
+     * @return legend
      */
     public T setHorizontalGap(Integer horizontalGap) {
         this.horizontalGap = horizontalGap;
@@ -384,6 +397,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * If not set the default value is "[[title]]".
      *
      * @param labelText label text
+     * @return legend
      */
     public T setLabelText(String labelText) {
         this.labelText = labelText;
@@ -401,6 +415,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets distance from left side of the chart, in pixels. In case legend position is set to "absolute".
      *
      * @param left distance from left side of the chart, in pixels
+     * @return legend
      */
     public T setLeft(Integer left) {
         this.left = left;
@@ -462,6 +477,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * 	Sets marker border opacity. If not set the default value is 1.
      *
      * 	@param markerBorderAlpha marker border opacity
+     *  @return legend
      */
     public T setMarkerBorderAlpha(Double markerBorderAlpha) {
         this.markerBorderAlpha = markerBorderAlpha;
@@ -479,6 +495,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets marker border color. If not set, will use the same color as marker.
      *
      * @param markerBorderColor marker border color
+     * @return legend
      */
     public T setMarkerBorderColor(Color markerBorderColor) {
         this.markerBorderColor = markerBorderColor;
@@ -497,6 +514,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * type is line, this style will be used for line thickness. If not set the default value is 1.
      *
      * @param markerBorderThickness marker border thickness
+     * @return legend
      */
     public T setMarkerBorderThickness(Integer markerBorderThickness) {
         this.markerBorderThickness = markerBorderThickness;
@@ -514,6 +532,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets the color of the disabled marker (when the graph is hidden). If not set the default value is #AAB3B3.
      *
      * @param markerDisabledColor marker disabled color
+     * @return legend
      */
     public T setMarkerDisabledColor(Color markerDisabledColor) {
         this.markerDisabledColor = markerDisabledColor;
@@ -531,6 +550,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets space between legend marker and legend text, in pixels. If not set the default value is 5.
      *
      * @param markerLabelGap marker label gap
+     * @return legend
      */
     public T setMarkerLabelGap(Integer markerLabelGap) {
         this.markerLabelGap = markerLabelGap;
@@ -548,6 +568,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets size of the legend marker (key). If not set the default value is 16.
      *
      * @param markerSize marker size
+     * @return legend
      */
     public T setMarkerSize(Integer markerSize) {
         this.markerSize = markerSize;
@@ -566,6 +587,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * triangleLeft, triangleDown, bubble, line, none. If not set the default value is SQUARE.
      *
      * @param markerType marker type
+     * @return legend
      */
     public T setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
@@ -584,6 +606,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * automatically set to 1.
      *
      * @param maxColumns maximum number of columns
+     * @return legend
      */
     public T setMaxColumns(Integer maxColumns) {
         this.maxColumns = maxColumns;
@@ -605,6 +628,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * [[value.sum]] means that sum of all data points of value field in the selected period will be displayed.
      *
      * @param periodValueText period value text
+     * @return legend
      */
     public T setPeriodValueText(String periodValueText) {
         this.periodValueText = periodValueText;
@@ -623,6 +647,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * "absolute", you should set left and top properties too. If not set the default value is BOTTOM.
      *
      * @param position position
+     * @return legend
      */
     public T setPosition(LegendPosition position) {
         this.position = position;
@@ -641,6 +666,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * is false.
      *
      * @param reversedOrder reversed order option
+     * @return legend
      */
     public T setReversedOrder(Boolean reversedOrder) {
         this.reversedOrder = reversedOrder;
@@ -658,6 +684,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets distance from right side of the chart, in pixels if legend position is set to "absolute".
      *
      * @param right distance from right side of the chart, in pixels
+     * @return legend
      */
     public T setRight(Integer right) {
         this.right = right;
@@ -675,6 +702,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets legend item text color on roll-over. If not set the default value is #CC0000.
      *
      * @param rollOverColor roll over color
+     * @return legend
      */
     public T setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
@@ -693,6 +721,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * their opacity, so that the graph you rolled-over would be distinguished. If not set the default value is 1.
      *
      * @param rollOverGraphAlpha roll over graph alpha
+     * @return legend
      */
     public T setRollOverGraphAlpha(Double rollOverGraphAlpha) {
         this.rollOverGraphAlpha = rollOverGraphAlpha;
@@ -710,6 +739,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Set showEntries to false if you want to turn all the legend entries off. If not set the default value is true.
      *
      * @param showEntries showEntries option
+     * @return legend
      */
     public T setShowEntries(Boolean showEntries) {
         this.showEntries = showEntries;
@@ -727,6 +757,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets horizontal space between legend items, in pixels. If not set the default value is 10.
      *
      * @param spacing horizontal space between legend items, in pixels
+     * @return legend
      */
     public T setSpacing(Integer spacing) {
         this.spacing = spacing;
@@ -745,6 +776,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * default value is true.
      *
      * @param switchable switchable option
+     * @return legend
      */
     public T setSwitchable(Boolean switchable) {
         this.switchable = switchable;
@@ -762,6 +794,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets legend switch color. If not set the default value is #FFFFFF
      *
      * @param switchColor switch color
+     * @return legend
      */
     public T setSwitchColor(Color switchColor) {
         this.switchColor = switchColor;
@@ -780,6 +813,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * default value is "x".
      *
      * @param switchType legend switch type
+     * @return legend
      */
     public T setSwitchType(LegendSwitch switchType) {
         this.switchType = switchType;
@@ -796,6 +830,8 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
     /**
      * Set textClickEnabled to true if you want show/hide balloon of the graph by click on the text. Otherwise it
      * will show/hide graph/slice, if switchable is set to true. If not set the default value is false.
+     * @param textClickEnabled textClickEnabled
+     * @return legend
      */
     public T setTextClickEnabled(Boolean textClickEnabled) {
         this.textClickEnabled = textClickEnabled;
@@ -813,6 +849,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets distance from top of the chart, in pixels, if legend position is set to "absolute".
      *
      * @param top distance from top of the chart, in pixels
+     * @return legend
      */
     public T setTop(Integer top) {
         this.top = top;
@@ -832,6 +869,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * they will not be reflected in the marker. If not set the default value is false.
      *
      * @param useGraphSettings use graph settings option
+     * @return legend
      */
     public T setUseGraphSettings(Boolean useGraphSettings) {
         this.useGraphSettings = useGraphSettings;
@@ -850,6 +888,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * default value is false.
      *
      * @param useMarkerColorForLabels useMarkerColorForLabels option
+     * @return legend
      */
     public T setUseMarkerColorForLabels(Boolean useMarkerColorForLabels) {
         this.useMarkerColorForLabels = useMarkerColorForLabels;
@@ -868,6 +907,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * not set the default value is false.
      *
      * @param useMarkerColorForValues useMarkerColorForValues option
+     * @return legend
      */
     public T setUseMarkerColorForValues(Boolean useMarkerColorForValues) {
         this.useMarkerColorForValues = useMarkerColorForValues;
@@ -885,6 +925,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets alignment of the value text. Possible values are "left" and "right". If not set the default value is RIGHT.
      *
      * @param valueAlign alignment of the value text
+     * @return legend
      */
     public T setValueAlign(ValueAlign valueAlign) {
         this.valueAlign = valueAlign;
@@ -904,6 +945,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * "[[value]]".
      *
      * @param valueText value text
+     * @return legend
      */
     public T setValueText(String valueText) {
         this.valueText = valueText;
@@ -921,6 +963,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets width of the value text. If not set the default value is 50.
      *
      * @param valueWidth value width
+     * @return legend
      */
     public T setValueWidth(Integer valueWidth) {
         this.valueWidth = valueWidth;
@@ -939,6 +982,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * the default value is 10.
      *
      * @param verticalGap vertical space
+     * @return legend
      */
     public T setVerticalGap(Integer verticalGap) {
         this.verticalGap = verticalGap;
@@ -956,6 +1000,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets id of a div in case you want the legend to be placed in a separate container.
      *
      * @param divId id of a div
+     * @return legend
      */
     public T setDivId(String divId) {
         this.divId = divId;
@@ -973,6 +1018,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Specifies if legend is enabled or not. If not set the default value is true.
      *
      * @param enabled enabled option
+     * @return legend
      */
     public T setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -990,6 +1036,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets label width. If width of the label is bigger than labelWidth, it will be wrapped.
      *
      * @param labelWidth label width
+     * @return legend
      */
     public T setLabelWidth(Integer labelWidth) {
         this.labelWidth = labelWidth;
@@ -1009,6 +1056,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * return string which will be displayed as value in the legend.
      *
      * @param valueFunction JS function
+     * @return legend
      */
     public T setValueFunction(JsFunction valueFunction) {
         this.valueFunction = valueFunction;
@@ -1026,6 +1074,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets width of a legend, when position is set to absolute.
      *
      * @param width width of a legend
+     * @return legend
      */
     public T setWidth(Integer width) {
         this.width = width;
@@ -1044,6 +1093,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * more than one chart and want to align all the legends. If not set the default value is false.
      *
      * @param forceWidth force width option
+     * @return legend
      */
     public T setForceWidth(Boolean forceWidth) {
         this.forceWidth = forceWidth;
@@ -1061,6 +1111,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * Sets gradient rotation of the legend. Can be used if legend uses custom data. Set it to 0, 90, 180 or 270.
      *
      * @param gradientRotation gradient rotation of the legend
+     * @return legend
      */
     public T setGradientRotation(Integer gradientRotation) {
         this.gradientRotation = gradientRotation;
@@ -1081,6 +1132,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * all browsers and readers support this.
      *
      * @param tabIndex tab index
+     * @return legend
      */
     public T setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
@@ -1100,6 +1152,7 @@ public class AbstractLegend<T extends AbstractLegend> extends AbstractChartObjec
      * all screen readers and browsers support this. If not set the default value is "[[title]]".
      *
      * @param accessibleLabel accessible label text
+     * @return legend
      */
     public T setAccessibleLabel(String accessibleLabel) {
         this.accessibleLabel = accessibleLabel;

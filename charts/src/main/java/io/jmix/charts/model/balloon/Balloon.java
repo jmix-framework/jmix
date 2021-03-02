@@ -97,6 +97,7 @@ public class Balloon extends AbstractChartObject {
      * slice, graph, etc instead of background color. If not set the default value is true.
      *
      * @param adjustBorderColor adjust border color option
+     * @return balloon
      */
     public Balloon setAdjustBorderColor(Boolean adjustBorderColor) {
         this.adjustBorderColor = adjustBorderColor;
@@ -115,6 +116,7 @@ public class Balloon extends AbstractChartObject {
      * value is 0.3.
      *
      * @param animationDuration animation duration in seconds
+     * @return balloon
      */
     public Balloon setAnimationDuration(Double animationDuration) {
         this.animationDuration = animationDuration;
@@ -132,6 +134,7 @@ public class Balloon extends AbstractChartObject {
      * Sets balloon border opacity. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param borderAlpha border opacity
+     * @return balloon
      */
     public Balloon setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
@@ -150,6 +153,7 @@ public class Balloon extends AbstractChartObject {
      * #FFFFFF.
      *
      * @param borderColor border color
+     * @return balloon
      */
     public Balloon setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
@@ -167,6 +171,7 @@ public class Balloon extends AbstractChartObject {
      * Sets balloon border thickness. If not set the default value is 2.
      *
      * @param borderThickness border thickness
+     * @return balloon
      */
     public Balloon setBorderThickness(Integer borderThickness) {
         this.borderThickness = borderThickness;
@@ -184,6 +189,7 @@ public class Balloon extends AbstractChartObject {
      * Sets color of text in the balloon. If not set the default value is #000000.
      *
      * @param color color of the text
+     * @return balloon
      */
     public Balloon setColor(Color color) {
         this.color = color;
@@ -201,6 +207,7 @@ public class Balloon extends AbstractChartObject {
      * Sets balloon corner radius. If not set the default value is 0.
      *
      * @param cornerRadius corner radius
+     * @return balloon
      */
     public Balloon setCornerRadius(Integer cornerRadius) {
         this.cornerRadius = cornerRadius;
@@ -218,6 +225,7 @@ public class Balloon extends AbstractChartObject {
      * Sets duration of a fade out animation, in seconds. If not set the default value is 0.3.
      *
      * @param fadeOutDuration duration in seconds
+     * @return balloon
      */
     public Balloon setFadeOutDuration(Double fadeOutDuration) {
         this.fadeOutDuration = fadeOutDuration;
@@ -235,6 +243,7 @@ public class Balloon extends AbstractChartObject {
      * Sets balloon background opacity. If not set the default value is 0.8.
      *
      * @param fillAlpha background opacity
+     * @return balloon
      */
     public Balloon setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
@@ -253,6 +262,7 @@ public class Balloon extends AbstractChartObject {
      * is true this color will be used. If not set the default value is #FFFFFF.
      *
      * @param fillColor background color
+     * @return balloon
      */
     public Balloon setFillColor(Color fillColor) {
         this.fillColor = fillColor;
@@ -271,6 +281,7 @@ public class Balloon extends AbstractChartObject {
      * (this does not affect balloon behavior if ChartCursor is used). If not set the default value is true.
      *
      * @param fixedPosition fixed position option
+     * @return balloon
      */
     public Balloon setFixedPosition(Boolean fixedPosition) {
         this.fixedPosition = fixedPosition;
@@ -288,6 +299,7 @@ public class Balloon extends AbstractChartObject {
      * Sets size of text in the balloon. Chart's fontSize is used by default.
      *
      * @param fontSize font size
+     * @return balloon
      */
     public Balloon setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -305,6 +317,7 @@ public class Balloon extends AbstractChartObject {
      * Sets horizontal padding of the balloon. If not set the default value is 8.
      *
      * @param horizontalPadding horizontal padding
+     * @return balloon
      */
     public Balloon setHorizontalPadding(Integer horizontalPadding) {
         this.horizontalPadding = horizontalPadding;
@@ -322,6 +335,7 @@ public class Balloon extends AbstractChartObject {
      * Sets maximum width of a balloon.
      *
      * @param maxWidth maximum width
+     * @return balloon
      */
     public Balloon setMaxWidth(Integer maxWidth) {
         this.maxWidth = maxWidth;
@@ -341,6 +355,7 @@ public class Balloon extends AbstractChartObject {
      * to false or Chart Cursor is enabled. If not set the default value is 1.
      *
      * @param offsetX horizontal distance from mouse pointer to balloon pointer
+     * @return balloon
      */
     public Balloon setOffsetX(Integer offsetX) {
         this.offsetX = offsetX;
@@ -360,6 +375,7 @@ public class Balloon extends AbstractChartObject {
      * to false or Chart Cursor is enabled. If not set the default value is 6.
      *
      * @param offsetY vertical distance from mouse pointer to balloon pointer
+     * @return balloon
      */
     public Balloon setOffsetY(Integer offsetY) {
         this.offsetY = offsetY;
@@ -377,6 +393,7 @@ public class Balloon extends AbstractChartObject {
      * Specifies direction of a pointer. Works only if balloon drop set to true. If not set the default value is 6.
      *
      * @param pointerWidth pointer width
+     * @return balloon
      */
     public Balloon setPointerWidth(Integer pointerWidth) {
         this.pointerWidth = pointerWidth;
@@ -394,6 +411,7 @@ public class Balloon extends AbstractChartObject {
      * Sets opacity of a shadow. If not set the default value is 0.4.
      *
      * @param shadowAlpha opacity of a shadow
+     * @return balloon
      */
     public Balloon setShadowAlpha(Double shadowAlpha) {
         this.shadowAlpha = shadowAlpha;
@@ -411,6 +429,7 @@ public class Balloon extends AbstractChartObject {
      * Sets color of a shadow. If not set the default value is #000000.
      *
      * @param shadowColor shadow color
+     * @return balloon
      */
     public Balloon setShadowColor(Color shadowColor) {
         this.shadowColor = shadowColor;
@@ -429,6 +448,7 @@ public class Balloon extends AbstractChartObject {
      * is used. If you don't want the bullet near the balloon, set it to false. If not set the default value is false.
      *
      * @param showBullet show bullet option
+     * @return balloon
      */
     public Balloon setShowBullet(Boolean showBullet) {
         this.showBullet = showBullet;
@@ -446,6 +466,7 @@ public class Balloon extends AbstractChartObject {
      * Sets text alignment, possible values "left", "middle" and "right". If not set the default value is CENTER.
      *
      * @param textAlign text alignment
+     * @return balloon
      */
     public Balloon setTextAlign(Align textAlign) {
         this.textAlign = textAlign;
@@ -463,6 +484,7 @@ public class Balloon extends AbstractChartObject {
      * Sets vertical padding of the balloon. If not set the default value is 4.
      *
      * @param verticalPadding vertical padding
+     * @return balloon
      */
     public Balloon setVerticalPadding(Integer verticalPadding) {
         this.verticalPadding = verticalPadding;
@@ -481,6 +503,7 @@ public class Balloon extends AbstractChartObject {
      * the default value is true.
      *
      * @param disableMouseEvents disable mouse eventes option
+     * @return balloon
      */
     public Balloon setDisableMouseEvents(Boolean disableMouseEvents) {
         this.disableMouseEvents = disableMouseEvents;
@@ -501,6 +524,7 @@ public class Balloon extends AbstractChartObject {
      * different direction. Not supported by IE8. If not set the default value is false.
      *
      * @param drop drop option
+     * @return balloon
      */
     public Balloon setDrop(Boolean drop) {
         this.drop = drop;
@@ -519,6 +543,7 @@ public class Balloon extends AbstractChartObject {
      * true.
      *
      * @param enabled enabled option
+     * @return balloon
      */
     public Balloon setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -537,6 +562,7 @@ public class Balloon extends AbstractChartObject {
      * is DOWN.
      *
      * @param pointerOrientation pointer orientation
+     * @return balloon
      */
     public Balloon setPointerOrientation(PointerOrientation pointerOrientation) {
         this.pointerOrientation = pointerOrientation;

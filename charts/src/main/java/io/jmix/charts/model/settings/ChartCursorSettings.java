@@ -102,6 +102,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets orientation of value balloon pointer. If not set the default value is HORIZONTAL.
      *
      * @param balloonPointerOrientation orientation of value balloon pointer
+     * @return chart cursor settings
      */
     public ChartCursorSettings setBalloonPointerOrientation(BalloonPointerOrientation balloonPointerOrientation) {
         this.balloonPointerOrientation = balloonPointerOrientation;
@@ -119,6 +120,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Specifies if bullet for each graph will follow the cursor.
      *
      * @param bulletsEnabled bulletsEnabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setBulletsEnabled(Boolean bulletsEnabled) {
         this.bulletsEnabled = bulletsEnabled;
@@ -136,6 +138,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets size of bullets, following the cursor.
      *
      * @param bulletSize bullet size
+     * @return chart cursor settings
      */
     public ChartCursorSettings setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
@@ -153,6 +156,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets opacity of the category balloon.
      *
      * @param categoryBalloonAlpha opacity of the category balloon
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCategoryBalloonAlpha(Double categoryBalloonAlpha) {
         this.categoryBalloonAlpha = categoryBalloonAlpha;
@@ -170,6 +174,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets color of the category balloon.
      *
      * @param categoryBalloonColor color of the category balloon
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCategoryBalloonColor(Color categoryBalloonColor) {
         this.categoryBalloonColor = categoryBalloonColor;
@@ -197,6 +202,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * </pre>
      *
      * @param categoryBalloonDateFormats list of date formats
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCategoryBalloonDateFormats(List<DateFormat> categoryBalloonDateFormats) {
         this.categoryBalloonDateFormats = categoryBalloonDateFormats;
@@ -207,6 +213,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Adds date formats.
      *
      * @param categoryBalloonDateFormats date formats
+     * @return chart cursor settings
      */
     public ChartCursorSettings addCategoryBalloonDateFormats(DateFormat... categoryBalloonDateFormats) {
         if (categoryBalloonDateFormats != null) {
@@ -229,6 +236,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Specifies whether category balloon is enabled.
      *
      * @param categoryBalloonEnabled categoryBalloonEnabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCategoryBalloonEnabled(Boolean categoryBalloonEnabled) {
         this.categoryBalloonEnabled = categoryBalloonEnabled;
@@ -247,6 +255,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * this way. If not set the default value is "[[category]]".
      *
      * @param categoryBalloonText category balloon text
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCategoryBalloonText(String categoryBalloonText) {
         this.categoryBalloonText = categoryBalloonText;
@@ -264,6 +273,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets opacity of the cursor line.
      *
      * @param cursorAlpha opacity of the cursor line
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCursorAlpha(Double cursorAlpha) {
         this.cursorAlpha = cursorAlpha;
@@ -281,6 +291,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets color of the cursor line. If not set the default value is #FFFFFF.
      *
      * @param cursorColor color of the cursor line
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
@@ -298,6 +309,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets cursor position. Possible values: start, middle, mouse.
      *
      * @param cursorPosition cursor position
+     * @return chart cursor settings
      */
     public ChartCursorSettings setCursorPosition(CursorPosition cursorPosition) {
         this.cursorPosition = cursorPosition;
@@ -316,6 +328,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * true.
      *
      * @param enabled enabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -335,6 +348,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * feature. If not set the default value is false.
      *
      * @param fullWidth fullWidth option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setFullWidth(Boolean fullWidth) {
         this.fullWidth = fullWidth;
@@ -353,6 +367,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * its size, set this property to 1. If not set the default value is 1.7
      *
      * @param graphBulletSize size of a graph's bullet
+     * @return chart cursor settings
      */
     public ChartCursorSettings setGraphBulletSize(Double graphBulletSize) {
         this.graphBulletSize = graphBulletSize;
@@ -371,6 +386,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * set the default value is true.
      *
      * @param leaveAfterTouch leaveAfterTouch option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setLeaveAfterTouch(Boolean leaveAfterTouch) {
         this.leaveAfterTouch = leaveAfterTouch;
@@ -389,6 +405,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * want to see the balloons after he moves finger away. If not set the default value is false.
      *
      * @param leaveCursor leaveCursor option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setLeaveCursor(Boolean leaveCursor) {
         this.leaveCursor = leaveCursor;
@@ -407,6 +424,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * set the default value is false.
      *
      * @param onePanelOnly onePanelOnly option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setOnePanelOnly(Boolean onePanelOnly) {
         this.onePanelOnly = onePanelOnly;
@@ -424,6 +442,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Set pan to true and the user will be able to pan the chart instead of zooming.
      *
      * @param pan pan option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setPan(Boolean pan) {
         this.pan = pan;
@@ -442,6 +461,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * might be displayed anyway, when the user rolls-over the column or bullet. If not set the default value is false.
      *
      * @param valueBalloonsEnabled valueBalloonsEnabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setValueBalloonsEnabled(Boolean valueBalloonsEnabled) {
         this.valueBalloonsEnabled = valueBalloonsEnabled;
@@ -459,6 +479,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets opacity of value line. Will use cursorAlpha value if not set.
      *
      * @param valueLineAlpha opacity of value line
+     * @return chart cursor settings
      */
     public ChartCursorSettings setValueLineAlpha(Double valueLineAlpha) {
         this.valueLineAlpha = valueLineAlpha;
@@ -478,6 +499,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param valueLineBalloonEnabled valueLineBalloonEnabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setValueLineBalloonEnabled(Boolean valueLineBalloonEnabled) {
         this.valueLineBalloonEnabled = valueLineBalloonEnabled;
@@ -497,6 +519,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * balloon on this line by setting {@link Cursor#valueLineAxis} property. If not set the default value is false.
      *
      * @param valueLineEnabled valueLineEnabled option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setValueLineEnabled(Boolean valueLineEnabled) {
         this.valueLineEnabled = valueLineEnabled;
@@ -515,6 +538,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * automatically.
      *
      * @param zoomable zoomable option
+     * @return chart cursor settings
      */
     public ChartCursorSettings setZoomable(Boolean zoomable) {
         this.zoomable = zoomable;
@@ -532,6 +556,7 @@ public class ChartCursorSettings extends AbstractChartObject {
      * Sets text color.
      *
      * @param color text color
+     * @return chart cursor settings
      */
     public ChartCursorSettings setColor(Color color) {
         this.color = color;

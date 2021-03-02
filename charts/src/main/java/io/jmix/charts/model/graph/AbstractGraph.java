@@ -281,6 +281,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * set the default value is false.
      *
      * @param animationPlayed animation played option
+     * @return graph
      */
     public T setAnimationPlayed(Boolean animationPlayed) {
         this.animationPlayed = animationPlayed;
@@ -298,6 +299,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets graph title
      *
      * @param title graph title string
+     * @return graph
      */
     public T setTitle(String title) {
         this.title = title;
@@ -316,6 +318,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * and Radar charts can only display "line" type graphs. If not set the default value is LINE.
      *
      * @param type graph type
+     * @return graph
      */
     public T setType(GraphType type) {
         this.type = type;
@@ -333,6 +336,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the value field in your data provider.
      *
      * @param valueField value field string
+     * @return graph
      */
     public T setValueField(String valueField) {
         this.valueField = valueField;
@@ -350,6 +354,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the X field in your data provider. XY chart only.
      *
      * @param xField X field string
+     * @return graph
      */
     public T setXField(String xField) {
         this.xField = xField;
@@ -367,6 +372,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the Y field in your data provider. XY chart only.
      *
      * @param yField name of the Y field
+     * @return graph
      */
     public T setYField(String yField) {
         this.yField = yField;
@@ -384,6 +390,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the alpha field from your data provider.
      *
      * @param alphaField alpha field string
+     * @return graph
      */
     public T setAlphaField(String alphaField) {
         this.alphaField = alphaField;
@@ -401,6 +408,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets value balloon color. Will use graph or data item color if not set.
      *
      * @param balloonColor value balloon color
+     * @return graph
      */
     public T setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
@@ -420,6 +428,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * "[[value]]".
      *
      * @param balloonText balloon text
+     * @return graph
      */
     public T setBalloonText(String balloonText) {
         this.balloonText = balloonText;
@@ -438,6 +447,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * value is false;
      *
      * @param behindColumns behind columns option
+     * @return graph
      */
     public T setBehindColumns(Boolean behindColumns) {
         this.behindColumns = behindColumns;
@@ -455,6 +465,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets type of the bullets. If not set the default value is NONE.
      *
      * @param bullet bullet type
+     * @return graph
      */
     public T setBullet(BulletType bullet) {
         this.bullet = bullet;
@@ -472,6 +483,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets opacity of bullets. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param bulletAlpha opacity of bullets
+     * @return graph
      */
     public T setBulletAlpha(Double bulletAlpha) {
         this.bulletAlpha = bulletAlpha;
@@ -489,6 +501,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets	bullet border opacity. If not set the default value is 0.
      *
      * @param bulletBorderAlpha bullet border opacity
+     * @return graph
      */
     public T setBulletBorderAlpha(Double bulletBorderAlpha) {
         this.bulletBorderAlpha = bulletBorderAlpha;
@@ -506,6 +519,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets bullet border color. Will use lineColor if not set.
      *
      * @param bulletBorderColor bullet border color
+     * @return graph
      */
     public T setBulletBorderColor(Color bulletBorderColor) {
         this.bulletBorderColor = bulletBorderColor;
@@ -523,6 +537,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets bullet border thickness. If not set the default value is 2.
      *
      * @param bulletBorderThickness bullet border thickness
+     * @return graph
      */
     public T setBulletBorderThickness(Integer bulletBorderThickness) {
         this.bulletBorderThickness = bulletBorderThickness;
@@ -540,6 +555,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets bullet color. Will use lineColor if not set.
      *
      * @param bulletColor bullet color
+     * @return graph
      */
     public T setBulletColor(Color bulletColor) {
         this.bulletColor = bulletColor;
@@ -557,6 +573,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the bullet field from your data provider.
      *
      * @param bulletField bullet field string
+     * @return graph
      */
     public T setBulletField(String bulletField) {
         this.bulletField = bulletField;
@@ -575,6 +592,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * the columns. If not set the default value is 0.
      *
      * @param bulletOffset bullet offset
+     * @return graph
      */
     public T setBulletOffset(Integer bulletOffset) {
         this.bulletOffset = bulletOffset;
@@ -592,6 +610,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets bullet size. If not set the default value is 8.
      *
      * @param bulletSize bullet size
+     * @return graph
      */
     public T setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
@@ -609,6 +628,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the bullet size field from your data provider.
      *
      * @param bulletSizeField bullet size field string
+     * @return graph
      */
     public T setBulletSizeField(String bulletSizeField) {
         this.bulletSizeField = bulletSizeField;
@@ -626,6 +646,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the close field (used by candlesticks and ohlc) from your data provider.
      *
      * @param closeField close field string
+     * @return graph
      */
     public T setCloseField(String closeField) {
         this.closeField = closeField;
@@ -645,6 +666,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * If not set the default value is true.
      *
      * @param clustered clustered option
+     * @return graph
      */
     public T setClustered(Boolean clustered) {
         this.clustered = clustered;
@@ -662,6 +684,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets color of value labels. Will use chart's color if not set.
      *
      * @param color color of value labels
+     * @return graph
      */
     public T setColor(Color color) {
         this.color = color;
@@ -679,6 +702,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the color field in your data provider.
      *
      * @param colorField color field string
+     * @return graph
      */
     public T setColorField(String colorField) {
         this.colorField = colorField;
@@ -696,6 +720,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets column width for each graph individually. Value range is 0 - 1 (we set relative width, not pixel width here).
      *
      * @param columnWidth column relative width
+     * @return graph
      */
     public T setColumnWidth(Double columnWidth) {
         this.columnWidth = columnWidth;
@@ -714,6 +739,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * set the default value is true.
      *
      * @param connect connect option
+     * @return graph
      */
     public T setConnect(Boolean connect) {
         this.connect = connect;
@@ -733,6 +759,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * If not set the default value is 0.
      *
      * @param cornerRadiusTop corner radius
+     * @return graph
      */
     public T setCornerRadiusTop(Integer cornerRadiusTop) {
         this.cornerRadiusTop = cornerRadiusTop;
@@ -752,6 +779,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is 1.
      *
      * @param cursorBulletAlpha opacity of each graphs bullet
+     * @return graph
      */
     public T setCursorBulletAlpha(Double cursorBulletAlpha) {
         this.cursorBulletAlpha = cursorBulletAlpha;
@@ -769,6 +797,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets path to the image of custom bullet.
      *
      * @param customBullet path to image of custom bullet
+     * @return graph
      */
     public T setCustomBullet(String customBullet) {
         this.customBullet = customBullet;
@@ -786,6 +815,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the custom bullet field in your data provider.
      *
      * @param customBulletField custom bullet field string
+     * @return graph
      */
     public T setCustomBulletField(String customBulletField) {
         this.customBulletField = customBulletField;
@@ -803,6 +833,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets path to the image for legend marker.
      *
      * @param customMarker path to the image
+     * @return graph
      */
     public T setCustomMarker(String customMarker) {
         this.customMarker = customMarker;
@@ -821,6 +852,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * If not set the default value is 0.
      *
      * @param dashLength dash length
+     * @return graph
      */
     public T setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -840,6 +872,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * this won't work with smoothedLine graph.
      *
      * @param dashLengthField dash length field
+     * @return graph
      */
     public T setDashLengthField(String dashLengthField) {
         this.dashLengthField = dashLengthField;
@@ -857,6 +890,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the description field in your dataProvider.
      *
      * @param descriptionField description field string
+     * @return graph
      */
     public T setDescriptionField(String descriptionField) {
         this.descriptionField = descriptionField;
@@ -874,6 +908,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of error value field in your data provider.
      *
      * @param errorField error field string
+     * @return graph
      */
     public T setErrorField(String errorField) {
         this.errorField = errorField;
@@ -891,6 +926,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets opacity of fill.
      *
      * @param fillAlphas opacity of fill
+     * @return graph
      */
     public T setFillAlphas(Double fillAlphas) {
         this.fillAlphas = fillAlphas;
@@ -908,6 +944,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets list of fill colors. Will use lineColor if not set. Set more than one color to generate the gradient.
      *
      * @param fillColors list of fill colors
+     * @return graph
      */
     public T setFillColors(List<Color> fillColors) {
         this.fillColors = fillColors;
@@ -927,6 +964,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * {@link SerialChartModelImpl}.
      *
      * @param fillColorsField name of the fill colors field
+     * @return graph
      */
     public T setFillColorsField(String fillColorsField) {
         this.fillColorsField = fillColorsField;
@@ -944,6 +982,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets	size of value labels text. Will use chart's fontSize if not set.
      *
      * @param fontSize font size
+     * @return graph
      */
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -963,6 +1002,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * set the default value is false.
      *
      * @param forceGap force gap
+     * @return graph
      */
     public T setForceGap(Boolean forceGap) {
         this.forceGap = forceGap;
@@ -981,6 +1021,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * "horizontal". If not set the default value is VERTICAL.
      *
      * @param gradientOrientation gradient orientation
+     * @return graph
      */
     public T setGradientOrientation(GradientOrientation gradientOrientation) {
         this.gradientOrientation = gradientOrientation;
@@ -998,6 +1039,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Set hidden to true if the graph should be hidden. If not set the default value is false.
      *
      * @param hidden hidden option
+     * @return graph
      */
     public T setHidden(Boolean hidden) {
         this.hidden = hidden;
@@ -1016,6 +1058,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * means the bullets will always be visible. If not set the default value is 0.
      *
      * @param hideBulletsCount hide bullets count
+     * @return graph
      */
     public T setHideBulletsCount(Integer hideBulletsCount) {
         this.hideBulletsCount = hideBulletsCount;
@@ -1033,6 +1076,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the high field (used by candlesticks and ohlc) in your data provider.
      *
      * @param highField high field string
+     * @return graph
      */
     public T setHighField(String highField) {
         this.highField = highField;
@@ -1051,6 +1095,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * scrollbar's graph and need to indicate which graph should be used.
      *
      * @param id id of the graph
+     * @return graph
      */
     public T setId(String id) {
         this.id = id;
@@ -1069,6 +1114,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * axis. If not set the default value is true.
      *
      * @param includeInMinMax include in min max option
+     * @return graph
      */
     public T setIncludeInMinMax(Boolean includeInMinMax) {
         this.includeInMinMax = includeInMinMax;
@@ -1086,6 +1132,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of label color field in your data provider.
      *
      * @param labelColorField label color field string
+     * @return graph
      */
     public T setLabelColorField(String labelColorField) {
         this.labelColorField = labelColorField;
@@ -1105,6 +1152,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * value is TOP.
      *
      * @param labelPosition value label position
+     * @return graph
      */
     public T setLabelPosition(ValueLabelPosition labelPosition) {
         this.labelPosition = labelPosition;
@@ -1122,6 +1170,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets value label text. You can use tags like [[value]], [[description]], [[percents]], [[open", [[category".
      *
      * @param labelText value label text
+     * @return graph
      */
     public T setLabelText(String labelText) {
         this.labelText = labelText;
@@ -1140,6 +1189,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * is 1.
      *
      * @param legendAlpha legend marker opacity
+     * @return graph
      */
     public T setLegendAlpha(Double legendAlpha) {
         this.legendAlpha = legendAlpha;
@@ -1157,6 +1207,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets legend marker color. Will use lineColor if not set.
      *
      * @param legendColor legend marker color
+     * @return graph
      */
     public T setLegendColor(Color legendColor) {
         this.legendColor = legendColor;
@@ -1177,6 +1228,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * example: [[value.sum]] means that sum of all data points of value field in the selected period will be displayed.
      *
      * @param legendPeriodValueText legend period value text
+     * @return graph
      */
     public T setLegendPeriodValueText(String legendPeriodValueText) {
         this.legendPeriodValueText = legendPeriodValueText;
@@ -1195,6 +1247,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * You can also use custom fields from your data provider. If not set, uses {@link AbstractLegend#valueText}.
      *
      * @param legendValueText legend value text
+     * @return graph
      */
     public T setLegendValueText(String legendValueText) {
         this.legendValueText = legendValueText;
@@ -1212,6 +1265,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets	opacity of the line (or column border). Value range is 0 - 1.
      *
      * @param lineAlpha opacity of the line (or column border)
+     * @return graph
      */
     public T setLineAlpha(Double lineAlpha) {
         this.lineAlpha = lineAlpha;
@@ -1230,6 +1284,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * {@link CoordinateChartModelImpl#colors} list will be used for each subsequent graph.
      *
      * @param lineColor color of the line (or column border)
+     * @return graph
      */
     public T setLineColor(Color lineColor) {
         this.lineColor = lineColor;
@@ -1249,6 +1304,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * {@link SerialChartModelImpl}.
      *
      * @param lineColorField name of the line color field
+     * @return graph
      */
     public T setLineColorField(String lineColorField) {
         this.lineColorField = lineColorField;
@@ -1266,6 +1322,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets thickness of the graph line (or column border). If not set the default value is 1.
      *
      * @param lineThickness thickness of the graph line (or column border)
+     * @return graph
      */
     public T setLineThickness(Integer lineThickness) {
         this.lineThickness = lineThickness;
@@ -1283,6 +1340,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the low field (used by candlesticks and ohlc) in your data provider.
      *
      * @param lowField low field string
+     * @return graph
      */
     public T setLowField(String lowField) {
         this.lowField = lowField;
@@ -1301,6 +1359,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * square, circle, diamond, triangleUp, triangleDown, triangleLeft, triangleDown, bubble, line, none.
      *
      * @param markerType legend marker type
+     * @return graph
      */
     public T setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
@@ -1318,6 +1377,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets size of the bullet which value is the biggest (XY chart). If not set the default value is 50.
      *
      * @param maxBulletSize maximum bullet size
+     * @return graph
      */
     public T setMaxBulletSize(Integer maxBulletSize) {
         this.maxBulletSize = maxBulletSize;
@@ -1335,6 +1395,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets minimum size of the bullet (XY chart). If not set the default value is 4.
      *
      * @param minBulletSize minimum bullet size
+     * @return graph
      */
     public T setMinBulletSize(Integer minBulletSize) {
         this.minBulletSize = minBulletSize;
@@ -1353,6 +1414,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * for your negative values. If not set the default value is 0.
      *
      * @param negativeBase negative base
+     * @return graph
      */
     public T setNegativeBase(Double negativeBase) {
         this.negativeBase = negativeBase;
@@ -1370,6 +1432,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets fill opacity of negative part of the graph. Will use fillAlphas if not set.
      *
      * @param negativeFillAlphas negative fill alphas
+     * @return graph
      */
     public T setNegativeFillAlphas(Double negativeFillAlphas) {
         this.negativeFillAlphas = negativeFillAlphas;
@@ -1387,6 +1450,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets fill color of negative part of the graph. Will use fillColors if not set.
      *
      * @param negativeFillColors negative fill colors
+     * @return graph
      */
     public T setNegativeFillColors(List<Color> negativeFillColors) {
         this.negativeFillColors = negativeFillColors;
@@ -1405,6 +1469,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is 1.
      *
      * @param negativeLineAlpha opacity
+     * @return graph
      */
     public T setNegativeLineAlpha(Double negativeLineAlpha) {
         this.negativeLineAlpha = negativeLineAlpha;
@@ -1423,6 +1488,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * negativeLineColor is used when close value is less then open value.
      *
      * @param negativeLineColor color
+     * @return graph
      */
     public T setNegativeLineColor(Color negativeLineColor) {
         this.negativeLineColor = negativeLineColor;
@@ -1441,6 +1507,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * false.
      *
      * @param noStepRisers noStepRisers option
+     * @return graph
      */
     public T setNoStepRisers(Boolean noStepRisers) {
         this.noStepRisers = noStepRisers;
@@ -1458,6 +1525,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the open field (used by floating columns, candlesticks and ohlc) in your data provider.
      *
      * @param openField open field string
+     * @return graph
      */
     public T setOpenField(String openField) {
         this.openField = openField;
@@ -1477,6 +1545,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * your own patterns and use them. 3D bar/pie charts won't work properly with patterns.
      *
      * @param pattern pattern
+     * @return graph
      */
     public T setPattern(Pattern pattern) {
         this.pattern = pattern;
@@ -1496,6 +1565,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * patterns.
      *
      * @param patternField pattern field string
+     * @return graph
      */
     public T setPatternField(String patternField) {
         this.patternField = patternField;
@@ -1514,6 +1584,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is 1.
      *
      * @param periodSpan period span
+     * @return graph
      */
     public T setPeriodSpan(Integer periodSpan) {
         this.periodSpan = periodSpan;
@@ -1533,6 +1604,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Possible values are "start", "middle" and "end". If not set the default value is MIDDLE.
      *
      * @param pointPosition point position
+     * @return graph
      */
     public T setPointPosition(PointPosition pointPosition) {
         this.pointPosition = pointPosition;
@@ -1552,6 +1624,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is false.
      *
      * @param showAllValueLabels show all value labels option
+     * @return graph
      */
     public T setShowAllValueLabels(Boolean showAllValueLabels) {
         this.showAllValueLabels = showAllValueLabels;
@@ -1570,6 +1643,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * chart's indicator is over some series. If not set the default value is true.
      *
      * @param showBalloon show balloon option
+     * @return graph
      */
     public T setShowBalloon(Boolean showBalloon) {
         this.showBalloon = showBalloon;
@@ -1589,6 +1663,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * values will glue the balloon to top/bottom of the plot area. If not set the default value is CLOSE.
      *
      * @param showBalloonAt graphs value at which cursor is shown
+     * @return graph
      */
     public T setShowBalloonAt(ShowPositionOnCandle showBalloonAt) {
         this.showBalloonAt = showBalloonAt;
@@ -1607,6 +1682,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * the default value is false.
      *
      * @param showHandOnHover showHandOnHover option
+     * @return graph
      */
     public T setShowHandOnHover(Boolean showHandOnHover) {
         this.showHandOnHover = showHandOnHover;
@@ -1625,6 +1701,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * has stack types like "regular" or "100%". If not set the default value is true.
      *
      * @param stackable stackable option
+     * @return graph
      */
     public T setStackable(Boolean stackable) {
         this.stackable = stackable;
@@ -1642,6 +1719,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Specifies to which direction step should be drawn. Step graph only. If not set the default value is RIGHT.
      *
      * @param stepDirection step direction
+     * @return graph
      */
     public T setStepDirection(StepDirection stepDirection) {
         this.stepDirection = stepDirection;
@@ -1659,6 +1737,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets name of the URL field in your data provider.
      *
      * @param urlField the URL field string
+     * @return graph
      */
     public T setUrlField(String urlField) {
         this.urlField = urlField;
@@ -1676,6 +1755,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets target to open URLs in, i.e. "_blank", "_top", etc.
      *
      * @param urlTarget the URL target
+     * @return graph
      */
     public T setUrlTarget(String urlTarget) {
         this.urlTarget = urlTarget;
@@ -1697,6 +1777,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * value instead of comparing to previous value. If not set the default value is false.
      *
      * @param useNegativeColorIfDown useNegativeColorIfDown option
+     * @return graph
      */
     public T setUseNegativeColorIfDown(Boolean useNegativeColorIfDown) {
         this.useNegativeColorIfDown = useNegativeColorIfDown;
@@ -1715,6 +1796,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * value is true.
      *
      * @param visibleInLegend visible in legend option
+     * @return graph
      */
     public T setVisibleInLegend(Boolean visibleInLegend) {
         this.visibleInLegend = visibleInLegend;
@@ -1736,6 +1818,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * size of a bullet will change as you zoom the chart.
      *
      * @param bulletAxis bullet axis
+     * @return graph
      */
     public T setBulletAxis(String bulletAxis) {
         this.bulletAxis = bulletAxis;
@@ -1754,6 +1837,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * axis id.
      *
      * @param valueAxis value axis id
+     * @return graph
      */
     public T setValueAxis(String valueAxis) {
         this.valueAxis = valueAxis;
@@ -1771,6 +1855,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets a horizontal value axis to attach graph to. XY chart only.
      *
      * @param xAxis horizontal value axis id
+     * @return graph
      */
     public T setXAxis(String xAxis) {
         this.xAxis = xAxis;
@@ -1788,6 +1873,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets a vertical value axis id to attach graph to. XY chart only.
      *
      * @param yAxis vertical value axis id
+     * @return graph
      */
     public T setYAxis(String yAxis) {
         this.yAxis = yAxis;
@@ -1806,6 +1892,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * function should return a string which will be displayed in a balloon.
      *
      * @param balloonFunction JS function
+     * @return graph
      */
     public T setBalloonFunction(JsFunction balloonFunction) {
         this.balloonFunction = balloonFunction;
@@ -1825,6 +1912,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * and Radar chart.
      *
      * @param fillToGraph fill to graph
+     * @return graph
      */
     public T setFillToGraph(String fillToGraph) {
         this.fillToGraph = fillToGraph;
@@ -1843,6 +1931,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * area between graph and axis will be filled with color.
      *
      * @param fillToAxis id of axis
+     * @return graph
      */
     public T setFillToAxis(String fillToAxis) {
         this.fillToAxis = fillToAxis;
@@ -1861,6 +1950,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * available space.
      *
      * @param fixedColumnWidth column width
+     * @return graph
      */
     public T setFixedColumnWidth(Integer fixedColumnWidth) {
         this.fixedColumnWidth = fixedColumnWidth;
@@ -1879,6 +1969,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * this feature. This feature does not work with XY chart.
      *
      * @param gapField gap field string
+     * @return graph
      */
     public T setGapField(String gapField) {
         this.gapField = gapField;
@@ -1898,6 +1989,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * set the default value is 1.1.
      *
      * @param gapPeriod gap period
+     * @return graph
      */
     public T setGapPeriod(Double gapPeriod) {
         this.gapPeriod = gapPeriod;
@@ -1915,6 +2007,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets data label text anchor. If not set the default value is "auto".
      *
      * @param labelAnchor label anchor string
+     * @return graph
      */
     public T setLabelAnchor(String labelAnchor) {
         this.labelAnchor = labelAnchor;
@@ -1934,6 +2027,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * displayed as label.
      *
      * @param labelFunction label function
+     * @return graph
      */
     public T setLabelFunction(JsFunction labelFunction) {
         this.labelFunction = labelFunction;
@@ -1948,6 +2042,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets offset of data label. If not set the default value is 0.
      *
      * @param labelOffset label offset
+     * @return graph
      */
     public T setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
@@ -1969,6 +2064,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * value to a bigger number you can also make your lines look less jagged. If not set the default value is 1.
      *
      * @param minDistance minimum distance, in pixels
+     * @return graph
      */
     public T setMinDistance(Integer minDistance) {
         this.minDistance = minDistance;
@@ -1987,6 +2083,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * column/bar chart. If not set the default value is false.
      *
      * @param newStack newStack option
+     * @return graph
      */
     public T setNewStack(Boolean newStack) {
         this.newStack = newStack;
@@ -2005,6 +2102,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * events will be shown at the tip of the high line. If not set the default value is CLOSE.
      *
      * @param showBulletsAt position on candle
+     * @return graph
      */
     public T setShowBulletsAt(ShowPositionOnCandle showBulletsAt) {
         this.showBulletsAt = showBulletsAt;
@@ -2024,6 +2122,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * If not set the default value is false.
      *
      * @param showOnAxis showOnAxis option
+     * @return graph
      */
     public T setShowOnAxis(Boolean showOnAxis) {
         this.showOnAxis = showOnAxis;
@@ -2042,6 +2141,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is true.
      *
      * @param switchable switchable option
+     * @return graph
      */
     public T setSwitchable(Boolean switchable) {
         this.switchable = switchable;
@@ -2062,6 +2162,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * this to look good.
      *
      * @param topRadius top radius
+     * @return graph
      */
     public T setTopRadius(Integer topRadius) {
         this.topRadius = topRadius;
@@ -2080,6 +2181,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * DD, YYYY".
      *
      * @param dateFormat date format
+     * @return graph
      */
     public T setDateFormat(DateFormat dateFormat) {
         this.dateFormat = dateFormat;
@@ -2097,6 +2199,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets the rotation of a data label. If not set the default value is 0.
      *
      * @param labelRotation label rotation
+     * @return graph
      */
     public T setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
@@ -2114,6 +2217,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * Sets precision of values. Will use chart's precision if not set any.
      *
      * @param precision precision
+     * @return graph
      */
     public T setPrecision(Integer precision) {
         this.precision = precision;
@@ -2134,6 +2238,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * default value is false.
      *
      * @param proCandlesticks proCandlesticks option
+     * @return graph
      */
     public T setProCandlesticks(Boolean proCandlesticks) {
         this.proCandlesticks = proCandlesticks;
@@ -2151,6 +2256,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * If set to true, the bullet border will take the same color as graph line. If not set the default value is false.
      *
      * @param useLineColorForBulletBorder useLineColorForBulletBorder option
+     * @return graph
      */
     public T setUseLineColorForBulletBorder(Boolean useLineColorForBulletBorder) {
         this.useLineColorForBulletBorder = useLineColorForBulletBorder;
@@ -2171,6 +2277,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * [[category]] [[value]]".
      *
      * @param accessibleLabel accessible label string
+     * @return graph
      */
     public T setAccessibleLabel(String accessibleLabel) {
         this.accessibleLabel = accessibleLabel;
@@ -2189,6 +2296,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * used).
      *
      * @param balloon balloon
+     * @return graph
      */
     public T setBalloon(Balloon balloon) {
         this.balloon = balloon;
@@ -2208,6 +2316,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * touch (bullets usually are smaller and hard to hit).
      *
      * @param bulletHitAreaSize bullet hit area size
+     * @return graph
      */
     public T setBulletHitAreaSize(Integer bulletHitAreaSize) {
         this.bulletHitAreaSize = bulletHitAreaSize;
@@ -2227,6 +2336,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * points, such as bullets.
      *
      * @param classNameField class name field string
+     * @return graph
      */
     public T setClassNameField(String classNameField) {
         this.classNameField = classNameField;
@@ -2343,6 +2453,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * legend marker.
      *
      * @param legendColorFunction legend color function
+     * @return graph
      */
     public T setLegendColorFunction(JsFunction legendColorFunction) {
         this.legendColorFunction = legendColorFunction;
@@ -2362,6 +2473,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * accessibleLabel property of graph. Note, not all browsers and readers support this.
      *
      * @param tabIndex tab index
+     * @return graph
      */
     public T setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
@@ -2381,6 +2493,7 @@ public class AbstractGraph<T extends AbstractGraph> extends AbstractChartObject 
      * enabled in legend.
      *
      * @param columnIndexField column index field string
+     * @return graph
      */
     public T setColumnIndexField(String columnIndexField) {
         this.columnIndexField = columnIndexField;

@@ -40,6 +40,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Set addClassNames to true, if class names should be added to chart elements.
      *
      * @param addClassNames add class names option
+     * @return stock chart model
      */
     T setAddClassNames(Boolean addClassNames);
 
@@ -52,6 +53,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets the export menu.
      *
      * @param export export menu
+     * @return stock chart model
      */
     T setExport(Export export);
 
@@ -65,6 +67,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * time. If you want the animation to be repeated, set this property to false.
      *
      * @param animationPlayed animation played option
+     * @return stock chart model
      */
     T setAnimationPlayed(Boolean animationPlayed);
 
@@ -78,6 +81,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * set the default value is true.
      *
      * @param autoResize auto resize option
+     * @return stock chart model
      */
     T setAutoResize(Boolean autoResize);
 
@@ -90,6 +94,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets the balloon.
      *
      * @param balloon the balloon
+     * @return stock chart model
      */
     T setBalloon(Balloon balloon);
 
@@ -102,6 +107,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets settings for category axes.
      *
      * @param categoryAxesSettings category axis settings
+     * @return stock chart model
      */
     T setCategoryAxesSettings(CategoryAxesSettings categoryAxesSettings);
 
@@ -114,6 +120,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets chart cursor settings.
      *
      * @param chartCursorSettings chart cursor settings
+     * @return stock chart model
      */
     T setChartCursorSettings(ChartCursorSettings chartCursorSettings);
 
@@ -123,6 +130,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets chart scrollbar settings.
      *
      * @param chartScrollbarSettings chart scrollbar settings
+     * @return stock chart model
      */
     T setChartScrollbarSettings(ChartScrollbarSettings chartScrollbarSettings);
 
@@ -137,6 +145,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * value is "amcharts".
      *
      * @param classNamePrefix class name prefix string
+     * @return stock chart model
      */
     T setClassNamePrefix(String classNamePrefix);
 
@@ -149,6 +158,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets the list of of data sets selected for comparing.
      *
      * @param comparedDataSets compared data sets
+     * @return stock chart model
      */
     T setComparedDataSets(List<String> comparedDataSets);
 
@@ -156,6 +166,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Adds compared data sets.
      *
      * @param comparedDataSets compared data sets
+     * @return stock chart model
      */
     T addComparedDataSets(String... comparedDataSets);
 
@@ -168,6 +179,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets data date format. Please note, that two-digit years "YY" is NOT supported in this setting.
      *
      * @param dataDateFormat data date format string
+     * @return stock chart model
      */
     T setDataDateFormat(String dataDateFormat);
 
@@ -188,6 +200,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets the list of data sets.
      *
      * @param dataSets list of data sets
+     * @return stock chart model
      */
     T setDataSets(List<DataSet> dataSets);
 
@@ -195,6 +208,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Adds data sets.
      *
      * @param dataSets data sets
+     * @return stock chart model
      */
     T addDataSets(DataSet... dataSets);
 
@@ -208,6 +222,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * select/compare them.
      *
      * @param dataSetSelector data set selector
+     * @return stock chart model
      */
     T setDataSetSelector(DataSetSelector dataSetSelector);
 
@@ -222,6 +237,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * period if the chart is zoomed from the beginning or end of the data. If not set the default value is true.
      *
      * @param extendToFullPeriod extend to full period option
+     * @return stock chart model
      */
     T setExtendToFullPeriod(Boolean extendToFullPeriod);
 
@@ -234,6 +250,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets day week starts. 0 - Sunday, 1 - Monday etc. If not set the default value is 1.
      *
      * @param firstDayOfWeek first day of week
+     * @return stock chart model
      */
     T setFirstDayOfWeek(Integer firstDayOfWeek);
 
@@ -247,6 +264,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * the default value is false.
      *
      * @param glueToTheEnd glue to the end option
+     * @return stock chart model
      */
     T setGlueToTheEnd(Boolean glueToTheEnd);
 
@@ -260,6 +278,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * name used in this file, like <code>setLanguage("de")</code>.
      *
      * @param language language string
+     * @return stock chart model
      */
     T setLanguage(String language);
 
@@ -272,6 +291,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets legend settings.
      *
      * @param legendSettings legend settings
+     * @return stock chart model
      */
     T setLegendSettings(LegendSettings legendSettings);
 
@@ -284,6 +304,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets data set as main.
      *
      * @param mainDataSet main data set
+     * @return stock chart model
      */
     T setMainDataSet(String mainDataSet);
 
@@ -297,6 +318,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * false.
      *
      * @param mouseWheelScrollEnabled mouse wheel scroll option
+     * @return stock chart model
      */
     T setMouseWheelScrollEnabled(Boolean mouseWheelScrollEnabled);
 
@@ -309,6 +331,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets list of stock panels.
      *
      * @param panels list of stock panels
+     * @return stock chart model
      */
     T setPanels(List<StockPanel> panels);
 
@@ -316,6 +339,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Adds stock panels.
      *
      * @param panels stock panels
+     * @return stock chart model
      */
     T addPanels(StockPanel... panels);
 
@@ -328,6 +352,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets settings for stock panels.
      *
      * @param panelsSettings panel settings
+     * @return stock chart model
      */
     T setPanelsSettings(PanelsSettings panelsSettings);
 
@@ -340,6 +365,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Specifies absolute or relative path to amCharts files.
      *
      * @param path the path string
+     * @return stock chart model
      */
     T setPath(String path);
 
@@ -349,6 +375,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Specifies path to the folder where images like resize grips, lens and similar are.
      *
      * @param pathToImages path to images
+     * @return stock chart model
      */
     T setPathToImages(String pathToImages);
 
@@ -362,6 +389,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * predefined period buttons.
      *
      * @param periodSelector period selector
+     * @return stock chart model
      */
     T setPeriodSelector(PeriodSelector periodSelector);
 
@@ -374,6 +402,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets settings for stock events.
      *
      * @param stockEventsSettings stock events settings
+     * @return stock chart model
      */
     T setStockEventsSettings(StockEventsSettings stockEventsSettings);
 
@@ -386,6 +415,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets theme of a chart.
      *
      * @param theme the theme
+     * @return stock chart model
      */
     T setTheme(ChartTheme theme);
 
@@ -398,6 +428,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Sets settings for value axes.
      *
      * @param valueAxesSettings value axes settings
+     * @return stock chart model
      */
     T setValueAxesSettings(ValueAxesSettings valueAxesSettings);
 
@@ -410,6 +441,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * Specifies whether the chart should zoom-out when main data set is changed. If not set the default value is false.
      *
      * @param zoomOutOnDataSetChange zoom out on data set change option
+     * @return stock chart model
      */
     T setZoomOutOnDataSetChange(Boolean zoomOutOnDataSetChange);
 
@@ -423,6 +455,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * configuration.
      *
      * @param additionalFields list of additional fields
+     * @return stock chart model
      */
     T setAdditionalFields(List<String> additionalFields);
 
@@ -438,6 +471,7 @@ public interface StockChartModel<T extends StockChartModel> extends HasColors<T>
      * the chart is busy. If not set the default value is 0.
      *
      * @param processTimeout process timeout
+     * @return stock chart model
      */
     T setProcessTimeout(Integer processTimeout);
 }

@@ -40,6 +40,7 @@ public interface HasStartEffect<T> {
      * If you use chart based on {@link SlicedChartModelImpl} default value is BOUNCE.
      *
      * @param startEffect the start effect
+     * @return object with set animation effect
      */
     T setStartEffect(AnimationEffect startEffect);
 
@@ -59,6 +60,7 @@ public interface HasStartEffect<T> {
      * If you use chart based on {@link SlicedChartModelImpl} default value is 1.
      *
      * @param startDuration the start duration
+     * @return object with set duration of the animation
      */
     T setStartDuration(Double startDuration);
 }

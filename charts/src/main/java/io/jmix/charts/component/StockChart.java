@@ -55,6 +55,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock chart click events. Called when user clicks on the stock chart.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addClickListener(Consumer<StockChartClickEvent> clickListener);
 
@@ -63,6 +64,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds listener to stock chart right click events. Called when user clicks on the stock chart.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addRightClickListener(Consumer<StockChartRightClickEvent> clickListener);
 
@@ -70,6 +72,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds listener to stock event click events. Called when user clicks on the stock event.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addStockEventClickListener(Consumer<StockEventClickEvent> clickListener);
 
@@ -77,6 +80,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock event roll-out events. Called when the stock event did roll-out.
      *
      * @param rollOutListener a listener to add
+     * @return subscription
      */
     Subscription addStockEventRollOutListener(Consumer<StockEventRollOutEvent> rollOutListener);
 
@@ -84,6 +88,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds listener to stock event roll-over events. Called when the stock event did roll-over.
      *
      * @param rollOverListener a listener to add
+     * @return subscription
      */
     Subscription addStockEventRollOverListener(Consumer<StockEventRollOverEvent> rollOverListener);
 
@@ -92,6 +97,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds listener to stock chart zoom events.
      *
      * @param zoomListener a listener to add
+     * @return subscription
      */
     Subscription addZoomListener(Consumer<ZoomEvent> zoomListener);
 
@@ -99,6 +105,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to period selector change events. Called when the period selector changed.
      *
      * @param changeListener a listener
+     * @return subscription
      */
     Subscription addPeriodSelectorChangeListener(Consumer<PeriodSelectorChangeEvent> changeListener);
 
@@ -106,6 +113,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to dataset selector compare events. Called when the data set is selected for comparing.
      *
      * @param compareListener a listener to add
+     * @return subscription
      */
     Subscription addDataSetSelectorCompareListener(Consumer<DataSetSelectorCompareEvent> compareListener);
 
@@ -113,6 +121,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to dataset selector select events. Called when the dataset selector selected.
      *
      * @param selectListener a listener to add
+     * @return subscription
      */
     Subscription addDataSetSelectorSelectListener(Consumer<DataSetSelectorSelectEvent> selectListener);
 
@@ -121,6 +130,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * comparison.
      *
      * @param unCompareListener a listener to add
+     * @return subscription
      */
     Subscription addDataSetSelectorUnCompareListener(Consumer<DataSetSelectorUnCompareEvent> unCompareListener);
 
@@ -128,6 +138,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph click events. Called when user clicks on the stock graph.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphClickListener(Consumer<StockGraphClickEvent> clickListener);
 
@@ -135,6 +146,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph roll-out events. Called when the stock graph did roll-out.
      *
      * @param rollOutListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphRollOutListener(Consumer<StockGraphRollOutEvent> rollOutListener);
 
@@ -142,6 +154,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph roll-over events. Called when the stock graph did roll-over.
      *
      * @param rollOverListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphRollOverListener(Consumer<StockGraphRollOverEvent> rollOverListener);
 
@@ -149,6 +162,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph item click events. Called when user clicks on the stock graph item.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphItemClickListener(Consumer<StockGraphItemClickEvent> clickListener);
 
@@ -156,6 +170,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph item right click events. Called when user clicks on the stock graph item.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphItemRightClickListener(Consumer<StockGraphItemRightClickEvent> clickListener);
 
@@ -163,6 +178,7 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph item roll-out events. Called when the stock graph item did roll-out.
      *
      * @param rollOutListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphItemRollOutListener(Consumer<StockGraphItemRollOutEvent> rollOutListener);
 
@@ -170,12 +186,14 @@ public interface StockChart extends Component, StockChartModel<StockChart>, Comp
      * Adds a listener to stock graph item roll-over events.
      *
      * @param rollOverListener a listener to add
+     * @return subscription
      */
     Subscription addStockGraphItemRollOverListener(Consumer<StockGraphItemRollOverEvent> rollOverListener);
 
     /**
      * Set additional JSON configuration as a string.
      * This JSON can override configuration loaded from XML and from Component API.
+     * @param json additional JSON configuration
      */
     void setNativeJson(String json);
 

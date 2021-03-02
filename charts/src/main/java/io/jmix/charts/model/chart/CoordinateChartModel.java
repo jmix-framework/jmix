@@ -34,6 +34,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Sets the list of graphs belonging to this chart.
      *
      * @param graphs list of graphs
+     * @return  coordinate chart model
      */
     T setGraphs(List<Graph> graphs);
 
@@ -41,6 +42,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Adds graphs to the chart.
      *
      * @param graphs graphs
+     * @return  coordinate chart model
      */
     T addGraphs(Graph... graphs);
 
@@ -53,6 +55,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Sets list of ValueAxis. Chart creates one value axis automatically.
      *
      * @param valueAxes list of ValueAxis
+     * @return  coordinate chart model
      */
     T setValueAxes(List<ValueAxis> valueAxes);
 
@@ -60,6 +63,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Adds ValueAxes.
      *
      * @param valueAxes the value axes
+     * @return  coordinate chart model
      */
     T addValueAxes(ValueAxis... valueAxes);
 
@@ -74,6 +78,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * value axis, unless you specify a different valueAxis for the guide.
      *
      * @param guides list of guides
+     * @return  coordinate chart model
      */
     T setGuides(List<Guide> guides);
 
@@ -81,6 +86,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Adds guides.
      *
      * @param guides the guides
+     * @return  coordinate chart model
      */
     T addGuides(Guide... guides);
 
@@ -94,6 +100,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * properly with 3D charts. If not set the default value is false.
      *
      * @param gridAboveGraphs grid above graphs option
+     * @return  coordinate chart model
      */
     T setGridAboveGraphs(Boolean gridAboveGraphs);
 
@@ -107,6 +114,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * default value is true.
      *
      * @param sequencedAnimation sequenced animation option
+     * @return  coordinate chart model
      */
     T setSequencedAnimation(Boolean sequencedAnimation);
 
@@ -120,6 +128,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * columns/lines will fade in from startAlpha. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param startAlpha - the start alpha
+     * @return  coordinate chart model
      */
     T setStartAlpha(Double startAlpha);
 
@@ -132,6 +141,7 @@ public interface CoordinateChartModel<T extends CoordinateChartModel>
      * Sets target of URL. If not set the default value is "_self".
      *
      * @param urlTarget the URL target string
+     * @return  coordinate chart model
      */
     T setUrlTarget(String urlTarget);
 }

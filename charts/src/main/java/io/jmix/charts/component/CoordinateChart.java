@@ -36,6 +36,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph. Called when user clicks on the graph item.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addGraphClickListener(Consumer<GraphClickEvent> listener);
 
@@ -44,6 +45,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph item. Called when user clicks on the graph item.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addGraphItemClickListener(Consumer<GraphItemClickEvent> listener);
 
@@ -52,6 +54,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph item. Called when user clicks on the graph item.
      *
      * @param clickListener a listener to add
+     * @return subscription
      */
     Subscription addGraphItemRightClickListener(Consumer<GraphItemRightClickEvent> clickListener);
 
@@ -60,6 +63,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener to axis. Called when value of the axis zoom changed.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addAxisZoomListener(Consumer<AxisZoomEvent> listener);
 
@@ -67,6 +71,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph. Called when user rolls-out of a graph.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addRollOutGraphListener(Consumer<RollOutGraphEvent> listener);
 
@@ -74,6 +79,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph item. Called when user rolls-out of the data item.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addRollOutGraphItemListener(Consumer<RollOutGraphItemEvent> listener);
 
@@ -81,6 +87,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph. Called when user rolls-over a graph.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addRollOverGraphListener(Consumer<RollOverGraphEvent> listener);
 
@@ -88,6 +95,7 @@ public interface CoordinateChart<T extends CoordinateChart> extends Chart<T>, Co
      * Adds a listener for graph item. Called when user rolls-over data item.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addRollOverGraphItemListener(Consumer<RollOverGraphItemEvent> listener);
 

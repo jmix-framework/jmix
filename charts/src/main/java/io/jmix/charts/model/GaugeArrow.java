@@ -69,6 +69,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets opacity of an arrow. If not set the default value is 1.
      *
      * @param alpha opacity
+     * @return gauge arrow
      */
     public GaugeArrow setAlpha(Double alpha) {
         this.alpha = alpha;
@@ -86,6 +87,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets opacity of arrow border. If not set the default value is 1.
      *
      * @param borderAlpha border opacity
+     * @return gauge arrow
      */
     public GaugeArrow setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
@@ -103,6 +105,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Set clockWiseOnly to true if you need the arrow to rotate only clock-wise. If not set the default value is false.
      *
      * @param clockWiseOnly clockWiseOnly option
+     * @return gauge arrow
      */
     public GaugeArrow setClockWiseOnly(Boolean clockWiseOnly) {
         this.clockWiseOnly = clockWiseOnly;
@@ -120,6 +123,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets color of an arrow. If not set the default value is #000000.
      *
      * @param color color
+     * @return gauge arrow
      */
     public GaugeArrow setColor(Color color) {
         this.color = color;
@@ -137,6 +141,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets inner radius of an arrow. If not set the default value is 0.
      *
      * @param innerRadius inner radius
+     * @return gauge arrow
      */
     public GaugeArrow setInnerRadius(String innerRadius) {
         this.innerRadius = innerRadius;
@@ -154,6 +159,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets opacity of a nail, holding the arrow. If not set the default value is 1.
      *
      * @param nailAlpha opacity
+     * @return gauge arrow
      */
     public GaugeArrow setNailAlpha(Double nailAlpha) {
         this.nailAlpha = nailAlpha;
@@ -171,6 +177,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets opacity of nail border. If not set the default value is 0.
      *
      * @param nailBorderAlpha opacity
+     * @return gauge arrow
      */
     public GaugeArrow setNailBorderAlpha(Double nailBorderAlpha) {
         this.nailBorderAlpha = nailBorderAlpha;
@@ -188,6 +195,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets thickness of nail border. If not set the default value is 1.
      *
      * @param nailBorderThickness thickness
+     * @return gauge arrow
      */
     public GaugeArrow setNailBorderThickness(Integer nailBorderThickness) {
         this.nailBorderThickness = nailBorderThickness;
@@ -205,6 +213,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets radius of a nail, holding the arrow. If not set the default value is 8.
      *
      * @param nailRadius radius
+     * @return gauge arrow
      */
     public GaugeArrow setNailRadius(Integer nailRadius) {
         this.nailRadius = nailRadius;
@@ -222,6 +231,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets radius of an arrow. If not set the default value is 90%.
      *
      * @param radius radius
+     * @return gauge arrow
      */
     public GaugeArrow setRadius(String radius) {
         this.radius = radius;
@@ -239,6 +249,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets width of arrow root. If not set the default value is 8.
      *
      * @param startWidth width
+     * @return gauge arrow
      */
     public GaugeArrow setStartWidth(Integer startWidth) {
         this.startWidth = startWidth;
@@ -256,6 +267,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets axis of the arrow. If you don't set any axis, the first axis of a chart will be used.
      *
      * @param axis axis id
+     * @return gauge arrow
      */
     public GaugeArrow setAxis(String axis) {
         this.axis = axis;
@@ -271,6 +283,8 @@ public class GaugeArrow extends AbstractChartObject {
 
     /**
      * Sets unique id of an arrow.
+     * @param id unique id of an arrow
+     * @return gauge arrow
      */
     public GaugeArrow setId(String id) {
         this.id = id;
@@ -288,6 +302,7 @@ public class GaugeArrow extends AbstractChartObject {
      * Sets value to which the arrow should point at.
      *
      * @param value value
+     * @return gauge arrow
      */
     public GaugeArrow setValue(Double value) {
         this.value = value;

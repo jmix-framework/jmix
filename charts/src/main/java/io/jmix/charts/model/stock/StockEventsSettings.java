@@ -57,6 +57,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets opacity of bullet background. If not set the default value is 1.
      *
      * @param backgroundAlpha opacity
+     * @return stock event settings
      */
     public StockEventsSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -74,6 +75,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets color of bullet background. If not set the default value is #DADADA.
      *
      * @param backgroundColor color
+     * @return stock event settings
      */
     public StockEventsSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -91,6 +93,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets color for a roll-over balloon. If not set the default value is #CC0000.
      *
      * @param balloonColor balloon color
+     * @return stock event settings
      */
     public StockEventsSettings setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
@@ -108,6 +111,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets opacity of bullet border. If not set the default value is 1.
      *
      * @param borderAlpha opacity
+     * @return stock event settings
      */
     public StockEventsSettings setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
@@ -125,6 +129,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets bullet border color. If not set the default value is #888888.
      *
      * @param borderColor color
+     * @return stock event settings
      */
     public StockEventsSettings setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
@@ -142,6 +147,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets roll-over background color. If not set the default value is #CC0000.
      *
      * @param rollOverColor color
+     * @return stock event settings
      */
     public StockEventsSettings setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
@@ -159,6 +165,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Allows placing event bullets at "open", "close", "low", "high" values. If not set the default value is "close".
      *
      * @param showAt showAt string
+     * @return stock event settings
      */
     public StockEventsSettings setShowAt(String showAt) {
         this.showAt = showAt;
@@ -176,6 +183,7 @@ public class StockEventsSettings extends AbstractChartObject {
      * Sets type of bullet. If not set the default value is SIGN.
      *
      * @param type type
+     * @return stock event settings
      */
     public StockEventsSettings setType(StockEventType type) {
         this.type = type;

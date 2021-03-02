@@ -102,6 +102,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * set the default value is false.
      *
      * @param comparable comparable option
+     * @return stock graph
      */
     public StockGraph setComparable(Boolean comparable) {
         this.comparable = comparable;
@@ -120,6 +121,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * provider, but toField from FieldMapping object.
      *
      * @param compareField compare field
+     * @return stock graph
      */
     public StockGraph setCompareField(String compareField) {
         this.compareField = compareField;
@@ -138,6 +140,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * value of selected period when data sets are compared. If not set the default value is false.
      *
      * @param compareFromStart compareFromStart option
+     * @return stock graph
      */
     public StockGraph setCompareFromStart(Boolean compareFromStart) {
         this.compareFromStart = compareFromStart;
@@ -156,6 +159,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * instead of using old-style properties like compareGraphBulletBorderThickness.
      *
      * @param compareGraph graph
+     * @return stock graph
      */
     public StockGraph setCompareGraph(Graph compareGraph) {
         this.compareGraph = compareGraph;
@@ -173,6 +177,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets balloon color of comparing graph.
      *
      * @param compareGraphBalloonColor color
+     * @return stock graph
      */
     public StockGraph setCompareGraphBalloonColor(Color compareGraphBalloonColor) {
         this.compareGraphBalloonColor = compareGraphBalloonColor;
@@ -192,6 +197,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * compared data sets only. Use balloonFunction for main data set's graphs.
      *
      * @param compareGraphBalloonFunction JS function
+     * @return stock graph
      */
     public StockGraph setCompareGraphBalloonFunction(JsFunction compareGraphBalloonFunction) {
         this.compareGraphBalloonFunction = compareGraphBalloonFunction;
@@ -209,6 +215,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets balloon text of comparing graph.
      *
      * @param compareGraphBalloonText text
+     * @return stock graph
      */
     public StockGraph setCompareGraphBalloonText(String compareGraphBalloonText) {
         this.compareGraphBalloonText = compareGraphBalloonText;
@@ -227,6 +234,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * triangleLeft, triangleRight, bubble
      *
      * @param compareGraphBullet compare graph bullet string
+     * @return stock graph
      */
     public StockGraph setCompareGraphBullet(String compareGraphBullet) {
         this.compareGraphBullet = compareGraphBullet;
@@ -244,6 +252,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets opacity of bullet border of comparing graph.
      *
      * @param compareGraphBulletBorderAlpha opacity
+     * @return stock graph
      */
     public StockGraph setCompareGraphBulletBorderAlpha(Double compareGraphBulletBorderAlpha) {
         this.compareGraphBulletBorderAlpha = compareGraphBulletBorderAlpha;
@@ -261,6 +270,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets color of bullet border of comparing graph.
      *
      * @param compareGraphBulletBorderColor color
+     * @return stock graph
      */
     public StockGraph setCompareGraphBulletBorderColor(Color compareGraphBulletBorderColor) {
         this.compareGraphBulletBorderColor = compareGraphBulletBorderColor;
@@ -278,6 +288,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets thickness of bullet border of comparing graph.
      *
      * @param compareGraphBulletBorderThickness thickness
+     * @return stock graph
      */
     public StockGraph setCompareGraphBulletBorderThickness(Integer compareGraphBulletBorderThickness) {
         this.compareGraphBulletBorderThickness = compareGraphBulletBorderThickness;
@@ -295,6 +306,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets color of compared graphs bullets.
      *
      * @param compareGraphBulletColor color
+     * @return stock graph
      */
     public StockGraph setCompareGraphBulletColor(Color compareGraphBulletColor) {
         this.compareGraphBulletColor = compareGraphBulletColor;
@@ -312,6 +324,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets bullet size of comparing graph.
      *
      * @param compareGraphBulletSize bullet size
+     * @return stock graph
      */
     public StockGraph setCompareGraphBulletSize(Integer compareGraphBulletSize) {
         this.compareGraphBulletSize = compareGraphBulletSize;
@@ -329,6 +342,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets corner radius of comparing graph (if type is "column").
      *
      * @param compareGraphCornerRadiusTop corner radius
+     * @return stock graph
      */
     public StockGraph setCompareGraphCornerRadiusTop(Integer compareGraphCornerRadiusTop) {
         this.compareGraphCornerRadiusTop = compareGraphCornerRadiusTop;
@@ -346,6 +360,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets dash length of compare graph.
      *
      * @param compareGraphDashLength dash length
+     * @return stock graph
      */
     public StockGraph setCompareGraphDashLength(Integer compareGraphDashLength) {
         this.compareGraphDashLength = compareGraphDashLength;
@@ -363,6 +378,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets fill alpha of comparing graph.
      *
      * @param compareGraphFillAlphas fill alpha
+     * @return stock graph
      */
     public StockGraph setCompareGraphFillAlphas(Double compareGraphFillAlphas) {
         this.compareGraphFillAlphas = compareGraphFillAlphas;
@@ -380,6 +396,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets list of fill colors of comparing graph.
      *
      * @param compareGraphFillColors list of fill colors
+     * @return stock graph
      */
     public StockGraph setCompareGraphFillColors(List<Color> compareGraphFillColors) {
         this.compareGraphFillColors = compareGraphFillColors;
@@ -397,6 +414,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets opacity of comparing graph line.
      *
      * @param compareGraphLineAlpha opacity
+     * @return stock graph
      */
     public StockGraph setCompareGraphLineAlpha(Double compareGraphLineAlpha) {
         this.compareGraphLineAlpha = compareGraphLineAlpha;
@@ -414,6 +432,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets color of compare graph (by default data set color is used).
      *
      * @param compareGraphLineColor color
+     * @return stock graph
      */
     public StockGraph setCompareGraphLineColor(Color compareGraphLineColor) {
         this.compareGraphLineColor = compareGraphLineColor;
@@ -431,6 +450,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets thickness of compare graph.
      *
      * @param compareGraphLineThickness thickness
+     * @return stock graph
      */
     public StockGraph setCompareGraphLineThickness(Integer compareGraphLineThickness) {
         this.compareGraphLineThickness = compareGraphLineThickness;
@@ -449,6 +469,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * default value is LINE.
      *
      * @param compareGraphType type
+     * @return stock graph
      */
     public StockGraph setCompareGraphType(GraphType compareGraphType) {
         this.compareGraphType = compareGraphType;
@@ -467,6 +488,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * default value is true.
      *
      * @param compareGraphVisibleInLegend compareGraphVisibleInLegend option
+     * @return stock graph
      */
     public StockGraph setCompareGraphVisibleInLegend(Boolean compareGraphVisibleInLegend) {
         this.compareGraphVisibleInLegend = compareGraphVisibleInLegend;
@@ -484,6 +506,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * Sets period value. When data is grouped to periods, the graph must know which period value should be used.
      *
      * @param periodValue period value
+     * @return stock graph
      */
     public StockGraph setPeriodValue(StockGraphValue periodValue) {
         this.periodValue = periodValue;
@@ -506,6 +529,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * value.
      *
      * @param recalculateValue recalculate value
+     * @return stock graph
      */
     public StockGraph setRecalculateValue(StockGraphValue recalculateValue) {
         this.recalculateValue = recalculateValue;
@@ -524,6 +548,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * value is false.
      *
      * @param showEventsOnComparedGraphs showEventsOnComparedGraphs option
+     * @return stock graph
      */
     public StockGraph setShowEventsOnComparedGraphs(Boolean showEventsOnComparedGraphs) {
         this.showEventsOnComparedGraphs = showEventsOnComparedGraphs;
@@ -545,6 +570,7 @@ public class StockGraph extends AbstractGraph<StockGraph> {
      * not set. If not set the default value is true.
      *
      * @param useDataSetColors useDataSetColors option
+     * @return stock graph
      */
     public StockGraph setUseDataSetColors(Boolean useDataSetColors) {
         this.useDataSetColors = useDataSetColors;

@@ -34,6 +34,7 @@ public interface SlicedChart<T extends SlicedChart> extends Chart<T>, SlicedChar
      * Adds a listener for a slice. Called when user clicks on the slice.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addSliceClickListener(Consumer<SliceClickEvent> listener);
 
@@ -41,6 +42,7 @@ public interface SlicedChart<T extends SlicedChart> extends Chart<T>, SlicedChar
      * Adds a listener for a slice. Called when user clicks on the slice.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addSliceRightClickListener(Consumer<SliceRightClickEvent> listener);
 
@@ -48,6 +50,7 @@ public interface SlicedChart<T extends SlicedChart> extends Chart<T>, SlicedChar
      * Adds a listener for a slice. Called when the slice did pull-in.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addSlicePullInListener(Consumer<SlicePullInEvent> listener);
 
@@ -55,6 +58,7 @@ public interface SlicedChart<T extends SlicedChart> extends Chart<T>, SlicedChar
      * Adds a listener for a slice. Called when the slice did pull-out.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addSlicePullOutListener(Consumer<SlicePullOutEvent> listener);
 }

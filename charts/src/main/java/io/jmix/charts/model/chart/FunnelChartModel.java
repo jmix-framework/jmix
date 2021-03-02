@@ -33,6 +33,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * "[[title]]:[[value]]\n[[description]]".
      *
      * @param balloonText balloon text string
+     * @return funnel chart model
      */
     T setBalloonText(String balloonText);
 
@@ -46,6 +47,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * default value is 100%.
      *
      * @param baseWidth the base width
+     * @return funnel chart model
      */
     T setBaseWidth(String baseWidth);
 
@@ -59,6 +61,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * should increase left or right margin in order labels to be visible. If not set the default value is CENTER.
      *
      * @param labelPosition the label position
+     * @return funnel chart model
      */
     T setLabelPosition(LabelPosition labelPosition);
 
@@ -73,6 +76,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * by using additionalFields. If not set the default value is "[[title]]: [[value]]".
      *
      * @param labelText label text string
+     * @return funnel chart model
      */
     T setLabelText(String labelText);
 
@@ -86,6 +90,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * it look like pyramid. If not set the default value is "0".
      *
      * @param neckHeight the neck height
+     * @return funnel chart model
      */
     T setNeckHeight(String neckHeight);
 
@@ -99,6 +104,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * it look like pyramid. If not set the default value is "0".
      *
      * @param neckWidth the neck width
+     * @return funnel chart model
      */
     T setNeckWidth(String neckWidth);
 
@@ -111,6 +117,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * Sets the distance by which slice should be pulled when user clicks on it. If not set the default value is 30.
      *
      * @param pullDistance the pull distance
+     * @return funnel chart model
      */
     T setPullDistance(String pullDistance);
 
@@ -124,6 +131,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * default value is 0.
      *
      * @param startX the start X
+     * @return funnel chart model
      */
     T setStartX(Integer startX);
 
@@ -137,6 +145,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * default value is 0.
      *
      * @param startY the start Y
+     * @return funnel chart model
      */
     T setStartY(Integer startY);
 
@@ -150,6 +159,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * if you want the area of a slice to represent value. If not set the default value is HEIGHT.
      *
      * @param valueRepresents the value represents
+     * @return funnel chart model
      */
     T setValueRepresents(FunnelValueRepresentation valueRepresents);
 
@@ -163,6 +173,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * is false.
      *
      * @param rotate rotate option
+     * @return funnel chart model
      */
     T setRotate(Boolean rotate);
 
@@ -176,6 +187,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * not set the default value is 0.
      *
      * @param angle the angle
+     * @return funnel chart model
      */
     T setAngle(Integer angle);
 
@@ -189,6 +201,7 @@ public interface FunnelChartModel<T extends FunnelChartModel> extends SlicedChar
      * neckHeight/neckWidth will become 0 if you set these properties to bigger than 0 values.
      *
      * @param depth3D the depth 3D
+     * @return funnel chart model
      */
     T setDepth3D(Integer depth3D);
 }

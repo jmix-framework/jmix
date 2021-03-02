@@ -141,6 +141,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis opacity. If not set the default value is 1.
      *
      * @param axisAlpha opacity
+     * @return gauge axis
      */
     public GaugeAxis setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
@@ -158,6 +159,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis color. If not set the default value is #000000.
      *
      * @param axisColor color
+     * @return gauge axis
      */
     public GaugeAxis setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
@@ -175,6 +177,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets thickness of the axis outline. If not set the default value is 1.
      *
      * @param axisThickness axis thickness
+     * @return gauge axis
      */
     public GaugeAxis setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
@@ -192,6 +195,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets opacity of band fills. If not set the default value is 1.
      *
      * @param bandAlpha opacity
+     * @return gauge axis
      */
     public GaugeAxis setBandAlpha(Double bandAlpha) {
         this.bandAlpha = bandAlpha;
@@ -209,6 +213,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets opacity of band outlines. If not set the default value is 0.
      *
      * @param bandOutlineAlpha opacity
+     * @return gauge axis
      */
     public GaugeAxis setBandOutlineAlpha(Double bandOutlineAlpha) {
         this.bandOutlineAlpha = bandOutlineAlpha;
@@ -226,6 +231,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets color of band outlines. If not set the default value is #000000.
      *
      * @param bandOutlineColor color
+     * @return gauge axis
      */
     public GaugeAxis setBandOutlineColor(Color bandOutlineColor) {
         this.bandOutlineColor = bandOutlineColor;
@@ -243,6 +249,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets thickness of band outlines. If not set the default value is 0.
      *
      * @param bandOutlineThickness thickness
+     * @return gauge axis
      */
     public GaugeAxis setBandOutlineThickness(Integer bandOutlineThickness) {
         this.bandOutlineThickness = bandOutlineThickness;
@@ -260,6 +267,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets text displayed below the axis center.
      *
      * @param bottomText bottom text
+     * @return gauge axis
      */
     public GaugeAxis setBottomText(String bottomText) {
         this.bottomText = bottomText;
@@ -277,6 +285,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Set bottomTextBold to false if text shouldn't be bold. If not set the default value is true.
      *
      * @param bottomTextBold bottomTextBold option
+     * @return gauge axis
      */
     public GaugeAxis setBottomTextBold(Boolean bottomTextBold) {
         this.bottomTextBold = bottomTextBold;
@@ -294,6 +303,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets bottom text color.
      *
      * @param bottomTextColor color
+     * @return gauge axis
      */
     public GaugeAxis setBottomTextColor(Color bottomTextColor) {
         this.bottomTextColor = bottomTextColor;
@@ -311,6 +321,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets font size of bottom text.
      *
      * @param bottomTextFontSize font size
+     * @return gauge axis
      */
     public GaugeAxis setBottomTextFontSize(Integer bottomTextFontSize) {
         this.bottomTextFontSize = bottomTextFontSize;
@@ -328,6 +339,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets Y offset of bottom text. If not set the default value is 0.
      *
      * @param bottomTextYOffset Y offset
+     * @return gauge axis
      */
     public GaugeAxis setBottomTextYOffset(Integer bottomTextYOffset) {
         this.bottomTextYOffset = bottomTextYOffset;
@@ -345,6 +357,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets X position of the axis, relative to the center of the gauge. If not set the default value is 0%.
      *
      * @param centerX X position of the axis
+     * @return gauge axis
      */
     public GaugeAxis setCenterX(String centerX) {
         this.centerX = centerX;
@@ -362,6 +375,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets Y position of the axis, relative to the center of the gauge. If not set the default value is 0%.
      *
      * @param centerY Y position of the axis
+     * @return gauge axis
      */
     public GaugeAxis setCenterY(String centerY) {
         this.centerY = centerY;
@@ -379,6 +393,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis end angle. Valid values are from - 180 to 180. If not set the default value is 120.
      *
      * @param endAngle angle
+     * @return gauge axis
      */
     public GaugeAxis setEndAngle(Integer endAngle) {
         this.endAngle = endAngle;
@@ -396,6 +411,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis end (maximum) value.
      *
      * @param endValue end value
+     * @return gauge axis
      */
     public GaugeAxis setEndValue(Double endValue) {
         this.endValue = endValue;
@@ -413,6 +429,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Set gridInside to false if grid shouldn't be drawn inside the axis. If not set the default value is true.
      *
      * @param gridInside gridInside option
+     * @return gauge axis
      */
     public GaugeAxis setGridInside(Boolean gridInside) {
         this.gridInside = gridInside;
@@ -430,6 +447,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Set inside to false if labels should be placed outside the axis. If not set the default value is true.
      *
      * @param inside inside option
+     * @return gauge axis
      */
     public GaugeAxis setInside(Boolean inside) {
         this.inside = inside;
@@ -447,6 +465,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets frequency of labels. If not set the default value is 1.
      *
      * @param labelFrequency frequency
+     * @return gauge axis
      */
     public GaugeAxis setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
@@ -464,6 +483,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets distance from axis to the labels. If not set the default value is 15.
      *
      * @param labelOffset label offset
+     * @return gauge axis
      */
     public GaugeAxis setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
@@ -481,6 +501,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets interval, at which minor ticks should be placed.
      *
      * @param minorTickInterval minor tick interval
+     * @return gauge axis
      */
     public GaugeAxis setMinorTickInterval(Double minorTickInterval) {
         this.minorTickInterval = minorTickInterval;
@@ -498,6 +519,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets length of a minor tick. If not set the default value is 5.
      *
      * @param minorTickLength length
+     * @return gauge axis
      */
     public GaugeAxis setMinorTickLength(Integer minorTickLength) {
         this.minorTickLength = minorTickLength;
@@ -515,6 +537,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis radius. If not set the default value is 95%.
      *
      * @param radius radius
+     * @return gauge axis
      */
     public GaugeAxis setRadius(String radius) {
         this.radius = radius;
@@ -532,6 +555,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Set showFirstLabel to false if the first label shouldn't be shown. If not set the default value is true.
      *
      * @param showFirstLabel showFirstLabel option
+     * @return gauge axis
      */
     public GaugeAxis setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
@@ -549,6 +573,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Set showLastLabel to false if the last label shouldn't be shown. If not set the default value is true.
      *
      * @param showLastLabel showLastLabel option
+     * @return gauge axis
      */
     public GaugeAxis setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
@@ -566,6 +591,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis start angle. Valid values are from - 180 to 180. If not set the default value is -120.
      *
      * @param startAngle start angle
+     * @return gauge axis
      */
     public GaugeAxis setStartAngle(Integer startAngle) {
         this.startAngle = startAngle;
@@ -583,6 +609,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets axis start (minimum) value. If not set the default value is 0.
      *
      * @param startValue start value
+     * @return gauge axis
      */
     public GaugeAxis setStartValue(Double startValue) {
         this.startValue = startValue;
@@ -600,6 +627,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets opacity of axis ticks. If not set the default value is 1.
      *
      * @param tickAlpha opacity
+     * @return gauge axis
      */
     public GaugeAxis setTickAlpha(Double tickAlpha) {
         this.tickAlpha = tickAlpha;
@@ -617,6 +645,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets color of axis ticks. If not set the default value is #555555.
      *
      * @param tickColor tick color
+     * @return gauge axis
      */
     public GaugeAxis setTickColor(Color tickColor) {
         this.tickColor = tickColor;
@@ -634,6 +663,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets length of a major tick. If not set the default value is 10.
      *
      * @param tickLength tick length
+     * @return gauge axis
      */
     public GaugeAxis setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
@@ -651,6 +681,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets tick thickness. If not set the default value is 1.
      *
      * @param tickThickness tick thickness
+     * @return gauge axis
      */
     public GaugeAxis setTickThickness(Integer tickThickness) {
         this.tickThickness = tickThickness;
@@ -668,6 +699,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets text displayed above the axis center.
      *
      * @param topText top text
+     * @return gauge axis
      */
     public GaugeAxis setTopText(String topText) {
         this.topText = topText;
@@ -685,6 +717,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets topTextBold to false if text shouldn't be bold. If not set the default value is true.
      *
      * @param topTextBold topTextBold option
+     * @return gauge axis
      */
     public GaugeAxis setTopTextBold(Boolean topTextBold) {
         this.topTextBold = topTextBold;
@@ -702,6 +735,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets color of top text.
      *
      * @param topTextColor color
+     * @return gauge axis
      */
     public GaugeAxis setTopTextColor(Color topTextColor) {
         this.topTextColor = topTextColor;
@@ -719,6 +753,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets font size of top text.
      *
      * @param topTextFontSize font size
+     * @return gauge axis
      */
     public GaugeAxis setTopTextFontSize(Integer topTextFontSize) {
         this.topTextFontSize = topTextFontSize;
@@ -736,6 +771,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets Y offset of top text. If not set the default value is 0.
      *
      * @param topTextYOffset Y offset
+     * @return gauge axis
      */
     public GaugeAxis setTopTextYOffset(Integer topTextYOffset) {
         this.topTextYOffset = topTextYOffset;
@@ -753,6 +789,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets a string which can be placed next to axis labels.
      *
      * @param unit unit string
+     * @return gauge axis
      */
     public GaugeAxis setUnit(String unit) {
         this.unit = unit;
@@ -770,6 +807,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets position of the unit. If not set the default value is RIGHT.
      *
      * @param unitPosition unit position
+     * @return gauge axis
      */
     public GaugeAxis setUnitPosition(UnitPosition unitPosition) {
         this.unitPosition = unitPosition;
@@ -787,6 +825,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets interval, at which ticks with values should be placed.
      *
      * @param valueInterval value interval
+     * @return gauge axis
      */
     public GaugeAxis setValueInterval(Integer valueInterval) {
         this.valueInterval = valueInterval;
@@ -804,6 +843,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets list of bands.
      *
      * @param bands list of bands
+     * @return gauge axis
      */
     public GaugeAxis setBands(List<GaugeBand> bands) {
         this.bands = bands;
@@ -814,6 +854,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Adds bands.
      *
      * @param bands bands
+     * @return gauge axis
      */
     public GaugeAxis addBands(GaugeBand... bands) {
         if (bands != null) {
@@ -837,6 +878,7 @@ public class GaugeAxis extends AbstractChartObject {
      * choose a proper gridCount which would result grids at round numbers. If not set the default value is 5.
      *
      * @param gridCount number of grid lines
+     * @return gauge axis
      */
     public GaugeAxis setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -854,6 +896,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets unique id of an axis.
      *
      * @param id id
+     * @return gauge axis
      */
     public GaugeAxis setId(String id) {
         this.id = id;
@@ -871,6 +914,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets labelsEnabled to false if labels on the axis shouldn't be shown. If not set the default value is true.
      *
      * @param labelsEnabled labelsEnabled option
+     * @return gauge axis
      */
     public GaugeAxis setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
@@ -889,6 +933,7 @@ public class GaugeAxis extends AbstractChartObject {
      * the default value is false.
      *
      * @param usePrefixes usePrefixes option
+     * @return gauge axis
      */
     public GaugeAxis setUsePrefixes(Boolean usePrefixes) {
         this.usePrefixes = usePrefixes;
@@ -907,6 +952,7 @@ public class GaugeAxis extends AbstractChartObject {
      * labelFunction(value);
      *
      * @param labelFunction JS function
+     * @return gauge axis
      */
     public GaugeAxis setLabelFunction(JsFunction labelFunction) {
         this.labelFunction = labelFunction;
@@ -924,6 +970,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets labels color of the axis.
      *
      * @param color color
+     * @return gauge axis
      */
     public GaugeAxis setColor(Color color) {
         this.color = color;
@@ -941,6 +988,7 @@ public class GaugeAxis extends AbstractChartObject {
      * Sets font size for axis labels.
      *
      * @param fontSize font size
+     * @return gauge axis
      */
     public GaugeAxis setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -959,6 +1007,7 @@ public class GaugeAxis extends AbstractChartObject {
      * will be darker than the original, and positive number means the color will be lighter.
      *
      * @param bandGradientRatio list gradient ratios
+     * @return gauge axis
      */
     public GaugeAxis setBandGradientRatio(List<Float> bandGradientRatio) {
         this.bandGradientRatio = bandGradientRatio;

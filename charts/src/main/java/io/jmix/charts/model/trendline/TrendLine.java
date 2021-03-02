@@ -85,6 +85,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets balloon text. When set, enables displaying a roll-over balloon.
      *
      * @param balloonText balloon text
+     * @return trend line
      */
     public TrendLine setBalloonText(String balloonText) {
         this.balloonText = balloonText;
@@ -102,6 +103,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets dash length. If not set the default value is 0.
      *
      * @param dashLength dash length
+     * @return trend line
      */
     public TrendLine setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -120,6 +122,7 @@ public class TrendLine extends AbstractChartObject {
      * parse dates.
      *
      * @param finalCategory final category string
+     * @return trend line
      */
     public TrendLine setFinalCategory(String finalCategory) {
         this.finalCategory = finalCategory;
@@ -137,6 +140,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets date to which trend line should be drawn.
      *
      * @param finalDate final date
+     * @return trend line
      */
     public TrendLine setFinalDate(Date finalDate) {
         this.finalDate = finalDate;
@@ -154,6 +158,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets value at which trend line should end.
      *
      * @param finalValue final value
+     * @return trend line
      */
     public TrendLine setFinalValue(Double finalValue) {
         this.finalValue = finalValue;
@@ -171,6 +176,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets X value at which trend line should end. Used by XY chart only.
      *
      * @param finalXValue final X value
+     * @return trend line
      */
     public TrendLine setFinalXValue(Double finalXValue) {
         this.finalXValue = finalXValue;
@@ -189,6 +195,7 @@ public class TrendLine extends AbstractChartObject {
      * parse dates.
      *
      * @param initialCategory initial category
+     * @return trend line
      */
     public TrendLine setInitialCategory(String initialCategory) {
         this.initialCategory = initialCategory;
@@ -206,6 +213,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets date from which trend line should start.
      *
      * @param initialDate initial date
+     * @return trend line
      */
     public TrendLine setInitialDate(Date initialDate) {
         this.initialDate = initialDate;
@@ -223,6 +231,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets value from which trend line should start.
      *
      * @param initialValue initial value
+     * @return trend line
      */
     public TrendLine setInitialValue(Double initialValue) {
         this.initialValue = initialValue;
@@ -240,6 +249,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets X value from which trend line should start. Used by XY chart only
      *
      * @param initialXValue initial X value
+     * @return trend line
      */
     public TrendLine setInitialXValue(Double initialXValue) {
         this.initialXValue = initialXValue;
@@ -258,6 +268,7 @@ public class TrendLine extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param aProtected isProtected option
+     * @return trend line
      */
     public TrendLine setProtected(Boolean aProtected) {
         isProtected = aProtected;
@@ -275,6 +286,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets line opacity. If not set the default value is 1.
      *
      * @param lineAlpha opacity
+     * @return trend line
      */
     public TrendLine setLineAlpha(Double lineAlpha) {
         this.lineAlpha = lineAlpha;
@@ -292,6 +304,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets line color. If not set the default value is #00CC00.
      *
      * @param lineColor color
+     * @return trend line
      */
     public TrendLine setLineColor(Color lineColor) {
         this.lineColor = lineColor;
@@ -309,6 +322,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets line thickness. If not set the default value is 1.
      *
      * @param lineThickness thickness
+     * @return trend line
      */
     public TrendLine setLineThickness(Integer lineThickness) {
         this.lineThickness = lineThickness;
@@ -326,6 +340,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets value axis of the trend line. Will use first value axis of the chart if not set any.
      *
      * @param valueAxis value axis id
+     * @return trend line
      */
     public TrendLine setValueAxis(String valueAxis) {
         this.valueAxis = valueAxis;
@@ -343,6 +358,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets X axis of the trend line. Will use first X axis of the chart if not set any. Used by XY chart only.
      *
      * @param valueAxisX value axis X id
+     * @return trend line
      */
     public TrendLine setValueAxisX(String valueAxisX) {
         this.valueAxisX = valueAxisX;
@@ -360,6 +376,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets unique id of a trend line.
      *
      * @param id id
+     * @return trend line
      */
     public TrendLine setId(String id) {
         this.id = id;
@@ -377,6 +394,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets an image to the end of a trend line.
      *
      * @param finalImage final image
+     * @return trend line
      */
     public TrendLine setFinalImage(Image finalImage) {
         this.finalImage = finalImage;
@@ -394,6 +412,7 @@ public class TrendLine extends AbstractChartObject {
      * Sets an image to the beginning of a trend line.
      *
      * @param initialImage initial image
+     * @return trend line
      */
     public TrendLine setInitialImage(Image initialImage) {
         this.initialImage = initialImage;

@@ -69,6 +69,7 @@ public class PeriodSelector extends AbstractChartObject {
      * "DD-MM-YYYY".
      *
      * @param dateFormat date format string
+     * @return period selector
      */
     public PeriodSelector setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
@@ -86,6 +87,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets text displayed next to "from" date input field. If not set the default value is "From:".
      *
      * @param fromText from text
+     * @return period selector
      */
     public PeriodSelector setFromText(String fromText) {
         this.fromText = fromText;
@@ -104,6 +106,7 @@ public class PeriodSelector extends AbstractChartObject {
      * hidden. If not set the default value is true.
      *
      * @param hideOutOfScopePeriods hideOutOfScopePeriods option
+     * @return period selector
      */
     public PeriodSelector setHideOutOfScopePeriods(Boolean hideOutOfScopePeriods) {
         this.hideOutOfScopePeriods = hideOutOfScopePeriods;
@@ -122,6 +125,7 @@ public class PeriodSelector extends AbstractChartObject {
      * set the default value is true.
      *
      * @param inputFieldsEnabled inputFieldsEnabled option
+     * @return period selector
      */
     public PeriodSelector setInputFieldsEnabled(Boolean inputFieldsEnabled) {
         this.inputFieldsEnabled = inputFieldsEnabled;
@@ -140,6 +144,7 @@ public class PeriodSelector extends AbstractChartObject {
      * default value is 100.
      *
      * @param inputFieldWidth width
+     * @return period selector
      */
     public PeriodSelector setInputFieldWidth(Integer inputFieldWidth) {
         this.inputFieldWidth = inputFieldWidth;
@@ -157,6 +162,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets list of predefined periods.
      *
      * @param periods list of periods
+     * @return period selector
      */
     public PeriodSelector setPeriods(List<Period> periods) {
         this.periods = periods;
@@ -167,6 +173,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Adds periods.
      *
      * @param periods periods
+     * @return period selector
      */
     public PeriodSelector addPeriods(Period... periods) {
         if (periods != null) {
@@ -189,6 +196,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets text displayed next to predefined period buttons. If not set the default value is "Zoom:".
      *
      * @param periodsText periods text
+     * @return period selector
      */
     public PeriodSelector setPeriodsText(String periodsText) {
         this.periodsText = periodsText;
@@ -206,6 +214,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets position. If not set the default value is BOTTOM.
      *
      * @param position position
+     * @return period selector
      */
     public PeriodSelector setPosition(Position position) {
         this.position = position;
@@ -224,6 +233,7 @@ public class PeriodSelector extends AbstractChartObject {
      * the default value is false.
      *
      * @param selectFromStart selectFromStart option
+     * @return period selector
      */
     public PeriodSelector setSelectFromStart(Boolean selectFromStart) {
         this.selectFromStart = selectFromStart;
@@ -241,6 +251,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets text displayed next to "to" date input field. If not set the default value is "To:".
      *
      * @param toText text
+     * @return period selector
      */
     public PeriodSelector setToText(String toText) {
         this.toText = toText;
@@ -258,6 +269,7 @@ public class PeriodSelector extends AbstractChartObject {
      * Sets width of a period selector, when position is "left" or "right". If not set the default value is 180.
      *
      * @param width width
+     * @return period selector
      */
     public PeriodSelector setWidth(Integer width) {
         this.width = width;

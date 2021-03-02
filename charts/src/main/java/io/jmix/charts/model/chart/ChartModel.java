@@ -45,6 +45,7 @@ public interface ChartModel<T extends ChartModel> {
      * <a href="http://www.amcharts.com/kbase/css-class-names/">http://www.amcharts.com/kbase/css-class-names/</a>
      *
      * @param addClassNames add CSS class names option
+     * @return chart model
      */
     T setAddClassNames(Boolean addClassNames);
 
@@ -57,6 +58,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets the list of labels.
      *
      * @param allLabels list of labels
+     * @return chart model
      */
     T setAllLabels(List<Label> allLabels);
 
@@ -64,6 +66,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds labels.
      *
      * @param allLabels the labels to to add
+     * @return chart model
      */
     T addLabels(Label... allLabels);
 
@@ -76,6 +79,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets export config. Specifies how export to image/data export/print/annotate menu will look and behave.
      *
      * @param export the export
+     * @return chart model
      */
     T setExport(Export export);
 
@@ -89,6 +93,7 @@ public interface ChartModel<T extends ChartModel> {
      * background to be visible. If not set the default value is #FFFFFF.
      *
      * @param backgroundColor the background color
+     * @return chart model
      */
     T setBackgroundColor(Color backgroundColor);
 
@@ -101,6 +106,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets the balloon (tooltip) of the chart.
      *
      * @param balloon the balloon
+     * @return chart model
      */
     T setBalloon(Balloon balloon);
 
@@ -113,6 +119,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets legend of a chart.
      *
      * @param legend the legend
+     * @return chart model
      */
     T setLegend(Legend legend);
 
@@ -125,6 +132,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets decimal separator. If not set the default value is ".".
      *
      * @param decimalSeparator the decimal separator string
+     * @return chart model
      */
     T setDecimalSeparator(String decimalSeparator);
 
@@ -138,6 +146,7 @@ public interface ChartModel<T extends ChartModel> {
      * set the default value is 2.
      *
      * @param percentPrecision the percent precision
+     * @return chart model
      */
     T setPercentPrecision(Integer percentPrecision);
 
@@ -151,6 +160,7 @@ public interface ChartModel<T extends ChartModel> {
      * value is -1.
      *
      * @param precision the precision
+     * @return chart model
      */
     T setPrecision(Integer precision);
 
@@ -160,6 +170,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets data provider that contains data set.
      *
      * @param dataProvider the data provider
+     * @return chart model
      */
     T setDataProvider(DataProvider dataProvider);
 
@@ -167,6 +178,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds data items. If {@link DataProvider} is null, so it creates {@link ListDataProvider}
      *
      * @param dataItems data items to add
+     * @return chart model
      */
     T addData(DataItem... dataItems);
 
@@ -179,6 +191,7 @@ public interface ChartModel<T extends ChartModel> {
      * Specifies path to the folder where images like resize grips, lens and similar are.
      *
      * @param pathToImages path to images
+     * @return chart model
      */
     T setPathToImages(String pathToImages);
 
@@ -191,6 +204,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets theme of a chart. If not set the default value is NONE.
      *
      * @param theme the theme
+     * @return chart model
      */
     T setTheme(ChartTheme theme);
 
@@ -203,6 +217,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets opacity of chart's border. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param borderAlpha the border alpha
+     * @return chart model
      */
     T setBorderAlpha(Double borderAlpha);
 
@@ -216,6 +231,7 @@ public interface ChartModel<T extends ChartModel> {
      * If not set the default value is #000000.
      *
      * @param borderColor the border color
+     * @return chart model
      */
     T setBorderColor(Color borderColor);
 
@@ -229,6 +245,7 @@ public interface ChartModel<T extends ChartModel> {
      * {@link AbstractChart#addClassNames} is set to true. If not set the default value is "amcharts".
      *
      * @param classNamePrefix class name prefix string
+     * @return chart model
      */
     T setClassNamePrefix(String classNamePrefix);
 
@@ -242,6 +259,7 @@ public interface ChartModel<T extends ChartModel> {
      * Non-commercial version only. If not set the default value is TOP_LEFT.
      *
      * @param creditsPosition the credits position
+     * @return chart model
      */
     T setCreditsPosition(CreditsPosition creditsPosition);
 
@@ -254,6 +272,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets text color. If not set the default value is "#000000".
      *
      * @param color the text color
+     * @return chart model
      */
     T setColor(Color color);
 
@@ -266,6 +285,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets font family. If not set the default value is "Verdana".
      *
      * @param fontFamily font family string
+     * @return chart model
      */
     T setFontFamily(String fontFamily);
 
@@ -278,6 +298,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets font size. If not set the default value is 11.
      *
      * @param fontSize the font size
+     * @return chart model
      */
     T setFontSize(Integer fontSize);
 
@@ -292,6 +313,7 @@ public interface ChartModel<T extends ChartModel> {
      * handDrawThickness} properties for a more scattered result. If not set the default value is false.
      *
      * @param handDrawn hand drawn option
+     * @return chart model
      */
     T setHandDrawn(Boolean handDrawn);
 
@@ -305,6 +327,7 @@ public interface ChartModel<T extends ChartModel> {
      * true) will fluctuate. If not set the default value is 2.
      *
      * @param handDrawScatter the hand drawn scatter
+     * @return chart model
      */
     T setHandDrawScatter(Integer handDrawScatter);
 
@@ -318,6 +341,7 @@ public interface ChartModel<T extends ChartModel> {
      * to true). If not set the default value is 1.
      *
      * @param handDrawThickness the hand draw thickness
+     * @return chart model
      */
     T setHandDrawThickness(Integer handDrawThickness);
 
@@ -332,6 +356,7 @@ public interface ChartModel<T extends ChartModel> {
      * 150.
      *
      * @param hideBalloonTime the hide balloon time in milliseconds
+     * @return chart model
      */
     T setHideBalloonTime(Integer hideBalloonTime);
 
@@ -348,6 +373,7 @@ public interface ChartModel<T extends ChartModel> {
      * set the default value is true.
      *
      * @param panEventsEnabled pan events enabled option
+     * @return chart model
      */
     T setPanEventsEnabled(Boolean panEventsEnabled);
 
@@ -372,6 +398,7 @@ public interface ChartModel<T extends ChartModel> {
      *}</pre>
      *
      * @param prefixesOfBigNumbers list of BigNumberPrefix
+     * @return chart model
      */
     T setPrefixesOfBigNumbers(List<BigNumberPrefix> prefixesOfBigNumbers);
 
@@ -379,6 +406,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds BigNumberPrefixes.
      *
      * @param prefixesOfBigNumbers prefixes of big numbers
+     * @return chart model
      */
     T addPrefixesOfBigNumbers(BigNumberPrefix... prefixesOfBigNumbers);
 
@@ -403,6 +431,7 @@ public interface ChartModel<T extends ChartModel> {
      * }</pre>
      *
      * @param prefixesOfSmallNumbers list of SmallNumberPrefix
+     * @return chart model
      */
     T setPrefixesOfSmallNumbers(List<SmallNumberPrefix> prefixesOfSmallNumbers);
 
@@ -410,6 +439,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds SmallNumberPrefix
      *
      * @param prefixesOfSmallNumbers prefixes of small numbers
+     * @return chart model
      */
     T addPrefixesOfSmallNumbers(SmallNumberPrefix... prefixesOfSmallNumbers);
 
@@ -422,6 +452,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets thousands separator. If not set the default value is ".".
      *
      * @param thousandsSeparator - thousands separator string
+     * @return chart model
      */
     T setThousandsSeparator(String thousandsSeparator);
 
@@ -434,6 +465,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets list of titles.
      *
      * @param titles the titles
+     * @return chart model
      */
     T setTitles(List<Title> titles);
 
@@ -441,6 +473,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds titles to chart.
      *
      * @param titles the titles to add
+     * @return chart model
      */
     T addTitles(Title... titles);
 
@@ -456,6 +489,7 @@ public interface ChartModel<T extends ChartModel> {
      * false.
      *
      * @param usePrefixes the use prefixes option
+     * @return chart model
      */
     T setUsePrefixes(Boolean usePrefixes);
 
@@ -469,6 +503,7 @@ public interface ChartModel<T extends ChartModel> {
      * directly in the chart configuration.
      *
      * @param additionalFields list of additional fields
+     * @return chart model
      */
     T setAdditionalFields(List<String> additionalFields);
 
@@ -476,6 +511,7 @@ public interface ChartModel<T extends ChartModel> {
      * Adds additional fields
      *
      * @param fields the fields
+     * @return chart model
      */
     T addAdditionalFields(String... fields);
 
@@ -489,6 +525,7 @@ public interface ChartModel<T extends ChartModel> {
      * container (or any of it’s parents) and will render chart correctly. If not set the default value is false.
      *
      * @param autoDisplay auto display option
+     * @return chart model
      */
     T setAutoDisplay(Boolean autoDisplay);
 
@@ -502,6 +539,7 @@ public interface ChartModel<T extends ChartModel> {
      * the default value is true.
      *
      * @param autoResize auto resize option
+     * @return chart model
      */
     T setAutoResize(Boolean autoResize);
 
@@ -515,6 +553,7 @@ public interface ChartModel<T extends ChartModel> {
      * If not set the default value is 0.
      *
      * @param backgroundAlpha background alpha option
+     * @return chart model
      */
     T setBackgroundAlpha(Double backgroundAlpha);
 
@@ -528,6 +567,7 @@ public interface ChartModel<T extends ChartModel> {
      * name used in this file, like <code>setLanguage("de")</code>.
      *
      * @param language language string
+     * @return chart model
      */
     T setLanguage(String language);
 
@@ -540,6 +580,7 @@ public interface ChartModel<T extends ChartModel> {
      * Specifies absolute or relative path to amCharts files.
      *
      * @param path the path string
+     * @return chart model
      */
     T setPath(String path);
 
@@ -552,6 +593,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets use SVG icons (if browser supports SVG). If not set the default value is true.
      *
      * @param svgIcons svgIcons option
+     * @return chart model
      */
     T setSvgIcons(Boolean svgIcons);
 
@@ -569,6 +611,7 @@ public interface ChartModel<T extends ChartModel> {
      * will bring old behavior back. If not set the default value is true.
      *
      * @param tapToActivate tap to activate option
+     * @return chart model
      */
     T setTapToActivate(Boolean tapToActivate);
 
@@ -582,6 +625,7 @@ public interface ChartModel<T extends ChartModel> {
      * identical to XML structure of a object you are adding, only in JSON format.
      *
      * @param defs defs string
+     * @return chart model
      */
     T setDefs(String defs);
 
@@ -595,6 +639,7 @@ public interface ChartModel<T extends ChartModel> {
      * labels using properties like {@link AbstractGraph#accessibleLabel}. If not set the default value is true.
      *
      * @param accessible accessible option
+     * @return chart model
      */
     T setAccessible(Boolean accessible);
 
@@ -607,6 +652,7 @@ public interface ChartModel<T extends ChartModel> {
      * Description which is added to of a SVG element.
      *
      * @param accessibleTitle accessible title string
+     * @return chart model
      */
     T setAccessibleTitle(String accessibleTitle);
 
@@ -619,6 +665,7 @@ public interface ChartModel<T extends ChartModel> {
      * Sets a config object for Responsive plugin
      *
      * @param responsive the responsive
+     * @return chart model
      */
     T setResponsive(Responsive responsive);
 
@@ -632,6 +679,7 @@ public interface ChartModel<T extends ChartModel> {
      * and continue parsing data until it finishes. If not set the default value is 1000.
      *
      * @param processCount the process count
+     * @return chart model
      */
     T setProcessCount(Integer processCount);
 
@@ -647,6 +695,7 @@ public interface ChartModel<T extends ChartModel> {
      * the default value is 0.
      *
      * @param processTimeout the process timeout
+     * @return chart model
      */
     T setProcessTimeout(Integer processTimeout);
 
@@ -661,6 +710,7 @@ public interface ChartModel<T extends ChartModel> {
      * column/bullet/slice object. If not set the default value is 0.
      *
      * @param touchClickDuration the touch click duration in milliseconds
+     * @return chart model
      */
     T setTouchClickDuration(Integer touchClickDuration);
 
@@ -675,6 +725,7 @@ public interface ChartModel<T extends ChartModel> {
      * transforms. If not set the default value is false.
      *
      * @param autoTransform auto transform option
+     * @return chart model
      */
     T setAutoTransform(Boolean autoTransform);
 
@@ -687,6 +738,7 @@ public interface ChartModel<T extends ChartModel> {
      * Description which will be added to node of SVG element.
      *
      * @param accessibleDescription description string
+     * @return chart model
      */
     T setAccessibleDescription(String accessibleDescription);
 }

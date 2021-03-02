@@ -31,6 +31,7 @@ public interface SeriesBasedChart<T extends SeriesBasedChart> extends Rectangula
      * Adds a listener for zoom. Called when value of the chart zoom changed.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addZoomListener(Consumer<ZoomEvent> listener);
 
@@ -38,6 +39,7 @@ public interface SeriesBasedChart<T extends SeriesBasedChart> extends Rectangula
      * Adds a listener for category item click. Called when user clicks on the category.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addCategoryItemClickListener(Consumer<CategoryItemClickEvent> listener);
 

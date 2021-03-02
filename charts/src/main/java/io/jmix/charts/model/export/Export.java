@@ -65,6 +65,7 @@ public class Export extends AbstractChartObject {
      * Set enabled to false if you want to disable export functionality.
      *
      * @param enabled enabled option
+     * @return export
      */
     public Export setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -82,6 +83,7 @@ public class Export extends AbstractChartObject {
      * Sets 3rd party required library settings.
      *
      * @param libs export libs
+     * @return export
      */
     public Export setLibs(ExportLibs libs) {
         this.libs = libs;
@@ -99,6 +101,7 @@ public class Export extends AbstractChartObject {
      * Sets a list of menu or submenu items.
      *
      * @param menu list of menu
+     * @return export
      */
     public Export setMenu(List<ExportMenuItem> menu) {
         this.menu = menu;
@@ -109,6 +112,7 @@ public class Export extends AbstractChartObject {
      * Adds menu item.
      *
      * @param menuItem menu item
+     * @return export
      */
     public Export addMenuItem(ExportMenuItem menuItem) {
         if (menu == null) {
@@ -129,6 +133,7 @@ public class Export extends AbstractChartObject {
      * Sets the color for the background of the exported image.
      *
      * @param backgroundColor color
+     * @return export
      */
     public Export setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -147,6 +152,7 @@ public class Export extends AbstractChartObject {
      * format).
      *
      * @param fileName file name
+     * @return export
      */
     public Export setFileName(String fileName) {
         this.fileName = fileName;
@@ -165,6 +171,7 @@ public class Export extends AbstractChartObject {
      * "bottom-right".
      *
      * @param position position
+     * @return export
      */
     public Export setPosition(ExportPosition position) {
         this.position = position;
@@ -182,6 +189,7 @@ public class Export extends AbstractChartObject {
      * If true, export checks for and removes "tainted" images that area loaded from different domains.
      *
      * @param removeImages removeImages option
+     * @return export
      */
     public Export setRemoveImages(Boolean removeImages) {
         this.removeImages = removeImages;
@@ -199,6 +207,7 @@ public class Export extends AbstractChartObject {
      * Set exportTitles to true if the data field names should be replaced with it's dedicated title (data export only).
      *
      * @param exportTitles exportTitles option
+     * @return export
      */
     public Export setExportTitles(Boolean exportTitles) {
         this.exportTitles = exportTitles;
@@ -216,6 +225,7 @@ public class Export extends AbstractChartObject {
      * Set exportSelection to true if you want to export the current data selection only (data export only).
      *
      * @param exportSelection exportSelection option
+     * @return export
      */
     public Export setExportSelection(Boolean exportSelection) {
         this.exportSelection = exportSelection;
@@ -234,6 +244,7 @@ public class Export extends AbstractChartObject {
      * export only).
      *
      * @param dataDateFormat data date format
+     * @return export
      */
     public Export setDataDateFormat(String dataDateFormat) {
         this.dataDateFormat = dataDateFormat;
@@ -251,6 +262,7 @@ public class Export extends AbstractChartObject {
      * Formats the category field in given date format (data export only).
      *
      * @param dateFormat date format
+     * @return export
      */
     public Export setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
@@ -268,6 +280,7 @@ public class Export extends AbstractChartObject {
      * If true it observes the pressed keys to undo/redo the annotations.
      *
      * @param keyListener keyListener option
+     * @return export
      */
     public Export setKeyListener(Boolean keyListener) {
         this.keyListener = keyListener;
@@ -285,6 +298,7 @@ public class Export extends AbstractChartObject {
      * If true it observes the drag and drop feature and loads the dropped image file into the annotation.
      *
      * @param fileListener fileListener option
+     * @return export
      */
     public Export setFileListener(Boolean fileListener) {
         this.fileListener = fileListener;

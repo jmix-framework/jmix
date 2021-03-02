@@ -54,6 +54,7 @@ public class DataSetSelector extends AbstractChartObject {
      * value is "Select..."
      *
      * @param comboBoxSelectText text
+     * @return data set selector
      */
     public DataSetSelector setComboBoxSelectText(String comboBoxSelectText) {
         this.comboBoxSelectText = comboBoxSelectText;
@@ -71,6 +72,7 @@ public class DataSetSelector extends AbstractChartObject {
      * Sets text displayed near "compare to" list. If not set the default value is "Compare to:".
      *
      * @param compareText compare text
+     * @return data set selector
      */
     public DataSetSelector setCompareText(String compareText) {
         this.compareText = compareText;
@@ -88,6 +90,7 @@ public class DataSetSelector extends AbstractChartObject {
      * Sets the maximum height of the "compare to" field in pixels. If not set the default value is 150.
      *
      * @param listHeight list height
+     * @return data set selector
      */
     public DataSetSelector setListHeight(Integer listHeight) {
         this.listHeight = listHeight;
@@ -107,6 +110,7 @@ public class DataSetSelector extends AbstractChartObject {
      * top, bottom".
      *
      * @param position position
+     * @return data set selector
      */
     public DataSetSelector setPosition(Position position) {
         this.position = position;
@@ -124,6 +128,7 @@ public class DataSetSelector extends AbstractChartObject {
      * Sets text displayed near "Select" drop down. If not set the default value is "Select:".
      *
      * @param selectText select text
+     * @return data set selector
      */
     public DataSetSelector setSelectText(String selectText) {
         this.selectText = selectText;
@@ -141,6 +146,7 @@ public class DataSetSelector extends AbstractChartObject {
      * Sets width of a data set selector, when position is "left" or "right". If not set the default value is 180.
      *
      * @param width width
+     * @return data set selector
      */
     public DataSetSelector setWidth(Integer width) {
         this.width = width;

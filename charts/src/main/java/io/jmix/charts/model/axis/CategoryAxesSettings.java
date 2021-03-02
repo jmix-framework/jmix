@@ -118,6 +118,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * values to the first period available. If not set the default value is false.
      *
      * @param alwaysGroup alwaysGroup option
+     * @return category axes settings
      */
     public CategoryAxesSettings setAlwaysGroup(Boolean alwaysGroup) {
         this.alwaysGroup = alwaysGroup;
@@ -136,6 +137,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * according to the axis size. If not set the default value is true.
      *
      * @param autoGridCount autoGridCount option
+     * @return category axes settings
      */
     public CategoryAxesSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
@@ -153,6 +155,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets axis opacity. If not set the default value is 0.
      *
      * @param axisAlpha axis opacity
+     * @return category axes settings
      */
     public CategoryAxesSettings setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
@@ -170,6 +173,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets axis color.
      *
      * @param axisColor axis color
+     * @return category axes settings
      */
     public CategoryAxesSettings setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
@@ -187,6 +191,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets height of category axes. Set it to 0 if you set inside property to true. If not set the default value is 28.
      *
      * @param axisHeight height of category axes
+     * @return category axes settings
      */
     public CategoryAxesSettings setAxisHeight(Integer axisHeight) {
         this.axisHeight = axisHeight;
@@ -204,6 +209,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets thickness of the axis.
      *
      * @param axisThickness thickness of the axis
+     * @return category axes settings
      */
     public CategoryAxesSettings setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
@@ -222,6 +228,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * like month, in bold. Works when parse dates are on for the category axis. If not set the default value is true.
      *
      * @param boldPeriodBeginning bold period beginning option
+     * @return category axes settings
      */
     public CategoryAxesSettings setBoldPeriodBeginning(Boolean boldPeriodBeginning) {
         this.boldPeriodBeginning = boldPeriodBeginning;
@@ -239,6 +246,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets text color.
      *
      * @param color text color
+     * @return category axes settings
      */
     public CategoryAxesSettings setColor(Color color) {
         this.color = color;
@@ -256,6 +264,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets length of a dash.
      *
      * @param dashLength length of a dash
+     * @return category axes settings
      */
     public CategoryAxesSettings setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -274,6 +283,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * minutes, hh - hours, DD - days, MM - months, WW - weeks, YYYY - years.
      *
      * @param dateFormats list of date formats
+     * @return category axes settings
      */
     public CategoryAxesSettings setDateFormats(List<DateFormat> dateFormats) {
         this.dateFormats = dateFormats;
@@ -284,6 +294,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Adds date formats.
      *
      * @param dateFormats date formats
+     * @return category axes settings
      */
     public CategoryAxesSettings addDateFormats(DateFormat... dateFormats) {
         if (dateFormats != null) {
@@ -307,6 +318,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param equalSpacing equalSpacing option
+     * @return category axes settings
      */
     public CategoryAxesSettings setEqualSpacing(Boolean equalSpacing) {
         this.equalSpacing = equalSpacing;
@@ -324,6 +336,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets fill opacity. Every second space between grid lines can be filled with fillColor.
      *
      * @param fillAlpha fill opacity
+     * @return category axes settings
      */
     public CategoryAxesSettings setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
@@ -342,6 +355,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * greater than 0 to see the fills.
      *
      * @param fillColor fill color
+     * @return category axes settings
      */
     public CategoryAxesSettings setFillColor(Color fillColor) {
         this.fillColor = fillColor;
@@ -359,6 +373,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets text size.
      *
      * @param fontSize text size
+     * @return category axes settings
      */
     public CategoryAxesSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -376,6 +391,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets opacity of grid lines.
      *
      * @param gridAlpha opacity of grid lines
+     * @return category axes settings
      */
     public CategoryAxesSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
@@ -393,6 +409,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets color of grid lines.
      *
      * @param gridColor color of grid lines
+     * @return category axes settings
      */
     public CategoryAxesSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -411,6 +428,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * not set the default value is 10.
      *
      * @param gridCount number of grid lines
+     * @return category axes settings
      */
     public CategoryAxesSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -428,6 +446,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets thickness of grid lines.
      *
      * @param gridThickness grid thickness
+     * @return category axes settings
      */
     public CategoryAxesSettings setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
@@ -454,6 +473,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * </pre>
      *
      * @param groupToPeriods list of groupToPeriods strings
+     * @return category axes settings
      */
     public CategoryAxesSettings setGroupToPeriods(List<String> groupToPeriods) {
         this.groupToPeriods = groupToPeriods;
@@ -464,6 +484,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Adds groupToPeriods strings.
      *
      * @param groupToPeriods groupToPeriods
+     * @return category axes settings
      */
     public CategoryAxesSettings addGroupToPeriods(String... groupToPeriods) {
         if (groupToPeriods != null) {
@@ -486,6 +507,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Set inside to true if values should be placed inside of plot area. If not set the default value is false.
      *
      * @param inside inside option
+     * @return category axes settings
      */
     public CategoryAxesSettings setInside(Boolean inside) {
         this.inside = inside;
@@ -503,6 +525,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets offset of axis labels. If not set the default value is 0.
      *
      * @param labelOffset offset of axis labels
+     * @return category axes settings
      */
     public CategoryAxesSettings setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
@@ -520,6 +543,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets rotation angle of a label.
      *
      * @param labelRotation rotation angle of a label
+     * @return category axes settings
      */
     public CategoryAxesSettings setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
@@ -538,6 +562,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * the default value is true.
      *
      * @param labelsEnabled labelsEnabled option
+     * @return category axes settings
      */
     public CategoryAxesSettings setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
@@ -556,6 +581,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * value is true.
      *
      * @param markPeriodChange markPeriodChange option
+     * @return category axes settings
      */
     public CategoryAxesSettings setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;
@@ -575,6 +601,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * 150 - the chart will group data to weeks. If not set the default value is 150.
      *
      * @param maxSeries maximum series shown at a time
+     * @return category axes settings
      */
     public CategoryAxesSettings setMaxSeries(Integer maxSeries) {
         this.maxSeries = maxSeries;
@@ -593,6 +620,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * grid count. If not set the default value is 75.
      *
      * @param minHorizontalGap minimum cell width
+     * @return category axes settings
      */
     public CategoryAxesSettings setMinHorizontalGap(Integer minHorizontalGap) {
         this.minHorizontalGap = minHorizontalGap;
@@ -612,6 +640,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * instruct the chart that your data is supplied in 15 minute increments. If not set the default value is "DD".
      *
      * @param minPeriod the shortest period
+     * @return category axes settings
      */
     public CategoryAxesSettings setMinPeriod(String minPeriod) {
         this.minPeriod = minPeriod;
@@ -629,6 +658,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets position of category axes.
      *
      * @param position position of category axes
+     * @return category axes settings
      */
     public CategoryAxesSettings setPosition(CategoryAxesPosition position) {
         this.position = position;
@@ -648,6 +678,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * value is false.
      *
      * @param startOnAxis startOnAxis option
+     * @return category axes settings
      */
     public CategoryAxesSettings setStartOnAxis(Boolean startOnAxis) {
         this.startOnAxis = startOnAxis;
@@ -665,6 +696,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets tick length. If not set the default value is 0.
      *
      * @param tickLength tick length
+     * @return category axes settings
      */
     public CategoryAxesSettings setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
@@ -684,6 +716,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param twoLineMode twoLineMode option
+     * @return category axes settings
      */
     public CategoryAxesSettings setTwoLineMode(Boolean twoLineMode) {
         this.twoLineMode = twoLineMode;
@@ -701,6 +734,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Set to true if axis labels should be bold.
      *
      * @param boldLabels boldLabels option
+     * @return category axes settings
      */
     public CategoryAxesSettings setBoldLabels(Boolean boldLabels) {
         this.boldLabels = boldLabels;
@@ -718,6 +752,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * Sets opacity of minor grid. In order minor to be visible, you should set minorGridEnabled to true.
      *
      * @param minorGridAlpha opacity of minor grid
+     * @return category axes settings
      */
     public CategoryAxesSettings setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
@@ -736,6 +771,7 @@ public class CategoryAxesSettings extends AbstractChartObject {
      * ignored.
      *
      * @param minorGridEnabled minorGridEnabled option
+     * @return category axes settings
      */
     public CategoryAxesSettings setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;

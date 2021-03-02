@@ -27,6 +27,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * is false.
      *
      * @param hideXScrollbar hide X scrollbar option
+     * @return XY chart model
      */
     T setHideXScrollbar(Boolean hideXScrollbar);
 
@@ -40,6 +41,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * false.
      *
      * @param hideYScrollbar hide Y scrollbar option
+     * @return XY chart model
      */
     T setHideYScrollbar(Boolean hideYScrollbar);
 
@@ -53,6 +55,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * two-digit years "YY" as well as literal month names "MMM" are NOT supported in this setting.
      *
      * @param dataDateFormat data date format string
+     * @return XY chart model
      */
     T setDataDateFormat(String dataDateFormat);
 
@@ -68,6 +71,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * you use these two settings, you might also want to set minBulletSize to 0.
      *
      * @param maxValue maximum value of the size/scale of bubbles
+     * @return XY chart model
      */
     T setMaxValue(Integer maxValue);
 
@@ -83,6 +87,7 @@ public interface XYChartModel<T extends XYChartModel> extends RectangularChartMo
      * you use these two settings, you might also want to set minBulletSize to 0.
      *
      * @param minValue minimum value of the size/scale of bubbles
+     * @return XY chart model
      */
     T setMinValue(Integer minValue);
 }

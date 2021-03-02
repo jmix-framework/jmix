@@ -64,6 +64,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets opacity of band fill. Will use {@link GaugeAxis#bandAlpha} if not set any.
      *
      * @param alpha opacity
+     * @return gauge band
      */
     public GaugeBand setAlpha(Double alpha) {
         this.alpha = alpha;
@@ -81,6 +82,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets color of a band.
      *
      * @param color color
+     * @return gauge band
      */
     public GaugeBand setColor(Color color) {
         this.color = color;
@@ -98,6 +100,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets end value of a fill.
      *
      * @param endValue end value
+     * @return gauge band
      */
     public GaugeBand setEndValue(Double endValue) {
         this.endValue = endValue;
@@ -116,6 +119,7 @@ public class GaugeBand extends AbstractChartObject {
      * the band to be drawn to the axis center.
      *
      * @param innerRadius inner radius
+     * @return gauge band
      */
     public GaugeBand setInnerRadius(String innerRadius) {
         this.innerRadius = innerRadius;
@@ -133,6 +137,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets band radius. If not set any, the band will start with the axis outline.
      *
      * @param radius band radius
+     * @return gauge band
      */
     public GaugeBand setRadius(String radius) {
         this.radius = radius;
@@ -150,6 +155,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets start value of a fill.
      *
      * @param startValue start value
+     * @return gauge band
      */
     public GaugeBand setStartValue(Double startValue) {
         this.startValue = startValue;
@@ -167,6 +173,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets balloon text. When rolled-over, band will display balloon.
      *
      * @param balloonText balloon text
+     * @return gauge band
      */
     public GaugeBand setBalloonText(String balloonText) {
         this.balloonText = balloonText;
@@ -184,6 +191,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets unique id of a band.
      *
      * @param id id
+     * @return gauge band
      */
     public GaugeBand setId(String id) {
         this.id = id;
@@ -201,6 +209,7 @@ public class GaugeBand extends AbstractChartObject {
      * Sets URL for band. Gauge band can be clickable and can lead to some page.
      *
      * @param url the URL
+     * @return gauge band
      */
     public GaugeBand setUrl(String url) {
         this.url = url;
@@ -219,6 +228,7 @@ public class GaugeBand extends AbstractChartObject {
      * will be darker than the original, and positive number means the color will be lighter.
      *
      * @param gradientRatio list of gradient ratio
+     * @return gauge band
      */
     public GaugeBand setGradientRatio(List<Float> gradientRatio) {
         this.gradientRatio = gradientRatio;

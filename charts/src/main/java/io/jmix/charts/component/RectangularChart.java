@@ -34,6 +34,7 @@ public interface RectangularChart<T extends RectangularChart> extends Coordinate
      * Adds a listener for cursor zoom. Called when value of the cursor zoom changed.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addCursorZoomListener(Consumer<CursorZoomEvent> listener);
 
@@ -41,6 +42,7 @@ public interface RectangularChart<T extends RectangularChart> extends Coordinate
      * Adds a listener for period selection by cursor. Called when value of the cursor period changed.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addCursorPeriodSelectListener(Consumer<CursorPeriodSelectEvent> listener);
 }

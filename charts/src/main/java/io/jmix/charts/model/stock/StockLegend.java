@@ -56,6 +56,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * be displayed.
      *
      * @param periodValueTextComparing period value text comparing
+     * @return stock legend
      */
     public StockLegend setPeriodValueTextComparing(String periodValueTextComparing) {
         this.periodValueTextComparing = periodValueTextComparing;
@@ -76,6 +77,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * example: [[value.sum]] means that sum of all data points of value field in the selected period will be displayed.
      *
      * @param periodValueTextRegular period value text regular
+     * @return stock legend
      */
     public StockLegend setPeriodValueTextRegular(String periodValueTextRegular) {
         this.periodValueTextRegular = periodValueTextRegular;
@@ -95,6 +97,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * [[percents.value/open/close/low/high]], [[description]]. If not set the default value is "[[percents.value]]%".
      *
      * @param valueTextComparing value text comparing
+     * @return stock legend
      */
     public StockLegend setValueTextComparing(String valueTextComparing) {
         this.valueTextComparing = valueTextComparing;
@@ -114,6 +117,7 @@ public class StockLegend extends AbstractLegend<StockLegend> {
      * "[[value]]".
      *
      * @param valueTextRegular value text regular
+     * @return stock legend
      */
     public StockLegend setValueTextRegular(String valueTextRegular) {
         this.valueTextRegular = valueTextRegular;

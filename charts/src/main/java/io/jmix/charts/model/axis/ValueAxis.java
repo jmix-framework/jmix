@@ -132,6 +132,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * value is 10.
      *
      * @param axisTitleOffset axis title offset
+     * @return value axis
      */
     public ValueAxis setAxisTitleOffset(Integer axisTitleOffset) {
         this.axisTitleOffset = axisTitleOffset;
@@ -149,6 +150,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets the base value of the axis. If not set the default value is 0.
      *
      * @param baseValue base value
+     * @return value axis
      */
     public ValueAxis setBaseValue(Double baseValue) {
         this.baseValue = baseValue;
@@ -167,6 +169,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * duration. Possible values are: "ss", "mm", "hh" and "DD".
      *
      * @param duration duration
+     * @return value axis
      */
     public ValueAxis setDuration(Duration duration) {
         this.duration = duration;
@@ -188,6 +191,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * </pre>
      *
      * @param durationUnits duration units map
+     * @return value axis
      */
     public ValueAxis setDurationUnits(Map<Duration, String> durationUnits) {
         this.durationUnits = durationUnits;
@@ -206,6 +210,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * chart only. If not set the default value is POLYGONS.
      *
      * @param gridType grid type
+     * @return value axis
      */
     public ValueAxis setGridType(GridType gridType) {
         this.gridType = gridType;
@@ -224,6 +229,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * axis it should use.
      *
      * @param id id
+     * @return value axis
      */
     public ValueAxis setId(String id) {
         this.id = id;
@@ -242,6 +248,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * the axis. If not set the default value is false.
      *
      * @param includeGuidesInMinMax includeGuidesInMinMax option
+     * @return value axis
      */
     public ValueAxis setIncludeGuidesInMinMax(Boolean includeGuidesInMinMax) {
         this.includeGuidesInMinMax = includeGuidesInMinMax;
@@ -260,6 +267,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * values. If not set the default value is false.
      *
      * @param includeHidden includeHidden option
+     * @return value axis
      */
     public ValueAxis setIncludeHidden(Boolean includeHidden) {
         this.includeHidden = includeHidden;
@@ -277,6 +285,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Set integersOnly to true if values on the axis can only be integers. If not set the default value is false.
      *
      * @param integersOnly integersOnly option
+     * @return value axis
      */
     public ValueAxis setIntegersOnly(Boolean integersOnly) {
         this.integersOnly = integersOnly;
@@ -294,6 +303,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Set logarithmic to true if this value axis scale should be logarithmic. If not set the default value is false.
      *
      * @param logarithmic logarithmic option
+     * @return value axis
      */
     public ValueAxis setLogarithmic(Boolean logarithmic) {
         this.logarithmic = logarithmic;
@@ -312,6 +322,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * adjusted so that it would be possible to draw grid at rounded intervals.
      *
      * @param maximum maximum value
+     * @return value axis
      */
     public ValueAxis setMaximum(Double maximum) {
         this.maximum = maximum;
@@ -330,6 +341,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * adjusted so that it would be possible to draw grid at rounded intervals.
      *
      * @param minimum minimum value
+     * @return value axis
      */
     public ValueAxis setMinimum(Double minimum) {
         this.minimum = minimum;
@@ -348,6 +360,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * I.e. if set to 1.2 the scope of values will increase by 20%. If not set the default value is 1.
      *
      * @param minMaxMultiplier minimum and maximum multiplier
+     * @return value axis
      */
     public ValueAxis setMinMaxMultiplier(Double minMaxMultiplier) {
         this.minMaxMultiplier = minMaxMultiplier;
@@ -365,6 +378,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets precision (number of decimals) of values.
      *
      * @param precision precision
+     * @return value axis
      */
     public ValueAxis setPrecision(Integer precision) {
         this.precision = precision;
@@ -383,6 +397,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * the default value is true.
      *
      * @param radarCategoriesEnabled radarCategoriesEnabled option
+     * @return value axis
      */
     public ValueAxis setRadarCategoriesEnabled(Boolean radarCategoriesEnabled) {
         this.radarCategoriesEnabled = radarCategoriesEnabled;
@@ -402,6 +417,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * like XY chart. If not set the default value is false.
      *
      * @param recalculateToPercents recalculateToPercents option
+     * @return value axis
      */
     public ValueAxis setRecalculateToPercents(Boolean recalculateToPercents) {
         this.recalculateToPercents = recalculateToPercents;
@@ -420,6 +436,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * false.
      *
      * @param reversed reversed option
+     * @return value axis
      */
     public ValueAxis setReversed(Boolean reversed) {
         this.reversed = reversed;
@@ -438,6 +455,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * type will be stacked. If not set the default value is NONE.
      *
      * @param stackType stack type
+     * @return value axis
      */
     public ValueAxis setStackType(StackType stackType) {
         this.stackType = stackType;
@@ -455,6 +473,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Set the synchronization multiplier, in case you synchronize one value axis with another.
      *
      * @param synchronizationMultiplier synchronization multiplier
+     * @return value axis
      */
     public ValueAxis setSynchronizationMultiplier(Double synchronizationMultiplier) {
         this.synchronizationMultiplier = synchronizationMultiplier;
@@ -473,6 +492,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * display total value above the most-top column.
      *
      * @param totalText total text
+     * @return value axis
      */
     public ValueAxis setTotalText(String totalText) {
         this.totalText = totalText;
@@ -490,6 +510,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets color of total text.
      *
      * @param totalTextColor color
+     * @return value axis
      */
     public ValueAxis setTotalTextColor(Color totalTextColor) {
         this.totalTextColor = totalTextColor;
@@ -507,6 +528,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets unit which will be added to the value label.
      *
      * @param unit unit
+     * @return value axis
      */
     public ValueAxis setUnit(String unit) {
         this.unit = unit;
@@ -525,6 +547,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * set the default value is RIGHT.
      *
      * @param unitPosition unit position
+     * @return value axis
      */
     public ValueAxis setUnitPosition(UnitPosition unitPosition) {
         this.unitPosition = unitPosition;
@@ -545,6 +568,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * {@link AbstractChart#prefixesOfBigNumbers prefixesOfBigNumbers}. If not set the default value is false.
      *
      * @param usePrefixes usePrefixes option
+     * @return value axis
      */
     public ValueAxis setUsePrefixes(Boolean usePrefixes) {
         this.usePrefixes = usePrefixes;
@@ -564,6 +588,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * set the default value is false.
      *
      * @param useScientificNotation useScientificNotation option
+     * @return value axis
      */
     public ValueAxis setUseScientificNotation(Boolean useScientificNotation) {
         this.useScientificNotation = useScientificNotation;
@@ -582,6 +607,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * synchronizationMultiplier in order for this to work.
      *
      * @param synchronizeWith id of the axis
+     * @return value axis
      */
     public ValueAxis setSynchronizeWith(String synchronizeWith) {
         this.synchronizeWith = synchronizeWith;
@@ -599,6 +625,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets distance from data point to total text. If not set the default value is 0.
      *
      * @param totalTextOffset total text offset
+     * @return value axis
      */
     public ValueAxis setTotalTextOffset(Integer totalTextOffset) {
         this.totalTextOffset = totalTextOffset;
@@ -617,6 +644,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * than 0 value in order to work. If not set the default value is 0.
      *
      * @param treatZeroAs treatZeroAs value
+     * @return value axis
      */
     public ValueAxis setTreatZeroAs(Double treatZeroAs) {
         this.treatZeroAs = treatZeroAs;
@@ -635,6 +663,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * not set the default value is false.
      *
      * @param includeAllValues includeAllValues option
+     * @return value axis
      */
     public ValueAxis setIncludeAllValues(Boolean includeAllValues) {
         this.includeAllValues = includeAllValues;
@@ -655,6 +684,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * different arguments: labelFunction(valueText, date, valueAxis). Your function should return string.
      *
      * @param labelFunction JS function
+     * @return value axis
      */
     public ValueAxis setLabelFunction(JsFunction labelFunction) {
         this.labelFunction = labelFunction;
@@ -672,6 +702,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets maximum date of the axis, if your value axis is date-based.
      *
      * @param maximumDate maximum date
+     * @return value axis
      */
     public ValueAxis setMaximumDate(Date maximumDate) {
         this.maximumDate = maximumDate;
@@ -689,6 +720,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets minimum date of the axis, if your value axis is date-based.
      *
      * @param minimumDate minimum date
+     * @return value axis
      */
     public ValueAxis setMinimumDate(Date minimumDate) {
         this.minimumDate = minimumDate;
@@ -707,6 +739,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * axes. Works with radar charts only. If not set the default value is START.
      *
      * @param pointPosition point position
+     * @return value axis
      */
     public ValueAxis setPointPosition(PointPosition pointPosition) {
         this.pointPosition = pointPosition;
@@ -726,6 +759,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * chart will not adjust minimum and maximum of value axis. If not set the default value is false.
      *
      * @param strictMinMax strictMinMax option
+     * @return value axis
      */
     public ValueAxis setStrictMinMax(Boolean strictMinMax) {
         this.strictMinMax = strictMinMax;
@@ -744,6 +778,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * instead of numbers, set it to "date". If not set the default value is NUMERIC.
      *
      * @param type type
+     * @return value axis
      */
     public ValueAxis setType(ValueAxisType type) {
         this.type = type;
@@ -761,6 +796,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Sets opacity of a zero grid line. By default it is equal to 2 x gridAlpha.
      *
      * @param zeroGridAlpha opacity
+     * @return value axis
      */
     public ValueAxis setZeroGridAlpha(Double zeroGridAlpha) {
         this.zeroGridAlpha = zeroGridAlpha;
@@ -779,6 +815,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * Works with radar chart only. If not set the default value is 1.
      *
      * @param axisFrequency axis frequency
+     * @return value axis
      */
     public ValueAxis setAxisFrequency(Double axisFrequency) {
         this.axisFrequency = axisFrequency;
@@ -797,6 +834,7 @@ public class ValueAxis extends AbstractAxis<ValueAxis> {
      * (if axis is date-based) is passed as an argument. It should return string which will be displayed in the balloon.
      *
      * @param balloonTextFunction JS function
+     * @return value axis
      */
     public ValueAxis setBalloonTextFunction(JsFunction balloonTextFunction) {
         this.balloonTextFunction = balloonTextFunction;

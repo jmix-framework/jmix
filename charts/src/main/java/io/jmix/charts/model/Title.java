@@ -52,6 +52,7 @@ public class Title extends AbstractChartObject {
      * Sets opacity of a title. If not set the default value is 1.
      *
      * @param alpha opacity
+     * @return title
      */
     public Title setAlpha(Double alpha) {
         this.alpha = alpha;
@@ -69,6 +70,7 @@ public class Title extends AbstractChartObject {
      * Set bold to false if title shouldn't be bold. If not set the default value is true.
      *
      * @param bold bold option
+     * @return title
      */
     public Title setBold(Boolean bold) {
         this.bold = bold;
@@ -86,6 +88,7 @@ public class Title extends AbstractChartObject {
      * Sets text color of a title.
      *
      * @param color color
+     * @return title
      */
     public Title setColor(Color color) {
         this.color = color;
@@ -103,6 +106,7 @@ public class Title extends AbstractChartObject {
      * Sets text size of a title.
      *
      * @param size text size
+     * @return title
      */
     public Title setSize(Integer size) {
         this.size = size;
@@ -120,6 +124,7 @@ public class Title extends AbstractChartObject {
      * Sets text of a title.
      *
      * @param text text
+     * @return title
      */
     public Title setText(String text) {
         this.text = text;
@@ -137,6 +142,7 @@ public class Title extends AbstractChartObject {
      * Sets unique id of a title.
      *
      * @param id id
+     * @return title
      */
     public Title setId(String id) {
         this.id = id;
@@ -156,6 +162,7 @@ public class Title extends AbstractChartObject {
      * support this.
      *
      * @param tabIndex tab index
+     * @return title
      */
     public Title setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;

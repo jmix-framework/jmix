@@ -89,6 +89,7 @@ public class DataSet extends AbstractChartObject {
      * dates as strings in your data, i.e. "2015-01-05", it is strongly recommend setting dataDateFormat as well.
      *
      * @param categoryField category field name
+     * @return data set
      */
     public DataSet setCategoryField(String categoryField) {
         this.categoryField = categoryField;
@@ -107,6 +108,7 @@ public class DataSet extends AbstractChartObject {
      * set.
      *
      * @param color color
+     * @return data set
      */
     public DataSet setColor(Color color) {
         this.color = color;
@@ -124,6 +126,7 @@ public class DataSet extends AbstractChartObject {
      * Set to true if this data set selected for comparing. If not set the default value is false.
      *
      * @param compared compared option
+     * @return data set
      */
     public DataSet setCompared(Boolean compared) {
         this.compared = compared;
@@ -143,6 +146,7 @@ public class DataSet extends AbstractChartObject {
      * glitches on the chart.
      *
      * @param dataProvider data provider
+     * @return data set
      */
     public DataSet setDataProvider(DataProvider dataProvider) {
         this.dataProvider = dataProvider;
@@ -172,6 +176,7 @@ public class DataSet extends AbstractChartObject {
      * value/open/close/high/low fields for the {@link StockGraph}.
      *
      * @param fieldMappings list of field mappings
+     * @return data set
      */
     public DataSet setFieldMappings(List<FieldMapping> fieldMappings) {
         this.fieldMappings = fieldMappings;
@@ -182,6 +187,7 @@ public class DataSet extends AbstractChartObject {
      * Adds field mappings.
      *
      * @param fieldMappings field mappings
+     * @return data set
      */
     public DataSet addFieldMappings(FieldMapping... fieldMappings) {
         if (fieldMappings != null) {
@@ -205,6 +211,7 @@ public class DataSet extends AbstractChartObject {
      * value is true.
      *
      * @param showInCompare showInCompare option
+     * @return data set
      */
     public DataSet setShowInCompare(Boolean showInCompare) {
         this.showInCompare = showInCompare;
@@ -223,6 +230,7 @@ public class DataSet extends AbstractChartObject {
      * value is true.
      *
      * @param showInSelect showInSelect option
+     * @return data set
      */
     public DataSet setShowInSelect(Boolean showInSelect) {
         this.showInSelect = showInSelect;
@@ -240,6 +248,7 @@ public class DataSet extends AbstractChartObject {
      * Sets list of stock events.
      *
      * @param stockEvents list of stock events
+     * @return data set
      */
     public DataSet setStockEvents(List<StockEvent> stockEvents) {
         this.stockEvents = stockEvents;
@@ -250,6 +259,7 @@ public class DataSet extends AbstractChartObject {
      * Adds stock events.
      *
      * @param stockEvents stock events
+     * @return data set
      */
     public DataSet addStockEvents(StockEvent... stockEvents) {
         if (stockEvents != null) {
@@ -272,6 +282,7 @@ public class DataSet extends AbstractChartObject {
      * Sets data set title.
      *
      * @param title title
+     * @return data set
      */
     public DataSet setTitle(String title) {
         this.title = title;

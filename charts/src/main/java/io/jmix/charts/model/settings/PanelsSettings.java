@@ -120,6 +120,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets the angle of the 3D part of plot area. This creates a 3D effect (if the depth3D is greater than 0).
      *
      * @param angle angle
+     * @return panels settings
      */
     public PanelsSettings setAngle(Integer angle) {
         this.angle = angle;
@@ -138,6 +139,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * If not set the default value is 0.
      *
      * @param backgroundAlpha opacity
+     * @return panels settings
      */
     public PanelsSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -156,6 +158,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * If not set the default value is #FFFFFF.
      *
      * @param backgroundColor color
+     * @return panels settings
      */
     public PanelsSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -173,6 +176,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets the gap in pixels between two columns of the same category.
      *
      * @param columnSpacing column spacing
+     * @return panels settings
      */
     public PanelsSettings setColumnSpacing(Integer columnSpacing) {
         this.columnSpacing = columnSpacing;
@@ -190,6 +194,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets relative width of columns. Valid values 0 - 1.
      *
      * @param columnWidth column relative width
+     * @return panels settings
      */
     public PanelsSettings setColumnWidth(Integer columnWidth) {
         this.columnWidth = columnWidth;
@@ -209,6 +214,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * chart. If not set the default value is TOP_RIGHT.
      *
      * @param creditsPosition credits position
+     * @return panels settings
      */
     public PanelsSettings setCreditsPosition(CreditsPosition creditsPosition) {
         this.creditsPosition = creditsPosition;
@@ -226,6 +232,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets	separator of decimal values.
      *
      * @param decimalSeparator decimal separator
+     * @return panels settings
      */
     public PanelsSettings setDecimalSeparator(String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
@@ -243,6 +250,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets the depth of the 3D part of plot area. This creates a 3D effect (if the angle is greater than 0).
      *
      * @param depth3D depth 3D
+     * @return panels settings
      */
     public PanelsSettings setDepth3D(Integer depth3D) {
         this.depth3D = depth3D;
@@ -260,6 +268,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets font family.
      *
      * @param fontFamily font family
+     * @return panels settings
      */
     public PanelsSettings setFontFamily(String fontFamily) {
         this.fontFamily = fontFamily;
@@ -277,6 +286,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets font size.
      *
      * @param fontSize font size
+     * @return panels settings
      */
     public PanelsSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -339,6 +349,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * days. Works if {@link CategoryAxesSettings#equalSpacing} is set to false.
      *
      * @param maxSelectedTime maximum selected time
+     * @return panels settings
      */
     public PanelsSettings setMaxSelectedTime(Long maxSelectedTime) {
         this.maxSelectedTime = maxSelectedTime;
@@ -357,6 +368,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * second. Works if {@link CategoryAxesSettings#equalSpacing} is set to false. If not set the default value is 0.
      *
      * @param minSelectedTime minimum selected time
+     * @return panels settings
      */
     public PanelsSettings setMinSelectedTime(Long minSelectedTime) {
         this.minSelectedTime = minSelectedTime;
@@ -374,6 +386,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets gap between panels. If not set the default value is 8.
      *
      * @param panelSpacing panel spacing
+     * @return panels settings
      */
     public PanelsSettings setPanelSpacing(Integer panelSpacing) {
         this.panelSpacing = panelSpacing;
@@ -395,6 +408,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * panEventsEnabled to true. If not set the default value is false.
      *
      * @param panEventsEnabled panEventsEnabled option
+     * @return panels settings
      */
     public PanelsSettings setPanEventsEnabled(Boolean panEventsEnabled) {
         this.panEventsEnabled = panEventsEnabled;
@@ -412,6 +426,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets precision of percent values.
      *
      * @param percentPrecision percent precision
+     * @return panels settings
      */
     public PanelsSettings setPercentPrecision(Double percentPrecision) {
         this.percentPrecision = percentPrecision;
@@ -429,6 +444,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets the opacity of plot area's border.
      *
      * @param plotAreaBorderAlpha opacity
+     * @return panels settings
      */
     public PanelsSettings setPlotAreaBorderAlpha(Double plotAreaBorderAlpha) {
         this.plotAreaBorderAlpha = plotAreaBorderAlpha;
@@ -446,6 +462,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets the color of the plot area's border.
      *
      * @param plotAreaBorderColor color
+     * @return panels settings
      */
     public PanelsSettings setPlotAreaBorderColor(Color plotAreaBorderColor) {
         this.plotAreaBorderColor = plotAreaBorderColor;
@@ -463,6 +480,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets opacity of plot area fill.
      *
      * @param plotAreaFillAlphas opacity
+     * @return panels settings
      */
     public PanelsSettings setPlotAreaFillAlphas(Double plotAreaFillAlphas) {
         this.plotAreaFillAlphas = plotAreaFillAlphas;
@@ -480,6 +498,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets list of the colors used to tint the background gradient fill of the plot area.
      *
      * @param plotAreaFillColors list of colors
+     * @return panels settings
      */
     public PanelsSettings setPlotAreaFillColors(List<Color> plotAreaFillColors) {
         this.plotAreaFillColors = plotAreaFillColors;
@@ -490,6 +509,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Adds colors.
      *
      * @param plotAreaFillColors colors
+     * @return panels settings
      */
     public PanelsSettings addPlotAreaFillColors(Color... plotAreaFillColors) {
         if (plotAreaFillColors != null) {
@@ -512,6 +532,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets precision of values. -1 means values will not be rounded and shown as they are.
      *
      * @param precision precision
+     * @return panels settings
      */
     public PanelsSettings setPrecision(Double precision) {
         this.precision = precision;
@@ -541,6 +562,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * </pre>
      *
      * @param prefixesOfBigNumbers list of big number prefixes
+     * @return panels settings
      */
     public PanelsSettings setPrefixesOfBigNumbers(List<BigNumberPrefix> prefixesOfBigNumbers) {
         this.prefixesOfBigNumbers = prefixesOfBigNumbers;
@@ -570,6 +592,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * </pre>
      *
      * @param prefixesOfSmallNumbers list of small number prefixes
+     * @return panels settings
      */
     public PanelsSettings setPrefixesOfSmallNumbers(List<SmallNumberPrefix> prefixesOfSmallNumbers) {
         this.prefixesOfSmallNumbers = prefixesOfSmallNumbers;
@@ -588,6 +611,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * If not set the default value is "whenComparing".
      *
      * @param recalculateToPercents recalculate to percents
+     * @return panels settings
      */
     public PanelsSettings setRecalculateToPercents(RecalculateToPercents recalculateToPercents) {
         this.recalculateToPercents = recalculateToPercents;
@@ -605,6 +629,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Set sequencedAnimation to true if in the animation all objects should appear at once.
      *
      * @param sequencedAnimation sequencedAnimation option
+     * @return panels settings
      */
     public PanelsSettings setSequencedAnimation(Boolean sequencedAnimation) {
         this.sequencedAnimation = sequencedAnimation;
@@ -623,6 +648,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * columns/lines will fade in from startAlpha.
      *
      * @param startAlpha initial opacity
+     * @return panels settings
      */
     public PanelsSettings setStartAlpha(Double startAlpha) {
         this.startAlpha = startAlpha;
@@ -662,6 +688,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Sets separator of thousand values.
      *
      * @param thousandsSeparator thousands separator
+     * @return panels settings
      */
     public PanelsSettings setThousandsSeparator(String thousandsSeparator) {
         this.thousandsSeparator = thousandsSeparator;
@@ -679,6 +706,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * Set usePrefixes to true if prefixes should be used for big and small numbers.
      *
      * @param usePrefixes usePrefixes option
+     * @return panels settings
      */
     public PanelsSettings setUsePrefixes(Boolean usePrefixes) {
         this.usePrefixes = usePrefixes;
@@ -697,6 +725,7 @@ public class PanelsSettings extends AbstractChartObject implements HasMargins<Pa
      * {@link PeriodSelector}. If not set the default value is true.
      *
      * @param zoomOutAxes zoomOutAxes option
+     * @return panels settings
      */
     public PanelsSettings setZoomOutAxes(Boolean zoomOutAxes) {
         this.zoomOutAxes = zoomOutAxes;

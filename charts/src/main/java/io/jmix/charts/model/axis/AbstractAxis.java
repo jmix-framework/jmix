@@ -144,6 +144,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * according to the axis size. If not set the default value is true.
      *
      * @param autoGridCount auto grid count option
+     * @return axis
      */
     public T setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
@@ -161,6 +162,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets axis opacity. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param axisAlpha axis opacity
+     * @return axis
      */
     public T setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
@@ -178,6 +180,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets axis color. If not set the default value is #000000.
      *
      * @param axisColor axis color
+     * @return axis
      */
     public T setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
@@ -195,6 +198,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets thickness of the axis. If not set the default value is 1.
      *
      * @param axisThickness thickness of the axis
+     * @return axis
      */
     public T setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
@@ -212,6 +216,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets color of axis value labels. Will use chart's color if not set.
      *
      * @param color color of axis value labels
+     * @return axis
      */
     public T setColor(Color color) {
         this.color = color;
@@ -229,6 +234,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets length of a dash. 0 means line is not dashed. If not set the default value is 0.
      *
      * @param dashLength length of a dash
+     * @return axis
      */
     public T setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -247,6 +253,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * greater than 0 to see the fills.
      *
      * @param fillAlpha fill opacity
+     * @return axis
      */
     public T setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
@@ -265,6 +272,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * than 0 to see the fills. If not set the default value is #FFFFFF.
      *
      * @param fillColor fill color
+     * @return axis
      */
     public T setFillColor(Color fillColor) {
         this.fillColor = fillColor;
@@ -282,6 +290,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets size of value labels text. Will use chart's fontSize if not set.
      *
      * @param fontSize size of value labels text
+     * @return axis
      */
     public T setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -299,6 +308,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets opacity of grid lines. If not set the default value is 0.15.
      *
      * @param gridAlpha opacity of grid lines
+     * @return axis
      */
     public T setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
@@ -316,6 +326,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets color of grid lines. If not set the default value is #000000
      *
      * @param gridColor color of grid lines
+     * @return axis
      */
     public T setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -335,6 +346,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * default value is 5.
      *
      * @param gridCount grid count
+     * @return axis
      */
     public T setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -352,6 +364,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets thickness of grid lines. If not set the default value is 1.
      *
      * @param gridThickness thickness of grid lines
+     * @return axis
      */
     public T setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
@@ -369,6 +382,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets list of guides belonging to this axis
      *
      * @param guides list of guides
+     * @return axis
      */
     public T setGuides(List<Guide> guides) {
         this.guides = guides;
@@ -379,6 +393,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Adds guides.
      *
      * @param guides guides
+     * @return axis
      */
     public T addGuides(Guide... guides) {
         if (guides != null) {
@@ -402,6 +417,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * measured when calculating margin. If not set the default value is false.
      *
      * @param ignoreAxisWidth ignoreAxisWidth option
+     * @return axis
      */
     public T setIgnoreAxisWidth(Boolean ignoreAxisWidth) {
         this.ignoreAxisWidth = ignoreAxisWidth;
@@ -419,6 +435,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Set inside to true if values should be placed inside of plot area. If not set the default value is false.
      *
      * @param inside inside option
+     * @return axis
      */
     public T setInside(Boolean inside) {
         this.inside = inside;
@@ -437,6 +454,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * If not set the default value is 1.
      *
      * @param labelFrequency frequency at which labels should be placed
+     * @return axis
      */
     public T setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
@@ -455,6 +473,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * the setting will be ignored. Possible values from -90 to 90. If not set the default value is 0.
      *
      * @param labelRotation rotation angle of a label
+     * @return axis
      */
     public T setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
@@ -473,6 +492,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * the default value is true.
      *
      * @param labelsEnabled labelsEnabled option
+     * @return axis
      */
     public T setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
@@ -491,6 +511,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * count (when autoGridCount is true). If not set the default value is 75.
      *
      * @param minHorizontalGap minimum cell width required for one span between grid lines
+     * @return axis
      */
     public T setMinHorizontalGap(Integer minHorizontalGap) {
         this.minHorizontalGap = minHorizontalGap;
@@ -509,6 +530,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * the default value is 0.07.
      *
      * @param minorGridAlpha opacity of minor grid
+     * @return axis
      */
     public T setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
@@ -527,6 +549,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * setting will be ignored. If not set the default value is false.
      *
      * @param minorGridEnabled minorGridEnabled option
+     * @return axis
      */
     public T setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;
@@ -545,6 +568,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * count (when autoGridCount is set to true). If not set the default value is 35.
      *
      * @param minVerticalGap minimum cell height required for one span between grid lines
+     * @return axis
      */
     public T setMinVerticalGap(Integer minVerticalGap) {
         this.minVerticalGap = minVerticalGap;
@@ -563,6 +587,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * default value is 0.
      *
      * @param offset the distance of the axis to the plot area, in pixels
+     * @return axis
      */
     public T setOffset(Integer offset) {
         this.offset = offset;
@@ -581,6 +606,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * "left". If axis is horizontal, default position is "bottom". If not set the default value is BOTTOM.
      *
      * @param position position
+     * @return axis
      */
     public T setPosition(Position position) {
         this.position = position;
@@ -601,6 +627,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * true.
      *
      * @param showFirstLabel showFirstLabel option
+     * @return axis
      */
     public T setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
@@ -621,6 +648,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * true.
      *
      * @param showLastLabel showLastLabel option
+     * @return axis
      */
     public T setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
@@ -638,6 +666,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets length of the tick marks. If not set the default value is 5.
      *
      * @param tickLength length of the tick marks
+     * @return axis
      */
     public T setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
@@ -655,6 +684,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets title of the axis.
      *
      * @param title title of the axis
+     * @return axis
      */
     public T setTitle(String title) {
         this.title = title;
@@ -672,6 +702,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Set titleBold to false if title shouldn't be bold. If not set the default value is true.
      *
      * @param titleBold titleBold option
+     * @return axis
      */
     public T setTitleBold(Boolean titleBold) {
         this.titleBold = titleBold;
@@ -689,6 +720,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets color of axis title. Will use text color of chart if not set any.
      *
      * @param titleColor color of axis title
+     * @return axis
      */
     public T setTitleColor(Color titleColor) {
         this.titleColor = titleColor;
@@ -706,6 +738,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets font size of axis title. Will use font size of chart plus two pixels if not set any.
      *
      * @param titleFontSize font size of axis title
+     * @return axis
      */
     public T setTitleFontSize(Integer titleFontSize) {
         this.titleFontSize = titleFontSize;
@@ -723,6 +756,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Set boldLabels to true if axis labels should be bold. If not set the default value is false.
      *
      * @param boldLabels bold labels option
+     * @return axis
      */
     public T setBoldLabels(Boolean boldLabels) {
         this.boldLabels = boldLabels;
@@ -742,6 +776,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * initial render.
      *
      * @param autoRotateAngle angle of label rotation
+     * @return axis
      */
     public T setAutoRotateAngle(Integer autoRotateAngle) {
         this.autoRotateAngle = autoRotateAngle;
@@ -761,6 +796,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * charts.
      *
      * @param autoRotateCount auto rotate count
+     * @return axis
      */
     public T setAutoRotateCount(Integer autoRotateCount) {
         this.autoRotateCount = autoRotateCount;
@@ -779,6 +815,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * equalSpacing must be false). If not set the default value is false.
      *
      * @param centerLabels center labels option
+     * @return axis
      */
     public T setCenterLabels(Boolean centerLabels) {
         this.centerLabels = centerLabels;
@@ -809,6 +846,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * </pre>
      *
      * @param dateFormats list of date formats
+     * @return axis
      */
     public T setDateFormats(List<DateFormat> dateFormats) {
         this.dateFormats = dateFormats;
@@ -819,6 +857,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Adds date formats.
      *
      * @param dateFormats date formats
+     * @return axis
      */
     public T addDateFormats(DateFormat... dateFormats) {
         if (dateFormats != null) {
@@ -841,6 +880,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets length of minor grid tick. If not set the default value is 0.
      *
      * @param minorTickLength length of minor grid tick
+     * @return axis
      */
     public T setMinorTickLength(Integer minorTickLength) {
         this.minorTickLength = minorTickLength;
@@ -858,6 +898,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets rotation of axis title. Useful if you want to make vertical axis title to be shown from top to down.
      *
      * @param titleRotation rotation of axis title
+     * @return axis
      */
     public T setTitleRotation(Integer titleRotation) {
         this.titleRotation = titleRotation;
@@ -875,6 +916,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets balloon to the axis.
      *
      * @param balloon balloon
+     * @return axis
      */
     public T setBalloon(Balloon balloon) {
         this.balloon = balloon;
@@ -893,6 +935,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * the periods, like month, in bold. If not set the default value is true.
      *
      * @param boldPeriodBeginning boldPeriodBeginning option
+     * @return axis
      */
     public T setBoldPeriodBeginning(Boolean boldPeriodBeginning) {
         this.boldPeriodBeginning = boldPeriodBeginning;
@@ -912,6 +955,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * default value is true.
      *
      * @param centerLabelOnFullPeriod centerLabelOnFullPeriod option
+     * @return axis
      */
     public T setCenterLabelOnFullPeriod(Boolean centerLabelOnFullPeriod) {
         this.centerLabelOnFullPeriod = centerLabelOnFullPeriod;
@@ -929,6 +973,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * Sets first day of the week. 0 is Sunday, 1 is Monday, etc. If not set the default value is 1.
      *
      * @param firstDayOfWeek first day of the week
+     * @return axis
      */
     public T setFirstDayOfWeek(DayOfWeek firstDayOfWeek) {
         this.firstDayOfWeek = firstDayOfWeek;
@@ -947,6 +992,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * value is 0.
      *
      * @param labelOffset offset of axes labels
+     * @return axis
      */
     public T setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
@@ -965,6 +1011,7 @@ public abstract class AbstractAxis<T extends AbstractAxis> extends AbstractChart
      * shouldn't be bold. If not set the default value is true.
      *
      * @param markPeriodChange markPeriodChange option
+     * @return axis
      */
     public T setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;

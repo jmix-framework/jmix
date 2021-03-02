@@ -98,6 +98,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * If not set the default value is false.
      *
      * @param allowTurningOff allowTurningOff option
+     * @return stock panel
      */
     public StockPanel setAllowTurningOff(Boolean allowTurningOff) {
         this.allowTurningOff = allowTurningOff;
@@ -116,6 +117,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * default value is false.
      *
      * @param drawingIconsEnabled drawingIconsEnabled option
+     * @return stock panel
      */
     public StockPanel setDrawingIconsEnabled(Boolean drawingIconsEnabled) {
         this.drawingIconsEnabled = drawingIconsEnabled;
@@ -135,6 +137,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * to the value axis object or id of value axis.
      *
      * @param drawOnAxis value axis
+     * @return stock panel
      */
     public StockPanel setDrawOnAxis(ValueAxis drawOnAxis) {
         this.drawOnAxis = drawOnAxis;
@@ -153,6 +156,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * false trend lines will be erased one by one. If not set the default value is false.
      *
      * @param eraseAll eraseAll option
+     * @return stock panel
      */
     public StockPanel setEraseAll(Boolean eraseAll) {
         this.eraseAll = eraseAll;
@@ -171,6 +175,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * them to look properly. If not set the default value is 18.
      *
      * @param iconSize icon size
+     * @return stock panel
      */
     public StockPanel setIconSize(Integer iconSize) {
         this.iconSize = iconSize;
@@ -188,6 +193,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets relative height of panel. Possible values 0 - 100.
      *
      * @param percentHeight percent height
+     * @return stock panel
      */
     public StockPanel setPercentHeight(Integer percentHeight) {
         this.percentHeight = percentHeight;
@@ -205,6 +211,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets from which date's value should be used as a base when recalculating values to percent.
      *
      * @param recalculateFromDate date
+     * @return stock panel
      */
     public StockPanel setRecalculateFromDate(Date recalculateFromDate) {
         this.recalculateFromDate = recalculateFromDate;
@@ -223,6 +230,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * "whenComparing". If not set the default value is "whenComparing".
      *
      * @param recalculateToPercents recalculate to percents value
+     * @return stock panel
      */
     public StockPanel setRecalculateToPercents(String recalculateToPercents) {
         this.recalculateToPercents = recalculateToPercents;
@@ -240,6 +248,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Set showCategoryAxis to false if this panel should't show category axis. If not set the default value is true.
      *
      * @param showCategoryAxis showCategoryAxis option
+     * @return stock panel
      */
     public StockPanel setShowCategoryAxis(Boolean showCategoryAxis) {
         this.showCategoryAxis = showCategoryAxis;
@@ -258,6 +267,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * set the default value is true.
      *
      * @param showComparedOnTop showComparedOnTop option
+     * @return stock panel
      */
     public StockPanel setShowComparedOnTop(Boolean showComparedOnTop) {
         this.showComparedOnTop = showComparedOnTop;
@@ -275,6 +285,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets list of stock graphs.
      *
      * @param stockGraphs list of stock graphs
+     * @return stock panel
      */
     public StockPanel setStockGraphs(List<StockGraph> stockGraphs) {
         this.stockGraphs = stockGraphs;
@@ -285,6 +296,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Adds stock graphs
      *
      * @param stockGraphs stock graphs
+     * @return stock panel
      */
     public StockPanel addStockGraphs(StockGraph... stockGraphs) {
         if (stockGraphs != null) {
@@ -307,6 +319,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets stock chart legend.
      *
      * @param stockLegend stock legend
+     * @return stock panel
      */
     public StockPanel setStockLegend(StockLegend stockLegend) {
         this.stockLegend = stockLegend;
@@ -324,6 +337,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets a title of a panel. Note, {@link StockLegend} should be added in order title to be displayed.
      *
      * @param title title
+     * @return stock panel
      */
     public StockPanel setTitle(String title) {
         this.title = title;
@@ -341,6 +355,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets trend line opacity. If not set the default value is 1.
      *
      * @param trendLineAlpha opacity
+     * @return stock panel
      */
     public StockPanel setTrendLineAlpha(Double trendLineAlpha) {
         this.trendLineAlpha = trendLineAlpha;
@@ -358,6 +373,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets trend line color. If not set the default value is #00CC00.
      *
      * @param trendLineColor color
+     * @return stock panel
      */
     public StockPanel setTrendLineColor(Color trendLineColor) {
         this.trendLineColor = trendLineColor;
@@ -375,6 +391,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets trend line dash length. If not set the default value is 0.
      *
      * @param trendLineDashLength dash length
+     * @return stock panel
      */
     public StockPanel setTrendLineDashLength(Integer trendLineDashLength) {
         this.trendLineDashLength = trendLineDashLength;
@@ -392,6 +409,7 @@ public class StockPanel extends AbstractSerialChart<StockPanel> implements Serie
      * Sets trend line thickness. If not set the default value is 2.
      *
      * @param trendLineThickness thickness
+     * @return stock panel
      */
     public StockPanel setTrendLineThickness(Integer trendLineThickness) {
         this.trendLineThickness = trendLineThickness;

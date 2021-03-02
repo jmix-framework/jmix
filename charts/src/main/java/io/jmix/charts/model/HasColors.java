@@ -62,6 +62,7 @@ public interface HasColors<T> {
      * }</pre>
      *
      * @param colors list of colors
+     * @return chart
      */
     T setColors(List<Color> colors);
 
@@ -69,6 +70,7 @@ public interface HasColors<T> {
      * Adds colors.
      *
      * @param colors list of colors
+     * @return chart
      */
     T addColors(Color... colors);
 }

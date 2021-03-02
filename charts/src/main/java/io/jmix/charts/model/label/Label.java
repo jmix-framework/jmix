@@ -66,6 +66,7 @@ public class Label extends AbstractChartObject {
      * Sets align to the label. If not set the default value is LEFT.
      *
      * @param align align
+     * @return label
      */
     public Label setAlign(Align align) {
         this.align = align;
@@ -83,6 +84,7 @@ public class Label extends AbstractChartObject {
      * Sets opacity of the label. If not set the default value is 1.
      *
      * @param alpha opacity
+     * @return label
      */
     public Label setAlpha(Double alpha) {
         this.alpha = alpha;
@@ -100,6 +102,7 @@ public class Label extends AbstractChartObject {
      * Set bold to true if label should be bold. If not set the default value is false.
      *
      * @param bold bold option
+     * @return label
      */
     public Label setBold(Boolean bold) {
         this.bold = bold;
@@ -117,6 +120,7 @@ public class Label extends AbstractChartObject {
      * Sets color of a label.
      *
      * @param color color
+     * @return label
      */
     public Label setColor(Color color) {
         this.color = color;
@@ -134,6 +138,7 @@ public class Label extends AbstractChartObject {
      * Sets rotation angle. If not set the default value is 0.
      *
      * @param rotation angle
+     * @return label
      */
     public Label setRotation(Integer rotation) {
         this.rotation = rotation;
@@ -151,6 +156,7 @@ public class Label extends AbstractChartObject {
      * Sets text size.
      *
      * @param size size
+     * @return label
      */
     public Label setSize(Integer size) {
         this.size = size;
@@ -168,6 +174,7 @@ public class Label extends AbstractChartObject {
      * Sets text of the label.
      *
      * @param text text
+     * @return label
      */
     public Label setText(String text) {
         this.text = text;
@@ -185,6 +192,7 @@ public class Label extends AbstractChartObject {
      * Sets the URL which will be access if user clicks on a label.
      *
      * @param url the URL
+     * @return label
      */
     public Label setUrl(String url) {
         this.url = url;
@@ -205,6 +213,7 @@ public class Label extends AbstractChartObject {
      * For instance, 50% - position with percentage, 50 - position in pixels.
      *
      * @param x double or double with "%"
+     * @return label
      */
     public Label setX(String x) {
         checkCorrectInputFormat(x);
@@ -227,6 +236,7 @@ public class Label extends AbstractChartObject {
      * For instance, 50% - position with percentage, 50 - position in pixels.
      *
      * @param y double or double with "%"
+     * @return label
      */
     public Label setY(String y) {
         checkCorrectInputFormat(y);
@@ -246,6 +256,7 @@ public class Label extends AbstractChartObject {
      * Sets unique id of the label.
      *
      * @param id id
+     * @return label
      */
     public Label setId(String id) {
         this.id = id;
@@ -265,6 +276,7 @@ public class Label extends AbstractChartObject {
      * and readers support this.
      *
      * @param tabIndex tab index
+     * @return label
      */
     public Label setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;

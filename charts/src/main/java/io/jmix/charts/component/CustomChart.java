@@ -38,6 +38,7 @@ public interface CustomChart extends Component, Component.BelongToFrame, Compone
     /**
      * Set additional JSON configuration as a string.
      * This JSON can override configuration loaded from XML and from Component API.
+     * @param json additional JSON configuration
      */
     void setNativeJson(String json);
     /**

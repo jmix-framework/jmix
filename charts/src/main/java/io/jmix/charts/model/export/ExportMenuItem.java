@@ -96,6 +96,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets a file name that is used for generated export files.
      *
      * @param fileName file name
+     * @return export menu item
      */
     public ExportMenuItem setFileName(String fileName) {
         this.fileName = fileName;
@@ -113,6 +114,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets page orientation of the generated PDF file. Default is portrait.
      *
      * @param pageOrientation page orientation
+     * @return export menu item
      */
     public ExportMenuItem setPageOrientation(PageOrientation pageOrientation) {
         this.pageOrientation = pageOrientation;
@@ -130,6 +132,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set pageOrigin to false if the origin of the generated PDF should be hidden (pdf format only).
      *
      * @param pageOrigin pageOrigin option
+     * @return export menu item
      */
     public ExportMenuItem setPageOrigin(Boolean pageOrigin) {
         this.pageOrigin = pageOrigin;
@@ -147,6 +150,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets the format of PDF page. Default value is A4.
      *
      * @param pageSize page size
+     * @return export menu item
      */
     public ExportMenuItem setPageSize(PageSize pageSize) {
         this.pageSize = pageSize;
@@ -164,6 +168,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets a quality of the resulting JPG image. Default value is 1. Available values 0 - 1.
      *
      * @param quality quality
+     * @return export menu item
      */
     public ExportMenuItem setQuality(Double quality) {
         this.quality = quality;
@@ -181,6 +186,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets scale factor for the generated image.
      *
      * @param multiplier multiplier
+     * @return export menu item
      */
     public ExportMenuItem setMultiplier(Double multiplier) {
         this.multiplier = multiplier;
@@ -198,6 +204,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets delay by number of seconds.
      *
      * @param delay delay
+     * @return export menu item
      */
     public ExportMenuItem setDelay(Double delay) {
         this.delay = delay;
@@ -215,6 +222,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set lossless to true if you want enable image optimization when printing.
      *
      * @param lossless lossless option
+     * @return export menu item
      */
     public ExportMenuItem setLossless(Boolean lossless) {
         this.lossless = lossless;
@@ -232,6 +240,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets a string that is used as a column delimiter. Default value is ",".
      *
      * @param delimiter delimiter
+     * @return export menu item
      */
     public ExportMenuItem setDelimiter(String delimiter) {
         this.delimiter = delimiter;
@@ -249,6 +258,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set whether to enclose strings in double quotes.
      *
      * @param quotes quotes option
+     * @return export menu item
      */
     public ExportMenuItem setQuotes(Boolean quotes) {
         this.quotes = quotes;
@@ -266,6 +276,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set escape to false if you want to escape strings.
      *
      * @param escape escape option
+     * @return export menu item
      */
     public ExportMenuItem setEscape(Boolean escape) {
         this.escape = escape;
@@ -283,6 +294,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set withHeader to false if you don't want to add header row with column names. Work for CSV and XLSX formats.
      *
      * @param withHeader withHeader option
+     * @return export menu item
      */
     public ExportMenuItem setWithHeader(Boolean withHeader) {
         this.withHeader = withHeader;
@@ -300,6 +312,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Sets the date format. Work for XLSX format. Do not forget to set parseDates to true in {@link CategoryAxis}.
      *
      * @param dateFormat date format
+     * @return export menu item
      */
     public ExportMenuItem setDateFormat(String dateFormat) {
         this.dateFormat = dateFormat;
@@ -317,6 +330,7 @@ public class ExportMenuItem extends AbstractChartObject {
      * Set stringify to true if you want to convert all cell content to strings. Work for XLSX format.
      *
      * @param stringify stringify option
+     * @return export menu item
      */
     public ExportMenuItem setStringify(Boolean stringify) {
         this.stringify = stringify;

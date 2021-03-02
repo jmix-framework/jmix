@@ -94,6 +94,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets opacity of bullet background. If not set the default value is 1.
      *
      * @param backgroundAlpha opacity
+     * @return stock event
      */
     public StockEvent setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -111,6 +112,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets color of bullet background. If not set the default value is #DADADA.
      *
      * @param backgroundColor color
+     * @return stock event
      */
     public StockEvent setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -128,6 +130,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets opacity of bullet border. If not set the default value is 1.
      *
      * @param borderAlpha opacity
+     * @return stock event
      */
     public StockEvent setBorderAlpha(Double borderAlpha) {
         this.borderAlpha = borderAlpha;
@@ -145,6 +148,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets bullet border color. If not set the default value is #888888.
      *
      * @param borderColor color
+     * @return stock event
      */
     public StockEvent setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
@@ -162,6 +166,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets color of the event text. If not set the default value is #000000.
      *
      * @param color color
+     * @return stock event
      */
     public StockEvent setColor(Color color) {
         this.color = color;
@@ -179,6 +184,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets date of an event.
      *
      * @param date date
+     * @return stock event
      */
     public StockEvent setDate(Date date) {
         this.date = date;
@@ -196,6 +202,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets a description that will be shown in a balloon when user rolls over mouse cursor over event icon.
      *
      * @param description description
+     * @return stock event
      */
     public StockEvent setDescription(String description) {
         this.description = description;
@@ -213,6 +220,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets font size of a event bullet. Will use graph's or chart font size if not set.
      *
      * @param fontSize font size
+     * @return stock event
      */
     public StockEvent setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -230,6 +238,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets id of the graph on which event will be displayed.
      *
      * @param graph graph id
+     * @return stock event
      */
     public StockEvent setGraph(String graph) {
         this.graph = graph;
@@ -247,6 +256,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets roll-over background color. If not set the default value is #CC0000.
      *
      * @param rollOverColor color
+     * @return stock event
      */
     public StockEvent setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
@@ -264,6 +274,7 @@ public class StockEvent extends AbstractChartObject {
      * Allows placing event bullets at "open", "close", "low", "high" values.
      *
      * @param showAt showAt string
+     * @return stock event
      */
     public StockEvent setShowAt(String showAt) {
         this.showAt = showAt;
@@ -282,6 +293,7 @@ public class StockEvent extends AbstractChartObject {
      * the default value is false.
      *
      * @param showBullet showBullet option
+     * @return stock event
      */
     public StockEvent setShowBullet(Boolean showBullet) {
         this.showBullet = showBullet;
@@ -300,6 +312,7 @@ public class StockEvent extends AbstractChartObject {
      * false.
      *
      * @param showOnAxis showOnAxis option
+     * @return stock event
      */
     public StockEvent setShowOnAxis(Boolean showOnAxis) {
         this.showOnAxis = showOnAxis;
@@ -318,6 +331,7 @@ public class StockEvent extends AbstractChartObject {
      * longer texts.
      *
      * @param text text
+     * @return stock event
      */
     public StockEvent setText(String text) {
         this.text = text;
@@ -335,6 +349,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets type of bullet. If not set the default value is SIGN.
      *
      * @param type type
+     * @return stock event
      */
     public StockEvent setType(StockEventType type) {
         this.type = type;
@@ -352,6 +367,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets the URL to go to when user clicks the event.
      *
      * @param url the URL
+     * @return stock event
      */
     public StockEvent setUrl(String url) {
         this.url = url;
@@ -369,6 +385,7 @@ public class StockEvent extends AbstractChartObject {
      * Sets target of URL, "_blank" for example.
      *
      * @param urlTarget URL target
+     * @return stock event
      */
     public StockEvent setUrlTarget(String urlTarget) {
         this.urlTarget = urlTarget;
@@ -386,6 +403,7 @@ public class StockEvent extends AbstractChartObject {
      * Allows placing event bullets at specified value.
      *
      * @param value value
+     * @return stock event
      */
     public StockEvent setValue(Double value) {
         this.value = value;

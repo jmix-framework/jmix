@@ -35,11 +35,13 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets using the whole space of the canvas to draw the gauge. If not set the default value is true.
      *
      * @param adjustSize adjust size option
+     * @return chart model
      */
     T setAdjustSize(Boolean adjustSize);
 
     /**
      * @return list of GaugeArrow
+     * @return chart model
      */
     List<GaugeArrow> getArrows();
 
@@ -47,6 +49,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets list of GaugeArrow.
      *
      * @param arrows the arrows
+     * @return chart model
      */
     T setArrows(List<GaugeArrow> arrows);
 
@@ -54,6 +57,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Adds GaugeArrows.
      *
      * @param arrows the arrows
+     * @return chart model
      */
     T addArrows(GaugeArrow... arrows);
 
@@ -66,6 +70,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets list of GaugeAxis.
      *
      * @param axes the axes
+     * @return chart model
      */
     T setAxes(List<GaugeAxis> axes);
 
@@ -73,6 +78,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Adds GaugeAxis.
      *
      * @param axes the axes
+     * @return chart model
      */
     T addAxes(GaugeAxis... axes);
 
@@ -85,6 +91,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Set clockWiseOnly to true if you use gauge to create a clock. If not set the default value is false.
      *
      * @param clockWiseOnly clock wise only option
+     * @return chart model
      */
     T setClockWiseOnly(Boolean clockWiseOnly);
 
@@ -97,6 +104,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face opacity. If not set the default value is 0.
      *
      * @param faceAlpha the face alpha
+     * @return chart model
      */
     T setFaceAlpha(Double faceAlpha);
 
@@ -109,6 +117,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face border opacity. If not set the default value is 0.
      *
      * @param faceBorderAlpha the face border alpha
+     * @return chart model
      */
     T setFaceBorderAlpha(Double faceBorderAlpha);
 
@@ -121,6 +130,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face border color. If not set the default value is #555555.
      *
      * @param faceBorderColor the face border color
+     * @return chart model
      */
     T setFaceBorderColor(Color faceBorderColor);
 
@@ -133,6 +143,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face border width. If not set the default value is 1.
      *
      * @param faceBorderWidth the face border width
+     * @return chart model
      */
     T setFaceBorderWidth(Integer faceBorderWidth);
 
@@ -145,6 +156,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face color, requires faceAlpha greater than 0 value. If not set the default value is #FAFAFA.
      *
      * @param faceColor the face color
+     * @return chart model
      */
     T setFaceColor(Color faceColor);
 
@@ -157,6 +169,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge face image-pattern.
      *
      * @param facePattern the face pattern
+     * @return chart model
      */
     T setFacePattern(Pattern facePattern);
 
@@ -169,6 +182,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge's horizontal position in pixel, origin is the center. Centered by default.
      *
      * @param gaugeX horizontal position in pixel
+     * @return chart model
      */
     T setGaugeX(String gaugeX);
 
@@ -181,6 +195,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets gauge's vertical position in pixel, origin is the center. Centered by default.
      *
      * @param gaugeY vertical position in pixel
+     * @return chart model
      */
     T setGaugeY(String gaugeY);
 
@@ -193,6 +208,7 @@ public interface AngularGaugeChartModel<T extends AngularGaugeChartModel>
      * Sets minimum radius of a gauge. If not set the default value is 10.
      *
      * @param minRadius minimum radius
+     * @return chart model
      */
     T setMinRadius(Integer minRadius);
 }

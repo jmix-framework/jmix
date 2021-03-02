@@ -35,6 +35,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets cursor of a chart.
      *
      * @param chartCursor the chart cursor
+     * @return  rectangular chart model
      */
     T setChartCursor(Cursor chartCursor);
 
@@ -47,6 +48,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets chart scrollbar.
      *
      * @param chartScrollbar the chart scrollbar
+     * @return  rectangular chart model
      */
     T setChartScrollbar(Scrollbar chartScrollbar);
 
@@ -59,6 +61,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets the list of trend lines.
      *
      * @param trendLines list of trend lines
+     * @return  rectangular chart model
      */
     T setTrendLines(List<TrendLine> trendLines);
 
@@ -66,6 +69,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Adds trend lines.
      *
      * @param trendLines the trend lines
+     * @return  rectangular chart model
      */
     T addTrendLines(TrendLine... trendLines);
 
@@ -79,6 +83,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * not set the default value is 0.
      *
      * @param angle the angle
+     * @return  rectangular chart model
      */
     T setAngle(Integer angle);
 
@@ -92,6 +97,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * the default value is 10.
      *
      * @param autoMarginOffset the auto margin offset
+     * @return  rectangular chart model
      */
     T setAutoMarginOffset(Integer autoMarginOffset);
 
@@ -106,6 +112,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * and marginBottom properties. If not set the default value is true.
      *
      * @param autoMargins auto margins option
+     * @return  rectangular chart model
      */
     T setAutoMargins(Boolean autoMargins);
 
@@ -119,6 +126,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * set the default value is 0.
      *
      * @param depth3D the depth 3D
+     * @return  rectangular chart model
      */
     T setDepth3D(Integer depth3D);
 
@@ -133,6 +141,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * the default value is false.
      *
      * @param marginsUpdated the margin update option
+     * @return  rectangular chart model
      */
     T setMarginsUpdated(Boolean marginsUpdated);
 
@@ -145,6 +154,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets the opacity of plot area's border. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param plotAreaBorderAlpha opacity of plot area's border
+     * @return  rectangular chart model
      */
     T setPlotAreaBorderAlpha(Double plotAreaBorderAlpha);
 
@@ -158,6 +168,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * default value is #000000.
      *
      * @param plotAreaBorderColor the plot area border color
+     * @return  rectangular chart model
      */
     T setPlotAreaBorderColor(Color plotAreaBorderColor);
 
@@ -170,6 +181,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets opacity of plot area. If not set the default value is 0.
      *
      * @param plotAreaFillAlphas opacity
+     * @return  rectangular chart model
      */
     T setPlotAreaFillAlphas(Double plotAreaFillAlphas);
 
@@ -183,6 +195,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * need to get a solid color. If not set the default value is #FFFFFF.
      *
      * @param plotAreaFillColors list of plot area colors
+     * @return  rectangular chart model
      */
     T setPlotAreaFillColors(List<Color> plotAreaFillColors);
 
@@ -196,6 +209,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * horizontal and vertical: 0, 90, 180, 270. If not set the default value is 0.
      *
      * @param plotAreaGradientAngle the plot area gradient angle
+     * @return  rectangular chart model
      */
     T setPlotAreaGradientAngle(Integer plotAreaGradientAngle);
 
@@ -208,6 +222,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets opacity of zoom-out button background. If not set the default value is 0.
      *
      * @param zoomOutButtonAlpha opacity of zoom-out button background
+     * @return  rectangular chart model
      */
     T setZoomOutButtonAlpha(Double zoomOutButtonAlpha);
 
@@ -220,6 +235,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets zoom-out button background color. If not set the default value is #e5e5e5.
      *
      * @param zoomOutButtonColor zoom-out button background color
+     * @return  rectangular chart model
      */
     T setZoomOutButtonColor(Color zoomOutButtonColor);
 
@@ -234,6 +250,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * default value is "lens".
      *
      * @param zoomOutButtonImage zoom out button image name string
+     * @return  rectangular chart model
      */
     T setZoomOutButtonImage(String zoomOutButtonImage);
 
@@ -246,6 +263,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets the size of zoom-out button image. If not set the default value is 17.
      *
      * @param zoomOutButtonImageSize the zoom out button image size
+     * @return  rectangular chart model
      */
     T setZoomOutButtonImageSize(Integer zoomOutButtonImageSize);
 
@@ -258,6 +276,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets padding around the text and image. If not set the default value is 8.
      *
      * @param zoomOutButtonPadding the zoom out button padding
+     * @return  rectangular chart model
      */
     T setZoomOutButtonPadding(Integer zoomOutButtonPadding);
 
@@ -270,6 +289,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets opacity of zoom-out button background when mouse is over it. If not set the default value is 1.
      *
      * @param zoomOutButtonRollOverAlpha opacity of zoom-out button background
+     * @return  rectangular chart model
      */
     T setZoomOutButtonRollOverAlpha(Double zoomOutButtonRollOverAlpha);
 
@@ -282,6 +302,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets text in the zoom-out button. If not set the default value is "Show all".
      *
      * @param zoomOutText zoom out text string
+     * @return  rectangular chart model
      */
     T setZoomOutText(String zoomOutText);
 
@@ -294,6 +315,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * Sets the maximum zoom factor value axes. If not set the default value is 20.
      *
      * @param maxZoomFactor maximum zoom factor
+     * @return  rectangular chart model
      */
     T setMaxZoomFactor(Integer maxZoomFactor);
 
@@ -307,6 +329,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * this side will be not less than set on minMarginBottom property.
      *
      * @param minMarginBottom the minimum margin bottom
+     * @return  rectangular chart model
      */
     T setMinMarginBottom(Integer minMarginBottom);
 
@@ -320,6 +343,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * side will be not less than set on minMarginLeft property.
      *
      * @param minMarginLeft the minimum margin left
+     * @return  rectangular chart model
      */
     T setMinMarginLeft(Integer minMarginLeft);
 
@@ -333,6 +357,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * this side will be not less than set on minMarginRight property.
      *
      * @param minMarginRight the minimum margin right
+     * @return  rectangular chart model
      */
     T setMinMarginRight(Integer minMarginRight);
 
@@ -346,6 +371,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * side will be not less than set on minMarginTop property.
      *
      * @param minMarginTop the minimum margin top
+     * @return  rectangular chart model
      */
     T setMinMarginTop(Integer minMarginTop);
 
@@ -360,6 +386,7 @@ public interface RectangularChartModel<T extends RectangularChartModel>
      * set, the chart will zoom-out. Note, not all browsers and readers support this.
      *
      * @param zoomOutButtonTabIndex the zoom out button tab index
+     * @return  rectangular chart model
      */
     T setZoomOutButtonTabIndex(Integer zoomOutButtonTabIndex);
 }

@@ -103,6 +103,7 @@ public class Guide extends AbstractChartObject {
      * Set above to true if the guide should be displayed above the graphs. If not set the default value is false.
      *
      * @param above above option
+     * @return guide
      */
     public Guide setAbove(Boolean above) {
         this.above = above;
@@ -120,6 +121,7 @@ public class Guide extends AbstractChartObject {
      * Sets angle at which guide should start. Affects only fills, not lines. Radar chart only.
      *
      * @param angle angle
+     * @return guide
      */
     public Guide setAngle(Integer angle) {
         this.angle = angle;
@@ -137,6 +139,7 @@ public class Guide extends AbstractChartObject {
      * Sets balloon fill color.
      *
      * @param balloonColor fill color
+     * @return guide
      */
     public Guide setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
@@ -154,6 +157,7 @@ public class Guide extends AbstractChartObject {
      * Sets the text which will be displayed if the user rolls-over the guide.
      *
      * @param balloonText balloon text
+     * @return guide
      */
     public Guide setBalloonText(String balloonText) {
         this.balloonText = balloonText;
@@ -171,6 +175,7 @@ public class Guide extends AbstractChartObject {
      * Sets category of the guide (in case the guide is for category axis).
      *
      * @param category category value
+     * @return guide
      */
     public Guide setCategory(String category) {
         this.category = category;
@@ -188,6 +193,7 @@ public class Guide extends AbstractChartObject {
      * Sets dash length.
      *
      * @param dashLength dash length
+     * @return guide
      */
     public Guide setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -206,6 +212,7 @@ public class Guide extends AbstractChartObject {
      * true).
      *
      * @param date date
+     * @return guide
      */
     public Guide setDate(Date date) {
         this.date = date;
@@ -223,6 +230,7 @@ public class Guide extends AbstractChartObject {
      * Sets fill opacity. Value range is 0 - 1.
      *
      * @param fillAlpha fill opacity
+     * @return guide
      */
     public Guide setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
@@ -240,6 +248,7 @@ public class Guide extends AbstractChartObject {
      * Sets fill color.
      *
      * @param fillColor fill color
+     * @return guide
      */
     public Guide setFillColor(Color fillColor) {
         this.fillColor = fillColor;
@@ -257,6 +266,7 @@ public class Guide extends AbstractChartObject {
      * Sets font size of guide label.
      *
      * @param fontSize font size
+     * @return guide
      */
     public Guide setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -274,6 +284,7 @@ public class Guide extends AbstractChartObject {
      * Set inside to true if label should be placed inside plot area.
      *
      * @param inside inside option
+     * @return guide
      */
     public Guide setInside(Boolean inside) {
         this.inside = inside;
@@ -291,6 +302,7 @@ public class Guide extends AbstractChartObject {
      * Sets the label which will be displayed near the guide.
      *
      * @param label label string
+     * @return guide
      */
     public Guide setLabel(String label) {
         this.label = label;
@@ -308,6 +320,7 @@ public class Guide extends AbstractChartObject {
      * Sets rotation angle of a guide label.
      *
      * @param labelRotation rotation angle
+     * @return guide
      */
     public Guide setLabelRotation(Integer labelRotation) {
         this.labelRotation = labelRotation;
@@ -325,6 +338,7 @@ public class Guide extends AbstractChartObject {
      * Sets line opacity.
      *
      * @param lineAlpha line opacity
+     * @return guide
      */
     public Guide setLineAlpha(Double lineAlpha) {
         this.lineAlpha = lineAlpha;
@@ -342,6 +356,7 @@ public class Guide extends AbstractChartObject {
      * Sets line color.
      *
      * @param lineColor line color
+     * @return guide
      */
     public Guide setLineColor(Color lineColor) {
         this.lineColor = lineColor;
@@ -359,6 +374,7 @@ public class Guide extends AbstractChartObject {
      * Sets line thickness.
      *
      * @param lineThickness line thickness
+     * @return guide
      */
     public Guide setLineThickness(Integer lineThickness) {
         this.lineThickness = lineThickness;
@@ -377,6 +393,7 @@ public class Guide extends AbstractChartObject {
      * for vertical axis.
      *
      * @param position position of guide label
+     * @return guide
      */
     public Guide setPosition(Position position) {
         this.position = position;
@@ -394,6 +411,7 @@ public class Guide extends AbstractChartObject {
      * Sets tick length.
      *
      * @param tickLength tick length
+     * @return guide
      */
     public Guide setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
@@ -411,6 +429,7 @@ public class Guide extends AbstractChartObject {
      * Sets the angle at which guide should end. Affects only fills, not lines. Radar chart only.
      *
      * @param toAngle angle
+     * @return guide
      */
     public Guide setToAngle(Integer toAngle) {
         this.toAngle = toAngle;
@@ -428,6 +447,7 @@ public class Guide extends AbstractChartObject {
      * Sets "to" category of the guide (in case the guide is for category axis).
      *
      * @param toCategory to category
+     * @return guide
      */
     public Guide setToCategory(String toCategory) {
         this.toCategory = toCategory;
@@ -446,6 +466,7 @@ public class Guide extends AbstractChartObject {
      * to true) If you have both date and toDate, the space between these two dates can be filled with color.
      *
      * @param toDate date
+     * @return guide
      */
     public Guide setToDate(Date toDate) {
         this.toDate = toDate;
@@ -463,6 +484,7 @@ public class Guide extends AbstractChartObject {
      * Sets "to" value of the guide (in case the guide is for value axis).
      *
      * @param toValue to value
+     * @return guide
      */
     public Guide setToValue(Object toValue) {
         this.toValue = toValue;
@@ -480,6 +502,7 @@ public class Guide extends AbstractChartObject {
      * Sets value of the guide (in case the guide is for value axis).
      *
      * @param value value
+     * @return guide
      */
     public Guide setValue(Object value) {
         this.value = value;
@@ -497,6 +520,7 @@ public class Guide extends AbstractChartObject {
      * Set boldLabel to true if label should be bold. If not set the default value is false.
      *
      * @param boldLabel boldLabel option
+     * @return guide
      */
     public Guide setBoldLabel(Boolean boldLabel) {
         this.boldLabel = boldLabel;
@@ -514,6 +538,7 @@ public class Guide extends AbstractChartObject {
      * Sets color of a guide label.
      *
      * @param color color
+     * @return guide
      */
     public Guide setColor(Color color) {
         this.color = color;
@@ -534,6 +559,7 @@ public class Guide extends AbstractChartObject {
      * and this axis is non-date-based. If not set the default value is false.
      *
      * @param expand expand option
+     * @return guide
      */
     public Guide setExpand(Boolean expand) {
         this.expand = expand;
@@ -551,6 +577,7 @@ public class Guide extends AbstractChartObject {
      * Sets unique id of a guide.
      *
      * @param id id
+     * @return guide
      */
     public Guide setId(String id) {
         this.id = id;
@@ -569,6 +596,7 @@ public class Guide extends AbstractChartObject {
      * axis should be used.
      *
      * @param valueAxis value axis id
+     * @return guide
      */
     public Guide setValueAxis(String valueAxis) {
         this.valueAxis = valueAxis;

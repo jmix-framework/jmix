@@ -36,6 +36,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets opacity of all slices. If not set the default value is 1.
      *
      * @param alpha opacity of all slices
+     * @return sliced chart model
      */
     T setAlpha(Double alpha);
 
@@ -48,6 +49,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets alpha field name from data provider which holds slice's alpha.
      *
      * @param alphaField alpha field string
+     * @return sliced chart model
      */
     T setAlphaField(String alphaField);
 
@@ -61,6 +63,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * brightnessStep to set intensity of color change for each subsequent slice. If not set the default value is 20.
      *
      * @param baseColor color of the first slice
+     * @return sliced chart model
      */
     T setBaseColor(Color baseColor);
 
@@ -73,6 +76,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets name of the field from data provider which holds slice's color.
      *
      * @param colorField color field string
+     * @return sliced chart model
      */
     T setColorField(String colorField);
 
@@ -85,6 +89,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets name of the field from data provider which holds a string with description.
      *
      * @param descriptionField description field string
+     * @return sliced chart model
      */
     T setDescriptionField(String descriptionField);
 
@@ -98,6 +103,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * color will be darker than the original, and positive number means the color will be lighter.
      *
      * @param gradientRatio list of gradient ratio
+     * @return sliced chart model
      */
     T setGradientRatio(List<Double> gradientRatio);
 
@@ -105,6 +111,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Adds gradient ratios.
      *
      * @param ratios the ratios
+     * @return sliced chart model
      */
     T addGradientRatio(Double... ratios);
 
@@ -117,6 +124,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets opacity of the group slice. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param groupedAlpha opacity of the group slice
+     * @return sliced chart model
      */
     T setGroupedAlpha(Double groupedAlpha);
 
@@ -130,6 +138,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * "colors" list will be used.
      *
      * @param groupedColor grouped color
+     * @return sliced chart model
      */
     T setGroupedColor(Color groupedColor);
 
@@ -142,6 +151,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets description of the group slice.
      *
      * @param groupedDescription grouped description string
+     * @return sliced chart model
      */
     T setGroupedDescription(String groupedDescription);
 
@@ -155,6 +165,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * value is false.
      *
      * @param groupedPulled grouped pulled option
+     * @return sliced chart model
      */
     T setGroupedPulled(Boolean groupedPulled);
 
@@ -167,6 +178,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets title of the group slice. If not set the default value is "Other".
      *
      * @param groupedTitle grouped title string
+     * @return sliced chart model
      */
     T setGroupedTitle(String groupedTitle);
 
@@ -178,6 +190,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * slice in a pie. If not set the default value is 0.
      *
      * @param groupPercent the group percent
+     * @return sliced chart model
      */
     T setGroupPercent(Double groupPercent);
 
@@ -192,6 +205,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * set the default value is 0.
      *
      * @param hideLabelsPercent the hide labels percent
+     * @return sliced chart model
      */
     T setHideLabelsPercent(Double hideLabelsPercent);
 
@@ -204,6 +218,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets opacity of a hovered slice. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param hoverAlpha opacity of a hovered slice
+     * @return sliced chart model
      */
     T setHoverAlpha(Double hoverAlpha);
 
@@ -216,6 +231,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Set labelsEnabled to true if data labels should be visible. If not set the default value is true.
      *
      * @param labelsEnabled labels enabled option
+     * @return sliced chart model
      */
     T setLabelsEnabled(Boolean labelsEnabled);
 
@@ -228,6 +244,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets {@link Label label} tick opacity. Value range is 0 - 1. If not set the default value is 0.2.
      *
      * @param labelTickAlpha label tick opacity
+     * @return sliced chart model
      */
     T setLabelTickAlpha(Double labelTickAlpha);
 
@@ -240,6 +257,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets	{@link Label label} tick color. If not set the default value is #000000.
      *
      * @param labelTickColor label tick color
+     * @return sliced chart model
      */
     T setLabelTickColor(Color labelTickColor);
 
@@ -252,6 +270,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets outline opacity. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param outlineAlpha outline opacity
+     * @return sliced chart model
      */
     T setOutlineAlpha(Double outlineAlpha);
 
@@ -264,6 +283,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets outline color. If not set the default value is #FFFFFF.
      *
      * @param outlineColor the outline color
+     * @return sliced chart model
      */
     T setOutlineColor(Color outlineColor);
 
@@ -276,6 +296,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets pie outline thickness. If not set the default value is 1.
      *
      * @param outlineThickness the outline thickness
+     * @return sliced chart model
      */
     T setOutlineThickness(Integer outlineThickness);
 
@@ -288,6 +309,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets field name from your data provider which holds pattern information.
      *
      * @param patternField pattern field string
+     * @return sliced chart model
      */
     T setPatternField(String patternField);
 
@@ -301,6 +323,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * slice must be pulled or not.
      *
      * @param pulledField pulled field string
+     * @return sliced chart model
      */
     T setPulledField(String pulledField);
 
@@ -313,6 +336,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets pull out duration in seconds. If not set the default value is 1.
      *
      * @param pullOutDuration pull out duration in seconds
+     * @return sliced chart model
      */
     T setPullOutDuration(Integer pullOutDuration);
 
@@ -326,6 +350,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * value is BOUNCE.
      *
      * @param pullOutEffect the pull out effect
+     * @return sliced chart model
      */
     T setPullOutEffect(AnimationEffect pullOutEffect);
 
@@ -339,6 +364,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * any other pulled-out slice will be pulled in. If not set the default value is false.
      *
      * @param pullOutOnlyOne pull out only one option
+     * @return sliced chart model
      */
     T setPullOutOnlyOne(Boolean pullOutOnlyOne);
 
@@ -352,6 +378,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * default value is true.
      *
      * @param sequencedAnimation sequenced animation option
+     * @return sliced chart model
      */
     T setSequencedAnimation(Boolean sequencedAnimation);
 
@@ -364,6 +391,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets initial opacity of all slices. Slices will fade in from startAlpha. If not set the default value is 0.
      *
      * @param startAlpha initial opacity of all slices
+     * @return sliced chart model
      */
     T setStartAlpha(Double startAlpha);
 
@@ -376,6 +404,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets name of the field from data provider which holds slice's title.
      *
      * @param titleField title field string
+     * @return sliced chart model
      */
     T setTitleField(String titleField);
 
@@ -388,6 +417,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets name of the field from data provider which holds URL which would be accessed if the user clicks on a slice.
      *
      * @param urlField the URL field string
+     * @return sliced chart model
      */
     T setUrlField(String urlField);
 
@@ -401,6 +431,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * URL. Use "_blank" if you want URL to be opened in a new window. If not set the default value is "_self".
      *
      * @param urlTarget the URL target string
+     * @return sliced chart model
      */
     T setUrlTarget(String urlTarget);
 
@@ -413,6 +444,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * Sets name of the field from data provider which holds slice's value.
      *
      * @param valueField value field string
+     * @return sliced chart model
      */
     T setValueField(String valueField);
 
@@ -427,6 +459,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * slices that have "showInLegend: false" in their data will not be shown in the legend.
      *
      * @param visibleInLegendField visible in legend field string
+     * @return sliced chart model
      */
     T setVisibleInLegendField(String visibleInLegendField);
 
@@ -441,6 +474,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * label.
      *
      * @param labelFunction label function
+     * @return sliced chart model
      */
     T setLabelFunction(JsFunction labelFunction);
 
@@ -454,6 +488,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * the default value is 200.
      *
      * @param maxLabelWidth maximum label width
+     * @return sliced chart model
      */
     T setMaxLabelWidth(Integer maxLabelWidth);
 
@@ -467,6 +502,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * {@link AbstractChart#addClassNames} is enabled, the slice element will have this class name set.
      *
      * @param classNameField class name field string
+     * @return sliced chart model
      */
     T setClassNameField(String classNameField);
 
@@ -480,6 +516,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * even if their value is 0. If not set the default value is false.
      *
      * @param showZeroSlices show zero slices option
+     * @return sliced chart model
      */
     T setShowZeroSlices(Boolean showZeroSlices);
 
@@ -495,6 +532,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * "[[title]]: [[percents]]% [[value]] [[description]]".
      *
      * @param accessibleLabel accessible label text
+     * @return sliced chart model
      */
     T setAccessibleLabel(String accessibleLabel);
 
@@ -508,6 +546,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * for each slice individually. If not set the default value is #000000.
      *
      * @param labelColorField label color field string
+     * @return sliced chart model
      */
     T setLabelColorField(Color labelColorField);
 
@@ -522,6 +561,7 @@ public interface SlicedChartModel<T extends SlicedChartModel>
      * {@link SlicedChartModelImpl#accessibleLabel}. Note, not all browsers and readers support this.
      *
      * @param tabIndex the tab index
+     * @return sliced chart model
      */
     T setTabIndex(Integer tabIndex);
 }

@@ -65,6 +65,7 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when user clicks on the chart.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addClickListener(Consumer<ChartClickEvent> listener);
 
@@ -72,6 +73,7 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when user clicks on the chart.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addRightClickListener(Consumer<ChartRightClickEvent> listener);
 
@@ -79,6 +81,7 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when the legend item hided.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addLegendItemHideListener(Consumer<LegendItemHideEvent> listener);
 
@@ -86,6 +89,7 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when the legend item showed.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addLegendItemShowListener(Consumer<LegendItemShowEvent> listener);
 
@@ -93,6 +97,7 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when user clicks on the legend item.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addLegendLabelClickListener(Consumer<LegendItemClickEvent> listener);
 
@@ -100,12 +105,14 @@ public interface Chart<T extends Chart> extends Component, ChartModel<T>, Compon
      * Adds a listener for a chart. Called when user clicks on the legend marker.
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addLegendMarkerClickListener(Consumer<LegendMarkerClickEvent> listener);
 
     /**
      * Set additional JSON configuration as a string.
      * This JSON can override configuration loaded from XML and from Component API.
+     * @param json JSON configuration
      */
     void setNativeJson(String json);
 

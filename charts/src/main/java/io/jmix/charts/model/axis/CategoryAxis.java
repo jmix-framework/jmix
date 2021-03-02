@@ -73,6 +73,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * If not set the default value is false.
      *
      * @param autoWrap autoWrap option
+     * @return category axis
      */
     public CategoryAxis setAutoWrap(Boolean autoWrap) {
         this.autoWrap = autoWrap;
@@ -92,6 +93,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * and parseDates is set to true. If not set the default value is false.
      *
      * @param equalSpacing equalSpacing option
+     * @return category axis
      */
     public CategoryAxis setEqualSpacing(Boolean equalSpacing) {
         this.equalSpacing = equalSpacing;
@@ -111,6 +113,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * parseDates is set to false.
      *
      * @param forceShowField force show field string
+     * @return category axis
      */
     public CategoryAxis setForceShowField(String forceShowField) {
         this.forceShowField = forceShowField;
@@ -130,6 +133,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * default value is MIDDLE.
      *
      * @param gridPosition grid position
+     * @return category axis
      */
     public CategoryAxis setGridPosition(GridPosition gridPosition) {
         this.gridPosition = gridPosition;
@@ -148,6 +152,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * default value is "DD".
      *
      * @param minPeriod the shortest period of your data
+     * @return category axis
      */
     public CategoryAxis setMinPeriod(DatePeriod minPeriod) {
         this.minPeriod = minPeriod;
@@ -175,6 +180,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * If not set the default value is false.
      *
      * @param parseDates parseDates option
+     * @return category axis
      */
     public CategoryAxis setParseDates(Boolean parseDates) {
         this.parseDates = parseDates;
@@ -194,6 +200,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * set to true.
      *
      * @param startOnAxis startOnAxis option
+     * @return category axis
      */
     public CategoryAxis setStartOnAxis(Boolean startOnAxis) {
         this.startOnAxis = startOnAxis;
@@ -215,6 +222,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * axis parses dates and when it doesn't. If axis parses dates, your categoryFunction should return Date object.
      *
      * @param categoryFunction JS function
+     * @return category axis
      */
     public CategoryAxis setCategoryFunction(JsFunction categoryFunction) {
         this.categoryFunction = categoryFunction;
@@ -232,6 +240,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * Sets label color field. Works only with non-date-based data.
      *
      * @param labelColorField label color field string
+     * @return category axis
      */
     public CategoryAxis setLabelColorField(String labelColorField) {
         this.labelColorField = labelColorField;
@@ -250,6 +259,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * not set the default value is false. If not set the default value is "middle".
      *
      * @param tickPosition tick position string
+     * @return category axis
      */
     public CategoryAxis setTickPosition(String tickPosition) {
         this.tickPosition = tickPosition;
@@ -288,6 +298,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * will be displayed on the axis.
      *
      * @param labelFunction Js function
+     * @return category axis
      */
     public CategoryAxis setLabelFunction(JsFunction labelFunction) {
         this.labelFunction = labelFunction;
@@ -305,6 +316,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * Sets relative width for your columns using this field name from data provider.
      *
      * @param widthField width field name
+     * @return category axis
      */
     public CategoryAxis setWidthField(String widthField) {
         this.widthField = widthField;
@@ -325,6 +337,7 @@ public class CategoryAxis extends AbstractAxis<CategoryAxis> {
      * if the axis is date-based.
      *
      * @param classNameField class name field string
+     * @return category axis
      */
     public CategoryAxis setClassNameField(String classNameField) {
         this.classNameField = classNameField;

@@ -118,6 +118,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * size. If not set the default value is true.
      *
      * @param autoGridCount autoGridCount option
+     * @return value axes settings
      */
     public ValueAxesSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
@@ -135,6 +136,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets axis opacity. If not set the default value is 0.
      *
      * @param axisAlpha opacity
+     * @return value axes settings
      */
     public ValueAxesSettings setAxisAlpha(Double axisAlpha) {
         this.axisAlpha = axisAlpha;
@@ -152,6 +154,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets axis color.
      *
      * @param axisColor color
+     * @return value axes settings
      */
     public ValueAxesSettings setAxisColor(Color axisColor) {
         this.axisColor = axisColor;
@@ -169,6 +172,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets thickness of the axis.
      *
      * @param axisThickness thickness
+     * @return value axes settings
      */
     public ValueAxesSettings setAxisThickness(Integer axisThickness) {
         this.axisThickness = axisThickness;
@@ -186,6 +190,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets {@link Label label} color.
      *
      * @param color color
+     * @return value axes settings
      */
     public ValueAxesSettings setColor(Color color) {
         this.color = color;
@@ -203,6 +208,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets length of a dash. By default, the grid line is not dashed.
      *
      * @param dashLength dash length
+     * @return value axes settings
      */
     public ValueAxesSettings setDashLength(Integer dashLength) {
         this.dashLength = dashLength;
@@ -220,6 +226,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets fill opacity. Every second space between grid lines can be filled with color.
      *
      * @param fillAlpha opacity
+     * @return value axes settings
      */
     public ValueAxesSettings setFillAlpha(Double fillAlpha) {
         this.fillAlpha = fillAlpha;
@@ -238,6 +245,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * greater than 0 to see the fills.
      *
      * @param fillColor color
+     * @return value axes settings
      */
     public ValueAxesSettings setFillColor(Color fillColor) {
         this.fillColor = fillColor;
@@ -255,6 +263,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets opacity of grid lines.
      *
      * @param gridAlpha opacity
+     * @return value axes settings
      */
     public ValueAxesSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
@@ -272,6 +281,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets color of grid lines.
      *
      * @param gridColor color
+     * @return value axes settings
      */
     public ValueAxesSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -289,6 +299,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets thickness of grid lines.
      *
      * @param gridThickness thickness
+     * @return value axes settings
      */
     public ValueAxesSettings setGridThickness(Integer gridThickness) {
         this.gridThickness = gridThickness;
@@ -306,6 +317,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Specifies whether guide values should be included when calculating minimum and maximum of the axis.
      *
      * @param includeGuidesInMinMax includeGuidesInMinMax option
+     * @return value axes settings
      */
     public ValueAxesSettings setIncludeGuidesInMinMax(Boolean includeGuidesInMinMax) {
         this.includeGuidesInMinMax = includeGuidesInMinMax;
@@ -323,6 +335,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Specifies whether the axis should include hidden graphs when calculating minimum and maximum values.
      *
      * @param includeHidden includeHidden option
+     * @return value axes settings
      */
     public ValueAxesSettings setIncludeHidden(Boolean includeHidden) {
         this.includeHidden = includeHidden;
@@ -343,6 +356,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * default value is true.
      *
      * @param inside inside option
+     * @return value axes settings
      */
     public ValueAxesSettings setInside(Boolean inside) {
         this.inside = inside;
@@ -360,6 +374,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Specifies whether values on axis can only be integers or both integers and doubles.
      *
      * @param integersOnly integersOnly option
+     * @return value axes settings
      */
     public ValueAxesSettings setIntegersOnly(Boolean integersOnly) {
         this.integersOnly = integersOnly;
@@ -377,6 +392,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets frequency at which labels should be placed.
      *
      * @param labelFrequency label frequency
+     * @return value axes settings
      */
     public ValueAxesSettings setLabelFrequency(Double labelFrequency) {
         this.labelFrequency = labelFrequency;
@@ -394,6 +410,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets label offset. You can use it to adjust position of axis labels. If not set the default value is 0.
      *
      * @param labelOffset label offset
+     * @return value axes settings
      */
     public ValueAxesSettings setLabelOffset(Integer labelOffset) {
         this.labelOffset = labelOffset;
@@ -411,6 +428,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Set labelsEnabled to false if value labels shouldn't be displayed.
      *
      * @param labelsEnabled labelsEnabled option
+     * @return value axes settings
      */
     public ValueAxesSettings setLabelsEnabled(Boolean labelsEnabled) {
         this.labelsEnabled = labelsEnabled;
@@ -428,6 +446,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Set logarithmic to true if value axis is logarithmic.
      *
      * @param logarithmic logarithmic option
+     * @return value axes settings
      */
     public ValueAxesSettings setLogarithmic(Boolean logarithmic) {
         this.logarithmic = logarithmic;
@@ -446,6 +465,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * adjusted so that it would be possible to draw grid at rounded intervals.
      *
      * @param maximum maximum value
+     * @return value axes settings
      */
     public ValueAxesSettings setMaximum(Double maximum) {
         this.maximum = maximum;
@@ -464,6 +484,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * adjusted so that it would be possible to draw grid at rounded intervals.
      *
      * @param minimum minimum value
+     * @return value axes settings
      */
     public ValueAxesSettings setMinimum(Double minimum) {
         this.minimum = minimum;
@@ -482,6 +503,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * I.e. if set to 1.2 the scope of values will increase by 20%.
      *
      * @param minMaxMultiplier minimum and maximum multiplier
+     * @return value axes settings
      */
     public ValueAxesSettings setMinMaxMultiplier(Double minMaxMultiplier) {
         this.minMaxMultiplier = minMaxMultiplier;
@@ -500,6 +522,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * side.
      *
      * @param offset offset
+     * @return value axes settings
      */
     public ValueAxesSettings setOffset(Integer offset) {
         this.offset = offset;
@@ -517,6 +540,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets position of the value axis. Possible values are "left" and "right".
      *
      * @param position position
+     * @return value axes settings
      */
     public ValueAxesSettings setPosition(ValueAxisPosition position) {
         this.position = position;
@@ -534,6 +558,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Set reversed to true if value axis should be reversed (smaller values on top).
      *
      * @param reversed reversed option
+     * @return value axes settings
      */
     public ValueAxesSettings setReversed(Boolean reversed) {
         this.reversed = reversed;
@@ -552,6 +577,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * is true.
      *
      * @param showFirstLabel showFirstLabel option
+     * @return value axes settings
      */
     public ValueAxesSettings setShowFirstLabel(Boolean showFirstLabel) {
         this.showFirstLabel = showFirstLabel;
@@ -569,6 +595,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Set showLastLabel to true if last label of value axis should be displayed. If not set the default value is false.
      *
      * @param showLastLabel showLastLabel option
+     * @return value axes settings
      */
     public ValueAxesSettings setShowLastLabel(Boolean showLastLabel) {
         this.showLastLabel = showLastLabel;
@@ -586,6 +613,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets stacking mode of the axis. Possible values are: "none", "regular", "100%", "3d".
      *
      * @param stackType stack type
+     * @return value axes settings
      */
     public ValueAxesSettings setStackType(StackType stackType) {
         this.stackType = stackType;
@@ -603,6 +631,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets tick length. If not set the default value is 0.
      *
      * @param tickLength tick length
+     * @return value axes settings
      */
     public ValueAxesSettings setTickLength(Integer tickLength) {
         this.tickLength = tickLength;
@@ -620,6 +649,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets unit which will be added to the value label.
      *
      * @param unit unit
+     * @return value axes settings
      */
     public ValueAxesSettings setUnit(String unit) {
         this.unit = unit;
@@ -637,6 +667,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets position of the unit. Possible values are "left" or "right".
      *
      * @param unitPosition unit position
+     * @return value axes settings
      */
     public ValueAxesSettings setUnitPosition(UnitPosition unitPosition) {
         this.unitPosition = unitPosition;
@@ -655,6 +686,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * ignored.
      *
      * @param gridCount grid count
+     * @return value axes settings
      */
     public ValueAxesSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -672,6 +704,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets opacity of minor grid. In order minor to be visible, you should set minorGridEnabled to true.
      *
      * @param minorGridAlpha opacity
+     * @return value axes settings
      */
     public ValueAxesSettings setMinorGridAlpha(Double minorGridAlpha) {
         this.minorGridAlpha = minorGridAlpha;
@@ -689,6 +722,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Specifies if minor grid should be displayed. Note, if equalSpacing is set to true, this setting will be ignored.
      *
      * @param minorGridEnabled minorGridEnabled option
+     * @return value axes settings
      */
     public ValueAxesSettings setMinorGridEnabled(Boolean minorGridEnabled) {
         this.minorGridEnabled = minorGridEnabled;
@@ -707,6 +741,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * specifies minimum cell height required for one span between grid lines.
      *
      * @param minVerticalGap minimum vertical gap
+     * @return value axes settings
      */
     public ValueAxesSettings setMinVerticalGap(Integer minVerticalGap) {
         this.minVerticalGap = minVerticalGap;
@@ -724,6 +759,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * Sets precision (number of decimals) of values.
      *
      * @param precision precision
+     * @return value axes settings
      */
     public ValueAxesSettings setPrecision(Integer precision) {
         this.precision = precision;
@@ -743,6 +779,7 @@ public class ValueAxesSettings extends AbstractChartObject {
      * chart shouldn't adjust minimum and maximum of value axis.
      *
      * @param strictMinMax strictMinMax option
+     * @return value axes settings
      */
     public ValueAxesSettings setStrictMinMax(Boolean strictMinMax) {
         this.strictMinMax = strictMinMax;

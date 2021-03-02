@@ -16,6 +16,7 @@
 
 package io.jmix.charts.model;
 
+import io.jmix.charts.component.SerialChart;
 import io.jmix.charts.model.chart.impl.RadarChartModelImpl;
 import io.jmix.charts.model.chart.impl.RectangularChartModelImpl;
 import io.jmix.charts.model.chart.impl.SlicedChartModelImpl;
@@ -45,6 +46,7 @@ public interface HasMargins<T> {
      * If is used for {@link PanelsSettings} the default value is 0.
      *
      * @param marginTop top spacing
+     * @return object with set top spacing
      */
     T setMarginTop(Integer marginTop);
 
@@ -68,6 +70,7 @@ public interface HasMargins<T> {
      * If is used for {@link PanelsSettings} the default value is 0.
      *
      * @param marginBottom bottom spacing
+     * @return object with set bottom spacing
      */
     T setMarginBottom(Integer marginBottom);
 
@@ -94,6 +97,7 @@ public interface HasMargins<T> {
      * If is used for {@link PanelsSettings} the default value is 0.
      *
      * @param marginLeft left-hand spacing
+     * @return object with set left-hand spacing
      */
     T setMarginLeft(Integer marginLeft);
 
@@ -120,6 +124,7 @@ public interface HasMargins<T> {
      * If is used for {@link PanelsSettings} the default value is 0.
      *
      * @param marginRight right-hand spacing
+     * @return object with set right-hand spacing
      */
     T setMarginRight(Integer marginRight);
 }

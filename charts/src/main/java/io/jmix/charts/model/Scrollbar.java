@@ -132,6 +132,7 @@ public class Scrollbar extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param autoGridCount autoGridCount option
+     * @return scrollbar
      */
     public Scrollbar setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
@@ -149,6 +150,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets background opacity. If not set the default value is 1.
      *
      * @param backgroundAlpha background opacity
+     * @return scrollbar
      */
     public Scrollbar setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -166,6 +168,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets background color of the scrollbar. If not set the default value is #D4D4D4.
      *
      * @param backgroundColor background color of the scrollbar
+     * @return scrollbar
      */
     public Scrollbar setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -183,6 +186,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets text color. If not set the default value is #FFFFFF.
      *
      * @param color text color
+     * @return scrollbar
      */
     public Scrollbar setColor(Color color) {
         this.color = color;
@@ -201,6 +205,7 @@ public class Scrollbar extends AbstractChartObject {
      * want it to be distorted because of resizing. If not set the default value is 35.
      *
      * @param dragIconHeight drag icon height
+     * @return scrollbar
      */
     public Scrollbar setDragIconHeight(Integer dragIconHeight) {
         this.dragIconHeight = dragIconHeight;
@@ -219,6 +224,7 @@ public class Scrollbar extends AbstractChartObject {
      * want it to be distorted because of resizing. If not set the default value is 35.
      *
      * @param dragIconWidth drag icon width
+     * @return scrollbar
      */
     public Scrollbar setDragIconWidth(Integer dragIconWidth) {
         this.dragIconWidth = dragIconWidth;
@@ -236,6 +242,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets graph fill opacity. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param graphFillAlpha graph fill opacity
+     * @return scrollbar
      */
     public Scrollbar setGraphFillAlpha(Double graphFillAlpha) {
         this.graphFillAlpha = graphFillAlpha;
@@ -253,6 +260,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets graph fill color. If not set the default value is #BBBBBB.
      *
      * @param graphFillColor graph fill color
+     * @return scrollbar
      */
     public Scrollbar setGraphFillColor(Color graphFillColor) {
         this.graphFillColor = graphFillColor;
@@ -270,6 +278,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets graph line opacity. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param graphLineAlpha graph line opacity
+     * @return scrollbar
      */
     public Scrollbar setGraphLineAlpha(Double graphLineAlpha) {
         this.graphLineAlpha = graphLineAlpha;
@@ -287,6 +296,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets graph line color. If not set the default value is #BBBBBB.
      *
      * @param graphLineColor graph line color
+     * @return scrollbar
      */
     public Scrollbar setGraphLineColor(Color graphLineColor) {
         this.graphLineColor = graphLineColor;
@@ -306,6 +316,7 @@ public class Scrollbar extends AbstractChartObject {
      * step, smoothedLine, candlestick, ohlc.
      *
      * @param graphType graph type
+     * @return scrollbar
      */
     public Scrollbar setGraphType(GraphType graphType) {
         this.graphType = graphType;
@@ -323,6 +334,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets grid opacity. Value range is 0 - 1. If not set the default value is 0.7.
      *
      * @param gridAlpha grid opacity
+     * @return scrollbar
      */
     public Scrollbar setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
@@ -340,6 +352,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets grid color. If not set the default value is #FFFFFF.
      *
      * @param gridColor grid color
+     * @return scrollbar
      */
     public Scrollbar setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -357,6 +370,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets the number of grid lines. If not set the default value is 0.
      *
      * @param gridCount number of grid lines
+     * @return scrollbar
      */
     public Scrollbar setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -375,6 +389,7 @@ public class Scrollbar extends AbstractChartObject {
      * set the default value is false.
      *
      * @param hideResizeGrips hideResizeGrips option
+     * @return scrollbar
      */
     public Scrollbar setHideResizeGrips(Boolean hideResizeGrips) {
         this.hideResizeGrips = hideResizeGrips;
@@ -392,6 +407,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets maximum value of {@link ValueAxis} of scrollbar. Calculated automatically, if not set.
      *
      * @param maximum maximum value
+     * @return scrollbar
      */
     public Scrollbar setMaximum(Double maximum) {
         this.maximum = maximum;
@@ -409,6 +425,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets minimum value of {@link ValueAxis} of scrollbar. Calculated automatically, if not set.
      *
      * @param minimum minimum value
+     * @return scrollbar
      */
     public Scrollbar setMinimum(Double minimum) {
         this.minimum = minimum;
@@ -428,6 +445,7 @@ public class Scrollbar extends AbstractChartObject {
      * value is true. If not set the default value is true.
      *
      * @param resizeEnabled resizeEnabled option
+     * @return scrollbar
      */
     public Scrollbar setResizeEnabled(Boolean resizeEnabled) {
         this.resizeEnabled = resizeEnabled;
@@ -445,6 +463,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets height (width, if chart is rotated) of a scrollbar. If not set the default value is 20.
      *
      * @param scrollbarHeight scrollbar height
+     * @return scrollbar
      */
     public Scrollbar setScrollbarHeight(Integer scrollbarHeight) {
         this.scrollbarHeight = scrollbarHeight;
@@ -463,6 +482,7 @@ public class Scrollbar extends AbstractChartObject {
      * updateOnReleaseOnly should be set to false in order animation to happen. If not set the default value is 1.
      *
      * @param scrollDuration scroll duration, in seconds
+     * @return scrollbar
      */
     public Scrollbar setScrollDuration(Double scrollDuration) {
         this.scrollDuration = scrollDuration;
@@ -480,6 +500,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected background opacity. If not set the default value is 1.
      *
      * @param selectedBackgroundAlpha opacity
+     * @return scrollbar
      */
     public Scrollbar setSelectedBackgroundAlpha(Double selectedBackgroundAlpha) {
         this.selectedBackgroundAlpha = selectedBackgroundAlpha;
@@ -497,6 +518,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected background color. If not set the default value is #EFEFEF.
      *
      * @param selectedBackgroundColor color
+     * @return scrollbar
      */
     public Scrollbar setSelectedBackgroundColor(Color selectedBackgroundColor) {
         this.selectedBackgroundColor = selectedBackgroundColor;
@@ -514,6 +536,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected graph's fill opacity. Value range is 0 - 1. If not set the default value is 1.
      *
      * @param selectedGraphFillAlpha opacity
+     * @return scrollbar
      */
     public Scrollbar setSelectedGraphFillAlpha(Double selectedGraphFillAlpha) {
         this.selectedGraphFillAlpha = selectedGraphFillAlpha;
@@ -531,6 +554,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected graph's fill color. If not set the default value is #888888.
      *
      * @param selectedGraphFillColor color.
+     * @return scrollbar
      */
     public Scrollbar setSelectedGraphFillColor(Color selectedGraphFillColor) {
         this.selectedGraphFillColor = selectedGraphFillColor;
@@ -548,6 +572,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected graph's line opacity. Value range is 0 - 1. If not set the default value is 0.
      *
      * @param selectedGraphLineAlpha opacity
+     * @return scrollbar
      */
     public Scrollbar setSelectedGraphLineAlpha(Double selectedGraphLineAlpha) {
         this.selectedGraphLineAlpha = selectedGraphLineAlpha;
@@ -565,6 +590,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets selected graph's line color. If not set the default value is #888888.
      *
      * @param selectedGraphLineColor color
+     * @return scrollbar
      */
     public Scrollbar setSelectedGraphLineColor(Color selectedGraphLineColor) {
         this.selectedGraphLineColor = selectedGraphLineColor;
@@ -583,6 +609,7 @@ public class Scrollbar extends AbstractChartObject {
      * button. If not set the default value is false.
      *
      * @param updateOnReleaseOnly updateOnReleaseOnly option
+     * @return scrollbar
      */
     public Scrollbar setUpdateOnReleaseOnly(Boolean updateOnReleaseOnly) {
         this.updateOnReleaseOnly = updateOnReleaseOnly;
@@ -601,6 +628,7 @@ public class Scrollbar extends AbstractChartObject {
      * graph.
      *
      * @param graph graph id
+     * @return scrollbar
      */
     public Scrollbar setGraph(String graph) {
         this.graph = graph;
@@ -619,6 +647,7 @@ public class Scrollbar extends AbstractChartObject {
      * property without actually removing it.
      *
      * @param enabled enabled option
+     * @return scrollbar
      */
     public Scrollbar setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -636,6 +665,7 @@ public class Scrollbar extends AbstractChartObject {
      * Sets distance from plot area to scrollbar, in pixels. If not set the default value is 0.
      *
      * @param offset distance, in pixels
+     * @return scrollbar
      */
     public Scrollbar setOffset(Integer offset) {
         this.offset = offset;
@@ -657,6 +687,7 @@ public class Scrollbar extends AbstractChartObject {
      * default value is "dragIconRoundBig".
      *
      * @param dragIcon icon file name
+     * @return scrollbar
      */
     public Scrollbar setDragIcon(String dragIcon) {
         this.dragIcon = dragIcon;
@@ -676,6 +707,7 @@ public class Scrollbar extends AbstractChartObject {
      * colored with this custom color. If not set the default value is false.
      *
      * @param ignoreCustomColors ignoreCustomColors option
+     * @return scrollbar
      */
     public Scrollbar setIgnoreCustomColors(Boolean ignoreCustomColors) {
         this.ignoreCustomColors = ignoreCustomColors;
@@ -696,6 +728,7 @@ public class Scrollbar extends AbstractChartObject {
      * is true.
      *
      * @param oppositeAxis oppositeAxis option
+     * @return scrollbar
      */
     public Scrollbar setOppositeAxis(Boolean oppositeAxis) {
         this.oppositeAxis = oppositeAxis;
@@ -714,6 +747,7 @@ public class Scrollbar extends AbstractChartObject {
      * value is "cursor: move; cursor: grab; cursor: -moz-grabbing; cursor: -webkit-grabbing;"
      *
      * @param dragCursorDown drag cursor down string
+     * @return scrollbar
      */
     public Scrollbar setDragCursorDown(String dragCursorDown) {
         this.dragCursorDown = dragCursorDown;
@@ -732,6 +766,7 @@ public class Scrollbar extends AbstractChartObject {
      * default value is "cursor: move; cursor: grab; cursor: -moz-grab; cursor: -webkit-grab;".
      *
      * @param dragCursorHover drag cursor hover string
+     * @return scrollbar
      */
     public Scrollbar setDragCursorHover(String dragCursorHover) {
         this.dragCursorHover = dragCursorHover;
@@ -752,6 +787,7 @@ public class Scrollbar extends AbstractChartObject {
      * zoom-in, zoom-out or pan the scrollbar using cursor keys. Note, not all browsers and readers support this.
      *
      * @param tabIndex tab index
+     * @return scrollbar
      */
     public Scrollbar setTabIndex(Integer tabIndex) {
         this.tabIndex = tabIndex;
@@ -773,6 +809,7 @@ public class Scrollbar extends AbstractChartObject {
      * "Zoom chart using cursor arrows".
      *
      * @param accessibleLabel accessible label string
+     * @return scrollbar
      */
     public Scrollbar setAccessibleLabel(String accessibleLabel) {
         this.accessibleLabel = accessibleLabel;

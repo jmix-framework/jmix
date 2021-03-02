@@ -31,6 +31,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets the category axis.
      *
      * @param categoryAxis the category axis
+     * @return  chart model
      */
     T setCategoryAxis(CategoryAxis categoryAxis);
 
@@ -44,6 +45,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * be used for category axis values.
      *
      * @param categoryField category field name string
+     * @return  chart model
      */
     T setCategoryField(String categoryField);
 
@@ -57,6 +59,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * {@link Cursor}). If not set the default value is "MMM DD, YYYY".
      *
      * @param balloonDateFormat the balloon date format
+     * @return  chart model
      */
     T setBalloonDateFormat(String balloonDateFormat);
 
@@ -69,6 +72,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets space between 3D stacked columns. If not set the default value is 0.
      *
      * @param columnSpacing3D space between 3D stacked columns
+     * @return  chart model
      */
     T setColumnSpacing3D(Integer columnSpacing3D);
 
@@ -81,6 +85,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets the gap in pixels between two columns of the same category. If not set the default value is 5.
      *
      * @param columnSpacing column spacing in pixels
+     * @return  chart model
      */
     T setColumnSpacing(Integer columnSpacing);
 
@@ -93,6 +98,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets relative width of columns. Value range is 0 - 1. If not set the default value is 0.8.
      *
      * @param columnWidth relative width of columns
+     * @return  chart model
      */
     T setColumnWidth(Double columnWidth);
 
@@ -107,6 +113,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * years "YY" as well as literal month names "MMM" are NOT supported in this setting.
      *
      * @param dataDateFormat data date format string
+     * @return  chart model
      */
     T setDataDateFormat(String dataDateFormat);
 
@@ -119,6 +126,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets maximum number of series allowed to select.
      *
      * @param maxSelectedSeries the maximum number of selected series
+     * @return  chart model
      */
     T setMaxSelectedSeries(Integer maxSelectedSeries);
 
@@ -132,6 +140,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * days. Works if {@link CategoryAxis#equalSpacing} is set to false.
      *
      * @param maxSelectedTime the maximum selected time in milliseconds
+     * @return  chart model
      */
     T setMaxSelectedTime(Long maxSelectedTime);
 
@@ -145,6 +154,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * second. Works if {@link CategoryAxis#equalSpacing} is set to false. If not set the default value is 0.
      *
      * @param minSelectedTime the minimum selected time in milliseconds
+     * @return  chart model
      */
     T setMinSelectedTime(Long minSelectedTime);
 
@@ -158,6 +168,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * chart will zoom-in/out. If not set the default value is false.
      *
      * @param mouseWheelScrollEnabled mouse wheel scroll option
+     * @return  chart model
      */
     T setMouseWheelScrollEnabled(Boolean mouseWheelScrollEnabled);
 
@@ -171,6 +182,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * the default value is false.
      *
      * @param rotate rotate option
+     * @return  chart model
      */
     T setRotate(Boolean rotate);
 
@@ -184,6 +196,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * true.
      *
      * @param zoomOutOnDataUpdate zoomOutOnDataUpdate option
+     * @return  chart model
      */
     T setZoomOutOnDataUpdate(Boolean zoomOutOnDataUpdate);
 
@@ -197,6 +210,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * while rotating mouse wheel, the chart will scroll. If not set the default value is false.
      *
      * @param mouseWheelZoomEnabled mouseWheelZoomEnabled option
+     * @return  chart model
      */
     T setMouseWheelZoomEnabled(Boolean mouseWheelZoomEnabled);
 
@@ -209,6 +223,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * Sets value scrollbar, enables scrolling value axes.
      *
      * @param valueScrollbar the value scrollbar
+     * @return  chart model
      */
     T setValueScrollbar(Scrollbar valueScrollbar);
 
@@ -222,6 +237,7 @@ public interface SeriesBasedChartModel<T extends SeriesBasedChartModel> extends 
      * would be show at equal intervals. This helps users to compare values more easily.
      *
      * @param synchronizeGrid synchronized grid option
+     * @return  chart model
      */
     T setSynchronizeGrid(Boolean synchronizeGrid);
 }

@@ -108,6 +108,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * automatically, according to the axis size. If not set the default value is true.
      *
      * @param autoGridCount autoGridCount option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setAutoGridCount(Boolean autoGridCount) {
         this.autoGridCount = autoGridCount;
@@ -125,6 +126,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets background opacity.
      *
      * @param backgroundAlpha background opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setBackgroundAlpha(Double backgroundAlpha) {
         this.backgroundAlpha = backgroundAlpha;
@@ -142,6 +144,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets background color of the scrollbar.
      *
      * @param backgroundColor background color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setBackgroundColor(Color backgroundColor) {
         this.backgroundColor = backgroundColor;
@@ -159,6 +162,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets text color.
      *
      * @param color text color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setColor(Color color) {
         this.color = color;
@@ -177,6 +181,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * want it to be distorted because of resizing. If not set the default value is 18.
      *
      * @param dragIconHeight icon height
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setDragIconHeight(Integer dragIconHeight) {
         this.dragIconHeight = dragIconHeight;
@@ -195,6 +200,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * want it to be distorted because of resizing. If not set the default value is 11.
      *
      * @param dragIconWidth icon width
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setDragIconWidth(Integer dragIconWidth) {
         this.dragIconWidth = dragIconWidth;
@@ -212,6 +218,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Set enabled false if you don't need scrollbar. If not set the default value is true.
      *
      * @param enabled enabled option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -229,6 +236,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets font size
      *
      * @param fontSize font size
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
@@ -246,6 +254,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets graph which will be displayed in the scrollbar.
      *
      * @param graph graph id
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraph(String graph) {
         this.graph = graph;
@@ -263,6 +272,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets graph fill opacity.
      *
      * @param graphFillAlpha graph fill opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraphFillAlpha(Double graphFillAlpha) {
         this.graphFillAlpha = graphFillAlpha;
@@ -280,6 +290,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets graph fill color.
      *
      * @param graphFillColor graph fill color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraphFillColor(Color graphFillColor) {
         this.graphFillColor = graphFillColor;
@@ -297,6 +308,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets graph line opacity.
      *
      * @param graphLineAlpha graph line opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraphLineAlpha(Double graphLineAlpha) {
         this.graphLineAlpha = graphLineAlpha;
@@ -314,6 +326,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets graph line color.
      *
      * @param graphLineColor graph line color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraphLineColor(Color graphLineColor) {
         this.graphLineColor = graphLineColor;
@@ -333,6 +346,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * are: line, column, step, smoothedLine, candlestick, ohlc.
      *
      * @param graphType graph type
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGraphType(GraphType graphType) {
         this.graphType = graphType;
@@ -350,6 +364,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets grid opacity.
      *
      * @param gridAlpha grid opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGridAlpha(Double gridAlpha) {
         this.gridAlpha = gridAlpha;
@@ -367,6 +382,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets grid color.
      *
      * @param gridColor grid color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGridColor(Color gridColor) {
         this.gridColor = gridColor;
@@ -384,6 +400,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets grid count. You should set autoGridCount to false in order this property to work.
      *
      * @param gridCount grid count
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setGridCount(Integer gridCount) {
         this.gridCount = gridCount;
@@ -401,6 +418,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets height of scrollbar, in pixels. If not set the default value is 40.
      *
      * @param height height, in pixels
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setHeight(Integer height) {
         this.height = height;
@@ -419,6 +437,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * set the default value is false.
      *
      * @param hideResizeGrips hideResizeGrips option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setHideResizeGrips(Boolean hideResizeGrips) {
         this.hideResizeGrips = hideResizeGrips;
@@ -436,6 +455,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Specifies if category axis of scrollbar should mark period change with a different date format.
      *
      * @param markPeriodChange markPeriodChange option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setMarkPeriodChange(Boolean markPeriodChange) {
         this.markPeriodChange = markPeriodChange;
@@ -453,6 +473,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets position of a scrollbar. Possible values are "top" and "bottom". If not set the default value is BOTTOM.
      *
      * @param position position of a scrollbar
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setPosition(ChartScrollbarPosition position) {
         this.position = position;
@@ -470,6 +491,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Set resizeEnabled to false if you want to disable a resizing. If not set the default value is true.
      *
      * @param resizeEnabled resizeEnabled option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setResizeEnabled(Boolean resizeEnabled) {
         this.resizeEnabled = resizeEnabled;
@@ -488,6 +510,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * updateOnReleaseOnly should be set to false in order animation to happen. If not set the default value is true.
      *
      * @param scrollDuration duration of scrolling, in seconds
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setScrollDuration(Double scrollDuration) {
         this.scrollDuration = scrollDuration;
@@ -505,6 +528,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected background opacity.
      *
      * @param selectedBackgroundAlpha opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedBackgroundAlpha(Double selectedBackgroundAlpha) {
         this.selectedBackgroundAlpha = selectedBackgroundAlpha;
@@ -522,6 +546,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected background color.
      *
      * @param selectedBackgroundColor color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedBackgroundColor(Color selectedBackgroundColor) {
         this.selectedBackgroundColor = selectedBackgroundColor;
@@ -539,6 +564,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected graph's fill opacity.
      *
      * @param selectedGraphFillAlpha opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedGraphFillAlpha(Double selectedGraphFillAlpha) {
         this.selectedGraphFillAlpha = selectedGraphFillAlpha;
@@ -556,6 +582,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected graph's fill color.
      *
      * @param selectedGraphFillColor color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedGraphFillColor(Color selectedGraphFillColor) {
         this.selectedGraphFillColor = selectedGraphFillColor;
@@ -573,6 +600,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected graph's line opacity.
      *
      * @param selectedGraphLineAlpha opacity
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedGraphLineAlpha(Double selectedGraphLineAlpha) {
         this.selectedGraphLineAlpha = selectedGraphLineAlpha;
@@ -590,6 +618,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * Sets selected graph's line color.
      *
      * @param selectedGraphLineColor color
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setSelectedGraphLineColor(Color selectedGraphLineColor) {
         this.selectedGraphLineColor = selectedGraphLineColor;
@@ -608,6 +637,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * button. Useful when working with large data sets.
      *
      * @param updateOnReleaseOnly updateOnReleaseOnly option
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setUpdateOnReleaseOnly(Boolean updateOnReleaseOnly) {
         this.updateOnReleaseOnly = updateOnReleaseOnly;
@@ -629,6 +659,7 @@ public class ChartScrollbarSettings extends AbstractChartObject {
      * {@link CategoryAxesSettings#groupToPeriods}.
      *
      * @param usePeriod date period
+     * @return chart scrollbar settings
      */
     public ChartScrollbarSettings setUsePeriod(String usePeriod) {
         this.usePeriod = usePeriod;

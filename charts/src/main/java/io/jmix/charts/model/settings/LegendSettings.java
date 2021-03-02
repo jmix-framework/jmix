@@ -94,6 +94,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets alignment of legend entries. Possible values are: "left", "right" and "center".
      *
      * @param align alignment of legend entries
+     * @return legend settings
      */
     public LegendSettings setAlign(Align align) {
         this.align = align;
@@ -112,6 +113,7 @@ public class LegendSettings extends AbstractChartObject {
      * the default value is false.
      *
      * @param equalWidths equalWidths option
+     * @return legend settings
      */
     public LegendSettings setEqualWidths(Boolean equalWidths) {
         this.equalWidths = equalWidths;
@@ -129,6 +131,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets horizontal space between legend item and left/right border.
      *
      * @param horizontalGap horizontal gap
+     * @return legend settings
      */
     public LegendSettings setHorizontalGap(Integer horizontalGap) {
         this.horizontalGap = horizontalGap;
@@ -146,6 +149,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets the text which will be displayed in the legend. Tag [[title]] will be replaced with the title of the graph.
      *
      * @param labelText text
+     * @return legend settings
      */
     public LegendSettings setLabelText(String labelText) {
         this.labelText = labelText;
@@ -163,6 +167,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets space below the last row of the legend, in pixels. If not set the default value is 0.
      *
      * @param marginBottom margin bottom
+     * @return legend settings
      */
     public LegendSettings setMarginBottom(Integer marginBottom) {
         this.marginBottom = marginBottom;
@@ -180,6 +185,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets space above the first row of the legend, in pixels. If not set the default value is 0.
      *
      * @param marginTop margin top
+     * @return legend settings
      */
     public LegendSettings setMarginTop(Integer marginTop) {
         this.marginTop = marginTop;
@@ -197,6 +203,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets opacity of marker border.
      *
      * @param markerBorderAlpha opacity
+     * @return legend settings
      */
     public LegendSettings setMarkerBorderAlpha(Double markerBorderAlpha) {
         this.markerBorderAlpha = markerBorderAlpha;
@@ -214,6 +221,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets marker border color.
      *
      * @param markerBorderColor color
+     * @return legend settings
      */
     public LegendSettings setMarkerBorderColor(Color markerBorderColor) {
         this.markerBorderColor = markerBorderColor;
@@ -231,6 +239,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets thickness of the legend border.
      *
      * @param markerBorderThickness thickness
+     * @return legend settings
      */
     public LegendSettings setMarkerBorderThickness(Integer markerBorderThickness) {
         this.markerBorderThickness = markerBorderThickness;
@@ -248,6 +257,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets color of the disabled marker (when the graph is hidden).
      *
      * @param markerDisabledColor color
+     * @return legend settings
      */
     public LegendSettings setMarkerDisabledColor(Color markerDisabledColor) {
         this.markerDisabledColor = markerDisabledColor;
@@ -265,6 +275,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets space between legend marker and legend text, in pixels.
      *
      * @param markerLabelGap marker label gap
+     * @return legend settings
      */
     public LegendSettings setMarkerLabelGap(Integer markerLabelGap) {
         this.markerLabelGap = markerLabelGap;
@@ -282,6 +293,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets size of the legend marker (key).
      *
      * @param markerSize marker size
+     * @return legend settings
      */
     public LegendSettings setMarkerSize(Integer markerSize) {
         this.markerSize = markerSize;
@@ -300,6 +312,7 @@ public class LegendSettings extends AbstractChartObject {
      * triangleLeft, triangleDown, bubble, none.
      *
      * @param markerType marker type
+     * @return legend settings
      */
     public LegendSettings setMarkerType(MarkerType markerType) {
         this.markerType = markerType;
@@ -317,6 +330,7 @@ public class LegendSettings extends AbstractChartObject {
      * Set reversedOrder to true if legend entries should be placed in reversed order.
      *
      * @param reversedOrder reversedOrder option
+     * @return legend settings
      */
     public LegendSettings setReversedOrder(Boolean reversedOrder) {
         this.reversedOrder = reversedOrder;
@@ -334,6 +348,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets legend item text color on roll-over.
      *
      * @param rollOverColor color
+     * @return legend settings
      */
     public LegendSettings setRollOverColor(Color rollOverColor) {
         this.rollOverColor = rollOverColor;
@@ -352,6 +367,7 @@ public class LegendSettings extends AbstractChartObject {
      * opacity, so that the graph you rolled-over would be distinguished.
      *
      * @param rollOverGraphAlpha opacity
+     * @return legend settings
      */
     public LegendSettings setRollOverGraphAlpha(Double rollOverGraphAlpha) {
         this.rollOverGraphAlpha = rollOverGraphAlpha;
@@ -369,6 +385,7 @@ public class LegendSettings extends AbstractChartObject {
      * Set switchable to false if graphs shouldn't be shown/hidden by click on the legend marker.
      *
      * @param switchable switchable option
+     * @return legend settings
      */
     public LegendSettings setSwitchable(Boolean switchable) {
         this.switchable = switchable;
@@ -386,6 +403,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets legend switch color.
      *
      * @param switchColor color
+     * @return legend settings
      */
     public LegendSettings setSwitchColor(Color switchColor) {
         this.switchColor = switchColor;
@@ -403,6 +421,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets legend switch type (in case the legend is switchable). Possible values are: "x" and "v".
      *
      * @param switchType switch type
+     * @return legend settings
      */
     public LegendSettings setSwitchType(SwitchType switchType) {
         this.switchType = switchType;
@@ -421,6 +440,7 @@ public class LegendSettings extends AbstractChartObject {
      * value balloons if they are enabled. If not set the default value is false.
      *
      * @param textClickEnabled textClickEnabled option
+     * @return legend settings
      */
     public LegendSettings setTextClickEnabled(Boolean textClickEnabled) {
         this.textClickEnabled = textClickEnabled;
@@ -438,6 +458,7 @@ public class LegendSettings extends AbstractChartObject {
      * Set useMarkerColorForLabels to true if legend labels should use the same color as corresponding markers.
      *
      * @param useMarkerColorForLabels useMarkerColorForLabels option
+     * @return legend settings
      */
     public LegendSettings setUseMarkerColorForLabels(Boolean useMarkerColorForLabels) {
         this.useMarkerColorForLabels = useMarkerColorForLabels;
@@ -457,6 +478,7 @@ public class LegendSettings extends AbstractChartObject {
      * [[percents]], [[description]].
      *
      * @param valueTextComparing value text comparing
+     * @return legend settings
      */
     public LegendSettings setValueTextComparing(String valueTextComparing) {
         this.valueTextComparing = valueTextComparing;
@@ -475,6 +497,7 @@ public class LegendSettings extends AbstractChartObject {
      * [[open]], [[high]], [[low]], [[close]], [[percents]], [[description]].
      *
      * @param valueTextRegular value text regular
+     * @return legend settings
      */
     public LegendSettings setValueTextRegular(String valueTextRegular) {
         this.valueTextRegular = valueTextRegular;
@@ -492,6 +515,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets width of the value text. Increase this value if your values do not fit in the allocated space.
      *
      * @param valueWidth width
+     * @return legend settings
      */
     public LegendSettings setValueWidth(Integer valueWidth) {
         this.valueWidth = valueWidth;
@@ -509,6 +533,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets vertical space between legend items, in pixels.
      *
      * @param verticalGap vertical gap
+     * @return legend settings
      */
     public LegendSettings setVerticalGap(Integer verticalGap) {
         this.verticalGap = verticalGap;
@@ -526,6 +551,7 @@ public class LegendSettings extends AbstractChartObject {
      * Sets position of legend in panels. Possible values are: "bottom" and "top".
      *
      * @param position position
+     * @return legend settings
      */
     public LegendSettings setPosition(LegendSettingsPosition position) {
         this.position = position;

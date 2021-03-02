@@ -35,6 +35,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets brightness step. Lightness increase of each subsequent bar of one series. Value range is from -255 to 255.
      *
      * @param brightnessStep brightness step
+     * @return  gantt chart model
      */
     T setBrightnessStep(Integer brightnessStep);
 
@@ -47,6 +48,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets segment color field from your data provider.
      *
      * @param colorField color field string
+     * @return  gantt chart model
      */
     T setColorField(String colorField);
 
@@ -59,6 +61,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets field of column width of a segments from your data provider.
      *
      * @param columnWidthField column width field string
+     * @return  gantt chart model
      */
     T setColumnWidthField(String columnWidthField);
 
@@ -72,6 +75,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * segment.
      *
      * @param durationField duration field string
+     * @return  gantt chart model
      */
     T setDurationField(String durationField);
 
@@ -84,6 +88,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets end date field from your data provider which holds end date of a segment.
      *
      * @param endDateField end date field string
+     * @return  gantt chart model
      */
     T setEndDateField(String endDateField);
 
@@ -98,6 +103,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * endField and set number of periods instead of providing exact end date. If not set the default value is "ss".
      *
      * @param endField end field string
+     * @return  gantt chart model
      */
     T setEndField(String endField);
 
@@ -112,6 +118,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * segments.
      *
      * @param graph the graph
+     * @return  gantt chart model
      */
     T setGraph(Graph graph);
 
@@ -124,6 +131,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets data period. Used only value axis is date-based.
      *
      * @param period the period
+     * @return  gantt chart model
      */
     T setPeriod(DatePeriod period);
 
@@ -136,6 +144,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets segments field in your data provider.
      *
      * @param segmentsField segments field string
+     * @return  gantt chart model
      */
     T setSegmentsField(String segmentsField);
 
@@ -149,6 +158,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * number of periods instead of providing exact dates.
      *
      * @param startDate the start date
+     * @return  gantt chart model
      */
     T setStartDate(Date startDate);
 
@@ -161,6 +171,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets date field from your data provider which holds start date of a segment.
      *
      * @param startDateField start date field string
+     * @return  gantt chart model
      */
     T setStartDateField(String startDateField);
 
@@ -175,6 +186,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * startField and set number of periods instead of providing exact start date.
      *
      * @param startField start field string
+     * @return  gantt chart model
      */
     T setStartField(String startField);
 
@@ -187,6 +199,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Sets value axis of Gantt chart. Set it's type to "date" if your data is date or time based.
      *
      * @param valueAxis the value axis
+     * @return  gantt chart model
      */
     T setValueAxis(ValueAxis valueAxis);
 
@@ -200,6 +213,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * {@link AbstractChart#additionalFields additionalFields} attribute.
      *
      * @param additionalSegmentFields list of additional segment fields
+     * @return  gantt chart model
      */
     T setAdditionalSegmentFields(List<String> additionalSegmentFields);
 
@@ -207,6 +221,7 @@ public interface GanttChartModel<T extends GanttChartModel> extends SeriesBasedC
      * Adds additional segment fields.
      *
      * @param fields the fields
+     * @return  gantt chart model
      */
     T addAdditionalSegmentFields(String... fields);
 }

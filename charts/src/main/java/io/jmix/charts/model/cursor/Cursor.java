@@ -120,6 +120,7 @@ public class Cursor extends AbstractChartObject {
      * next data point. If not set the default value is 0.
      *
      * @param adjustment adjustment
+     * @return cursor
      */
     public Cursor setAdjustment(Integer adjustment) {
         this.adjustment = adjustment;
@@ -138,6 +139,7 @@ public class Cursor extends AbstractChartObject {
      * to turn this off. If not set the default value is true.
      *
      * @param avoidBalloonOverlapping avoidBalloonOverlapping option
+     * @return cursor
      */
     public Cursor setAvoidBalloonOverlapping(Boolean avoidBalloonOverlapping) {
         this.avoidBalloonOverlapping = avoidBalloonOverlapping;
@@ -156,6 +158,7 @@ public class Cursor extends AbstractChartObject {
      * If not set the default value is "horizontal".
      *
      * @param balloonPointerOrientation balloon pointer orientation
+     * @return cursor
      */
     public Cursor setBalloonPointerOrientation(String balloonPointerOrientation) {
         this.balloonPointerOrientation = balloonPointerOrientation;
@@ -173,6 +176,7 @@ public class Cursor extends AbstractChartObject {
      * Sets duration of animation of a line, in seconds. If not set the default value is 0.3.
      *
      * @param animationDuration duration of animation of a line, in seconds
+     * @return cursor
      */
     public Cursor setAnimationDuration(Double animationDuration) {
         this.animationDuration = animationDuration;
@@ -191,6 +195,7 @@ public class Cursor extends AbstractChartObject {
      * false.
      *
      * @param bulletsEnabled bulletsEnabled option
+     * @return cursor
      */
     public Cursor setBulletsEnabled(Boolean bulletsEnabled) {
         this.bulletsEnabled = bulletsEnabled;
@@ -208,6 +213,7 @@ public class Cursor extends AbstractChartObject {
      * Sets bullet size, that following the cursor. If not set the default value is 8.
      *
      * @param bulletSize bullet size
+     * @return cursor
      */
     public Cursor setBulletSize(Integer bulletSize) {
         this.bulletSize = bulletSize;
@@ -225,6 +231,7 @@ public class Cursor extends AbstractChartObject {
      * Sets opacity of the category balloon. If not set the default value is 1.
      *
      * @param categoryBalloonAlpha opacity of the category balloon
+     * @return cursor
      */
     public Cursor setCategoryBalloonAlpha(Double categoryBalloonAlpha) {
         this.categoryBalloonAlpha = categoryBalloonAlpha;
@@ -242,6 +249,7 @@ public class Cursor extends AbstractChartObject {
      * Sets color of the category balloon. Default color is cursorColor.
      *
      * @param categoryBalloonColor category balloon color
+     * @return cursor
      */
     public Cursor setCategoryBalloonColor(Color categoryBalloonColor) {
         this.categoryBalloonColor = categoryBalloonColor;
@@ -260,6 +268,7 @@ public class Cursor extends AbstractChartObject {
      * "MMM DD, YYYY".
      *
      * @param categoryBalloonDateFormat category balloon date format string
+     * @return cursor
      */
     public Cursor setCategoryBalloonDateFormat(String categoryBalloonDateFormat) {
         this.categoryBalloonDateFormat = categoryBalloonDateFormat;
@@ -278,6 +287,7 @@ public class Cursor extends AbstractChartObject {
      * true.
      *
      * @param categoryBalloonEnabled categoryBalloonEnabled option
+     * @return cursor
      */
     public Cursor setCategoryBalloonEnabled(Boolean categoryBalloonEnabled) {
         this.categoryBalloonEnabled = categoryBalloonEnabled;
@@ -295,6 +305,7 @@ public class Cursor extends AbstractChartObject {
      * Sets text color. If not set the default value is #FFFFFF.
      *
      * @param color text color
+     * @return cursor
      */
     public Cursor setColor(Color color) {
         this.color = color;
@@ -312,6 +323,7 @@ public class Cursor extends AbstractChartObject {
      * Sets opacity of the cursor line. If not set the default value is 1.
      *
      * @param cursorAlpha opacity
+     * @return cursor
      */
     public Cursor setCursorAlpha(Double cursorAlpha) {
         this.cursorAlpha = cursorAlpha;
@@ -329,6 +341,7 @@ public class Cursor extends AbstractChartObject {
      * Sets color of the cursor line. If not set the default value is #CC0000.
      *
      * @param cursorColor color
+     * @return cursor
      */
     public Cursor setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
@@ -349,6 +362,7 @@ public class Cursor extends AbstractChartObject {
      * is MIDDLE.
      *
      * @param cursorPosition cursor position
+     * @return cursor
      */
     public Cursor setCursorPosition(CursorPosition cursorPosition) {
         this.cursorPosition = cursorPosition;
@@ -366,6 +380,7 @@ public class Cursor extends AbstractChartObject {
      * Set enabled to false if you want cursor shouldn't be enabled. If not set the default value is true.
      *
      * @param enabled enabled option
+     * @return cursor
      */
     public Cursor setEnabled(Boolean enabled) {
         this.enabled = enabled;
@@ -384,6 +399,7 @@ public class Cursor extends AbstractChartObject {
      * its size, set this property to 1. If not set the default value is 1.7.
      *
      * @param graphBulletSize graph bullet size
+     * @return cursor
      */
     public Cursor setGraphBulletSize(Double graphBulletSize) {
         this.graphBulletSize = graphBulletSize;
@@ -402,6 +418,7 @@ public class Cursor extends AbstractChartObject {
      * If not set the default value is false.
      *
      * @param oneBalloonOnly oneBalloonOnly option
+     * @return cursor
      */
     public Cursor setOneBalloonOnly(Boolean oneBalloonOnly) {
         this.oneBalloonOnly = oneBalloonOnly;
@@ -420,6 +437,7 @@ public class Cursor extends AbstractChartObject {
      * false.
      *
      * @param pan pan option
+     * @return cursor
      */
     public Cursor setPan(Boolean pan) {
         this.pan = pan;
@@ -437,6 +455,7 @@ public class Cursor extends AbstractChartObject {
      * Sets opacity of the selection. If not set the default value is 0.2.
      *
      * @param selectionAlpha opacity
+     * @return cursor
      */
     public Cursor setSelectionAlpha(Double selectionAlpha) {
         this.selectionAlpha = selectionAlpha;
@@ -455,6 +474,7 @@ public class Cursor extends AbstractChartObject {
      * mouse button. If not set the default value is false.
      *
      * @param selectWithoutZooming selectWithoutZooming option
+     * @return cursor
      */
     public Cursor setSelectWithoutZooming(Boolean selectWithoutZooming) {
         this.selectWithoutZooming = selectWithoutZooming;
@@ -474,6 +494,7 @@ public class Cursor extends AbstractChartObject {
      * hovered item doesn't have value for this graph.
      *
      * @param showNextAvailable showNextAvailable option
+     * @return cursor
      */
     public Cursor setShowNextAvailable(Boolean showNextAvailable) {
         this.showNextAvailable = showNextAvailable;
@@ -493,6 +514,7 @@ public class Cursor extends AbstractChartObject {
      * default value is true.
      *
      * @param valueBalloonsEnabled valueBalloonsEnabled option
+     * @return cursor
      */
     public Cursor setValueBalloonsEnabled(Boolean valueBalloonsEnabled) {
         this.valueBalloonsEnabled = valueBalloonsEnabled;
@@ -511,6 +533,7 @@ public class Cursor extends AbstractChartObject {
      * automatically. If not set the default value is true.
      *
      * @param zoomable zoomable option
+     * @return cursor
      */
     public Cursor setZoomable(Boolean zoomable) {
         this.zoomable = zoomable;
@@ -530,6 +553,7 @@ public class Cursor extends AbstractChartObject {
      * an argument.
      *
      * @param categoryBalloonFunction JS function
+     * @return cursor
      */
     public Cursor setCategoryBalloonFunction(JsFunction categoryBalloonFunction) {
         this.categoryBalloonFunction = categoryBalloonFunction;
@@ -550,6 +574,7 @@ public class Cursor extends AbstractChartObject {
      * feature. If not set the default value is false.
      *
      * @param fullWidth fullWidth option
+     * @return cursor
      */
     public Cursor setFullWidth(Boolean fullWidth) {
         this.fullWidth = fullWidth;
@@ -569,6 +594,7 @@ public class Cursor extends AbstractChartObject {
      * cursor's position.
      *
      * @param graphBulletAlpha opacity of graph bullet
+     * @return cursor
      */
     public Cursor setGraphBulletAlpha(Double graphBulletAlpha) {
         this.graphBulletAlpha = graphBulletAlpha;
@@ -586,6 +612,7 @@ public class Cursor extends AbstractChartObject {
      * Sets opacity of value line. Will use cursorAlpha value if not set.
      *
      * @param valueLineAlpha opacity of value line.
+     * @return cursor
      */
     public Cursor setValueLineAlpha(Double valueLineAlpha) {
         this.valueLineAlpha = valueLineAlpha;
@@ -603,6 +630,7 @@ public class Cursor extends AbstractChartObject {
      * Sets axis which should display the balloon.
      *
      * @param valueLineAxis value line axis id
+     * @return cursor
      */
     public Cursor setValueLineAxis(String valueLineAxis) {
         this.valueLineAxis = valueLineAxis;
@@ -621,6 +649,7 @@ public class Cursor extends AbstractChartObject {
      * the default value is false.
      *
      * @param valueLineBalloonEnabled valueLineBalloonEnabled option
+     * @return cursor
      */
     public Cursor setValueLineBalloonEnabled(Boolean valueLineBalloonEnabled) {
         this.valueLineBalloonEnabled = valueLineBalloonEnabled;
@@ -640,6 +669,7 @@ public class Cursor extends AbstractChartObject {
      * balloons on this line by setting valueLineBalloonEnabled to true. If not set the default value is false.
      *
      * @param valueLineEnabled valueLineEnabled option
+     * @return cursor
      */
     public Cursor setValueLineEnabled(Boolean valueLineEnabled) {
         this.valueLineEnabled = valueLineEnabled;
@@ -658,6 +688,7 @@ public class Cursor extends AbstractChartObject {
      * this way. If not set the default value is "[[category]]".
      *
      * @param categoryBalloonText category balloon text
+     * @return cursor
      */
     public Cursor setCategoryBalloonText(String categoryBalloonText) {
         this.categoryBalloonText = categoryBalloonText;
@@ -676,6 +707,7 @@ public class Cursor extends AbstractChartObject {
      * set the default value is true.
      *
      * @param leaveAfterTouch leaveAfterTouch option
+     * @return cursor
      */
     public Cursor setLeaveAfterTouch(Boolean leaveAfterTouch) {
         this.leaveAfterTouch = leaveAfterTouch;
@@ -694,6 +726,7 @@ public class Cursor extends AbstractChartObject {
      * want to see the balloons after he moves finger away. If not set the default value is false.
      *
      * @param leaveCursor leaveCursor option
+     * @return cursor
      */
     public Cursor setLeaveCursor(Boolean leaveCursor) {
         this.leaveCursor = leaveCursor;
@@ -713,6 +746,7 @@ public class Cursor extends AbstractChartObject {
      * middle.
      *
      * @param limitToGraph id of a graph
+     * @return cursor
      */
     public Cursor setLimitToGraph(String limitToGraph) {
         this.limitToGraph = limitToGraph;
@@ -731,6 +765,7 @@ public class Cursor extends AbstractChartObject {
      * value is false.
      *
      * @param valueZoomable valueZoomable option
+     * @return cursor
      */
     public Cursor setValueZoomable(Boolean valueZoomable) {
         this.valueZoomable = valueZoomable;

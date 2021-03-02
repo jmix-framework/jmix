@@ -29,6 +29,7 @@ public interface RadarChartModel<T extends RadarChartModel> extends CoordinateCh
      * Sets field from your data provider containing categories.
      *
      * @param categoryField category field string
+     * @return radar chart model
      */
     T setCategoryField(String categoryField);
 
@@ -41,6 +42,7 @@ public interface RadarChartModel<T extends RadarChartModel> extends CoordinateCh
      * Sets radius of radar. If not set the default value is 35%.
      *
      * @param radius the radius
+     * @return radar chart model
      */
     T setRadius(String radius);
 }

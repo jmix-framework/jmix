@@ -338,6 +338,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * length in characters exceeds the number then the properties will be shown vertically.
      * <p>
      * Applies only when {@code editable=true}.
+     * @param unusedPropertiesVertical properties
      */
     void setUnusedPropertiesVertical(UnusedPropertiesVertical unusedPropertiesVertical);
 
@@ -427,6 +428,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * @see #setExclusions(Map)
      * @see #setExclusions(String, List)
      * @see #addExclusions(String, String...)
+     * @param inclusions map with properties and values included in rendering
      */
     void setInclusions(Map<String, List<String>> inclusions);
 
@@ -475,6 +477,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * @see #setInclusions(Map)
      * @see #setInclusions(String, List)
      * @see #addInclusions(String, String...)
+     * @param  exclusions map with properties and values excluded from rendering
      */
     void setExclusions(Map<String, List<String>> exclusions);
 
@@ -519,6 +522,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
     /**
      * Set additional JSON configuration as a string.
      * This JSON can override configuration loaded from XML and from Component API.
+     * @param json additional JSON configuration
      */
     void setNativeJson(String json);
 
@@ -582,6 +586,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
     /**
      * Adds a listener to the pivot table refresh events. Fired only for editable PivotTable.
      * @param refreshListener a listener to add
+     * @return subscription
      */
     Subscription addRefreshListener(Consumer<RefreshEvent> refreshListener);
 
@@ -697,6 +702,7 @@ public interface PivotTable extends Component, Component.BelongToFrame, Componen
      * renderers (table, heatmap, table barchart, col heatmap, row heatmap).
      *
      * @param listener a listener to add
+     * @return subscription
      */
     Subscription addCellClickListener(Consumer<CellClickEvent> listener);
 

@@ -54,6 +54,7 @@ public class Image extends AbstractChartObject {
      * Sets roll-over balloon color. If not set the default value is #000000.
      *
      * @param balloonColor color
+     * @return image
      */
     public Image setBalloonColor(Color balloonColor) {
         this.balloonColor = balloonColor;
@@ -71,6 +72,7 @@ public class Image extends AbstractChartObject {
      * Sets roll-over text.
      *
      * @param balloonText text
+     * @return image
      */
     public Image setBalloonText(String balloonText) {
         this.balloonText = balloonText;
@@ -89,6 +91,7 @@ public class Image extends AbstractChartObject {
      * default value is #000000.
      *
      * @param color color
+     * @return image
      */
     public Image setColor(Color color) {
         this.color = color;
@@ -106,6 +109,7 @@ public class Image extends AbstractChartObject {
      * Sets height of an image. If not set the default value is 20.
      *
      * @param height height
+     * @return image
      */
     public Image setHeight(Integer height) {
         this.height = height;
@@ -123,6 +127,7 @@ public class Image extends AbstractChartObject {
      * Sets horizontal offset. If not set the default value is 0.
      *
      * @param offsetX X offset
+     * @return image
      */
     public Image setOffsetX(Integer offsetX) {
         this.offsetX = offsetX;
@@ -140,6 +145,7 @@ public class Image extends AbstractChartObject {
      * Sets vertical offset. If not set the default value is 0.
      *
      * @param offsetY Y offset
+     * @return image
      */
     public Image setOffsetY(Integer offsetY) {
         this.offsetY = offsetY;
@@ -157,6 +163,7 @@ public class Image extends AbstractChartObject {
      * Sets color of image outline. Works only if an image is generated using SVG path (using svgPath property)
      *
      * @param outlineColor color
+     * @return image
      */
     public Image setOutlineColor(Color outlineColor) {
         this.outlineColor = outlineColor;
@@ -174,6 +181,7 @@ public class Image extends AbstractChartObject {
      * Sets rotation of an image. If not set the default value is 0.
      *
      * @param rotation rotation
+     * @return image
      */
     public Image setRotation(Integer rotation) {
         this.rotation = rotation;
@@ -191,6 +199,7 @@ public class Image extends AbstractChartObject {
      * Sets svg path of an image. Will not work with IE8.
      *
      * @param svgPath svg path
+     * @return image
      */
     public Image setSvgPath(String svgPath) {
         this.svgPath = svgPath;
@@ -208,6 +217,7 @@ public class Image extends AbstractChartObject {
      * Sets the URL of an image.
      *
      * @param url the URL
+     * @return image
      */
     public Image setUrl(String url) {
         this.url = url;
@@ -225,6 +235,7 @@ public class Image extends AbstractChartObject {
      * Sets width on an image. If not set the default value is 20.
      *
      * @param width width
+     * @return image
      */
     public Image setWidth(Integer width) {
         this.width = width;

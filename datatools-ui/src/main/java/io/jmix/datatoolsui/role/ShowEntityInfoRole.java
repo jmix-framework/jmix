@@ -37,5 +37,5 @@ public interface ShowEntityInfoRole {
     @EntityPolicy(entityClass = InfoValue.class, actions = {EntityPolicyAction.ALL})
     @EntityAttributePolicy(entityClass = InfoValue.class, action = EntityAttributePolicyAction.MODIFY, attributes = "*")
     @SpecificPolicy(resources = "datatools.ui.showEntityInfo")
-    void access();
+    void showEntityInfo();
 }

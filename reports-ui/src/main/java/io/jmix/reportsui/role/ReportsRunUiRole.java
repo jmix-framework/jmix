@@ -20,6 +20,5 @@ public interface ReportsRunUiRole extends ReportsRunRole {
             "report_showChart",
             "commonLookup"
     })
-    @Override
-    void access();
+    void reportsRunUi();
 }

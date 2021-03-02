@@ -40,5 +40,5 @@ public interface ReportsRunRole {
     @EntityAttributePolicy(entityClass = Report.class, attributes = {"locName", "description", "code", "updateTs", "group"}, action = MODIFY)
     @EntityAttributePolicy(entityClass = ReportGroup.class, attributes = {"title", "localeNames"}, action = MODIFY)
     @EntityAttributePolicy(entityClass = ReportTemplate.class, attributes = {"code", "name", "customDefinition", "custom", "alterable"}, action = MODIFY)
-    void access();
+    void reportsRun();
 }

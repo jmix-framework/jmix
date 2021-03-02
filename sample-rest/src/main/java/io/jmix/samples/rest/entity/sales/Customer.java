@@ -47,7 +47,7 @@ public class Customer extends StandardEntity {
     }
 
     public Status getStatus() {
-        return EnumUtils.fromId(Status.class, status, null);
+        return EnumUtils.fromId(Status.class, status);
     }
 
     public void setStatus(Status status) {

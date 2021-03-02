@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping(value = "/myapi/sample")
 public class SampleTestController {
@@ -32,7 +34,7 @@ public class SampleTestController {
 
     @GetMapping(value = "/protectedMethod")
     public String protectedMethod() {
-        UserDetails user = currentAuthentication.getUser();
+        Objects.requireNonNull(currentAuthentication.getUser());
         return "protectedMethod";
     }
 

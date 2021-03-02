@@ -32,8 +32,6 @@ public class MetaPropertyInfo {
     public boolean readOnly;
     boolean isPersistent;
     public String description;
-    @Deprecated
-    boolean isTransient;
 
     public MetaPropertyInfo(MetaProperty metaProperty,
                             MessageTools messageTools,
@@ -62,7 +60,6 @@ public class MetaPropertyInfo {
         this.readOnly = metaProperty.isReadOnly();
         this.mandatory = metaProperty.isMandatory();
         this.isPersistent = metadataTools.isJpa(metaProperty);
-        this.isTransient = !metadataTools.isJpa(metaProperty);
         this.description = messageTools.getPropertyCaption(metaProperty);
     }
 
@@ -70,8 +67,35 @@ public class MetaPropertyInfo {
         return isPersistent;
     }
 
-    @Deprecated
-    public boolean getTransient() {
-        return isTransient;
+    public String getName() {
+        return name;
+    }
+
+    public MetaProperty.Type getAttributeType() {
+        return attributeType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Range.Cardinality getCardinality() {
+        return cardinality;
+    }
+
+    public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public boolean isPersistent() {
+        return isPersistent;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

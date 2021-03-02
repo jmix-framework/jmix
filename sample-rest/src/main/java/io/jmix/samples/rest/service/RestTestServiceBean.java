@@ -59,7 +59,7 @@ public class RestTestServiceBean implements RestTestService {
 
     @Override
     public Integer sum(int number1, String number2) {
-        return number1 + Integer.valueOf(number2);
+        return number1 + Integer.parseInt(number2);
     }
 
     @Override

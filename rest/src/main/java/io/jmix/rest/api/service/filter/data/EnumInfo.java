@@ -26,4 +26,12 @@ public class EnumInfo {
         this.name = name;
         this.values = values;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<EnumValueInfo> getValues() {
+        return values;
+    }
 }

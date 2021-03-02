@@ -26,4 +26,16 @@ public class EnumValueInfo {
         this.id = id;
         this.caption = caption;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Object getId() {
+        return id;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
 }

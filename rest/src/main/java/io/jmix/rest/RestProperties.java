@@ -41,7 +41,6 @@ public class RestProperties {
     private final int maxUploadSize;
     boolean standardAuthenticationEnabled;
     List<String> standardAuthenticationUsers;
-    boolean anonymousEnabled;
     boolean tokenMaskingEnabled;
     boolean optimisticLockingEnabled;
     boolean checkPasswordOnClient;
@@ -49,7 +48,6 @@ public class RestProperties {
     boolean responseViewEnabled;
     String securityScope;
     boolean storeTokensInDb;
-    boolean syncTokenReplication;
     Integer defaultMaxFetchSize;
     Map<String, Integer> entityMaxFetchSize;
 
@@ -73,7 +71,6 @@ public class RestProperties {
             @DefaultValue("true") boolean responseViewEnabled,
             @DefaultValue("REST") String securityScope,
             @DefaultValue("false") boolean storeTokensInDb,
-            @DefaultValue("false") boolean syncTokenReplication,
             @DefaultValue("10000") Integer defaultMaxFetchSize,
             @Nullable Map<String, Integer> entityMaxFetchSize) {
         this.clientId = clientId;
@@ -94,7 +91,6 @@ public class RestProperties {
         this.responseViewEnabled = responseViewEnabled;
         this.securityScope = securityScope;
         this.storeTokensInDb = storeTokensInDb;
-        this.syncTokenReplication = syncTokenReplication;
         this.defaultMaxFetchSize = defaultMaxFetchSize;
         this.entityMaxFetchSize = entityMaxFetchSize == null ? Collections.emptyMap() : entityMaxFetchSize;
     }

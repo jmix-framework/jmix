@@ -26,6 +26,10 @@ public class UserInfo {
         this.username = user.getUsername();
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public String getLocale() {
         return locale;
     }

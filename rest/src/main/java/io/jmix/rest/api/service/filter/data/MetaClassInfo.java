@@ -40,4 +40,16 @@ public class MetaClassInfo {
                 .map(metaProperty -> new MetaPropertyInfo(metaProperty, messageTools, datatypeRegistry, metadataTools))
                 .collect(Collectors.toList()));
     }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public String getAncestor() {
+        return ancestor;
+    }
+
+    public List<MetaPropertyInfo> getProperties() {
+        return properties;
+    }
 }

@@ -50,7 +50,7 @@ public class RestControllerExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(RestControllerExceptionHandler.class);
 
     protected static final Collection<Class> SERIALIZABLE_INVALID_VALUE_TYPES =
-            Arrays.asList(String.class, Date.class, Number.class, Enum.class, UUID.class);
+            Collections.unmodifiableList(Arrays.asList(String.class, Date.class, Number.class, Enum.class, UUID.class));
 
     @Autowired
     protected CurrentAuthentication currentAuthentication;

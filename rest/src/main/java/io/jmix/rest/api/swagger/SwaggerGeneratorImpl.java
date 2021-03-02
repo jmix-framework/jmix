@@ -38,11 +38,11 @@ import io.swagger.models.parameters.*;
 import io.swagger.models.properties.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -487,11 +487,10 @@ public class SwaggerGeneratorImpl implements SwaggerGenerator {
 
     protected Property getNamePatternProperty(MetaClass entityClass) {
         Property namePatternProperty = new StringProperty();
-        Class<?> javaClass = entityClass.getJavaClass();
-//        NamePattern namePatternAnnotation = javaClass.getAnnotation(NamePattern.class);
-//        if (namePatternAnnotation != null) {
-//            namePatternProperty.setDefault(namePatternAnnotation.value());
-//        }
+        namePatternProperty.setDefault(
+                metadataTools.getInstanceNameRelatedProperties(entityClass).stream()
+                        .map(MetadataObject::getName)
+                        .collect(Collectors.joining()));
         return namePatternProperty;
     }
 

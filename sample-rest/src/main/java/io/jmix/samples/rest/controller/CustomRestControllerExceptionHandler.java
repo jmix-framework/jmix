@@ -36,8 +36,11 @@ public class CustomRestControllerExceptionHandler {
     @ResponseBody
     public ResponseEntity<ErrorInfo> handleException(Exception e) {
         log.error("Exception in REST controller", e);
-        CustomHttpClientErrorException ex = (CustomHttpClientErrorException) e;
-        ErrorInfo errorInfo = new ErrorInfo(ex.getStatusCode().getReasonPhrase(), ex.getStatusText());
-        return new ResponseEntity<>(errorInfo, ex.getStatusCode());
+        if (e instanceof CustomHttpClientErrorException) {
+            CustomHttpClientErrorException ex = (CustomHttpClientErrorException) e;
+            ErrorInfo errorInfo = new ErrorInfo(ex.getStatusCode().getReasonPhrase(), ex.getStatusText());
+            return new ResponseEntity<>(errorInfo, ex.getStatusCode());
+        }
+        return null;
     }
 }

@@ -187,6 +187,10 @@ dependencies {
         api "io.jmix.ui:jmix-ui-widgets-compiled:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-ui-starter:${snapshotOr(uiVersion)}"
         api "io.jmix.ui:jmix-ui-data-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-charts-starter:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table:${snapshotOr(uiVersion)}"
+        api "io.jmix.ui:jmix-pivot-table-starter:${snapshotOr(uiVersion)}"
 
         api 'com.google.guava:guava:27.0.1-jre'
         api 'commons-io:commons-io:2.6'
@@ -272,6 +276,12 @@ dependencies {
         api "com.haulmont.yarg:yarg:$yargVersion"
 
         api 'org.jsoup:jsoup:1.11.3'
+
+        api 'org.apache.poi:poi:4.1.2'
+
+        api 'org.webjars.bower:pivottable:2.21.0.jmix.0'
+        api 'org.webjars:jquery-ui-touch-punch:0.2.3-2'
+        api 'org.webjars:amcharts:3.21.12.jmix.0'
 
         runtime 'org.hsqldb:hsqldb:2.4.1'
     }

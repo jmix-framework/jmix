@@ -24,7 +24,11 @@ public class Types {
         GT(PropertyCondition.Operation.GREATER),
         GTE(PropertyCondition.Operation.GREATER_OR_EQUAL),
         LT(PropertyCondition.Operation.LESS),
-        LTE(PropertyCondition.Operation.LESS_OR_EQUAL);
+        LTE(PropertyCondition.Operation.LESS_OR_EQUAL),
+        _contains(PropertyCondition.Operation.CONTAINS),
+        _notContains(PropertyCondition.Operation.NOT_CONTAINS),
+        _startsWith(PropertyCondition.Operation.STARTS_WITH),
+        _endsWith(PropertyCondition.Operation.ENDS_WITH);
 
         FilterOperation(String jmixOperation) {
             this.jmixOperation = jmixOperation;

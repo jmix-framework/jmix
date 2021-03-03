@@ -252,6 +252,6 @@ class QuerySortTest extends DataSpec {
 
         then:
 
-        queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e order by e.id.tenant desc, e.id.entityId desc'
+        queryBuilder.getResultQueryString() == 'select e from test_TestCompositeKeyEntity e left join e.id e_id order by e_id.tenant desc, e_id.entityId desc'
     }
 }

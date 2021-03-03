@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class SoftDeletionFilterDefinition extends FilterDefinition {
 
-    public static final String NAME = "SoftDeletionFilter";
+    public static final String SOFT_DELETION_FILTER = "SoftDeletionFilter";
 
     private static final long serialVersionUID = 2763953911243774699L;
 
@@ -32,7 +32,7 @@ public class SoftDeletionFilterDefinition extends FilterDefinition {
      * Construct a default SoftDeletionFilterDefinition instance.
      */
     public SoftDeletionFilterDefinition() {
-        super(NAME, "", new HashMap<>());
+        super(SOFT_DELETION_FILTER, "", new HashMap<>());
     }
 
     /**

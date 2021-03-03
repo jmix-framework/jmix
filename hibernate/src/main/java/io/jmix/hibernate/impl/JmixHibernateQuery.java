@@ -364,13 +364,13 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
                     query.setCacheable(false);
                 }
 
-                RootGraphImplementor<?> entityGraph = getProducer().createEntityGraph(fetchPlan.getEntityClass());
-                if (entityGraph != null) {
-                    for (FetchPlan plan : fetchPlans) {
-                        fetchGraphProvider.fillGraph(entityGraph, plan);
-                    }
-                    query = query.applyLoadGraph(entityGraph);
-                }
+//                RootGraphImplementor<?> entityGraph = getProducer().createEntityGraph(fetchPlan.getEntityClass());
+//                if (entityGraph != null) {
+//                    for (FetchPlan plan : fetchPlans) {
+//                        fetchGraphProvider.fillGraph(entityGraph, plan);
+//                    }
+////                    query = query.applyFetchGraph(entityGraph);
+//                }
             }
         }
         return query;

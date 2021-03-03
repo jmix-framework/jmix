@@ -19,12 +19,14 @@ package entity_annotations
 import io.jmix.core.DataManager
 import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
-import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.DataSpec
+import test_support.entity.soft_delete.EntityWithSoftDeletedCollection
+import test_support.entity.soft_delete.EntityWithSoftDeletedManyToManyCollection
 import test_support.entity.soft_delete.SoftDeleteEntity
 import test_support.entity.soft_delete.SoftDeleteWithUserEntity
 
@@ -52,6 +54,8 @@ class SoftDeleteTest extends DataSpec {
                 .build()
         userRepository.addUser(admin)
         authenticator.begin()
+
+//        jdbcTemplate.update("alter table TEST_SOFT_DELETION_MANY_COLLECTION_TO_SOFT add column TIME_OF_DELETION int default 0")
     }
 
     def cleanup() {
@@ -115,6 +119,74 @@ class SoftDeleteTest extends DataSpec {
         !dataManager.load(tsOnly.class).id(tsOnly.id).optional().isPresent()
         dataManager.load(tsOnly.class).id(tsOnly.id).softDeletion(false).optional().isPresent()
 
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "Soft deletion for collection"() {
+        setup:
+        authenticator.begin("admin")
+
+        EntityWithSoftDeletedCollection parent = dataManager.save(dataManager.create(EntityWithSoftDeletedCollection))
+
+        SoftDeleteEntity el1 = dataManager.create(SoftDeleteEntity)
+        el1.setParent(parent)
+        el1 = dataManager.save(el1)
+
+        SoftDeleteEntity el2 = dataManager.create(SoftDeleteEntity)
+        el2.setParent(parent)
+        el2 = dataManager.save(el2)
+
+        when:
+        parent = dataManager.load(EntityWithSoftDeletedCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 2
+
+        when:
+        dataManager.remove(el1)
+        parent = dataManager.load(EntityWithSoftDeletedCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 1
+        parent.collection.get(0).id == el2.id
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "Soft deletion for many to many collection"() {
+        setup:
+        authenticator.begin("admin")
+
+        SoftDeleteEntity el1 = dataManager.create(SoftDeleteEntity)
+        el1.title = "el1"
+        el1 = dataManager.save(el1)
+
+        SoftDeleteEntity el2 = dataManager.create(SoftDeleteEntity)
+        el2.title = "el2"
+        el2 = dataManager.save(el2)
+
+        EntityWithSoftDeletedManyToManyCollection parent = dataManager.create(EntityWithSoftDeletedManyToManyCollection)
+        parent.setCollection(new HashSet<SoftDeleteEntity>())
+        parent.getCollection().add(el1)
+        parent.getCollection().add(el2)
+        parent = dataManager.save(parent)
+
+        when:
+        parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 2
+
+        when:
+        dataManager.remove(el1)
+        parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 1
+        parent.collection.iterator().next().id == el2.id
 
         cleanup:
         authenticator.end()

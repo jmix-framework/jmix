@@ -31,8 +31,6 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     implementation 'org.liquibase:liquibase-core'
 
-//    implementation 'org.hibernate:hibernate-core:5.4.25.Final'
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.springframework:spring-test'
     testImplementation "org.spockframework:spock-core"

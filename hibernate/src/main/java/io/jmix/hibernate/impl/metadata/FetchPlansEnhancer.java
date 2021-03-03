@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("hibernate_FetchPlansMetadataEnhancer")
-public class FetchPlansMetamodelEnhancer implements MetamodelEnhancer {
+public class FetchPlansEnhancer implements SessionFactoryEnhancer {
 
     @Autowired
     protected FetchPlanRepository fetchPlanRepository;
@@ -41,7 +41,7 @@ public class FetchPlansMetamodelEnhancer implements MetamodelEnhancer {
     @Override
     public void enhance(SessionFactoryImplementor sessionFactoryImplementor) {
         MetamodelImplementor metamodel = sessionFactoryImplementor.getMetamodel();
-        for (MetaClass metaClass : metadata.getClasses()) {
+        for (MetaClass metaClass : this.metadata.getClasses()) {
             for (String fetchPlanName : fetchPlanRepository.getFetchPlanNames(metaClass)) {
                 FetchPlan fetchPlan = fetchPlanRepository.findFetchPlan(metaClass, fetchPlanName);
                 RootGraphImplementor namedEntityGraph = fetchGraphProvider.createNamedEntityGraph(fetchPlan, sessionFactoryImplementor);

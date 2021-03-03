@@ -16,46 +16,54 @@
 
 package test_support.entity.soft_delete;
 
-import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.hibernate.impl.SoftDeletionFilterDefinition;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
-@Table(name = "TEST_HARDDELETE_ENTITY")
+@Table(name = "TEST_SOFT_DELETION_COLLECTION")
 @JmixEntity
-@Entity(name = "test_SoftDeleteEntity")
-@Where(clause = "TIME_OF_DELETION is null")
-public class SoftDeleteEntity extends HardDeleteEntity {
+@Entity(name = "test_EntityWithSoftDeletedCollection")
+public class EntityWithSoftDeletedCollection {
     private static final long serialVersionUID = 7016314126468585951L;
 
-    @DeletedDate
-    @Column(name = "TIME_OF_DELETION")
-    protected Date timeOfDeletion;
+    @Id
+    @Column(name = "ID", nullable = false)
+    @JmixGeneratedValue
+    protected UUID id;
 
-    @JoinColumn(name = "PARENT_ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private EntityWithSoftDeletedCollection parent;
+    @OneToMany(mappedBy = "parent")
+    private List<SoftDeleteEntity> collection;
 
-    public EntityWithSoftDeletedCollection getParent() {
-        return parent;
+    @Column(name = "TITLE")
+    private String title;
+
+    public List<SoftDeleteEntity> getCollection() {
+        return collection;
     }
 
-    public void setParent(EntityWithSoftDeletedCollection parent) {
-        this.parent = parent;
+    public void setCollection(List<SoftDeleteEntity> collection) {
+        this.collection = collection;
     }
 
-
-    public Date getTimeOfDeletion() {
-        return timeOfDeletion;
+    public UUID getId() {
+        return id;
     }
 
-    public void setTimeOfDeletion(Date timeOfDeletion) {
-        this.timeOfDeletion = timeOfDeletion;
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
 

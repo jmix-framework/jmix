@@ -18,7 +18,7 @@ package io.jmix.hibernate.impl.metadata;
 
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 
-public interface MetamodelEnhancer {
+public interface SessionFactoryEnhancer {
 
     void enhance(SessionFactoryImplementor sessionFactoryImplementor);
 }

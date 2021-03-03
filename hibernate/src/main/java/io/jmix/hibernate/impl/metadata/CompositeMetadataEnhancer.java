@@ -16,21 +16,21 @@
 
 package io.jmix.hibernate.impl.metadata;
 
-import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.boot.spi.MetadataImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component("hibernate_CompositeSessionFactoryEnhancer")
-public class CompositeSessionFactoryEnhancer {
+@Component("hibernate_CompositeMetadataEnhancer")
+public class CompositeMetadataEnhancer {
 
     @Autowired
-    protected List<SessionFactoryEnhancer> enhancers;
+    protected List<MetadataEnhancer> enhancers;
 
-    public void enhance(SessionFactoryImplementor sessionFactoryImplementor) {
-        for (SessionFactoryEnhancer enhancer : enhancers) {
-            enhancer.enhance(sessionFactoryImplementor);
+    public void enhance(MetadataImplementor metadata) {
+        for (MetadataEnhancer enhancer : enhancers) {
+            enhancer.enhance(metadata);
         }
     }
 }

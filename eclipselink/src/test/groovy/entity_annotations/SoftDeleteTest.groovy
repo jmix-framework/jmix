@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import test_support.DataSpec
+import test_support.entity.soft_delete.EntityWithSoftDeletedManyToManyCollection
 import test_support.entity.soft_delete.SoftDeleteEntity
 import test_support.entity.soft_delete.SoftDeleteWithUserEntity
 
@@ -112,6 +113,51 @@ class SoftDeleteTest extends DataSpec {
         ((EntityEntrySoftDelete) tsOnly.__getEntityEntry()).getDeletedBy() == null
         beforeOrEquals(beforeDelete, tsOnly.timeOfDeletion)
         afterOrEquals(afterDelete, tsOnly.timeOfDeletion)
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "Soft deletion for many to many collection"() {
+        setup:
+        authenticator.begin("admin")
+
+        SoftDeleteEntity el1 = dataManager.create(SoftDeleteEntity)
+        el1.title = "el1"
+        el1 = dataManager.save(el1)
+
+        SoftDeleteEntity el2 = dataManager.create(SoftDeleteEntity)
+        el2.title = "el2"
+        el2 = dataManager.save(el2)
+
+        EntityWithSoftDeletedManyToManyCollection parent = dataManager.create(EntityWithSoftDeletedManyToManyCollection)
+        parent.setCollection(new HashSet<SoftDeleteEntity>())
+        parent.getCollection().add(el1)
+        parent.getCollection().add(el2)
+        parent = dataManager.save(parent)
+
+        when:
+        parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 2
+
+        when:
+        dataManager.remove(el1)
+        parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId()).fetchPlanProperties("collection").one()
+
+        then:
+        parent.collection.size() == 1
+        parent.collection.iterator().next().id == el2.id
+
+        when:
+        dataManager.remove(el1)
+        parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId())
+                .fetchPlanProperties("collection").softDeletion(false).one()
+
+        then:
+        parent.collection.size() == 2
+
 
         cleanup:
         authenticator.end()

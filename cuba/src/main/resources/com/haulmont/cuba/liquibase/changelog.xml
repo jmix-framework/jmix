@@ -24,6 +24,6 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
-    <includeAll path="/com/haulmont/cuba/liquibase/changelog"/>
+    <include file="/com/haulmont/cuba/liquibase/changelog/001-cuba.xml"/>
 
 </databaseChangeLog>

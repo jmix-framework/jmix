@@ -21,6 +21,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <includeAll path="/io/jmix/data/liquibase/changelog"/>
+    <include file="/io/jmix/data/liquibase/changelog/001-data.xml"/>
 
 </databaseChangeLog>

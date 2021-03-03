@@ -24,6 +24,6 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
-    <includeAll path="/io/jmix/uidata/liquibase/changelog"/>
+    <include file="/io/jmix/uidata/liquibase/changelog/001-ui-data.xml"/>
 
 </databaseChangeLog>

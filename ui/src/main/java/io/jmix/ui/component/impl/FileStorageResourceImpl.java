@@ -18,7 +18,6 @@ package io.jmix.ui.component.impl;
 
 import com.vaadin.server.StreamResource;
 import io.jmix.core.FileRef;
-import io.jmix.core.FileStorageException;
 import io.jmix.core.FileStorageLocator;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.FileStorageResource;
@@ -35,9 +34,6 @@ import java.util.UUID;
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class FileStorageResourceImpl extends AbstractStreamSettingsResource
         implements WebResource, FileStorageResource {
-
-    protected static final String FILE_STORAGE_EXCEPTION_MESSAGE = "Can't create FileStorageResource. " +
-            "An error occurred while obtaining a file from the storage";
 
     protected FileStorageLocator fileStorageLocator;
 
@@ -69,14 +65,9 @@ public class FileStorageResourceImpl extends AbstractStreamSettingsResource
 
     @Override
     protected void createResource() {
-        resource = new StreamResource(() -> {
-            try {
-                return fileStorageLocator.getByName(fileReference.getStorageName())
-                        .openStream(fileReference);
-            } catch (FileStorageException e) {
-                throw new RuntimeException(FILE_STORAGE_EXCEPTION_MESSAGE, e);
-            }
-        }, getResourceName());
+        resource = new StreamResource(() ->
+                fileStorageLocator.getByName(fileReference.getStorageName()).openStream(fileReference),
+                getResourceName());
 
         StreamResource streamResource = (StreamResource) this.resource;
 

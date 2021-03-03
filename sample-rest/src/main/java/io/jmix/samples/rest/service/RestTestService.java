@@ -24,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.text.ParseException;
 import java.time.*;
 import java.util.Date;
@@ -67,7 +68,7 @@ public interface RestTestService {
 
     Date testDateParam(Date param);
 
-    String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime);
+    String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime, Time time);
 
     BigDecimal testBigDecimalParam(BigDecimal param);
 

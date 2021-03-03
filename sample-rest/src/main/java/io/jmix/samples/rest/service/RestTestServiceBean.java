@@ -31,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -133,12 +134,13 @@ public class RestTestServiceBean implements RestTestService {
     }
 
     @Override
-    public String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime) {
+    public String testJavaTimeParam(LocalDate localDate, LocalDateTime localDateTime, LocalTime localTime, OffsetDateTime offsetDateTime, OffsetTime offsetTime, Time time) {
         StringBuilder builder = new StringBuilder(localDate.toString()).append(",");
         builder.append(localDateTime.toString()).append(",");
         builder.append(localTime.toString()).append(",");
         builder.append(offsetDateTime.toString()).append(",");
-        builder.append(offsetTime.toString());
+        builder.append(offsetTime.toString()).append(",");
+        builder.append(time.toString());
         return builder.toString();
     }
 

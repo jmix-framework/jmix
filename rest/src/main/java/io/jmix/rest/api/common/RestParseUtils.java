@@ -108,6 +108,13 @@ public class RestParseUtils {
         if (OffsetTime.class == clazz) {
             return datatypeRegistry.get(OffsetTime.class).parse(value);
         }
+        if (Time.class == clazz) {
+            LocalTime result = datatypeRegistry.get(LocalTime.class).parse(value);
+            if (result == null) {
+                return null;
+            }
+            return Time.valueOf(result);
+        }
         if (BigDecimal.class == clazz) return datatypeRegistry.get(BigDecimal.class).parse(value);
         if (Boolean.class == clazz || Boolean.TYPE == clazz) return datatypeRegistry.get(Boolean.class).parse(value);
         if (Long.class == clazz || Long.TYPE == clazz) return datatypeRegistry.get(Long.class).parse(value);

@@ -14,6 +14,6 @@
     <property name="byte[].type" dbms="oracle" value="BLOB"/>
     <property name="byte[].type" dbms="hsqldb" value="BLOB"/>
 
-    <includeAll path="io/jmix/email/liquibase/changelog"/>
+    <include file="io/jmix/email/liquibase/changelog/001-email.xml"/>
 
 </databaseChangeLog>

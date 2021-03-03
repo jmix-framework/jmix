@@ -34,10 +34,13 @@ import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import java.net.URI;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,6 +61,8 @@ import static io.jmix.ui.component.PropertyFilter.Operation.*;
 @Internal
 @Component("ui_PropertyFilterSupport")
 public class PropertyFilterSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(PropertyFilterSupport.class);
 
     protected static final List<Class<?>> dateTimeClasses = ImmutableList.of(
             Date.class, java.sql.Date.class, LocalDate.class, LocalDateTime.class, OffsetDateTime.class);
@@ -176,7 +181,7 @@ public class PropertyFilterSupport {
         } else if (mppRange.isDatatype()) {
             Class<?> type = mppRange.asDatatype().getJavaClass();
 
-            if (String.class.equals(type)) {
+            if (String.class.equals(type) || URI.class.equals(type)) {
                 return EnumSet.of(CONTAINS, NOT_CONTAINS, EQUAL, NOT_EQUAL, IS_SET, STARTS_WITH, ENDS_WITH, IN_LIST,
                         NOT_IN_LIST);
             } else if (dateTimeClasses.contains(type)) {
@@ -191,6 +196,10 @@ public class PropertyFilterSupport {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             } else if (UUID.class.equals(type)) {
                 return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET, IN_LIST, NOT_IN_LIST);
+            } else {
+                log.warn("Cannot find predefined PropertyFilter operations for {} datatype. " +
+                        "The default set of operations (EQUAL, NOT_EQUAL, IS_SET) will be used", type);
+                return EnumSet.of(EQUAL, NOT_EQUAL, IS_SET);
             }
         }
 

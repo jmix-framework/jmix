@@ -547,28 +547,31 @@ public abstract class StandardEditor<T> extends Screen
         commitChanges()
                 .then(() -> {
                     commitActionPerformed = true;
-                    showSaveNotification();
+                    if (showSaveNotification) {
+                        showSaveNotification();
+                    }
                 });
     }
 
     protected void showSaveNotification() {
-        if (!showSaveNotification) {
-            return;
-        }
+        getScreenContext().getNotifications().create(NotificationType.TRAY)
+                .withCaption(getSaveNotificationCaption())
+                .show();
+    }
 
+    protected String getSaveNotificationCaption(){
         Metadata metadata = getApplicationContext().getBean(Metadata.class);
         Messages messages = getApplicationContext().getBean(Messages.class);
         MessageTools messageTools = getApplicationContext().getBean(MessageTools.class);
         InstanceNameProvider instanceNameProvider = getApplicationContext().getBean(InstanceNameProvider.class);
 
-        T entity = getEditedEntity();
-        MetaClass metaClass = metadata.getClass(entity);
-        getScreenContext().getNotifications().create(NotificationType.TRAY)
-                .withCaption(messages.formatMessage("", "info.EntitySave",
-                        messageTools.getEntityCaption(metaClass),
-                        instanceNameProvider.getInstanceName(entity)))
-                .show();
+        MetaClass metaClass = metadata.getClass(getEditedEntity());
+
+        return messages.formatMessage("", "info.EntitySave",
+                messageTools.getEntityCaption(metaClass),
+                instanceNameProvider.getInstanceName(getEditedEntity()));
     }
+
 
     protected void cancel(@SuppressWarnings("unused") Action.ActionPerformedEvent event) {
         close(commitActionPerformed ?

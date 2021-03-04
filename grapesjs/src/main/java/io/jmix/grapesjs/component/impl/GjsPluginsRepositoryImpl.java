@@ -27,7 +27,7 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("grapesJs_GjsPluginsRepository")
+@Component("grpjs_GjsPluginsRepository")
 public class GjsPluginsRepositoryImpl implements GjsPluginsRepository {
     @Autowired
     protected Resources resources;

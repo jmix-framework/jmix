@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("grapesJs_GjsBlocksRepository")
+@Component("grpjs_GjsBlocksRepository")
 public class GjsBlocksRepositoryImpl implements GjsBlocksRepository {
 
     protected Map<String, GjsBlock> registeredBlocks = new HashMap<>();

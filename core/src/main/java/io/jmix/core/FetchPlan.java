@@ -147,14 +147,4 @@ public class FetchPlan implements Serializable {
     public boolean loadPartialEntities() {
         return loadPartialEntities;
     }
-
-    protected List<String> getInterfaceProperties(Class<?> intf) {
-        List<String> result = new ArrayList<>();
-        for (Method method : intf.getDeclaredMethods()) {
-            if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
-                result.add(StringUtils.uncapitalize(method.getName().substring(3)));
-            }
-        }
-        return result;
-    }
 }

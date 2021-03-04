@@ -48,7 +48,7 @@ $jmix-tagcontainer-max-height: 8 * $v-unit-size !default;
 
     .#{$taglabel-stylename}-close {
       text-align: right;
-      width: halo-tagcontainer-tag-close-btn-width;
+      width: halo-tagcontainer-tag-close-btn-width();
     }
 
     .#{$taglabel-stylename}-close,
@@ -72,6 +72,9 @@ $jmix-tagcontainer-max-height: 8 * $v-unit-size !default;
   }
 }
 
+/*
+ * Width for close button in the TagLabel.
+ */
 @function halo-tagcontainer-tag-close-btn-width($font-size: $v-font-size) {
   @return floor($font-size * 0.8);
 }

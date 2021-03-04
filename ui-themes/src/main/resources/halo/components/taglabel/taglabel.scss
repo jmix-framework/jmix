@@ -80,7 +80,6 @@ $jmix-taglabel-border-radius: $v-border-radius !default;
   .#{$primary-stylename}-close {
     cursor: pointer;
     text-align: center;
-    margin-left: $jmix-taglabel-padding-width;
 
     &:after {
       content: "\f00d";
@@ -119,6 +118,10 @@ $jmix-taglabel-border-radius: $v-border-radius !default;
       background-color: $bcg-color;
       color: $color;
     }
+  }
+
+  .jmix-taglabel-content {
+    padding-right: $padding-width;
   }
 }
 

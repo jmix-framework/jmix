@@ -22,8 +22,10 @@ import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.vaadin.client.ComputedStyle;
 import com.vaadin.client.StyleConstants;
 import com.vaadin.client.ui.VLabel;
+import com.vaadin.server.Page;
 import elemental.json.JsonObject;
 import io.jmix.ui.widget.client.suggestionfield.JmixSuggestionFieldWidget;
 import io.jmix.ui.widget.client.suggestionfield.menu.SuggestionsContainer;
@@ -44,6 +46,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
     public static final String EMPTY = "empty";
     public static final String CLEAR_ALL = "clear-all";
     public static final String SINGLELINE = "singleline";
+    public static final String TEXT_OVERFLOW_TAGLABEL = "text-overflow";
 
     protected static final String TAG_CAPTION_KEY = "caption";
     protected static final String TAG_STYLE_KEY = "style";
@@ -151,15 +154,13 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
         }
 
         for (int i = 0; i < layout.getWidgetCount(); i++) {
-            if (i == layout.getWidgetCount() - 1) {
-                // skip textField
-                continue;
-            }
-
             Widget widget = layout.getWidget(i);
-            widget.removeStyleName(StyleConstants.DISABLED);
-            if (!isEnabled()) {
-                widget.addStyleName(StyleConstants.DISABLED);
+
+            if (widget instanceof JmixTagLabelWidget) {
+                widget.removeStyleName(StyleConstants.DISABLED);
+                if (!isEnabled()) {
+                    widget.addStyleName(StyleConstants.DISABLED);
+                }
             }
         }
     }
@@ -253,6 +254,7 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
         addClearAllButton();
 
         updateWidgetsAvailability();
+        updateWidgetsWidth();
 
         textField.setFocus(true);
     }
@@ -294,6 +296,36 @@ public class JmixTagFieldWidget extends JmixSuggestionFieldWidget {
             return true;
         }
         return false;
+    }
+
+    protected void updateWidgetsWidth() {
+        for (int i = 0; i < layout.getWidgetCount(); i++) {
+            Widget widget = layout.getWidget(i);
+
+            if (widget instanceof JmixTagLabelWidget) {
+                if (isTagLabelExceedFieldWidth((JmixTagLabelWidget) widget)) {
+                    if (!widget.getStyleName().contains(TEXT_OVERFLOW_TAGLABEL)) {
+                        widget.addStyleName(TEXT_OVERFLOW_TAGLABEL);
+                    }
+                }
+            }
+        }
+    }
+
+    protected boolean isTagLabelExceedFieldWidth(JmixTagLabelWidget label) {
+        int fieldRight = getElement().getAbsoluteRight();
+
+        if (isClearAllVisible()) {
+            int closeAllWidth = clearAllBtn.getElement().getOffsetWidth();
+            fieldRight = fieldRight - closeAllWidth;
+        }
+
+        ComputedStyle computedStyle = new ComputedStyle(label.getElement());
+        int[] margin = computedStyle.getMargin();
+
+        int labelRight = label.getElement().getAbsoluteRight() + margin[1]; // right margin
+
+        return labelRight > fieldRight;
     }
 
     /**

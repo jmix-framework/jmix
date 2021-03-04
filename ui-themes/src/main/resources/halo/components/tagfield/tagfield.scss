@@ -129,6 +129,21 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
                       halo-tagfield-elements-height(),
                       $jmix-tagfield-tag-border-radius,
                       $jmix-tagfield-tag-padding-width);
+
+    &.text-overflow {
+      display: flex;
+      width: 100%;
+
+      .jmix-taglabel-content {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .jmix-taglabel-close {
+        width: halo-tagfield-tag-close-btn-width();
+      }
+    }
   }
 }
 
@@ -188,11 +203,11 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
 
 @mixin halo-tagfield-default-padding() {
   $padding: halo-tagfield-filled-padding();
-  padding: $padding 0 0 $padding;
+  padding: $padding $padding 0 $padding;
 }
 
 /*
- * Padding for TagField when it contains at least one TagLabel
+ * Padding for TagField when it contains at least one TagLabel.
  */
 @function halo-tagfield-filled-padding($unit-size: $v-unit-size) {
   @return round($unit-size/9);
@@ -204,4 +219,11 @@ $jmix-tagfield-tag-border-radius: $jmix-taglabel-border-radius !default;
 @function halo-tagfield-elements-height($field-height: $v-unit-size) {
  // field-height - 2 * TagField padding - 2x border
  @return $field-height - (2 * halo-tagfield-filled-padding()) - (2 * first-number(valo-border()));
+}
+
+/*
+ * Width for close button in the TagLabel.
+ */
+@function halo-tagfield-tag-close-btn-width($font-size: $v-font-size) {
+  @return floor($font-size * 0.8);
 }

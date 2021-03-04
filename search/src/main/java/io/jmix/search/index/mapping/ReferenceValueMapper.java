@@ -17,19 +17,13 @@
 package io.jmix.search.index.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.MetadataTools;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 
-import java.util.Map;
-
-public class ReferenceValueMapper implements ValueMapper {
-
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
+public class ReferenceValueMapper extends AbstractValueMapper {
 
     protected final MetadataTools metadataTools;
 
@@ -38,18 +32,26 @@ public class ReferenceValueMapper implements ValueMapper {
     }
 
     @Override
-    public JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
-        JsonNode result = NullNode.getInstance();
-        if(propertyPath.getRange().isClass()) {
-            Object refEntity = EntityValues.getValueEx(entity, propertyPath);
-            if(refEntity != null) {
-                String instanceName = metadataTools.getInstanceName(refEntity);
-                JsonNode instanceNameNode = objectMapper.convertValue(instanceName, JsonNode.class);
-                ObjectNode node = JsonNodeFactory.instance.objectNode();
-                node.set("_instance_name", instanceNameNode);
-                result = node;
-            }
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
+        return propertyPath.getRange().isClass();
+    }
+
+    @Override
+    protected JsonNode processSingleValue(Object value) {
+        String instanceName = metadataTools.getInstanceName(value);
+        ObjectNode result = JsonNodeFactory.instance.objectNode();
+        result.put("_instance_name", instanceName);
+        return result;
+    }
+
+    @Override
+    protected JsonNode processMultipleValues(Iterable<?> values) {
+        ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+        for(Object value : values) {
+            arrayNode.add(metadataTools.getInstanceName(value));
         }
+        ObjectNode result = JsonNodeFactory.instance.objectNode();
+        result.set("_instance_name", arrayNode);
         return result;
     }
 }

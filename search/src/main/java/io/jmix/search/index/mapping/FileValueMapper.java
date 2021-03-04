@@ -17,11 +17,10 @@
 package io.jmix.search.index.mapping;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.jmix.core.FileRef;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.impl.FileRefDatatype;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -29,9 +28,7 @@ import io.jmix.search.exception.FileParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-
-public class FileValueMapper implements ValueMapper {
+public class FileValueMapper extends AbstractValueMapper {
 
     private static final Logger log = LoggerFactory.getLogger(FileValueMapper.class);
 
@@ -44,27 +41,37 @@ public class FileValueMapper implements ValueMapper {
     }
 
     @Override
-    public JsonNode getValue(Object entity, MetaPropertyPath propertyPath, Map<String, Object> parameters) {
-        JsonNode result = NullNode.getInstance();
+    protected boolean isSupported(Object entity, MetaPropertyPath propertyPath) {
         if(propertyPath.getRange().isDatatype()) {
             Datatype<?> datatype = propertyPath.getRange().asDatatype();
-            if(datatype instanceof FileRefDatatype) {
-                FileRef fileRef = EntityValues.getValueEx(entity, propertyPath);
-                if(fileRef != null) {
-                    result = processFileRef(fileRef);
-                }
-            }
+            return datatype instanceof FileRefDatatype;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected JsonNode processSingleValue(Object value) {
+        return processFileRef((FileRef)value);
+    }
+
+    @Override
+    protected JsonNode processMultipleValues(Iterable<?> values) {
+        ArrayNode result = JsonNodeFactory.instance.arrayNode();
+        for(Object value : (values)) {
+            FileRef fileRef = (FileRef)value;
+            result.add(processFileRef(fileRef));
         }
         return result;
     }
 
     protected ObjectNode processFileRef(FileRef fileRef) {
-        ObjectNode node = JsonNodeFactory.instance.objectNode();
-        node.put("_file_name", fileRef.getFileName());
+        ObjectNode result = JsonNodeFactory.instance.objectNode();
+        result.put("_file_name", fileRef.getFileName());
         if(mapFileContent) {
-            addFileContent(node, fileRef);
+            addFileContent(result, fileRef);
         }
-        return node;
+        return result;
     }
 
     protected void addFileContent(ObjectNode node, FileRef fileRef) {

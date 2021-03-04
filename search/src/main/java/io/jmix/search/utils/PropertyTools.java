@@ -95,10 +95,10 @@ public class PropertyTools {
 
         String pathItem = pathItems[0];
         log.info("[IVGA] Path Item = {}", pathItem);
-        if(pathItems.length == 1) { //Last
+        if(pathItems.length == 1) {
             log.info("[IVGA] '{}' is the last level of path", pathItem);
             if(hasWildcard(pathItem)) {
-                Pattern pattern = Pattern.compile(pathItem.replace("*", ".*"));
+                Pattern pattern = Pattern.compile(pathItem.replace("*", ".*")); //todo exclude inverse properties
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = localPropertiesByPattern.stream()
                         .filter(this::isSearchableProperty)
@@ -152,9 +152,8 @@ public class PropertyTools {
                 .collect(Collectors.toList());
     }
 
-    protected boolean isSearchableProperty(MetaProperty metaProperty) {
-        //return !metaProperty.getRange().isClass(); // todo
-        return true;
+    protected boolean isSearchableProperty(MetaProperty property) {
+        return !metadataTools.isSystem(property);
     }
 
     protected boolean isReferenceProperty(MetaProperty metaProperty) {

@@ -28,6 +28,6 @@ public class NativeFieldConfiguration implements FieldConfiguration {
 
     @Override
     public ObjectNode asJson() {
-        return config;
+        return config.deepCopy();
     }
 }

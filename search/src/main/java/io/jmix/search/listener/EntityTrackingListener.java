@@ -16,15 +16,15 @@
 
 package io.jmix.search.listener;
 
-import io.jmix.core.DataManager;
-import io.jmix.core.Id;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
 import io.jmix.search.index.queue.QueueItem;
 import io.jmix.search.index.queue.QueueService;
@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,56 +57,66 @@ public class EntityTrackingListener {
     protected QueueService queueService;
     @Autowired
     protected PropertyTools propertyTools;
+    @Autowired
+    protected StoreAwareLocator storeAwareLocator;
 
     @EventListener
     public void onEntityChangedBeforeCommit(EntityChangedEvent<?> event) {
         try {
-            Id<?> entityId = event.getEntityId();
-            Class<?> entityClass = entityId.getEntityClass();
-            MetaClass metaClass = metadata.getClass(entityClass);
-
-            if (isProcessingRequired(entityClass)) {
-                EntityOp entityOperation = resolveEntityOperation(event);
-                String entityName = metaClass.getName();
-                String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
-                Object entity = dataManager.load(entityId)
-                        .fetchPlanProperties(primaryKeyPropertyName)
-                        .softDeletion(false)
-                        .one();
-
-                if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
-                    log.debug("{} is directly indexed", entityId);
-                    Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
-                    log.debug("Primary Key of tracked entity: {}", primaryKey);
-                    primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
-                }
-
-                Map<MetaClass, Set<String>> dependentEntityPks;
-                switch (entityOperation) {
-                    case CREATE:
-                    case UPDATE:
-                        AttributeChanges changes = event.getChanges();
-                        dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass, changes);
-                        log.debug("Dependent entities for Create/Update: {}", dependentEntityPks);
-                        break;
-                    case DELETE:
-                        dependentEntityPks = getDependentEntityPksForDelete(entity, entityClass);
-                        log.debug("Dependent entities for Delete: {}", dependentEntityPks);
-                        break;
-                    default:
-                        dependentEntityPks = Collections.emptyMap();
-                        break;
-                }
-                dependentEntityPks.forEach(
-                        ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
-                );
+            if (isProcessingRequired(event)) {
+                log.trace("Process event: {}", event);
+                processEvent(event);
             }
         } catch(Exception e){
-            log.error("Failed to enqueue data for entity {} and change type '{}'", event.getEntityId(), event.getType(), e);
+            log.error("Failed to process event {}", event, e);
         }
     }
 
-    protected boolean isProcessingRequired(Class<?> entityClass) {
+    protected void processEvent(EntityChangedEvent<?> event) {
+        Id<?> entityId = event.getEntityId();
+        Class<?> entityClass = entityId.getEntityClass();
+        MetaClass metaClass = metadata.getClass(entityClass);
+        EntityOp entityOperation = resolveEntityOperation(event);
+        String entityName = metaClass.getName();
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+
+        Object entity = null;
+        if(isTrackedEntityReloadingRequired(event.getType(), entityName)) {
+            entity = dataManager.load(entityId)
+                    .fetchPlanProperties(primaryKeyPropertyName)
+                    .softDeletion(false)
+                    .one();
+        }
+
+        if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+            log.debug("{} is directly indexed", entityId);
+            Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
+            log.debug("Primary Key of tracked entity: {}", primaryKey);
+            primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
+        }
+
+        Map<MetaClass, Set<String>> dependentEntityPks;
+        switch (entityOperation) {
+            case UPDATE:
+                AttributeChanges changes = event.getChanges();
+                dependentEntityPks = getDependentEntityPksForUpdate(entity, entityClass, changes);
+                log.debug("Dependent entities for Update: {}", dependentEntityPks);
+                break;
+            case DELETE:
+                dependentEntityPks = getDependentEntityPksForDelete(entity, entityClass);
+                log.debug("Dependent entities for Delete: {}", dependentEntityPks);
+                break;
+            default:
+                dependentEntityPks = Collections.emptyMap();
+                break;
+        }
+        dependentEntityPks.forEach(
+                ((dependentEntityClass, primaryKeys) -> queueService.enqueue(dependentEntityClass, primaryKeys, EntityOp.UPDATE))
+        );
+    }
+
+    protected boolean isProcessingRequired(EntityChangedEvent<?> event) {
+        Class<?> entityClass = event.getEntityId().getEntityClass();
         return !QueueItem.class.equals(entityClass) && indexDefinitionsProvider.isAffectedEntityClass(entityClass);
     }
 
@@ -120,7 +132,6 @@ public class EntityTrackingListener {
         return loadDependentEntityPks(entity, dependencies);
     }
 
-    //todo improve loading
     protected Map<MetaClass, Set<String>> loadDependentEntityPks(Object entity, Map<MetaClass, Set<MetaPropertyPath>> dependencyMetaData) {
         log.debug("Load dependent entity pks for entity {}: {}", entity, dependencyMetaData);
 
@@ -131,12 +142,43 @@ public class EntityTrackingListener {
                 continue;
             }
             Set<String> entityPks = new HashSet<>();
-            for(MetaPropertyPath property : properties) {
+            String entityName = entry.getKey().getName();
+            for(MetaPropertyPath propertyPath : properties) {
+                log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
+                MetaProperty[] metaProperties = propertyPath.getMetaProperties();
+                int currentEntityIndex = 1;
+                String currentEntityAlias = "e1";
+                StringBuilder currentPropertyPathSb = new StringBuilder(currentEntityAlias);
+                StringBuilder querySb = new StringBuilder("select ")
+                        .append(currentEntityAlias)
+                        .append(" from ")
+                        .append(entityName)
+                        .append(' ')
+                        .append(currentEntityAlias);
+                for(int i = 0; i < metaProperties.length; i++) {
+                    MetaProperty property = metaProperties[i];
+                    currentPropertyPathSb.append('.').append(property.getName());
+                    if(i == metaProperties.length - 1) {
+                        querySb.append(" where ").append(currentPropertyPathSb).append(" = :ref");
+                    } else {
+                        boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
+                        boolean manyToMany = property.getAnnotatedElement().isAnnotationPresent(ManyToMany.class);
+                        if (oneToMany || manyToMany) {
+                            currentEntityIndex++;
+                            currentEntityAlias = "e" + currentEntityIndex;
+                            querySb.append(" join ").append(currentPropertyPathSb).append(' ').append(currentEntityAlias);
+                            currentPropertyPathSb = new StringBuilder(currentEntityAlias);
+                        }
+                    }
+                }
+                String queryString = querySb.toString();
+                log.debug("Query String: {}", queryString);
+
                 MetaClass metaClass = entry.getKey();
                 String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
                 List<String> refObjectPks = dataManager.load(metaClass.getJavaClass())
-                        .query("select e from " + entry.getKey().getName() + " e where e." + property.toPathString() + " = :refObject")
-                        .parameter("refObject", entity)
+                        .query(queryString)
+                        .parameter("ref", entity)
                         .fetchPlanProperties(primaryKeyPropertyName)
                         .list()
                         .stream()
@@ -169,5 +211,9 @@ public class EntityTrackingListener {
     protected Optional<String> getPrimaryKey(MetaClass metaClass, Object entity) {
         String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
         return Optional.ofNullable(EntityValues.getValue(entity, primaryKeyPropertyName)).map(Object::toString);
+    }
+
+    protected boolean isTrackedEntityReloadingRequired(EntityChangedEvent.Type eventType, String entityName) {
+        return indexDefinitionsProvider.isDirectlyIndexed(entityName) || !eventType.equals(EntityChangedEvent.Type.CREATED);
     }
 }

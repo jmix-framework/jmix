@@ -75,6 +75,7 @@ public class SearchService {
 
         HighlightBuilder highlightBuilder = new HighlightBuilder();
         highlightBuilder.field("*");
+        highlightBuilder.fragmentSize(10);
         searchSourceBuilder.highlighter(highlightBuilder);
 
         searchRequest.source(searchSourceBuilder);
@@ -111,6 +112,7 @@ public class SearchService {
                     String instanceName = reloadedIdNames.get(entityId);
                     Map<String, HighlightField> highlightFields = searchHit.getHighlightFields();
                     List<FieldHit> fieldHits = new ArrayList<>();
+                    log.info("[IVGA] Highlight Fields: {}", highlightFields);
                     highlightFields.forEach((f, h) -> {
                         String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
                         fieldHits.add(new FieldHit(formatFieldName(f), highlight));

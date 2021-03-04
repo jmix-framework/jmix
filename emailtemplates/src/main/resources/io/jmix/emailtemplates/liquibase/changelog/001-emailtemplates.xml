@@ -22,8 +22,8 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
     <changeSet id="1" author="emailtemplates">
 
-        <!-- EMAILTEMPLATES_TEMPLATE_GROUP -->
-        <createTable tableName="EMAILTEMPLATES_TEMPLATE_GROUP">
+        <!-- EMLTMP_TEMPLATE_GROUP -->
+        <createTable tableName="EMLTMP_TEMPLATE_GROUP">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -41,10 +41,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <!-- EMAILTEMPLATES_TEMPLATE_GROUP -->
+        <!-- EMLTMP_TEMPLATE_GROUP -->
 
-        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
-        <createTable tableName="EMAILTEMPLATES_EMAIL_TEMPLATE">
+        <!-- EMLTMP_EMAIL_TEMPLATE -->
+        <createTable tableName="EMLTMP_EMAIL_TEMPLATE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -64,7 +64,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="GROUP_ID" type="${uuid.type}">
-                <constraints foreignKeyName="FK_ET_EMAILTEMPLATE_GROUP" references="EMAILTEMPLATES_TEMPLATE_GROUP(ID)"/>
+                <constraints foreignKeyName="FK_ET_EMAILTEMPLATE_GROUP" references="EMLTMP_TEMPLATE_GROUP(ID)"/>
             </column>
             <column name="TYPE_" type="varchar(50)">
                 <constraints nullable="false"/>
@@ -78,25 +78,25 @@
             <column name="BCC" type="clob"/>
             <column name="SUBJECT" type="varchar(255)"/>
 
-            <!-- from emailtemplates_ReportEmailTemplate-->
+            <!-- from emltmp_ReportEmailTemplate-->
             <column name="EMAIL_BODY_REPORT_ID" type="${uuid.type}"/>
 
-            <!-- from emailtemplates_JsonEmailTemplate-->
+            <!-- from emltmp_JsonEmailTemplate-->
             <column name="HTML" type="clob"/>
             <column name="REPORT_JSON" type="clob"/>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_UK_CODE" unique="true">
+        <createIndex tableName="EMLTMP_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_UK_CODE" unique="true">
             <column name="CODE"/>
             <column name="DELETE_TS"/>
         </createIndex>
-        <createIndex tableName="EMAILTEMPLATES_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_GROUP">
+        <createIndex tableName="EMLTMP_EMAIL_TEMPLATE" indexName="IDX_ET_EMAILTEMPLATE_GROUP">
             <column name="GROUP_ID"/>
         </createIndex>
-        <!-- EMAILTEMPLATES_EMAIL_TEMPLATE -->
+        <!-- EMLTMP_EMAIL_TEMPLATE -->
 
-        <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
-        <createTable tableName="EMAILTEMPLATES_TEMPLATE_REPORT">
+        <!-- EMLTMP_TEMPLATE_REPORT -->
+        <createTable tableName="EMLTMP_TEMPLATE_REPORT">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -118,26 +118,26 @@
             </column>
             <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_TEMPLATEREPORT_TEMPLATE"
-                             references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
+                             references="EMLTMP_EMAIL_TEMPLATE(ID)"/>
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_REPORT">
+        <createIndex tableName="EMLTMP_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_REPORT">
             <column name="REPORT_ID"/>
         </createIndex>
 
-        <createIndex tableName="EMAILTEMPLATES_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_TEMPLATE">
+        <createIndex tableName="EMLTMP_TEMPLATE_REPORT" indexName="IDX_ET_TEMPLATEREPORT_TEMPLATE">
             <column name="EMAIL_TEMPLATE_ID"/>
         </createIndex>
-        <!-- EMAILTEMPLATES_TEMPLATE_REPORT -->
+        <!-- EMLTMP_TEMPLATE_REPORT -->
 
 
-        <addForeignKeyConstraint baseTableName="EMAILTEMPLATES_EMAIL_TEMPLATE" baseColumnNames="EMAIL_BODY_REPORT_ID"
-                                 constraintName="FK_ET_EMTEMPLATE_BODYREPORT" referencedTableName="EMAILTEMPLATES_TEMPLATE_REPORT"
+        <addForeignKeyConstraint baseTableName="EMLTMP_EMAIL_TEMPLATE" baseColumnNames="EMAIL_BODY_REPORT_ID"
+                                 constraintName="FK_ET_EMTEMPLATE_BODYREPORT" referencedTableName="EMLTMP_TEMPLATE_REPORT"
                                  referencedColumnNames="ID"/>
 
-        <!-- EMAILTEMPLATES_TEMPLATE_ATTACHMENT -->
-        <createTable tableName="EMAILTEMPLATES_TEMPLATE_ATTACHMENT">
+        <!-- EMLTMP_TEMPLATE_ATTACHMENT -->
+        <createTable tableName="EMLTMP_TEMPLATE_ATTACHMENT">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -158,13 +158,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="EMAIL_TEMPLATE_ID" type="${uuid.type}">
-                <constraints foreignKeyName="FK_ET_ATTACHMENT_EMTEMPLATE" references="EMAILTEMPLATES_EMAIL_TEMPLATE(ID)"/>
+                <constraints foreignKeyName="FK_ET_ATTACHMENT_EMTEMPLATE" references="EMLTMP_EMAIL_TEMPLATE(ID)"/>
             </column>
         </createTable>
-        <!-- EMAILTEMPLATES_TEMPLATE_ATTACHMENT -->
+        <!-- EMLTMP_TEMPLATE_ATTACHMENT -->
 
-        <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
-        <createTable tableName="EMAILTEMPLATES_PARAMETER_VALUE">
+        <!-- EMLTMP_PARAMETER_VALUE -->
+        <createTable tableName="EMLTMP_PARAMETER_VALUE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -188,17 +188,17 @@
 
             <column name="TEMPLATE_REPORT_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_PARAMVALUE_TEMPREPORT"
-                             references="EMAILTEMPLATES_TEMPLATE_REPORT(ID)"/>
+                             references="EMLTMP_TEMPLATE_REPORT(ID)"/>
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_PARAMETER_VALUE" indexName="IDX_ET_PARAMVALUE_TEMPREPORT">
+        <createIndex tableName="EMLTMP_PARAMETER_VALUE" indexName="IDX_ET_PARAMVALUE_TEMPREPORT">
             <column name="TEMPLATE_REPORT_ID"/>
         </createIndex>
-        <!-- EMAILTEMPLATES_PARAMETER_VALUE -->
+        <!-- EMLTMP_PARAMETER_VALUE -->
 
-        <!-- EMAILTEMPLATES_BLOCK_GROUP -->
-        <createTable tableName="EMAILTEMPLATES_BLOCK_GROUP">
+        <!-- EMLTMP_BLOCK_GROUP -->
+        <createTable tableName="EMLTMP_BLOCK_GROUP">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -217,15 +217,15 @@
             </column>
         </createTable>
 
-        <createIndex tableName="EMAILTEMPLATES_BLOCK_GROUP" indexName="IDX_ET_BLOCKGROUP_UNIQ_NAME"
+        <createIndex tableName="EMLTMP_BLOCK_GROUP" indexName="IDX_ET_BLOCKGROUP_UNIQ_NAME"
                      unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>
         </createIndex>
-        <!-- EMAILTEMPLATES_BLOCK_GROUP -->
+        <!-- EMLTMP_BLOCK_GROUP -->
 
-        <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->
-        <createTable tableName="EMAILTEMPLATES_TEMPLATE_BLOCK">
+        <!-- EMLTMP_TEMPLATE_BLOCK -->
+        <createTable tableName="EMLTMP_TEMPLATE_BLOCK">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -247,23 +247,23 @@
             </column>
             <column name="CATEGORY_ID" type="${uuid.type}">
                 <constraints foreignKeyName="FK_ET_TEMPLATEBLOCK_CATEGORY"
-                             references="EMAILTEMPLATES_BLOCK_GROUP(ID)"/>
+                             references="EMLTMP_BLOCK_GROUP(ID)"/>
             </column>
             <column name="CONTENT" type="clob"/>
             <column name="ICON" type="varchar(50)"/>
         </createTable>
 
-        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_UK_NAME" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK"
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_UK_NAME" tableName="EMLTMP_TEMPLATE_BLOCK"
                      unique="true">
             <column name="NAME"/>
             <column name="DELETE_TS"/>
         </createIndex>
-        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_CATEGORY" tableName="EMAILTEMPLATES_TEMPLATE_BLOCK" >
+        <createIndex indexName="IDX_ET_TEMPLATEBLOCK_CATEGORY" tableName="EMLTMP_TEMPLATE_BLOCK" >
             <column name="CATEGORY_ID"/>
         </createIndex>
-        <!-- EMAILTEMPLATES_TEMPLATE_BLOCK -->
+        <!-- EMLTMP_TEMPLATE_BLOCK -->
         
-        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+        <insert tableName="EMLTMP_BLOCK_GROUP">
             <column name="ID" value="26c1c349-fa68-a66f-9d93-fda2b4e4e898"/>
             <column name="VERSION" value="1"/>
             <column name="CREATE_TS" value="2019-09-13 15:56:17"/>
@@ -272,7 +272,7 @@
             <column name="NAME" value="Basic"/>
         </insert>
 
-        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+        <insert tableName="EMLTMP_BLOCK_GROUP">
             <column name="ID" value="46c195fd-c046-cb27-432e-213260d9ce6d"/>
             <column name="VERSION" value="1"/>
             <column name="CREATE_TS" value="2019-09-13 15:56:28"/>
@@ -281,7 +281,7 @@
             <column name="NAME" value="Extra"/>
         </insert>
 
-        <insert tableName="EMAILTEMPLATES_BLOCK_GROUP">
+        <insert tableName="EMLTMP_BLOCK_GROUP">
             <column name="ID" value="66359bdd-1e16-5ae4-7f8a-88b9e7b4a5ed"/>
             <column name="VERSION" value="1"/>
             <column name="CREATE_TS" value="2019-09-13 15:56:40"/>

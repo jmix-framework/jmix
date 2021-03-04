@@ -30,24 +30,24 @@ public interface EmailTemplatesAdminUiRole extends EmailTemplatesAdminRole, Repo
     String CODE = "emailtemplates-admin-ui";
 
     @ScreenPolicy(screenIds = {
-            "emailtemplates_TemplateGroup.edit",
-            "emailtemplates_TemplateGroup.browse",
-            "emailtemplates_TemplateBlock.edit",
-            "emailtemplates_TemplateBlock.browse",
-            "emailtemplates_CustomTemplateBlock.edit",
-            "emailtemplates_TemplateBlockGroup.browse",
-            "emailtemplates_HtmlSourceCodeScreen",
-            "emailtemplates_EmailTemplate.send",
-            "emailtemplates_ReportEmailTemplate.edit",
-            "emailtemplates_EmailTemplate.browse",
-            "emailtemplates_JsonEmailTemplate.edit",
-            "emailtemplates_EmailTemplateAttachment.edit",
+            "emltmp_TemplateGroup.edit",
+            "emltmp_TemplateGroup.browse",
+            "emltmp_TemplateBlock.edit",
+            "emltmp_TemplateBlock.browse",
+            "emltmp_TemplateBlockGroup.edit",
+            "emltmp_TemplateBlockGroup.browse",
+            "emltmp_HtmlSourceCodeScreen",
+            "emltmp_EmailTemplate.send",
+            "emltmp_ReportEmailTemplate.edit",
+            "emltmp_EmailTemplate.browse",
+            "emltmp_JsonEmailTemplate.edit",
+            "emltmp_EmailTemplateAttachment.edit",
             "report_Report.browse",
             "report_InputParameters.lookup",
             "report_InputParametersFragment",
             "report_ReportInputParameter.edit",
             "report_ReportValueFormat.edit"})
-    @MenuPolicy(menuIds = {"emailtemplates_EmailTemplate.browse"})
+    @MenuPolicy(menuIds = {"emltmp_EmailTemplate.browse"})
     @SpecificPolicy(resources = {"groupsButton", "blocksButton"})
     void emailTemplatesAdminUi();
 }

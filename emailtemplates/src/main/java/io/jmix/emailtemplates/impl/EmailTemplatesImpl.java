@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Component("emailtemplates_EmailTemplates")
+@Component("emltmp_EmailTemplates")
 public class EmailTemplatesImpl implements EmailTemplates {
 
     private static final Logger log = LoggerFactory.getLogger(EmailTemplatesImpl.class);
@@ -189,7 +189,7 @@ public class EmailTemplatesImpl implements EmailTemplates {
 
     protected EmailTemplate getEmailTemplateByCode(String emailTemplateCode) throws TemplateNotFoundException {
         EmailTemplate emailTemplate = dataManager.load(EmailTemplate.class)
-                .query("select e from emailtemplates_EmailTemplate e where e.code = :code")
+                .query("select e from emltmp_EmailTemplate e where e.code = :code")
                 .parameter("code", emailTemplateCode)
                 .fetchPlan("emailTemplate-fetchPlan")
                 .optional()

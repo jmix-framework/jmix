@@ -25,7 +25,7 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@UiController("emailtemplates_ValueFormatsFragment")
+@UiController("emltmp_ValueFormatsFragment")
 @UiDescriptor(path = "/io/jmix/reportsui/screen/report/edit/tabs/formats.xml")
 public class ValueFormatsFragment extends ScreenFragment {
 

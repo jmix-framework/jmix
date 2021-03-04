@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UiController("emailtemplates_EmailTemplateAttachmentsFragment")
+@UiController("emltmp_EmailTemplateAttachmentsFragment")
 @UiDescriptor("email-template-attachments-fragment.xml")
 public class EmailTemplateAttachmentsFragment extends ScreenFragment {
 

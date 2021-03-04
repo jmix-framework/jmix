@@ -31,7 +31,7 @@
                     fetchPlan="_local">
             <loader id="templateBlockGroupsDl">
                 <query>
-                    <![CDATA[select e from emailtemplates_CustomTemplateBlock e order by e.name]]>
+                    <![CDATA[select e from emltmp_TemplateBlockGroup e order by e.name]]>
                 </query>
             </loader>
         </collection>

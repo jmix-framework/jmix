@@ -40,7 +40,7 @@
                     fetchPlan="_instance_name">
             <loader id="groupDl">
                 <query>
-                    <![CDATA[select e from emailtemplates_TemplateGroup e]]>
+                    <![CDATA[select e from emltmp_TemplateGroup e]]>
                 </query>
             </loader>
 
@@ -154,7 +154,7 @@
                  caption="msg://attachments"
                  lazy="true">
                 <fragment id="attachmentsFrame"
-                          screen="emailtemplates_EmailTemplateAttachmentsFragment"
+                          screen="emltmp_EmailTemplateAttachmentsFragment"
                           height="100%"/>
             </tab>
         </tabSheet>

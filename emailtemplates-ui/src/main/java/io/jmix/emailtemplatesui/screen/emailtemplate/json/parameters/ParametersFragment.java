@@ -46,7 +46,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@UiController("emailtemplates_ParametersFragment")
+@UiController("emltmp_ParametersFragment")
 @UiDescriptor("parameters-fragment.xml")
 public class ParametersFragment extends ScreenFragment {
     private static final Pattern SIMPLE_FIELD_PATTERN = Pattern.compile("\\$\\{([a-zA-Z0-9]+)([?][^}]*|)}");

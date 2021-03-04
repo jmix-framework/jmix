@@ -34,7 +34,7 @@ import java.util.HashSet;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Component("emailtemplates_TemplateConverter")
+@Component("emltmp_TemplateConverter")
 public class TemplateConverterImpl implements TemplateConverter {
 
     @Autowired

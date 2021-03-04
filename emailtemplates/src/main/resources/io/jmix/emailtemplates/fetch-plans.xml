@@ -16,8 +16,6 @@
   -->
 
 <fetchPlans xmlns="http://jmix.io/schema/core/fetch-plans">
-   <!-- <include file="/io/jmix/reports/fetch-plans.xml"/>-->
-
     <fetchPlan class="io.jmix.emailtemplates.entity.EmailTemplate"
           extends="_local"
           name="emailTemplate-fetchPlan">
@@ -98,7 +96,7 @@
                   fetchPlan="emailTemplate-fetchPlan"/>
         <property name="parameterValues" fetchPlan="_local"/>
     </fetchPlan>
-    <fetchPlan entity="emailtemplates_TemplateBlock" name="templateBlock-fetchPlan" extends="_local">
+    <fetchPlan class="io.jmix.emailtemplates.entity.TemplateBlock" name="templateBlock-fetchPlan" extends="_local">
         <property name="category" fetchPlan="_instance_name"/>
     </fetchPlan>
 </fetchPlans>

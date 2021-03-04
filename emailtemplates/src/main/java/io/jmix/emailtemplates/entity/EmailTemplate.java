@@ -39,8 +39,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Table(name = "EMAILTEMPLATES_EMAIL_TEMPLATE")
-@Entity(name = "emailtemplates_EmailTemplate")
+@Table(name = "EMLTMP_EMAIL_TEMPLATE")
+@Entity(name = "emltmp_EmailTemplate")
 @JmixEntity
 @DiscriminatorColumn(name = "DTYPE", discriminatorType = DiscriminatorType.STRING, length = 100)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

@@ -59,7 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@UiController("emailtemplates_EmailTemplateSendScreen")
+@UiController("emltmp_EmailTemplateSendScreen")
 @UiDescriptor("email-template-send-screen.xml")
 public class EmailTemplateSendScreen extends Screen {
 

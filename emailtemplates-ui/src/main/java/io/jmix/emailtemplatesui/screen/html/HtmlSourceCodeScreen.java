@@ -28,7 +28,7 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("emailtemplates_HtmlSourceCodeScreen")
+@UiController("emltmp_HtmlSourceCodeScreen")
 @UiDescriptor("html-source-code-screen.xml")
 public class HtmlSourceCodeScreen extends Screen {
 

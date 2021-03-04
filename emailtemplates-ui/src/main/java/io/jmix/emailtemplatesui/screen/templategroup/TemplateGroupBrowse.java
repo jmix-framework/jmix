@@ -22,7 +22,7 @@ import io.jmix.ui.screen.StandardLookup;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@UiController("emailtemplates_TemplateGroup.browse")
+@UiController("emltmp_TemplateGroup.browse")
 @UiDescriptor("template-group-browse.xml")
 public class TemplateGroupBrowse extends StandardLookup<TemplateGroup> {
 }

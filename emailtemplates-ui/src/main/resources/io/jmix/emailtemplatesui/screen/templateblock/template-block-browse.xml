@@ -24,7 +24,7 @@
                     fetchPlan="templateBlock-fetchPlan">
             <loader id="templateBlocksDl">
                 <query>
-                    <![CDATA[select e from emailtemplates_TemplateBlock e]]>
+                    <![CDATA[select e from emltmp_TemplateBlock e]]>
                 </query>
             </loader>
         </collection>

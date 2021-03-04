@@ -39,7 +39,7 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-@UiController("emailtemplates_EmailTemplate.browse")
+@UiController("emltmp_EmailTemplate.browse")
 @UiDescriptor("email-template-browse.xml")
 public class EmailTemplateBrowse extends StandardLookup<EmailTemplate> {
 

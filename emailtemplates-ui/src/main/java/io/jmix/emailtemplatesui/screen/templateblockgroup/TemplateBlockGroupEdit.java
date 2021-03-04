@@ -23,7 +23,7 @@ import io.jmix.ui.screen.StandardEditor;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@UiController("emailtemplates_CustomTemplateBlock.edit")
+@UiController("emltmp_TemplateBlockGroup.edit")
 @UiDescriptor("template-block-group-edit.xml")
 @EditedEntityContainer("templateBlockGroupDc")
 public class TemplateBlockGroupEdit extends StandardEditor<TemplateBlockGroup> {

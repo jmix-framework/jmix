@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 
-@UiController("emailtemplates_EmailTemplateAttachment.edit")
+@UiController("emltmp_EmailTemplateAttachment.edit")
 @UiDescriptor("email-template-attachment-edit.xml")
 @EditedEntityContainer("emailTemplateAttachmentDc")
 public class EmailTemplateAttachmentEdit extends StandardEditor<EmailTemplateAttachment> {

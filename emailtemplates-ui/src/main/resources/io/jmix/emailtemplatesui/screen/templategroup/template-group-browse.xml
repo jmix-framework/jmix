@@ -24,7 +24,7 @@
                          fetchPlan="_local">
             <loader id="templateGroupDl">
                 <query>
-                    <![CDATA[select e from emailtemplates_TemplateGroup e]]>
+                    <![CDATA[select e from emltmp_TemplateGroup e]]>
                 </query>
             </loader>
 

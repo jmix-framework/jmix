@@ -25,7 +25,7 @@ import io.jmix.reports.entity.Report;
 
 import javax.persistence.*;
 
-@Entity(name = "emailtemplates_ReportEmailTemplate")
+@Entity(name = "emltmp_ReportEmailTemplate")
 @JmixEntity
 @DiscriminatorValue("R")
 public class ReportEmailTemplate extends EmailTemplate {

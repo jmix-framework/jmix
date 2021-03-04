@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Component("emailtemplates_TemplateNotFoundExceptionHandler")
+@Component("emltmp_TemplateNotFoundExceptionHandler")
 public class TemplateNotFoundExceptionHandler implements UiExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateNotFoundExceptionHandler.class);

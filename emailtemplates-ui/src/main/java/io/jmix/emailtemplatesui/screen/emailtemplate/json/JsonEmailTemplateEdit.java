@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@UiController("emailtemplates_JsonEmailTemplate.edit")
+@UiController("emltmp_JsonEmailTemplate.edit")
 @UiDescriptor("json-email-template-edit.xml")
 @EditedEntityContainer("emailTemplateDc")
 public class JsonEmailTemplateEdit extends StandardEditor<JsonEmailTemplate> {

@@ -17,6 +17,6 @@
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
     <menu id="administration">
-        <item screen="emailtemplates_EmailTemplate.browse"/>
+        <item screen="emltmp_EmailTemplate.browse"/>
     </menu>
 </menu-config>

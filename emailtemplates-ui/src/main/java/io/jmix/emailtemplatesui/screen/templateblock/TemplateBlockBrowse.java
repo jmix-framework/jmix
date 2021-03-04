@@ -24,7 +24,7 @@ import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-@UiController("emailtemplates_TemplateBlock.browse")
+@UiController("emltmp_TemplateBlock.browse")
 @UiDescriptor("template-block-browse.xml")
 @LookupComponent("templateBlocksTable")
 public class TemplateBlockBrowse extends StandardLookup<TemplateBlock> {

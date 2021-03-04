@@ -23,7 +23,7 @@ import io.jmix.ui.screen.StandardLookup;
 import io.jmix.ui.screen.UiController;
 import io.jmix.ui.screen.UiDescriptor;
 
-@UiController("emailtemplates_TemplateBlockGroup.browse")
+@UiController("emltmp_TemplateBlockGroup.browse")
 @UiDescriptor("template-block-group-browse.xml")
 @LookupComponent("templateBlockGroupsTable")
 public class TemplateBlockGroupBrowse extends StandardLookup<TemplateBlockGroup> {

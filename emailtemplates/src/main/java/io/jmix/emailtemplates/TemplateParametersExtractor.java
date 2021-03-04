@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Component("emailtemplates_TemplateParametersExtractor")
+@Component("emltmp_TemplateParametersExtractor")
 public class TemplateParametersExtractor {
 
     protected Map<ParameterType, Class> primitiveParameterTypeMapping = new ImmutableMap.Builder<ParameterType, Class>()

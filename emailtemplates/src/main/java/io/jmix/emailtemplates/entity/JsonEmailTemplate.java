@@ -23,10 +23,10 @@ import io.jmix.reports.entity.Report;
 
 import javax.persistence.*;
 
-@Entity(name = "emailtemplates_JsonEmailTemplate")
+@Entity(name = "emltmp_JsonEmailTemplate")
 @JmixEntity
 @DiscriminatorValue("J")
-@Listeners("emailtemplates_JsonEmailTemplateDetachListener")
+@Listeners("emltmp_JsonEmailTemplateDetachListener")
 public class JsonEmailTemplate extends EmailTemplate {
 
     @Lob

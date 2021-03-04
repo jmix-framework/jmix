@@ -27,7 +27,6 @@ import io.jmix.emailtemplatesui.dto.ReportWithParamField;
 import io.jmix.reports.ParameterClassResolver;
 import io.jmix.reports.entity.Report;
 import io.jmix.reports.entity.ReportInputParameter;
-
 import io.jmix.reportsui.screen.report.run.ParameterFieldCreator;
 import io.jmix.reportsui.screen.report.validators.ReportParamFieldValidator;
 import io.jmix.ui.Actions;
@@ -35,8 +34,10 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.*;
-import io.jmix.ui.component.data.options.ContainerOptions;
-import io.jmix.ui.screen.*;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.Subscribe;
+import io.jmix.ui.screen.UiController;
+import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -45,9 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-
-@UiController("emailtemplates_EmailTemplateParametersFragment")
+@UiController("emltmp_EmailTemplateParametersFragment")
 @UiDescriptor("email-template-parameters-fragment.xml")
 public class EmailTemplateParametersFragment extends ScreenFragment {
     public static final String IS_DEFAULT_PARAM_VALUES = "isDefault";

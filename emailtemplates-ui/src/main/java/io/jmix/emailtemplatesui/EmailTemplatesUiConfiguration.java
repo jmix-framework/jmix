@@ -35,7 +35,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.emailtemplatesui", value = "classpath:/io/jmix/emailtemplatesui/module.properties")
 public class EmailTemplatesUiConfiguration {
 
-    @Bean("emailtemplates_UiControllersConfiguration")
+    @Bean("emltmp_UiControllersConfiguration")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers

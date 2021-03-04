@@ -32,8 +32,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "EMAILTEMPLATES_BLOCK_GROUP")
-@Entity(name = "emailtemplates_TemplateBlockGroup")
+@Table(name = "EMLTMP_BLOCK_GROUP")
+@Entity(name = "emltmp_TemplateBlockGroup")
 @JmixEntity
 public class TemplateBlockGroup {
     @Id

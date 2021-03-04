@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
-@Component("emailtemplates_JsonEmailTemplateDetachListener")
+@Component("emltmp_JsonEmailTemplateDetachListener")
 public class JsonEmailTemplateDetachListener implements BeforeDetachEntityListener<JsonEmailTemplate> {
     @Autowired
     protected TemplateConverter templateConverter;

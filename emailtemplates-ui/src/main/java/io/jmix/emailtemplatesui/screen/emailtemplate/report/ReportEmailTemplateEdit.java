@@ -42,7 +42,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.ArrayList;
 
-@UiController("emailtemplates_ReportEmailTemplate.edit")
+@UiController("emltmp_ReportEmailTemplate.edit")
 @UiDescriptor("report-email-template-edit.xml")
 @EditedEntityContainer("emailTemplateDc")
 public class ReportEmailTemplateEdit extends StandardEditor<ReportEmailTemplate> {

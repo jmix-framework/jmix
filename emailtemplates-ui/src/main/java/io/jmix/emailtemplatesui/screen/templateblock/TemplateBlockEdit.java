@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.TreeMap;
 
-@UiController("emailtemplates_TemplateBlock.edit")
+@UiController("emltmp_TemplateBlock.edit")
 @UiDescriptor("template-block-edit.xml")
 @EditedEntityContainer("templateBlockDc")
 public class TemplateBlockEdit extends StandardEditor<TemplateBlock> {

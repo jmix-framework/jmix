@@ -34,8 +34,8 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
-@Table(name = "EMAILTEMPLATES_PARAMETER_VALUE")
-@Entity(name = "emailtemplates_ParameterValue")
+@Table(name = "EMLTMP_PARAMETER_VALUE")
+@Entity(name = "emltmp_ParameterValue")
 @JmixEntity
 public class ParameterValue {
 

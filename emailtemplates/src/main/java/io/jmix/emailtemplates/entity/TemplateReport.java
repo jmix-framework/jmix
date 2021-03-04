@@ -39,8 +39,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@Table(name = "EMAILTEMPLATES_TEMPLATE_REPORT")
-@Entity(name = "emailtemplates_TemplateReport")
+@Table(name = "EMLTMP_TEMPLATE_REPORT")
+@Entity(name = "emltmp_TemplateReport")
 @JmixEntity
 public class TemplateReport {
     @Id

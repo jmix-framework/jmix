@@ -29,7 +29,7 @@ import javax.annotation.PostConstruct;
 
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.isMany;
 
-@Component("datatools_EntityInspectorFetchPlanBuilder")
+@Component("datatl_EntityInspectorFetchPlanBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFetchPlanBuilder {
 

@@ -40,7 +40,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.datatoolsui", value = "classpath:/io/jmix/datatoolsui/module.properties")
 public class DatatoolsUiConfiguration {
 
-    @Bean("datatools_UiControllersConfiguration")
+    @Bean("datatl_UiControllersConfiguration")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers
@@ -49,7 +49,7 @@ public class DatatoolsUiConfiguration {
         return uiControllers;
     }
 
-    @Bean("datatools_UiActions")
+    @Bean("datatl_UiActions")
     public ActionsConfiguration actions(ApplicationContext applicationContext,
                                         AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);

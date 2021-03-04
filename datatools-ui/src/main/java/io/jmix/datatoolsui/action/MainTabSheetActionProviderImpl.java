@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
-@Component("datatools_ScreenContextMenuActionProvider")
+@Component("datatl_ScreenContextMenuActionProvider")
 public class MainTabSheetActionProviderImpl implements MainTabSheetActionProvider {
 
     @Autowired

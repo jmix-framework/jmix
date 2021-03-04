@@ -46,7 +46,7 @@ import java.util.List;
 import static io.jmix.datatoolsui.screen.entityinspector.EntityFormUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-@Component("datatools_EntityInspectorFormBuilder")
+@Component("datatl_EntityInspectorFormBuilder")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class InspectorFormBuilder {
 

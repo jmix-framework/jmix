@@ -34,7 +34,7 @@ import java.util.*;
 
 import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
-@Component("datatools_EntityRestore")
+@Component("datatl_EntityRestore")
 public class EntityRestoreImpl implements EntityRestore {
 
     private static final Logger log = LoggerFactory.getLogger(EntityRestore.class);

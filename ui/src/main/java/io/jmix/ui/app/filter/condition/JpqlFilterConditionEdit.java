@@ -98,6 +98,8 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     protected ComboBox<Class> enumClassField;
     @Autowired
     protected CheckBox hasInExpressionField;
+    @Autowired
+    protected TextField<String> parameterNameField;
 
     protected MetaClass filterMetaClass = null;
     protected HasValue defaultValueField;
@@ -133,6 +135,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.uuid"), UUID.class);
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.entity"), Entity.class);
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.enum"), Enum.class);
+        optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.void"), Void.class);
         parameterClassField.setOptionsMap(optionsMap);
     }
 
@@ -286,10 +289,12 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             enumClassField.setValue(null);
         }
 
-        hasInExpressionField.setVisible(parameterClass != Boolean.class);
-        if (parameterClass == Boolean.class) {
+        hasInExpressionField.setVisible(parameterClass != Boolean.class && parameterClass != Void.class);
+        if (parameterClass == Boolean.class || parameterClass == Void.class) {
             hasInExpressionField.setValue(false);
         }
+
+        parameterNameField.setVisible(parameterClass != Void.class);
 
         if (event.isUserOriginated()) {
             if (parameterClass != null

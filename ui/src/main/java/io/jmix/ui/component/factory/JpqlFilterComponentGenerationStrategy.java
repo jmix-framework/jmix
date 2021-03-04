@@ -111,6 +111,8 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
                 }
             }
             return dataTypeField;
+        } else if (Void.class.isAssignableFrom(parameterClass)) {
+            return createVoidField(context);
         }
 
         return super.createComponentInternal(context);
@@ -261,6 +263,10 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         ));
 
         return component;
+    }
+
+    protected Field createVoidField(ComponentGenerationContext context) {
+        return uiComponents.create(CheckBox.NAME);
     }
 
     @Override

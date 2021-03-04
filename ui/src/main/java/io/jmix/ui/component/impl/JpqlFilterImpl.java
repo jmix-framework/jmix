@@ -79,19 +79,32 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
             return;
         }
 
-        Object parameterValue = null;
-        if (newValue != null) {
-            if (EntityValues.isEntity(newValue)) {
-                parameterValue = EntityValues.getIdOrEntity(newValue);
-            } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
-                Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
-                parameterValue = enumeration.format(newValue);
+        if (parameterClass == Void.class) {
+            if (Boolean.TRUE.equals(newValue)) {
+                getQueryCondition().setWhere(where);
+                getQueryCondition().setJoin(join);
             } else {
-                parameterValue = newValue;
+                resetQueryCondition();
             }
-        }
 
-        getQueryCondition().setParameterValuesMap(Collections.singletonMap(parameterName, parameterValue));
+            if (!getQueryCondition().getParameterValuesMap().isEmpty()) {
+                getQueryCondition().setParameterValuesMap(Collections.emptyMap());
+            }
+        } else {
+            Object parameterValue = null;
+            if (newValue != null) {
+                if (EntityValues.isEntity(newValue)) {
+                    parameterValue = EntityValues.getIdOrEntity(newValue);
+                } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
+                    Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
+                    parameterValue = enumeration.format(newValue);
+                } else {
+                    parameterValue = newValue;
+                }
+            }
+
+            getQueryCondition().setParameterValuesMap(Collections.singletonMap(parameterName, parameterValue));
+        }
     }
 
     @Override
@@ -121,6 +134,10 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
         checkState(this.parameterClass == null, "Parameter class has already been initialized");
         checkNotNullArgument(parameterClass);
 
+        if (parameterClass == Void.class) {
+            resetQueryCondition();
+        }
+
         this.parameterClass = parameterClass;
     }
 
@@ -139,11 +156,13 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
     public void setCondition(String where, @Nullable String join) {
         checkNotNullArgument(where);
 
-        if (StringUtils.isNotEmpty(parameterName)) {
-            getQueryCondition().setWhere(where.replace("?", ":" + parameterName));
-        }
+        if (parameterClass != Void.class) {
+            if (StringUtils.isNotEmpty(parameterName)) {
+                getQueryCondition().setWhere(where.replace("?", ":" + parameterName));
+            }
 
-        getQueryCondition().setJoin(join);
+            getQueryCondition().setJoin(join);
+        }
 
         this.where = where;
         this.join = join;
@@ -157,5 +176,10 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
     @Override
     public void setHasInExpression(boolean hasInExpression) {
         this.hasInExpression = hasInExpression;
+    }
+
+    protected void resetQueryCondition() {
+        getQueryCondition().setWhere("");
+        getQueryCondition().setJoin("");
     }
 }

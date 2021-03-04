@@ -129,6 +129,9 @@ public class JpqlFilterSupport {
         } else if (datatypeRegistry.find(parameterClass) != null) {
             Datatype datatype = datatypeRegistry.get(parameterClass);
             return datatype.format(value);
+        } else if (Void.class.isAssignableFrom(parameterClass)) {
+            Datatype datatype = datatypeRegistry.get(Boolean.class);
+            return datatype.format(value);
         }
 
         return null;
@@ -176,6 +179,9 @@ public class JpqlFilterSupport {
                 return enumeration.parse(value);
             } else if (datatypeRegistry.find(parameterClass) != null) {
                 Datatype datatype = datatypeRegistry.get(parameterClass);
+                return datatype.parse(value);
+            } else if (Void.class.isAssignableFrom(parameterClass)) {
+                Datatype datatype = datatypeRegistry.get(Boolean.class);
                 return datatype.parse(value);
             }
         } catch (ParseException e) {

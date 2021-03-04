@@ -100,8 +100,6 @@ public abstract class ComponentsHelper {
         FrameImplementation frameImpl = (FrameImplementation) window;
         if (elements.length == 1) {
             return frameImpl.getRegisteredComponent(id);
-            // todo timers should be find using getFacet()
-//                return window.getTimer(id);
         } else {
             Component innerComponent = frameImpl.getRegisteredComponent(elements[0]);
             if (innerComponent instanceof HasComponents) {
@@ -251,32 +249,36 @@ public abstract class ComponentsHelper {
 
     private static void __walkComponents(HasComponents container, ComponentVisitor visitor, String path) {
         for (Component component : container.getOwnComponents()) {
-            String id = component.getId();
-            if (id == null && component instanceof ActionOwner
-                    && ((ActionOwner) component).getAction() != null) {
-                id = ((ActionOwner) component).getAction().getId();
-            }
-            if (id == null) {
-                id = component.getClass().getSimpleName();
-            }
-            visitor.visit(component, path + id);
+            __walkThroughComponent(component, visitor, path);
+        }
+    }
 
-            if (component instanceof HasComponents) {
-                String p = component instanceof Frame ?
-                        path + id + "." :
-                        path;
-                __walkComponents(((HasComponents) component), visitor, p);
-            } else if (component instanceof AppWorkArea) {
-                // todo support HasInnerComponents
-                AppWorkArea workArea = (AppWorkArea) component;
-                if (workArea.getState() == AppWorkArea.State.INITIAL_LAYOUT) {
-                    VBoxLayout initialLayout = workArea.getInitialLayout();
+    private static void __walkInnerComponents(HasInnerComponents innerComponents, ComponentVisitor visitor, String path) {
+        for (Component component : innerComponents.getInnerComponents()) {
+            __walkThroughComponent(component, visitor, path);
+        }
+    }
 
-                    if (initialLayout != null) {
-                        __walkComponents(initialLayout, visitor, path);
-                    }
-                }
-            }
+    private static void __walkThroughComponent(Component component, ComponentVisitor visitor, String path) {
+        String id = component.getId();
+        if (id == null && component instanceof ActionOwner
+                && ((ActionOwner) component).getAction() != null) {
+            id = ((ActionOwner) component).getAction().getId();
+        }
+        if (id == null) {
+            id = component.getClass().getSimpleName();
+        }
+
+        visitor.visit(component, path + id);
+
+        String p = component instanceof Frame ?
+                path + id + "." :
+                path;
+
+        if (component instanceof HasComponents) {
+            __walkComponents(((HasComponents) component), visitor, p);
+        } else if (component instanceof HasInnerComponents) {
+            __walkInnerComponents((HasInnerComponents) component, visitor, p);
         }
     }
 
@@ -551,7 +553,7 @@ public abstract class ComponentsHelper {
     }
 
     @Nullable
-    public static <T extends Component & HasComponents> Component.Focusable focusChildComponent(T container) {
+    public static Component.Focusable focusChildComponent(Component container) {
         if (!container.isEnabledRecursive()) {
             return null;
         }
@@ -559,7 +561,16 @@ public abstract class ComponentsHelper {
             return null;
         }
 
-        for (Component component : container.getOwnComponents()) {
+        Collection<Component> components;
+        if (container instanceof HasComponents) {
+            components = ((HasComponents) container).getOwnComponents();
+        } else if (container instanceof HasInnerComponents) {
+            components = ((HasInnerComponents) container).getInnerComponents();
+        } else {
+            return null;
+        }
+
+        for (Component component : components) {
             if (component.isVisible()
                     && component.isEnabled()) {
 
@@ -578,14 +589,13 @@ public abstract class ComponentsHelper {
                         return focusable;
                     }
 
-                    if (component instanceof HasComponents) {
-                        Component.Focusable focused = focusChildComponent((T) component);
+                    if (component instanceof HasComponents
+                            || component instanceof HasInnerComponents) {
+                        Component.Focusable focused = focusChildComponent(component);
                         if (focused != null) {
                             return focused;
                         }
                     }
-
-                    // todo support HasInnerComponents
                 }
             }
         }

@@ -58,7 +58,7 @@
                              references="EMAIL_SENDING_MESSAGE(ID)"/>
             </column>
 
-            <column name="CONTENT" type="${byte[].type}"/>
+            <column name="CONTENT" type="${byte_array.type}"/>
             <column name="CONTENT_FILE" type="clob"/>
             <column name="NAME" type="varchar(500)"/>
             <column name="CONTENT_ID" type="varchar(50)"/>

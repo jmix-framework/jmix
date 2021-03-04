@@ -7,12 +7,12 @@
     <property name="uuid.type" dbms="oracle" value="varchar2(32)"/>
     <property name="uuid.type" dbms="!oracle" value="uuid"/>
 
-    <property name="byte[].type" dbms="mysql" value="BLOB"/>
-    <property name="byte[].type" dbms="mariadb" value="BLOB"/>
-    <property name="byte[].type" dbms="postgresql" value="bytea"/>
-    <property name="byte[].type" dbms="mssql" value="varbinary(max)"/>
-    <property name="byte[].type" dbms="oracle" value="BLOB"/>
-    <property name="byte[].type" dbms="hsqldb" value="BLOB"/>
+    <property name="byte_array.type" dbms="mysql" value="BLOB"/>
+    <property name="byte_array.type" dbms="mariadb" value="BLOB"/>
+    <property name="byte_array.type" dbms="postgresql" value="bytea"/>
+    <property name="byte_array.type" dbms="mssql" value="varbinary(max)"/>
+    <property name="byte_array.type" dbms="oracle" value="BLOB"/>
+    <property name="byte_array.type" dbms="hsqldb" value="BLOB"/>
 
     <include file="io/jmix/email/liquibase/changelog/001-email.xml"/>
 

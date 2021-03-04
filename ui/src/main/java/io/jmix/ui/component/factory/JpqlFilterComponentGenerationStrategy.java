@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.factory;
 
+import com.google.common.collect.ImmutableMap;
 import io.jmix.core.Entity;
 import io.jmix.core.FileRef;
 import io.jmix.core.JmixOrder;
@@ -56,6 +57,8 @@ import java.util.UUID;
 @SuppressWarnings({"unchecked", "rawtypes"})
 @org.springframework.stereotype.Component("ui_JpqlFilterComponentGenerationStrategy")
 public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGenerationStrategy implements Ordered {
+
+    protected static final String UNARY_FIELD_STYLENAME = "unary-field";
 
     protected DatatypeRegistry datatypeRegistry;
     protected DataAwareComponentsTools dataAwareComponentsTools;
@@ -244,6 +247,20 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         dataAwareComponentsTools.setupDateFormat(dateField, parameterClass);
 
         return dateField;
+    }
+
+    @Override
+    protected Field createBooleanField(ComponentGenerationContext context) {
+        ComboBox<Boolean> component = uiComponents.create(ComboBox.of(Boolean.class));
+        component.setTextInputAllowed(false);
+        component.addStyleName(UNARY_FIELD_STYLENAME);
+
+        component.setOptionsMap(ImmutableMap.of(
+                messages.getMessage("boolean.yes"), Boolean.TRUE,
+                messages.getMessage("boolean.no"), Boolean.FALSE
+        ));
+
+        return component;
     }
 
     @Override

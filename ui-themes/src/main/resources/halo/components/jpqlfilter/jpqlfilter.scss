@@ -18,4 +18,8 @@
   .#{$primary-stylename} {
     outline: 0;
   }
+
+  .#{$primary-stylename} .unary-field {
+    width: ceil($v-unit-size * 2.5);
+  }
 }

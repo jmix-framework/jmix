@@ -21,6 +21,7 @@ import io.jmix.core.common.event.EventHub;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Frame;
+import io.jmix.ui.component.HasInnerComponents;
 import io.jmix.ui.component.impl.AbstractFacet;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.Screen.AfterDetachEvent;
@@ -147,7 +148,7 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
         assert getOwner() != null;
 
         if (auto) {
-            return getOwner().getComponents();
+            return fillComponents(getOwner().getComponents());
         }
 
         if (CollectionUtils.isNotEmpty(componentIds)) {
@@ -324,4 +325,28 @@ public class ScreenSettingsFacetImpl extends AbstractFacet implements ScreenSett
             throw new IllegalStateException("ScreenSettingsFacet is not attached to the screen");
         }
     }
+
+    protected Collection<Component> fillComponents(Collection<Component> components) {
+        Collection<Component> result = new ArrayList<>(components);
+        for (Component component : components) {
+            if (component instanceof HasInnerComponents) {
+                fillWithInnerComponents(result, (HasInnerComponents) component);
+            }
+        }
+        return result;
+    }
+
+    protected Collection<Component> fillWithInnerComponents(Collection<Component> components, HasInnerComponents hasInnerComponents) {
+        Collection<Component> innerComponents = hasInnerComponents.getInnerComponents();
+        components.addAll(innerComponents);
+
+        for (Component component : innerComponents) {
+            if (component instanceof HasInnerComponents) {
+                fillWithInnerComponents(components, (HasInnerComponents) component);
+            }
+        }
+
+        return components;
+    }
+
 }

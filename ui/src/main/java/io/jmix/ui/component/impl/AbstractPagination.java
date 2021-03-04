@@ -22,6 +22,7 @@ import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import io.jmix.core.Messages;
+import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -34,6 +35,8 @@ import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixAbstractPagination;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.list.UnmodifiableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
@@ -46,6 +49,8 @@ import java.util.function.Supplier;
 public abstract class AbstractPagination<T extends JmixAbstractPagination>
         extends AbstractComponent<T>
         implements PaginationComponent {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractPagination.class);
 
     protected enum State {
         FIRST_COMPLETE,     // "63 rows"
@@ -102,6 +107,43 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     @Override
     public Subscription addBeforeRefreshListener(Consumer<BeforeRefreshEvent> listener) {
         return getEventHub().subscribe(BeforeRefreshEvent.class, listener);
+    }
+
+    /**
+     * INTERNAL.
+     *
+     * @return items per page value
+     */
+    @Nullable
+    @Internal
+    public Integer getItemsPerPageValue() {
+        return isItemsPerPageVisible() ? getItemsPerPageComboBox().getValue() : null;
+    }
+
+    /**
+     * INTERNAL.
+     *
+     * @param value items per page value
+     */
+    @Internal
+    public void setItemsPerPageValue(@Nullable Integer value) {
+        if (isItemsPerPageVisible()) {
+            if (processedOptions == null) {
+                return;
+            }
+
+            if (processedOptions.contains(value)) {
+                setSilentlyItemsPerPageValue(value);
+                //noinspection ConstantConditions
+                dataBinder.setMaxResults(value);
+            } else if (value == null && isNullItemsPerPageOptionVisible()) {
+                setSilentlyItemsPerPageValue(null);
+                dataBinder.setMaxResults(getEntityMaxFetchSize(dataBinder.getEntityMetaClass()));
+            } else {
+                log.debug("Options for items-per-page ComboBox does not contain '{}' value."
+                        + " The value is not set.", value);
+            }
+        }
     }
 
     protected BeforeRefreshEvent fireBeforeRefreshEvent() {

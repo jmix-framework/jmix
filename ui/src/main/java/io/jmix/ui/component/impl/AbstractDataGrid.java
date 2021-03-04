@@ -490,10 +490,14 @@ public abstract class AbstractDataGrid<C extends Grid<E> & JmixEnhancedGrid<E>, 
 
     @Override
     public Collection<io.jmix.ui.component.Component> getInnerComponents() {
+        Collection<io.jmix.ui.component.Component> components = new ArrayList<>(2);
         if (buttonsPanel != null) {
-            return Collections.singletonList(buttonsPanel);
+            components.add(buttonsPanel);
         }
-        return Collections.emptyList();
+        if (pagination != null) {
+            components.add(pagination);
+        }
+        return components;
     }
 
     protected void initEditor(Grid<E> component) {

@@ -328,10 +328,14 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
     @Override
     public Collection<io.jmix.ui.component.Component> getInnerComponents() {
+        List<io.jmix.ui.component.Component> components = new ArrayList<>(2);
         if (buttonsPanel != null) {
-            return Collections.singletonList(buttonsPanel);
+            components.add(buttonsPanel);
         }
-        return Collections.emptyList();
+        if (pagination != null) {
+            components.add(pagination);
+        }
+        return components;
     }
 
     @SuppressWarnings("unchecked")

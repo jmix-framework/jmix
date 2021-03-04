@@ -19,8 +19,8 @@ package io.jmix.uidata.settings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.impl.TableImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
-import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +39,8 @@ public class ComponentSettingsRegistry implements InitializingBean {
     @Autowired
     protected List<ComponentSettingsBinder> binders;
 
-    protected Map<Class<? extends Component>, Class<? extends ComponentSettings>> settingsClasses = new ConcurrentHashMap<>();
-    protected Map<Class<? extends ComponentSettings>, Class<? extends ComponentSettingsBinder>> binderClasses = new ConcurrentHashMap<>();
+    protected Map<Class<? extends Component>, Class<? extends ComponentSettings>> componentSettings = new ConcurrentHashMap<>();
+    protected Map<Class<? extends Component>, ComponentSettingsBinder> componentBinder = new ConcurrentHashMap<>();
 
     @Override
     public void afterPropertiesSet() {
@@ -56,7 +56,7 @@ public class ComponentSettingsRegistry implements InitializingBean {
     public Class<? extends ComponentSettings> getSettingsClass(Class<? extends Component> componentClass) {
         Preconditions.checkNotNullArgument(componentClass);
 
-        Class<? extends ComponentSettings> settingClass = settingsClasses.get(componentClass);
+        Class<? extends ComponentSettings> settingClass = componentSettings.get(componentClass);
         if (settingClass != null) {
             return settingClass;
         }
@@ -65,28 +65,25 @@ public class ComponentSettingsRegistry implements InitializingBean {
     }
 
     /**
-     * @param settingsClass settings class (e.g. {@link TableSettings})
-     * @return binder class if registered, otherwise in throws an exception
+     * @param componentClass component class
+     * @return component settings binder or throws an exception if there is no binder registered for this class
      */
-    public Class<? extends ComponentSettingsBinder> getBinderClass(Class<? extends ComponentSettings> settingsClass) {
-        Preconditions.checkNotNullArgument(settingsClass);
-
-        Class<? extends ComponentSettingsBinder> binderClass = binderClasses.get(settingsClass);
-        if (binderClass != null) {
-            return binderClass;
+    public ComponentSettingsBinder getBinder(Class<? extends Component> componentClass) {
+        ComponentSettingsBinder binder = componentBinder.get(componentClass);
+        if (binder == null) {
+            throw new IllegalStateException(String.format("Cannot find binder for: '%s'", componentClass));
         }
-
-        throw new IllegalStateException(String.format("Cannot find binder class for '%s'", settingsClass));
+        return binder;
     }
 
     /**
-     * @param componentClass component class (e.g. WebTable)
+     * @param componentClass component class (e.g. {@link TableImpl})
      * @return true if settings is registered for component class
      */
     public boolean isSettingsRegisteredFor(Class<? extends Component> componentClass) {
         Preconditions.checkNotNullArgument(componentClass);
 
-        Class<? extends ComponentSettings> settingsClass = settingsClasses.get(componentClass);
+        Class<? extends ComponentSettings> settingsClass = componentSettings.get(componentClass);
         return settingsClass != null;
     }
 
@@ -96,7 +93,7 @@ public class ComponentSettingsRegistry implements InitializingBean {
         Preconditions.checkNotNullArgument(binder.getSettingsClass(),
                 "Settings class cannot be null in '%s'", binder.getClass());
 
-        settingsClasses.put(binder.getComponentClass(), binder.getSettingsClass());
-        binderClasses.put(binder.getSettingsClass(), binder.getClass());
+        componentSettings.put(binder.getComponentClass(), binder.getSettingsClass());
+        componentBinder.put(binder.getComponentClass(), binder);
     }
 }

@@ -31,7 +31,6 @@ import io.jmix.ui.settings.ScreenSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -46,9 +45,6 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
     @Autowired
     protected ComponentSettingsRegistry settingsRegistry;
 
-    @Autowired
-    protected ApplicationContext applicationContext;
-
     @Override
     public void applySettings(Collection<Component> components, ScreenSettings screenSettings) {
         Preconditions.checkNotNullArgument(components);
@@ -62,16 +58,15 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             log.trace("Applying settings for {} : {} ", getComponentPath(component), component);
 
-            Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
-
-            ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
-
-            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
 
             if (component instanceof HasTablePresentations) {
                 ComponentSettings defaultSettings = binder.getSettings(component);
                 ((HasTablePresentations) component).setDefaultSettings(new SettingsWrapperImpl(defaultSettings));
             }
+
+            Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
+            ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
             binder.applySettings(component, new SettingsWrapperImpl(settings));
 
@@ -100,7 +95,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
                 ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
@@ -128,7 +123,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
-            ComponentSettingsBinder binder = applicationContext.getBean(settingsRegistry.getBinderClass(settingsClass));
+            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
 
             boolean settingsChanged = binder.saveSettings(component, new SettingsWrapperImpl(settings));
             if (settingsChanged) {

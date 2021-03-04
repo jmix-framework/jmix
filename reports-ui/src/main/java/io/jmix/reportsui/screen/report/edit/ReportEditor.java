@@ -180,12 +180,11 @@ public class ReportEditor extends StandardEditor<Report> {
         setScreenCaption();
     }
 
-    @Subscribe(target = Target.DATA_CONTEXT)
-    protected void onPostCommit(DataContext.PostCommitEvent event) {
-        notifications.create(Notifications.NotificationType.TRAY)
-                .withCaption(messages.formatMessage(getClass(), "notification.completeSuccessfully", getEditedEntity().getName()))
-                .show();
+    @Override
+    protected String getSaveNotificationCaption(){
+        return messages.formatMessage(getClass(), "notification.completeSuccessfully", getEditedEntity().getName());
     }
+
 
     protected void setScreenCaption() {
         if (!StringUtils.isEmpty(getEditedEntity().getName())) {

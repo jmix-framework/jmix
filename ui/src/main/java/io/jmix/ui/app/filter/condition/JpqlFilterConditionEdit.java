@@ -275,6 +275,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     @Subscribe("parameterClassField")
     protected void onParameterClassFieldValueChange(HasValue.ValueChangeEvent<Class> event) {
         Class parameterClass = event.getValue();
+
         entityClassField.setVisible(parameterClass == Entity.class);
         if (parameterClass != Entity.class) {
             entityClassField.setValue(null);
@@ -285,6 +286,11 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             enumClassField.setValue(null);
         }
 
+        hasInExpressionField.setVisible(parameterClass != Boolean.class);
+        if (parameterClass == Boolean.class) {
+            hasInExpressionField.setValue(false);
+        }
+
         if (event.isUserOriginated()) {
             if (parameterClass != null
                     && parameterClass != Entity.class
@@ -293,13 +299,6 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
                 updateParameterName(parameterClass);
             } else {
                 getEditedEntity().setParameterClass(null);
-            }
-
-            if (parameterClass == Boolean.class) {
-                getEditedEntity().setHasInExpression(false);
-                hasInExpressionField.setEnabled(false);
-            } else {
-                hasInExpressionField.setEnabled(true);
             }
 
             initDefaultValueField();

@@ -24,6 +24,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiComponents;
+import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
@@ -95,6 +96,8 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     protected ComboBox<Class> entityClassField;
     @Autowired
     protected ComboBox<Class> enumClassField;
+    @Autowired
+    protected CheckBox hasInExpressionField;
 
     protected MetaClass filterMetaClass = null;
     protected HasValue defaultValueField;
@@ -291,6 +294,14 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             } else {
                 getEditedEntity().setParameterClass(null);
             }
+
+            if (parameterClass == Boolean.class) {
+                getEditedEntity().setHasInExpression(false);
+                hasInExpressionField.setEnabled(false);
+            } else {
+                hasInExpressionField.setEnabled(true);
+            }
+
             initDefaultValueField();
         }
     }

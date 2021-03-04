@@ -1,6 +1,8 @@
 package io.jmix.graphql.schema;
 
-import graphql.language.*;
+import graphql.language.Comment;
+import graphql.language.InputObjectTypeDefinition;
+import graphql.language.InputValueDefinition;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static io.jmix.graphql.schema.Types.FilterOperation.*;
 import static io.jmix.graphql.schema.Types.listValueDef;
 import static io.jmix.graphql.schema.Types.valueDef;
 
@@ -55,16 +58,18 @@ public class FilterTypesBuilder extends BaseTypesBuilder {
         return InputObjectTypeDefinition.newInputObjectDefinition()
                 .name(name)
                 .comments(Collections.singletonList(new Comment(comment, null)))
-                .inputValueDefinition(valueDef("EQ", scalarTypeName, "equals"))
-                .inputValueDefinition(valueDef("NEQ", scalarTypeName, "not equals"))
-                .inputValueDefinition(valueDef("GT", scalarTypeName, "greater than"))
-                .inputValueDefinition(valueDef("GTE", scalarTypeName, "greater than or equals"))
-                .inputValueDefinition(valueDef("LT", scalarTypeName, "less that"))
-                .inputValueDefinition(valueDef("LTE", scalarTypeName, "less than or equals"))
-                .inputValueDefinition(valueDef("_contains", scalarTypeName, "contains substring"))
-                .inputValueDefinition(valueDef("_notContains", scalarTypeName, "not contains substring"))
-                .inputValueDefinition(valueDef("_startsWith", scalarTypeName, "starts with substring"))
-                .inputValueDefinition(valueDef("_endsWith", scalarTypeName, "ends with substring"))
+                .inputValueDefinition(valueDef(EQ.getId(), scalarTypeName, "equals"))
+                .inputValueDefinition(valueDef(NEQ.getId(), scalarTypeName, "not equals"))
+                .inputValueDefinition(valueDef(GT.getId(), scalarTypeName, "greater than"))
+                .inputValueDefinition(valueDef(GTE.getId(), scalarTypeName, "greater than or equals"))
+                .inputValueDefinition(valueDef(LT.getId(), scalarTypeName, "less that"))
+                .inputValueDefinition(valueDef(LTE.getId(), scalarTypeName, "less than or equals"))
+                .inputValueDefinition(valueDef(CONTAINS.getId(), scalarTypeName, "contains substring"))
+                .inputValueDefinition(valueDef(NOT_CONTAINS.getId(), scalarTypeName, "not contains substring"))
+                .inputValueDefinition(valueDef(STARTS_WITH.getId(), scalarTypeName, "starts with substring"))
+                .inputValueDefinition(valueDef(ENDS_WITH.getId(), scalarTypeName, "ends with substring"))
+                .inputValueDefinition(listValueDef(IN_LIST.getId(), scalarTypeName, "in list"))
+                .inputValueDefinition(listValueDef(NOT_IN_LIST.getId(), scalarTypeName, "not in list"))
                 .build();
     }
 

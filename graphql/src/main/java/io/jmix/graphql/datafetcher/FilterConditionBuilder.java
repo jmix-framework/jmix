@@ -15,6 +15,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import static io.jmix.graphql.schema.Types.FilterOperation.IN_LIST;
+import static io.jmix.graphql.schema.Types.FilterOperation.NOT_IN_LIST;
+
 @Component
 public class FilterConditionBuilder {
 
@@ -47,13 +50,15 @@ public class FilterConditionBuilder {
             }
 
             String newPath = StringUtils.isEmpty(path) ? condPath : path + "." + condPath;
-            if (Collection.class.isAssignableFrom(condition.getClass())) {
+            if (Collection.class.isAssignableFrom(condition.getClass())
+                    && !IN_LIST.getId().equals(condPath)
+                    && !NOT_IN_LIST.getId().equals(condPath)) {
                 result.addAll(buildCollectionOfConditions(newPath, (Collection<Map<String, Object>>) condition));
                 return;
             }
 
             log.debug("buildPropertyCondition: {} {} {}", path, condPath, condition);
-            Types.FilterOperation operation = Types.FilterOperation.valueOf(condPath);
+            Types.FilterOperation operation = Types.FilterOperation.fromId(condPath);
             result.add(PropertyCondition.createWithValue(path, operation.getJmixOperation(), condition));
         });
         return result;

@@ -19,27 +19,47 @@ public class Types {
     }
 
     public enum FilterOperation {
-        EQ(PropertyCondition.Operation.EQUAL),
-        NEQ(PropertyCondition.Operation.NOT_EQUAL),
-        GT(PropertyCondition.Operation.GREATER),
-        GTE(PropertyCondition.Operation.GREATER_OR_EQUAL),
-        LT(PropertyCondition.Operation.LESS),
-        LTE(PropertyCondition.Operation.LESS_OR_EQUAL),
-        _contains(PropertyCondition.Operation.CONTAINS),
-        _notContains(PropertyCondition.Operation.NOT_CONTAINS),
-        _startsWith(PropertyCondition.Operation.STARTS_WITH),
-        _endsWith(PropertyCondition.Operation.ENDS_WITH);
+        EQ("EQ", PropertyCondition.Operation.EQUAL),
+        NEQ("NEQ", PropertyCondition.Operation.NOT_EQUAL),
+        GT("GT", PropertyCondition.Operation.GREATER),
+        GTE("GTE", PropertyCondition.Operation.GREATER_OR_EQUAL),
+        LT("LT", PropertyCondition.Operation.LESS),
+        LTE("LTE", PropertyCondition.Operation.LESS_OR_EQUAL),
+        CONTAINS("_contains", PropertyCondition.Operation.CONTAINS),
+        NOT_CONTAINS("_notContains", PropertyCondition.Operation.NOT_CONTAINS),
+        STARTS_WITH("_startsWith", PropertyCondition.Operation.STARTS_WITH),
+        ENDS_WITH("_endsWith", PropertyCondition.Operation.ENDS_WITH),
+        IN_LIST("_in", PropertyCondition.Operation.IN_LIST),
+        NOT_IN_LIST("_notIn", PropertyCondition.Operation.NOT_IN_LIST);
 
-        FilterOperation(String jmixOperation) {
+        private final String id;
+        private final String jmixOperation;
+
+        FilterOperation(String id, String jmixOperation) {
+            this.id = id;
             this.jmixOperation = jmixOperation;
         }
 
-        private final String jmixOperation;
+        public static FilterOperation fromId(String id) {
+            if (id != null) {
+                for (FilterOperation operation :
+                        FilterOperation.values()) {
+                    if (operation.getId().equals(id)) {
+                        return operation;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public String getId() {
+            return id;
+        }
 
         public String getJmixOperation() {
             return jmixOperation;
         }
-
     }
 
     public static GraphQLScalarType[] scalars = {

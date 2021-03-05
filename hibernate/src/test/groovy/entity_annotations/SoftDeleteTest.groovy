@@ -24,6 +24,7 @@ import io.jmix.core.security.SystemAuthenticator
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.soft_delete.EntityWithSoftDeletedCollection
 import test_support.entity.soft_delete.EntityWithSoftDeletedManyToManyCollection
@@ -156,6 +157,7 @@ class SoftDeleteTest extends DataSpec {
         authenticator.end()
     }
 
+    @Ignore
     def "Soft deletion for many to many collection"() {
         setup:
         authenticator.begin("admin")

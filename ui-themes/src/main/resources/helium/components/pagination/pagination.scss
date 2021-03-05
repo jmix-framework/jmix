@@ -141,8 +141,8 @@
 }
 
 @mixin he-pagination-itemsperpage-size($primary-stylename : jmix-pagination,
-                                      $unit-size         : $v-unit-size,
-                                      $font-size         : $v-font-size) {
+                                       $unit-size         : $v-unit-size,
+                                       $font-size         : $v-font-size) {
 
   .#{$primary-stylename}-itemsperpage-layout {
     .#{$primary-stylename}-itemsperpage-label {

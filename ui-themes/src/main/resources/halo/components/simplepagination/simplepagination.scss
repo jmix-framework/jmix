@@ -13,18 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-$jmix-pagination-wrapper-margin-right: round($v-layout-spacing-horizontal/2) !default;
+
+/*
+ * Defines margin-right of navigation buttons (first, previous, etc) and label with number of items.
+ * @group simplepagination
+ */
+$jmix-simplepagination-button-margin-right: round($v-layout-spacing-horizontal/2) !default;
+
+/*
+ * Definess margin-right for elements in simplepagination like navigation buttons layout.
+ * @group simplepagination
+ */
+$jmix-simplepagination-layout-margin-right: $v-layout-spacing-horizontal !default;
+
+/*
+ * Definess margin-bottom for elements in simplepagination like navigation buttons layout and items per page layout.
+ * @group simplepagination
+ */
+$jmix-simplepagination-layout-margin-bottom: $v-layout-spacing-vertical !default;
 
 @mixin halo-simplepagination($primary-stylename: jmix-simplepagination) {
 
  .#{$primary-stylename} {
 
    & > *:not(:last-child) {
-     margin-right: $jmix-pagination-wrapper-margin-right;
+     margin-right: $jmix-simplepagination-layout-margin-right;
    }
 
    & > * {
      vertical-align: middle;
+     margin-bottom: $jmix-simplepagination-layout-margin-bottom;
    }
 
    .#{$primary-stylename}-count {
@@ -32,7 +50,19 @@ $jmix-pagination-wrapper-margin-right: round($v-layout-spacing-horizontal/2) !de
      border: 0;
    }
 
-   @include he-simplepagination-navigation-btn-size($primary-stylename);
+   @include halo-simplepagination-navigation-btn-size($primary-stylename);
+ }
+
+ .#{$primary-stylename}-navigation-layout {
+   white-space: nowrap;
+
+   & > * {
+     vertical-align: middle;
+   }
+
+   & > *:not(:last-child) {
+     margin-right: $jmix-simplepagination-button-margin-right;
+   }
  }
 
  .#{$primary-stylename}-status {
@@ -51,13 +81,13 @@ $jmix-pagination-wrapper-margin-right: round($v-layout-spacing-horizontal/2) !de
 
  .#{$primary-stylename}-itemsperpage-layout .#{$primary-stylename}-itemsperpage-label {
    line-height: $v-unit-size;
-   margin-right: $jmix-pagination-wrapper-margin-right;
+   margin-right: $jmix-simplepagination-button-margin-right;
  }
 }
 
-@mixin he-simplepagination-navigation-btn-size($primary-stylename : jmix-simplepagination,
-                                               $unit-size         : $v-unit-size,
-                                               $font-size         : $v-font-size) {
+@mixin halo-simplepagination-navigation-btn-size($primary-stylename : jmix-simplepagination,
+                                                 $unit-size         : $v-unit-size,
+                                                 $font-size         : $v-font-size) {
 
  .v-button.#{$primary-stylename}-navigation-btn {
    height: round($unit-size/1.5);

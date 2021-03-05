@@ -30,45 +30,45 @@
 
   &.small .#{$primary-stylename} {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
   }
 
   &.large .#{$primary-stylename} {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
   }
 
   /* Size within a container */
 
   .small .#{$primary-stylename} {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
   }
 
   .medium .#{$primary-stylename} {
     @include he-pagination-itemsperpage-size($primary-stylename);
-    @include he-simplepagination-navigation-btn-size($primary-stylename);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename);
   }
 
   .large .#{$primary-stylename} {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
   }
 
   /* Own size */
 
   .#{$primary-stylename}.small {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--small, $v-font-size--small);
   }
 
   .#{$primary-stylename}.medium {
     @include he-pagination-itemsperpage-size($primary-stylename);
-    @include he-simplepagination-navigation-btn-size($primary-stylename);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename);
   }
 
   .#{$primary-stylename}.large {
     @include he-pagination-itemsperpage-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
-    @include he-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
+    @include halo-simplepagination-navigation-btn-size($primary-stylename, $v-unit-size--large, $v-font-size--large);
   }
 }

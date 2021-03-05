@@ -183,6 +183,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         } else {
             getEditedEntity().setParameterClass(null);
         }
+        resetDefaultValue();
         initDefaultValueField();
     }
 
@@ -306,6 +307,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
                 getEditedEntity().setParameterClass(null);
             }
 
+            resetDefaultValue();
             initDefaultValueField();
         }
     }
@@ -319,7 +321,15 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     @Subscribe("hasInExpressionField")
     protected void onHasInExpressionFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
         if (event.isUserOriginated()) {
+            resetDefaultValue();
             initDefaultValueField();
+        }
+    }
+
+    protected void resetDefaultValue() {
+        FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+        if (valueComponent != null) {
+            valueComponent.setDefaultValue(null);
         }
     }
 

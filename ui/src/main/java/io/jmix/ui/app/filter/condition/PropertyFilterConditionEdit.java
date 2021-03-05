@@ -160,6 +160,7 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
                 operationField.setValue(null);
             }
 
+            resetDefaultValue();
             initDefaultValueField();
         }
     }
@@ -168,7 +169,15 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     protected void onOperationFieldValueChange(HasValue.ValueChangeEvent<PropertyFilter.Operation> event) {
         PropertyFilter.Operation operation = event.getValue();
         if (operation != null && event.isUserOriginated()) {
+            resetDefaultValue();
             initDefaultValueField();
+        }
+    }
+
+    protected void resetDefaultValue() {
+        FilterValueComponent valueComponent = getEditedEntity().getValueComponent();
+        if (valueComponent != null) {
+            valueComponent.setDefaultValue(null);
         }
     }
 

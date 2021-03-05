@@ -48,6 +48,7 @@ import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -123,7 +124,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     }
 
     protected void initParameterClassFieldOptionsMap() {
-        Map<String, Class> optionsMap = new TreeMap<>();
+        Map<String, Class> optionsMap = new LinkedHashMap<>();
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.string"), String.class);
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.dateWithoutTime"), LocalDate.class);
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.date"), Date.class);
@@ -137,6 +138,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.enum"), Enum.class);
         optionsMap.put(messages.getMessage(JpqlFilterConditionEdit.class, "parameterClassField.void"), Void.class);
         parameterClassField.setOptionsMap(optionsMap);
+        parameterClassField.setPageLength(optionsMap.size());
     }
 
     protected void initEntityClassField() {

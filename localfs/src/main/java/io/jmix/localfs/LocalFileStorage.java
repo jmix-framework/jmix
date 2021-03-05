@@ -50,7 +50,7 @@ import java.util.concurrent.Executors;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Internal
-@Component("localfs_FileStorage")
+@Component("locfs_FileStorage")
 public class LocalFileStorage implements FileStorage {
 
     private static final Logger log = LoggerFactory.getLogger(LocalFileStorage.class);

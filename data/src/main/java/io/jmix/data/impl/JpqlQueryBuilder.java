@@ -241,11 +241,18 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     for (Map.Entry<String, Object> parameter : jpqlCondition.getParameterValuesMap().entrySet()) {
                         // JpqlCondition may take a value from queryParameters collection or from the
                         // JpqlCondition.parameterValuesMap attribute. queryParameters value has higher priority.
+                        Object parameterValue;
                         if (!nonNullParamNames.contains(parameter.getKey())) {
-                            resultParameters.put(parameter.getKey(), parameter.getValue());
+                            // Modify the query parameter value (e.g. wrap value from JpqlFilter for "contains"
+                            // jpql operation)
+                            parameterValue = wrapQueryParameterValueForJpql(PropertyCondition.Operation.CONTAINS,
+                                    parameter.getValue());
                         } else {
-                            resultParameters.put(parameter.getKey(), queryParameters.get(parameter.getKey()));
+                            // In other cases, it is assumed that the value has already been modified
+                            // (e.g. wrapped value from DataLoadCoordinator)
+                            parameterValue = queryParameters.get(parameter.getKey());
                         }
+                        resultParameters.put(parameter.getKey(), parameterValue);
                     }
                 }
             }

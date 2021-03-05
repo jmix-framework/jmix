@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
-@ConfigurationProperties(prefix = "jmix.filestorage.aws")
+@ConfigurationProperties(prefix = "jmix.awsfs")
 @ConstructorBinding
 public class AwsFileStorageProperties {
     String accessKey;

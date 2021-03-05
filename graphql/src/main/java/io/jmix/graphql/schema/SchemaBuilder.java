@@ -14,6 +14,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.graphql.datafetcher.EntityMutationDataFetcher;
 import io.jmix.graphql.datafetcher.EntityQueryDataFetcher;
+import io.jmix.graphql.datafetcher.PermissionDataFetcher;
 import io.jmix.graphql.schema.scalar.CustomScalars;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,13 @@ public class SchemaBuilder {
     @Autowired
     protected FilterTypesBuilder filterTypesBuilder;
     @Autowired
+    protected PermissionTypesBuilder permissionTypesBuilder;
+    @Autowired
     protected EntityMutationDataFetcher entityMutationDataFetcher;
     @Autowired
     protected EntityQueryDataFetcher entityQueryDataFetcher;
+    @Autowired
+    protected PermissionDataFetcher permissionDataFetcher;
     @Autowired
     protected Metadata metadata;
 
@@ -141,6 +146,9 @@ public class SchemaBuilder {
             }
         });
 
+        // permission types
+        typeDefinitionRegistry.addAll(permissionTypesBuilder.buildPermissionTypes());
+
         GraphQLSchema graphQLSchema = new SchemaGenerator()
                 .makeExecutableSchema(typeDefinitionRegistry, buildRuntimeWiring(allPersistentMetaClasses).build());
         // schema could be downloaded via 'graphqurl', not need in log
@@ -164,7 +172,8 @@ public class SchemaBuilder {
                     rwBuilder.type(SCHEMA_QUERY, typeWiring -> typeWiring
                             .dataFetcher(NamingUtils.composeListQueryName(metaClass), entityQueryDataFetcher.loadEntities(metaClass))
                             .dataFetcher(NamingUtils.composeByIdQueryName(metaClass), entityQueryDataFetcher.loadEntity(metaClass))
-                            .dataFetcher(NamingUtils.composeCountQueryName(metaClass), entityQueryDataFetcher.countEntities(metaClass)));
+                            .dataFetcher(NamingUtils.composeCountQueryName(metaClass), entityQueryDataFetcher.countEntities(metaClass))
+                            .dataFetcher(NamingUtils.QUERY_PERMISSIONS, permissionDataFetcher.loadPermissions()));
 
                     rwBuilder.type(SCHEMA_MUTATION, typeWiring -> typeWiring
                             .dataFetcher(NamingUtils.composeUpsertMutationName(metaClass), entityMutationDataFetcher.upsertEntity(metaClass))
@@ -220,6 +229,13 @@ public class SchemaBuilder {
                             .build());
 
         });
+
+        // custom query for permissions
+        fields.add(
+                FieldDefinition.newFieldDefinition()
+                        .name(NamingUtils.QUERY_PERMISSIONS)
+                        .type(new TypeName(NamingUtils.TYPE_SEC_PERMISSION_CONFIG))
+                        .build());
 
         return ObjectTypeDefinition.newObjectTypeDefinition()
                 .name(SCHEMA_QUERY)

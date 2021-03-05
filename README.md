@@ -98,3 +98,52 @@ Schema could be downloaded using `graphqurl`
 npm install -g graphqurl
 gq http://localhost:8080/graphql --introspect > schema.graphql
 ```
+
+## Api
+
+### Permission query
+
+```
+{
+  permissions {
+    entities {
+      target
+      value
+    }
+    entityAttributes {
+      target
+      value
+    }
+  }
+}
+```
+
+will return result as follows:
+```
+{
+  "data": {
+    "permissions": {
+      "entities": [
+        {
+          "target": "scr$Car:create",
+          "value": 1
+        }
+
+        # more items
+        # ...
+      ],
+      "entityAttributes": [
+        {
+          "target": "scr$Car:purchaseDate",
+          "value": 2
+        }
+
+        # more items
+        # ...
+      ]
+    }
+  }
+}
+```
+
+

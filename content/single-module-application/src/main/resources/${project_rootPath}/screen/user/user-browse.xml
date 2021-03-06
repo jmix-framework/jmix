@@ -5,13 +5,7 @@
     <data readOnly="true">
         <collection id="usersDc"
                     class="${project_rootPackage}.entity.User">
-            <fetchPlan extends="_instance_name">
-                <property name="username"/>
-                <property name="firstName"/>
-                <property name="lastName"/>
-                <property name="email"/>
-                <property name="enabled"/>
-            </fetchPlan>
+            <fetchPlan extends="_base"/>
             <loader id="usersDl">
                 <query>
                     <![CDATA[select e from ${normalizedPrefix_underscore}User e order by e.username]]>

@@ -16,6 +16,7 @@
 
 package io.jmix.ui.widget;
 
+import com.vaadin.event.SerializableEventListener;
 import com.vaadin.util.ReflectTools;
 import com.vaadin.v7.ui.Calendar;
 import io.jmix.ui.widget.client.calendar.JmixCalendarEventId;
@@ -23,7 +24,6 @@ import io.jmix.ui.widget.client.calendar.JmixCalendarServerRpc;
 
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.EventListener;
 import java.util.EventObject;
 
 public class JmixCalendar extends Calendar {
@@ -82,7 +82,7 @@ public class JmixCalendar extends Calendar {
         fireEvent(new JmixCalendarDayClickEvent(this, date));
     }
 
-    public interface DayClickHandler extends EventListener {
+    public interface DayClickHandler extends SerializableEventListener {
 
         Method method = ReflectTools.findMethod(
                 DayClickHandler.class, "onDayClick", JmixCalendarDayClickEvent.class);

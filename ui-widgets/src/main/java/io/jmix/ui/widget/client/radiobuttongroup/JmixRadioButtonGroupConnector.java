@@ -53,9 +53,4 @@ public class JmixRadioButtonGroupConnector extends RadioButtonGroupConnector {
             getWidget().setReadonly(getState().readOnly);
         }
     }
-
-    @Override
-    protected void updateWidgetReadOnlyState() {
-        getWidget().setReadonly(isReadOnly());
-    }
 }

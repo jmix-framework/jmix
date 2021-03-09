@@ -17,10 +17,6 @@
 <window xmlns="http://jmix.io/schema/ui/window"
         caption=""
         messagesPack="io.jmix.datatoolsui.screen.entityinspector">
-    <actions>
-        <action id="windowCommitAndClose" primary="true"/>
-        <action id="windowClose"/>
-    </actions>
     <layout expand="tablesTabSheet" spacing="true">
         <tabSheet id="tablesTabSheet" width="100%">
             <tab id="general" caption="msg://general" spacing="true">

@@ -54,7 +54,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -435,7 +434,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     private Action createRestoreAction(Table table) {
         ListAction action = new ItemTrackingAction(RESTORE_ACTION_ID)
                 .withCaption(messages.getMessage(EntityInspectorBrowser.class, "restore"))
-                .withPrimary(true)
                 .withHandler(event ->
                         showRestoreDialog()
                 );

@@ -47,10 +47,6 @@ public class OutTypesBuilder extends BaseTypesBuilder {
         boolean isMany = metaProperty.getRange().getCardinality().isMany();
 
         Type<?> type = isMany ? new ListType(new TypeName(typeName)) : new TypeName(typeName);
-        if (metaProperty.isMandatory()) {
-            type = NonNullType.newNonNullType(type).build();
-        }
-
         return Stream.of(FieldDefinition.newFieldDefinition()
                 .name(metaProperty.getName())
                 .type(type)

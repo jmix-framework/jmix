@@ -48,11 +48,6 @@ public class InpTypesBuilder extends BaseTypesBuilder {
         boolean isMany = metaProperty.getRange().getCardinality().isMany();
 
         Type<?> type = isMany ? new ListType(new TypeName(typeName)) : new TypeName(typeName);
-        // todo 'id' could has another name
-        // 'id' should not be mandatory
-        if (metaProperty.isMandatory() && !metaProperty.getName().equals("id")) {
-            type = NonNullType.newNonNullType(type).build();
-        }
 
         return Stream.of(InputValueDefinition.newInputValueDefinition()
                 .name(metaProperty.getName())

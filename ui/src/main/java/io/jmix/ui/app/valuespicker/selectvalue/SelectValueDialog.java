@@ -352,7 +352,7 @@ public class SelectValueDialog<V> extends Screen implements SelectValueControlle
         comboBox.setOptionCaptionProvider(context.getOptionCaptionProvider());
         comboBox.addValueChangeListener(e -> {
             V selectedValue = e.getValue();
-            if (selectedValue != null) {
+            if (selectedValue != null && !valueExists(selectedValue)) {
                 this.addValueToLayout(selectedValue);
             }
             comboBox.setValue(null);

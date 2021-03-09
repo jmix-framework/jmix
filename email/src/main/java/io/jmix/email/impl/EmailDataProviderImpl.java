@@ -68,6 +68,9 @@ public class EmailDataProviderImpl implements EmailDataProvider {
     protected FileStorage fileStorage;
 
     @Autowired
+    protected DataManager dataManager;
+
+    @Autowired
     protected FileStorageLocator fileStorageLocator;
 
     @Autowired
@@ -132,7 +135,11 @@ public class EmailDataProviderImpl implements EmailDataProvider {
 
     @Override
     public String loadContentText(SendingMessage sendingMessage) {
-        SendingMessage msg = transaction.execute(status -> reloadSendingMessage(sendingMessage, "sendingMessage.loadContentText"));
+        SendingMessage msg = dataManager.load(SendingMessage.class)
+                .id(sendingMessage.getId())
+                .fetchPlan("sendingMessage.loadContentText")
+                .optional()
+                .orElse(null);
 
         Objects.requireNonNull(msg, "Sending message not found: " + sendingMessage.getId());
 
@@ -267,14 +274,6 @@ public class EmailDataProviderImpl implements EmailDataProvider {
             context.files.add(contentTextFile);
         }
         return contentTextFile;
-    }
-
-    protected SendingMessage reloadSendingMessage(SendingMessage sendingMessage, String fetchPlanName) {
-        FetchPlan fetchPlan = fetchPlanRepository.getFetchPlan(SendingMessage.class, fetchPlanName);
-        return entityManager.createQuery("select sm from email_SendingMessage sm where sm.id = :id", SendingMessage.class)
-                .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
-                .setParameter("id", sendingMessage.getId())
-                .getSingleResult();
     }
 
     protected String getFileName(SendingMessage msg) {

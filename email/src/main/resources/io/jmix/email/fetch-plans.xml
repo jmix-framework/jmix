@@ -22,6 +22,7 @@
 
     <fetchPlan class="io.jmix.email.entity.SendingMessage" name="sendingMessage.loadContentText">
         <property name="contentText"/>
+        <property name="contentTextFile"/>
     </fetchPlan>
 
     <fetchPlan class="io.jmix.email.entity.SendingAttachment" name="sendingAttachment.loadFromQueue"

@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.*;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Nullable;
@@ -66,6 +68,12 @@ public class EmailerManagementFacade {
     @Autowired
     protected void setJavaMailProperties() {
         javaMailProperties = javaMailSender.getJavaMailProperties();
+    }
+
+    @Autowired
+    protected void setTransaction(PlatformTransactionManager transactionManager) {
+        transaction = new TransactionTemplate(transactionManager);
+        transaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
     }
 
     @ManagedAttribute(description = "Default \"from\" address")

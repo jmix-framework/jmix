@@ -2,10 +2,7 @@ package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.graphql.schema.NamingUtils;
@@ -30,7 +27,7 @@ public class EntityQueryDataFetcher {
     private final Logger log = LoggerFactory.getLogger(EntityQueryDataFetcher.class);
 
     @Autowired
-    MetadataTools metadataTools;
+    ResponseBuilder responseBuilder;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -51,68 +48,9 @@ public class EntityQueryDataFetcher {
             Object entity = dataManager.load(lc);
             if (entity == null) return null;
 
-            return buildResponse((Entity) entity, fetchPlan, metaClass, EnvironmentUtils.getDotDelimitedProps(environment));
+            return responseBuilder.buildResponse((Entity) entity, fetchPlan, metaClass, EnvironmentUtils.getDotDelimitedProps(environment));
         };
     }
-
-    /**
-     * Convert loaded entity to data fetcher return format (Map<String, Object>)
-     *
-     * @param entity loaded entity
-     * @param fetchPlan loaded entity properties
-     * @param metaClass entity meta class
-     * @param props we need pass full set of properties to have information about system props such '_instanceName'
-     * @return entity converted to response as Map<String, Object>
-     */
-    protected Map<String, Object> buildResponse(Entity entity, FetchPlan fetchPlan, MetaClass metaClass, Set<String> props) {
-        Map<String, Object> entityAsMap = new HashMap<>();
-
-        // check and evaluate _instanceName, if required
-        if (EnvironmentUtils.hasInstanceNameProperty(props)) {
-            entityAsMap.put(NamingUtils.SYS_ATTR_INSTANCE_NAME, metadataTools.getInstanceName(entity));
-        }
-
-        // compose result object by iterating over fetch plan props
-        fetchPlan.getProperties().forEach(prop -> {
-
-            String propName = prop.getName();
-            MetaProperty metaProperty = metaClass.getProperty(propName);
-            Object fieldValue = EntityValues.getValue(entity, propName);
-            Range propertyRange = metaProperty.getRange();
-
-            if (fieldValue == null) {
-                entityAsMap.put(propName, null);
-                return;
-            }
-
-            if (propertyRange.isDatatype() || propertyRange.isEnum()) {
-                entityAsMap.put(propName, fieldValue);
-                return;
-            }
-
-            if (propertyRange.isClass()) {
-                Set<String> nestedProps = EnvironmentUtils.getNestedProps(props, propName);
-
-                if (fieldValue instanceof Entity) {
-                    entityAsMap.put(propName, buildResponse((Entity) fieldValue, prop.getFetchPlan(), propertyRange.asClass(), nestedProps));
-                    return;
-                }
-
-                if (fieldValue instanceof Collection) {
-                    Collection<Object> values = ((Collection<Entity>)fieldValue).stream()
-                            .map(e -> buildResponse(e, prop.getFetchPlan(), propertyRange.asClass(), nestedProps))
-                            .collect(Collectors.toList());
-                    entityAsMap.put(propName, values);
-                    return;
-                }
-            }
-
-            log.warn("buildResponse: failed for {}.{} unsupported range type ", metaClass.getName(), prop.getName());
-            throw new IllegalStateException("Unsupported range type " + propertyRange);
-        });
-        return entityAsMap;
-    }
-
     public DataFetcher<List<Map<String, Object>>> loadEntities(MetaClass metaClass) {
         return environment -> {
 
@@ -165,7 +103,7 @@ public class EntityQueryDataFetcher {
 
             Set<String> props = EnvironmentUtils.getDotDelimitedProps(environment);
             List<Map<String, Object>> entitiesAsMap = objects.stream()
-                    .map(e -> buildResponse((Entity) e, fetchPan, metaClass, props))
+                    .map(e -> responseBuilder.buildResponse((Entity) e, fetchPan, metaClass, props))
                     .collect(Collectors.toList());
 
             log.debug("loadEntities return {} objects for {}", entitiesAsMap.size(), metaClass.getName());

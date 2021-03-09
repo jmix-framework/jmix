@@ -3,6 +3,7 @@ package io.jmix.graphql.datafetcher;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.importexport.EntityImportPlanJsonBuilder;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.graphql.schema.NamingUtils;
@@ -19,6 +20,8 @@ public class EntityMutationDataFetcher {
     private final Logger log = LoggerFactory.getLogger(EntityMutationDataFetcher.class);
 
     @Autowired
+    ResponseBuilder responseBuilder;
+    @Autowired
     private Metadata metadata;
     @Autowired
     protected DataManager dataManager;
@@ -28,6 +31,10 @@ public class EntityMutationDataFetcher {
     EntityImportPlanJsonBuilder entityImportPlanJsonBuilder;
     @Autowired
     protected EntityImportExport entityImportExport;
+    @Autowired
+    protected DataFetcherPlanBuilder dataFetcherPlanBuilder;
+    @Autowired
+    protected EntityStates entityStates;
 
 
     // todo batch commit with association not supported now (not transferred from cuba-graphql)
@@ -44,9 +51,18 @@ public class EntityMutationDataFetcher {
             Object entity = entitySerialization.entityFromJson(entityJson, metaClass);
 
             EntityImportPlan entityImportPlan = entityImportPlanJsonBuilder.buildFromJson(entityJson, metaClass);
-            log.debug("upsertEntity: entityImportPlan {}", entityImportPlan);
             Collection<Object> objects = entityImportExport.importEntities(Collections.singletonList(entity), entityImportPlan);
-            return getMainEntity(objects, metaClass);
+            Object mainEntity = getMainEntity(objects, metaClass);
+
+            FetchPlan fetchPlan = dataFetcherPlanBuilder.buildFetchPlan(metaClass.getJavaClass(), environment);
+            // reload for response fetch plan, if required
+            if (!entityStates.isLoadedWithFetchPlan(entity, fetchPlan)) {
+                LoadContext loadContext = new LoadContext(metaClass).setFetchPlan(fetchPlan);
+                loadContext.setId(EntityValues.getId(entity));
+                mainEntity = dataManager.load(loadContext);
+            }
+
+            return responseBuilder.buildResponse((Entity) mainEntity, fetchPlan, metaClass, EnvironmentUtils.getDotDelimitedProps(environment));
         };
     }
 

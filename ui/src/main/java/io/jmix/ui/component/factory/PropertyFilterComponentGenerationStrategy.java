@@ -29,15 +29,7 @@ import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
-import io.jmix.ui.component.ComboBox;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.ComponentGenerationContext;
-import io.jmix.ui.component.ComponentGenerationStrategy;
-import io.jmix.ui.component.DateField;
-import io.jmix.ui.component.EntityPicker;
-import io.jmix.ui.component.Field;
-import io.jmix.ui.component.HasDatatype;
-import io.jmix.ui.component.PropertyFilter;
+import io.jmix.ui.component.*;
 import io.jmix.ui.component.data.DataAwareComponentsTools;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
 import io.jmix.ui.icon.Icons;
@@ -46,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Nullable;
+import java.net.URI;
 
 /**
  * A {@link ComponentGenerationStrategy} used by {@link PropertyFilter} UI component
@@ -101,17 +94,31 @@ public class PropertyFilterComponentGenerationStrategy extends AbstractComponent
         return super.createComponentInternal(context);
     }
 
+    @SuppressWarnings("rawtypes")
     @Nullable
     @Override
     protected Component createDatatypeField(ComponentGenerationContext context, MetaPropertyPath mpp) {
-        Component field = super.createDatatypeField(context, mpp);
         Datatype datatype = mpp.getRange().asDatatype();
+
+        Component field;
+        if (datatype.getJavaClass().equals(URI.class)) {
+            field = createUriField(context);
+        } else {
+            field = super.createDatatypeField(context, mpp);
+        }
 
         if (field instanceof HasDatatype) {
             ((HasDatatype<?>) field).setDatatype(datatype);
         }
 
         return field;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected Field createUriField(ComponentGenerationContext context) {
+        TextField component = uiComponents.create(TextField.class);
+        setValueSource(component, context);
+        return component;
     }
 
     @SuppressWarnings("rawtypes")

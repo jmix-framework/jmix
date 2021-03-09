@@ -279,11 +279,15 @@ $cuba-sidemenu-submenu-background-color: $cuba-sidemenu-background-color !defaul
     font-size: $v-font-size--h1 * 1.5;
   }
 
-  .c-userindicator .v-label {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    text-align: right;
+  .c-userindicator {
+     outline: 0;
+
+     .v-label {
+       text-overflow: ellipsis;
+       white-space: nowrap;
+       overflow: hidden;
+       text-align: right;
+     }
   }
 
   .c-user-select-combobox {

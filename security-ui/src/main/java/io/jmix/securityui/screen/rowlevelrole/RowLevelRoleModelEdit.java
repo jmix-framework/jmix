@@ -238,6 +238,7 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
             policyEntity.setType(policyModel.getType());
             policyEntity.setWhereClause(policyModel.getWhereClause());
             policyEntity.setJoinClause(policyModel.getJoinClause());
+            policyEntity.setScript(policyModel.getScript());
         }
 
         Set<String> childRoles = childRolesDc.getItems().stream()

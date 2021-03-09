@@ -89,6 +89,7 @@ public class RoleModelConverter {
                     model.setEntityName(rowLevelPolicy.getEntityName());
                     model.setJoinClause(rowLevelPolicy.getJoinClause());
                     model.setWhereClause(rowLevelPolicy.getWhereClause());
+                    model.setScript(rowLevelPolicy.getScript());
                     model.setCustomProperties(rowLevelPolicy.getCustomProperties());
                     return model;
                 })

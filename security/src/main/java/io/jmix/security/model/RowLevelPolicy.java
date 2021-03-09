@@ -40,6 +40,8 @@ public class RowLevelPolicy implements Serializable {
 
     private String joinClause;
 
+    private String script;
+
     private RowLevelPolicyType type;
 
     private Map<String, String> customProperties = new HashMap<>();
@@ -58,8 +60,18 @@ public class RowLevelPolicy implements Serializable {
         this.customProperties = customProperties;
     }
 
-    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<Object> predicate) {
-        this(entityName, action, predicate, Collections.emptyMap());
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, Predicate<Object> predicate) {
+        this(entityName, action, script, predicate, Collections.emptyMap());
+    }
+
+    public RowLevelPolicy(String entityName, RowLevelPolicyAction action, String script, Predicate<Object> predicate,
+                          Map<String, String> customProperties) {
+        this.entityName = entityName;
+        this.action = action;
+        this.script = script;
+        this.predicate = predicate;
+        this.type = RowLevelPolicyType.PREDICATE;
+        this.customProperties = customProperties;
     }
 
     public RowLevelPolicy(String entityName, RowLevelPolicyAction action, Predicate<Object> predicate,
@@ -95,6 +107,16 @@ public class RowLevelPolicy implements Serializable {
     @Nullable
     public Predicate<Object> getPredicate() {
         return predicate;
+    }
+
+    /**
+     * Returns a script for predicate for in-memory row-level policy
+     *
+     * @return a script
+     */
+    @Nullable
+    public String getScript() {
+        return script;
     }
 
     /**

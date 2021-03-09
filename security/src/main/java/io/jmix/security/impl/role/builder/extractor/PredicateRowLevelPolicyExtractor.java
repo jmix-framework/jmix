@@ -18,6 +18,8 @@ package io.jmix.security.impl.role.builder.extractor;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.impl.method.ContextArgumentResolverComposite;
+import io.jmix.core.impl.method.MethodArgumentsProvider;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.security.model.RowLevelPolicy;
 import io.jmix.security.model.RowLevelPolicyAction;
@@ -29,7 +31,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -40,10 +45,12 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
 
     protected Metadata metadata;
     protected ConcurrentMap<Class<?>, Object> proxyCache = new ConcurrentHashMap<>();
+    private final MethodArgumentsProvider methodArgumentsProvider;
 
     @Autowired
-    public PredicateRowLevelPolicyExtractor(Metadata metadata) {
+    public PredicateRowLevelPolicyExtractor(Metadata metadata, ContextArgumentResolverComposite resolvers) {
         this.metadata = metadata;
+        this.methodArgumentsProvider = new MethodArgumentsProvider(resolvers);
     }
 
     @Override
@@ -57,15 +64,13 @@ public class PredicateRowLevelPolicyExtractor implements RowLevelPolicyExtractor
                 MetaClass metaClass = metadata.getClass(entityClass);
                 Predicate<Object> predicate;
                 try {
-                    if (Modifier.isStatic(method.getModifiers())) {
-                        //noinspection unchecked
-                        predicate = (Predicate<Object>) method.invoke(null);
-                    } else {
-                        Object proxyObject = proxyCache.computeIfAbsent(method.getDeclaringClass(), this::createProxy);
-                        //noinspection unchecked
-                        predicate = (Predicate<Object>) method.invoke(proxyObject);
+                    Object proxyObject = null;
+                    if (!Modifier.isStatic(method.getModifiers())) {
+                        proxyObject = proxyCache.computeIfAbsent(method.getDeclaringClass(), this::createProxy);
                     }
-                } catch (IllegalAccessException | InvocationTargetException e) {
+                    //noinspection unchecked
+                    predicate = (Predicate<Object>) method.invoke(proxyObject, methodArgumentsProvider.getMethodArgumentValues(method));
+                } catch (Exception e) {
                     throw new RuntimeException("Cannot evaluate row level policy predicate", e);
                 }
                 RowLevelPolicy rowLevelPolicy = new RowLevelPolicy(metaClass.getName(),

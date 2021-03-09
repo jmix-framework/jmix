@@ -24,7 +24,7 @@ import io.jmix.security.model.RowLevelRole;
 import io.jmix.security.role.RowLevelRoleProvider;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.support.StaticScriptSource;
 import org.springframework.stereotype.Component;
@@ -42,8 +42,13 @@ import java.util.stream.Collectors;
 public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLevelRole>
         implements RowLevelRoleProvider {
 
-    @Autowired
-    protected ScriptEvaluator scriptEvaluator;
+    private final ScriptEvaluator scriptEvaluator;
+    private final ApplicationContext applicationContext;
+
+    public DatabaseRowLevelRoleProvider(ScriptEvaluator scriptEvaluator, ApplicationContext applicationContext) {
+        this.scriptEvaluator = scriptEvaluator;
+        this.applicationContext = applicationContext;
+    }
 
     @Override
     protected Class<?> getRoleClass() {
@@ -83,6 +88,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
                                     case PREDICATE:
                                         return new RowLevelPolicy(policyEntity.getEntityName(),
                                                 policyEntity.getAction(),
+                                                policyEntity.getScript(),
                                                 createPredicateFromScript(policyEntity.getScript()),
                                                 customProperties);
                                     default:
@@ -101,6 +107,7 @@ public class DatabaseRowLevelRoleProvider extends BaseDatabaseRoleProvider<RowLe
             String modifiedScript = script.replace("{E}", "__entity__");
             Map<String, Object> arguments = new HashMap<>();
             arguments.put("__entity__", entity);
+            arguments.put("applicationContext", applicationContext);
             return Boolean.TRUE.equals(scriptEvaluator.evaluate(new StaticScriptSource(modifiedScript), arguments));
         };
     }

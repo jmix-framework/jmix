@@ -19,6 +19,7 @@ package io.jmix.ui.component.jpqlfilter;
 import io.jmix.core.ClassManager;
 import io.jmix.core.Metadata;
 import io.jmix.core.annotation.Internal;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
@@ -109,8 +110,9 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
     }
 
     protected HasValue generateValueComponent(JpqlFilter component, JpqlFilterCondition model) {
-        return singleFilterSupport.generateValueComponent(metadata.getClass(model.getMetaClass()),
-                model.getHasInExpression(), component.getParameterClass());
+        MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+        return singleFilterSupport.generateValueComponent(metaClass, model.getHasInExpression(),
+                component.getParameterClass());
     }
 
     protected HasValue convertValueComponentToComponent(JpqlFilter component, JpqlFilterCondition model) {

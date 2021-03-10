@@ -18,6 +18,7 @@ package io.jmix.ui.component.propertyfilter;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import io.jmix.core.AccessManager;
 import io.jmix.core.DataManager;
 import io.jmix.core.Id;
 import io.jmix.core.MessageTools;
@@ -32,8 +33,12 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.metamodel.model.impl.DatatypeRange;
 import io.jmix.core.querycondition.PropertyCondition;
+import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
+import io.jmix.ui.property.UiFilterProperties;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +52,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,18 +82,24 @@ public class PropertyFilterSupport {
     protected MetadataTools metadataTools;
     protected DataManager dataManager;
     protected DatatypeRegistry datatypeRegistry;
+    protected UiFilterProperties uiFilterProperties;
+    protected AccessManager accessManager;
 
     @Autowired
     public PropertyFilterSupport(Messages messages,
                                  MessageTools messageTools,
                                  MetadataTools metadataTools,
                                  DataManager dataManager,
-                                 DatatypeRegistry datatypeRegistry) {
+                                 DatatypeRegistry datatypeRegistry,
+                                 UiFilterProperties uiFilterProperties,
+                                 AccessManager accessManager) {
         this.messages = messages;
         this.messageTools = messageTools;
         this.metadataTools = metadataTools;
         this.dataManager = dataManager;
         this.datatypeRegistry = datatypeRegistry;
+        this.uiFilterProperties = uiFilterProperties;
+        this.accessManager = accessManager;
     }
 
     public String getOperationCaption(Operation operation) {
@@ -214,6 +227,19 @@ public class PropertyFilterSupport {
         }
 
         return getAvailableOperations(mpp);
+    }
+
+    public Operation getDefaultOperation(MetaClass metaClass, String property) {
+        MetaPropertyPath mpp = resolveMetaPropertyPath(metaClass, property);
+
+        if (mpp == null) {
+            throw new UnsupportedOperationException("Unsupported attribute name: " + property);
+        }
+
+        Range range = mpp.getMetaProperty().getRange();
+        return range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass())
+                ? CONTAINS
+                : EQUAL;
     }
 
     public String toPropertyConditionOperation(Operation operation) {
@@ -351,5 +377,55 @@ public class PropertyFilterSupport {
     @Nullable
     protected MetaPropertyPath resolveMetaPropertyPath(MetaClass metaClass, String property) {
         return metaClass.getPropertyPath(property);
+    }
+
+    public List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
+                                                   @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
+        List<MetaPropertyPath> paths = getPropertyPaths(filterMetaClass, filterMetaClass, 0,
+                "", propertiesFilterPredicate);
+        paths.sort((mpp1, mpp2) -> ObjectUtils.compare(mpp1.toPathString(), mpp2.toPathString()));
+        return paths;
+    }
+
+    protected List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
+                                                      MetaClass currentMetaClass,
+                                                      int currentDepth,
+                                                      String currentPropertyPath,
+                                                      @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
+        List<MetaPropertyPath> paths = new ArrayList<>();
+        for (MetaProperty property : currentMetaClass.getProperties()) {
+            String propertyPath = StringUtils.isEmpty(currentPropertyPath)
+                    ? property.getName()
+                    : currentPropertyPath + "." + property.getName();
+            MetaPropertyPath metaPropertyPath = filterMetaClass.getPropertyPath(propertyPath);
+
+            if (metaPropertyPath == null
+                    || !isMetaPropertyPathAllowed(metaPropertyPath)
+                    || (propertiesFilterPredicate != null && !propertiesFilterPredicate.test(metaPropertyPath))
+                    || currentDepth >= uiFilterProperties.getPropertiesHierarchyDepth()) {
+                continue;
+            }
+
+            paths.add(metaPropertyPath);
+
+            if (property.getRange().isClass()) {
+                MetaClass childMetaClass = property.getRange().asClass();
+                List<MetaPropertyPath> childPaths = getPropertyPaths(filterMetaClass, childMetaClass, ++currentDepth,
+                        propertyPath, propertiesFilterPredicate);
+                paths.addAll(childPaths);
+            }
+        }
+
+        return paths;
+    }
+
+    protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath) {
+        UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
+        accessManager.applyRegisteredConstraints(context);
+        return context.canView()
+                && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
+                && metadataTools.isJpa(propertyPath)
+                && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
+                && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
     }
 }

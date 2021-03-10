@@ -105,8 +105,8 @@ public class PropertyFilterConverter
     }
 
     protected HasValue generateValueComponent(PropertyFilterCondition model) {
-        return singleFilterSupport.generateValueComponent(metadata.getClass(model.getMetaClass()),
-                model.getProperty(), model.getOperation());
+        MetaClass metaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+        return singleFilterSupport.generateValueComponent(metaClass, model.getProperty(), model.getOperation());
     }
 
     protected HasValue convertValueComponentToComponent(PropertyFilterCondition model) {

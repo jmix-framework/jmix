@@ -16,11 +16,18 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.StandardEditor;
 
 public abstract class FilterConditionEdit<E extends FilterCondition> extends StandardEditor<E> {
 
+    protected MetaClass filterMetaClass;
+
     public abstract InstanceContainer<E> getInstanceContainer();
+
+    public void setFilterMetaClass(MetaClass filterMetaClass) {
+        this.filterMetaClass = filterMetaClass;
+    }
 }

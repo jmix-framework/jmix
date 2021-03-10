@@ -21,6 +21,8 @@ import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.entity.FilterCondition;
 
+import javax.annotation.Nullable;
+
 @Internal
 public class FilterComponentRegistrationImpl implements FilterComponentRegistration {
 
@@ -32,7 +34,7 @@ public class FilterComponentRegistrationImpl implements FilterComponentRegistrat
     public FilterComponentRegistrationImpl(Class<? extends FilterComponent> componentClass,
                                            Class<? extends FilterCondition> modelClass,
                                            Class<? extends FilterConverter<? extends FilterComponent, ? extends FilterCondition>> converterClass,
-                                           String editScreenId) {
+                                           @Nullable String editScreenId) {
         this.componentClass = componentClass;
         this.modelClass = modelClass;
         this.converterClass = converterClass;

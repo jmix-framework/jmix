@@ -178,27 +178,40 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
                             .newEntity(createFilterCondition(modelClass))
                             .build();
 
-                    if (editScreen instanceof LogicalFilterConditionEdit) {
-                        ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(getCurrentFilterConfiguration());
-                    }
-
-                    editScreen.addAfterCloseListener(afterCloseEvent -> {
-                        if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
-                            FilterCondition filterCondition =
-                                    (FilterCondition) ((FilterConditionEdit) afterCloseEvent.getScreen())
-                                            .getInstanceContainer()
-                                            .getItem();
-                            select(Lists.newArrayList(filterCondition));
-                        }
-                    });
+                    applyScreenConfigurer(editScreen);
+                    editScreen.addAfterCloseListener(this::onEditScreenAfterCommit);
 
                     editScreen.show();
                 });
     }
 
+    protected void applyScreenConfigurer(Screen editScreen) {
+        if (editScreen instanceof FilterConditionEdit) {
+            ((FilterConditionEdit<?>) editScreen).setFilterMetaClass(filterMetaClass);
+        }
+
+        if (editScreen instanceof LogicalFilterConditionEdit) {
+            ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(getCurrentFilterConfiguration());
+        }
+
+        if (editScreen instanceof PropertyFilterConditionEdit) {
+            ((PropertyFilterConditionEdit) editScreen).setPropertiesFilterPredicate(
+                    currentFilterConfiguration.getOwner().getPropertiesFilterPredicate());
+        }
+    }
+
+    protected void onEditScreenAfterCommit(AfterCloseEvent afterCloseEvent) {
+        if (afterCloseEvent.closedWith(StandardOutcome.COMMIT)) {
+            FilterCondition filterCondition =
+                    (FilterCondition) ((FilterConditionEdit) afterCloseEvent.getScreen())
+                            .getInstanceContainer()
+                            .getItem();
+            select(Lists.newArrayList(filterCondition));
+        }
+    }
+
     protected FilterCondition createFilterCondition(Class<? extends FilterCondition> modelClass) {
         FilterCondition newCondition = metadata.create(modelClass);
-        newCondition.setMetaClass(filterMetaClass.getName());
         if (newCondition instanceof AbstractSingleFilterCondition) {
             FilterValueComponent filterValueComponent = metadata.create(FilterValueComponent.class);
             ((AbstractSingleFilterCondition) newCondition).setValueComponent(filterValueComponent);

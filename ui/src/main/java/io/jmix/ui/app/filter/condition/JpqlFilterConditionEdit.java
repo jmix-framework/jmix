@@ -102,7 +102,6 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     @Autowired
     protected TextField<String> parameterNameField;
 
-    protected MetaClass filterMetaClass = null;
     protected HasValue defaultValueField;
 
     @Override
@@ -119,8 +118,10 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
     }
 
     protected void initSuggesters() {
-        joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
-        whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
+        if (filterMetaClass != null) {
+            joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
+            whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
+        }
     }
 
     protected void initParameterClassFieldOptionsMap() {
@@ -191,15 +192,8 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
-        initFilterMetaClass();
         initParameterClassField();
         initDefaultValueField();
-    }
-
-    protected void initFilterMetaClass() {
-        if (getEditedEntity().getMetaClass() != null) {
-            filterMetaClass = metadata.getClass(getEditedEntity().getMetaClass());
-        }
     }
 
     protected void initParameterClassField() {
@@ -250,7 +244,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
         String entityAlias = "a39";
 
         int queryPosition = -1;
-        String queryStart = "select " + entityAlias + " from " + getEditedEntity().getMetaClass() + " "
+        String queryStart = "select " + entityAlias + " from " + filterMetaClass.getName() + " "
                 + entityAlias + " ";
 
         StringBuilder queryBuilder = new StringBuilder(queryStart);

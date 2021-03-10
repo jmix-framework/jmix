@@ -128,10 +128,6 @@ public class FilterComponents implements InitializingBean {
                                                                                                               Filter filter) {
         FilterComponentRegistration registration = resolveRegistrationByComponentClass(componentClass);
         Class<? extends FilterConverter> converterClass = registration.getConverterClass();
-        if (converterClass == null) {
-            throw new IllegalArgumentException(String.format("Unable to find filter converter for component %s",
-                    componentClass.getCanonicalName()));
-        }
 
         ObjectProvider<?> converterProvider = applicationContext.getBeanProvider(converterClass);
         if (AbstractFilterComponentConverter.class.isAssignableFrom(converterClass)) {
@@ -154,10 +150,6 @@ public class FilterComponents implements InitializingBean {
                                                                                                           Filter filter) {
         FilterComponentRegistration registration = resolveRegistrationByModelClass(modelClass);
         Class<? extends FilterConverter> converterClass = registration.getConverterClass();
-        if (converterClass == null) {
-            throw new IllegalArgumentException(String.format("Unable to find filter converter for model %s",
-                    modelClass.getCanonicalName()));
-        }
 
         ObjectProvider<?> converterProvider = applicationContext.getBeanProvider(converterClass);
         if (AbstractFilterComponentConverter.class.isAssignableFrom(converterClass)) {

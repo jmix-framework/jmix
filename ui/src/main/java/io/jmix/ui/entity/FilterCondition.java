@@ -50,9 +50,6 @@ public abstract class FilterCondition implements Serializable {
     protected String styleName;
 
     @JmixProperty
-    protected String metaClass;
-
-    @JmixProperty
     protected FilterCondition parent;
 
     public String getComponentId() {
@@ -93,14 +90,6 @@ public abstract class FilterCondition implements Serializable {
 
     public void setStyleName(String styleName) {
         this.styleName = styleName;
-    }
-
-    public String getMetaClass() {
-        return metaClass;
-    }
-
-    public void setMetaClass(String metaClass) {
-        this.metaClass = metaClass;
     }
 
     public FilterCondition getParent() {

@@ -18,8 +18,8 @@ package io.jmix.ui.app.filter.condition;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.ComboBox;
@@ -40,10 +40,14 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Predicate;
 
 @UiController("ui_PropertyFilterCondition.edit")
 @UiDescriptor("property-filter-condition-edit.xml")
@@ -61,7 +65,7 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     protected InstanceContainer<PropertyFilterCondition> filterConditionDc;
 
     @Autowired
-    protected TextField<String> propertyField;
+    protected ComboBox<String> propertyField;
     @Autowired
     protected TextField<String> captionField;
     @Autowired
@@ -75,8 +79,12 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     @Autowired
     protected HBoxLayout defaultValueBox;
 
-    protected MetaClass filterMetaClass = null;
     protected HasValue defaultValueField;
+    protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
+
+    public void setPropertiesFilterPredicate(@Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
+        this.propertiesFilterPredicate = propertiesFilterPredicate;
+    }
 
     @Override
     public InstanceContainer<PropertyFilterCondition> getInstanceContainer() {
@@ -85,21 +93,28 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
-        initFilterMetaClass();
+        initPropertyField();
         initOperationField();
         initDefaultValueField();
     }
 
-    protected void initFilterMetaClass() {
-        if (getEditedEntity().getMetaClass() != null) {
-            filterMetaClass = metadata.getClass(getEditedEntity().getMetaClass());
+    protected void initPropertyField() {
+        if (filterMetaClass != null) {
+            List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, propertiesFilterPredicate);
+            Map<String, String> properties = new TreeMap<>();
+            for (MetaPropertyPath mpp : paths) {
+                String property = mpp.toPathString();
+                String caption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass, property);
+                properties.put(caption, property);
+            }
+            propertyField.setOptionsMap(properties);
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void initOperationField() {
         List<PropertyFilter.Operation> operations;
-        if (getEditedEntity().getProperty() != null && getEditedEntity().getMetaClass() != null) {
+        if (filterMetaClass != null && getEditedEntity().getProperty() != null) {
             EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
                     .getAvailableOperations(filterMetaClass, getEditedEntity().getProperty());
             operations = new ArrayList<>(availableOperations);

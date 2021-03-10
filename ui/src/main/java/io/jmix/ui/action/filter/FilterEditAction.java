@@ -31,8 +31,6 @@ import io.jmix.ui.component.filter.FilterSupport;
 import io.jmix.ui.component.filter.configuration.DesignTimeConfiguration;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.component.filter.registration.FilterComponents;
-import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
-import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
@@ -43,7 +41,6 @@ import io.jmix.ui.screen.ScreenFragment;
 import io.jmix.ui.screen.StandardOutcome;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -122,10 +119,7 @@ public class FilterEditAction extends FilterAction {
         LogicalFilterCondition model = (LogicalFilterCondition) converter.convertToModel(rootComponent);
 
         Screen editScreen = createEditScreen(modelClass, model);
-
-        if (editScreen instanceof LogicalFilterConditionEdit) {
-            ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(currentConfiguration);
-        }
+        applyScreenConfigurer(editScreen);
 
         ScreenFragment screenFragment = filterSupport.createFilterConfigurationFragment(
                 editScreen.getWindow().getFrameOwner(), isNewConfiguration, currentConfiguration);
@@ -165,6 +159,17 @@ public class FilterEditAction extends FilterAction {
                 .withOpenMode(OpenMode.DIALOG)
                 .editEntity(model)
                 .build();
+    }
+
+    protected void applyScreenConfigurer(Screen editScreen) {
+        if (editScreen instanceof FilterConditionEdit) {
+            ((FilterConditionEdit<?>) editScreen).setFilterMetaClass(
+                    filter.getDataLoader().getContainer().getEntityMetaClass());
+        }
+
+        if (editScreen instanceof LogicalFilterConditionEdit) {
+            ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(filter.getCurrentConfiguration());
+        }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

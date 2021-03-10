@@ -21,6 +21,8 @@ import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.filter.converter.FilterConverter;
 import io.jmix.ui.entity.FilterCondition;
 
+import javax.annotation.Nullable;
+
 /**
  * Registers a UI filter component in the framework. Registered components can be
  * used inside a {@link Filter.Configuration}.
@@ -75,5 +77,6 @@ public interface FilterComponentRegistration {
      *
      * @return an id of the model edit screen.
      */
+    @Nullable
     String getEditScreenId();
 }

@@ -148,10 +148,17 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
 
     protected void editActionScreenConfigurer(Screen screen) {
         if (getListComponent() != null) {
-            FilterCondition selectedCondition = getListComponent().getSingleSelected();
-            if (screen instanceof LogicalFilterConditionEdit
-                    && selectedCondition instanceof LogicalFilterCondition) {
+            if (screen instanceof FilterConditionEdit) {
+                ((FilterConditionEdit<?>) screen).setFilterMetaClass(filterMetaClass);
+            }
+
+            if (screen instanceof LogicalFilterConditionEdit) {
                 ((LogicalFilterConditionEdit<?>) screen).setConfiguration(configuration);
+            }
+
+            if (screen instanceof PropertyFilterConditionEdit) {
+                ((PropertyFilterConditionEdit) screen).setPropertiesFilterPredicate(
+                        configuration.getOwner().getPropertiesFilterPredicate());
             }
         }
     }

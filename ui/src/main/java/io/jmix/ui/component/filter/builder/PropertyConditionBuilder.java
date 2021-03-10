@@ -16,17 +16,12 @@
 
 package io.jmix.ui.component.filter.builder;
 
-import io.jmix.core.AccessManager;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.querycondition.PropertyConditionUtils;
-import io.jmix.ui.accesscontext.UiEntityAttributeContext;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
@@ -38,16 +33,13 @@ import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.FilterValueComponent;
 import io.jmix.ui.entity.HeaderFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
-import io.jmix.ui.property.UiFilterProperties;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -61,25 +53,20 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     @Autowired
     protected MessageTools messageTools;
     @Autowired
-    protected UiFilterProperties uiFilterProperties;
-    @Autowired
-    protected AccessManager accessManager;
-    @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
     @Autowired
     protected SingleFilterSupport singleFilterSupport;
-    @Autowired
-    protected MetadataTools metadataTools;
 
     @Override
     public List<FilterCondition> build(Filter filter) {
         MetaClass rootEntityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
         Predicate<MetaPropertyPath> propertiesFilterPredicate = filter.getPropertiesFilterPredicate();
-        List<FilterCondition> conditions =
-                createFilterConditionsByMetaClass(rootEntityMetaClass, propertiesFilterPredicate);
 
-        return conditions.size() > 1
-                ? conditions
+        List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(rootEntityMetaClass,
+                propertiesFilterPredicate);
+
+        return !paths.isEmpty()
+                ? createFilterConditionsByPaths(paths)
                 : Collections.emptyList();
     }
 
@@ -88,78 +75,34 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         return JmixOrder.HIGHEST_PRECEDENCE;
     }
 
-    protected List<FilterCondition> createFilterConditionsByMetaClass(MetaClass rootEntityMetaClass,
-                                                                      @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
+    protected List<FilterCondition> createFilterConditionsByPaths(List<MetaPropertyPath> paths) {
+        List<FilterCondition> conditions = new ArrayList<>();
+
         HeaderFilterCondition propertiesHeaderCondition = createHeaderFilterCondition(
                 messages.getMessage(PropertyConditionBuilder.class, "propertyConditionBuilder.headerCaption"));
+        conditions.add(propertiesHeaderCondition);
 
-        List<FilterCondition> conditions = createFilterConditionsByMetaClass(rootEntityMetaClass, rootEntityMetaClass,
-                0, "", propertiesHeaderCondition, propertiesFilterPredicate);
+        for (MetaPropertyPath path : paths) {
+            FilterCondition condition = createFilterConditionByPath(path);
+            FilterCondition parent = path.isDirectProperty()
+                    ? propertiesHeaderCondition
+                    : getParentCondition(path, conditions);
+            condition.setParent(parent);
+            conditions.add(condition);
+        }
+
         conditions.sort((condition1, condition2) ->
                 ObjectUtils.compare(condition1.getCaption(), condition2.getCaption()));
 
-        if (!conditions.isEmpty()) {
-            conditions.add(0, propertiesHeaderCondition);
-        }
-
         return conditions;
     }
 
-    protected List<FilterCondition> createFilterConditionsByMetaClass(MetaClass rootEntityMetaClass,
-                                                                      MetaClass currentEntityMetaClass,
-                                                                      int currentDepth,
-                                                                      String currentPropertyPath,
-                                                                      @Nullable FilterCondition parent,
-                                                                      @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
-        List<FilterCondition> conditions = new ArrayList<>();
-        for (MetaProperty property : currentEntityMetaClass.getProperties()) {
-            String propertyPath = StringUtils.isEmpty(currentPropertyPath)
-                    ? property.getName()
-                    : currentPropertyPath + "." + property.getName();
-            MetaPropertyPath metaPropertyPath = rootEntityMetaClass.getPropertyPath(propertyPath);
-
-            if (metaPropertyPath == null
-                    || !isMetaPropertyPathAllowed(metaPropertyPath)
-                    || (propertiesFilterPredicate != null
-                    && !propertiesFilterPredicate.test(metaPropertyPath))) {
-                continue;
-            }
-
-            FilterCondition condition = createFilterConditionByMetaClass(metaPropertyPath, parent);
-            conditions.add(condition);
-
-            if (currentDepth < uiFilterProperties.getPropertiesHierarchyDepth()
-                    && property.getRange().isClass()) {
-                MetaClass childMetaClass = property.getRange().asClass();
-                List<FilterCondition> children =
-                        createFilterConditionsByMetaClass(rootEntityMetaClass, childMetaClass,
-                                ++currentDepth, propertyPath, condition, propertiesFilterPredicate);
-                conditions.addAll(children);
-            }
-        }
-
-        return conditions;
-    }
-
-    protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath) {
-        UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
-        accessManager.applyRegisteredConstraints(context);
-        return context.canView()
-                && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
-                && metadataTools.isJpa(propertyPath)
-                && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
-                && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
-    }
-
-    protected FilterCondition createFilterConditionByMetaClass(MetaPropertyPath metaPropertyPath,
-                                                               @Nullable FilterCondition parent) {
+    protected FilterCondition createFilterConditionByPath(MetaPropertyPath metaPropertyPath) {
 
         Class modelClass = filterComponents.getModelClass(PropertyFilter.class);
         FilterCondition filterCondition = (FilterCondition) metadata.create(modelClass);
         MetaClass metaClass = metaPropertyPath.getMetaClass();
-        filterCondition.setMetaClass(metaClass.getName());
         filterCondition.setCaption(messageTools.getPropertyCaption(metaPropertyPath.getMetaProperty()));
-        filterCondition.setParent(parent);
 
         if (PropertyFilterCondition.class.isAssignableFrom(modelClass)) {
             String property = metaPropertyPath.toPathString();
@@ -173,22 +116,7 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
                     propertyFilterSupport.getPropertyFilterPrefix(null, property);
             filterCondition.setComponentId(propertyFilterPrefix.substring(0, propertyFilterPrefix.length() - 1));
 
-            PropertyFilter.Operation operation;
-            Range range = metaPropertyPath.getMetaProperty().getRange();
-            if (range.isDatatype() && String.class.equals(range.asDatatype().getJavaClass())) {
-                operation = PropertyFilter.Operation.CONTAINS;
-            } else {
-                operation = PropertyFilter.Operation.EQUAL;
-            }
-
-            EnumSet<PropertyFilter.Operation> availableOperations =
-                    propertyFilterSupport.getAvailableOperations(metaClass, property);
-            if (!availableOperations.contains(operation)) {
-                operation = availableOperations.stream()
-                        .findFirst()
-                        .orElse(PropertyFilter.Operation.EQUAL);
-            }
-
+            PropertyFilter.Operation operation = propertyFilterSupport.getDefaultOperation(metaClass, property);
             ((PropertyFilterCondition) filterCondition).setOperation(operation);
 
             FilterValueComponent modelValueComponent = metadata.create(FilterValueComponent.class);
@@ -200,5 +128,14 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         }
 
         return filterCondition;
+    }
+
+    @Nullable
+    protected FilterCondition getParentCondition(MetaPropertyPath path, List<FilterCondition> conditions) {
+        return conditions.stream()
+                .filter(filterCondition -> filterCondition instanceof PropertyFilterCondition
+                        && path.toPathString().startsWith(((PropertyFilterCondition) filterCondition).getProperty()))
+                .findFirst()
+                .orElse(null);
     }
 }

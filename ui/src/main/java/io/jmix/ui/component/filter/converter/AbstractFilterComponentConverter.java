@@ -48,7 +48,6 @@ public abstract class AbstractFilterComponentConverter<C extends FilterComponent
     @Override
     public M convertToModel(C component) {
         M model = createModel();
-        model.setMetaClass(filter.getDataLoader().getContainer().getEntityMetaClass().getName());
         model.setVisible(component.isVisible());
         model.setEnabled(component.isEnabled());
 

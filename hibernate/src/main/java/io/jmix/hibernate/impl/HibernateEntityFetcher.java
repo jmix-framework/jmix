@@ -36,9 +36,6 @@ public class HibernateEntityFetcher extends EntityFetcher {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateEntityFetcher.class);
 
-    @Autowired
-    protected MetadataTools metadataTools;
-
     protected Object unproxy(Object value) {
         if (value != null) {
             if (!(value instanceof Collection)) {

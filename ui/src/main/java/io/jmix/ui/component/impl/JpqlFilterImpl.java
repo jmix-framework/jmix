@@ -17,8 +17,6 @@
 package io.jmix.ui.component.impl;
 
 import io.jmix.core.entity.EntityValues;
-import io.jmix.core.metamodel.datatype.Enumeration;
-import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.querycondition.JpqlCondition;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.JpqlFilter;
@@ -95,9 +93,6 @@ public class JpqlFilterImpl<V> extends AbstractSingleFilterComponent<V> implemen
             if (newValue != null) {
                 if (EntityValues.isEntity(newValue)) {
                     parameterValue = EntityValues.getIdOrEntity(newValue);
-                } else if (Enumeration.class.isAssignableFrom(parameterClass)) {
-                    Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
-                    parameterValue = enumeration.format(newValue);
                 } else {
                     parameterValue = newValue;
                 }

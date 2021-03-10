@@ -16,6 +16,11 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
+
+import javax.annotation.Nullable;
+import java.util.Objects;
+
 /**
  * Interface to be implemented by a component that supports different caption positions.
  */
@@ -36,7 +41,7 @@ public interface SupportsCaptionPosition {
     /**
      * Caption position of the component.
      */
-    enum CaptionPosition {
+    enum CaptionPosition implements EnumClass<String> {
         /**
          * Component caption will be placed on the left side of component.
          */
@@ -45,6 +50,21 @@ public interface SupportsCaptionPosition {
         /**
          * Component caption will be placed above the component.
          */
-        TOP
+        TOP;
+
+        @Override
+        public String getId() {
+            return name();
+        }
+
+        @Nullable
+        public static CaptionPosition fromId(String id) {
+            for (CaptionPosition captionPosition : CaptionPosition.values()) {
+                if (Objects.equals(id, captionPosition.getId())) {
+                    return captionPosition;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -36,8 +36,7 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
     protected String parameterName;
 
     @JmixProperty
-    @Convert(converter = PropertyFilterOperationConverter.class)
-    protected Operation operation;
+    protected String operation;
 
     @JmixProperty
     protected Boolean operationEditable = true;
@@ -59,11 +58,11 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
     }
 
     public Operation getOperation() {
-        return operation;
+        return Operation.fromId(operation);
     }
 
     public void setOperation(Operation operation) {
-        this.operation = operation;
+        this.operation = operation != null ? operation.getId() : null;
     }
 
     public Boolean getOperationEditable() {

@@ -25,8 +25,7 @@ import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
-import io.jmix.core.metamodel.datatype.Enumeration;
-import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
@@ -131,9 +130,8 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
         if (Entity.class.isAssignableFrom(parameterClass)) {
             MetaClass metaClass = metadata.getClass(cfContext.getParameterClass());
             selectAction.setEntityName(metaClass.getName());
-        } else if (Enum.class.isAssignableFrom(parameterClass)) {
-            Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
-            selectAction.setEnumClass(enumeration.getJavaClass());
+        } else if (EnumClass.class.isAssignableFrom(parameterClass)) {
+            selectAction.setEnumClass(parameterClass);
         } else if (datatypeRegistry.find(parameterClass) != null) {
             Datatype datatype = datatypeRegistry.get(parameterClass);
             selectAction.setJavaClass(datatype.getJavaClass());
@@ -164,9 +162,8 @@ public class JpqlFilterComponentGenerationStrategy extends AbstractComponentGene
     @Override
     protected Field createEnumField(ComponentGenerationContext context) {
         JpqlFilterComponentGenerationContext cfContext = (JpqlFilterComponentGenerationContext) context;
-        Enumeration<?> enumeration = new EnumerationImpl<>(cfContext.getParameterClass());
         ComboBox<?> component = uiComponents.create(ComboBox.class);
-        component.setOptionsEnum(enumeration.getJavaClass());
+        component.setOptionsEnum(cfContext.getParameterClass());
         return component;
     }
 

@@ -16,11 +16,14 @@
 
 package io.jmix.ui.component;
 
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.model.DataLoader;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Component which can contain other filter components and can be used for filtering entities
@@ -82,8 +85,23 @@ public interface LogicalFilterComponent extends FilterComponent {
     /**
      * Operation representing corresponding logical filtering condition.
      */
-    enum Operation {
+    enum Operation implements EnumClass<String> {
         AND,
-        OR
+        OR;
+
+        @Nullable
+        public static Operation fromId(String id) {
+            for (Operation operation : Operation.values()) {
+                if (Objects.equals(id, operation.getId())) {
+                    return operation;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return name();
+        }
     }
 }

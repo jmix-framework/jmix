@@ -26,6 +26,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.datatype.Enumeration;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.metamodel.datatype.impl.EnumerationImpl;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.ui.component.JpqlFilter;
@@ -123,7 +124,7 @@ public class JpqlFilterSupport {
     protected String formatSingleDefaultValue(Class parameterClass, Object value) {
         if (Entity.class.isAssignableFrom(parameterClass)) {
             return String.valueOf(EntityValues.getId(value));
-        } else if (Enum.class.isAssignableFrom(parameterClass)) {
+        } else if (EnumClass.class.isAssignableFrom(parameterClass)) {
             Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
             return enumeration.format(value);
         } else if (datatypeRegistry.find(parameterClass) != null) {
@@ -174,7 +175,7 @@ public class JpqlFilterSupport {
                                 .one();
                     }
                 }
-            } else if (Enum.class.isAssignableFrom(parameterClass)) {
+            } else if (EnumClass.class.isAssignableFrom(parameterClass)) {
                 Enumeration<?> enumeration = new EnumerationImpl<>(parameterClass);
                 return enumeration.parse(value);
             } else if (datatypeRegistry.find(parameterClass) != null) {

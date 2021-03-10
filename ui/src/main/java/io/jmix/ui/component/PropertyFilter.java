@@ -17,10 +17,13 @@
 package io.jmix.ui.component;
 
 import io.jmix.core.common.event.Subscription;
+import io.jmix.core.metamodel.datatype.impl.EnumClass;
 import io.jmix.core.querycondition.PropertyCondition;
 import io.jmix.ui.model.DataLoader;
 
+import javax.annotation.Nullable;
 import java.util.EventObject;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -122,7 +125,7 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
     /**
      * Operation representing corresponding filtering condition.
      */
-    enum Operation {
+    enum Operation implements EnumClass<String> {
         EQUAL(Type.VALUE),
         NOT_EQUAL(Type.VALUE),
         GREATER(Type.VALUE),
@@ -148,6 +151,21 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
 
         public Type getType() {
             return type;
+        }
+
+        @Nullable
+        public static Operation fromId(String id) {
+            for (Operation operation : Operation.values()) {
+                if (Objects.equals(id, operation.getId()))  {
+                    return operation;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public String getId() {
+            return name();
         }
 
         /**

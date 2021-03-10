@@ -86,7 +86,7 @@ public class JpqlFilterConverter extends AbstractFilterComponentConverter<JpqlFi
         condition.setCaptionPosition(jpqlFilter.getCaptionPosition());
         condition.setRequired(jpqlFilter.isRequired());
         condition.setParameterName(jpqlFilter.getParameterName());
-        condition.setParameterClass(jpqlFilter.getParameterClass().getCanonicalName());
+        condition.setParameterClass(jpqlFilter.getParameterClass().getName());
         condition.setWhere(jpqlFilter.getWhere());
         condition.setJoin(jpqlFilter.getJoin());
         condition.setHasInExpression(jpqlFilter.hasInExpression());

@@ -121,17 +121,9 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     @Subscribe
     protected void onInit(InitEvent event) {
-        initSuggesters();
         initParameterClassFieldOptionsMap();
         initEntityClassField();
         initEnumClassField();
-    }
-
-    protected void initSuggesters() {
-        if (filterMetaClass != null) {
-            joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
-            whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
-        }
     }
 
     protected void initParameterClassFieldOptionsMap() {
@@ -191,7 +183,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     protected void updateDefaultValueByClass(@Nullable Class parameterClass) {
         if (parameterClass != null) {
-            getEditedEntity().setParameterClass(parameterClass.getCanonicalName());
+            getEditedEntity().setParameterClass(parameterClass.getName());
             updateParameterName(parameterClass);
         } else {
             getEditedEntity().setParameterClass(null);
@@ -202,8 +194,16 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     @Subscribe
     protected void onAfterShow(AfterShowEvent event) {
+        initSuggesters();
         initParameterClassField();
         initDefaultValueField();
+    }
+
+    protected void initSuggesters() {
+        if (filterMetaClass != null) {
+            joinField.setSuggester((source, text, cursorPosition) -> requestHint(joinField, cursorPosition));
+            whereField.setSuggester((source, text, cursorPosition) -> requestHint(whereField, cursorPosition));
+        }
     }
 
     protected void initParameterClassField() {
@@ -307,7 +307,7 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
             if (parameterClass != null
                     && parameterClass != Entity.class
                     && parameterClass != Enum.class) {
-                getEditedEntity().setParameterClass(parameterClass.getCanonicalName());
+                getEditedEntity().setParameterClass(parameterClass.getName());
                 updateParameterName(parameterClass);
             } else {
                 getEditedEntity().setParameterClass(null);

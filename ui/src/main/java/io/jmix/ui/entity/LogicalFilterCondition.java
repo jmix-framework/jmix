@@ -22,7 +22,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.component.LogicalFilterComponent;
 
-import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,18 +33,17 @@ public abstract class LogicalFilterCondition extends FilterCondition {
 
     @JmixProperty
     @InstanceName
-    @Convert(converter = GroupFilterOperationConverter.class)
-    protected LogicalFilterComponent.Operation operation;
+    protected String operation;
 
     @JmixProperty
     protected List<FilterCondition> ownFilterConditions = new ArrayList<>();
 
     public LogicalFilterComponent.Operation getOperation() {
-        return operation;
+        return LogicalFilterComponent.Operation.fromId(operation);
     }
 
     public void setOperation(LogicalFilterComponent.Operation operation) {
-        this.operation = operation;
+        this.operation = operation != null ? operation.getId() : null;
     }
 
     public List<FilterCondition> getOwnFilterConditions() {

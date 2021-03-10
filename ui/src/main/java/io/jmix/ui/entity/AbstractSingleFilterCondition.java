@@ -21,8 +21,6 @@ import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.JmixProperty;
 import io.jmix.ui.component.SupportsCaptionPosition;
 
-import javax.persistence.Convert;
-
 @JmixEntity(name = "ui_AbstractSingleFilterCondition")
 @SystemLevel
 public abstract class AbstractSingleFilterCondition extends FilterCondition {
@@ -30,8 +28,7 @@ public abstract class AbstractSingleFilterCondition extends FilterCondition {
     private static final long serialVersionUID = 3911163960016094584L;
 
     @JmixProperty
-    @Convert(converter = CaptionPositionConverter.class)
-    protected SupportsCaptionPosition.CaptionPosition captionPosition;
+    protected String captionPosition;
 
     @JmixProperty
     protected FilterValueComponent valueComponent;
@@ -40,11 +37,11 @@ public abstract class AbstractSingleFilterCondition extends FilterCondition {
     protected Boolean required = false;
 
     public SupportsCaptionPosition.CaptionPosition getCaptionPosition() {
-        return captionPosition;
+        return SupportsCaptionPosition.CaptionPosition.fromId(captionPosition);
     }
 
     public void setCaptionPosition(SupportsCaptionPosition.CaptionPosition captionPosition) {
-        this.captionPosition = captionPosition;
+        this.captionPosition = captionPosition != null ? captionPosition.getId() : null;
     }
 
     public FilterValueComponent getValueComponent() {

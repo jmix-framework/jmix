@@ -17,6 +17,7 @@
 package test_support.entity.soft_delete;
 
 import io.jmix.core.annotation.DeletedDate;
+import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.hibernate.impl.SoftDeletionFilterDefinition;
 import org.hibernate.annotations.Filter;
@@ -25,13 +26,21 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Table(name = "TEST_HARDDELETE_ENTITY")
 @JmixEntity
 @Entity(name = "test_SoftDeleteEntity")
-@Where(clause = "TIME_OF_DELETION is null")
-public class SoftDeleteEntity extends HardDeleteEntity {
+public class SoftDeleteEntity {
     private static final long serialVersionUID = 7016314126468585951L;
+
+    @Id
+    @Column(name = "ID")
+    @JmixGeneratedValue
+    protected UUID id;
+
+    @Column(name = "TITLE")
+    private String title;
 
     @DeletedDate
     @Column(name = "TIME_OF_DELETION")
@@ -40,6 +49,22 @@ public class SoftDeleteEntity extends HardDeleteEntity {
     @JoinColumn(name = "PARENT_ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private EntityWithSoftDeletedCollection parent;
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public EntityWithSoftDeletedCollection getParent() {
         return parent;

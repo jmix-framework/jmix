@@ -18,16 +18,24 @@ package io.jmix.hibernate.impl.metadata;
 
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
+import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
+import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.core.metamodel.model.Range;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.graph.internal.RootGraphImpl;
 import org.hibernate.graph.spi.GraphImplementor;
 import org.hibernate.graph.spi.RootGraphImplementor;
 import org.hibernate.graph.spi.SubGraphImplementor;
 import org.hibernate.metamodel.model.domain.spi.EntityTypeDescriptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("hibernate_FetchGraphProvider")
 public class FetchGraphProvider {
+
+    @Autowired
+    protected Metadata metadata;
 
     public RootGraphImplementor createNamedEntityGraph(FetchPlan fetchPlan, SessionFactoryImplementor sessionFactoryImplementor) {
         EntityTypeDescriptor entityTypeDescriptor = findEntityDescriptor(fetchPlan, sessionFactoryImplementor);
@@ -41,15 +49,21 @@ public class FetchGraphProvider {
     }
 
     public void fillGraph(GraphImplementor rootGraph, FetchPlan fetchPlan) {
+        MetaClass metaClass = metadata.getClass(fetchPlan.getEntityClass());
         for (FetchPlanProperty fetchPlanProperty : fetchPlan.getProperties()) {
             if (rootGraph.getGraphedType().findAttribute(fetchPlanProperty.getName()) != null) {
                 rootGraph.addAttributeNode(fetchPlanProperty.getName());
-                if (fetchPlanProperty.getFetchPlan() != null) {
+                if (fetchPlanProperty.getFetchPlan() != null
+                        && !isManyToMany(metaClass.getProperty(fetchPlanProperty.getName()))) {
                     SubGraphImplementor subGraph = rootGraph.addSubGraph(fetchPlanProperty.getName());
                     fillGraph(subGraph, fetchPlanProperty.getFetchPlan());
                 }
             }
         }
+    }
+
+    private boolean isManyToMany(MetaProperty metaProperty) {
+        return Range.Cardinality.MANY_TO_MANY == metaProperty.getRange().getCardinality();
     }
 
     private EntityTypeDescriptor findEntityDescriptor(FetchPlan fetchPlan, SessionFactoryImplementor sessionFactoryImplementor) {

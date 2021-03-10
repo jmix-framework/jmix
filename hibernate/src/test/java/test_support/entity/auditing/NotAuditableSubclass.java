@@ -16,12 +16,14 @@
 
 package test_support.entity.auditing;
 
+import io.jmix.core.annotation.DeletedDate;
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
 import io.jmix.core.metamodel.annotation.Store;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 @JmixEntity
@@ -35,6 +37,10 @@ public class NotAuditableSubclass {
     @Column(name = "TITLE")
     @InstanceName
     private String title;
+
+    @DeletedDate
+    @Column(name = "WHEN_DELETED")
+    protected Date whenDeleted;
 
     public UUID getId() {
         return id;
@@ -50,5 +56,13 @@ public class NotAuditableSubclass {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Date getWhenDeleted() {
+        return whenDeleted;
+    }
+
+    public void setWhenDeleted(Date whenDeleted) {
+        this.whenDeleted = whenDeleted;
     }
 }

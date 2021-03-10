@@ -35,10 +35,6 @@ public class SoftDeleteAuditableEntity extends AuditableSubclass {
     @Column(name = "WHO_DELETED", length = 50)
     protected String whoDeleted;
 
-    @DeletedDate
-    @Column(name = "WHEN_DELETED")
-    protected Date whenDeleted;
-
     @Column(name = "REASON")
     protected String reason;
 
@@ -48,14 +44,6 @@ public class SoftDeleteAuditableEntity extends AuditableSubclass {
 
     public void setWhoDeleted(String whoDeleted) {
         this.whoDeleted = whoDeleted;
-    }
-
-    public Date getWhenDeleted() {
-        return whenDeleted;
-    }
-
-    public void setWhenDeleted(Date whenDeleted) {
-        this.whenDeleted = whenDeleted;
     }
 
     public String getReason() {

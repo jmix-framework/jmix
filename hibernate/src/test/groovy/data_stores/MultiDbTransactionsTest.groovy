@@ -21,8 +21,6 @@ import test_support.entity.multidb.Db1Customer
 import test_support.entity.multidb.Db1Order
 import test_support.entity.sec.User
 
-//todo: hibernate merge
-@Ignore
 class MultiDbTransactionsTest extends DataSpec {
 
     @Autowired
@@ -141,6 +139,8 @@ class MultiDbTransactionsTest extends DataSpec {
         main_entities[0] instanceof Colour
     }
 
+    //todo: hibernate merge
+    @Ignore
     def "nested tx for different db, work with first before and after committing nested"() {
         when:
         def main_entities

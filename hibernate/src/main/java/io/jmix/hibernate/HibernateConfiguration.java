@@ -20,7 +20,9 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.PersistentAttributesLoadChecker;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.data.DataConfiguration;
+import io.jmix.data.impl.EntityFetcher;
 import io.jmix.hibernate.impl.HibernateDataPersistentAttributesLoadChecker;
+import io.jmix.hibernate.impl.HibernateEntityFetcher;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
@@ -44,5 +46,11 @@ public class HibernateConfiguration {
     @Primary
     protected PersistentAttributesLoadChecker persistentAttributesLoadChecker(ApplicationContext applicationContext) {
         return new HibernateDataPersistentAttributesLoadChecker(applicationContext);
+    }
+
+    @Primary
+    @Bean("hibernate_EntityFetcher")
+    protected EntityFetcher entityFetcher() {
+        return new HibernateEntityFetcher();
     }
 }

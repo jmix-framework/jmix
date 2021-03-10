@@ -28,8 +28,6 @@ import test_support.entity.sales.OrderLineA
 import test_support.entity.sales.Product
 import test_support.entity.sec.User
 
-//todo: hibernate merge
-@Ignore
 class DataManagerTest extends DataSpec {
 
     @Autowired

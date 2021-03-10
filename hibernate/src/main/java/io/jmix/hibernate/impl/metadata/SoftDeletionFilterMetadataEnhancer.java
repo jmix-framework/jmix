@@ -40,7 +40,7 @@ import java.util.Map;
 
 import static io.jmix.hibernate.impl.SoftDeletionFilterDefinition.SOFT_DELETION_FILTER;
 
-@Component("hibernate_SoftDeletionFilterMetadataEnhancer")
+//@Component("hibernate_SoftDeletionFilterMetadataEnhancer")
 public class SoftDeletionFilterMetadataEnhancer implements MetadataEnhancer {
 
     private static final String IS_NOT_DELETED_CONDITION = " is null";

@@ -21,19 +21,16 @@ import io.jmix.core.MetadataTools;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
+import io.jmix.hibernate.impl.HibernateDataProperties;
 import org.hibernate.boot.spi.MetadataImplementor;
-import org.hibernate.internal.FilterConfiguration;
 import org.hibernate.mapping.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
 import java.lang.reflect.AnnotatedElement;
-import java.util.List;
 
-import static io.jmix.hibernate.impl.SoftDeletionFilterDefinition.SOFT_DELETION_FILTER;
-
-//@Component("hibernate_SoftDeletionMetadataEnhancer")
+@Component("hibernate_SoftDeletionMetadataEnhancer")
 public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
 
     private static final String IS_NOT_DELETED_CONDITION = " is null";
@@ -44,16 +41,32 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
     @Autowired
     private Metadata jmixMetadata;
 
+    @Autowired
+    private HibernateDataProperties dataProperties;
+
     @Override
     public void enhance(MetadataImplementor metadata) {
-        addSoftDeletionFilters(metadata);
+        if (dataProperties.isSoftDeletionEnabled()) {
+            addSoftDeletionFilters(metadata);
+        }
     }
 
     private void addSoftDeletionFilters(MetadataImplementor metadata) {
         for (PersistentClass entityBinding : metadata.getEntityBindings()) {
-            if (isSoftDeletable(entityBinding) && !hasFilter(entityBinding.getFilters(), SOFT_DELETION_FILTER)) {
+            if (isSoftDeletable(entityBinding)) {
                 if (entityBinding instanceof RootClass) {
                     addSoftDeletionFilter((RootClass) entityBinding);
+                } else {
+                    Class<?> mappedClass = entityBinding.getMappedClass();
+                    String deletedDateProperty = metadataTools.findDeletedDateProperty(mappedClass);
+                    if (jmixMetadata.getClass(mappedClass).getOwnProperties().stream()
+                            .anyMatch(p -> p.getName().equals(deletedDateProperty))) {
+                        throw new IllegalStateException(String.format(
+                                "Soft deletion property '%s' is not supported on inherited classes (class: %s)",
+                                deletedDateProperty,
+                                mappedClass.getName())
+                        );
+                    }
                 }
             }
             applyFilterToCollections(entityBinding);
@@ -75,6 +88,8 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
                                 Filterable bag = (Filterable) property.getValue();
                                 if (isManyToMany(metaProperty)) {
                                     addManyToManyFilter(columnName, bag);
+                                } else {
+                                    addFilter(columnName, bag);
                                 }
                             }
                         }
@@ -84,21 +99,20 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
         }
     }
 
+    private void addFilter(String columnName, Filterable bag) {
+        if (bag instanceof Collection) {
+            ((Collection) bag).setWhere(columnName + IS_NOT_DELETED_CONDITION);
+        }
+    }
+
     private void addManyToManyFilter(String columnName, Filterable bag) {
         if (bag instanceof Collection) {
-            Collection collection = (Collection) bag;
-            if (!hasFilter(collection.getManyToManyFilters(), SOFT_DELETION_FILTER)) {
-                collection.setManyToManyWhere(columnName + IS_NOT_DELETED_CONDITION);
-            }
+            ((Collection) bag).setManyToManyWhere(columnName + IS_NOT_DELETED_CONDITION);
         }
     }
 
     private boolean isManyToMany(MetaProperty metaProperty) {
         return Range.Cardinality.MANY_TO_MANY == metaProperty.getRange().getCardinality();
-    }
-
-    private boolean hasFilter(List filters, String name) {
-        return filters.stream().anyMatch(f -> ((FilterConfiguration) f).getName().equals(name));
     }
 
     private void addSoftDeletionFilter(RootClass entityBinding) {

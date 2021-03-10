@@ -27,6 +27,7 @@ import io.jmix.data.persistence.DbmsFeatures;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.hibernate.impl.metadata.FetchGraphProvider;
 import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.graph.GraphSemantic;
 import org.hibernate.graph.spi.RootGraphImplementor;
 import org.hibernate.query.ParameterMetadata;
 import org.hibernate.query.Query;
@@ -369,7 +370,8 @@ public class JmixHibernateQuery<E> extends AbstractProducedQuery<E> implements Q
                     for (FetchPlan plan : fetchPlans) {
                         fetchGraphProvider.fillGraph(entityGraph, plan);
                     }
-                    query = query.applyLoadGraph(entityGraph);
+                    //Resolve issue with many to many soft deletable collections
+//                    query = query.applyLoadGraph(entityGraph);
                 }
             }
         }

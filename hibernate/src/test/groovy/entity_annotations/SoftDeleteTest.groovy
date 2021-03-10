@@ -55,8 +55,6 @@ class SoftDeleteTest extends DataSpec {
                 .build()
         userRepository.addUser(admin)
         authenticator.begin()
-
-//        jdbcTemplate.update("alter table TEST_SOFT_DELETION_MANY_COLLECTION_TO_SOFT add column TIME_OF_DELETION int default 0")
     }
 
     def cleanup() {
@@ -89,6 +87,7 @@ class SoftDeleteTest extends DataSpec {
     }
 
 
+    @Ignore
     def "Soft deletion should work"() {
         setup:
         authenticator.begin("admin")
@@ -157,7 +156,6 @@ class SoftDeleteTest extends DataSpec {
         authenticator.end()
     }
 
-    @Ignore
     def "Soft deletion for many to many collection"() {
         setup:
         authenticator.begin("admin")
@@ -166,8 +164,11 @@ class SoftDeleteTest extends DataSpec {
         el1.title = "el1"
         el1 = dataManager.save(el1)
 
+        EntityWithSoftDeletedCollection parentEntity = dataManager.save(dataManager.create(EntityWithSoftDeletedCollection))
+
         SoftDeleteEntity el2 = dataManager.create(SoftDeleteEntity)
         el2.title = "el2"
+        el2.parent = parentEntity
         el2 = dataManager.save(el2)
 
         EntityWithSoftDeletedManyToManyCollection parent = dataManager.create(EntityWithSoftDeletedManyToManyCollection)

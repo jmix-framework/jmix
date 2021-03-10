@@ -19,6 +19,7 @@ package data_manager
 import io.jmix.core.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.TestOrderChangedEventListener
 import test_support.entity.TestAppEntity
@@ -155,21 +156,22 @@ class DataManagerCommitTest extends DataSpec {
         foo1.parts[0] == part
     }
 
+    @Ignore
     def "save entity with removed reference"() {
         when:
 
-        def customer = dataManager.create(Customer)
-        dataManager.remove(dataManager.save(customer))
+        def customer = dataManager.save(dataManager.create(Customer))
+
         def committedCustomer = dataManager.load(Customer).id(customer.id)
-                .softDeletion(false)
                 .optional().orElse(null)
+
+        dataManager.remove(customer)
 
         def order = dataManager.create(Order)
         order.number = '1'
         order.customer = committedCustomer
 
         SaveContext commitContext = new SaveContext().saving(order)
-        commitContext.setSoftDeletion(false)
         EntitySet committedEntities = dataManager.save(commitContext)
 
         def committedOrder = committedEntities.get(Order, order.id)

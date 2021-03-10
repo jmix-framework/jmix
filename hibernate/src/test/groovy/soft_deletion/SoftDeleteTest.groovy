@@ -24,7 +24,7 @@ import test_support.DataSpec
 import test_support.entity.TestAppEntity
 
 //todo: hibernate merge
-@Ignore
+//@Ignore
 class SoftDeleteTest extends DataSpec {
 
     @Autowired
@@ -51,6 +51,7 @@ class SoftDeleteTest extends DataSpec {
         entity2 == null
     }
 
+    @Ignore
     def "load deleted entity with disabled filter by soft delete"() {
         def entity
         setup:

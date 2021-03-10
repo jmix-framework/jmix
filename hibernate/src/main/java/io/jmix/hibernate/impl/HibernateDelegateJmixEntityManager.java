@@ -238,11 +238,11 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
 
     private void setSoftDeletion(boolean softDeletion) {
         delegate.setProperty(PersistenceHints.SOFT_DELETION, softDeletion);
-        if (softDeletion) {
-            delegate.enableFilter(SoftDeletionFilterDefinition.SOFT_DELETION_FILTER);
-        } else {
-            delegate.disableFilter(SoftDeletionFilterDefinition.SOFT_DELETION_FILTER);
-        }
+//        if (softDeletion) {
+//            delegate.enableFilter(SoftDeletionFilterDefinition.SOFT_DELETION_FILTER);
+//        } else {
+//            delegate.disableFilter(SoftDeletionFilterDefinition.SOFT_DELETION_FILTER);
+//        }
     }
 
     private boolean isSoftDeletion(Map<String, Object> properties) {

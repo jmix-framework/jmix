@@ -164,13 +164,11 @@ class AuditingTest extends DataSpec {
         irregularEntity = dataManager.save(irregularEntity)
         irregularEntity.setName("test")
         irregularEntity = dataManager.save(irregularEntity)
-        dataManager.remove(irregularEntity)
-        irregularEntity = dataManager.load(IrregularAuditTypesEntity).id(irregularEntity.id).softDeletion(false).one()
+        irregularEntity = dataManager.load(IrregularAuditTypesEntity).id(irregularEntity.id).one()
 
         then:
         irregularEntity.createdDate != null
         irregularEntity.touchDate != null
-        irregularEntity.whenDeleted != null
     }
 
     static boolean beforeOrEquals(Date first, Date second) {

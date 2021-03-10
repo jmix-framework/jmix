@@ -30,14 +30,18 @@ public class HibernateDataProperties {
 
     boolean runtimeEntityEnhancement;
 
+    boolean softDeletionEnabled;
+
     public HibernateDataProperties(
             @DefaultValue("true") boolean useDateInsteadOfTimestamp,
             @DefaultValue("true") boolean storeUuidAsString,
-            @DefaultValue("false") boolean runtimeEntityEnhancement
+            @DefaultValue("false") boolean runtimeEntityEnhancement,
+            @DefaultValue("true") boolean softDeletionEnabled
     ) {
         this.useDateInsteadOfTimestamp = useDateInsteadOfTimestamp;
         this.storeUuidAsString = storeUuidAsString;
         this.runtimeEntityEnhancement = runtimeEntityEnhancement;
+        this.softDeletionEnabled = softDeletionEnabled;
     }
 
     public boolean isUseDateInsteadOfTimestamp() {
@@ -50,5 +54,9 @@ public class HibernateDataProperties {
 
     public boolean isRuntimeEntityEnhancement() {
         return runtimeEntityEnhancement;
+    }
+
+    public boolean isSoftDeletionEnabled() {
+        return softDeletionEnabled;
     }
 }

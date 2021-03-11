@@ -45,7 +45,9 @@ class SimplePaginationTest extends ScreenSpecification {
     void setup() {
         exportScreensPackages(["component.simplepagination"])
 
-        10.times { dataManager.save(metadata.create(Customer)) }
+        def customers = []
+        10.times { customers.add(dataManager.create(Customer)) }
+        dataManager.save(customers.toArray())
     }
 
     @Override

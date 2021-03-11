@@ -40,7 +40,7 @@ public interface PaginationDataBinder {
     /**
      * @return maximum number of instances to load
      */
-    int getMaxResult();
+    int getMaxResults();
 
     /**
      * Sets maximum number of instances to load.

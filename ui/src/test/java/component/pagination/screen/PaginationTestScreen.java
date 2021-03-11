@@ -38,13 +38,24 @@ public class PaginationTestScreen extends Screen {
     public Pagination paginationCustomOptions;
 
     @Autowired
-    public Pagination paginationDefaultValue;
+    public Pagination paginationEntityPageSize;
 
-    public ComboBox<Integer> getPaginationCustomOptionsCB() {
-        return paginationCustomOptions.unwrap(JmixPagination.class).getItemsPerPageComboBox();
+    @Autowired
+    public Pagination paginationItemsPerPageDefaultValue;
+
+    @Autowired
+    public Pagination paginationItemsPerPageDefaultValueCB;
+
+    @Autowired
+    public Pagination paginationItemsPerPageDefaultValueCBandCO;
+
+    public ComboBox<Integer> getComboBoxFromDefaultValueCB() {
+        return paginationItemsPerPageDefaultValueCB
+                .unwrap(JmixPagination.class).getItemsPerPageComboBox();
     }
 
-    public ComboBox<Integer> getPaginationDefaultValueCB() {
-        return paginationDefaultValue.unwrap(JmixPagination.class).getItemsPerPageComboBox();
+    public ComboBox<Integer> getComboBoxFromDefaultValueCBandCO() {
+        return paginationItemsPerPageDefaultValueCBandCO
+                .unwrap(JmixPagination.class).getItemsPerPageComboBox();
     }
 }

@@ -355,6 +355,13 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
     }
 
     protected Integer getDefaultOptionValue(List<Integer> options, MetaClass metaClass) {
+        // if options are not explicitly set and they are not shown
+        if (CollectionUtils.isEmpty(itemsPerPageOptions) && !isItemsPerPageVisible()) {
+            if (itemsPerPageDefaultValue != null) {
+                return itemsPerPageDefaultValue;
+            }
+        }
+
         if (itemsPerPageDefaultValue != null) {
             if (options.contains(itemsPerPageDefaultValue)) {
                 return itemsPerPageDefaultValue;

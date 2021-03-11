@@ -17,17 +17,35 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <collection id="customersDc" class="test_support.entity.sales.Customer">
-            <loader id="customersLd" maxResults="2">
+            <loader id="customersLd">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
         <collection id="customersDcCustomOptions" class="test_support.entity.sales.Customer">
-            <loader id="customersLdCustomOptions" maxResults="2">
+            <loader id="customersLdCustomOptions">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
-        <collection id="customersDcDefaultValue" class="test_support.entity.sales.Customer">
-            <loader id="customersLdDefaultValue" maxResults="2">
+
+        <collection id="customersEntityPageSizeDc" class="test_support.entity.sales.Customer">
+            <loader id="customersEntityPageSizeLd">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+        <collection id="customersItemsPerPageDefaultValueDc" class="test_support.entity.sales.Customer">
+            <loader id="customersItemsPerPageDefaultValueLd">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+
+        <collection id="customersItemsPerPageDefaultValueCBDc" class="test_support.entity.sales.Customer">
+            <loader id="customersItemsPerPageDefaultValueCBLd">
+                <query><![CDATA[select e from test_Customer e]]></query>
+            </loader>
+        </collection>
+
+        <collection id="customersItemsPerPageDefaultValueCBandCODc" class="test_support.entity.sales.Customer">
+            <loader id="customersItemsPerPageDefaultValueCBandCOLd">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
@@ -36,7 +54,8 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <pagination id="pagination">
+        <pagination id="pagination"
+                    itemsPerPageDefaultValue="2">
             <loaderProvider loaderId="customersLd"/>
         </pagination>
         <pagination id="paginationWithoutDataSource"
@@ -46,11 +65,26 @@
                     itemsPerPageVisible="true">
             <loaderProvider loaderId="customersLdCustomOptions"/>
         </pagination>
-        <pagination id="paginationDefaultValue"
-                    itemsPerPageDefaultValue="9"
-                    itemsPerPageOptions="12, 9, 23, 41, 1"
-                    itemsPerPageVisible="true">
-            <loaderProvider loaderId="customersLdDefaultValue"/>
+
+        <pagination id="paginationEntityPageSize">
+            <loaderProvider loaderId="customersEntityPageSizeLd"/>
+        </pagination>
+        <pagination id="paginationItemsPerPageDefaultValue"
+                    itemsPerPageDefaultValue="2">
+            <loaderProvider loaderId="customersItemsPerPageDefaultValueLd"/>
+        </pagination>
+
+        <pagination id="paginationItemsPerPageDefaultValueCB"
+                    itemsPerPageVisible="true"
+                    itemsPerPageDefaultValue="2">
+            <loaderProvider loaderId="customersItemsPerPageDefaultValueCBLd"/>
+        </pagination>
+
+        <pagination id="paginationItemsPerPageDefaultValueCBandCO"
+                    itemsPerPageVisible="true"
+                    itemsPerPageOptions="4, 5, 6, 7"
+                    itemsPerPageDefaultValue="6">
+            <loaderProvider loaderId="customersItemsPerPageDefaultValueCBandCOLd"/>
         </pagination>
     </layout>
 </window>

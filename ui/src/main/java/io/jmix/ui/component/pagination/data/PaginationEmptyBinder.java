@@ -42,7 +42,7 @@ public class PaginationEmptyBinder implements PaginationDataBinder {
     }
 
     @Override
-    public int getMaxResult() {
+    public int getMaxResults() {
         return Integer.MAX_VALUE;
     }
 

@@ -17,22 +17,22 @@
 <window xmlns="http://jmix.io/schema/ui/window">
     <data>
         <collection id="customersDc" class="test_support.entity.sales.Customer">
-            <loader id="customersLd" maxResults="2">
+            <loader id="customersLd">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
         <collection id="customersDc1" class="test_support.entity.sales.Customer">
-            <loader id="customersLdIPP" maxResults="2">
+            <loader id="customersLdIPP">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
         <collection id="customersDc2" class="test_support.entity.sales.Customer">
-            <loader id="customersLdNoIPP" maxResults="2">
+            <loader id="customersLdNoIPP">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
         <collection id="customersDc3" class="test_support.entity.sales.Customer">
-            <loader id="customersLdPostponed" maxResults="2">
+            <loader id="customersLdPostponed">
                 <query><![CDATA[select e from test_Customer e]]></query>
             </loader>
         </collection>
@@ -41,23 +41,12 @@
         <dataLoadCoordinator auto="true"/>
     </facets>
     <layout>
-        <simplePagination id="pagination">
+        <simplePagination id="pagination"
+                          itemsPerPageDefaultValue="2">
             <loaderProvider loaderId="customersLd"/>
         </simplePagination>
-        <simplePagination id="paginationCustomIPP"
-                    itemsPerPageOptions="12, 9, 23, 41, 1">
-            <loaderProvider loaderId="customersLd"/>
-        </simplePagination>
-        <simplePagination id="paginationNoIPP"
-                    itemsPerPageOptions="1,5">
-            <containerProvider dataContainer="customersDc2"/>
-        </simplePagination>
-        <simplePagination id="paginationIPP"
-                    itemsPerPageVisible="true"
-                    itemsPerPageOptions="1,5">
-            <containerProvider dataContainer="customersDc1"/>
-        </simplePagination>
+
         <simplePagination id="paginationWithoutDataSource"
-                    itemsPerPageVisible="true"/>
+                          itemsPerPageVisible="true"/>
     </layout>
 </window>

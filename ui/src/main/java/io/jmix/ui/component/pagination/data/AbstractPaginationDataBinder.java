@@ -69,7 +69,7 @@ public abstract class AbstractPaginationDataBinder implements PaginationDataBind
     }
 
     @Override
-    public int getMaxResult() {
+    public int getMaxResults() {
         return loader != null ? loader.getMaxResults() : Integer.MAX_VALUE;
     }
 

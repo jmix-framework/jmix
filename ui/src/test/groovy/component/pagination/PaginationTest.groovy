@@ -48,7 +48,9 @@ class PaginationTest extends ScreenSpecification {
     void setup() {
         exportScreensPackages(["component.pagination"])
 
-        10.times { dataManager.save(metadata.create(Customer)) }
+        def customers = []
+        10.times { customers.add(dataManager.create(Customer)) }
+        dataManager.save(customers.toArray())
     }
 
     @Override
@@ -125,19 +127,25 @@ class PaginationTest extends ScreenSpecification {
         screen.show()
 
         then: """
-              Pagination without ItemsPerPage should use loader's maxResult.
-              Pagination with ItemsPerPage should load according to option value from ComboBox.
+              Pagination should have fetch size equal to itemsPerPageDefaultValue if it is defined.
+              If it is not, fetch size will be got from UiProperties entityPageSize.
               """
 
-        // Pagination WITHOUT ItemsPerPage will use loader's maxResult
-        screen.pagination.dataBinder.size() == 2
+        // If itemsPerPageDefaultValue is defined and itemsPerPageOptions is not set explicitly
+        screen.paginationItemsPerPageDefaultValue.dataBinder.maxResults == 2
 
-        // Pagination WITH ItemsPerPage will try to use entityPageSize, but if options
-        // don't contain this value, component will find the closest value in options.
-        screen.getPaginationCustomOptionsCB().getValue() == 41
+        // itemsPerPageDefaultValue is not defined get value from jmix.ui.entityPageSize
+        // or from jmix.ui.defaultPageSize
+        screen.paginationEntityPageSize.dataBinder.maxResults == 50
 
-        // Pagination with itemsPerPageDefaultValue = 9
-        screen.getPaginationDefaultValueCB().getValue() == 9
+        // if ItemsPerPage is visible and default options do not contain itemsPerPageDefaultValue
+        // the nearest value will be set
+        screen.paginationItemsPerPageDefaultValueCB.dataBinder.maxResults == 20
+        screen.getComboBoxFromDefaultValueCB().getValue() == 20
+
+        // if ItemsPerPageOptions explicitly set and contains itemsPerPageDefaultValue it will be selected
+        screen.paginationItemsPerPageDefaultValueCBandCO.dataBinder.maxResults == 6
+        screen.getComboBoxFromDefaultValueCBandCO().getValue() == 6
     }
 
     def "pagination changes affect another pagination with the same loader"() {

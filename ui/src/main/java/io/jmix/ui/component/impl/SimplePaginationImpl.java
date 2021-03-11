@@ -217,7 +217,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
     protected void onPrevClick(Button.ClickEvent event) {
         int firstResult = dataBinder.getFirstResult();
-        int newStart = dataBinder.getFirstResult() - dataBinder.getMaxResult();
+        int newStart = dataBinder.getFirstResult() - dataBinder.getMaxResults();
         dataBinder.setFirstResult(Math.max(newStart, 0));
 
         if (refreshData()) {
@@ -229,7 +229,7 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
     protected void onNextClick(Button.ClickEvent event) {
         int firstResult = dataBinder.getFirstResult();
-        dataBinder.setFirstResult(dataBinder.getFirstResult() + dataBinder.getMaxResult());
+        dataBinder.setFirstResult(dataBinder.getFirstResult() + dataBinder.getMaxResults());
         if (refreshData()) {
             if (state == State.LAST && size == 0) {
                 dataBinder.setFirstResult(firstResult);
@@ -245,8 +245,8 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
 
     protected void onLastClick(Button.ClickEvent event) {
         int count = getTotalCount();
-        int itemsToDisplay = count % dataBinder.getMaxResult();
-        if (itemsToDisplay == 0) itemsToDisplay = dataBinder.getMaxResult();
+        int itemsToDisplay = count % dataBinder.getMaxResults();
+        if (itemsToDisplay == 0) itemsToDisplay = dataBinder.getMaxResults();
 
         int firstResult = dataBinder.getFirstResult();
         dataBinder.setFirstResult(count - itemsToDisplay);
@@ -315,17 +315,17 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
             start = dataBinder.getFirstResult();
             samePage = false;
             refreshSizeButton = State.LAST.equals(state);
-        } else if ((size == 0 || size < dataBinder.getMaxResult()) && dataBinder.getFirstResult() == 0) {
+        } else if ((size == 0 || size < dataBinder.getMaxResults()) && dataBinder.getFirstResult() == 0) {
             state = State.FIRST_COMPLETE;
             lastState = state;
-        } else if (size == dataBinder.getMaxResult() && dataBinder.getFirstResult() == 0) {
+        } else if (size == dataBinder.getMaxResults() && dataBinder.getFirstResult() == 0) {
             state = State.FIRST_INCOMPLETE;
             lastState = state;
-        } else if (size == dataBinder.getMaxResult() && dataBinder.getFirstResult() > 0 && !lastPage) {
+        } else if (size == dataBinder.getMaxResults() && dataBinder.getFirstResult() > 0 && !lastPage) {
             state = State.MIDDLE;
             start = dataBinder.getFirstResult();
             lastState = state;
-        } else if (size <= dataBinder.getMaxResult() && dataBinder.getFirstResult() > 0) {
+        } else if (size <= dataBinder.getMaxResults() && dataBinder.getFirstResult() > 0) {
             state = State.LAST;
             start = dataBinder.getFirstResult();
             lastState = state;
@@ -343,9 +343,9 @@ public class SimplePaginationImpl extends AbstractPagination<JmixSimplePaginatio
             updateTotalCountButton();
         }
 
-        if (dataBinder.getMaxResult() != getItemsCountToDisplay()) {
+        if (dataBinder.getMaxResults() != getItemsCountToDisplay()) {
             if (isItemsPerPageVisible()) {
-                setSilentlyItemsPerPageValue(dataBinder.getMaxResult());
+                setSilentlyItemsPerPageValue(dataBinder.getMaxResults());
             }
         }
     }

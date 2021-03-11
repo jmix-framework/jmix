@@ -16,6 +16,7 @@
 
 package io.jmix.securityui.action;
 
+import com.google.common.base.Strings;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.PasswordNotMatchException;
@@ -180,18 +181,21 @@ public class ChangePasswordAction extends SecuredListAction implements Action.Ex
         }
 
         String userName = user.getUsername();
-        builder.withValidator(validationContext -> getValidationErrors(confirmPasswField, validationContext));
+        builder.withValidator(validationContext -> getValidationErrors(passwField, confirmPasswField, validationContext));
         InputDialog inputDialog = builder.build();
         builder.withActions(DialogActions.OK_CANCEL, result -> okButtonAction(userName, result));
         inputDialog.show();
     }
 
-    private ValidationErrors getValidationErrors(PasswordField confirmPasswField, InputDialog.ValidationContext validationContext) {
+    private ValidationErrors getValidationErrors(PasswordField passwField, PasswordField confirmPasswField, InputDialog.ValidationContext validationContext) {
         String password = validationContext.getValue("password");
         String confirmPassword = validationContext.getValue("confirmPassword");
         ValidationErrors errors = new ValidationErrors();
         if (!Objects.equals(password, confirmPassword)) {
             errors.add(confirmPasswField, messages.getMessage("changePasswordDialog.passwordsDoNotMatch"));
+        }
+        if (Strings.isNullOrEmpty(password)) {
+            errors.add(passwField, messages.getMessage("changePasswordDialog.passwordRequired"));
         }
         if (errors.isEmpty()) {
             return ValidationErrors.none();

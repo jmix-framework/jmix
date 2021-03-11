@@ -205,7 +205,7 @@ public class PaginationImpl extends AbstractPagination<JmixPagination> implement
 
         if (component.isFirstResultInRanges(firstResult)) {
             // if maxResult was changed not in this component try to adjust pages and ItemsPerPage value
-            if (component.getItemsToDisplay() != dataBinder.getMaxResult()) {
+            if (component.getItemsToDisplay() != maxResult) {
                 if (isItemsPerPageVisible()) {
                     setSilentlyItemsPerPageValue(maxResult);
                 }

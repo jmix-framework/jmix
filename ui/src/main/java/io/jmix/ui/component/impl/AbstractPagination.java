@@ -16,7 +16,6 @@
 
 package io.jmix.ui.component.impl;
 
-import com.google.common.base.Splitter;
 import com.vaadin.data.HasValue;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.Button;

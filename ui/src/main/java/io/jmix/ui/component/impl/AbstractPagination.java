@@ -276,15 +276,12 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
             return;
         }
 
+        Integer optionValue = getDefaultOptionValue(processedOptions, dataBinder.getEntityMetaClass());
+
         if (isItemsPerPageVisible()) {
-            Integer maxResult = getDefaultOptionValue(processedOptions, dataBinder.getEntityMetaClass());
-            dataBinder.setMaxResults(maxResult);
-            getItemsPerPageComboBox().setValue(maxResult);
-        } else {
-            int maxResult = dataBinder.getMaxResult();
-            int maxFetch = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
-            dataBinder.setMaxResults(Math.min(maxResult, maxFetch));
+            getItemsPerPageComboBox().setValue(optionValue);
         }
+        dataBinder.setMaxResults(optionValue);
     }
 
     protected int getTotalCount() {
@@ -309,9 +306,7 @@ public abstract class AbstractPagination<T extends JmixAbstractPagination>
             Integer value = getItemsPerPageComboBox().getValue();
             return value != null ? value : getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
         } else {
-            int maxResult = dataBinder.getMaxResult();
-            int maxFetch = getEntityMaxFetchSize(dataBinder.getEntityMetaClass());
-            return Math.min(maxResult, maxFetch);
+            return getDefaultOptionValue(processedOptions, dataBinder.getEntityMetaClass());
         }
     }
 

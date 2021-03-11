@@ -116,9 +116,9 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
     void cleanup() {
         clearTables("AUDIT_LOGGED_ATTR",
                 "AUDIT_LOGGED_ENTITY",
-                "SYS_ATTR_VALUE",
-                "SYS_CATEGORY_ATTR",
-                "SYS_CATEGORY",
+                "DYNAT_ATTR_VALUE",
+                "DYNAT_CATEGORY_ATTR",
+                "DYNAT_CATEGORY",
                 "DA_FIRST_ENTITY",
                 "DA_SECOND_ENTITY",
                 "DA_ADDITIONAL_ENTITY")

@@ -454,7 +454,8 @@ public class BulkEditorWindow<E> extends Screen implements BulkEditorController<
                 // In some cases JPA loads extended entities as instance of base
                 // class which leads to ClassCastException loading property lazy
                 // prevents this from happening
-                builder.addFetchPlan(propFetchPlan);
+                builder.add(metaProperty.getName(), propFetchPlanBuilder ->
+                        propFetchPlanBuilder.addFetchPlan(propFetchPlan));
                 break;
             default:
                 throw new IllegalStateException("unknown property type");

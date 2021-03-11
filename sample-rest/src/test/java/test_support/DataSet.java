@@ -187,9 +187,9 @@ public class DataSet {
         //deleteInstances(conn, "DEBT_CASE", caseIds);
         //deleteInstances(conn, "DEBT_DEBTOR", debtorIds);
         deleteSellers(conn);
-        deleteInstances(conn, "SYS_ATTR_VALUE", categoryAttributeValueIds);
-        deleteInstances(conn, "SYS_CATEGORY_ATTR", categoryAttributeIds);
-        deleteInstances(conn, "SYS_CATEGORY", categoryIds);
+        deleteInstances(conn, "DYNAT_ATTR_VALUE", categoryAttributeValueIds);
+        deleteInstances(conn, "DYNAT_CATEGORY_ATTR", categoryAttributeIds);
+        deleteInstances(conn, "DYNAT_CATEGORY", categoryIds);
 //        deleteInstances(conn, "SEC_CONSTRAINT", constraintIds);
         deleteInstances(conn, "SAMPLE_REST_SEC_GROUP", groupIds);
         deleteInstances(conn, "REF_PLANT", plantIds);

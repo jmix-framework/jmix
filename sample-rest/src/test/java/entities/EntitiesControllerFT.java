@@ -26,6 +26,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.junit.jupiter.api.Test;
 import test_support.AbstractRestControllerFT;
+
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.*;
@@ -832,7 +833,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
 
             //to delete the created objects in the @After method
             dirtyData.addCarId(carId);
-            try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from SYS_ATTR_VALUE where ENTITY_ID = ?")) {
+            try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from DYNAT_ATTR_VALUE where ENTITY_ID = ?")) {
                 stmt.setObject(1, carId);
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
@@ -1355,7 +1356,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from DYNAT_ATTR_VALUE where ID = ?")) {
             stmt.setObject(1, numberOfSeatsCategoryAttrValueId);
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
@@ -1381,7 +1382,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             }
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from SYS_ATTR_VALUE where ID = ?")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select STRING_VALUE from DYNAT_ATTR_VALUE where ID = ?")) {
             stmt.setObject(1, numberOfSeatsCategoryAttrValueId);
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
@@ -1405,7 +1406,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
             assertEquals(dynamicAttributeValue, ctx.read("$.+numberOfSeatsAttr"));
         }
 
-        try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from SYS_ATTR_VALUE where ENTITY_ID = ?")) {
+        try (PreparedStatement stmt = conn.prepareStatement("select ID, STRING_VALUE from DYNAT_ATTR_VALUE where ENTITY_ID = ?")) {
             stmt.setObject(1, UUID.fromString(secondCarUuidString));
             ResultSet rs = stmt.executeQuery();
             assertTrue(rs.next());
@@ -2499,14 +2500,14 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         );
 
         UUID carCategoryId = dirtyData.createCategoryId();
-        executePrepared("insert into sys_category (id, name, entity_type, discriminator, version) values (?, ?, ?, 0, 1)",
+        executePrepared("insert into DYNAT_CATEGORY (id, name, entity_type, discriminator, version) values (?, ?, ?, 0, 1)",
                 carCategoryId,
                 "carCategory",
                 "ref_Car"
         );
 
         UUID seatsNumberCategoryAttrId = dirtyData.createCategoryAttributeId();
-        executePrepared("insert into sys_category_attr (id, name, code, category_entity_type, category_id, data_type, " +
+        executePrepared("insert into DYNAT_CATEGORY_attr (id, name, code, category_entity_type, category_id, data_type, " +
                         "is_collection, version) values (?,?,?, ?, ?, ?,false, 1)",
                 seatsNumberCategoryAttrId,
                 "numberOfSeats",
@@ -2517,7 +2518,7 @@ class EntitiesControllerFT extends AbstractRestControllerFT {
         );
 
         numberOfSeatsCategoryAttrValueId = dirtyData.createCategoryAttributeValueId();
-        executePrepared("insert into sys_attr_value (id, category_attr_id, code, entity_id, string_value, version) values (?, ?, ?, ?, ?, 1)",
+        executePrepared("insert into DYNAT_ATTR_VALUE (id, category_attr_id, code, entity_id, string_value, version) values (?, ?, ?, ?, ?, 1)",
                 numberOfSeatsCategoryAttrValueId,
                 seatsNumberCategoryAttrId,
                 "numberOfSeatsAttr",

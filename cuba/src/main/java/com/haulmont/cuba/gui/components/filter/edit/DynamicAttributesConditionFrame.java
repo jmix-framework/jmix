@@ -21,6 +21,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
+import com.haulmont.cuba.core.global.filter.Op;
+import com.haulmont.cuba.core.global.filter.OpManager;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
@@ -35,8 +37,6 @@ import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextField;
-import com.haulmont.cuba.core.global.filter.Op;
-import com.haulmont.cuba.core.global.filter.OpManager;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -133,7 +133,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
 
         String where;
         if (op == Op.NOT_EMPTY) {
-            where = "(exists (select " + cavAlias + " from sys_CategoryAttributeValue " + cavAlias +
+            where = "(exists (select " + cavAlias + " from dynat_CategoryAttributeValue " + cavAlias +
                     " where " + cavAlias + ".entity." + cavEntityId + "=" +
                     "{E}" +
                     propertyPath +
@@ -155,7 +155,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                 valueFieldName = "dateValue";
 
             if (attribute.isCollection()) {
-                condition.setJoin(", sys_CategoryAttributeValue " + cavAlias + " ");
+                condition.setJoin(", dynat_CategoryAttributeValue " + cavAlias + " ");
 
                 String paramStr = " ? ";
                 where = cavAlias + ".entity." + cavEntityId + "=" +
@@ -169,7 +169,7 @@ public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttri
                         attributeLookup.getValue().getId() + "'";
                 where = where.replace("?", ":" + paramName);
             } else {
-                where = "(exists (select " + cavAlias + " from sys_CategoryAttributeValue " + cavAlias +
+                where = "(exists (select " + cavAlias + " from dynat_CategoryAttributeValue " + cavAlias +
                         " where " + cavAlias + ".entity." + cavEntityId + "=" + "{E}" + propertyPath + ".id and "
                         + cavAlias + "." + valueFieldName + " = :" + paramName + " and " +
                         cavAlias + ".categoryAttribute.id='" + attributeLookup.getValue().getId() + "'))";

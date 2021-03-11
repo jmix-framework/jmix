@@ -54,7 +54,7 @@ public class SessionsAutoConfiguration {
     @ConditionalOnBean(TokenStore.class)
     @Order(10)
     public static class OAuth2SessionsConfiguration {
-        @Bean("sessions_sessionIdResolver")
+        @Bean("sess_sessionIdResolver")
         @ConditionalOnMissingBean(HttpSessionIdResolver.class)
         public HttpSessionIdResolver sessionIdResolver() {
             return new OAuth2AndCookieSessionIdResolver();
@@ -64,7 +64,7 @@ public class SessionsAutoConfiguration {
     @Configuration(proxyBeanMethods = false)
     @Order(20)
     public static class DefaultSessionsConfiguration {
-        @Bean("sessions_sessionIdResolver")
+        @Bean("sess_sessionIdResolver")
         @ConditionalOnMissingBean(HttpSessionIdResolver.class)
         public HttpSessionIdResolver sessionIdResolver() {
             return new CookieHttpSessionIdResolver();

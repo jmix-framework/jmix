@@ -18,6 +18,7 @@ package io.jmix.ui.settings.component.binder;
 
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.AbstractSplitPanel;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.SplitPanel;
 import io.jmix.ui.component.impl.SplitPanelImpl;
@@ -25,7 +26,9 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.SplitPanelSettings;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_SplitPanelSettingsBinder")
 public class SplitPanelSettingsBinder implements ComponentSettingsBinder<SplitPanel, SplitPanelSettings> {
 

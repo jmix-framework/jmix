@@ -21,6 +21,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.settings.AbstractScreenSettings;
+import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.ComponentSettings.HasSettingsPresentation;
@@ -58,7 +59,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             log.trace("Applying settings for {} : {} ", getComponentPath(component), component);
 
-            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
+            ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
             if (component instanceof HasTablePresentations) {
                 ComponentSettings defaultSettings = binder.getSettings(component);
@@ -95,7 +96,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             Class<? extends ComponentSettings> settingsClass = settingsRegistry.getSettingsClass(component.getClass());
 
-            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
+            ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
             if (binder instanceof DataLoadingSettingsBinder) {
                 ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
@@ -123,7 +124,7 @@ public class ScreenSettingsManagerImpl implements ScreenSettingsManager {
 
             ComponentSettings settings = screenSettings.getSettingsOrCreate(component.getId(), settingsClass);
 
-            ComponentSettingsBinder binder = settingsRegistry.getBinder(component.getClass());
+            ComponentSettingsBinder binder = settingsRegistry.getSettingsBinder(component.getClass());
 
             boolean settingsChanged = binder.saveSettings(component, new SettingsWrapperImpl(settings));
             if (settingsChanged) {

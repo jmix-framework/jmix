@@ -18,6 +18,7 @@ package test_support.custom_settings;
 
 import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.settings.component.ComponentSettings;
+import io.jmix.ui.settings.component.ResizableTextAreaSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
 
@@ -62,5 +63,10 @@ public class TestResizableTextAreaBinder extends ResizableTextAreaSettingsBinder
             settings.setText(textArea.getValue().toString());
         }
         return settings;
+    }
+
+    @Override
+    protected ResizableTextAreaSettings createSettings() {
+        return new TestResizableTextAreaSettings();
     }
 }

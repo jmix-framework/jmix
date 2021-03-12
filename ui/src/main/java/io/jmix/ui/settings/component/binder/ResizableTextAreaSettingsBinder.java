@@ -16,6 +16,7 @@
 
 package io.jmix.ui.settings.component.binder;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ResizableTextArea;
 import io.jmix.ui.component.ResizableTextArea.ResizeDirection;
@@ -24,8 +25,9 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.ResizableTextAreaSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.widget.JmixResizableTextAreaWrapper;
+import org.springframework.core.annotation.Order;
 
-@SuppressWarnings("rawtypes")
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_ResizableTextAreaSettingsBinder")
 public class ResizableTextAreaSettingsBinder implements ComponentSettingsBinder<ResizableTextArea, ResizableTextAreaSettings> {
 

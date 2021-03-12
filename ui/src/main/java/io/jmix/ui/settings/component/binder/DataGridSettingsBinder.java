@@ -16,6 +16,10 @@
 
 package io.jmix.ui.settings.component.binder;
 
+import io.jmix.core.JmixOrder;
+import org.springframework.core.annotation.Order;
+
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_DataGridSettingsBinder")
 public class DataGridSettingsBinder extends AbstractDataGridSettingsBinder {
 }

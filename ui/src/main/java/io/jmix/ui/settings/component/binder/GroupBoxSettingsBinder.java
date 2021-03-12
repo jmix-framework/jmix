@@ -16,13 +16,16 @@
 
 package io.jmix.ui.settings.component.binder;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.GroupBoxLayout;
 import io.jmix.ui.component.impl.GroupBoxImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.GroupBoxSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_GroupBoxSettingsBinder")
 public class GroupBoxSettingsBinder implements ComponentSettingsBinder<GroupBoxLayout, GroupBoxSettings> {
 

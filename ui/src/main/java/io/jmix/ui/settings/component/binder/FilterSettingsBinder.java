@@ -16,13 +16,16 @@
 
 package io.jmix.ui.settings.component.binder;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.impl.FilterImpl;
 import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.FilterSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_FilterSettingsBinder")
 public class FilterSettingsBinder implements ComponentSettingsBinder<Filter, FilterSettings> {
 

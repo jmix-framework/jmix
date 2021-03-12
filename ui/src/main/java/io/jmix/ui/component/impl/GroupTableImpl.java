@@ -185,7 +185,11 @@ public class GroupTableImpl<E> extends AbstractTable<JmixGroupTable, E>
 
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
-        return applicationContext.getBean(GroupTableSettingsBinder.class);
+        if (settingsRegistry == null) {
+            throw new IllegalStateException("User settings are not available "
+                    + "because the module that provides the given functionality is not added");
+        }
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 
     @Override

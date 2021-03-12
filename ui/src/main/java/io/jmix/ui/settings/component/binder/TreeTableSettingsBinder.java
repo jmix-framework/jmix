@@ -16,9 +16,12 @@
 
 package io.jmix.ui.settings.component.binder;
 
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.impl.TreeTableImpl;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_TreeTableSettingsBinder")
 public class TreeTableSettingsBinder extends AbstractTableSettingsBinder {
 

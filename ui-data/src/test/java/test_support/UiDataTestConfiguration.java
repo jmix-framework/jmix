@@ -17,6 +17,7 @@
 package test_support;
 
 import io.jmix.core.JmixModules;
+import io.jmix.core.JmixOrder;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -91,6 +93,7 @@ public class UiDataTestConfiguration {
         return new TestUiSettingsCache();
     }
 
+    @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     @Bean("test_resizableTextAreaBinder")
     TestResizableTextAreaBinder resizableTextAreaBinder() {
         return new TestResizableTextAreaBinder();

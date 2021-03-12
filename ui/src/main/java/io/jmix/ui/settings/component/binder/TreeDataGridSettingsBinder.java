@@ -17,6 +17,7 @@
 package io.jmix.ui.settings.component.binder;
 
 import com.google.common.base.Strings;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.component.DataGrid.Column;
@@ -26,8 +27,9 @@ import io.jmix.ui.settings.component.ComponentSettings;
 import io.jmix.ui.settings.component.DataGridSettings;
 import io.jmix.ui.settings.component.SettingsWrapper;
 import io.jmix.ui.settings.component.TreeDataGridSettings;
+import org.springframework.core.annotation.Order;
 
-@SuppressWarnings("rawtypes")
+@Order(JmixOrder.LOWEST_PRECEDENCE)
 @org.springframework.stereotype.Component("ui_TreeDataGridSettingsBinder")
 public class TreeDataGridSettingsBinder extends AbstractDataGridSettingsBinder {
 

@@ -95,6 +95,7 @@ import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.InstallTargetHandler;
 import io.jmix.ui.screen.ScreenContext;
 import io.jmix.ui.screen.UiControllerUtils;
+import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.SettingsHelper;
 import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.settings.component.ComponentSettings;
@@ -103,7 +104,6 @@ import io.jmix.ui.settings.component.SettingsWrapperImpl;
 import io.jmix.ui.settings.component.TableSettings;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.settings.component.binder.DataLoadingSettingsBinder;
-import io.jmix.ui.settings.component.binder.TableSettingsBinder;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import io.jmix.ui.widget.JmixButton;
@@ -172,6 +172,7 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     protected DataComponents dataComponents;
     protected FetchPlanRepository viewRepository;
     protected UserSettingsTools userSettingsTools;
+    protected ComponentSettingsRegistry settingsRegistry;
     protected EntityStates entityStates;
     protected Actions actions;
     protected UiComponentsGenerator uiComponentsGenerator;
@@ -299,6 +300,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     @Autowired(required = false)
     public void setUserSettingsTools(UserSettingsTools userSettingsTools) {
         this.userSettingsTools = userSettingsTools;
+    }
+
+    @Autowired(required = false)
+    public void setSettingsRegistry(ComponentSettingsRegistry settingsRegistry) {
+        this.settingsRegistry = settingsRegistry;
     }
 
     @Autowired
@@ -2881,7 +2887,11 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return applicationContext.getBean(TableSettingsBinder.class);
+        if (settingsRegistry == null) {
+            throw new IllegalStateException("User settings are not available "
+                    + "because the module that provides the given functionality is not added");
+        }
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 
     protected boolean needUpdatePresentation(Map<String, Object> variables) {

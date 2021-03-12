@@ -17,9 +17,12 @@
 package com.haulmont.cuba.settings.binder;
 
 import com.haulmont.cuba.web.gui.components.WebResizableTextArea;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.settings.component.binder.ResizableTextAreaSettingsBinder;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @org.springframework.stereotype.Component(CubaResizableTextAreaSettingsBinder.NAME)
 public class CubaResizableTextAreaSettingsBinder extends ResizableTextAreaSettingsBinder {
 

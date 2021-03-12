@@ -28,7 +28,6 @@ import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
-import com.haulmont.cuba.settings.binder.CubaTreeDataGridSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyTreeDataGridSettingsConverter;
 import com.haulmont.cuba.web.gui.components.datagrid.DataGridDelegate;
@@ -57,9 +56,11 @@ import io.jmix.ui.component.impl.TreeDataGridImpl;
 import io.jmix.ui.component.valueprovider.FormatterBasedValueProvider;
 import io.jmix.ui.component.valueprovider.StringPresentationValueProvider;
 import io.jmix.ui.component.valueprovider.YesNoIconPresentationValueProvider;
+import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import io.jmix.ui.widget.JmixGridEditorFieldFactory;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -73,6 +74,7 @@ import static io.jmix.core.common.util.Preconditions.checkNotNullArgument;
 public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
         implements TreeDataGrid<E>, LookupComponent.LookupSelectionChangeNotifier<E> {
 
+    protected ComponentSettingsRegistry settingsRegistry;
     protected LegacySettingsDelegate settingsDelegate;
     protected DataGridDelegate dataGridDelegate;
 
@@ -85,6 +87,11 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
 
         settingsDelegate = createSettingsDelegate();
         dataGridDelegate = createDataGridDelegate();
+    }
+
+    @Autowired
+    public void setSettingsRegistry(ComponentSettingsRegistry settingsRegistry) {
+        this.settingsRegistry = settingsRegistry;
     }
 
     @Override
@@ -113,7 +120,7 @@ public class WebTreeDataGrid<E extends Entity> extends TreeDataGridImpl<E>
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) this.applicationContext.getBean(CubaTreeDataGridSettingsBinder.NAME);
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 
     @Override

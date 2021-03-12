@@ -32,7 +32,6 @@ import com.haulmont.cuba.gui.data.DsBuilder;
 import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.presentation.LegacyPresentationsDelegate;
 import com.haulmont.cuba.gui.presentation.Presentations;
-import com.haulmont.cuba.settings.binder.CubaGroupTableSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyGroupTableSettingsConverter;
 import com.haulmont.cuba.web.gui.components.table.CubaTableFieldFactoryImpl;
@@ -113,7 +112,7 @@ public class WebGroupTable<E extends Entity> extends GroupTableImpl<E>
 
     @Override
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) applicationContext.getBean(CubaGroupTableSettingsBinder.NAME);
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 
     protected LegacySettingsDelegate createSettingsDelegate() {

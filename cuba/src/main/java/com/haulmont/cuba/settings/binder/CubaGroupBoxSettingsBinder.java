@@ -17,9 +17,12 @@
 package com.haulmont.cuba.settings.binder;
 
 import com.haulmont.cuba.web.gui.components.WebGroupBox;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.settings.component.binder.GroupBoxSettingsBinder;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @org.springframework.stereotype.Component(CubaGroupBoxSettingsBinder.NAME)
 public class CubaGroupBoxSettingsBinder extends GroupBoxSettingsBinder {
 

@@ -17,9 +17,12 @@
 package com.haulmont.cuba.settings.binder;
 
 import com.haulmont.cuba.web.gui.components.WebTreeDataGrid;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.settings.component.binder.TreeDataGridSettingsBinder;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @org.springframework.stereotype.Component(CubaTreeDataGridSettingsBinder.NAME)
 public class CubaTreeDataGridSettingsBinder extends TreeDataGridSettingsBinder {
 

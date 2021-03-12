@@ -18,20 +18,27 @@ package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.CubaComponentsHelper;
 import com.haulmont.cuba.gui.components.SplitPanel;
-import com.haulmont.cuba.settings.binder.CubaSplitPanelSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacySplitPanelSettingsConverter;
 import io.jmix.ui.component.impl.SplitPanelImpl;
+import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
 @Deprecated
 public class WebSplitPanel extends SplitPanelImpl implements SplitPanel, InitializingBean {
 
+    protected ComponentSettingsRegistry settingsRegistry;
     protected LegacySettingsDelegate settingsDelegate;
+
+    @Autowired
+    public void setSettingsRegistry(ComponentSettingsRegistry settingsRegistry) {
+        this.settingsRegistry = settingsRegistry;
+    }
 
     @Override
     public void setSplitPosition(int pos, int unit) {
@@ -94,6 +101,6 @@ public class WebSplitPanel extends SplitPanelImpl implements SplitPanel, Initial
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) applicationContext.getBean(CubaSplitPanelSettingsBinder.NAME);
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 }

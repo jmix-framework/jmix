@@ -17,12 +17,13 @@
 package com.haulmont.cuba.web.gui.components;
 
 import com.haulmont.cuba.gui.components.ResizableTextArea;
-import com.haulmont.cuba.settings.binder.CubaResizableTextAreaSettingsBinder;
 import com.haulmont.cuba.settings.component.LegacySettingsDelegate;
 import com.haulmont.cuba.settings.converter.LegacyResizableTextAreaSettingsConverter;
 import io.jmix.ui.component.impl.ResizableTextAreaImpl;
+import io.jmix.ui.settings.ComponentSettingsRegistry;
 import io.jmix.ui.settings.component.binder.ComponentSettingsBinder;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.function.Consumer;
 
@@ -30,14 +31,21 @@ import java.util.function.Consumer;
 public class WebResizableTextArea<V> extends ResizableTextAreaImpl<V>
         implements ResizableTextArea<V> {
 
-    protected int columns;
+    protected ComponentSettingsRegistry settingsRegistry;
     protected LegacySettingsDelegate settingsDelegate;
+
+    protected int columns;
 
     @Override
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
 
         settingsDelegate = createSettingsDelegate();
+    }
+
+    @Autowired
+    public void setSettingsRegistry(ComponentSettingsRegistry settingsRegistry) {
+        this.settingsRegistry = settingsRegistry;
     }
 
     @Override
@@ -72,7 +80,7 @@ public class WebResizableTextArea<V> extends ResizableTextAreaImpl<V>
     }
 
     protected ComponentSettingsBinder getSettingsBinder() {
-        return (ComponentSettingsBinder) applicationContext.getBean(CubaResizableTextAreaSettingsBinder.NAME);
+        return settingsRegistry.getSettingsBinder(this.getClass());
     }
 
     @Override

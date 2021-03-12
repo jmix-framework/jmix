@@ -17,9 +17,12 @@
 package com.haulmont.cuba.settings.binder;
 
 import com.haulmont.cuba.web.gui.components.WebDataGrid;
+import io.jmix.core.JmixOrder;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.settings.component.binder.DataGridSettingsBinder;
+import org.springframework.core.annotation.Order;
 
+@Order(JmixOrder.LOWEST_PRECEDENCE - 10)
 @org.springframework.stereotype.Component(CubaDataGridSettingsBinder.NAME)
 public class CubaDataGridSettingsBinder extends DataGridSettingsBinder {
 

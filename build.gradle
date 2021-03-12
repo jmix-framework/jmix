@@ -71,6 +71,7 @@ dependencies {
 
     def baseVersion = '1.0.0'
     def auditVersion = baseVersion
+    def bpmVersion = baseVersion
     def coreVersion = baseVersion
     def cubaVersion = baseVersion
     def dataVersion = baseVersion
@@ -99,6 +100,12 @@ dependencies {
 
         api "io.jmix.awsfs:jmix-awsfs:${snapshotOr(awsfsVersion)}"
         api "io.jmix.awsfs:jmix-awsfs-starter:${snapshotOr(awsfsVersion)}"
+
+        api "io.jmix.bpm:jmix-bpm:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-modeler:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-starter:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-ui:${snapshotOr(bpmVersion)}"
+        api "io.jmix.bpm:jmix-bpm-ui-starter:${snapshotOr(bpmVersion)}"
 
         api "io.jmix.core:jmix-core:${snapshotOr(coreVersion)}"
         api "io.jmix.core:jmix-core-starter:${snapshotOr(coreVersion)}"

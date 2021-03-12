@@ -22,7 +22,6 @@ import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.ActionType;
 import io.jmix.ui.app.filter.condition.FilterConditionEdit;
 import io.jmix.ui.app.filter.condition.GroupFilterConditionEdit;
-import io.jmix.ui.app.filter.condition.LogicalFilterConditionEdit;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.Fragment;
@@ -163,12 +162,7 @@ public class FilterEditAction extends FilterAction {
 
     protected void applyScreenConfigurer(Screen editScreen) {
         if (editScreen instanceof FilterConditionEdit) {
-            ((FilterConditionEdit<?>) editScreen).setFilterMetaClass(
-                    filter.getDataLoader().getContainer().getEntityMetaClass());
-        }
-
-        if (editScreen instanceof LogicalFilterConditionEdit) {
-            ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(filter.getCurrentConfiguration());
+            ((FilterConditionEdit<?>) editScreen).setCurrentConfiguration(filter.getCurrentConfiguration());
         }
     }
 

@@ -187,16 +187,7 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
 
     protected void applyScreenConfigurer(Screen editScreen) {
         if (editScreen instanceof FilterConditionEdit) {
-            ((FilterConditionEdit<?>) editScreen).setFilterMetaClass(filterMetaClass);
-        }
-
-        if (editScreen instanceof LogicalFilterConditionEdit) {
-            ((LogicalFilterConditionEdit<?>) editScreen).setConfiguration(getCurrentFilterConfiguration());
-        }
-
-        if (editScreen instanceof PropertyFilterConditionEdit) {
-            ((PropertyFilterConditionEdit) editScreen).setPropertiesFilterPredicate(
-                    currentFilterConfiguration.getOwner().getPropertiesFilterPredicate());
+            ((FilterConditionEdit<?>) editScreen).setCurrentConfiguration(getCurrentFilterConfiguration());
         }
     }
 

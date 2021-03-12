@@ -51,7 +51,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     @Autowired
     protected LogicalFilterSupport logicalFilterSupport;
 
-    protected Filter.Configuration configuration;
     protected List<FilterCondition> filterConditions = new ArrayList<>();
 
     public abstract CollectionContainer<FilterCondition> getCollectionContainer();
@@ -67,14 +66,6 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
 
     @Nullable
     public abstract ListComponent<FilterCondition> getListComponent();
-
-    public Filter.Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Filter.Configuration configuration) {
-        this.configuration = configuration;
-    }
 
     @Subscribe
     protected void onBeforeShowEvent(BeforeShowEvent event) {
@@ -92,7 +83,7 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
         FilterAddConditionAction addAction = getAddAction();
         if (addAction != null && getListComponent() != null) {
             addAction.setIcon(null);
-            addAction.setFilter(getConfiguration().getOwner());
+            addAction.setFilter(currentConfiguration.getOwner());
             addAction.refreshState();
             addAction.setSelectHandler(this::addActionSelectHandler);
         }
@@ -147,19 +138,8 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     }
 
     protected void editActionScreenConfigurer(Screen screen) {
-        if (getListComponent() != null) {
-            if (screen instanceof FilterConditionEdit) {
-                ((FilterConditionEdit<?>) screen).setFilterMetaClass(filterMetaClass);
-            }
-
-            if (screen instanceof LogicalFilterConditionEdit) {
-                ((LogicalFilterConditionEdit<?>) screen).setConfiguration(configuration);
-            }
-
-            if (screen instanceof PropertyFilterConditionEdit) {
-                ((PropertyFilterConditionEdit) screen).setPropertiesFilterPredicate(
-                        configuration.getOwner().getPropertiesFilterPredicate());
-            }
+        if (screen instanceof FilterConditionEdit) {
+            ((FilterConditionEdit<?>) screen).setCurrentConfiguration(currentConfiguration);
         }
     }
 
@@ -234,8 +214,8 @@ public abstract class LogicalFilterConditionEdit<E extends LogicalFilterConditio
     }
 
     protected boolean configurationExist() {
-        Filter filter = configuration.getOwner();
-        return filter.getConfiguration(configuration.getId()) != null
-                && !Objects.equals(filter.getCurrentConfiguration().getId(), configuration.getId());
+        Filter filter = currentConfiguration.getOwner();
+        return filter.getConfiguration(currentConfiguration.getId()) != null
+                && !Objects.equals(filter.getCurrentConfiguration().getId(), currentConfiguration.getId());
     }
 }

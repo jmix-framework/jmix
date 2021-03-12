@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.CheckBox;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.SourceCodeEditor;
@@ -104,9 +105,18 @@ public class JpqlFilterConditionEdit extends FilterConditionEdit<JpqlFilterCondi
 
     protected HasValue defaultValueField;
 
+    protected MetaClass filterMetaClass;
+
     @Override
     public InstanceContainer<JpqlFilterCondition> getInstanceContainer() {
         return filterConditionDc;
+    }
+
+    @Override
+    public void setCurrentConfiguration(Filter.Configuration currentConfiguration) {
+        super.setCurrentConfiguration(currentConfiguration);
+
+        filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
     }
 
     @Subscribe

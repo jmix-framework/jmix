@@ -26,6 +26,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.EntityValues;
+import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
@@ -380,14 +381,16 @@ public class PropertyFilterSupport {
     }
 
     public List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
+                                                   String query,
                                                    @Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
-        List<MetaPropertyPath> paths = getPropertyPaths(filterMetaClass, filterMetaClass, 0,
+        List<MetaPropertyPath> paths = getPropertyPaths(filterMetaClass, query, filterMetaClass, 0,
                 "", propertiesFilterPredicate);
         paths.sort((mpp1, mpp2) -> ObjectUtils.compare(mpp1.toPathString(), mpp2.toPathString()));
         return paths;
     }
 
     protected List<MetaPropertyPath> getPropertyPaths(MetaClass filterMetaClass,
+                                                      String query,
                                                       MetaClass currentMetaClass,
                                                       int currentDepth,
                                                       String currentPropertyPath,
@@ -400,7 +403,7 @@ public class PropertyFilterSupport {
             MetaPropertyPath metaPropertyPath = filterMetaClass.getPropertyPath(propertyPath);
 
             if (metaPropertyPath == null
-                    || !isMetaPropertyPathAllowed(metaPropertyPath)
+                    || !isMetaPropertyPathAllowed(metaPropertyPath, query)
                     || (propertiesFilterPredicate != null && !propertiesFilterPredicate.test(metaPropertyPath))
                     || currentDepth >= uiFilterProperties.getPropertiesHierarchyDepth()) {
                 continue;
@@ -410,8 +413,8 @@ public class PropertyFilterSupport {
 
             if (property.getRange().isClass()) {
                 MetaClass childMetaClass = property.getRange().asClass();
-                List<MetaPropertyPath> childPaths = getPropertyPaths(filterMetaClass, childMetaClass, ++currentDepth,
-                        propertyPath, propertiesFilterPredicate);
+                List<MetaPropertyPath> childPaths = getPropertyPaths(filterMetaClass, query, childMetaClass,
+                        ++currentDepth, propertyPath, propertiesFilterPredicate);
                 paths.addAll(childPaths);
             }
         }
@@ -419,13 +422,19 @@ public class PropertyFilterSupport {
         return paths;
     }
 
-    protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath) {
+    protected boolean isMetaPropertyPathAllowed(MetaPropertyPath propertyPath, String query) {
         UiEntityAttributeContext context = new UiEntityAttributeContext(propertyPath);
         accessManager.applyRegisteredConstraints(context);
         return context.canView()
                 && !metadataTools.isSystemLevel(propertyPath.getMetaProperty())
-                && metadataTools.isJpa(propertyPath)
+                && (metadataTools.isJpa(propertyPath)
+                || (propertyPath.getMetaClass() instanceof KeyValueMetaClass && !isAggregateFunction(propertyPath, query)))
                 && !propertyPath.getMetaProperty().getRange().getCardinality().isMany()
                 && !(byte[].class.equals(propertyPath.getMetaProperty().getJavaType()));
+    }
+
+    @SuppressWarnings("unused")
+    protected boolean isAggregateFunction(MetaPropertyPath propertyPath, String query) {
+        return false;
     }
 }

@@ -59,10 +59,11 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
 
     @Override
     public List<FilterCondition> build(Filter filter) {
-        MetaClass rootEntityMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+        MetaClass filterMetaClass = filter.getDataLoader().getContainer().getEntityMetaClass();
+        String query = filter.getDataLoader().getQuery();
         Predicate<MetaPropertyPath> propertiesFilterPredicate = filter.getPropertiesFilterPredicate();
 
-        List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(rootEntityMetaClass,
+        List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, query,
                 propertiesFilterPredicate);
 
         return !paths.isEmpty()

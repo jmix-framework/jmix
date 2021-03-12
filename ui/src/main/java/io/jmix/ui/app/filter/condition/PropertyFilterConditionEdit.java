@@ -18,11 +18,13 @@ package io.jmix.ui.app.filter.condition;
 
 import io.jmix.core.MessageTools;
 import io.jmix.core.Metadata;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.querycondition.PropertyConditionUtils;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.ComboBox;
+import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.HBoxLayout;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
@@ -40,7 +42,6 @@ import io.jmix.ui.screen.UiDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -80,15 +81,23 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     protected HBoxLayout defaultValueBox;
 
     protected HasValue defaultValueField;
-    protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
 
-    public void setPropertiesFilterPredicate(@Nullable Predicate<MetaPropertyPath> propertiesFilterPredicate) {
-        this.propertiesFilterPredicate = propertiesFilterPredicate;
-    }
+    protected MetaClass filterMetaClass;
+    protected String query;
+    protected Predicate<MetaPropertyPath> propertiesFilterPredicate;
 
     @Override
     public InstanceContainer<PropertyFilterCondition> getInstanceContainer() {
         return filterConditionDc;
+    }
+
+    @Override
+    public void setCurrentConfiguration(Filter.Configuration currentConfiguration) {
+        super.setCurrentConfiguration(currentConfiguration);
+
+        filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
+        query = currentConfiguration.getOwner().getDataLoader().getQuery();
+        propertiesFilterPredicate = currentConfiguration.getOwner().getPropertiesFilterPredicate();
     }
 
     @Subscribe
@@ -100,7 +109,8 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
 
     protected void initPropertyField() {
         if (filterMetaClass != null) {
-            List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, propertiesFilterPredicate);
+            List<MetaPropertyPath> paths = propertyFilterSupport.getPropertyPaths(filterMetaClass, query,
+                    propertiesFilterPredicate);
             Map<String, String> properties = new TreeMap<>();
             for (MetaPropertyPath mpp : paths) {
                 String property = mpp.toPathString();

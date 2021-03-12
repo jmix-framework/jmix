@@ -16,13 +16,23 @@
 
 package io.jmix.uidata;
 
+import io.jmix.core.AccessManager;
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.DataManager;
+import io.jmix.core.MessageTools;
+import io.jmix.core.Messages;
+import io.jmix.core.MetadataTools;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.data.DataConfiguration;
+import io.jmix.data.QueryTransformerFactory;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.component.filter.FilterSupport;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.presentation.TablePresentations;
+import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.ui.settings.ScreenSettingsManager;
 import io.jmix.ui.settings.UiSettingsCache;
 import io.jmix.ui.settings.UserSettingService;
@@ -30,6 +40,7 @@ import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import io.jmix.uidata.filter.UiDataFilterSupport;
+import io.jmix.uidata.propertyfilter.UiDataPropertyFilterSupport;
 import io.jmix.uidata.settings.ScreenSettingsManagerImpl;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -95,8 +106,21 @@ public class UiDataConfiguration {
 
     @Bean("ui_UiDataFilterSupport")
     @Primary
-    public UiDataFilterSupport filterSupport() {
+    public FilterSupport filterSupport() {
         return new UiDataFilterSupport();
     }
-}
 
+    @Bean("ui_UiDataPropertyFilterSupport")
+    @Primary
+    public PropertyFilterSupport propertyFilterSupport(Messages messages,
+                                                       MessageTools messageTools,
+                                                       MetadataTools metadataTools,
+                                                       DataManager dataManager,
+                                                       DatatypeRegistry datatypeRegistry,
+                                                       UiFilterProperties uiFilterProperties,
+                                                       AccessManager accessManager,
+                                                       QueryTransformerFactory queryTransformerFactory) {
+        return new UiDataPropertyFilterSupport(messages, messageTools, metadataTools, dataManager, datatypeRegistry,
+                uiFilterProperties, accessManager, queryTransformerFactory);
+    }
+}

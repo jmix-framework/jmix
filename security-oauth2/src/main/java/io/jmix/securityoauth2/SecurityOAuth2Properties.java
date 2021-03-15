@@ -23,7 +23,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.List;
 
-@ConfigurationProperties(prefix = "jmix.sec.oauth2")
+@ConfigurationProperties(prefix = "jmix.security.oauth2")
 @ConstructorBinding
 public class SecurityOAuth2Properties {
     private final String clientId;

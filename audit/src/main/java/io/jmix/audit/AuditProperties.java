@@ -26,21 +26,21 @@ public class AuditProperties {
 
     boolean enabled;
     //ToDo: make system user name globally configurable?
-    String systemUserLogin;
+    String systemUsername;
 
     public AuditProperties(
             @DefaultValue("true") boolean enabled,
-            @DefaultValue("system") String systemUserLogin
+            @DefaultValue("system") String systemUsername
     ) {
         this.enabled = enabled;
-        this.systemUserLogin = systemUserLogin;
+        this.systemUsername = systemUsername;
     }
 
     public boolean isEnabled() {
         return enabled;
     }
 
-    public String getSystemUserLogin() {
-        return systemUserLogin;
+    public String getSystemUsername() {
+        return systemUsername;
     }
 }

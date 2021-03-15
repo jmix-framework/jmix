@@ -45,7 +45,7 @@
             </column>
             <column name="CREATE_TS" type="datetime"/>
             <column name="CREATED_BY" type="varchar(255)"/>
-            <column name="USER_LOGIN" type="varchar(255)"/>
+            <column name="USERNAME" type="varchar(255)"/>
             <column name="EVENT_TS" type="datetime"/>
             <column name="CHANGE_TYPE" type="varchar(1)"/>
             <column name="ENTITY" type="varchar(100)"/>

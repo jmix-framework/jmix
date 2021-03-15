@@ -427,16 +427,16 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         enqueueItem(item, storeName);
     }
 
-    protected String findUserLogin() {
+    protected String findUsername() {
         UserDetails currentUser = auditInfoProvider.getCurrentUser();
         if (currentUser != null)
             return currentUser.getUsername();
         else {
-            String login = properties.getSystemUserLogin();
-            if (login != null)
-                return login;
+            String username = properties.getSystemUsername();
+            if (username != null)
+                return username;
             else
-                throw new RuntimeException("The user '" + login + "' specified in cuba.jmxUserLogin does not exist");
+                throw new RuntimeException("The user '" + username + "' specified in jmix.audit.systemUsername does not exist");
         }
     }
 
@@ -549,7 +549,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
         if (!entityLogAttrs.isEmpty() || type == EntityLogItem.Type.RESTORE) {
             item = metadata.create(EntityLogItem.class);
             item.setEventTs(ts);
-            item.setUserLogin(findUserLogin());
+            item.setUsername(findUsername());
             item.setType(type);
             item.setEntity(extendedEntities.getOriginalOrThisMetaClass(metaClass).getName());
             item.setEntityInstanceName(metadataTools.getInstanceName(entity));
@@ -664,7 +664,7 @@ public class EntityLogImpl implements EntityLog, JpaLifecycleListener {
 
         item = metadata.create(EntityLogItem.class);
         item.setEventTs(ts);
-        item.setUserLogin(findUserLogin());
+        item.setUsername(findUsername());
         item.setType(type);
         item.setEntity(entityName);
         item.setEntityInstanceName(metadataTools.getInstanceName(entity));

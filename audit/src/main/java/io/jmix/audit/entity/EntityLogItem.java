@@ -96,8 +96,8 @@ public class EntityLogItem implements Serializable {
     @Column(name = "EVENT_TS")
     private Date eventTs;
 
-    @Column(name = "USER_LOGIN")
-    private String userLogin;
+    @Column(name = "USERNAME")
+    private String username;
 
     @Column(name = "CHANGE_TYPE", length = 1)
     private String type;
@@ -183,12 +183,12 @@ public class EntityLogItem implements Serializable {
         this.type = type.getId();
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Set<EntityLogAttr> getAttributes() {

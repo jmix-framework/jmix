@@ -47,7 +47,7 @@
                                 <c:where>e.entity = :entityName</c:where>
                             </c:jpql>
                             <c:jpql>
-                                <c:where>e.userLogin = :user</c:where>
+                                <c:where>e.username = :user</c:where>
                             </c:jpql>
                             <c:jpql>
                                 <c:where>e.eventTs &gt;= :fromDate</c:where>
@@ -133,7 +133,7 @@
                                 <column id="eventTs" caption="msg://when">
                                     <dateFormatter format="msg://dateTimeWithSeconds"/>
                                 </column>
-                                <column id="userLogin" caption="msg://user"/>
+                                <column id="username" caption="msg://user"/>
                                 <column id="type" caption="msg://changeType"/>
                                 <column id="displayedEntityName" caption="msg://entity"/>
                                 <column id="entityId" caption="Id"/>

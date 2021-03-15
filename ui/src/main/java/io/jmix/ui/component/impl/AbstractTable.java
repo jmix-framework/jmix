@@ -1940,7 +1940,17 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
 
         @Override
         public void setValueDescription(@Nullable String valueDescription) {
-            this.valueDescription = valueDescription;
+            if (!Objects.equals(getValueDescription(), valueDescription)) {
+                this.valueDescription = valueDescription;
+
+                if (owner != null) {
+                    if (Strings.isNullOrEmpty(valueDescription)) {
+                        owner.setColumnAggregationDescriptionByType(this, id);
+                    } else {
+                        owner.getComponent().setAggregationDescription(id, valueDescription);
+                    }
+                }
+            }
         }
 
         @Override
@@ -2057,6 +2067,16 @@ public abstract class AbstractTable<T extends com.vaadin.v7.ui.Table & JmixEnhan
                         owner.getComponent().addContainerPropertyAggregation(id,
                                 WrapperUtils.convertAggregationType(aggregation.getType()));
                     }
+                }
+
+                if (aggregation != null
+                        && aggregation.getType() != AggregationInfo.Type.CUSTOM
+                        && StringUtils.isEmpty(getValueDescription())) {
+                    owner.setColumnAggregationDescriptionByType(this, id);
+                }
+
+                if (isAggregationEditable()) {
+                    owner.getComponent().addAggregationEditableColumn(id);
                 }
             }
         }

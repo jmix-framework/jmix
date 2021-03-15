@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
+import io.jmix.ui.AppUI;
 import io.jmix.ui.widget.client.Tools;
 import io.jmix.ui.widget.client.aggregation.AggregationInputFieldInfo;
 import io.jmix.ui.widget.client.aggregation.TableAggregationRow;
@@ -789,6 +790,12 @@ public class JmixGroupTableWidget extends JmixScrollTableWidget {
                 inputElement.setValue(text);
                 inputElement.addClassName("v-textfield v-widget");
                 inputElement.addClassName("c-group-aggregation-textfield");
+
+                AppUI ui = AppUI.getCurrent();
+                if (ui != null && ui.isTestMode()) {
+                    inputElement.setAttribute("j-test-id", "aggregationField");
+                }
+
                 Style elemStyle = inputElement.getStyle();
                 elemStyle.setWidth(100, Style.Unit.PCT);
                 DOM.appendChild(container, inputElement);

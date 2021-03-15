@@ -24,6 +24,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import io.jmix.ui.AppUI;
 import io.jmix.ui.widget.client.Tools;
 import io.jmix.ui.widget.client.table.JmixScrollTableWidget;
 import io.jmix.ui.widget.client.tableshared.TableWidget;
@@ -287,6 +288,12 @@ public class TableAggregationRow extends Panel {
         inputElement.setValue(text);
         inputElement.addClassName("v-textfield v-widget");
         inputElement.addClassName("c-total-aggregation-textfield");
+
+        AppUI ui = AppUI.getCurrent();
+        if (ui != null && ui.isTestMode()) {
+            inputElement.setAttribute("j-test-id", "aggregationField");
+        }
+
         Style elemStyle = inputElement.getStyle();
         elemStyle.setWidth(100, Style.Unit.PCT);
 

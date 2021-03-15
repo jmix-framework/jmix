@@ -89,7 +89,7 @@ public class SearchService {
     }
 
     protected SearchResult processHits(String searchTerm, SearchHits searchHits) {
-        Map<String, List<SearchHit>> hitsByEntityClass = Stream.of(searchHits.getHits())
+        Map<String, List<SearchHit>> hitsByEntityName = Stream.of(searchHits.getHits())
                 .collect(Collectors.groupingBy(hit -> {
                     Object metaObject = hit.getSourceAsMap().get("meta");
                     if (metaObject instanceof Map) {
@@ -100,11 +100,11 @@ public class SearchService {
                 }));
 
         SearchResult searchResult = new SearchResult(searchTerm);
-        for(Map.Entry<String, List<SearchHit>> entry : hitsByEntityClass.entrySet()) {
-            String entityClass = entry.getKey();
+        for(Map.Entry<String, List<SearchHit>> entry : hitsByEntityName.entrySet()) {
+            String entityName = entry.getKey();
             List<SearchHit> entityHits = entry.getValue();
             List<String> entityIds = entityHits.stream().map(SearchHit::getId).collect(Collectors.toList());
-            Map<String, String> reloadedIdNames = loadEntityInstanceNames(metadata.getClass(entityClass), entityIds);
+            Map<String, String> reloadedIdNames = loadEntityInstanceNames(metadata.getClass(entityName), entityIds);
 
             for(SearchHit searchHit : entityHits) {
                 String entityId = searchHit.getId();
@@ -117,7 +117,7 @@ public class SearchService {
                         String highlight = Arrays.stream(h.getFragments()).map(Text::toString).collect(Collectors.joining("..."));
                         fieldHits.add(new FieldHit(formatFieldName(f), highlight));
                     });
-                    searchResult.addEntry(new SearchResultEntry(entityId, instanceName, entityClass, fieldHits));
+                    searchResult.addEntry(new SearchResultEntry(entityId, instanceName, entityName, fieldHits));
                 }
             }
         }
@@ -156,13 +156,13 @@ public class SearchService {
     public static class SearchResultEntry {
         private final String docId;
         private final String instanceName;
-        private final String entityClass;
+        private final String entityName;
         private final List<FieldHit> fieldHits;
 
-        public SearchResultEntry(String docId, String instanceName, String entityClass, List<FieldHit> fieldHits) {
+        public SearchResultEntry(String docId, String instanceName, String entityName, List<FieldHit> fieldHits) {
             this.docId = docId;
             this.instanceName = instanceName;
-            this.entityClass = entityClass;
+            this.entityName = entityName;
             this.fieldHits = fieldHits;
         }
 
@@ -174,8 +174,8 @@ public class SearchService {
             return instanceName;
         }
 
-        public String getEntityClass() {
-            return entityClass;
+        public String getEntityName() {
+            return entityName;
         }
 
         public List<FieldHit> getFieldHits() {
@@ -203,30 +203,30 @@ public class SearchService {
 
     public static class SearchResult {
         protected final String searchTerm;
-        protected final Map<String, Set<SearchResultEntry>> entriesByEntityClassName = new HashMap<>();
+        protected final Map<String, Set<SearchResultEntry>> entriesByEntityName = new HashMap<>();
 
         public SearchResult(String searchTerm) {
             this.searchTerm = searchTerm;
         }
 
         public void addEntry(SearchResultEntry searchResultEntry) {
-            Set<SearchResultEntry> entriesForEntityClassName = entriesByEntityClassName.computeIfAbsent(
-                    searchResultEntry.getEntityClass(),
+            Set<SearchResultEntry> entriesForEntityName = entriesByEntityName.computeIfAbsent(
+                    searchResultEntry.getEntityName(),
                     s -> new LinkedHashSet<>()
             );
-            entriesForEntityClassName.add(searchResultEntry);
+            entriesForEntityName.add(searchResultEntry);
         }
 
-        public Set<SearchResultEntry> getEntriesByEntityClassName(String entityClassName) {
-            return entriesByEntityClassName.get(entityClassName);
+        public Set<SearchResultEntry> getEntriesByEntityName(String entityName) {
+            return entriesByEntityName.get(entityName);
         }
 
         public boolean isEmpty() {
-            return entriesByEntityClassName.isEmpty();
+            return entriesByEntityName.isEmpty();
         }
 
-        public Collection<String> getEntityClassNames() {
-            return entriesByEntityClassName.keySet();
+        public Collection<String> getEntityNames() {
+            return entriesByEntityName.keySet();
         }
     }
 }

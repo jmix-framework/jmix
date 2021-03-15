@@ -146,16 +146,16 @@ public class EntitySearcherBrowser extends Screen {
             contentBox.add(createNotFoundLabel());
         } else {
             List<Pair<String, String>> entityGroups = new ArrayList<>();
-            for (String entityClassName : searchResult.getEntityClassNames()) {
+            for (String entityName : searchResult.getEntityNames()) {
                 entityGroups.add(new Pair<>(
-                        entityClassName,
-                        messageTools.getEntityCaption(metadata.getClass(entityClassName))
+                        entityName,
+                        messageTools.getEntityCaption(metadata.getClass(entityName))
                 ));
             }
             entityGroups.sort(Comparator.comparing(Pair::getSecond));
 
             for (Pair<String, String> entityPair : entityGroups) {
-                String entityClassName = entityPair.getFirst();
+                String entityName = entityPair.getFirst();
                 String entityCaption = entityPair.getSecond();
 
                 CssLayout container = createCssLayout();
@@ -170,7 +170,7 @@ public class EntitySearcherBrowser extends Screen {
 
                 CssLayout instancesLayout = createCssLayout();
                 instancesLayout.setWidth("100%");
-                displayInstances(searchResult, entityClassName, instancesLayout);
+                displayInstances(searchResult, entityName, instancesLayout);
                 container.add(instancesLayout);
 
                 contentBox.add(container);
@@ -197,11 +197,11 @@ public class EntitySearcherBrowser extends Screen {
         return entityLabel;
     }
 
-    protected void displayInstances(SearchResult searchResult, String entityClassName, CssLayout instancesLayout) {
-        Set<SearchResultEntry> entries = searchResult.getEntriesByEntityClassName(entityClassName);
+    protected void displayInstances(SearchResult searchResult, String entityName, CssLayout instancesLayout) {
+        Set<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
 
         for (SearchResultEntry entry : entries) {
-            Button instanceBtn = createInstanceButton(entityClassName, entry);
+            Button instanceBtn = createInstanceButton(entityName, entry);
             instancesLayout.add(instanceBtn);
 
             List<String> list = new ArrayList<>(entry.getFieldHits().size());

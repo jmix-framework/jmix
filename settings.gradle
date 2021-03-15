@@ -7,6 +7,7 @@ include 'security-oauth2'
 include 'security-starter'
 include 'security-data-starter'
 include 'security-ui-starter'
+include 'security-oauth2-starter'
 
 rootProject.children.each { p1 ->
 	p1.buildFileName = "${p1.name}.gradle"

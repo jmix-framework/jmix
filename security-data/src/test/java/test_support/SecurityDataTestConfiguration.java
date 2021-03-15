@@ -31,20 +31,19 @@ import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -53,6 +52,7 @@ import javax.sql.DataSource;
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {SecurityConfiguration.class, DataConfiguration.class, EclipselinkConfiguration.class})
+@Import(SecurityDataTestConfiguration.TestStandardSecurityConfiguration.class)
 public class SecurityDataTestConfiguration {
 
     @Bean
@@ -112,5 +112,9 @@ public class SecurityDataTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }
 }

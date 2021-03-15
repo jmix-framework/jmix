@@ -31,6 +31,7 @@ import io.jmix.email.EmailConfiguration;
 import io.jmix.emailtemplates.EmailTemplatesConfiguration;
 import io.jmix.reports.ReportsConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -54,7 +56,8 @@ import java.util.Collections;
 
 @Configuration
 @Import({CoreConfiguration.class, DataConfiguration.class, EmailTemplatesConfiguration.class, EmailConfiguration.class,
-        ReportsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class})
+        ReportsConfiguration.class, SecurityConfiguration.class, EclipselinkConfiguration.class,
+        EmailTemplatesTestConfiguration.TestStandardSecurityConfiguration.class})
 public class EmailTemplatesTestConfiguration {
     @Bean
     @Primary
@@ -111,5 +114,9 @@ public class EmailTemplatesTestConfiguration {
     @Primary
     public JavaMailSender jmixMailSender() {
         return new TestMailSender();
+    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }
 }

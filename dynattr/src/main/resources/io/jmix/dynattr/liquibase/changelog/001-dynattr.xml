@@ -23,7 +23,7 @@
 
     <changeSet author="dynattr" id="1" context="!cuba">
 
-        <createTable tableName="SYS_CATEGORY">
+        <createTable tableName="DYNAT_CATEGORY">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -49,7 +49,7 @@
             <column name="LOCALE_NAMES" type="varchar(1000)"/>
         </createTable>
 
-        <createTable tableName="SYS_CATEGORY_ATTR">
+        <createTable tableName="DYNAT_CATEGORY_ATTR">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -70,7 +70,8 @@
             </column>
             <column name="DESCRIPTION" type="varchar(1000)"/>
             <column name="CATEGORY_ID" type="${uuid.type}">
-                <constraints foreignKeyName="SYS_CATEGORY_ATTR_CATEGORY_ID" references="SYS_CATEGORY(ID)" nullable="false"/>
+                <constraints foreignKeyName="DYNAT_CATEGORY_ATTR_CATEGORY_ID" references="DYNAT_CATEGORY(ID)"
+                             nullable="false"/>
             </column>
             <column name="ENTITY_CLASS" type="varchar(1000)"/>
             <column name="DATA_TYPE" type="varchar(200)"/>
@@ -104,7 +105,7 @@
             <column name="ATTRIBUTE_CONFIGURATION_JSON" type="clob"/>
         </createTable>
 
-        <createTable tableName="SYS_ATTR_VALUE">
+        <createTable tableName="DYNAT_ATTR_VALUE">
             <column name="ID" type="${uuid.type}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -119,7 +120,8 @@
             <column name="DELETED_BY" type="varchar(50)"/>
 
             <column name="CATEGORY_ATTR_ID" type="${uuid.type}">
-                <constraints foreignKeyName="SYS_ATTR_VALUE_ATTR_ID" references="SYS_CATEGORY_ATTR(ID)" nullable="false"/>
+                <constraints foreignKeyName="DYNAT_ATTR_VALUE_ATTR_ID" references="DYNAT_CATEGORY_ATTR(ID)"
+                             nullable="false"/>
             </column>
             <column name="CODE" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -143,7 +145,7 @@
             <column name="LONG_ENTITY_VALUE" type="number"/>
 
             <column name="PARENT_ID" type="${uuid.type}">
-                <constraints foreignKeyName="SYS_ATTR_VALUE_VAL_PARENT_ID" references="SYS_ATTR_VALUE(ID)"/>
+                <constraints foreignKeyName="DYNAT_ATTR_VALUE_VAL_PARENT_ID" references="DYNAT_ATTR_VALUE(ID)"/>
             </column>
         </createTable>
     </changeSet>

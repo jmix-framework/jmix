@@ -38,7 +38,7 @@ import java.util.Collections;
 @PropertySource(name = "io.jmix.dynattrui", value = "classpath:/io/jmix/dynattrui/module.properties")
 public class DynAttrUiConfiguration {
 
-    @Bean("dynattr_DynAttrUiUiControllers")
+    @Bean("dynat_DynAttrUiUiControllers")
     public UiControllersConfiguration screens(ApplicationContext applicationContext,
                                               AnnotationScanMetadataReaderFactory metadataReaderFactory) {
         UiControllersConfiguration uiControllers

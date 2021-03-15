@@ -53,7 +53,7 @@ import java.util.*;
 
 import static io.jmix.dynattr.AttributeType.*;
 
-@org.springframework.stereotype.Component("dynattr_DynamicAttributeComponentGenerationStrategy")
+@org.springframework.stereotype.Component("dynat_DynamicAttributeComponentGenerationStrategy")
 public class DynAttrComponentGenerationStrategy implements ComponentGenerationStrategy, Ordered {
     protected Messages messages;
     protected UiComponents uiComponents;

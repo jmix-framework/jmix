@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import static io.jmix.core.entity.EntitySystemAccess.addExtraState;
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
-@Component("dynattr_DynAttrEntityStateInitializer")
+@Component("dynat_DynAttrEntityStateInitializer")
 public class DynAttrEntityStateInitializer implements EntityInitializer, Ordered {
 
     @Override

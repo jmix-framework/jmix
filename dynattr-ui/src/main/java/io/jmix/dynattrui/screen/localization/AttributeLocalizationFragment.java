@@ -26,22 +26,12 @@ import io.jmix.dynattrui.impl.model.AttributeLocalizedValue;
 import io.jmix.ui.component.DataGrid;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.ScreenFragment;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.Target;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
-
+import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
 
-@UiController("dynattr_AttributeLocalizationFragment")
+import java.util.*;
+
+@UiController("dynat_AttributeLocalizationFragment")
 @UiDescriptor("attribute-localization-fragment.xml")
 public class AttributeLocalizationFragment extends ScreenFragment {
 

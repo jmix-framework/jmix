@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.Map;
 
-@Component("dynattrui_DynAttrAwareEntityTransformer")
+@Component("dynat_DynAttrAwareEntityTransformer")
 @Order(110)
 public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
 

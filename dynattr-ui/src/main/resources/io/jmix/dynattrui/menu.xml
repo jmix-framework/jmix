@@ -17,6 +17,6 @@
 
 <menu-config xmlns="http://jmix.io/schema/ui/menu">
     <menu id="administration">
-        <item screen="sys_Category.browse"/>
+        <item screen="dynat_Category.browse"/>
     </menu>
 </menu-config>

@@ -51,7 +51,7 @@ import java.util.Collections;
 *
  * @param <T> any Object
  */
-@Component("dynattr_GroovyScriptValidator")
+@Component("dynat_GroovyScriptValidator")
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class GroovyScriptValidator<T> extends AbstractValidator<T> {
 

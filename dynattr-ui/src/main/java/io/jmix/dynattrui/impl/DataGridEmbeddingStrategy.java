@@ -28,7 +28,7 @@ import io.jmix.ui.component.data.meta.EntityDataUnit;
 
 import java.util.List;
 
-@org.springframework.stereotype.Component("dynattr_DataGridEmbeddingStrategy")
+@org.springframework.stereotype.Component("dynat_DataGridEmbeddingStrategy")
 public class DataGridEmbeddingStrategy extends ListEmbeddingStrategy {
 
     @Override

@@ -29,27 +29,13 @@ import io.jmix.ui.Fragments;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
-import io.jmix.ui.component.Button;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.DataGrid;
-import io.jmix.ui.component.Fragment;
-import io.jmix.ui.component.LinkButton;
-import io.jmix.ui.component.TextField;
-import io.jmix.ui.component.TextInputField;
-import io.jmix.ui.component.VBoxLayout;
+import io.jmix.ui.component.*;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.CollectionLoader;
 import io.jmix.ui.model.InstanceContainer;
-import io.jmix.ui.screen.DialogMode;
-import io.jmix.ui.screen.Install;
-import io.jmix.ui.screen.Screen;
-import io.jmix.ui.screen.StandardOutcome;
-import io.jmix.ui.screen.Subscribe;
-import io.jmix.ui.screen.Target;
-import io.jmix.ui.screen.UiController;
-import io.jmix.ui.screen.UiDescriptor;
+import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -58,7 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@UiController("dynattr_AttributeEnumerationScreen")
+@UiController("dynat_AttributeEnumerationScreen")
 @UiDescriptor("attribute-enumeration-screen.xml")
 @DialogMode(forceDialog = true)
 public class AttributeEnumerationScreen extends Screen {

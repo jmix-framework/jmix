@@ -23,12 +23,12 @@ import io.jmix.core.Metadata
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
 import io.jmix.data.entity.ReferenceToEntity
-import io.jmix.eclipselink.EclipselinkConfiguration
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
 import io.jmix.dynattr.DynAttrMetadata
 import io.jmix.dynattr.DynAttrQueryHints
 import io.jmix.dynattr.model.CategoryAttribute
+import io.jmix.eclipselink.EclipselinkConfiguration
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
@@ -123,9 +123,9 @@ class DynamicAttributesTest extends Specification {
 
     void cleanup() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource)
-        jdbcTemplate.update('delete from SYS_ATTR_VALUE')
-        jdbcTemplate.update('delete from SYS_CATEGORY_ATTR')
-        jdbcTemplate.update('delete from SYS_CATEGORY')
+        jdbcTemplate.update('delete from DYNAT_ATTR_VALUE')
+        jdbcTemplate.update('delete from DYNAT_CATEGORY_ATTR')
+        jdbcTemplate.update('delete from DYNAT_CATEGORY')
         jdbcTemplate.update('delete from DYNATTR_GROUP')
         jdbcTemplate.update('delete from DYNATTR_USER_ROLE')
         jdbcTemplate.update('delete from DYNATTR_ROLE')

@@ -37,7 +37,7 @@ import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@UiController("sys_Category.browse")
+@UiController("dynat_Category.browse")
 @UiDescriptor("category-browse.xml")
 @LookupComponent("categoriesTable")
 public class CategoryBrowse extends StandardLookup<Category> {

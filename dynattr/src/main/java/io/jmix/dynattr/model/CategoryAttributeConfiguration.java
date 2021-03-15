@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-@JmixEntity(name = "sys_CategoryAttributeConfiguration")
+@JmixEntity(name = "dynat_CategoryAttributeConfiguration")
 @SystemLevel
 public class CategoryAttributeConfiguration implements Serializable {
     private static final long serialVersionUID = 2670605418267938507L;

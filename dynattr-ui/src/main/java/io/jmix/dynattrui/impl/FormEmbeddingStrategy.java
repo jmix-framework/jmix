@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
-@org.springframework.stereotype.Component("dynattr_FormEmbeddingStrategy")
+@org.springframework.stereotype.Component("dynat_FormEmbeddingStrategy")
 public class FormEmbeddingStrategy extends BaseEmbeddingStrategy {
 
     protected UiComponentsGenerator uiComponentsGenerator;

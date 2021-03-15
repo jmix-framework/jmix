@@ -48,7 +48,7 @@ import java.util.stream.Stream;
 import static io.jmix.core.entity.EntitySystemAccess.*;
 
 //TODO: take into account category
-@Component("dynattr_DynamicModelManager")
+@Component("dynat_DynamicModelManager")
 public class DynAttrManagerImpl implements DynAttrManager {
     public static final int MAX_ENTITIES_FOR_ATTRIBUTE_VALUES_BATCH = 100;
 
@@ -311,13 +311,13 @@ public class DynAttrManagerImpl implements DynAttrManager {
         List<CategoryAttributeValue> result;
         if (metadataTools.hasUuid(metaClass)) {
             result = entityManager.createQuery(
-                    String.format("select v from sys_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
+                    String.format("select v from dynat_CategoryAttributeValue v where v.entity.%s in :ids and v.parent is null",
                             referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                     .getResultList();
         } else {
-            result = entityManager.createQuery(String.format("select v from sys_CategoryAttributeValue v where v.entity.%s in :ids " +
+            result = entityManager.createQuery(String.format("select v from dynat_CategoryAttributeValue v where v.entity.%s in :ids " +
                             "and v.categoryAttribute.categoryEntityType = :entityType and v.parent is null",
                     referenceToEntitySupport.getReferenceIdPropertyName(metaClass)), CategoryAttributeValue.class)
                     .setParameter("ids", entityIds)
@@ -399,7 +399,7 @@ public class DynAttrManagerImpl implements DynAttrManager {
                         builder -> builder.addFetchPlan(FetchPlan.LOCAL).add("category"))
                 .build();
 
-        return entityManager.createQuery("select v from sys_CategoryAttributeValue v where v.id in :ids", CategoryAttributeValue.class)
+        return entityManager.createQuery("select v from dynat_CategoryAttributeValue v where v.id in :ids", CategoryAttributeValue.class)
                 .setParameter("ids", ids)
                 .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                 .getResultList();

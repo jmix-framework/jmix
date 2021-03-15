@@ -44,8 +44,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 @JmixEntity
-@Entity(name = "sys_CategoryAttribute")
-@Table(name = "SYS_CATEGORY_ATTR")
+@Entity(name = "dynat_CategoryAttribute")
+@Table(name = "DYNAT_CATEGORY_ATTR")
 @SystemLevel
 public class CategoryAttribute implements Serializable {
     private static final long serialVersionUID = -6959392628534815752L;

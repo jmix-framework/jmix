@@ -62,7 +62,7 @@ import static io.jmix.dynattr.AttributeType.*;
 import static io.jmix.dynattr.OptionsLoaderType.*;
 import static java.lang.String.format;
 
-@UiController("sys_CategoryAttribute.edit")
+@UiController("dynat_CategoryAttribute.edit")
 @UiDescriptor("category-attrs-edit.xml")
 @EditedEntityContainer("categoryAttributeDc")
 @DialogMode(forceDialog = true)
@@ -518,7 +518,7 @@ public class CategoryAttrsEdit extends StandardEditor<CategoryAttribute> {
                 && !getEditedEntity().getConfiguration().getDependsOnAttributeCodes().isEmpty()) {
             dependsOnAttributesField.setValue(
                     dataManager.load(CategoryAttribute.class)
-                            .query("select e from sys_CategoryAttribute e where e.code in (:codes)")
+                            .query("select e from dynat_CategoryAttribute e where e.code in (:codes)")
                             .parameter("codes", String.join(",", getEditedEntity().getConfiguration().getDependsOnAttributeCodes()))
                             .list()
             );

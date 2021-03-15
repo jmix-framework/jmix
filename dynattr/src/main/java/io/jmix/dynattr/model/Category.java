@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@javax.persistence.Entity(name = "sys_Category")
-@Table(name = "SYS_CATEGORY")
+@javax.persistence.Entity(name = "dynat_Category")
+@Table(name = "DYNAT_CATEGORY")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.INTEGER)
 @DiscriminatorValue("0")

@@ -41,7 +41,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component("dynattr_DynAttrMetadata")
+@Component("dynat_DynAttrMetadata")
 public class DynAttrMetadataImpl implements DynAttrMetadata {
 
     @Autowired
@@ -123,7 +123,7 @@ public class DynAttrMetadataImpl implements DynAttrMetadata {
                     })
                     .build();
 
-            return entityManager.createQuery("select c from sys_Category c where c.entityType = :entityType", Category.class)
+            return entityManager.createQuery("select c from dynat_Category c where c.entityType = :entityType", Category.class)
                     .setParameter("entityType", entityName)
                     .setHint(PersistenceHints.FETCH_PLAN, fetchPlan)
                     .getResultList().stream()

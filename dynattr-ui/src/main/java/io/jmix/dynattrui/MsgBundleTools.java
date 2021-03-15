@@ -23,9 +23,9 @@ import com.google.common.collect.Maps;
 import io.jmix.core.LocaleResolver;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.security.CurrentAuthentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Internal
-@Component("dynattr_MsgBundleTools")
+@Component("dynat_MsgBundleTools")
 public final class MsgBundleTools {
 
     @Autowired

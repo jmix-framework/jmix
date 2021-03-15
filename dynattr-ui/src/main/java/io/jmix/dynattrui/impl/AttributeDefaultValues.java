@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("dynattr_AttributeDefaultValues")
+@Component("dynat_AttributeDefaultValues")
 public class AttributeDefaultValues {
     @Autowired
     protected Metadata metadata;

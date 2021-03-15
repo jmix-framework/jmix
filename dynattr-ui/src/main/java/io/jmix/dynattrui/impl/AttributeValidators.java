@@ -16,17 +16,17 @@
 
 package io.jmix.dynattrui.impl;
 
-import org.springframework.context.ApplicationContext;
 import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.ui.component.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Component("dynattr_AttributeValidators")
+@Component("dynat_AttributeValidators")
 public class AttributeValidators {
 
     @Autowired

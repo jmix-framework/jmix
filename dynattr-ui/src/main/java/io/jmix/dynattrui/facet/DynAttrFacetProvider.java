@@ -26,7 +26,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Internal
-@org.springframework.stereotype.Component("dynattr_DynamicAttributeFacetProvider")
+@org.springframework.stereotype.Component("dynat_DynamicAttributeFacetProvider")
 public class DynAttrFacetProvider implements FacetProvider<DynAttrFacet> {
 
     @Autowired

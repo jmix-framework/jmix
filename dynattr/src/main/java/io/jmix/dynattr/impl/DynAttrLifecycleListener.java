@@ -33,7 +33,7 @@ import java.util.Objects;
 
 import static io.jmix.core.entity.EntitySystemAccess.*;
 
-@Component("dynattr_DynAttrLifecycleListener")
+@Component("dynat_DynAttrLifecycleListener")
 public class DynAttrLifecycleListener implements DataStoreEventListener, DataStoreCustomizer {
 
     @Autowired

@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component("dynattr_AttributeDependencies")
+@Component("dynat_AttributeDependencies")
 public class AttributeDependencies {
 
     @Autowired

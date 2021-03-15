@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.UUID;
 
 @JmixEntity
-@javax.persistence.Entity(name = "sys_CategoryAttributeValue")
-@Table(name = "SYS_ATTR_VALUE")
+@javax.persistence.Entity(name = "dynat_CategoryAttributeValue")
+@Table(name = "DYNAT_ATTR_VALUE")
 @SystemLevel
 public class CategoryAttributeValue implements Serializable {
     private static final long serialVersionUID = -2861790889151226985L;

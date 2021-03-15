@@ -24,7 +24,7 @@ import io.jmix.core.metamodel.annotation.JmixProperty;
 import javax.persistence.Id;
 import java.util.UUID;
 
-@JmixEntity(name = "sys_AttributeLocalizedValue")
+@JmixEntity(name = "dynat_AttributeLocalizedValue")
 @SystemLevel
 public class AttributeLocalizedValue {
 

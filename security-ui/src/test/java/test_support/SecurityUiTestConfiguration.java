@@ -28,6 +28,7 @@ import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.impl.liquibase.JmixLiquibase;
 import io.jmix.data.impl.liquibase.LiquibaseChangeLogProcessor;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
 import liquibase.integration.spring.SpringLiquibase;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -35,14 +36,12 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -52,6 +51,7 @@ import java.util.Collections;
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 //@JmixModule(dependsOn = {JmixSecurityConfiguration.class, JmixDataConfiguration.class})
+@Import(SecurityUiTestConfiguration.TestStandardSecurityConfiguration.class)
 public class SecurityUiTestConfiguration {
 
     @Bean
@@ -114,5 +114,9 @@ public class SecurityUiTestConfiguration {
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
         uiControllers.setBasePackages(Collections.singletonList("test_support"));
         return uiControllers;
+    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }
 }

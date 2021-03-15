@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2019 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.securitydata;
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
-import io.jmix.security.SecurityConfiguration;
-import io.jmix.securitydata.SecurityDataConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+group = 'io.jmix.security'
+archivesBaseName = 'jmix-security-oauth2'
 
-@Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class,
-        SecurityDataConfiguration.class})
-public class SecurityDataAutoConfiguration {
+dependencies {
+    api platform("io.jmix.bom:jmix-bom:$bomVersion")
+
+    api 'io.jmix.core:jmix-core'
+    api project(':security')
 }

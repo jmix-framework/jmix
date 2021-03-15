@@ -17,18 +17,113 @@
 package io.jmix.security;
 
 import io.jmix.core.CoreConfiguration;
+import io.jmix.core.CoreProperties;
 import io.jmix.core.annotation.JmixModule;
+import io.jmix.core.rememberme.JmixRememberMeServices;
+import io.jmix.core.rememberme.RememberMeProperties;
+import io.jmix.core.security.UserRepository;
+import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
+import io.jmix.core.session.SessionProperties;
+import io.jmix.security.constraint.SecurityConstraintsRegistration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.session.CompositeSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices.DEFAULT_PARAMETER;
 
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
 @JmixModule(dependsOn = CoreConfiguration.class)
 @PropertySource(name = "io.jmix.security", value = "classpath:/io/jmix/security/module.properties")
-@Import(StandardSecurityConfiguration.class)
 public class SecurityConfiguration {
+
+    @Autowired
+    private CoreProperties coreProperties;
+
+    @Autowired
+    private SessionProperties sessionProperties;
+
+    @Autowired
+    private RememberMeProperties rememberMeProperties;
+
+    @Autowired
+    private PersistentTokenRepository rememberMeTokenRepository;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Bean(name = "sec_PasswordEncoder")
+    public PasswordEncoder getPasswordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Bean(name = "sec_SecurityConstraintsRegistration")
+    public SecurityConstraintsRegistration constraintsRegistration() {
+        return new SecurityConstraintsRegistration();
+    }
+
+    @Bean
+    protected PersistentTokenRepository inMemoryRememberMeRepository() {
+        return new InMemoryTokenRepositoryImpl();
+    }
+
+
+    @Bean("sec_rememberMeServices")
+    protected RememberMeServices rememberMeServices() {
+        JmixRememberMeServices rememberMeServices =
+                new JmixRememberMeServices(rememberMeProperties.getKey(), userRepository, rememberMeTokenRepository);
+        rememberMeServices.setTokenValiditySeconds(rememberMeProperties.getTokenValiditySeconds());
+        rememberMeServices.setParameter(DEFAULT_PARAMETER);
+        return rememberMeServices;
+    }
+
+    @Primary
+    @Bean
+    protected SessionAuthenticationStrategy sessionControlAuthenticationStrategy() {
+        return new CompositeSessionAuthenticationStrategy(strategies());
+    }
+
+    protected List<SessionAuthenticationStrategy> strategies() {
+        RegisterSessionAuthenticationStrategy registerSessionAuthenticationStrategy
+                = new RegisterSessionAuthenticationStrategy(sessionRegistry);
+        ConcurrentSessionControlAuthenticationStrategy concurrentSessionControlStrategy
+                = new ConcurrentSessionControlAuthenticationStrategy(sessionRegistry);
+        concurrentSessionControlStrategy.setMaximumSessions(sessionProperties.getMaximumSessionsPerUser());
+
+        List<SessionAuthenticationStrategy> strategies = new LinkedList<>();
+
+        strategies.add(registerSessionAuthenticationStrategy);
+        strategies.add(concurrentSessionControlStrategy);
+        strategies.add(jmixSessionAuthenticationStrategy());
+        return strategies;
+    }
+
+    @Bean
+    protected SessionAuthenticationStrategy jmixSessionAuthenticationStrategy() {
+        return new JmixSessionAuthenticationStrategy();
+    }
+
+    @Bean(name = "sec_SessionRegistry")
+    protected SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
 }

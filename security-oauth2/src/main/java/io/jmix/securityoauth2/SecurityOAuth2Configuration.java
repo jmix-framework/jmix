@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.securitydata;
+package io.jmix.securityoauth2;
 
+import com.sun.org.apache.xerces.internal.parsers.SecurityConfiguration;
 import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
-import io.jmix.security.SecurityConfiguration;
-import io.jmix.securitydata.SecurityDataConfiguration;
+import io.jmix.core.annotation.JmixModule;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+
 
 @Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class,
-        SecurityDataConfiguration.class})
-public class SecurityDataAutoConfiguration {
+@JmixModule(dependsOn = {CoreConfiguration.class, SecurityConfiguration.class})
+@ComponentScan
+@ConfigurationPropertiesScan
+@PropertySource(name = "jmix.security", value = "classpath:/io/jmix/securityoauth2/module.properties")
+public class SecurityOAuth2Configuration {
 }

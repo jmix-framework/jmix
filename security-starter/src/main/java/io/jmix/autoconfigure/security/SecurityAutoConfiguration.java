@@ -18,10 +18,19 @@ package io.jmix.autoconfigure.security;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @Import({CoreConfiguration.class, SecurityConfiguration.class})
 public class SecurityAutoConfiguration {
+
+    @EnableWebSecurity
+    @ConditionalOnMissingBean(StandardSecurityConfiguration.class)
+    public static class DefaultStandardSecurityConfiguration extends StandardSecurityConfiguration {
+
+    }
 }

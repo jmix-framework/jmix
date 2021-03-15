@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.autoconfigure.securitydata;
+@Internal
+package io.jmix.securityoauth2.impl;
 
-import io.jmix.core.CoreConfiguration;
-import io.jmix.data.DataConfiguration;
-import io.jmix.security.SecurityConfiguration;
-import io.jmix.securitydata.SecurityDataConfiguration;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-
-@Configuration
-@Import({CoreConfiguration.class, DataConfiguration.class, SecurityConfiguration.class,
-        SecurityDataConfiguration.class})
-public class SecurityDataAutoConfiguration {
-}
+import io.jmix.core.annotation.Internal;

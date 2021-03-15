@@ -69,6 +69,7 @@ public class OAuthTokenFT {
     @LocalServerPort
     private int port;
 
+    private String oauthUrl;
     private String baseUrl;
 
     @Autowired
@@ -89,7 +90,9 @@ public class OAuthTokenFT {
 
         userRepository.addUser(admin);
 
+        oauthUrl = "http://localhost:" + port + "/";
         baseUrl = "http://localhost:" + port + "/rest";
+
     }
 
     @AfterEach
@@ -99,13 +102,13 @@ public class OAuthTokenFT {
 
     @Test
     public void getToken() throws IOException {
-        String token = getAuthToken(baseUrl, "admin", "admin123");
+        String token = getAuthToken(oauthUrl, "admin", "admin123");
         assertNotNull(token);
     }
 
     @Test
     public void requestTokenWithoutAuthentication() throws Exception {
-        String uri = baseUrl + "/oauth/token";
+        String uri = oauthUrl + "/oauth/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(uri);
@@ -127,7 +130,7 @@ public class OAuthTokenFT {
 
     @Test
     public void requestTokenWithInvalidClientCredentials() throws Exception {
-        String uri = baseUrl + "/oauth/token";
+        String uri = oauthUrl + "/oauth/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString(("invalidClient:invalidPassword").getBytes());
@@ -151,7 +154,7 @@ public class OAuthTokenFT {
 
     @Test
     public void requestTokenWithInvalidUserCredentials() throws Exception {
-        String uri = baseUrl + "/oauth/token";
+        String uri = oauthUrl + "/oauth/token";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString(("cuba:cuba").getBytes());
@@ -175,13 +178,13 @@ public class OAuthTokenFT {
 
     @Test
     public void revokeToken() throws Exception {
-        String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
+        String oauthToken = getAuthToken(oauthUrl, "admin", "admin123");
         String resourceUrl = baseUrl + "/entities/ref_Car";
         try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
             assertEquals(SC_OK, statusCode(response));
         }
 
-        String revokeUrl = baseUrl + "/oauth/revoke";
+        String revokeUrl = oauthUrl + "/oauth/revoke";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         String encoding = Base64.getEncoder().encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());
@@ -205,13 +208,13 @@ public class OAuthTokenFT {
 
     @Test
     public void revokeTokenWithoutAuthorization() throws Exception {
-        String oauthToken = getAuthToken(baseUrl, "admin", "admin123");
+        String oauthToken = getAuthToken(oauthUrl, "admin", "admin123");
         String resourceUrl = baseUrl + "/entities/ref_Car";
         try (CloseableHttpResponse response = sendGet(resourceUrl, oauthToken, null)) {
             assertEquals(SC_OK, statusCode(response));
         }
 
-        String revokeUrl = baseUrl + "/oauth/revoke";
+        String revokeUrl = oauthUrl + "/oauth/revoke";
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost httpPostRevoke = new HttpPost(revokeUrl);

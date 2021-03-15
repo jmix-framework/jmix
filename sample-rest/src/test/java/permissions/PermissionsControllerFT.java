@@ -60,7 +60,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
 
         userRepository.addUser(user);
 
-        oauthToken = getAuthToken(baseUrl, userLogin, userPassword);
+        oauthToken = getAuthToken(oauthUrl, userLogin, userPassword);
     }
 
     @AfterEach

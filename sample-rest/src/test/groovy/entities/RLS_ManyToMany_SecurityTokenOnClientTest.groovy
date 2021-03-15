@@ -71,7 +71,7 @@ class RLS_ManyToMany_SecurityTokenOnClientTest extends RestSpec {
         createPlantModelLink(sql, plantId, model3Id)
         createPlantModelLink(sql, plantId, model5Id)
 
-        userToken = getAuthToken(baseUrl, userLogin, userPassword)
+        userToken = getAuthToken(oauthUrl, userLogin, userPassword)
     }
 
     void cleanup() {

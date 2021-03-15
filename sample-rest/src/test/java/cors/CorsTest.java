@@ -77,7 +77,7 @@ public class CorsTest extends AbstractRestControllerFT {
         params.add("username", username);
         params.add("password", password);
 
-        ResultActions result = mockMvc.perform(post("/rest/oauth/token")
+        ResultActions result = mockMvc.perform(post("/oauth/token")
                 .params(params)
                 .with(httpBasic("client", "secret"))
                 .accept("application/json;charset=UTF-8"))

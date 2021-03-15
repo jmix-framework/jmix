@@ -39,7 +39,6 @@ dependencies {
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
     implementation'com.google.code.gson:gson'
-    implementation 'org.springframework.security.oauth:spring-security-oauth2'
     implementation 'io.swagger:swagger-models'
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2' // TODO move to BOM

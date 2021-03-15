@@ -68,6 +68,7 @@ class RestSpec extends Specification {
     String userLogin = "admin"
     String userToken
     String baseUrl
+    String oauthUrl
     UserDetails admin
 
     void setup() {
@@ -80,9 +81,11 @@ class RestSpec extends Specification {
         userRepository.addUser(admin)
 
         baseUrl = "http://localhost:" + port + "/rest"
+        oauthUrl = "http://localhost:" + port
+
         RestSpecsUtils.setBasePort(port)
 
-        userToken = getAuthToken(baseUrl, userLogin, userPassword)
+        userToken = getAuthToken(oauthUrl, userLogin, userPassword)
 
         sql = getSql() as Sql
 

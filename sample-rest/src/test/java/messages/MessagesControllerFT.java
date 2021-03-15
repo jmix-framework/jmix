@@ -81,14 +81,14 @@ public class MessagesControllerFT extends AbstractRestControllerFT {
     public void testLocalizationUsingLocaleFromLogin() throws Exception {
         String url = baseUrl + "/messages/entities/sec$User";
 
-        String ruToken = getAuthToken(baseUrl, "admin", "admin123", Collections.singletonMap("Accept-Language", "ru"));
+        String ruToken = getAuthToken(oauthUrl, "admin", "admin123", Collections.singletonMap("Accept-Language", "ru"));
         try (CloseableHttpResponse response = sendGetWithHeaders(url, ruToken, null, Collections.emptyMap())) {
             ReadContext ctx = parseResponse(response);
             assertEquals("Пользователь", ctx.read("$['sec$User']"));
             assertEquals("Логин", ctx.read("$['sec$User.login']"));
         }
 
-        String enToken = getAuthToken(baseUrl, "admin", "admin123", Collections.singletonMap("Accept-Language", "en"));
+        String enToken = getAuthToken(oauthUrl, "admin", "admin123", Collections.singletonMap("Accept-Language", "en"));
         try (CloseableHttpResponse response = sendGetWithHeaders(url, enToken, null, Collections.emptyMap())) {
             ReadContext ctx = parseResponse(response);
             assertEquals("User", ctx.read("$['sec$User']"));

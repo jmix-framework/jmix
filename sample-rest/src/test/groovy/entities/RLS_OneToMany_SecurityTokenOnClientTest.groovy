@@ -66,7 +66,7 @@ class RLS_OneToMany_SecurityTokenOnClientTest extends RestSpec {
 
         case4Id = dirtyData.createInsuranceCaseUuid()
 
-        userToken = getAuthToken(baseUrl, userLogin, userPassword)
+        userToken = getAuthToken(oauthUrl, userLogin, userPassword)
     }
 
     void cleanup() {

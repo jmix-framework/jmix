@@ -20,8 +20,8 @@ import io.jmix.core.CoreConfiguration;
 import io.jmix.core.DataManager;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.data.DataConfiguration;
-import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.dynattr.DynAttrMetadata;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.rest.RestConfiguration;
 import io.jmix.samples.rest.SampleRestApplication;
 import io.jmix.samples.rest.security.FullAccessRole;
@@ -83,6 +83,7 @@ public abstract class AbstractRestControllerFT {
     protected DataSet dirtyData = new DataSet();
     protected String oauthToken;
     protected String baseUrl;
+    protected String oauthUrl;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -94,9 +95,10 @@ public abstract class AbstractRestControllerFT {
 
         userRepository.addUser(admin);
 
+        oauthUrl = "http://localhost:" + port + "/";
         baseUrl = "http://localhost:" + port + "/rest";
 
-        oauthToken = getAuthToken(baseUrl, "admin", "admin123");
+        oauthToken = getAuthToken(oauthUrl, "admin", "admin123");
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
         conn = DriverManager.getConnection(DB_URL, "sa", "");
         prepareDb();

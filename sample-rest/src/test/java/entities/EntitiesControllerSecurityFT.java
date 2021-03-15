@@ -99,11 +99,11 @@ class EntitiesControllerSecurityFT extends AbstractRestControllerFT {
 
         createUsers();
 
-        colorReadUserToken = getAuthToken(baseUrl, colorReadUserLogin, colorReadUserPassword);
-        colorUpdateUserToken = getAuthToken(baseUrl, colorUpdateUserLogin, colorUpdateUserPassword);
-        colorCreateUserToken = getAuthToken(baseUrl, colorCreateUserLogin, colorCreateUserPassword);
-        colorDeleteUserToken = getAuthToken(baseUrl, colorDeleteUserLogin, colorDeleteUserPassword);
-        carReadUserToken = getAuthToken(baseUrl, carReadUserLogin, carReadUserPassword);
+        colorReadUserToken = getAuthToken(oauthUrl, colorReadUserLogin, colorReadUserPassword);
+        colorUpdateUserToken = getAuthToken(oauthUrl, colorUpdateUserLogin, colorUpdateUserPassword);
+        colorCreateUserToken = getAuthToken(oauthUrl, colorCreateUserLogin, colorCreateUserPassword);
+        colorDeleteUserToken = getAuthToken(oauthUrl, colorDeleteUserLogin, colorDeleteUserPassword);
+        carReadUserToken = getAuthToken(oauthUrl, carReadUserLogin, carReadUserPassword);
     }
 
     @AfterEach

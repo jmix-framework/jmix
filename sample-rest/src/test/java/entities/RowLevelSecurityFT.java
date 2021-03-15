@@ -68,7 +68,7 @@ public class RowLevelSecurityFT extends AbstractRestControllerFT {
         prepareDb();
         createUsers();
 
-        userToken = getAuthToken(baseUrl, userLogin, userPassword);
+        userToken = getAuthToken(oauthUrl, userLogin, userPassword);
     }
 
     @AfterEach

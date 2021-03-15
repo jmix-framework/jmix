@@ -18,28 +18,10 @@ package io.jmix.autoconfigure.rest;
 
 import io.jmix.core.CoreConfiguration;
 import io.jmix.rest.RestConfiguration;
-import io.jmix.rest.security.oauth.UniqueAuthenticationKeyGenerator;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @Import({CoreConfiguration.class, RestConfiguration.class})
 public class RestAutoConfiguration {
-
-    @Bean(name = "rest_tokenStore")
-    @ConditionalOnMissingBean(TokenStore.class)
-    protected TokenStore tokenStore() {
-        InMemoryTokenStore tokenStore = new InMemoryTokenStore();
-        tokenStore.setAuthenticationKeyGenerator(authenticationKeyGenerator());
-        return tokenStore;
-    }
-
-    @Bean
-    protected UniqueAuthenticationKeyGenerator authenticationKeyGenerator() {
-        return new UniqueAuthenticationKeyGenerator();
-    }
 }

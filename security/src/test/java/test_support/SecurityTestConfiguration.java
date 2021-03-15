@@ -23,20 +23,23 @@ import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @PropertySource("classpath:/test_support/test-app.properties")
 @JmixModule(dependsOn = {SecurityConfiguration.class})
+@Import(SecurityTestConfiguration.TestStandardSecurityConfiguration.class)
 public class SecurityTestConfiguration {
-
     @Bean
     public UserRepository userRepository() {
         return new InMemoryUserRepository();
@@ -55,5 +58,9 @@ public class SecurityTestConfiguration {
     @Bean
     public CacheManager cacheManager() {
         return new ConcurrentMapCacheManager();
+    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }
 }

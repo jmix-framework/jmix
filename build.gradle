@@ -173,9 +173,11 @@ dependencies {
         api "io.jmix.security:jmix-security:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-ui:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-data:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-oauth2:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-starter:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-ui-starter:${snapshotOr(securityVersion)}"
         api "io.jmix.security:jmix-security-data-starter:${snapshotOr(securityVersion)}"
+        api "io.jmix.security:jmix-security-oauth2-starter:${snapshotOr(securityVersion)}"
 
         api "io.jmix.sessions:jmix-sessions:${snapshotOr(sessionsVersion)}"
         api "io.jmix.sessions:jmix-sessions-starter:${snapshotOr(sessionsVersion)}"

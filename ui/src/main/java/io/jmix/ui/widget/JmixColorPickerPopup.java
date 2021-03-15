@@ -31,6 +31,30 @@ public class JmixColorPickerPopup extends ColorPickerPopup {
         super(initialColor);
     }
 
+    public void setJTestIds(String colorPickerPrefix) {
+        setJTestId(colorPickerPrefix + "_colorPickerPopup");
+
+        ok.setJTestId(colorPickerPrefix + "_ok");
+        cancel.setJTestId(colorPickerPrefix + "_cancel");
+        resize.setJTestId(colorPickerPrefix + "_resize");
+
+        redSlider.setJTestId(colorPickerPrefix + "_redSlider");
+        greenSlider.setJTestId(colorPickerPrefix + "_greenSlider");
+        blueSlider.setJTestId(colorPickerPrefix + "_blueSlider");
+        hueSlider.setJTestId(colorPickerPrefix + "_hueSlider");
+        saturationSlider.setJTestId(colorPickerPrefix + "_saturationSlider");
+        valueSlider.setJTestId(colorPickerPrefix + "_valueSlider");
+
+        rgbPreview.setJTestId(colorPickerPrefix + "_rgbPreview");
+        rgbPreview.getField().setJTestId(colorPickerPrefix + "_rgbPreview_textField");
+        hsvPreview.setJTestId(colorPickerPrefix + "_hsvPreview");
+        hsvPreview.getField().setJTestId(colorPickerPrefix + "_hsvPreview_textField");
+        selPreview.setJTestId(colorPickerPrefix + "_selPreview");
+        selPreview.getField().setJTestId(colorPickerPrefix + "_selPreview_textField");
+
+        colorSelect.setJTestId(colorPickerPrefix + "_colorSelect");
+    }
+
     @Override
     protected VerticalLayout createHistoryOuterContainer(VerticalLayout innerContainer) {
         innerContainer.setMargin(false);

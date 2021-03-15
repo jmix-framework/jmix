@@ -61,6 +61,15 @@ public class JmixColorPicker extends ColorPicker implements Component.Focusable 
     }
 
     @Override
+    public void setJTestId(String jTestId) {
+        super.setJTestId(jTestId);
+
+        if (window instanceof JmixColorPickerPopup) {
+            ((JmixColorPickerPopup) window).setJTestIds(jTestId);
+        }
+    }
+
+    @Override
     protected ValueChangeListener<Color> createColorValueChangeListener() {
         return event -> {
             setValue(event.getValue(), true);
@@ -80,7 +89,7 @@ public class JmixColorPicker extends ColorPicker implements Component.Focusable 
     @Override
     public void setValue(Color color) {
         if (color == null) {
-            color = new Color(0,0,0);
+            color = new Color(0, 0, 0);
         }
         super.setValue(color);
     }

@@ -33,10 +33,7 @@ public class SecurityOAuth2Properties {
     private final String[] clientAuthorizedGrantTypes;
     private final boolean supportRefreshToken;
     private final boolean reuseRefreshToken;
-    boolean standardAuthenticationEnabled;
-    List<String> standardAuthenticationUsers;
-    boolean tokenMaskingEnabled;
-    List<String> externalRestBypassPatterns;
+    private final boolean tokenMaskingEnabled;
 
     public SecurityOAuth2Properties(
             @DefaultValue("client") String clientId,
@@ -46,10 +43,7 @@ public class SecurityOAuth2Properties {
             @DefaultValue({"password", "external", "refresh_token"}) String[] clientAuthorizedGrantTypes,
             @DefaultValue("true") boolean supportRefreshToken,
             @DefaultValue("true") boolean reuseRefreshToken,
-            @DefaultValue("true") boolean standardAuthenticationEnabled,
-            List<String> standardAuthenticationUsers,
-            @DefaultValue("true") boolean tokenMaskingEnabled,
-            List<String> externalRestBypassPatterns) {
+            @DefaultValue("true") boolean tokenMaskingEnabled) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientTokenExpirationTimeSec = clientTokenExpirationTimeSec;
@@ -57,10 +51,7 @@ public class SecurityOAuth2Properties {
         this.clientAuthorizedGrantTypes = clientAuthorizedGrantTypes;
         this.supportRefreshToken = supportRefreshToken;
         this.reuseRefreshToken = reuseRefreshToken;
-        this.standardAuthenticationEnabled = standardAuthenticationEnabled;
-        this.standardAuthenticationUsers = standardAuthenticationUsers;
         this.tokenMaskingEnabled = tokenMaskingEnabled;
-        this.externalRestBypassPatterns = externalRestBypassPatterns;
     }
 
     /**
@@ -75,34 +66,10 @@ public class SecurityOAuth2Properties {
     }
 
     /**
-     * @return list of users that are not allowed to use external authentication. They can use only standard
-     * authentication. Empty list means that everyone is allowed to login using external authentication.
-     */
-    public List<String> getStandardAuthenticationUsers() {
-        return standardAuthenticationUsers;
-    }
-
-    /**
      * @return token masking in application logs is enabled
      */
     public boolean isTokenMaskingEnabled() {
         return tokenMaskingEnabled;
-    }
-
-    /**
-     * Application components can use this property to set URL patterns to bypass by REST API.
-     * <p>
-     * Patterns are trailing sub-paths of REST API base mapping: {@code /rest/v2} starting with "/".
-     * <p>
-     * Example for IDP REST Auth to bypass all {@code /rest/v2/idp/**} requests:
-     * <pre>
-     *    cuba.web.externalRestBypassPatterns = +/idp/,
-     * </pre>
-     *
-     * @return Comma-separated list with trailing comma of patterns for REST {@link RequestMatcher} to bypass.
-     */
-    public List<String> getExternalRestBypassPatterns() {
-        return externalRestBypassPatterns;
     }
 
     /**

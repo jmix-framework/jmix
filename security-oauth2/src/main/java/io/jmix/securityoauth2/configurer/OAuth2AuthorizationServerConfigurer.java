@@ -179,7 +179,7 @@ public class OAuth2AuthorizationServerConfigurer extends WebSecurityConfigurerAd
                     .withClient(properties.getClientId())
                     .secret(properties.getClientSecret())
                     .authorizedGrantTypes(properties.getClientAuthorizedGrantTypes())
-                    .accessTokenValiditySeconds(properties.getClientRefreshTokenExpirationTimeSec())
+                    .accessTokenValiditySeconds(properties.getClientTokenExpirationTimeSec())
                     .refreshTokenValiditySeconds(properties.getClientRefreshTokenExpirationTimeSec())
                     .scopes("api")
                     .and()

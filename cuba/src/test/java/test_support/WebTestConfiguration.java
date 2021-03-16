@@ -42,6 +42,7 @@ import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
@@ -57,6 +58,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -68,6 +70,7 @@ import javax.sql.DataSource;
         DataConfiguration.class, EclipselinkConfiguration.class,
         UiConfiguration.class, UiDataConfiguration.class,
         SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
+        WebTestConfiguration.TestStandardSecurityConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class,
         LocalFileStorageConfiguration.class,
         DatatoolsConfiguration.class, DatatoolsUiConfiguration.class,
@@ -152,4 +155,8 @@ public class WebTestConfiguration {
 //    DataLoadCoordinatorFacetProvider dataLoadCoordinatorFacetProvider() {
 //        return new CubaDataLoadCoordinatorFacetProvider(); // this is normally done in CubaAutoConfiguration
 //    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
+    }
 }

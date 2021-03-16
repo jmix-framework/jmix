@@ -19,8 +19,12 @@ package io.jmix.searchui;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
+import io.jmix.searchui.component.SearchField;
+import io.jmix.searchui.component.SearchFieldLoader;
 import io.jmix.ui.UiConfiguration;
 import io.jmix.ui.sys.UiControllersConfiguration;
+import io.jmix.ui.sys.registration.ComponentRegistration;
+import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -46,5 +50,13 @@ public class SearchUiConfiguration {
                 = new UiControllersConfiguration(applicationContext, metadataReaderFactory);
         uiControllers.setBasePackages(Collections.singletonList("io.jmix.searchui"));
         return uiControllers;
+    }
+
+    @Bean
+    public ComponentRegistration searchField() {
+        return ComponentRegistrationBuilder.create(SearchField.NAME)
+                .withComponentClass(SearchField.class)
+                .withComponentLoaderClass(SearchFieldLoader.class)
+                .build();
     }
 }

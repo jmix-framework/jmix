@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Haulmont.
+ * Copyright 2021 Haulmont.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,42 +14,35 @@
  * limitations under the License.
  */
 
-package io.jmix.searchui.screen.entitysearcher;
+package io.jmix.searchui.screen.result;
 
 import com.google.common.collect.EvictingQueue;
 import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.SearchManager;
 import io.jmix.search.SearchProperties;
 import io.jmix.search.SearchService;
+import io.jmix.search.SearchService.SearchResult;
 import io.jmix.search.utils.PropertyTools;
-import io.jmix.searchui.SearchLauncher;
-import io.jmix.searchui.component.SearchField;
-import io.jmix.ui.*;
-import io.jmix.ui.action.Action;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
 import io.jmix.ui.screen.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static io.jmix.search.SearchService.*;
 import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 
-@UiController("entitySearcher.browser")
-@UiDescriptor("entity-searcher-browser.xml")
-public class EntitySearcherBrowser extends Screen {
+@UiController(SearchResultsScreen.SCREEN_ID)
+@UiDescriptor("search-results.xml")
+public class SearchResultsScreen extends Screen {
 
-    private static final Logger log = LoggerFactory.getLogger(EntitySearcherBrowser.class);
+    public static final String SCREEN_ID = "searchResultsScreen";
 
-    @Autowired
-    protected SearchService searchService;
-    @Autowired
-    protected SearchManager searchManager;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -67,15 +60,31 @@ public class EntitySearcherBrowser extends Screen {
     @Autowired
     protected PropertyTools propertyTools;
 
-    /*@Autowired
-    protected TextField<String> searchInput;
     @Autowired
     protected ScrollBoxLayout contentBox;
     @Autowired
-    protected HBoxLayout navigationBox;*/
+    protected HBoxLayout navigationBox;
 
-    protected Page currentPage;
-    protected Queue<Page> pages;
+
+    protected SearchResultsScreen.Page currentPage;
+    protected Queue<SearchResultsScreen.Page> pages;
+
+    @Subscribe
+    public void onAfterInit(AfterInitEvent event) {
+        Map<String, Object> params = new HashMap<>(0);
+        ScreenOptions options = event.getOptions();
+        if (options instanceof MapScreenOptions) {
+            params = ((MapScreenOptions) options).getParams();
+        }
+
+        SearchResult searchResult = (SearchResult) params.get("searchResult");
+        if (searchResult == null) {
+            throw new RuntimeException("Search result not found");
+        }
+
+        initScreenCaption(searchResult);
+        handleSearchResult(searchResult);
+    }
 
     protected static class Page {
         protected int pageNumber;
@@ -112,29 +121,26 @@ public class EntitySearcherBrowser extends Screen {
     }
 
 
-    /*@Subscribe("performSearchAction")
-    public void onPerformSearchAction(Action.ActionPerformedEvent event) {
-        String searchTerm = searchField.getValue();
-        log.debug("[IVGA] onPerformSearchAction with term '{}", searchTerm);
-        *//*if(StringUtils.isNotBlank(searchTerm)) {
-            searchTerm = searchTerm.trim();
-            SearchResult searchResult = searchService.search(searchTerm);
-            initSearchResults(searchResult);
-        }*//*
-
-        searchLauncher.search(this, searchTerm);
-    }*/
-
-    @Subscribe("reindexAllAction")
-    public void onReindexAllAction(Action.ActionPerformedEvent event) {
-        searchManager.asyncReindexAll();
+    protected void initScreenCaption(SearchResult searchResult) {
+        String caption = messages.getMessage(SearchResultsScreen.class, "resultScreenCaption");
+        String searchTerm = searchResult.getSearchTerm();
+        if (StringUtils.isNotBlank(searchTerm)) {
+            caption = caption + ": " + searchTerm;
+        }
+        getWindow().setCaption(caption);
     }
 
-    /*protected void initSearchResults(SearchResult searchResult) {
+    protected void handleSearchResult(SearchResult searchResult) {
+        String searchTerm = searchResult.getSearchTerm();
+        if (StringUtils.isBlank(searchTerm)) {
+            handleNoSearchTerm();
+            return;
+        }
+
         //todo paging
         //noinspection UnstableApiUsage
         pages = EvictingQueue.create(searchProperties.getMaxSearchPageCount());
-        currentPage = new Page(0);
+        currentPage = new SearchResultsScreen.Page(0);
         currentPage.setSearchResult(searchResult);
         pages.add(currentPage);
 
@@ -142,7 +148,12 @@ public class EntitySearcherBrowser extends Screen {
         //paintNavigationControls(pages);
     }
 
-    protected void renderResult(Page page) {
+    protected void handleNoSearchTerm() {
+        Label<String> label = createNoSearchTermLabel();
+        contentBox.add(label);
+    }
+
+    protected void renderResult(SearchResultsScreen.Page page) {
         contentBox.removeAll();
         SearchResult searchResult = page.getSearchResult();
         if (searchResult.isEmpty()) {
@@ -179,15 +190,22 @@ public class EntitySearcherBrowser extends Screen {
                 contentBox.add(container);
             }
         }
-    }*/
+    }
 
     protected CssLayout createCssLayout() {
         return uiComponents.create(CssLayout.class);
     }
 
+    protected Label<String> createNoSearchTermLabel() {
+        Label<String> label = uiComponents.create(Label.of(String.class));
+        label.setValue(messages.getMessage(SearchResultsScreen.class, "noSearchTerm"));
+        label.setStyleName("h2");
+        return label;
+    }
+
     protected Label<String> createNotFoundLabel() {
         Label<String> label = uiComponents.create(Label.of(String.class));
-        label.setValue(messages.getMessage(EntitySearcherBrowser.class, "notFound"));
+        label.setValue(messages.getMessage(SearchResultsScreen.class, "noResults"));
         label.setStyleName("h2");
         return label;
     }
@@ -201,14 +219,14 @@ public class EntitySearcherBrowser extends Screen {
     }
 
     protected void displayInstances(SearchResult searchResult, String entityName, CssLayout instancesLayout) {
-        Set<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
+        Set<SearchService.SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
 
-        for (SearchResultEntry entry : entries) {
+        for (SearchService.SearchResultEntry entry : entries) {
             Button instanceBtn = createInstanceButton(entityName, entry);
             instancesLayout.add(instanceBtn);
 
             List<String> list = new ArrayList<>(entry.getFieldHits().size());
-            for(FieldHit fieldHit : entry.getFieldHits()) {
+            for (SearchService.FieldHit fieldHit : entry.getFieldHits()) {
                 list.add(fieldHit.getFieldName() + " : " + fieldHit.getHighlights());
             }
             Collections.sort(list);
@@ -220,7 +238,7 @@ public class EntitySearcherBrowser extends Screen {
         }
     }
 
-    protected Button createInstanceButton(String entityName, SearchResultEntry entry) {
+    protected Button createInstanceButton(String entityName, SearchService.SearchResultEntry entry) {
         LinkButton instanceBtn = uiComponents.create(LinkButton.class);
         instanceBtn.setStyleName("fts-found-instance");
         instanceBtn.setAlignment(MIDDLE_LEFT);
@@ -244,7 +262,7 @@ public class EntitySearcherBrowser extends Screen {
         return hitLabel;
     }
 
-    protected void onInstanceClick(String entityName, SearchResultEntry entry) {
+    protected void onInstanceClick(String entityName, SearchService.SearchResultEntry entry) {
         Screen appWindow = Optional.ofNullable(AppUI.getCurrent())
                 .map(AppUI::getTopLevelWindow)
                 .map(Window::getFrameOwner)
@@ -265,7 +283,7 @@ public class EntitySearcherBrowser extends Screen {
         }
     }
 
-    protected void openEntityWindow(SearchResultEntry entry, String entityName, OpenMode openMode, FrameOwner origin) {
+    protected void openEntityWindow(SearchService.SearchResultEntry entry, String entityName, OpenMode openMode, FrameOwner origin) {
         MetaClass metaClass = metadata.getSession().getClass(entityName);
         Object entity = reloadEntity(metaClass, entry.getDocId());
         screenBuilders.editor(metaClass.getJavaClass(), origin)

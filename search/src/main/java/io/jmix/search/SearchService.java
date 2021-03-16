@@ -228,5 +228,9 @@ public class SearchService {
         public Collection<String> getEntityNames() {
             return entriesByEntityName.keySet();
         }
+
+        public String getSearchTerm() {
+            return searchTerm;
+        }
     }
 }

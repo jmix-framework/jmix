@@ -16,6 +16,7 @@
   -->
 
 <window xmlns="http://jmix.io/schema/ui/window"
+        xmlns:search="http://jmix.io/schema/search/ui"
         caption="msg://entitySearcherBrowser.caption">
     <actions>
         <action id="performSearchAction"/>
@@ -28,15 +29,15 @@
                     <button id="reindexAllButton" action="reindexAllAction" caption="Reindex All"/>
                 </buttonsPanel>
             </groupBox>
-            <hbox id="searchInputBox" spacing="true">
+            <!--<hbox id="searchInputBox" spacing="true">
                 <textField id="searchInput"/>
                 <button id="searchButton" action="performSearchAction" icon="SEARCH"/>
             </hbox>
             <scrollBox id="contentBox"/>
             <hbox width="100%" >
                 <hbox id="navigationBox" align="MIDDLE_CENTER"/>
-            </hbox>
-
+            </hbox>-->
+            <search:searchField id="searchField"/>
         </vbox>
     </layout>
 </window>

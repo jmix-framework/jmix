@@ -24,14 +24,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class GridLayoutLoader extends ContainerLoader<GridLayout> {
     protected boolean[][] spanMatrix;
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(GridLayout.NAME);
+        resultComponent = createComponentInternal();
         loadId(resultComponent, element);
 
         Element columnsElement = element.element("columns");
@@ -60,7 +64,7 @@ public class GridLayoutLoader extends ContainerLoader<GridLayout> {
                 resultComponent.setColumnExpandRatio(i, 1);
             }
         } else {
-            String countAttr =  columnsElement.attributeValue("count");
+            String countAttr = columnsElement.attributeValue("count");
             if (StringUtils.isNotEmpty(countAttr)) {
                 throw new GuiDevelopmentException("'grid' element can't contain a set of 'column' elements and a 'count' attribute",
                         context, "Grid ID", resultComponent.getId());
@@ -116,6 +120,10 @@ public class GridLayoutLoader extends ContainerLoader<GridLayout> {
                 row++;
             }
         }
+    }
+
+    protected GridLayout createComponentInternal() {
+        return factory.create(GridLayout.NAME);
     }
 
     @Override

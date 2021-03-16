@@ -855,16 +855,16 @@ public class ScreensImpl implements Screens {
                 // todo we should update UI theme and its properties only when RootWindow is attached to UI
                 ui.beforeTopLevelWindowInit();
 
-                window = uiComponents.create(RootWindow.NAME);
+                window = createRootWindow();
                 break;
 
             case THIS_TAB:
             case NEW_TAB:
-                window = uiComponents.create(TabWindow.NAME);
+                window = createTabWindow();
                 break;
 
             case DIALOG:
-                DialogWindow dialogWindow = uiComponents.create(DialogWindow.NAME);
+                DialogWindow dialogWindow = createDialogWindow();
 
                 if (openDetails.isForceDialog()) {
                     ThemeConstants theme = ui.getApp().getThemeConstants();
@@ -904,6 +904,18 @@ public class ScreensImpl implements Screens {
         ((WindowImplementation) window).setContext(windowContext);
 
         return window;
+    }
+
+    protected DialogWindow createDialogWindow() {
+        return uiComponents.create(DialogWindow.NAME);
+    }
+
+    protected RootWindow createRootWindow() {
+        return uiComponents.create(RootWindow.NAME);
+    }
+
+    protected TabWindow createTabWindow() {
+        return uiComponents.create(TabWindow.NAME);
     }
 
     protected WindowContextImpl createWindowContext(Window window, ScreenOpenDetails openDetails) {

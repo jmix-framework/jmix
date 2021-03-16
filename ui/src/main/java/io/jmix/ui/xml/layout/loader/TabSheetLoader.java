@@ -31,7 +31,7 @@ public class TabSheetLoader extends ContainerLoader<TabSheet> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(TabSheet.NAME);
+        resultComponent = createComponentInternal();
         loadId(resultComponent, element);
 
         LayoutLoader layoutLoader = getLayoutLoader();
@@ -58,6 +58,11 @@ public class TabSheetLoader extends ContainerLoader<TabSheet> {
             pendingLoadTabs.put(tabElement, tab);
         }
     }
+
+    protected TabSheet createComponentInternal() {
+        return factory.create(TabSheet.NAME);
+    }
+
 
     @Override
     public void loadComponent() {

@@ -113,7 +113,7 @@ public class FragmentsImpl implements Fragments {
 
         Timer.Sample createSample = Timer.start(meterRegistry);
 
-        Fragment fragment = uiComponents.create(Fragment.NAME);
+        Fragment fragment = createFragmentInternal();
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
 
         // setup screen and controller
@@ -188,6 +188,10 @@ public class FragmentsImpl implements Fragments {
 
         //noinspection unchecked
         return (T) controller;
+    }
+
+    protected Fragment createFragmentInternal() {
+        return uiComponents.create(Fragment.NAME);
     }
 
     @Override

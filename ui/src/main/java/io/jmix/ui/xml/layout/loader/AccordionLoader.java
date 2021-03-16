@@ -31,7 +31,7 @@ public class AccordionLoader extends ContainerLoader<Accordion> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(Accordion.NAME);
+        resultComponent = createComponentInternal();
         loadId(resultComponent, element);
 
         LayoutLoader layoutLoader = getLayoutLoader();
@@ -58,6 +58,10 @@ public class AccordionLoader extends ContainerLoader<Accordion> {
 
             pendingLoadTabs.put(tabElement, tab);
         }
+    }
+
+    protected Accordion createComponentInternal() {
+        return factory.create(Accordion.NAME);
     }
 
     @Override

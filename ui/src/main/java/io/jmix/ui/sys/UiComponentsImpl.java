@@ -148,8 +148,6 @@ public class UiComponentsImpl implements UiComponents {
         classes.put(LogoutButton.NAME, LogoutButtonImpl.class);
         classes.put(NewWindowButton.NAME, NewWindowButtonImpl.class);
         classes.put(UserIndicator.NAME, UserIndicatorImpl.class);
-//        classes.put(FoldersPane.NAME, WebFoldersPane.class); // todo folder pane
-//        classes.put(FtsField.NAME, WebFtsField.class); // todo fts
         classes.put(TimeZoneIndicator.NAME, TimeZoneIndicatorImpl.class);
         classes.put(SideMenu.NAME, SideMenuImpl.class);
     }

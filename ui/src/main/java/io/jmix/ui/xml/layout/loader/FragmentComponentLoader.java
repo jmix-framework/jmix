@@ -58,7 +58,7 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
 
         Timer.Sample createSample = Timer.start(getMeterRegistry());
 
-        Fragment fragment = factory.create(Fragment.NAME);
+        Fragment fragment = createComponentInternal();
         FragmentHelper fragmentHelper = getFragmentHelper();
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
 
@@ -116,6 +116,10 @@ public class FragmentComponentLoader extends ContainerLoader<Fragment> {
         createSample.stop(createScreenTimer(getMeterRegistry(), ScreenLifeCycle.CREATE, windowInfo.getId()));
 
         this.resultComponent = fragment;
+    }
+
+    protected Fragment createComponentInternal() {
+        return factory.create(Fragment.NAME);
     }
 
     protected WindowInfo createWindowInfo(Element element) {

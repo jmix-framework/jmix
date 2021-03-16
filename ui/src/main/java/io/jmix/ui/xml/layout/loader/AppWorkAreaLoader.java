@@ -27,7 +27,7 @@ public class AppWorkAreaLoader extends ContainerLoader<AppWorkArea> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(AppWorkArea.NAME);
+        resultComponent = createComponentInternal();
         loadId(resultComponent, element);
 
         Element initialLayoutElement = element.element("initialLayout");
@@ -35,6 +35,10 @@ public class AppWorkAreaLoader extends ContainerLoader<AppWorkArea> {
         initialLayoutLoader.createComponent();
         VBoxLayout initialLayout = (VBoxLayout) initialLayoutLoader.getResultComponent();
         resultComponent.setInitialLayout(initialLayout);
+    }
+
+    protected AppWorkArea createComponentInternal() {
+        return factory.create(AppWorkArea.NAME);
     }
 
     @Override

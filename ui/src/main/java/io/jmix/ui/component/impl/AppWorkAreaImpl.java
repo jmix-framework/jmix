@@ -106,12 +106,16 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
 
         messages = applicationContext.getBean(Messages.class);
 
-        UiComponents cf = applicationContext.getBean(UiComponents.class);
-        setInitialLayout(cf.create(VBoxLayout.NAME));
+        setInitialLayout(createInitialLayout());
 
         this.tabbedContainer = createTabbedModeContainer();
 
         loadModeFromSettings();
+    }
+
+    protected VBoxLayout createInitialLayout() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        return uiComponents.create(VBoxLayout.NAME);
     }
 
     @Override
@@ -227,7 +231,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
                 reflectTabChangeToUrl(event.isUserOriginated());
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
             });
-         } else {
+        } else {
             JmixManagedTabSheet jmixManagedTabSheet = new JmixManagedTabSheet();
 
             ManagedMainTabSheetMode tabSheetMode = getUiProperties().getManagedMainTabSheetMode();
@@ -246,7 +250,7 @@ public class AppWorkAreaImpl extends AbstractComponent<CssLayout> implements App
                 fireTabChangedEvent(tabbedContainer.getTabSheetBehaviour());
                 reflectTabChangeToUrl(event.isUserOriginated());
             });
-         }
+        }
 
         tabbedContainer.setHeight(100, Sizeable.Unit.PERCENTAGE);
         tabbedContainer.setStyleName(TABBED_CONTAINER_STYLENAME);

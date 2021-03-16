@@ -383,7 +383,7 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
     public Accordion.Tab addLazyTab(String name,
                                    Element descriptor,
                                    ComponentLoader loader) {
-        CssLayout tabContent = uiComponents.create(CssLayout.NAME);
+        CssLayout tabContent = createLazyTabLayout();
         tabContent.setStyleName("c-tabsheet-lazytab");
         tabContent.setSizeFull();
 
@@ -421,6 +421,10 @@ public class AccordionImpl extends AbstractComponent<JmixAccordion>
         }
 
         return tab;
+    }
+
+    protected CssLayout createLazyTabLayout() {
+        return uiComponents.create(CssLayout.NAME);
     }
 
     @Override

@@ -45,11 +45,6 @@ public class DefaultComponentGenerationStrategy extends AbstractComponentGenerat
         super(messages, uiComponents, entityFieldCreationSupport, metadata, metadataTools, icons, actions);
     }
 
-    @Autowired
-    public void setUiComponents(UiComponents uiComponents) {
-        this.uiComponents = uiComponents;
-    }
-
     @Nullable
     @Override
     public Component createComponent(ComponentGenerationContext context) {

@@ -36,7 +36,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -372,7 +379,7 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
 
     @Override
     public TabSheet.Tab addLazyTab(String name, Element descriptor, ComponentLoader loader) {
-        CssLayout tabContent = uiComponents.create(CssLayout.NAME);
+        CssLayout tabContent = createLazyTabLayout();
         tabContent.setStyleName("c-tabsheet-lazytab");
         tabContent.setSizeFull();
 
@@ -412,6 +419,10 @@ public class TabSheetImpl extends AbstractComponent<JmixTabSheet>
         }
 
         return tab;
+    }
+
+    protected CssLayout createLazyTabLayout() {
+        return uiComponents.create(CssLayout.NAME);
     }
 
     @Override

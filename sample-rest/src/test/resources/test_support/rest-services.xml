@@ -4,9 +4,9 @@
   ~ Use is subject to license terms, see http://www.cuba-platform.com/commercial-software-license for details.
   -->
 
-<services xmlns="services.xsd">
+<services xmlns="http://jmix.io/schema/rest/services">
     <service name="jmix_RestTestService">
-        <method name="sum" anonymousAllowed="true">
+        <method name="sum">
             <param name="number1"/>
             <param name="number2"/>
         </method>

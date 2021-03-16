@@ -15,7 +15,7 @@
   ~ limitations under the License.
   -->
 
-<transformations xmlns="http://schemas.haulmont.com/cuba/rest-json-transformations.xsd">
+<transformations xmlns="http://jmix.io/schema/rest/json-transformations">
 
     <transformation modelVersion="1.0" oldEntityName="ref$OldCar" currentEntityName="ref_Car">
         <renameAttribute oldName="oldVin" currentName="vin"/>

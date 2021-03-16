@@ -15,17 +15,17 @@
   ~ limitations under the License.
   -->
 
-<xs:schema targetNamespace="http://jmix.io/schema/rest/services-v2"
-        xmlns:xs="http://www.w3.org/2001/XMLSchema"
-        xmlns="http://jmix.io/schema/rest/services-v2"
-        elementFormDefault="qualified"
-        attributeFormDefault="unqualified">
+<xs:schema targetNamespace="http://jmix.io/schema/rest/services"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://jmix.io/schema/rest/services"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
 
     <xs:element name="services" type="servicesType"/>
 
     <xs:complexType name="servicesType">
         <xs:sequence>
-            <xs:element name="service" type="serviceType"  maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="service" type="serviceType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<queries xmlns="queries.xsd">
+<queries xmlns="http://jmix.io/schema/rest/queries">
     <query name="carByVin" entity="ref_Car" fetchPlan="carEdit">
         <jpql><![CDATA[select c from ref_Car c where c.vin = :vin]]></jpql>
         <params>
@@ -12,7 +12,7 @@
             <param name="login" type="java.lang.String"/>
         </params>
     </query>
-    <query name="currentUser" entity="sec$User" fetchPlan="_local" cacheable="true" anonymousAllowed="true">
+    <query name="currentUser" entity="sec$User" fetchPlan="_local" cacheable="true">
         <jpql><![CDATA[select u from sec$User u where u.login = :session$username]]></jpql>
     </query>
     <query name="allColours" entity="ref$Colour" fetchPlan="_local">

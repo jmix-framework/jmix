@@ -157,13 +157,22 @@ public class ParameterEditor extends StandardEditor<ReportInputParameter> {
     protected ParameterFieldCreator parameterFieldCreator;
 
     @Subscribe
-    protected void onInit(Screen.InitEvent event) {
+    protected void onInit(InitEvent event) {
         parameterTypeField.setOptionsList(Arrays.asList(ParameterType.TEXT, ParameterType.NUMERIC, ParameterType.BOOLEAN, ParameterType.ENUMERATION,
                 ParameterType.DATE, ParameterType.TIME, ParameterType.DATETIME, ParameterType.ENTITY, ParameterType.ENTITY_LIST));
-
         initMetaClassLookup();
         initEnumsLookup();
         initCodeEditors();
+    }
+
+    @Subscribe
+    public void onBeforeShow(BeforeShowEvent event) {
+        ReportInputParameter editedParam = getEditedEntity();
+
+        if (editedParam.getParameterClass() == null) {
+            editedParam.setType(parameterTypeField.getValue());
+            editedParam.setParameterClass(parameterClassResolver.resolveClass(editedParam));
+        }
     }
 
     @Install(to = "localeField", subject = "contextHelpIconClickHandler")

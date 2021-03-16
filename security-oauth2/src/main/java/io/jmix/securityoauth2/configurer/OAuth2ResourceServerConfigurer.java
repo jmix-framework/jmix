@@ -16,13 +16,18 @@
 
 package io.jmix.securityoauth2.configurer;
 
+import io.jmix.core.security.UserRepository;
+import io.jmix.securityoauth2.SecurityOAuth2Properties;
 import io.jmix.securityoauth2.filter.LastSecurityFilter;
+import io.jmix.securityoauth2.impl.DevTokenService;
 import io.jmix.securityoauth2.impl.RequestLocaleProvider;
 import io.jmix.securityoauth2.token.TokenMasker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 import static io.jmix.security.SecurityConfigurers.apiSecurity;
@@ -32,6 +37,8 @@ public class OAuth2ResourceServerConfigurer extends ResourceServerConfigurerAdap
     private TokenMasker tokenMasker;
     private RequestLocaleProvider localeProvider;
     private LastSecurityFilter lastSecurityFilter;
+    private SecurityOAuth2Properties oauth2Properties;
+    private UserRepository userRepository;
 
     @Autowired
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
@@ -46,6 +53,16 @@ public class OAuth2ResourceServerConfigurer extends ResourceServerConfigurerAdap
     @Autowired
     public void setLocaleProvider(RequestLocaleProvider localeProvider) {
         this.localeProvider = localeProvider;
+    }
+
+    @Autowired
+    public void setOauth2Properties(SecurityOAuth2Properties oauth2Properties) {
+        this.oauth2Properties = oauth2Properties;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public ApplicationEventPublisher getApplicationEventPublisher() {
@@ -66,6 +83,15 @@ public class OAuth2ResourceServerConfigurer extends ResourceServerConfigurerAdap
                 .sessionManagement()
                 .and()
                 .addFilterAfter(getLastSecurityFilter(), FilterSecurityInterceptor.class);
+    }
+
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        if (oauth2Properties.isDevMode()) {
+            DefaultTokenServices tokenServices = new DevTokenService(userRepository, oauth2Properties);
+            tokenServices.setSupportRefreshToken(true);
+            resources.tokenServices(tokenServices);
+        }
     }
 
     public LastSecurityFilter getLastSecurityFilter() {

@@ -19,9 +19,6 @@ package io.jmix.securityoauth2;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import java.util.List;
 
 @ConfigurationProperties(prefix = "jmix.security.oauth2")
 @ConstructorBinding
@@ -34,6 +31,8 @@ public class SecurityOAuth2Properties {
     private final boolean supportRefreshToken;
     private final boolean reuseRefreshToken;
     private final boolean tokenMaskingEnabled;
+    private final boolean devMode;
+    private final String devUsername;
 
     public SecurityOAuth2Properties(
             @DefaultValue("client") String clientId,
@@ -43,7 +42,9 @@ public class SecurityOAuth2Properties {
             @DefaultValue({"password", "external", "refresh_token"}) String[] clientAuthorizedGrantTypes,
             @DefaultValue("true") boolean supportRefreshToken,
             @DefaultValue("true") boolean reuseRefreshToken,
-            @DefaultValue("true") boolean tokenMaskingEnabled) {
+            @DefaultValue("true") boolean tokenMaskingEnabled,
+            @DefaultValue("false") boolean devMode,
+            String devUsername) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
         this.clientTokenExpirationTimeSec = clientTokenExpirationTimeSec;
@@ -52,6 +53,8 @@ public class SecurityOAuth2Properties {
         this.supportRefreshToken = supportRefreshToken;
         this.reuseRefreshToken = reuseRefreshToken;
         this.tokenMaskingEnabled = tokenMaskingEnabled;
+        this.devMode = devMode;
+        this.devUsername = devUsername;
     }
 
     /**
@@ -105,5 +108,20 @@ public class SecurityOAuth2Properties {
      */
     public boolean isReuseRefreshToken() {
         return reuseRefreshToken;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isDevMode() {
+        return devMode;
+    }
+
+    /**
+     * @return - username that is used for development mode.
+     * See {@link SecurityOAuth2Properties#isDevMode()}
+     */
+    public String getDevUsername() {
+        return devUsername;
     }
 }

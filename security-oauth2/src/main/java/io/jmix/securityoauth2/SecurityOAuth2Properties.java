@@ -111,7 +111,9 @@ public class SecurityOAuth2Properties {
     }
 
     /**
-     * @return
+     * Development mode allows using of REST/GraphQL APIs without authentication token.
+     * Default user that is used for all REST/GraphQL APIs invocation
+     * in dev mode is specified by {@link SecurityOAuth2Properties#getDevUsername()}
      */
     public boolean isDevMode() {
         return devMode;

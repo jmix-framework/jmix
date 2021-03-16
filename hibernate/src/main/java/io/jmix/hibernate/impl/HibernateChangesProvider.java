@@ -78,7 +78,10 @@ public class HibernateChangesProvider {
         Collection<Object> coll = (Collection<Object>) oldValue;
         Collection<Id> idColl = oldValue instanceof List ? new ArrayList<>() : new LinkedHashSet<>();
         for (Object item : coll) {
-            idColl.add(Id.of(initializeAndUnproxy(item)));
+            Object initializedItem = initializeAndUnproxy(item);
+            if (initializedItem != null) {
+                idColl.add(Id.of(initializedItem));
+            }
         }
         return idColl;
     }

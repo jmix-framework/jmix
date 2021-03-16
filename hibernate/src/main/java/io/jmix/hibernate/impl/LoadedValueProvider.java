@@ -60,6 +60,7 @@ public class LoadedValueProvider {
         return null;
     }
 
+    @Nullable
     public Object convertLoadedValue(Object entity, String attribute, Object value) {
         if (value instanceof HibernateProxy) {
             return HibernateUtils.initializeAndUnproxy(value);

@@ -19,7 +19,6 @@ package io.jmix.hibernate.impl;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanProperty;
-import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -28,7 +27,6 @@ import io.jmix.data.impl.EntityFetcher;
 import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 
 import java.util.*;
@@ -39,13 +37,8 @@ public class HibernateEntityFetcher extends EntityFetcher {
 
     @Nullable
     protected Object unproxy(@Nullable Object value) {
-        if (value != null) {
-            if (!(value instanceof Collection)) {
-                value = HibernateUtils.initializeAndUnproxy(value);
-                if (value != null && EntityValues.isSoftDeleted(value)) {
-                    return null;
-                }
-            }
+        if (value != null && !(value instanceof Collection)) {
+            value = HibernateUtils.initializeAndUnproxy(value);
         }
 
         return value;
@@ -76,11 +69,16 @@ public class HibernateEntityFetcher extends EntityFetcher {
             FetchPlan propertyFetchPlan = property.getFetchPlan();
             if (value != null && propertyFetchPlan != null) {
                 if (value instanceof Collection) {
+                    Map<Object, Object> itemsToErase = new HashMap<>();
                     for (Object item : new ArrayList(((Collection) value))) {
                         if (item instanceof Entity) {
                             Object result = item;
                             if (result instanceof HibernateProxy) {
                                 result = unproxy(result);
+                                if (EntityValues.isSoftDeleted(result)) {
+                                    itemsToErase.put(EntityValues.getId(result), item);
+                                    continue;
+                                }
                                 setResultToList(value, item, result);
                             }
                             if (entityStates.isDetached(result)) {
@@ -93,10 +91,17 @@ public class HibernateEntityFetcher extends EntityFetcher {
                             }
                         }
                     }
+                    for (Map.Entry entry : itemsToErase.entrySet()) {
+                        removeItem(value, entry.getValue());
+                        EntitySystemAccess.getSecurityState(entity).addErasedId(property.getName(), entry.getKey());
+                    }
                 } else {
                     Object result = value;
                     if (result instanceof HibernateProxy) {
                         result = unproxy(result);
+                        if (result != null && EntityValues.isSoftDeleted(result)) {
+                            result = null;
+                        }
                         EntityValues.setValue(entity, property.getName(), result);
                     }
                     if (result instanceof Entity) {
@@ -122,6 +127,16 @@ public class HibernateEntityFetcher extends EntityFetcher {
             Collection collection = (Collection) value;
             collection.remove(item);
             collection.add(result);
+        }
+    }
+
+    private void removeItem(Object value, Object item) {
+        if (value instanceof List) {
+            List list = (List) value;
+            list.remove(list.indexOf(item));
+        } else {
+            Collection collection = (Collection) value;
+            collection.remove(item);
         }
     }
 }

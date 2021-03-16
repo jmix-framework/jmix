@@ -24,6 +24,8 @@ import org.hibernate.query.spi.QueryParameterBinding;
 import org.hibernate.query.spi.QueryParameterListBinding;
 import org.springframework.beans.factory.BeanFactory;
 
+import javax.annotation.Nullable;
+
 public class JmixQueryParameterBindingsImpl extends DelegateQueryParameterBindingsImpl {
 
     protected BeanFactory beanFactory;
@@ -48,6 +50,7 @@ public class JmixQueryParameterBindingsImpl extends DelegateQueryParameterBindin
         return new JmixQueryParameterBindingsImpl(beanFactory, parameterMetadata, sessionFactory, queryParametersValidationEnabled, isNative);
     }
 
+    @Nullable
     public Object getBindValue(String paramName) {
         QueryParameterBinding<?> binding = getBinding(paramName);
 

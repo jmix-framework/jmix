@@ -32,11 +32,12 @@ import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
-import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.dynattr.DynAttrConfiguration;
 import io.jmix.dynattrui.DynAttrUiConfiguration;
+import io.jmix.eclipselink.EclipselinkConfiguration;
 import io.jmix.localfs.LocalFileStorageConfiguration;
 import io.jmix.security.SecurityConfiguration;
+import io.jmix.security.StandardSecurityConfiguration;
 import io.jmix.security.constraint.SecureOperations;
 import io.jmix.securitydata.SecurityDataConfiguration;
 import io.jmix.securityui.SecurityUiConfiguration;
@@ -51,6 +52,7 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.scripting.ScriptEvaluator;
 import org.springframework.scripting.groovy.GroovyScriptEvaluator;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.persistence.EntityManagerFactory;
@@ -61,7 +63,8 @@ import javax.sql.DataSource;
         DataConfiguration.class, EclipselinkConfiguration.class,
         UiConfiguration.class,
         DynAttrConfiguration.class, DynAttrUiConfiguration.class, LocalFileStorageConfiguration.class,
-        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class})
+        SecurityConfiguration.class, SecurityDataConfiguration.class, SecurityUiConfiguration.class,
+        CoreTestConfiguration.TestStandardSecurityConfiguration.class})
 @PropertySource("classpath:/com/haulmont/cuba/core/test-core-app.properties")
 public class CoreTestConfiguration {
 
@@ -141,5 +144,9 @@ public class CoreTestConfiguration {
     @Primary
     public SecureOperations secureOperations() {
         return new TestSecureOperations();
+    }
+
+    @EnableWebSecurity
+    public static class TestStandardSecurityConfiguration extends StandardSecurityConfiguration {
     }
 }

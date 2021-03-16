@@ -23,6 +23,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.filter.Op;
 import com.haulmont.cuba.core.global.filter.OpManager;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.filter.ConditionParamBuilder;
 import com.haulmont.cuba.gui.components.filter.Param;
 import com.haulmont.cuba.gui.components.filter.condition.DynamicAttributesCondition;
@@ -34,7 +35,6 @@ import io.jmix.dynattr.AttributeDefinition;
 import io.jmix.dynattr.CategoryDefinition;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
-import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Label;
 import io.jmix.ui.component.TextField;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -47,11 +47,11 @@ import static com.haulmont.cuba.core.global.filter.Op.*;
 public class DynamicAttributesConditionFrame extends ConditionFrame<DynamicAttributesCondition> {
 
     @Autowired
-    protected ComboBox<CategoryDefinition> categoryLookup;
+    protected LookupField<CategoryDefinition> categoryLookup;
     @Autowired
-    protected ComboBox<AttributeDefinition> attributeLookup;
+    protected LookupField<AttributeDefinition> attributeLookup;
     @Autowired
-    protected ComboBox<Op> operationLookup;
+    protected LookupField<Op> operationLookup;
     @Autowired
     protected Label<String> categoryLabel;
     @Autowired

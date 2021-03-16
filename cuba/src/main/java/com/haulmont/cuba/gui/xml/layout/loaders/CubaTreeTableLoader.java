@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.TreeTable;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -38,6 +39,14 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @SuppressWarnings("rawtypes")
 public class CubaTreeTableLoader extends TreeTableLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(io.jmix.ui.component.TreeTable.NAME);
+        loadId(resultComponent, element);
+        createButtonsPanel(resultComponent, element);
+    }
 
     @Override
     public void loadComponent() {
@@ -89,8 +98,9 @@ public class CubaTreeTableLoader extends TreeTableLoader {
 
     @Override
     protected void loadTableData() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         // must be before datasource setting
-        ComponentLoaderHelper.loadRowsCount((TreeTable) resultComponent, element, () -> factory.create(RowsCount.NAME));
+        ComponentLoaderHelper.loadRowsCount((TreeTable) resultComponent, element, () -> uiComponents.create(RowsCount.NAME));
 
         super.loadTableData();
     }

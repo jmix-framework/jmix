@@ -18,6 +18,7 @@ package com.haulmont.cuba.web.app.login;
 
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.web.security.AuthInfo;
 import io.jmix.core.CoreProperties;
 import io.jmix.core.security.ClientDetails;
@@ -74,7 +75,7 @@ public class LoginScreen extends Screen {
     @Inject
     protected PasswordField passwordField;
     @Inject
-    protected ComboBox<Locale> localesSelect;
+    protected LookupField<Locale> localesSelect;
 
     @Subscribe
     protected void onInit(InitEvent event) {

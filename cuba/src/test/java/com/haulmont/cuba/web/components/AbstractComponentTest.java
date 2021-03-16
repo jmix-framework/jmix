@@ -16,11 +16,11 @@
 
 package com.haulmont.cuba.web.components;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.web.testsupport.WebTest;
 import test_support.WebTestConfiguration;
 import io.jmix.core.Metadata;
 import io.jmix.core.FetchPlanRepository;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.Component;
 
 import org.springframework.beans.factory.annotation.Autowired;

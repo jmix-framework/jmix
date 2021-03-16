@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.ResizableTextArea;
 import com.haulmont.cuba.gui.components.TextArea;
@@ -33,17 +34,18 @@ public class CubaResizableTextAreaLoader extends ResizableTextAreaLoader {
 
     @Override
     public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         if (element.getName().equals(ResizableTextArea.NAME)) {
-            resultComponent = factory.create(ResizableTextArea.NAME);
+            resultComponent = uiComponents.create(ResizableTextArea.NAME);
         }
 
         if (element.getName().equals(TextArea.NAME)) {
             if (isResizable() || hasResizableDirection()) {
-                resultComponent = factory.create(ResizableTextArea.NAME);
+                resultComponent = uiComponents.create(ResizableTextArea.NAME);
                 log.warn("The 'resizableTextArea' element must be used in order to create a resizable text area " +
                         "instead of 'textArea'");
             } else {
-                resultComponent = factory.create(TextArea.NAME);
+                resultComponent = uiComponents.create(TextArea.NAME);
             }
         }
 

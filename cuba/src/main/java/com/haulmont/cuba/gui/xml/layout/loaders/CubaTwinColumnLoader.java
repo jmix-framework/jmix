@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
@@ -28,6 +29,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class CubaTwinColumnLoader extends TwinColumnLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(TwinColumn.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override

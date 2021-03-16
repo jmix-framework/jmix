@@ -16,7 +16,9 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.DateField;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
@@ -24,6 +26,13 @@ import io.jmix.ui.xml.layout.loader.DateFieldLoader;
 import org.dom4j.Element;
 
 public class CubaDateFieldLoader extends DateFieldLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(DateField.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override

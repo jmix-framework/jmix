@@ -16,8 +16,8 @@
 
 package com.haulmont.cuba.client.sys;
 
+import com.haulmont.cuba.gui.components.LookupPickerField;
 import io.jmix.ui.UiProperties;
-import io.jmix.ui.component.EntityComboBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +31,7 @@ public class PersistenceManagerClient {
 
     public boolean useLookupScreen(String entityName) {
         String fieldType = properties.getEntityFieldType().get(entityName);
-        return fieldType == null || !fieldType.equals(EntityComboBox.NAME);
+        return fieldType == null || !fieldType.equals(LookupPickerField.NAME);
     }
 
     public int getFetchUI(String entityName) {

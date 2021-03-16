@@ -58,12 +58,11 @@
     </facets>
     <layout expand="split"
             spacing="true">
-        <!--        todo filter -->
-        <!--        <filter id="filter"-->
-        <!--                applyTo="ownersTable"-->
-        <!--                dataLoader="ownersDl">-->
-        <!--            <properties include=".*"/>-->
-        <!--        </filter>-->
+        <filter id="filter"
+                applyTo="ownersTable"
+                dataLoader="ownersDl">
+            <properties include=".*"/>
+        </filter>
         <split id="split" orientation="horizontal" width="100%">
             <groupTable id="ownersTable"
                         width="100%"
@@ -75,7 +74,7 @@
                 </columns>
                 <buttonsPanel id="buttonsPanel"
                               alwaysVisible="true">
-                    <entityPicker id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>
+                    <pickerField id="categoryFilterField" metaClass="pc_OwnerCategory" width="150px"/>
                     <textField id="nameFilterField" width="100px"/>
                 </buttonsPanel>
             </groupTable>

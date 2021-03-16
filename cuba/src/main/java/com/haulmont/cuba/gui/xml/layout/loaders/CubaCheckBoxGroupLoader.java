@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
@@ -28,6 +29,13 @@ import org.dom4j.Element;
 
 public class CubaCheckBoxGroupLoader extends CheckBoxGroupLoader {
 
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(com.haulmont.cuba.gui.components.CheckBoxGroup.NAME);
+        loadId(resultComponent, element);
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
@@ -38,7 +46,7 @@ public class CubaCheckBoxGroupLoader extends CheckBoxGroupLoader {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(io.jmix.ui.component.CheckBoxGroup component, Element element) {
+    protected void loadData(CheckBoxGroup component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper

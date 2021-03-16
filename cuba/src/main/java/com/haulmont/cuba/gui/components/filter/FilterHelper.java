@@ -20,8 +20,8 @@ package com.haulmont.cuba.gui.components.filter;
 import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.entity.Folder;
 import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.LookupField;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.ui.component.ComboBox;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.Frame;
@@ -63,9 +63,9 @@ public interface FilterHelper {
         }
     }
 
-    void setLookupNullSelectionAllowed(ComboBox lookupField, boolean value);
+    void setLookupNullSelectionAllowed(LookupField lookupField, boolean value);
 
-    void setLookupTextInputAllowed(ComboBox lookupField, boolean value);
+    void setLookupTextInputAllowed(LookupField lookupField, boolean value);
 
     /**
      * Saves a folder to a FoldersPane
@@ -98,13 +98,13 @@ public interface FilterHelper {
 
     void setComponentFocusable(Component component, boolean focusable);
 
-    void setLookupCaptions(ComboBox lookupField, Map<Object, String> captions);
+    void setLookupCaptions(LookupField lookupField, Map<Object, String> captions);
 
     void addTextChangeListener(TextField textField, TextChangeListener listener);
 
     void addShortcutListener(TextField textField, ShortcutListener listener);
 
-    void setLookupFieldPageLength(ComboBox lookupField, int pageLength);
+    void setLookupFieldPageLength(LookupField lookupField, int pageLength);
 
     void setInternalDebugId(Component component, String id);
 

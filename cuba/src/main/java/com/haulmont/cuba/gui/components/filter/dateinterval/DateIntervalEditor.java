@@ -21,6 +21,7 @@ import com.google.common.collect.Multimap;
 import com.haulmont.chile.core.datatypes.Datatypes;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.OptionsGroup;
 import com.haulmont.cuba.gui.components.filter.dateinterval.predefined.PredefinedDateInterval;
 import io.jmix.ui.WindowParam;
@@ -43,7 +44,7 @@ public class DateIntervalEditor extends AbstractWindow {
     protected TextField<Integer> numberField;
 
     @Autowired
-    protected ComboBox<DateIntervalValue.TimeUnit> timeUnitLookup;
+    protected LookupField<DateIntervalValue.TimeUnit> timeUnitLookup;
 
     @Autowired
     protected OptionsGroup<DateIntervalValue.Type, DateIntervalValue.Type> typeOptionsGroup;
@@ -52,7 +53,7 @@ public class DateIntervalEditor extends AbstractWindow {
     protected CheckBox includingCurrentCheckBox;
 
     @Autowired
-    protected ComboBox<PredefinedDateInterval> predefinedIntervalsLookup;
+    protected LookupField<PredefinedDateInterval> predefinedIntervalsLookup;
 
     @Autowired
     protected ThemeConstants themeConstants;

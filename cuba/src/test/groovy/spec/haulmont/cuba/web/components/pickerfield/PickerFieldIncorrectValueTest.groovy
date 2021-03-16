@@ -25,7 +25,7 @@ import spec.haulmont.cuba.web.UiScreenSpec
 class PickerFieldIncorrectValueTest extends UiScreenSpec {
 
     def "PickerField throws exception if metaClass is not set"() {
-        def pickerField = uiComponents.create(PickerField.class)
+        def pickerField = cubaUiComponents.create(PickerField.class)
 
         when:
         pickerField.setValue(metadata.create(User))
@@ -36,7 +36,7 @@ class PickerFieldIncorrectValueTest extends UiScreenSpec {
     }
 
     def "PickerField throws exception if metaClass does not match value type"() {
-        def pickerField = uiComponents.create(PickerField.class)
+        def pickerField = cubaUiComponents.create(PickerField.class)
 
         when:
         pickerField.setMetaClass(metadata.getClass(Role))

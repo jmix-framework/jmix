@@ -16,12 +16,21 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
+import com.haulmont.cuba.gui.components.Image;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.ImageLoader;
 import org.dom4j.Element;
 
 public class CubaImageLoader extends ImageLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(Image.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override

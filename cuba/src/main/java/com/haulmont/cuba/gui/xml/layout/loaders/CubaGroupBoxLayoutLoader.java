@@ -16,11 +16,21 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.GroupBoxLayout;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.xml.layout.loader.GroupBoxLayoutLoader;
 
 public class CubaGroupBoxLayoutLoader extends GroupBoxLayoutLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(GroupBoxLayout.NAME);
+        loadId(resultComponent, element);
+        loadOrientation(resultComponent, element);
+        createSubComponents(resultComponent, element);
+    }
 
     @Override
     public void loadComponent() {

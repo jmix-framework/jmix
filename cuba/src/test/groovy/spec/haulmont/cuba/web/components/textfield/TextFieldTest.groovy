@@ -35,7 +35,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testNew() {
         when:
-        Component component = uiComponents.create(TextField)
+        Component component = cubaUiComponents.create(TextField)
 
         then:
         component != null
@@ -45,7 +45,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testGetSetValue() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         then:
         component.value == null
@@ -60,7 +60,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testGetSetInteger() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         then:
         component.value == null
@@ -76,7 +76,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testSetToReadonly() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         component.editable = false
 
@@ -94,7 +94,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testSetToReadonlyFromValueListener() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         then:
         component.editable
@@ -112,7 +112,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testDatasource() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         //noinspection unchecked
         def testDs = new DsBuilder()
@@ -152,7 +152,7 @@ class TextFieldTest extends UiScreenSpec {
 
     def testValueChangeListener() {
         when:
-        TextField component = uiComponents.create(TextField.class)
+        TextField component = cubaUiComponents.create(TextField.class)
 
         AtomicInteger counter = new AtomicInteger(0)
 

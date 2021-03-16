@@ -18,6 +18,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.validators.DateValidator;
 import com.haulmont.cuba.gui.components.validators.DoubleValidator;
 import com.haulmont.cuba.gui.components.validators.IntegerValidator;
@@ -35,7 +36,6 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.dynattrui.MsgBundleTools;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.component.BoxLayout;
 import io.jmix.ui.component.Component;

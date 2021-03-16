@@ -23,7 +23,27 @@ import io.jmix.ui.component.Component;
  * @deprecated Use {@link io.jmix.ui.UiComponents} instead
  */
 @Deprecated
-public interface UiComponents extends io.jmix.ui.UiComponents {
+public interface UiComponents {
+
+    String NAME = "cuba_UiComponents";
+
+    /**
+     * Create a component instance by its name.
+     *
+     * @param name component name. It is usually defined in NAME constant inside the component interface,
+     *             e.g. {@link com.haulmont.cuba.gui.components.Label#NAME}.
+     *             It is also usually equal to component's XML name.
+     * @return component instance for the current client type (web or desktop)
+     */
+    <T extends Component> T create(String name);
+
+    /**
+     * Create a component instance by its type.
+     *
+     * @param type component type
+     * @return component instance for the current client type (web or desktop)
+     */
+    <T extends Component> T create(Class<T> type);
 
     /**
      * Create a component instance by its type.

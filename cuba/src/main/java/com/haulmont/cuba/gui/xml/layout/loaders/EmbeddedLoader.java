@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Embedded;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.xml.layout.loader.AbstractComponentLoader;
@@ -34,7 +35,8 @@ public class EmbeddedLoader extends AbstractComponentLoader<Embedded> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(Embedded.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(Embedded.NAME);
         loadId(resultComponent, element);
     }
 

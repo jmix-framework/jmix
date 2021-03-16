@@ -17,6 +17,7 @@
 package com.haulmont.cuba.web.sys;
 
 import com.haulmont.cuba.gui.Screens;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.AbstractEditor;
@@ -32,7 +33,12 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.DsContextImplementation;
 import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
-import com.haulmont.cuba.gui.screen.compatibility.*;
+import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
+import com.haulmont.cuba.gui.screen.compatibility.ScreenEditorWrapper;
+import com.haulmont.cuba.gui.screen.compatibility.ScreenFragmentWrapper;
+import com.haulmont.cuba.gui.screen.compatibility.ScreenLookupWrapper;
+import com.haulmont.cuba.gui.screen.compatibility.ScreenWrapper;
+import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import com.haulmont.cuba.settings.CubaLegacySettings;
 import com.haulmont.cuba.settings.Settings;
@@ -46,8 +52,14 @@ import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
-import io.jmix.ui.screen.*;
-import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
+import io.jmix.ui.screen.EditorScreen;
+import io.jmix.ui.screen.FrameOwner;
+import io.jmix.ui.screen.LookupScreen;
+import io.jmix.ui.screen.MapScreenOptions;
+import io.jmix.ui.screen.Screen;
+import io.jmix.ui.screen.ScreenFragment;
+import io.jmix.ui.screen.ScreenOptions;
+import io.jmix.ui.screen.UiControllerUtils;
 import io.jmix.ui.sys.ScreensImpl;
 import io.jmix.ui.sys.WindowContextImpl;
 import io.jmix.ui.xml.layout.loader.ComponentLoaderContext;
@@ -67,6 +79,8 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
 
     @Autowired
     protected ScreenViewsLoader screenViewsLoader;
+    @Autowired
+    protected UiComponents cubaUiComponents;
 
     protected DataSupplier defaultDataSupplier = new GenericDataSupplier();
 
@@ -324,6 +338,21 @@ public final class CubaScreens extends ScreensImpl implements Screens, WindowMan
     @Override
     public void close(Window window) {
         remove(window.getFrameOwner());
+    }
+
+    @Override
+    protected DialogWindow createDialogWindow() {
+        return cubaUiComponents.create(DialogWindow.NAME);
+    }
+
+    @Override
+    protected RootWindow createRootWindow() {
+        return cubaUiComponents.create(RootWindow.NAME);
+    }
+
+    @Override
+    protected TabWindow createTabWindow() {
+        return cubaUiComponents.create(TabWindow.NAME);
     }
 
     @Override

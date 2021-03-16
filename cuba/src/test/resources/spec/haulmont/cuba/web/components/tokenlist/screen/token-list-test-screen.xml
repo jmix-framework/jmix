@@ -14,15 +14,15 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window">
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd">
     <data>
         <instance id="orderDc"
                   class="com.haulmont.cuba.core.model.sales.Order">
             <loader/>
             <collection id="orderLinesDc" property="orderLines"/>
-            <fetchPlan extends="_local">
-                <property name="orderLines" fetchPlan="_local"/>
-            </fetchPlan>
+            <view extends="_local">
+                <property name="orderLines" view="_local"/>
+            </view>
         </instance>
     </data>
 

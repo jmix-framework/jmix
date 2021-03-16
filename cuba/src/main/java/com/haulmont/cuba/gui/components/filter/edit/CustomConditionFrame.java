@@ -21,6 +21,7 @@ import com.google.common.base.Strings;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.filter.*;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import com.haulmont.cuba.gui.components.filter.condition.CustomCondition;
@@ -51,9 +52,9 @@ public class CustomConditionFrame extends ConditionFrame<CustomCondition> {
     protected static final String WHERE = " where ";
 
     @Autowired
-    protected ComboBox<ParamType> typeSelect;
+    protected LookupField<ParamType> typeSelect;
     @Autowired
-    protected ComboBox<Object> entitySelect;
+    protected LookupField<Object> entitySelect;
 
     @Autowired
     protected CheckBox inExprCb;

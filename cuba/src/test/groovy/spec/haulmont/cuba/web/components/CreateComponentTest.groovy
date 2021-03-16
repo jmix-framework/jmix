@@ -32,9 +32,9 @@ class CreateComponentTest extends UiScreenSpec {
     Facets facets
 
     @Unroll
-    def "create standard UI component: '#name' with UiComponents"() {
+    def "create standard UI component: '#name' with CubaUiComponents"() {
         expect:
-        uiComponents.create(name) != null
+        cubaUiComponents.create(name) != null
 
         where:
         name << [

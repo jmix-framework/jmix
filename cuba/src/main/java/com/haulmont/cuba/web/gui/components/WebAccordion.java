@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Accordion;
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -26,6 +27,7 @@ import com.haulmont.cuba.settings.Settings;
 import com.vaadin.ui.TabSheet;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.CssLayout;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.AccordionImpl;
@@ -41,6 +43,11 @@ import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
 public class WebAccordion extends AccordionImpl implements Accordion {
+
+    @Override
+    protected CssLayout createLazyTabLayout() {
+        return applicationContext.getBean(UiComponents.class).create(com.haulmont.cuba.gui.components.CssLayout.NAME);
+    }
 
     @Override
     public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {

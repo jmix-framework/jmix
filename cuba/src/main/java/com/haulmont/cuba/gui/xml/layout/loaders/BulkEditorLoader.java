@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.BulkEditor;
 import com.haulmont.cuba.gui.components.Field;
@@ -81,7 +82,8 @@ public class BulkEditorLoader extends AbstractComponentLoader<BulkEditor> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(BulkEditor.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(BulkEditor.NAME);
         loadId(resultComponent, element);
     }
 

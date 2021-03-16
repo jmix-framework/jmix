@@ -28,11 +28,15 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManagerProvider;
 import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.Frame.NotificationType;
 import com.haulmont.cuba.gui.components.ListEditor;
+import com.haulmont.cuba.gui.components.LookupField;
+import com.haulmont.cuba.gui.components.LookupPickerField;
+import com.haulmont.cuba.gui.components.PickerField;
 import com.haulmont.cuba.gui.components.filter.dateinterval.DateInIntervalComponent;
 import com.haulmont.cuba.gui.components.listeditor.ListEditorHelper;
 import com.haulmont.cuba.security.global.UserSession;
@@ -50,7 +54,6 @@ import io.jmix.data.QueryTransformer;
 import io.jmix.data.QueryTransformerFactory;
 import io.jmix.dynattr.DynAttrUtils;
 import io.jmix.ui.Actions;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.entitypicker.EntityClearAction;
 import io.jmix.ui.action.entitypicker.EntityOpenAction;
 import io.jmix.ui.component.*;
@@ -808,7 +811,7 @@ public class Param {
     }
 
     protected Component createBooleanField(ValueProperty valueProperty) {
-        ComboBox<Object> field = uiComponents.create(ComboBox.NAME);
+        LookupField<Object> field = uiComponents.create(LookupField.NAME);
         field.setWidth(theme.get("cuba.gui.filter.Param.booleanLookup.width"));
 
         Map<String, Object> values = ParamsMap.of(
@@ -870,7 +873,7 @@ public class Param {
                 initListEditor(listEditor, valueProperty);
                 return listEditor;
             } else {
-                EntityPicker<Entity> picker = uiComponents.create(EntityPicker.NAME);
+                PickerField<Entity> picker = uiComponents.create(PickerField.NAME);
                 picker.setMetaClass(metaClass);
 
                 picker.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
@@ -916,7 +919,7 @@ public class Param {
                         dataComponents.createCollectionContainer(metaClass.getJavaClass());
                 loader.setContainer(container);
 
-                EntityComboBox<Entity> lookup = uiComponents.create(EntityComboBox.NAME);
+                LookupPickerField<Entity> lookup = uiComponents.create(LookupPickerField.NAME);
                 lookup.setWidth(theme.get("cuba.gui.filter.Param.textComponent.width"));
                 lookup.addAction(actions.create(EntityClearAction.ID));
                 lookup.setOptions(new ContainerOptions<>(container));
@@ -964,7 +967,7 @@ public class Param {
             return listEditor;
 
         } else {
-            ComboBox<Object> lookup = uiComponents.create(ComboBox.NAME);
+            LookupField<Object> lookup = uiComponents.create(LookupField.NAME);
             lookup.setOptionsEnum(javaClass);
 
             lookup.addValueChangeListener(e -> _setValue(e.getValue(), valueProperty));

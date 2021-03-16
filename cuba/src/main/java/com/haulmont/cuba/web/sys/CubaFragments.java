@@ -16,7 +16,9 @@
 
 package com.haulmont.cuba.web.sys;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.xml.layout.loaders.ComponentLoaderContext;
+import io.jmix.ui.component.Fragment;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.sys.FragmentsImpl;
 
@@ -26,5 +28,11 @@ public class CubaFragments extends FragmentsImpl {
     @Override
     protected ComponentLoaderContext createComponentLoaderContext(ScreenOptions options) {
         return new ComponentLoaderContext(options);
+    }
+
+    @Override
+    protected Fragment createFragmentInternal() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        return uiComponents.create(com.haulmont.cuba.gui.components.Fragment.NAME);
     }
 }

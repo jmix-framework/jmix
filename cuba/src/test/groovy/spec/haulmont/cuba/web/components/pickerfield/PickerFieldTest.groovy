@@ -40,7 +40,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testNew() {
         when:
-        Component component = uiComponents.create(PickerField.NAME)
+        Component component = cubaUiComponents.create(PickerField.NAME)
         then:
         component != null
         component instanceof PickerField
@@ -49,7 +49,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testGetSetValue() {
         when:
-        PickerField component = uiComponents.create(PickerField.class)
+        PickerField component = cubaUiComponents.create(PickerField.class)
 
         then:
         component.value == null
@@ -85,7 +85,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testSetToReadonly() {
         when:
-        PickerField component = uiComponents.create(PickerField.class)
+        PickerField component = cubaUiComponents.create(PickerField.class)
 
         component.setEditable(false)
         component.setMetaClass(metadata.getClass(User.class))
@@ -105,7 +105,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testSetToReadonlyFromValueListener() {
         when:
-        PickerField component = uiComponents.create(PickerField.class)
+        PickerField component = cubaUiComponents.create(PickerField.class)
 
         component.setMetaClass(metadata.getClass(User.class))
         then:
@@ -126,7 +126,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testDatasource() {
         when:
-        PickerField component = uiComponents.create(PickerField.class)
+        PickerField component = cubaUiComponents.create(PickerField.class)
 
         //noinspection unchecked
         def testDs = new DsBuilder()
@@ -173,7 +173,7 @@ class PickerFieldTest extends UiScreenSpec {
 
     def testValueChangeListener() {
         when:
-        PickerField component = uiComponents.create(PickerField.class)
+        PickerField component = cubaUiComponents.create(PickerField.class)
 
         final AtomicInteger counter = new AtomicInteger(0)
 

@@ -15,6 +15,7 @@
  */
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -34,7 +35,8 @@ import org.dom4j.Element;
 public class TokenListLoader extends AbstractFieldLoader<TokenList> {
     @Override
     public void createComponent() {
-        resultComponent = factory.create(TokenList.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(TokenList.NAME);
         loadId(resultComponent, element);
     }
 

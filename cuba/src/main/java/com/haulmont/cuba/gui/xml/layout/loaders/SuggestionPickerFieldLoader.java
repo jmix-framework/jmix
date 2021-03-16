@@ -17,18 +17,18 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
-import com.haulmont.cuba.gui.components.OptionsField;
+import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.PickerField;
-import com.haulmont.cuba.gui.components.SearchPickerField;
+import com.haulmont.cuba.gui.components.SuggestionPickerField;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.core.Metadata;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
-import io.jmix.ui.component.ComboBox;
-import org.apache.commons.lang3.StringUtils;
+import io.jmix.ui.component.EntitySuggestionField;
+import io.jmix.ui.xml.layout.loader.EntitySuggestionFieldLoader;
 import org.dom4j.Element;
 
 import javax.annotation.Nullable;
@@ -38,11 +38,12 @@ import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAct
 import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadLegacyPickerAction;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
-public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
+public class SuggestionPickerFieldLoader extends EntitySuggestionFieldLoader {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(SearchPickerField.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(SuggestionPickerField.NAME);
         loadId(resultComponent, element);
     }
 
@@ -51,31 +52,38 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
     public void loadComponent() {
         super.loadComponent();
 
-        SearchPickerField searchPickerField = (SearchPickerField) resultComponent;
-
-        String metaClass = element.attributeValue("metaClass");
-        if (!StringUtils.isEmpty(metaClass)) {
-            searchPickerField.setMetaClass(getMetadata().findClass(metaClass));
-        }
-
-        loadActions(searchPickerField, element);
-        if (searchPickerField.getActions().isEmpty()) {
-            searchPickerField.addLookupAction();
-            searchPickerField.addOpenAction();
-        }
-
-        String minSearchStringLength = element.attributeValue("minSearchStringLength");
-        if (StringUtils.isNotEmpty(minSearchStringLength)) {
-            searchPickerField.setMinSearchStringLength(Integer.parseInt(minSearchStringLength));
-        }
-
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
+    }
+
+    @Override
+    public SuggestionPickerField getResultComponent() {
+        return (SuggestionPickerField) super.getResultComponent();
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    protected void loadData(EntitySuggestionField component, Element element) {
+        super.loadData(component, element);
+
+        DatasourceLoaderHelper
+                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
+                        (ComponentLoaderContext) getComponentContext())
+                .ifPresent(component::setValueSource);
+    }
+
+    @Override
+    protected void addDefaultActions() {
+        if (ComponentLoaderHelper.isLegacyFrame(context)) {
+            getResultComponent().addLookupAction();
+            getResultComponent().addOpenAction();
+        } else {
+            super.addDefaultActions();
+        }
     }
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
         String id = loadActionId(element);
-
         Optional<Action> actionOpt = loadLegacyPickerAction(((PickerField) actionsHolder), element, context, id);
         if (actionOpt.isPresent()) {
             return actionOpt.get();
@@ -105,23 +113,13 @@ public class CubaSearchPickerFieldLoader extends CubaSearchFieldLoader {
                 context);
     }
 
-    protected Metadata getMetadata() {
-        return (Metadata) applicationContext.getBean(Metadata.class);
+    @Override
+    protected void loadCaptionProperty(EntitySuggestionField suggestionField, Element element) {
+        ComponentLoaderHelper.loadCaptionProperty((HasCaptionMode) suggestionField, element);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(ComboBox component, Element element) {
-        super.loadData(component, element);
-
-        DatasourceLoaderHelper
-                .loadDatasourceIfValueSourceNull((DatasourceComponent) resultComponent, element, context,
-                        (ComponentLoaderContext) getComponentContext())
-                .ifPresent(component::setValueSource);
-
-        DatasourceLoaderHelper
-                .loadOptionsDatasourceIfOptionsNull((OptionsField) resultComponent, element,
-                        (ComponentLoaderContext) getComponentContext())
-                .ifPresent(component::setOptions);
+    protected String loadFetchPlan(Element queryElement) {
+        return queryElement.attributeValue("view");
     }
 }

@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -36,6 +37,14 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @SuppressWarnings("rawtypes")
 public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(Table.NAME);
+        loadId(resultComponent, element);
+        createButtonsPanel(resultComponent, element);
+    }
 
     @Override
     public void loadComponent() {
@@ -88,8 +97,9 @@ public class CubaTableLoader extends io.jmix.ui.xml.layout.loader.TableLoader {
 
     @Override
     protected void loadTableData() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
         // must be before datasource setting
-        ComponentLoaderHelper.loadRowsCount((Table) resultComponent, element, () -> factory.create(RowsCount.NAME));
+        ComponentLoaderHelper.loadRowsCount((Table) resultComponent, element, () -> uiComponents.create(RowsCount.NAME));
 
         super.loadTableData();
     }

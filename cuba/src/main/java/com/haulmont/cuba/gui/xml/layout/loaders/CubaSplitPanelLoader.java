@@ -16,11 +16,35 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.SplitPanel;
+import com.haulmont.cuba.gui.components.VBoxLayout;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.xml.layout.loader.SplitPanelLoader;
+import org.apache.commons.lang3.StringUtils;
 
 public class CubaSplitPanelLoader extends SplitPanelLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(SplitPanel.NAME);
+        loadId(resultComponent, element);
+
+        String orientation = element.attributeValue("orientation");
+        if (StringUtils.isEmpty(orientation)) {
+            resultComponent.setOrientation(io.jmix.ui.component.SplitPanel.ORIENTATION_VERTICAL);
+        } else if ("vertical".equalsIgnoreCase(orientation)) {
+            resultComponent.setOrientation(io.jmix.ui.component.SplitPanel.ORIENTATION_VERTICAL);
+        } else if ("horizontal".equalsIgnoreCase(orientation)) {
+            resultComponent.setOrientation(io.jmix.ui.component.SplitPanel.ORIENTATION_HORIZONTAL);
+        }
+
+        createSubComponents(resultComponent, element);
+        if (resultComponent.getOwnComponents().size() == 1) {
+            resultComponent.add(uiComponents.create(VBoxLayout.NAME));
+        }
+    }
 
     @Override
     public void loadComponent() {

@@ -19,6 +19,7 @@ package spec.haulmont.cuba.web
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.UserSessionSource
 import com.haulmont.cuba.core.sys.AppProperties
+import com.haulmont.cuba.gui.UiComponents
 import com.haulmont.cuba.web.testsupport.WebTest
 import io.jmix.core.security.SecurityContextHelper
 import io.jmix.ui.screen.OpenMode
@@ -39,6 +40,9 @@ class UiScreenSpec extends ScreenSpecification {
 
     @Autowired
     UserSessionSource sessionSource
+
+    @Autowired
+    UiComponents cubaUiComponents;
 
     @Override
     void setup() {

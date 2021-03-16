@@ -16,7 +16,7 @@
 
 package com.haulmont.cuba.gui.components;
 
-import io.jmix.ui.UiComponents;
+import com.haulmont.cuba.gui.UiComponents;
 import io.jmix.ui.component.Window;
 
 @Deprecated

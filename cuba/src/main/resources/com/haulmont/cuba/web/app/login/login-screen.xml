@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
+<window xmlns="http://schemas.haulmont.com/cuba/screen/window.xsd"
         caption="msg://loginWindow.caption">
 
     <actions>
@@ -73,10 +73,10 @@
                         <checkBox id="rememberMeCheckBox"
                                   caption="msg://loginWindow.rememberMe"
                                   stylename="c-login-remember-me"/>
-                        <comboBox id="localesSelect"
-                                  nullOptionVisible="false"
-                                  stylename="c-login-locale"
-                                  textInputAllowed="false"/>
+                        <lookupField id="localesSelect"
+                                     nullOptionVisible="false"
+                                     stylename="c-login-locale"
+                                     textInputAllowed="false"/>
                     </hbox>
                     <button id="loginButton"
                             align="MIDDLE_CENTER"

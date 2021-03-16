@@ -17,6 +17,8 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.PopupButton;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
@@ -29,6 +31,15 @@ import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAct
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public class CubaPopupButtonLoader extends PopupButtonLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(PopupButton.NAME);
+        loadId(resultComponent, element);
+
+        createContent();
+    }
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {

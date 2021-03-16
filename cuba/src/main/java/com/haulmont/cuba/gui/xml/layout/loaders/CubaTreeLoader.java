@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.CaptionMode;
 import com.haulmont.cuba.gui.components.HasItemCaptionMode;
 import com.haulmont.cuba.gui.components.Tree;
@@ -36,6 +37,14 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 public class CubaTreeLoader extends TreeLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(Tree.NAME);
+        loadId(resultComponent, element);
+        createButtonsPanel(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override

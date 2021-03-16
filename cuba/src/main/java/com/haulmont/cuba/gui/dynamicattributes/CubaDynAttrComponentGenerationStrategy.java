@@ -16,13 +16,21 @@
 
 package com.haulmont.cuba.gui.dynamicattributes;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.haulmont.cuba.core.entity.FileDescriptor;
-import com.haulmont.cuba.gui.components.FileUploadField;
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.actions.picker.ClearAction;
+import com.haulmont.cuba.gui.actions.picker.LookupAction;
+import com.haulmont.cuba.gui.components.*;
+import io.jmix.core.Entity;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.metamodel.datatype.FormatStringsRegistry;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattr.AttributeDefinition;
+import io.jmix.dynattr.AttributeType;
 import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.dynattrui.MsgBundleTools;
 import io.jmix.dynattrui.impl.AttributeDependencies;
@@ -30,25 +38,37 @@ import io.jmix.dynattrui.impl.AttributeOptionsLoader;
 import io.jmix.dynattrui.impl.AttributeValidators;
 import io.jmix.dynattrui.impl.DynAttrComponentGenerationStrategy;
 import io.jmix.ui.Actions;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
+import io.jmix.ui.action.valuepicker.ValueClearAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentGenerationContext;
 import io.jmix.ui.component.Field;
+import io.jmix.ui.component.data.options.MapOptions;
+import io.jmix.ui.component.data.value.ContainerValueSource;
+import io.jmix.ui.component.validation.Validator;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
 import io.jmix.ui.sys.ScreensHelper;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @org.springframework.stereotype.Component("cuba_DynamicAttributeComponentGenerationStrategy")
 public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGenerationStrategy {
 
     protected Icons icons;
+    protected UiComponents cubaUiComponents;
 
     @Autowired
     public CubaDynAttrComponentGenerationStrategy(Messages messages,
-                                                  UiComponents uiComponents,
+                                                  io.jmix.ui.UiComponents uiComponents,
                                                   DynAttrMetadata dynamicModelMetadata,
                                                   Metadata metadata,
                                                   MsgBundleTools msgBundleTools,
@@ -60,11 +80,18 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
                                                   AttributeDependencies attributeDependencies,
                                                   FormatStringsRegistry formatStringsRegistry,
                                                   Icons icons,
-                                                  ApplicationContext applicationContext) {
+                                                  ApplicationContext applicationContext,
+                                                  UiComponents cubaUiComponents) {
         super(messages, uiComponents, dynamicModelMetadata, metadata, msgBundleTools, optionsLoader, attributeValidators,
                 windowConfig, screensHelper, actions, attributeDependencies, formatStringsRegistry, applicationContext);
 
         this.icons = icons;
+        this.cubaUiComponents = cubaUiComponents;
+    }
+
+    @Override
+    public int getOrder() {
+        return JmixOrder.HIGHEST_PRECEDENCE + 15;
     }
 
     @Override
@@ -82,7 +109,7 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
      * Creates FileUploadField working with FileDescriptor.
      */
     protected Field createCubaFileUploadField(ComponentGenerationContext context) {
-        FileUploadField fileUploadField = uiComponents.create(FileUploadField.NAME);
+        FileUploadField fileUploadField = cubaUiComponents.create(FileUploadField.NAME);
 
         fileUploadField.setUploadButtonCaption(null);
         fileUploadField.setUploadButtonDescription(messages.getMessage("upload.submit"));
@@ -101,7 +128,180 @@ public class CubaDynAttrComponentGenerationStrategy extends DynAttrComponentGene
     }
 
     @Override
-    public int getOrder() {
-        return JmixOrder.HIGHEST_PRECEDENCE + 15;
+    protected Component createCollectionField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        ListEditor listEditor = cubaUiComponents.create(ListEditor.NAME);
+        listEditor.setEntityJoinClause(attribute.getConfiguration().getJoinClause());
+        listEditor.setEntityWhereClause(attribute.getConfiguration().getWhereClause());
+
+        Collection<Validator<?>> validators = attributeValidators.getValidators(attribute);
+        if (validators != null && !validators.isEmpty()) {
+            for (Consumer<?> validator : validators) {
+                //noinspection unchecked
+                listEditor.addListItemValidator(validator);
+            }
+        }
+
+        setValueSource(listEditor, context);
+
+        ListEditor.ItemType itemType = getListEditorItemType(attribute);
+        listEditor.setItemType(itemType);
+
+        Class<?> entityClass = attribute.getJavaType();
+        if (entityClass != null && entityClass.isAssignableFrom(Entity.class)) {
+            MetaClass metaClass = metadata.getClass(entityClass);
+            listEditor.setEntityName(metaClass.getName());
+            listEditor.setUseLookupField(BooleanUtils.isTrue(attribute.getConfiguration().isLookup()));
+        }
+
+        if (AttributeType.ENUMERATION.equals(attribute.getDataType())) {
+            //noinspection unchecked
+            listEditor.setOptionsMap(getLocalizedEnumerationMap(attribute));
+        }
+
+        return listEditor;
+    }
+
+    @Override
+    protected Component createStringField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        TextInputField textField;
+
+        Integer rowsCount = attribute.getConfiguration().getRowsCount();
+        if (rowsCount != null && rowsCount > 1) {
+            TextArea textArea = uiComponents.create(TextArea.class);
+            textArea.setRows(rowsCount);
+            textField = textArea;
+        } else {
+            textField = cubaUiComponents.create(TextField.class);
+        }
+
+        setValidators(textField, attribute);
+        setValueSource(textField, context);
+
+        return textField;
+    }
+
+    @Override
+    protected Component createEnumerationField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        LookupField lookupField = cubaUiComponents.create(LookupField.class);
+
+        lookupField.setOptions(new MapOptions(getLocalizedEnumerationMap(attribute)));
+
+        setValueSource(lookupField, context);
+        setValidators(lookupField, attribute);
+
+        return lookupField;
+    }
+
+    @Override
+    protected Component createComboBox(ComponentGenerationContext context, AttributeDefinition attribute) {
+        LookupField lookupField = cubaUiComponents.create(LookupField.class);
+
+        if (context.getValueSource() instanceof ContainerValueSource) {
+            setComboBoxOptionsLoader(lookupField, attribute, (ContainerValueSource) context.getValueSource());
+        }
+
+        setValueSource(lookupField, context);
+        setValidators(lookupField, attribute);
+
+        return lookupField;
+    }
+
+    @Override
+    protected Field createBooleanField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        CheckBox component = cubaUiComponents.create(CheckBox.class);
+
+        setValidators(component, attribute);
+        setValueSource(component, context);
+
+        return component;
+    }
+
+    @Override
+    protected Component createDateField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        DateField dateField = cubaUiComponents.create(DateField.class);
+
+        setValidators(dateField, attribute);
+        setValueSource(dateField, context);
+
+        return dateField;
+    }
+
+    @Override
+    protected Field createNumberField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        TextField component = cubaUiComponents.create(TextField.class);
+
+        setValidators(component, attribute);
+        setCustomDatatype(component, attribute);
+        setValueSource(component, context);
+
+        return component;
+    }
+
+    protected Component createEntityField(ComponentGenerationContext context, AttributeDefinition attribute) {
+        if (attribute.getConfiguration().isLookup()) {
+            LookupPickerField lookupPickerField = cubaUiComponents.create(LookupPickerField.class);
+
+            if (context.getValueSource() instanceof ContainerValueSource) {
+                setComboBoxOptionsLoader(lookupPickerField, attribute, (ContainerValueSource) context.getValueSource());
+            }
+
+            setValueSource(lookupPickerField, context);
+            setValidators(lookupPickerField, attribute);
+
+            return lookupPickerField;
+        } else {
+            PickerField pickerField = cubaUiComponents.create(PickerField.class);
+
+            LookupAction lookupAction = actions.create(LookupAction.class);
+
+            setLookupActionScreen(lookupAction, attribute);
+
+            pickerField.addAction(lookupAction);
+            pickerField.addAction(actions.create(ClearAction.class));
+
+            setValueSource(pickerField, context);
+            setValidators(pickerField, attribute);
+
+            return pickerField;
+        }
+    }
+
+    protected ListEditor.ItemType getListEditorItemType(AttributeDefinition attribute) {
+        AttributeType attributeType = attribute.getDataType();
+        switch (attributeType) {
+            case ENTITY:
+                return ListEditor.ItemType.ENTITY;
+            case DATE:
+                return ListEditor.ItemType.DATETIME;
+            case DATE_WITHOUT_TIME:
+                return ListEditor.ItemType.DATE;
+            case DOUBLE:
+                return ListEditor.ItemType.DOUBLE;
+            case DECIMAL:
+                return ListEditor.ItemType.BIGDECIMAL;
+            case INTEGER:
+                return ListEditor.ItemType.INTEGER;
+            case STRING:
+            case ENUMERATION:
+                return ListEditor.ItemType.STRING;
+            default:
+                throw new IllegalStateException(String.format("Attribute type %s not supported", attributeType));
+        }
+    }
+
+    protected Map<String, String> getLocalizedEnumerationMap(AttributeDefinition attribute) {
+        String enumeration = attribute.getEnumeration();
+        if (enumeration == null) {
+            return Collections.emptyMap();
+        }
+
+        List<String> enumValues = Lists.newArrayList(Splitter.on(",").omitEmptyStrings().split(enumeration));
+        Map<String, String> enumMsgBundleValues = msgBundleTools.getEnumMsgBundleValues(attribute.getEnumerationMsgBundle());
+
+        Map<String, String> localizedEnumerationMap = new LinkedHashMap<>();
+        for (String enumValue : enumValues) {
+            localizedEnumerationMap.put(enumMsgBundleValues.get(enumValue), enumValue);
+        }
+        return localizedEnumerationMap;
     }
 }

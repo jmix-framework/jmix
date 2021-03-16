@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.FileUploadField;
@@ -27,6 +28,13 @@ import org.dom4j.Element;
 
 public class CubaFileUploadFieldLoader extends FileUploadFieldLoader<FileUploadField> {
 
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(FileUploadField.NAME);
+        loadId(resultComponent, element);
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
@@ -34,12 +42,6 @@ public class CubaFileUploadFieldLoader extends FileUploadFieldLoader<FileUploadF
         loadEnum(element, FileStoragePutMode.class, "fileStoragePutMode", resultComponent::setMode);
 
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
-    }
-
-    @Override
-    public void createComponent() {
-        resultComponent = factory.create(FileUploadField.NAME);
-        loadId(resultComponent, element);
     }
 
     @SuppressWarnings({"rawtypes"})

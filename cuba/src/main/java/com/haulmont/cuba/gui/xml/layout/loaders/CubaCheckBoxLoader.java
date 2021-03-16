@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.CheckBox;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -24,6 +26,13 @@ import io.jmix.ui.xml.layout.loader.CheckBoxLoader;
 import org.dom4j.Element;
 
 public class CubaCheckBoxLoader extends CheckBoxLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(CheckBox.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override

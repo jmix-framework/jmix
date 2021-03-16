@@ -22,6 +22,7 @@ import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.FilterDataContext;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
 import io.jmix.ui.component.*;
@@ -47,7 +48,7 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
     protected Component defaultValueComponent;
     protected CheckBox required;
     protected CheckBox hidden;
-    protected ComboBox<Integer> width;
+    protected LookupField<Integer> width;
     protected BoxLayout defaultValueLayout;
 
     @Override
@@ -64,7 +65,7 @@ public abstract class ConditionFrame<T extends AbstractCondition> extends Abstra
     protected void initComponents() {
         required = (CheckBox) getComponent("required");
         hidden = (CheckBox) getComponent("hidden");
-        width = (ComboBox) getComponent("width");
+        width = (LookupField) getComponent("width");
 
         if (width != null) {
             List<Integer> widthValues = new ArrayList<>();

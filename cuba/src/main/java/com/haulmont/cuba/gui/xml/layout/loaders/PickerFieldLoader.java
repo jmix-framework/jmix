@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
 import com.haulmont.cuba.gui.components.PickerField;
@@ -36,7 +37,7 @@ import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAct
 import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadLegacyPickerAction;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
-public class CubaPickerFieldLoader extends EntityPickerLoader {
+public class PickerFieldLoader extends EntityPickerLoader {
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -48,7 +49,8 @@ public class CubaPickerFieldLoader extends EntityPickerLoader {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(PickerField.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(PickerField.NAME);
         loadId(resultComponent, element);
     }
 

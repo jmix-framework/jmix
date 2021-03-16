@@ -18,10 +18,10 @@ package com.haulmont.cuba.gui.app.core.bulk;
 
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.Messages;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.data.Datasource;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.UiComponents;
 
 import javax.annotation.Nullable;
 import java.sql.Time;

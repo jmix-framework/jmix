@@ -17,10 +17,10 @@
 package com.haulmont.cuba.gui.components.filter;
 
 import com.haulmont.cuba.core.global.AppBeans;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.FilterDataContext;
 import com.haulmont.cuba.gui.components.filter.condition.AbstractCondition;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.icon.JmixIcon;

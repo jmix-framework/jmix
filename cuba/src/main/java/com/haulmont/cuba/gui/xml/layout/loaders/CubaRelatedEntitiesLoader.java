@@ -16,12 +16,21 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.RelatedEntities;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.xml.layout.loader.RelatedEntitiesLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class CubaRelatedEntitiesLoader extends RelatedEntitiesLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(RelatedEntities.NAME);
+        loadId(resultComponent, element);
+    }
 
     @Override
     protected void loadPropertyOption(Element routeElement) {

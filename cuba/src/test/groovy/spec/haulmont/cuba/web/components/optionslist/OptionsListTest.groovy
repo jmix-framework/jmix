@@ -175,7 +175,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testNew() {
         when:
-        Component component = uiComponents.create(OptionsList)
+        Component component = cubaUiComponents.create(OptionsList)
 
         then:
         component != null
@@ -184,7 +184,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testGetSetValue() {
         when:
-        def component = uiComponents.create(OptionsList)
+        def component = cubaUiComponents.create(OptionsList)
 
         then:
         component.value == null
@@ -199,7 +199,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testSetToReadonly() {
         when:
-        def component = uiComponents.create(OptionsList)
+        def component = cubaUiComponents.create(OptionsList)
 
         component.setEditable(false)
 
@@ -218,7 +218,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testSetToReadonlyFromValueListener() {
         when:
-        def component = uiComponents.create(OptionsList)
+        def component = cubaUiComponents.create(OptionsList)
 
         then:
         component.editable
@@ -236,7 +236,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testDatasource() {
         when:
-        def component = uiComponents.create(OptionsList)
+        def component = cubaUiComponents.create(OptionsList)
 
         //noinspection unchecked
         def testDs = new DsBuilder()
@@ -262,7 +262,7 @@ class OptionsListTest extends UiScreenSpec {
 
     def testOptionsDatasource() {
         when:
-        def component = uiComponents.create(OptionsList)
+        def component = cubaUiComponents.create(OptionsList)
 
         //noinspection unchecked
         def testDs = new DsBuilder()

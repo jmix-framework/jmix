@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowParams;
 import com.haulmont.cuba.gui.components.LookupPickerField;
@@ -30,7 +31,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
@@ -80,7 +80,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     protected Button addButton;
     protected Button clearButton;
 
-    protected EntityComboBox<V> entityComboBox;
+    protected LookupPickerField<V> lookupPickerField;
     protected Action lookupAction;
     protected String lookupScreen;
     protected Map<String, Object> lookupScreenParams;
@@ -190,15 +190,15 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
         clearButton = uiComponents.create(Button.class);
         clearButton.setCaption(messages.getMessage("actions.Clear"));
 
-        createEntityComboBox();
+        createLookupPickerField();
 
         setMultiSelect(false);
     }
 
     @SuppressWarnings("unchecked")
-    protected void createEntityComboBox() {
-        entityComboBox = uiComponents.create(LookupPickerField.class);
-        entityComboBox.addValueChangeListener(lookupSelectListener);
+    protected void createLookupPickerField() {
+        lookupPickerField = uiComponents.create(LookupPickerField.class);
+        lookupPickerField.addValueChangeListener(lookupSelectListener);
     }
 
     @Override
@@ -215,26 +215,26 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     @Nullable
     @Override
     public String getOptionsCaptionProperty() {
-        return ((LookupPickerField) entityComboBox).getCaptionProperty();
+        return ((LookupPickerField) lookupPickerField).getCaptionProperty();
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void setOptionsCaptionProperty(@Nullable String optionsCaptionProperty) {
-        ((LookupPickerField) entityComboBox).setCaptionProperty(optionsCaptionProperty);
+        ((LookupPickerField) lookupPickerField).setCaptionProperty(optionsCaptionProperty);
     }
 
     @SuppressWarnings("rawtypes")
     @Nullable
     @Override
     public CaptionMode getOptionsCaptionMode() {
-        return ((LookupPickerField) entityComboBox).getCaptionMode();
+        return ((LookupPickerField) lookupPickerField).getCaptionMode();
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void setOptionsCaptionMode(@Nullable CaptionMode optionsCaptionMode) {
-        ((LookupPickerField) entityComboBox).setCaptionMode(optionsCaptionMode);
+        ((LookupPickerField) lookupPickerField).setCaptionMode(optionsCaptionMode);
     }
 
     @Override
@@ -363,7 +363,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     @Override
     public void setFrame(@Nullable Frame frame) {
         super.setFrame(frame);
-        entityComboBox.setFrame(frame);
+        lookupPickerField.setFrame(frame);
     }
 
     @Override
@@ -373,22 +373,22 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
 
     @Override
     public ComboBox.FilterMode getFilterMode() {
-        return entityComboBox.getFilterMode();
+        return lookupPickerField.getFilterMode();
     }
 
     @Override
     public void setFilterMode(ComboBox.FilterMode mode) {
-        entityComboBox.setFilterMode(mode);
+        lookupPickerField.setFilterMode(mode);
     }
 
     @Override
     public void setLookupFieldOptionsCaptionProvider(@Nullable Function<? super V, String> optionsCaptionProvider) {
-        entityComboBox.setOptionCaptionProvider(optionsCaptionProvider);
+        lookupPickerField.setOptionCaptionProvider(optionsCaptionProvider);
     }
 
     @Override
     public Function<? super V, String> getLookupFieldOptionsCaptionProvider() {
-        return entityComboBox.getOptionCaptionProvider();
+        return lookupPickerField.getOptionCaptionProvider();
     }
 
     @Override
@@ -419,13 +419,13 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
                 && !(options instanceof EntityOptions)) {
             throw new IllegalArgumentException("TokenList supports only EntityOptions");
         }
-        entityComboBox.setOptions(options);
+        lookupPickerField.setOptions(options);
     }
 
     @Nullable
     @Override
     public Options<V> getOptions() {
-        return entityComboBox.getOptions();
+        return lookupPickerField.getOptions();
     }
 
     @Override
@@ -452,9 +452,9 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
         if (this.lookup != lookup) {
             if (lookup) {
                 lookupAction = createLookupAction();
-                entityComboBox.addAction(lookupAction);
+                lookupPickerField.addAction(lookupAction);
             } else {
-                entityComboBox.removeAction(lookupAction);
+                lookupPickerField.removeAction(lookupAction);
             }
         }
         this.lookup = lookup;
@@ -896,12 +896,12 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     @Nullable
     @Override
     public String getLookupInputPrompt() {
-        return entityComboBox.getInputPrompt();
+        return lookupPickerField.getInputPrompt();
     }
 
     @Override
     public void setLookupInputPrompt(@Nullable String inputPrompt) {
-        this.entityComboBox.setInputPrompt(inputPrompt);
+        this.lookupPickerField.setInputPrompt(inputPrompt);
     }
 
     protected String getInstanceCaption(@Nullable V instance) {
@@ -938,15 +938,15 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
     }
 
     protected void addValueFromLookupPickerField() {
-        V newItem = entityComboBox.getValue();
+        V newItem = lookupPickerField.getValue();
         if (newItem == null) {
             return;
         }
 
         handleSelection(Collections.singleton(newItem));
 
-        entityComboBox.setValue(null);
-        entityComboBox.focus();
+        lookupPickerField.setValue(null);
+        lookupPickerField.focus();
     }
 
     @Override
@@ -954,7 +954,7 @@ public class WebTokenList<V extends Entity> extends AbstractField<CubaTokenList<
         if (simple) {
             addButton.focus();
         } else {
-            entityComboBox.focus();
+            lookupPickerField.focus();
         }
     }
 

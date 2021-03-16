@@ -19,6 +19,7 @@ package com.haulmont.cuba.gui.xml.layout.loaders;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.haulmont.cuba.core.global.Security;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.FieldGroup;
 import com.haulmont.cuba.gui.components.FieldGroup.FieldCaptionAlignment;
 import com.haulmont.cuba.gui.components.FieldGroupFieldFactory;
@@ -62,7 +63,8 @@ public class FieldGroupLoader extends AbstractComponentLoader<FieldGroup> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(FieldGroup.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(FieldGroup.NAME);
         loadId(resultComponent, element);
 
         // required for border visible

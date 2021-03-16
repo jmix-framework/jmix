@@ -16,21 +16,24 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.gui.components.OptionsGroup;
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.OptionsList;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
 import io.jmix.ui.xml.layout.loader.AbstractOptionsBaseLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGroup> {
+public class OptionsListLoader extends AbstractOptionsBaseLoader<OptionsList> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(OptionsGroup.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(OptionsList.NAME);
         loadId(resultComponent, element);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
         super.loadComponent();
@@ -40,9 +43,12 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
             resultComponent.setMultiSelect(Boolean.parseBoolean(multiselect));
         }
 
-        loadOrientation(resultComponent, element);
-        loadCaptionProperty(resultComponent, element);
+        String nullOptionVisible = element.attributeValue("nullOptionVisible");
+        if (StringUtils.isNotEmpty(nullOptionVisible)) {
+            resultComponent.setNullOptionVisible(Boolean.parseBoolean(nullOptionVisible));
+        }
 
+        loadCaptionProperty(resultComponent, element);
         loadOptionsEnum(resultComponent, element);
         loadTabIndex(resultComponent, element);
 
@@ -51,7 +57,7 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    protected void loadData(OptionsGroup component, Element element) {
+    protected void loadData(OptionsList component, Element element) {
         super.loadData(component, element);
 
         DatasourceLoaderHelper
@@ -66,7 +72,7 @@ public class CubaOptionsGroupLoader extends AbstractOptionsBaseLoader<OptionsGro
     }
 
     @Override
-    protected void loadCaptionProperty(OptionsGroup component, Element element) {
+    protected void loadCaptionProperty(OptionsList component, Element element) {
         ComponentLoaderHelper.loadCaptionProperty(component, element);
     }
 }

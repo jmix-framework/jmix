@@ -16,12 +16,20 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.sys.FrameHelper;
 import io.jmix.ui.WindowInfo;
+import io.jmix.ui.component.Fragment;
 import io.jmix.ui.xml.layout.loader.FragmentComponentLoader;
 import org.dom4j.Element;
 
 public class CubaFragmentComponentLoader extends FragmentComponentLoader {
+
+    @Override
+    protected Fragment createComponentInternal() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        return uiComponents.create(com.haulmont.cuba.gui.components.Fragment.NAME);
+    }
 
     @Override
     protected ComponentLoaderContext createInnerContext() {

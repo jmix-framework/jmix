@@ -31,6 +31,7 @@ import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.PersistenceHelper;
 import com.haulmont.cuba.core.global.Security;
 import com.haulmont.cuba.core.global.UserSessionSource;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.WindowParams;
@@ -74,7 +75,6 @@ import io.jmix.dynattr.DynAttrMetadata;
 import io.jmix.ui.Dialogs;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.AbstractAction;
@@ -256,7 +256,7 @@ public class FilterDelegateImpl implements FilterDelegate {
     protected PinAppliedAction pinAppliedAction;
     protected SaveAsFolderAction saveAsAppFolderAction;
     protected SaveAsFolderAction saveAsSearchFolderAction;
-    protected ComboBox<FilterEntity> filtersLookup;
+    protected LookupField<FilterEntity> filtersLookup;
 
     protected Consumer<FDExpandedStateChangeEvent> expandedStateChangeListener;
 
@@ -373,7 +373,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         filterHelper.setInternalDebugId(filtersPopupButton, "filtersPopupButton");
         filtersPopupBox.add(filtersPopupButton);
 
-        filtersLookup = uiComponents.create(ComboBox.class);
+        filtersLookup = uiComponents.create(LookupField.class);
         filtersLookup.setWidth(theme.get("cuba.gui.filter.select.width"));
         filtersLookup.addValueChangeListener(new FiltersLookupChangeListener());
         filterHelper.setLookupNullSelectionAllowed(filtersLookup, false);
@@ -537,7 +537,7 @@ public class FilterDelegateImpl implements FilterDelegate {
         maxResultsLabel.setAlignment(Alignment.MIDDLE_RIGHT);
         maxResultsLayout.add(maxResultsLabel);
 
-        maxResultsTextField = uiComponents.create(TextField.TYPE_INTEGER);
+        maxResultsTextField = uiComponents.create(com.haulmont.cuba.gui.components.TextField.TYPE_INTEGER);
         maxResultsTextField.setStyleName("c-maxresults-input");
         maxResultsTextField.setMaxLength(4);
         maxResultsTextField.setWidth(theme.get("cuba.gui.Filter.maxResults.width"));

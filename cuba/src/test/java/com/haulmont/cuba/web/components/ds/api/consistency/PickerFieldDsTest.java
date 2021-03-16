@@ -16,12 +16,12 @@
 
 package com.haulmont.cuba.web.components.ds.api.consistency;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.components.PickerField;
 import io.jmix.core.common.event.Subscription;
 import com.haulmont.cuba.core.model.common.Group;
 import com.haulmont.cuba.core.model.common.User;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.HasValue;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

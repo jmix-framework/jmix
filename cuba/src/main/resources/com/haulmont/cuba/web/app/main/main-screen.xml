@@ -14,7 +14,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
         caption="mainMsg://application.caption">
 
     <layout>

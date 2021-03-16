@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.components;
 
 import com.haulmont.cuba.gui.DialogOptions;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.WindowContext;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.compatibility.AfterCloseListenerAdapter;
@@ -35,7 +36,6 @@ import io.jmix.core.common.event.Subscription;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.screen.CloseAction;

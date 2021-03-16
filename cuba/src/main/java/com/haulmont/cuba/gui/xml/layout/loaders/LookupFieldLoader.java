@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
@@ -36,11 +37,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-public class CubaLookupFieldLoader extends ComboBoxLoader {
+public class LookupFieldLoader extends ComboBoxLoader {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(LookupField.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(LookupField.NAME);
         loadId(resultComponent, element);
     }
 

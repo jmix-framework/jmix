@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.TimeField;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
@@ -24,6 +25,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class CubaTimeFieldLoader extends TimeFieldLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(TimeField.NAME);
+        loadId(resultComponent, element);
+    }
 
     @Override
     public void loadComponent() {

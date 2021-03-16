@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.app.core.bulk;
 
 import com.haulmont.cuba.core.global.*;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.CssLayout;
 import com.haulmont.cuba.gui.components.Field;
@@ -39,7 +40,6 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.WindowParam;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.Action.Status;
@@ -348,7 +348,7 @@ public class BulkEditorWindow extends AbstractWindow {
             return false;
         }
 
-        boolean isPickerField = field instanceof ValuePicker;
+        boolean isPickerField = field instanceof PickerField;
         boolean isAffectedBrowser = deviceInfo.isFirefox() || deviceInfo.isEdge() || deviceInfo.isIE()
                 || deviceInfo.isSafari();
 

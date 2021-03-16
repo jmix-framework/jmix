@@ -18,6 +18,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Preconditions;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.sys.FrameHelper;
 import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.WindowInfo;
@@ -47,7 +48,7 @@ import java.util.Objects;
 import static io.jmix.ui.monitoring.UiMonitoring.createScreenTimer;
 import static io.jmix.ui.screen.UiControllerUtils.*;
 
-public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
+public class RuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
 
     protected static final String DEFAULT_DESCRIPTOR =
             "/com/haulmont/cuba/gui/app/core/dynamicattributes/runtime-properties-frame.xml";
@@ -83,7 +84,8 @@ public class CubaRuntimePropertiesFrameLoader extends ContainerLoader<Frame> {
 
         WindowInfo windowInfo = frameHelper.createFakeWindowInfo(src, fragmentId);
 
-        Fragment fragment = factory.create(Fragment.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        Fragment fragment = uiComponents.create(Fragment.NAME);
         ScreenFragment controller = fragmentHelper.createController(windowInfo, fragment);
 
         // setup screen and controller

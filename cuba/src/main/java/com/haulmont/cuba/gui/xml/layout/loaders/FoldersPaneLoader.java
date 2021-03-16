@@ -16,12 +16,14 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.mainwindow.FoldersPane;
 
 public class FoldersPaneLoader extends AbstractComponentLoader<FoldersPane> {
     @Override
     public void createComponent() {
-        resultComponent = factory.create(FoldersPane.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(FoldersPane.NAME);
         loadId(resultComponent, element);
     }
 

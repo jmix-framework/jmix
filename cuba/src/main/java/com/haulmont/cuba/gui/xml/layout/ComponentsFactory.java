@@ -15,7 +15,7 @@
  */
 package com.haulmont.cuba.gui.xml.layout;
 
-import io.jmix.ui.UiComponents;
+import com.haulmont.cuba.gui.UiComponents;
 import io.jmix.ui.component.*;
 import com.haulmont.cuba.gui.components.ComponentGenerationContext;
 

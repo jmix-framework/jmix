@@ -16,7 +16,9 @@
 
 package com.haulmont.cuba.web.gui.components.mainwindow;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.mainwindow.AppWorkArea;
+import io.jmix.ui.component.VBoxLayout;
 import io.jmix.ui.component.impl.AppWorkAreaImpl;
 
 import java.util.function.Consumer;
@@ -27,5 +29,11 @@ public class WebAppWorkArea extends AppWorkAreaImpl implements AppWorkArea {
     @Override
     public void removeStateChangeListener(Consumer<StateChangeEvent> listener) {
         unsubscribe(StateChangeEvent.class, listener);
+    }
+
+    @Override
+    protected VBoxLayout createInitialLayout() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        return uiComponents.create(VBoxLayout.NAME);
     }
 }

@@ -20,7 +20,9 @@ package com.haulmont.cuba.web.gui.components;
 import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.entity.AbstractSearchFolder;
 import com.haulmont.cuba.core.entity.Folder;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.ListComponent;
+import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.Window;
 import com.haulmont.cuba.gui.components.filter.ConditionsTree;
 import com.haulmont.cuba.gui.components.filter.FilterHelper;
@@ -38,7 +40,6 @@ import com.vaadin.ui.components.grid.TreeGridDropTarget;
 import io.jmix.core.common.datastruct.Node;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.AppUI;
-import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
 import io.jmix.ui.presentation.TablePresentations;
 import io.jmix.ui.screen.FrameOwner;
@@ -73,13 +74,13 @@ public class WebFilterHelper implements FilterHelper {
     protected CubaProperties cubaProperties;
 
     @Override
-    public void setLookupNullSelectionAllowed(ComboBox comboBox, boolean value) {
-        comboBox.setNullOptionVisible(value);
+    public void setLookupNullSelectionAllowed(LookupField lookupField, boolean value) {
+        lookupField.setNullOptionVisible(value);
     }
 
     @Override
-    public void setLookupTextInputAllowed(ComboBox comboBox, boolean value) {
-        comboBox.setTextInputAllowed(value);
+    public void setLookupTextInputAllowed(LookupField lookupField, boolean value) {
+        lookupField.setTextInputAllowed(value);
     }
 
     @Override
@@ -345,7 +346,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setLookupCaptions(ComboBox lookupField, Map<Object, String> captions) {
+    public void setLookupCaptions(LookupField lookupField, Map<Object, String> captions) {
         lookupField.setOptionCaptionProvider(captions::get);
     }
 
@@ -376,7 +377,7 @@ public class WebFilterHelper implements FilterHelper {
     }
 
     @Override
-    public void setLookupFieldPageLength(ComboBox lookupField, int pageLength) {
+    public void setLookupFieldPageLength(LookupField lookupField, int pageLength) {
         lookupField.setPageLength(pageLength);
     }
 

@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.OptionsField;
@@ -27,11 +28,12 @@ import io.jmix.ui.component.ComboBox;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
-public class CubaSearchFieldLoader extends CubaLookupFieldLoader {
+public class SearchFieldLoader extends LookupFieldLoader {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(SearchField.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(SearchField.NAME);
         loadId(resultComponent, element);
     }
 

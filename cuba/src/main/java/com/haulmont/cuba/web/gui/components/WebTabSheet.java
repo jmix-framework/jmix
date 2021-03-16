@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.HasSettings;
 import com.haulmont.cuba.gui.components.TabSheet;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -25,6 +26,7 @@ import com.haulmont.cuba.settings.CubaLegacySettings;
 import com.haulmont.cuba.settings.Settings;
 import io.jmix.ui.component.ComponentContainer;
 import io.jmix.ui.component.ComponentsHelper;
+import io.jmix.ui.component.CssLayout;
 import io.jmix.ui.component.HasTablePresentations;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.component.impl.TabSheetImpl;
@@ -40,6 +42,12 @@ import static io.jmix.ui.component.ComponentsHelper.walkComponents;
 
 @Deprecated
 public class WebTabSheet extends TabSheetImpl implements TabSheet {
+
+    @Override
+    protected CssLayout createLazyTabLayout() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        return uiComponents.create(CssLayout.NAME);
+    }
 
     @Override
     public void removeSelectedTabChangeListener(Consumer<SelectedTabChangeEvent> listener) {

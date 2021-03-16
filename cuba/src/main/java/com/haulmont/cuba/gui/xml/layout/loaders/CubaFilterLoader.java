@@ -17,6 +17,7 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.Filter;
 import com.haulmont.cuba.gui.components.filter.FilterDelegate;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
@@ -47,7 +48,8 @@ public class CubaFilterLoader extends AbstractComponentLoader<Filter> {
 
     @Override
     public void createComponent() {
-        resultComponent = factory.create(Filter.NAME);
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(Filter.NAME);
         loadId(resultComponent, element);
     }
 

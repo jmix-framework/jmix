@@ -33,7 +33,6 @@ import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
-import com.haulmont.cuba.web.gui.CubaUiComponents;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
 import com.haulmont.cuba.web.sys.*;
 import com.haulmont.cuba.web.sys.navigation.CubaUrlChangeHandler;
@@ -154,12 +153,6 @@ public class CubaConfiguration {
     @Primary
     protected Metadata metadata(MetadataLoader metadataLoader) {
         return new CubaMetadata(metadataLoader);
-    }
-
-    @Bean("cuba_UiComponents")
-    @Primary
-    protected UiComponents uiComponents() {
-        return new CubaUiComponents();
     }
 
     @Bean("cuba_InstanceNameProvider")

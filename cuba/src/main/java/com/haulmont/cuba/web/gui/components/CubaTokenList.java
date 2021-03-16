@@ -26,7 +26,6 @@ import io.jmix.core.Entity;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.ui.component.ComponentsHelper;
-import io.jmix.ui.component.data.ValueSource;
 import io.jmix.ui.widget.JmixScrollBoxLayout;
 import io.jmix.ui.widget.JmixTokenListLabel;
 import org.apache.commons.collections4.CollectionUtils;
@@ -130,14 +129,14 @@ public class CubaTokenList<T extends Entity> extends CustomField<Collection<T>> 
                 editor.setWidth("100%");
 
                 if (!owner.isSimple()) {
-                    owner.entityComboBox.setWidthFull();
+                    owner.lookupPickerField.setWidthFull();
                 }
             } else {
                 composition.setWidthUndefined();
                 editor.setWidthUndefined();
 
                 if (!owner.isSimple()) {
-                    owner.entityComboBox.setWidthAuto();
+                    owner.lookupPickerField.setWidthAuto();
                 }
             }
         }
@@ -157,10 +156,10 @@ public class CubaTokenList<T extends Entity> extends CustomField<Collection<T>> 
         editor.removeAllComponents();
 
         if (!owner.isSimple()) {
-            owner.entityComboBox.setWidthAuto();
-            editor.addComponent(ComponentsHelper.getComposition(owner.entityComboBox));
+            owner.lookupPickerField.setWidthAuto();
+            editor.addComponent(ComponentsHelper.getComposition(owner.lookupPickerField));
         }
-        owner.entityComboBox.setVisible(!owner.isSimple());
+        owner.lookupPickerField.setVisible(!owner.isSimple());
 
         owner.addButton.setVisible(owner.isSimple());
         owner.addButton.setStyleName(ADD_BTN_STYLENAME);
@@ -338,14 +337,14 @@ public class CubaTokenList<T extends Entity> extends CustomField<Collection<T>> 
             editor.setWidth("100%");
 
             if (!owner.isSimple()) {
-                owner.entityComboBox.setWidthFull();
+                owner.lookupPickerField.setWidthFull();
             }
         } else {
             composition.setWidthUndefined();
             editor.setWidthUndefined();
 
             if (!owner.isSimple()) {
-                owner.entityComboBox.setWidthAuto();
+                owner.lookupPickerField.setWidthAuto();
             }
         }
     }

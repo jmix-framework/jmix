@@ -18,8 +18,8 @@ package com.haulmont.cuba.gui.components.filter;
 
 import com.google.common.base.Splitter;
 import com.haulmont.cuba.CubaProperties;
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.LookupField;
-import com.haulmont.cuba.web.gui.CubaUiComponents;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class MaxResultsFieldHelper {
     public static final String NAME = "cuba_MaxResultsFieldHelper";
 
     @Autowired
-    protected CubaUiComponents uiComponents;
+    protected UiComponents uiComponents;
     @Autowired
     protected FilterHelper filterHelper;
     @Autowired

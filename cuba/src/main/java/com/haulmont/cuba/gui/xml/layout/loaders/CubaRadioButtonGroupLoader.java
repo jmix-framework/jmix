@@ -16,6 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.components.HasCaptionMode;
@@ -27,6 +28,13 @@ import io.jmix.ui.xml.layout.loader.RadioButtonGroupLoader;
 import org.dom4j.Element;
 
 public class CubaRadioButtonGroupLoader extends RadioButtonGroupLoader {
+
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(com.haulmont.cuba.gui.components.RadioButtonGroup.NAME);
+        loadId(resultComponent, element);
+    }
 
     @SuppressWarnings("rawtypes")
     @Override

@@ -16,6 +16,8 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
+import com.haulmont.cuba.gui.UiComponents;
+import com.haulmont.cuba.gui.components.ColorPicker;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
@@ -25,6 +27,13 @@ import org.dom4j.Element;
 
 public class CubaColorPickerLoader extends ColorPickerLoader {
 
+    @Override
+    public void createComponent() {
+        UiComponents uiComponents = applicationContext.getBean(UiComponents.class);
+        resultComponent = uiComponents.create(ColorPicker.NAME);
+        loadId(resultComponent, element);
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public void loadComponent() {
@@ -33,7 +42,7 @@ public class CubaColorPickerLoader extends ColorPickerLoader {
         ComponentLoaderHelper.loadValidators((Field) resultComponent, element, context, getClassManager(), getMessages());
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("rawtypes")
     @Override
     protected void loadData(io.jmix.ui.component.ColorPicker component, Element element) {
         super.loadData(component, element);

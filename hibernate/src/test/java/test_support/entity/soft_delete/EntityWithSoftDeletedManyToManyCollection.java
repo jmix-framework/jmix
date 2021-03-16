@@ -18,12 +18,8 @@ package test_support.entity.soft_delete;
 
 import io.jmix.core.entity.annotation.JmixGeneratedValue;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.hibernate.impl.SoftDeletionFilterDefinition;
-import org.hibernate.annotations.*;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Set;
 import java.util.UUID;
 

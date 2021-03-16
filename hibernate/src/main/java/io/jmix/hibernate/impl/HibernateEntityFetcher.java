@@ -29,6 +29,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 
 import java.util.*;
 
@@ -36,11 +37,12 @@ public class HibernateEntityFetcher extends EntityFetcher {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateEntityFetcher.class);
 
-    protected Object unproxy(Object value) {
+    @Nullable
+    protected Object unproxy(@Nullable Object value) {
         if (value != null) {
             if (!(value instanceof Collection)) {
                 value = HibernateUtils.initializeAndUnproxy(value);
-                if (EntityValues.isSoftDeleted(value)) {
+                if (value != null && EntityValues.isSoftDeleted(value)) {
                     return null;
                 }
             }

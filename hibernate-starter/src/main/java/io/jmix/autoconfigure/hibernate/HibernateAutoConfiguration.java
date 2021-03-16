@@ -21,10 +21,10 @@ import io.jmix.core.JmixModules;
 import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.data.DataConfiguration;
-import io.jmix.hibernate.HibernateConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
+import io.jmix.hibernate.HibernateConfiguration;
+import io.jmix.hibernate.impl.JmixHibernateTransactionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +56,6 @@ public class HibernateAutoConfiguration {
     @Primary
     @ConditionalOnMissingBean(name = "transactionManager")
     protected PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        return new JmixTransactionManager(Stores.MAIN, entityManagerFactory);
+        return new JmixHibernateTransactionManager(Stores.MAIN, entityManagerFactory);
     }
 }

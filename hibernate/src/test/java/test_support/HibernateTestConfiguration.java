@@ -23,12 +23,12 @@ import io.jmix.core.impl.JmixMessageSource;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.core.security.InMemoryUserRepository;
 import io.jmix.core.security.UserRepository;
-import io.jmix.hibernate.HibernateConfiguration;
-import io.jmix.hibernate.impl.HibernateDataStore;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
-import io.jmix.data.impl.JmixTransactionManager;
 import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.data.persistence.JpqlSortExpressionProvider;
+import io.jmix.hibernate.HibernateConfiguration;
+import io.jmix.hibernate.impl.HibernateDataStore;
+import io.jmix.hibernate.impl.JmixHibernateTransactionManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
@@ -90,7 +90,7 @@ public class HibernateTestConfiguration extends CoreSecurityConfiguration {
     @Primary
     JpaTransactionManager transactionManager(
             @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        return new JmixTransactionManager(HibernateDataStore.STORE_NAME, entityManagerFactory);
+        return new JmixHibernateTransactionManager(HibernateDataStore.STORE_NAME, entityManagerFactory);
     }
 
     @Bean
@@ -148,7 +148,7 @@ public class HibernateTestConfiguration extends CoreSecurityConfiguration {
     @Bean
     JpaTransactionManager db1TransactionManager(
             @Qualifier("db1EntityManagerFactory") EntityManagerFactory entityManagerFactory) {
-        return new JmixTransactionManager("db1", entityManagerFactory);
+        return new JmixHibernateTransactionManager("db1", entityManagerFactory);
     }
 
     @Bean

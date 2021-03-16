@@ -29,7 +29,6 @@ import io.jmix.data.impl.*;
 import io.jmix.data.listener.AfterCompleteTransactionListener;
 import io.jmix.data.listener.BeforeCommitTransactionListener;
 import org.hibernate.Session;
-import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +58,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
     public static final String RESOURCE_HOLDER_KEY = ContainerResourceHolder.class.getName();
 
-    public static final String RUNNER_RESOURCE_HOLDER = RunnerResourceHolder.class.getName();
-
     @Autowired
     protected StoreAwareLocator storeAwareLocator;
 
@@ -88,13 +85,16 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
     @Autowired
     protected HibernateChangesProvider changesProvider;
 
+    @Autowired
+    protected LoadedValueProvider loadedValueProvider;
+
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 
     protected List<AfterCompleteTransactionListener> afterCompleteTxListeners;
 
     private static final Logger log = LoggerFactory.getLogger(HibernatePersistenceSupport.class.getName());
 
-    private Logger implicitFlushLog = LoggerFactory.getLogger("com.haulmont.cuba.IMPLICIT_FLUSH");
+    private Logger implicitFlushLog = LoggerFactory.getLogger("io.jmix.hibernate.IMPLICIT_FLUSH");
 
     protected static Set<Object> createEntitySet() {
         return Sets.newIdentityHashSet();
@@ -118,23 +118,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
     public void registerSynchronizations(String store) {
         log.trace("registerSynchronizations for store '{}'", store);
         getInstanceContainerResourceHolder(store);
-        getRunnerResourceHolder(store);
-    }
-
-    private RunnerResourceHolder getRunnerResourceHolder(String storeName) {
-        RunnerResourceHolder runner = (RunnerResourceHolder) TransactionSynchronizationManager.getResource(RUNNER_RESOURCE_HOLDER);
-        if (runner == null) {
-            runner = new RunnerResourceHolder(storeName);
-            TransactionSynchronizationManager.bindResource(RUNNER_RESOURCE_HOLDER, runner);
-        } else if (!storeName.equals(runner.getStoreName())) {
-            throw new IllegalStateException("Cannot handle entity from " + storeName
-                    + " datastore because active transaction is for " + runner.getStoreName());
-        }
-        if (TransactionSynchronizationManager.isSynchronizationActive() && !runner.isSynchronizedWithTransaction()) {
-            runner.setSynchronizedWithTransaction(true);
-            TransactionSynchronizationManager.registerSynchronization(new RunnerSynchronization(runner));
-        }
-        return runner;
     }
 
     public void registerInstance(Object entity, EntityManager entityManager) {
@@ -310,11 +293,11 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
         }
     }
 
-    public boolean isDeleted(Object entity, EntityEntry entry) {
-        if (entry != null && EntityValues.isSoftDeletionSupported(entity)) {
+    public boolean isDeleted(Object entity) {
+        if (EntityValues.isSoftDeletionSupported(entity)) {
             String deletedDateProperty = metadataTools.findDeletedDateProperty(entity.getClass());
             Object deleteDate = EntityValues.getValue(entity, deletedDateProperty);
-            Object originalDeleteDate = entry.getLoadedValue(deletedDateProperty);
+            Object originalDeleteDate = loadedValueProvider.getLoadedValue(entity, deletedDateProperty);
             return deleteDate != null
                     && originalDeleteDate == null
                     && EntityValues.isSoftDeleted(entity);
@@ -429,11 +412,8 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             Collection<Object> instances = container.getAllInstances();
             for (Object instance : instances) {
                 if (instance instanceof Entity) {
-
                     if (readOnly) {
-                        EntityEntry entry = HibernateUtils.getEntityEntry(
-                                (SessionImplementor) storeAwareLocator.getEntityManager(container.getStoreName()), instance);
-                        if (changesProvider.getEntityAttributeChanges(instance, entry).hasChanges())
+                        if (changesProvider.getEntityAttributeChanges(instance).hasChanges())
                             throw new IllegalStateException("Changed instance " + instance + " in read-only transaction");
                     }
                     fireBeforeDetachEntityListener(instance, container.getStoreName());
@@ -553,14 +533,9 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
                 return true;
             }
 
-            EntityEntry entry = HibernateUtils.getEntityEntry(
-                    (SessionImplementor) storeAwareLocator.getEntityManager(storeName), entity);
-            if (entry == null)
-                return false;
+            AttributeChanges changes = changesProvider.getEntityAttributeChanges(entity);
 
-            AttributeChanges changes = changesProvider.getEntityAttributeChanges(entity, entry);
-
-            if (isDeleted(entity, entry)) {
+            if (isDeleted(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_DELETE, storeName);
                 fireEntityChange(entity, EntityOp.DELETE, null);
 
@@ -569,11 +544,11 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
 
                 return true;
 
-            } else if (changesProvider.hasChanges(entity, entry)) {
+            } else if (changesProvider.hasChanges(entity)) {
                 entityListenerManager.fireListener(entity, EntityListenerType.BEFORE_UPDATE, storeName);
                 // add changes after listener
                 changes = AttributeChanges.Builder.ofChanges(changes)
-                        .mergeChanges(changesProvider.getEntityAttributeChanges(entity, entry))
+                        .mergeChanges(changesProvider.getEntityAttributeChanges(entity))
                         .build();
 
                 if (getEntityEntry(entity).isNew()) {
@@ -612,45 +587,6 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
             DeletePolicyProcessor processor = deletePolicyProcessorProvider.getObject(); // prototype
             processor.setEntity(entity);
             processor.process();
-        }
-    }
-
-    private static class RunnerResourceHolder extends ResourceHolderSupport {
-
-        private List<Runnable> list = new ArrayList<>();
-        private String storeName;
-
-        public RunnerResourceHolder(String storeName) {
-            this.storeName = storeName;
-        }
-
-        public String getStoreName() {
-            return storeName;
-        }
-
-        private void add(Runnable action) {
-            list.add(action);
-        }
-
-        private void run() {
-            for (Runnable runnable : list) {
-                runnable.run();
-            }
-        }
-    }
-
-    private static class RunnerSynchronization extends ResourceHolderSynchronization<RunnerResourceHolder, String> {
-
-        private RunnerResourceHolder runner;
-
-        public RunnerSynchronization(RunnerResourceHolder runner) {
-            super(runner, RUNNER_RESOURCE_HOLDER);
-            this.runner = runner;
-        }
-
-        @Override
-        public void beforeCommit(boolean readOnly) {
-            runner.run();
         }
     }
 }

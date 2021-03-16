@@ -156,7 +156,6 @@ class DataManagerCommitTest extends DataSpec {
         foo1.parts[0] == part
     }
 
-    @Ignore
     def "save entity with removed reference"() {
         when:
 
@@ -177,6 +176,6 @@ class DataManagerCommitTest extends DataSpec {
         def committedOrder = committedEntities.get(Order, order.id)
 
         then:
-        committedOrder.customer == customer
+        committedOrder.customer == null
     }
 }

@@ -16,7 +16,12 @@
 
 package io.jmix.hibernate.impl;
 
+import io.jmix.core.Entity;
+import io.jmix.core.EntityStates;
 import io.jmix.core.Metadata;
+import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntitySystemAccess;
+import io.jmix.hibernate.impl.load.InitialLoadedState;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.boot.spi.MetadataImplementor;
 import org.hibernate.type.Type;
@@ -34,6 +39,12 @@ public class JmixHibernateInterceptor extends EmptyInterceptor {
 
     @Autowired
     protected Metadata jmixMetadata;
+    @Autowired
+    protected EntityStates entityStates;
+    @Autowired
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected LoadedValueProvider loadedValueProvider;
 
     protected MetadataImplementor hibernateMetadata;
 
@@ -42,8 +53,33 @@ public class JmixHibernateInterceptor extends EmptyInterceptor {
     }
 
     @Override
-    public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public Boolean isTransient(Object entity) {
+        if (entity instanceof Entity) {
+            return !metadataTools.isJpaEntity(entity.getClass()) || entityStates.isNew(entity);
+        }
+        return super.isTransient(entity);
+    }
 
-        return super.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
+    @Override
+    public boolean onLoad(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+        saveState(entity, state, propertyNames);
+        return false;
+    }
+
+
+    @Override
+    public boolean onSave(Object entity, Serializable id, Object[] state, String[] propertyNames, Type[] types) {
+        saveState(entity, state, propertyNames);
+        return false;
+    }
+
+    private void saveState(Object entity, Object[] state, String[] propertyNames) {
+        if (entity instanceof Entity) {
+            InitialLoadedState.Builder builder = InitialLoadedState.builder();
+            for (int i = 0; i < propertyNames.length; i++) {
+                builder.value(propertyNames[i], loadedValueProvider.convertLoadedValue(entity, propertyNames[i], state[i]));
+            }
+            EntitySystemAccess.addExtraState(entity, builder.build(EntitySystemAccess.getEntityEntry(entity)));
+        }
     }
 }

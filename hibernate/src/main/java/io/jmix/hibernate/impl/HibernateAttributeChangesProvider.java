@@ -22,6 +22,7 @@ import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.PersistenceHints;
 import io.jmix.data.impl.BaseAttributeChangesProvider;
+import io.jmix.hibernate.HibernateConfiguration;
 import org.hibernate.Hibernate;
 import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -37,29 +38,22 @@ import java.util.function.BiFunction;
 
 @Component("hibernate_HibernateAttributeChangesProvider")
 public class HibernateAttributeChangesProvider extends BaseAttributeChangesProvider {
-    protected EntityManager entityManager;
-    protected HibernateChangesProvider changesProvider;
-
-    @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     @Autowired
-    public void setChangesProvider(HibernateChangesProvider changesProvider) {
-        this.changesProvider = changesProvider;
-    }
+    protected HibernateChangesProvider changesProvider;
+
+    @Autowired
+    protected LoadedValueProvider loadedValueProvider;
+
+    @Autowired
+    protected HibernateDataProperties dataProperties;
 
     @Override
     protected void buildChangesByImplementation(AttributeChanges.Builder builder,
                                                 Object entity,
                                                 BiFunction<Object, MetaProperty, Object> transformer) {
         checkEntityByImplementation(entity);
-
-        EntityEntry entry = getPersistenceContext().getEntry(entity);
-        if (entry != null) {
-            builder.mergeChanges(changesProvider.getEntityAttributeChanges(entity, entry));
-        }
+        builder.mergeChanges(changesProvider.getEntityAttributeChanges(entity));
     }
 
     @Override
@@ -67,37 +61,22 @@ public class HibernateAttributeChangesProvider extends BaseAttributeChangesProvi
     protected Object getOldValueByImplementation(Object entity, String attribute) {
         checkEntityByImplementation(entity);
 
-        EntityEntry entry = getPersistenceContext().getEntry(entity);
-        if (entry != null) {
-            return entry.getLoadedValue(attribute);
-        }
-
-        return null;
+        return loadedValueProvider.getLoadedValue(entity, attribute);
     }
 
     @Override
     protected Set<String> getChangedAttributeNamesByImplementation(Object entity) {
         checkEntityByImplementation(entity);
-
-        EntityEntry entry = getPersistenceContext().getEntry(entity);
-        if (entry != null) {
-            return changesProvider.dirtyFields(entity, entry);
-        }
-
-        return Collections.emptySet();
+        return changesProvider.dirtyFields(entity);
     }
 
     @Override
     protected boolean isSoftDeletionEnabled() {
-        return PersistenceHints.isSoftDeletion(entityManager);
+        return dataProperties.isSoftDeletionEnabled();
     }
 
     protected void checkEntityByImplementation(Object entity) {
         Preconditions.checkState(Hibernate.isInitialized(entity),
                 "The entity '%s' is not initialized", entity);
-    }
-
-    protected org.hibernate.engine.spi.PersistenceContext getPersistenceContext() {
-        return ((SessionImplementor) entityManager.getDelegate()).getPersistenceContextInternal();
     }
 }

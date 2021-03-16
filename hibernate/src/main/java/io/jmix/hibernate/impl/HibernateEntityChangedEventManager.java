@@ -127,18 +127,12 @@ public class HibernateEntityChangedEventManager {
                 attributeChanges = changesProvider.getEntityAttributeChanges(entity, false);
             } else {
                 if (session != null) {
-                    EntityEntry entry = HibernateUtils.getEntityEntry(session, entity);
-
-                    if (entry == null) {
-                        log.debug("Cannot publish EntityChangedEvent for {} because its EntityEntry is null", entity);
-                        continue;
-                    }
-                    if (persistenceSupport.isDeleted(entity, entry)) {
+                    if (persistenceSupport.isDeleted(entity)) {
                         type = EntityChangedEvent.Type.DELETED;
                         attributeChanges = changesProvider.getEntityAttributeChanges(entity, true);
-                    } else if (changesProvider.hasChanges(entity, entry)) {
+                    } else if (changesProvider.hasChanges(entity)) {
                         type = EntityChangedEvent.Type.UPDATED;
-                        attributeChanges = changesProvider.getEntityAttributeChanges(entity, entry);
+                        attributeChanges = changesProvider.getEntityAttributeChanges(entity);
                     }
                 } else {
                     log.debug("Cannot publish EntityChangedEvent for {} because its Session is null", entity);

@@ -24,6 +24,7 @@ import io.jmix.data.impl.DataStoreCrudListener;
 import io.jmix.data.impl.DataStoreCrudValuesListener;
 import io.jmix.data.impl.DataStoreInMemoryCrudListener;
 import io.jmix.hibernate.impl.lazyloading.HibernateLazyLoadingListener;
+import io.jmix.hibernate.impl.lazyloading.HibernateUnproxyListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,8 @@ import org.springframework.stereotype.Component;
 @Order(JmixOrder.HIGHEST_PRECEDENCE)
 public class HibernateStoreCustomizer implements DataStoreCustomizer {
 
+    @Autowired
+    protected HibernateUnproxyListener unproxyListener;
     @Autowired
     protected DataStoreCrudListener crudListener;
     @Autowired
@@ -45,6 +48,7 @@ public class HibernateStoreCustomizer implements DataStoreCustomizer {
     public void customize(DataStore dataStore) {
         if (dataStore instanceof HibernateDataStore) {
             AbstractDataStore abstractStore = (AbstractDataStore) dataStore;
+            abstractStore.registerInterceptor(unproxyListener);
             abstractStore.registerInterceptor(crudListener);
             abstractStore.registerInterceptor(inMemoryCrudListener);
             abstractStore.registerInterceptor(crudValuesListener);

@@ -32,6 +32,8 @@ public class HibernateEventListenerIntegrator implements Integrator {
     @Autowired
     protected HibernateFireEventsEventListener eventListener;
     @Autowired
+    protected HibernatePostLoadEventListener postLoadEventListener;
+    @Autowired
     protected JmixInitializeCollectionEventListener collectionEventListener;
 
     @Override
@@ -45,6 +47,7 @@ public class HibernateEventListenerIntegrator implements Integrator {
         eventListenerRegistry.getEventListenerGroup(EventType.POST_UPDATE).prependListener(eventListener);
         eventListenerRegistry.getEventListenerGroup(EventType.PRE_DELETE).prependListener(eventListener);
         eventListenerRegistry.getEventListenerGroup(EventType.POST_DELETE).prependListener(eventListener);
+        eventListenerRegistry.getEventListenerGroup(EventType.POST_LOAD).prependListener(postLoadEventListener);
         eventListenerRegistry.getEventListenerGroup(EventType.INIT_COLLECTION).prependListener(collectionEventListener);
     }
 

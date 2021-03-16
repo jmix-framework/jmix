@@ -21,24 +21,32 @@ import org.hibernate.engine.spi.EntityEntry;
 import org.hibernate.engine.spi.PersistenceContext;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.lang.Nullable;
+
+import javax.persistence.EntityNotFoundException;
 
 public class HibernateUtils {
 
-    public static <T> T initializeAndUnproxy(T entity) {
-        if (entity == null) {
-            throw new
-                    NullPointerException("Entity passed for initialization is null");
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T> T initializeAndUnproxy(@Nullable T object) {
+        if (object == null) {
+            return null;
         }
 
-        Hibernate.initialize(entity);
-        if (entity instanceof HibernateProxy) {
-            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
-                    .getImplementation();
+        try {
+            Hibernate.initialize(object);
+            if (object instanceof HibernateProxy) {
+                object = (T) ((HibernateProxy) object).getHibernateLazyInitializer()
+                        .getImplementation();
+            }
+        } catch (EntityNotFoundException e) {
+            return null;
         }
-        return entity;
+        return object;
     }
 
-    public static EntityEntry getEntityEntry(SessionImplementor session, Object entity){
+    public static EntityEntry getEntityEntry(SessionImplementor session, Object entity) {
         PersistenceContext persistenceContext = session.getPersistenceContextInternal();
         return persistenceContext.getEntry(entity);
     }

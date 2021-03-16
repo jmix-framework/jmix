@@ -26,14 +26,12 @@
                   width="100%" expand="configurationForm">
             <form id="configurationForm" width="100%" dataContainer="configurationDc">
                 <column width="100%">
-                    <textField id="nameField" property="name" required="true"/>
                     <checkBox id="availableForAllField"
                               caption="msg://uiDataFilterConfigurationModelFragment.availableForAllField"/>
                     <checkBox id="generatedIdField"
                               caption="msg://uiDataFilterConfigurationModelFragment.generatedIdField"/>
                 </column>
                 <column width="100%">
-                    <checkBox id="defaultForMeField" property="defaultForMe"/>
                     <checkBox id="defaultForAllField" property="defaultForAll"/>
                     <textField id="configurationIdField" property="configurationId" required="true"/>
                 </column>

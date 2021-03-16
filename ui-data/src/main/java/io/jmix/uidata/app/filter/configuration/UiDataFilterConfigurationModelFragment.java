@@ -17,10 +17,14 @@
 package io.jmix.uidata.app.filter.configuration;
 
 import io.jmix.core.AccessManager;
+import io.jmix.core.MessageTools;
 import io.jmix.core.security.CurrentAuthentication;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.CheckBox;
+import io.jmix.ui.component.Form;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.TextField;
+import io.jmix.ui.component.data.value.ContainerValueSource;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.property.UiFilterProperties;
 import io.jmix.ui.screen.Screen;
@@ -48,9 +52,16 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected UiFilterProperties uiFilterProperties;
     @Autowired
     protected AccessManager accessManager;
+    @Autowired
+    protected UiComponents uiComponents;
+    @Autowired
+    protected MessageTools messageTools;
 
     @Autowired
     protected InstanceContainer<FilterConfiguration> configurationDc;
+
+    @Autowired
+    protected Form configurationForm;
     @Autowired
     protected TextField<String> configurationIdField;
     @Autowired
@@ -59,8 +70,6 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected CheckBox defaultForAllField;
     @Autowired
     protected CheckBox generatedIdField;
-    @Autowired
-    protected CheckBox defaultForMeField;
 
     protected boolean defaultForMeFieldVisible = true;
 
@@ -74,24 +83,63 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
 
     @Subscribe
     protected void onAfterInit(AfterInitEvent event) {
-        FilterConfiguration editedConfigurationModel = configurationDc.getItem();
-        generatedIdField.setValue(true);
+        initFirstConfigurationFormRow();
+        initSecondConfigurationFormRow();
+        initThirdConfigurationFormRow();
+    }
 
-        defaultForMeField.setVisible(defaultForMeFieldVisible);
+    protected void initFirstConfigurationFormRow() {
+        TextField<String> nameField = createNameField();
+        if (defaultForMeFieldVisible) {
+            configurationForm.add(nameField, 0, 0);
+            CheckBox defaultForMeField = createDefaultForMeField();
+            configurationForm.add(defaultForMeField, 1, 0);
+        } else {
+            configurationForm.add(nameField, 0, 0, 2, 1);
+        }
+    }
 
-        configurationIdField.setEnabled(StringUtils.isEmpty(editedConfigurationModel.getConfigurationId()));
-        configurationIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
-        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+    protected TextField<String> createNameField() {
+        TextField<String> nameField = uiComponents.create(TextField.TYPE_STRING);
+        nameField.setValueSource(new ContainerValueSource<>(configurationDc, "name"));
+        nameField.setRequired(true);
+        String caption = messageTools.getPropertyCaption(configurationDc.getEntityMetaClass(), "name");
+        nameField.setCaption(caption);
+        nameField.addValueChangeListener(event -> {
+            if (generatedIdField.isChecked()) {
+                configurationIdField.setValue(generateConfigurationId(event.getValue()));
+            }
+        });
+        nameField.setWidthFull();
+        return nameField;
+    }
 
+    protected CheckBox createDefaultForMeField() {
+        CheckBox defaultForMeField = uiComponents.create(CheckBox.NAME);
+        defaultForMeField.setValueSource(new ContainerValueSource<>(configurationDc, "defaultForMe"));
+        String caption = messageTools.getPropertyCaption(configurationDc.getEntityMetaClass(), "name");
+        defaultForMeField.setCaption(caption);
+        defaultForMeField.setWidthFull();
+        return defaultForMeField;
+    }
+
+    protected void initSecondConfigurationFormRow() {
         UiFilterModifyGlobalConfigurationContext globalFilterContext = new UiFilterModifyGlobalConfigurationContext();
         accessManager.applyRegisteredConstraints(globalFilterContext);
         boolean allowGlobalFilters = globalFilterContext.isPermitted();
         availableForAllField.setVisible(allowGlobalFilters);
         defaultForAllField.setVisible(allowGlobalFilters);
 
-        boolean isAvailableForAll = StringUtils.isEmpty(editedConfigurationModel.getUsername());
+        boolean isAvailableForAll = StringUtils.isEmpty(configurationDc.getItem().getUsername());
         availableForAllField.setValue(isAvailableForAll);
         defaultForAllField.setEnabled(isAvailableForAll);
+    }
+
+    protected void initThirdConfigurationFormRow() {
+        generatedIdField.setValue(true);
+        configurationIdField.setEnabled(StringUtils.isEmpty(configurationDc.getItem().getConfigurationId()));
+        configurationIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
+        generatedIdField.setVisible(uiFilterProperties.isShowConfigurationIdField());
     }
 
     @Subscribe("availableForAllField")
@@ -107,13 +155,6 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected void onGeneratedIdFieldValueChange(HasValue.ValueChangeEvent<Boolean> event) {
         boolean checked = BooleanUtils.isTrue(event.getValue());
         configurationIdField.setEnabled(!checked);
-    }
-
-    @Subscribe("nameField")
-    protected void onNameFieldValueChange(HasValue.ValueChangeEvent<String> event) {
-        if (generatedIdField.isChecked()) {
-            configurationIdField.setValue(generateConfigurationId(event.getValue()));
-        }
     }
 
     @Subscribe(target = Target.PARENT_CONTROLLER)

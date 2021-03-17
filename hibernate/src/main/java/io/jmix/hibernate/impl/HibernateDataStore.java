@@ -542,6 +542,15 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         });
     }
 
+    @Override
+    protected FetchPlan getFetchPlanForSave(Map<Object, FetchPlan> fetchPlans, Object entity) {
+        FetchPlan fetchPlan = fetchPlans.get(entity);
+        if (fetchPlan == null) {
+            fetchPlan = entityStates.getCurrentFetchPlan(entity);
+        }
+        return fetchPlan;
+    }
+
     /**
      * @param context - loading context
      * @return false if maxResults=1 and the query is not by ID we should not use getSingleResult() for backward compatibility

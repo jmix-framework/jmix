@@ -18,21 +18,26 @@ package io.jmix.hibernate.impl.lazyloading;
 
 import io.jmix.core.*;
 import io.jmix.core.datastore.DataStoreEntityLoadingEvent;
+import io.jmix.core.datastore.DataStoreEntitySavingEvent;
 import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.entity.EntityPreconditions;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.hibernate.impl.HibernateUtils;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.proxy.LazyInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Component("hibernate_HibernateUnproxyListener")
-public class HibernateUnproxyListener implements DataStoreEventListener {
+public class HibernateDatastoreListener implements DataStoreEventListener {
 
     @Autowired
     protected Metadata metadata;
@@ -42,6 +47,28 @@ public class HibernateUnproxyListener implements DataStoreEventListener {
 
     @Autowired
     protected EntityStates entityStates;
+
+    @Autowired
+    protected DataManager dataManager;
+
+    @Override
+    public void entitySaving(DataStoreEntitySavingEvent event) {
+        Set<Object> visited = new LinkedHashSet<>();
+        for (Object entity : event.getEntities()) {
+            EntityPreconditions.checkEntityType(entity);
+            traverseEntities(entity, visited, (e, reference, propertyName) -> {
+                if (reference instanceof HibernateProxy) {
+                    LazyInitializer initializer = ((HibernateProxy) reference).getHibernateLazyInitializer();
+                    reference = HibernateUtils.initializeAndUnproxy(reference);
+                    if (reference == null) {
+                        reference = dataManager.getReference(initializer.getPersistentClass(), initializer.getIdentifier());
+                    }
+                    EntityValues.setValue(e, propertyName, reference);
+                }
+                return reference;
+            });
+        }
+    }
 
     @Override
     public void entityLoading(DataStoreEntityLoadingEvent event) {

@@ -21,17 +21,16 @@ import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.hibernate.impl.types.uuid.JmixUUIDTypeDescriptor
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import spock.lang.Ignore
 import test_support.DataSpec
-import test_support.entity.soft_delete.EntityWithSoftDeletedCollection
-import test_support.entity.soft_delete.EntityWithSoftDeletedManyToManyCollection
-import test_support.entity.soft_delete.SoftDeleteEntity
-import test_support.entity.soft_delete.SoftDeleteWithUserEntity
+import test_support.entity.soft_delete.*
 
-class SoftDeleteTest extends DataSpec {
+class SoftDeleteTestH extends DataSpec {
 
     @Autowired
     DataManager dataManager
@@ -44,6 +43,9 @@ class SoftDeleteTest extends DataSpec {
 
     @Autowired
     InMemoryUserRepository userRepository
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
     UserDetails admin
 
@@ -190,6 +192,71 @@ class SoftDeleteTest extends DataSpec {
         then:
         parent.collection.size() == 1
         parent.collection.iterator().next().id == el2.id
+
+        cleanup:
+        authenticator.end()
+    }
+
+    def "Restore soft deleted entity"() {
+        setup:
+        authenticator.begin("admin")
+
+        SoftDeleteEntity softDeleteEntity = dataManager.create(SoftDeleteEntity)
+        softDeleteEntity.title = "el1"
+        softDeleteEntity = dataManager.save(softDeleteEntity)
+
+        def softDelID = softDeleteEntity.id
+
+        def parent = dataManager.create(EntityWithSoftDeletedRef)
+        parent.softDeleteEntity = softDeleteEntity
+        parent = dataManager.save(parent)
+
+        when:
+        parent = dataManager.load(EntityWithSoftDeletedRef)
+                .id(parent.id)
+                .fetchPlanProperties("softDeleteEntity")
+                .one()
+
+        then:
+        parent.softDeleteEntity == softDeleteEntity
+
+        when:
+        softDeleteEntity = dataManager.load(SoftDeleteEntity)
+                .id(softDeleteEntity.id)
+                .one()
+        dataManager.remove(softDeleteEntity)
+        parent = dataManager.load(EntityWithSoftDeletedRef)
+                .id(parent.id)
+                .fetchPlanProperties("softDeleteEntity")
+                .one()
+
+        then:
+        parent.softDeleteEntity == null
+
+        when:
+        parent = dataManager.save(parent)
+        parent = dataManager.load(EntityWithSoftDeletedRef)
+                .id(parent.id)
+                .fetchPlanProperties("softDeleteEntity")
+                .one()
+
+        then:
+        parent.softDeleteEntity == null
+
+        when:
+        jdbcTemplate.update("update TEST_HARDDELETE_ENTITY set TIME_OF_DELETION = null where id = ?",
+                JmixUUIDTypeDescriptor.ToStringTransformer.INSTANCE.transform(softDelID))
+        softDeleteEntity = dataManager.load(SoftDeleteEntity)
+                .id(softDelID)
+                .one()
+        parent = dataManager.load(EntityWithSoftDeletedRef)
+                .id(parent.id)
+                .fetchPlanProperties("softDeleteEntity")
+                .one()
+
+        then:
+        softDeleteEntity != null
+        parent.softDeleteEntity == softDeleteEntity
 
         cleanup:
         authenticator.end()

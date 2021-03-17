@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class HibernateEntityFetcher extends EntityFetcher {
@@ -75,11 +76,15 @@ public class HibernateEntityFetcher extends EntityFetcher {
                             Object result = item;
                             if (result instanceof HibernateProxy) {
                                 result = unproxy(result);
-                                if (EntityValues.isSoftDeleted(result)) {
-                                    itemsToErase.put(EntityValues.getId(result), item);
+                                if (result == null) {
+                                    itemsToErase.put(getProxyId((HibernateProxy) item), item);
                                     continue;
                                 }
                                 setResultToList(value, item, result);
+                            }
+                            if (EntityValues.isSoftDeleted(result)) {
+                                itemsToErase.put(EntityValues.getId(result), item);
+                                continue;
                             }
                             if (entityStates.isDetached(result)) {
                                 Object finalResult = result;
@@ -99,9 +104,18 @@ public class HibernateEntityFetcher extends EntityFetcher {
                     Object result = value;
                     if (result instanceof HibernateProxy) {
                         result = unproxy(result);
-                        if (result != null && EntityValues.isSoftDeleted(result)) {
-                            result = null;
+                        if (result == null) {
+                            EntitySystemAccess.getSecurityState(entity).addErasedId(
+                                    property.getName(),
+                                    getProxyId((HibernateProxy) value));
                         }
+                        EntityValues.setValue(entity, property.getName(), result);
+                    }
+                    if (result != null && EntityValues.isSoftDeleted(result)) {
+                        EntitySystemAccess.getSecurityState(entity).addErasedId(
+                                property.getName(),
+                                EntityValues.getId(result));
+                        result = null;
                         EntityValues.setValue(entity, property.getName(), result);
                     }
                     if (result instanceof Entity) {
@@ -117,6 +131,10 @@ public class HibernateEntityFetcher extends EntityFetcher {
                 }
             }
         }
+    }
+
+    private Serializable getProxyId(HibernateProxy value) {
+        return value.getHibernateLazyInitializer().getIdentifier();
     }
 
     private void setResultToList(Object value, Object item, Object result) {

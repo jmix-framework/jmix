@@ -32,6 +32,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.engine.query.spi.HQLQueryPlan;
 import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.hibernate.engine.spi.SessionImplementor;
@@ -126,7 +127,9 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
             entity = internalMerge(entity);
         }
 
-        if (EntityValues.isSoftDeletionSupported(entity) && PersistenceHints.isSoftDeletion(delegate)) {
+        if (!deleteAnnotationPresent(entity)
+                && EntityValues.isSoftDeletionSupported(entity)
+                && PersistenceHints.isSoftDeletion(delegate)) {
             Class<?> deletedDateClass = EntitySystemAccess.getDeletedDateClass(entity);
             Class<?> deletedByClass = EntitySystemAccess.getDeletedByClass(entity);
 
@@ -143,6 +146,10 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
             delegate.remove(entity);
             getEntityEntry(entity).setRemoved(true);
         }
+    }
+
+    private boolean deleteAnnotationPresent(Object entity) {
+        return entity.getClass().getAnnotation(SQLDelete.class) != null;
     }
 
     @Override

@@ -61,7 +61,7 @@ public class HibernateChangesProvider {
     private boolean isEqual(Object entity, String property) {
         Object oldValue = loadedValueProvider.getLoadedValue(entity, property);
         Object newValue = EntityValues.getValue(entity, property);
-        if (oldValue instanceof Entity || oldValue instanceof HibernateProxy) {
+        if (oldValue instanceof Entity || newValue instanceof HibernateProxy) {
             return Objects.equals(
                     initializeAndUnproxy(oldValue),
                     initializeAndUnproxy(newValue));

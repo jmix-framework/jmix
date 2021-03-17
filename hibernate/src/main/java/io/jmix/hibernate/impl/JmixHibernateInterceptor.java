@@ -78,6 +78,7 @@ public class JmixHibernateInterceptor extends EmptyInterceptor {
             InitialLoadedState.Builder builder = InitialLoadedState.builder();
             for (int i = 0; i < propertyNames.length; i++) {
                 builder.value(propertyNames[i], loadedValueProvider.convertLoadedValue(entity, propertyNames[i], state[i]));
+//                builder.value(propertyNames[i], state[i]);
             }
             EntitySystemAccess.addExtraState(entity, builder.build(EntitySystemAccess.getEntityEntry(entity)));
         }

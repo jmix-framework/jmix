@@ -24,7 +24,7 @@ import io.jmix.data.impl.DataStoreCrudListener;
 import io.jmix.data.impl.DataStoreCrudValuesListener;
 import io.jmix.data.impl.DataStoreInMemoryCrudListener;
 import io.jmix.hibernate.impl.lazyloading.HibernateLazyLoadingListener;
-import io.jmix.hibernate.impl.lazyloading.HibernateUnproxyListener;
+import io.jmix.hibernate.impl.lazyloading.HibernateDatastoreListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 public class HibernateStoreCustomizer implements DataStoreCustomizer {
 
     @Autowired
-    protected HibernateUnproxyListener unproxyListener;
+    protected HibernateDatastoreListener unproxyListener;
     @Autowired
     protected DataStoreCrudListener crudListener;
     @Autowired

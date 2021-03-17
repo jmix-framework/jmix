@@ -18,9 +18,9 @@ package io.jmix.security.configurer;
 
 import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.context.ApplicationContext;
-import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -41,16 +41,23 @@ public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<Authoriz
         Collection<String> anonymousUrlPatterns = getAnonymousUrlPatterns(applicationContext);
         Collection<String> authenticatedUrlPatterns = getAuthenticatedUrlPatterns(applicationContext);
 
-        if (!anonymousUrlPatterns.isEmpty() && !authenticatedUrlPatterns.isEmpty()) {
+        if (!anonymousUrlPatterns.isEmpty() || !authenticatedUrlPatterns.isEmpty()) {
             try {
                 String[] urlPatterns = toArray(concat(anonymousUrlPatterns, authenticatedUrlPatterns), String.class);
 
-                http.requestMatchers()
+                ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry urlRegistry = http.requestMatchers()
                         .antMatchers(urlPatterns)
                         .and()
-                        .authorizeRequests()
-                        .antMatchers(toArray(anonymousUrlPatterns, String.class)).permitAll()
-                        .antMatchers(toArray(authenticatedUrlPatterns, String.class)).authenticated();
+                        .authorizeRequests();
+
+                if (!anonymousUrlPatterns.isEmpty()) {
+                    urlRegistry.antMatchers(toArray(anonymousUrlPatterns, String.class)).permitAll();
+                }
+
+                if (!authenticatedUrlPatterns.isEmpty()) {
+                    urlRegistry.antMatchers(toArray(authenticatedUrlPatterns, String.class)).authenticated();
+                }
+
             } catch (Exception e) {
                 throw new RuntimeException("Error while init security", e);
             }

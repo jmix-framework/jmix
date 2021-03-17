@@ -16,27 +16,20 @@
 
 package io.jmix.autoconfigure.securityoauth2;
 
-import com.sun.org.apache.xerces.internal.parsers.SecurityConfiguration;
 import io.jmix.core.CoreConfiguration;
 import io.jmix.core.JmixOrder;
-import io.jmix.core.session.SessionData;
+import io.jmix.security.SecurityConfiguration;
 import io.jmix.securityoauth2.SecurityOAuth2Configuration;
-import io.jmix.securityoauth2.SecurityOAuth2Properties;
-import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.configurer.OAuth2AuthorizationServerConfigurer;
-import io.jmix.securityoauth2.impl.RequestLocaleProvider;
+import io.jmix.securityoauth2.configurer.OAuth2ResourceServerConfigurer;
 import io.jmix.securityoauth2.impl.UniqueAuthenticationKeyGenerator;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 

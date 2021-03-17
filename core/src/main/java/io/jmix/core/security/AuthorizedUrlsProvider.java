@@ -19,17 +19,17 @@ package io.jmix.core.security;
 import java.util.Collection;
 
 /**
- * Provider used when configure http web security for API endpoints (like REST, MVC controllers)
+ * Provider used when configuring HTTP web security for API endpoints (like REST, MVC controllers).
  * Specifies lists of authenticated and anonymous URLs.
  */
 public interface AuthorizedUrlsProvider {
     /**
-     * Specify that URL patterns are allowed by any authenticated user.
+     * Returns URL patterns that are allowed to any authenticated user.
      */
     Collection<String> getAuthenticatedUrlPatterns();
 
     /**
-     * Specify that URL patterns are allowed by anonymous user.
+     * Returns URL patterns that are allowed to anonymous user.
      */
     Collection<String> getAnonymousUrlPatterns();
 }

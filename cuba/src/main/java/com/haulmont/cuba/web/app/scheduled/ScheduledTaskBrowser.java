@@ -70,7 +70,7 @@ public class ScheduledTaskBrowser extends AbstractWindow {
         removeAction.setEnabled(false);
 
         activateBtn.setAction(new BaseAction("activate")
-                .withCaption(getMessage("activate"))
+                .withCaption(messages.getMainMessage("activate"))
                 .withHandler(e -> {
                     Set<ScheduledTask> tasks = tasksTable.getSelected();
                     service.setActive(tasks, !BooleanUtils.isTrue(tasks.iterator().next().getActive()));
@@ -99,10 +99,10 @@ public class ScheduledTaskBrowser extends AbstractWindow {
             activateBtn.setEnabled(checkAllTasksHaveSameStatus(selected));
 
             if (singleSelected == null) {
-                activateBtn.setCaption(getMessage("activate"));
+                activateBtn.setCaption(messages.getMainMessage("activate"));
             } else {
                 activateBtn.setCaption(BooleanUtils.isTrue(singleSelected.getActive()) ?
-                        getMessage("deactivate") : getMessage("activate"));
+                        messages.getMainMessage("deactivate") : messages.getMainMessage("activate"));
             }
 
             showExecutionsAction.setEnabled(isSingleSelected);
@@ -147,7 +147,7 @@ public class ScheduledTaskBrowser extends AbstractWindow {
         public ShowExecutionsAction() {
             super("executions");
 
-            setCaption(getMessage("executions"));
+            setCaption(messages.getMainMessage("executions"));
         }
 
         @Override
@@ -170,7 +170,7 @@ public class ScheduledTaskBrowser extends AbstractWindow {
         public ExecuteOnceAction() {
             super("executeOnce");
 
-            setCaption(getMessage("executeOnce"));
+            setCaption(messages.getMainMessage("executeOnce"));
         }
 
         @Override
@@ -182,8 +182,8 @@ public class ScheduledTaskBrowser extends AbstractWindow {
                 }
             } catch (RunTaskOnceException e) {
                 log.error("Can't execute {}: not in permitted hosts or not a master.", e.getMessage());
-                showNotification(getMessage("errorNotification.caption"),
-                        getMessage("errorNotification.message"),
+                showNotification(messages.getMainMessage("errorNotification.caption"),
+                        messages.getMainMessage("errorNotification.message"),
                         NotificationType.ERROR);
             }
         }

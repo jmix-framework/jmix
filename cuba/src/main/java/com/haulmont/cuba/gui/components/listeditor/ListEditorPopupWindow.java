@@ -18,6 +18,7 @@ package com.haulmont.cuba.gui.components.listeditor;
 
 import com.google.common.base.Strings;
 import com.haulmont.chile.core.datatypes.Datatypes;
+import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.gui.components.DateField;
@@ -116,6 +117,9 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
 
     @Autowired
     protected FilterHelper filterHelper;
+
+    @Autowired
+    protected Messages messages;
 
     @Autowired
     protected DynamicAttributesGuiTools dynamicAttributesGuiTools;
@@ -232,7 +236,7 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
             if (itemType != ListEditor.ItemType.ENTITY) {
                 Button addBtn = uiComponents.create(Button.class);
                 addBtn.setId("add");
-                addBtn.setCaption(getMessage("actions.Add"));
+                addBtn.setCaption(messages.getMainMessage("actions.Add"));
                 addBtn.addClickListener(e ->
                         _addValue(componentForAdding)
                 );
@@ -272,7 +276,7 @@ public class ListEditorPopupWindow extends AbstractWindow implements ListEditorW
     }
 
     protected Field createComponentForEntity() {
-        Preconditions.checkNotNullArgument(entityName, getMessage("entityNameParamNotDefined"));
+        Preconditions.checkNotNullArgument(entityName, messages.getMainMessage("entityNameParamNotDefined"));
         MetaClass metaClass = metadata.getClassNN(entityName);
         Field<?> componentForEntity;
         if (BooleanUtils.isNotTrue(useLookupField)) {

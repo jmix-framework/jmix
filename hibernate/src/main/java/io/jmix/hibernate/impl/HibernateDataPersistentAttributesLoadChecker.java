@@ -17,12 +17,10 @@
 package io.jmix.hibernate.impl;
 
 import io.jmix.core.Entity;
-import io.jmix.core.entity.EntityValues;
 import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.StoreAwareLocator;
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.EntityManagerFactory;
@@ -45,11 +43,6 @@ public class HibernateDataPersistentAttributesLoadChecker extends CorePersistent
         if (persistenceUnitUtil.isLoaded(entity)) {
 
             if (persistenceUnitUtil.isLoaded(entity, property)) {
-//                Object value = EntityValues.getValue(entity, property);
-//                if (value instanceof HibernateProxy) {
-//                    //fix for soft deleted hibernate proxy
-//                    return PropertyLoadedState.NO;
-//                }
                 return PropertyLoadedState.YES;
             } else {
                 return PropertyLoadedState.NO;

@@ -28,7 +28,7 @@
                     <button id="collapseDrawerButton"
                             icon="CHEVRON_LEFT"
                             stylename="jmix-drawer-collapse-button"
-                            description="mainMsg://sideMenuCollapse"/>
+                            description="msg://sideMenuCollapse"/>
                     <userIndicator id="userIndicator"
                                    align="MIDDLE_CENTER"/>
                     <logoutButton id="logoutButton"

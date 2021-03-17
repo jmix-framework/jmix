@@ -291,7 +291,7 @@ definitions:
             properties:
               target:
                 type: string
-                example: app$Order:create
+                example: app$Order:number
             value:
               type: integer
               example: 1

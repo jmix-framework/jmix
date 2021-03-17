@@ -117,7 +117,7 @@ public class UiDataFilterConfigurationModelFragment extends ScreenFragment {
     protected CheckBox createDefaultForMeField() {
         CheckBox defaultForMeField = uiComponents.create(CheckBox.NAME);
         defaultForMeField.setValueSource(new ContainerValueSource<>(configurationDc, "defaultForMe"));
-        String caption = messageTools.getPropertyCaption(configurationDc.getEntityMetaClass(), "name");
+        String caption = messageTools.getPropertyCaption(configurationDc.getEntityMetaClass(), "defaultForMe");
         defaultForMeField.setCaption(caption);
         defaultForMeField.setWidthFull();
         return defaultForMeField;

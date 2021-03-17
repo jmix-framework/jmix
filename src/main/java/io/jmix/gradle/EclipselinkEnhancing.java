@@ -21,9 +21,14 @@ import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ResolvedDependency;
 import org.gradle.api.tasks.SourceSet;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
+
+    protected Set<ResolvedDependency> visited = new HashSet<>();
 
     public void run(Project project, SourceSet sourceSet, Set<String> allStores) {
         for (String storeName : allStores) {
@@ -55,10 +60,13 @@ public class EclipselinkEnhancing implements PersistenceProviderEnhancing {
 
     protected boolean findJpaDependencies(Set<ResolvedDependency> deps) {
         for (ResolvedDependency dep : deps) {
-            if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.core".equals(dep.getModuleName()))
-                return true;
-            if (findJpaDependencies(dep.getChildren()))
-                return true;
+            if (!visited.contains(dep)) {
+                if ("org.eclipse.persistence".equals(dep.getModuleGroup()) && "org.eclipse.persistence.core".equals(dep.getModuleName()))
+                    return true;
+                visited.add(dep);
+                if (findJpaDependencies(dep.getChildren()))
+                    return true;
+            }
         }
         return false;
     }

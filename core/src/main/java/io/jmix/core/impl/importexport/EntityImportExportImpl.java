@@ -228,6 +228,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                     .setSoftDeletion(false)
                     .setFetchPlan(fetchPlan)
                     .setHint("dynattr.load", true)
+                    .setHint("")
                     .setId(EntityValues.getId(srcEntity))
                     .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             Object dstEntity = dataManager.load(ctx);

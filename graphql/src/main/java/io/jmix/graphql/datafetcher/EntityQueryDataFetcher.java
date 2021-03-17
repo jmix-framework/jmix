@@ -2,6 +2,7 @@ package io.jmix.graphql.datafetcher;
 
 import graphql.schema.DataFetcher;
 import io.jmix.core.*;
+import io.jmix.core.accesscontext.CrudEntityContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
@@ -34,9 +35,14 @@ public class EntityQueryDataFetcher {
     protected DataFetcherPlanBuilder dataFetcherPlanBuilder;
     @Autowired
     protected FilterConditionBuilder filterConditionBuilder;
+    @Autowired
+    protected AccessManager accessManager;
 
     public DataFetcher<?> loadEntity(MetaClass metaClass) {
         return environment -> {
+
+            checkCanReadEntity(metaClass);
+
             String id = environment.getArgument("id");
             LoadContext<?> lc = new LoadContext<>(metaClass);
             // todo support not only UUID types of id
@@ -53,6 +59,8 @@ public class EntityQueryDataFetcher {
     }
     public DataFetcher<List<Map<String, Object>>> loadEntities(MetaClass metaClass) {
         return environment -> {
+
+            checkCanReadEntity(metaClass);
 
             Object filter = environment.getArgument(NamingUtils.FILTER);
             Object orderBy = environment.getArgument(NamingUtils.ORDER_BY);
@@ -133,11 +141,34 @@ public class EntityQueryDataFetcher {
 
     public DataFetcher<?> countEntities(MetaClass metaClass) {
         return environment -> {
+
+            checkCanReadEntity(metaClass);
+
             LoadContext<? extends Entity> lc = new LoadContext<>(metaClass);
             long count = dataManager.getCount(lc);
             log.debug("countEntities return {} for {}", count, metaClass.getName());
             return count;
         };
+    }
+
+    // todo methods above copypasted from 'jmix-rest'
+    protected void checkCanReadEntity(MetaClass metaClass) {
+        CrudEntityContext entityContext = applyEntityConstraints(metaClass);
+        if (!entityContext.isReadPermitted()) {
+            String exceptionMessage = String.format("Reading of the %s is forbidden", metaClass.getName());
+            log.warn("checkCanReadEntity: throw exception {}", exceptionMessage);
+            // todo implement correct exception class
+            throw new UnsupportedOperationException(exceptionMessage);
+//            throw new RestAPIException("Reading forbidden",
+//                    String.format("Reading of the %s is forbidden", metaClass.getName()),
+//                    HttpStatus.FORBIDDEN);
+        }
+    }
+
+    protected CrudEntityContext applyEntityConstraints(MetaClass metaClass) {
+        CrudEntityContext entityContext = new CrudEntityContext(metaClass);
+        accessManager.applyRegisteredConstraints(entityContext);
+        return entityContext;
     }
 
 }

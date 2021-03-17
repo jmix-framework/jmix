@@ -29,6 +29,5 @@ import org.springframework.context.annotation.PropertySource;
 @JmixModule(dependsOn = {CoreConfiguration.class, SecurityConfiguration.class})
 @ComponentScan
 @ConfigurationPropertiesScan
-@PropertySource(name = "jmix.security", value = "classpath:/io/jmix/securityoauth2/module.properties")
 public class SecurityOAuth2Configuration {
 }

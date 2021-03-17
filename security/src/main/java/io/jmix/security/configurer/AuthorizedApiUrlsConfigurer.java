@@ -18,6 +18,7 @@ package io.jmix.security.configurer;
 
 import io.jmix.core.security.AuthorizedUrlsProvider;
 import org.springframework.context.ApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
@@ -40,7 +41,7 @@ public class AuthorizedApiUrlsConfigurer extends AbstractHttpConfigurer<Authoriz
         Collection<String> anonymousUrlPatterns = getAnonymousUrlPatterns(applicationContext);
         Collection<String> authenticatedUrlPatterns = getAuthenticatedUrlPatterns(applicationContext);
 
-        if (anonymousUrlPatterns != null && authenticatedUrlPatterns != null) {
+        if (!anonymousUrlPatterns.isEmpty() && !authenticatedUrlPatterns.isEmpty()) {
             try {
                 String[] urlPatterns = toArray(concat(anonymousUrlPatterns, authenticatedUrlPatterns), String.class);
 

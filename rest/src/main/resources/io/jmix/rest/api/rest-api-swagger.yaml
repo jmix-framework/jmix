@@ -14,8 +14,8 @@ info:
     * Execution of services methods
     * Getting metadata (entities, fetch plans, views, enumerations, datatypes)
     * Getting localized messages
-    * Getting current user permissions (access to entities, attributes, specific permissions)
-    * Getting current user information (name, language, time zone, etc.)
+    * Getting current user permissions (access to entities, attributes)
+    * Getting current user information (username)
     * Working with files
 
     The REST API is available at the URL `/rest/` both in the web and the portal modules, e.g. `http://localhost:8080/rest/entities/sales$Order`
@@ -211,7 +211,7 @@ definitions:
         type: string
         description: There must be a set of entity fields instead of this one here.
         example: There must be a set of entity fields instead of this one here
-    required: [id, _entityName]
+    required: [ id, _entityName ]
 
 
   predefinedQuery:
@@ -273,20 +273,28 @@ definitions:
   permission:
     type: object
     properties:
-      type:
-        type: string
-        enum: [SCREEN, ENTITY_OP, ENTITY_ATTR, SPECIFIC, UI]
-        example: ENTITY_OP
-      target:
-        type: string
-        example: app$Order:create
-      value:
-        type: string
-        enum: [ALLOW, DENY, VIEW, MODIFY, HIDE, READ_ONLY, SHOW]
-        example: ALLOW
-      intValue:
-        type: integer
-        example: 1
+      entities:
+        type: array
+        items:
+          type: object
+          properties:
+            target:
+              type: string
+              example: app$Order:create
+          value:
+            type: integer
+            example: 1
+      entityAttributes:
+        type: array
+          items:
+            type: object
+            properties:
+              target:
+                type: string
+                example: app$Order:create
+            value:
+              type: integer
+              example: 1
 
   entityMetadata:
     type: object
@@ -425,7 +433,7 @@ definitions:
         type: array
         items:
           type: string
-        example: [firstName, lastName, login]
+        example: [ firstName, lastName, login ]
         description: |
           The array of properties may be of mixed type. If some of the properties is a reference to another entity then
           a nested view object will be returned instead of the string with the proeprty name.
@@ -538,7 +546,7 @@ paths:
           schema:
             $ref: '#/definitions/oauthError'
       security:
-        - tokenEndpointBasic: []
+        - tokenEndpointBasic: [ ]
 
   /oauth/revoke:
     post:
@@ -568,7 +576,7 @@ paths:
         200:
           description: Success
       security:
-        - tokenEndpointBasic: []
+        - tokenEndpointBasic: [ ]
 
   ############################### Entities ###################################
   /entities/{entityName}:
@@ -1471,9 +1479,22 @@ paths:
     get:
       tags:
         - Permissions
-      summary: Get a list of current user security permissions
+      summary: Get a list of current user security permissions (entities, entity attributes)
       description: |
-        Gets a list of current user security permissions
+        Gets a list of current user security permissions (entities, entity attributes)
+      parameters:
+        - name: entities
+          in: path
+          type: boolean
+          required: false
+          description: defines the ability to include entity permissions in the response
+          default: false
+        - name: entityAttributes
+            in: path
+            type: boolean
+            required: false
+            description: defines the ability to include entity attribute permissions in the response
+            default: false
       responses:
         200:
           description: Success

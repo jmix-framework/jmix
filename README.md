@@ -25,6 +25,73 @@ to `build.gradle` `dependencies` section in your app.
 
 GraphiQL will be available at [http://localhost:8080/graphiql]()
 
+### Configure GraphiQL for using with auth header
+To add **request headers** tab configure application property:
+
+```graphiql.props.variables.headerEditorEnabled=true``` 
+
+## Work with OAuth protected queries and mutations
+
+To fetch and modify entities protected by jmix security, 
+GraphQL request should contain authorisation header. 
+
+Example of auth header:
+```
+{ "Authorization": "Bearer gLGo5vRTMBWQtleaBbMl2oTkAZM=" }
+```
+Where `gLGo5vRTMBWQtleaBbMl2oTkAZM=` - auth token obtained from jmix OAuth service. 
+
+This header could be added for example in GraphIQL **request headers** tab (described in GraphIQL section) 
+for proper queries and mutation execution. 
+
+Token obtain instruction described in [https://doc.cuba-platform.com/restapi-7.2/#rest_api_v2_ex_get_token]()
+the only one difference that at this moment OAuth token url is changed from [/app/rest/v2/oauth/token]()
+to [/oauth/token]() 
+
+### OAuth protected query flow example
+
+Example based on [scr-jmix](https://github.com/jmix-projects/scr-jmix) backend app. 
+[HTTPie](https://httpie.io/) tool used to send requests. 
+
+
+1. Send auth request for user admin\admin, where `client` and `secret` - properties from `scr-jmix` 
+`client.id` and `client.secret`.
+```
+http -a client:secret --form POST localhost:8080/oauth/token \
+grant_type=password username=admin password=admin
+```
+
+Result will be json with `access_token`, which we need to send next request:
+```
+{
+    "OAuth2.SESSION_ID": "1697AFAFD8F76DE88C6C7AA092E3AAFD",
+    "access_token": "jMfH2tGBhioE2ugBa4jojeO/Wi8=",
+    "expires_in": 43199,
+    "refresh_token": "GdMwjtjSulf7NMuhlwqt/TtK3B8=",
+    "scope": "api",
+    "token_type": "bearer"
+}
+```
+
+2. Get list of cars
+```
+http POST http://localhost:8080/graphql query="{carList {_instanceName}}" "Authorization: Bearer jMfH2tGBhioE2ugBa4jojeO/Wi8="
+``` 
+
+## Jmix Security Development Mode
+OAuth header could be partially skipped in development mode. To switch on dev mode configure properties in app:
+```
+jmix.security.oauth2.devMode=true
+jmix.security.oauth2.devUsername=admin
+```
+In this mode no generated token required for authorization. Request automatically got permissions 
+of user which username set in `devUsername`. Due to issues in jmix OAuth service, header still need to be sent 
+but with empty token.
+```
+{ "Authorization": "Bearer" }
+```
+
+
 ## Schema download
 Schema could be downloaded using `graphqurl`
 ```

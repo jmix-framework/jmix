@@ -19,22 +19,22 @@ package io.jmix.rest.api.service.filter.data;
 /**
  */
 public class FileInfo {
-    protected String fileReference;
+    protected String fileRef;
     protected String name;
     protected long size;
 
-    public FileInfo(String fileReference, String name, long size) {
-        this.fileReference = fileReference;
+    public FileInfo(String fileRef, String name, long size) {
+        this.fileRef = fileRef;
         this.name = name;
         this.size = size;
     }
 
-    public String getFileReference() {
-        return fileReference;
+    public String getFileRef() {
+        return fileRef;
     }
 
-    public void setFileReference(String fileReference) {
-        this.fileReference = fileReference;
+    public void setFileRef(String fileRef) {
+        this.fileRef = fileRef;
     }
 
     public String getName() {

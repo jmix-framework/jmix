@@ -106,23 +106,23 @@ public class FileDownloadController {
         }
     }
 
-    protected void downloadAndWriteResponse(FileStorage fileStorage, FileRef fileReference,
+    protected void downloadAndWriteResponse(FileStorage fileStorage, FileRef fileRef,
                                             HttpServletResponse response) throws IOException {
         ServletOutputStream os = response.getOutputStream();
-        try (InputStream is = fileStorage.openStream(fileReference)) {
+        try (InputStream is = fileStorage.openStream(fileRef)) {
             IOUtils.copy(is, os);
             os.flush();
         } catch (FileStorageException e) {
             throw new RestAPIException("Unable to download file from FileStorage",
-                    "Unable to download file from FileStorage: " + fileReference.toString(),
+                    "Unable to download file from FileStorage: " + fileRef.toString(),
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e);
         }
     }
 
-    protected String getContentType(FileRef fileReference) {
+    protected String getContentType(FileRef fileRef) {
         ;
-        String extension = FilenameUtils.getExtension(fileReference.getFileName());
+        String extension = FilenameUtils.getExtension(fileRef.getFileName());
         if (StringUtils.isEmpty(extension)) {
             return FileTypesHelper.DEFAULT_MIME_TYPE;
         }

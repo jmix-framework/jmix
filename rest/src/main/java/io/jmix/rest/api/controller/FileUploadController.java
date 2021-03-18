@@ -86,9 +86,9 @@ public class FileUploadController {
 
             ServletInputStream is = request.getInputStream();
             name = Objects.toString(name, "");
-            FileRef fileReference = uploadToFileStorage(fileStorage, is, name);
+            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
 
-            return createFileInfoResponseEntity(request, fileReference, name, size);
+            return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);
             throw new RestAPIException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -115,9 +115,9 @@ public class FileUploadController {
             long size = file.getSize();
 
             InputStream is = file.getInputStream();
-            FileRef fileReference = uploadToFileStorage(fileStorage, is, name);
+            FileRef fileRef = uploadToFileStorage(fileStorage, is, name);
 
-            return createFileInfoResponseEntity(request, fileReference, name, size);
+            return createFileInfoResponseEntity(request, fileRef, name, size);
         } catch (Exception e) {
             log.error("File upload failed", e);
             throw new RestAPIException("File upload failed", "File upload failed", HttpStatus.INTERNAL_SERVER_ERROR, e);
@@ -149,11 +149,11 @@ public class FileUploadController {
     }
 
     protected ResponseEntity<FileInfo> createFileInfoResponseEntity(HttpServletRequest request,
-                                                                    FileRef fileReference, String filename, long size) {
-        FileInfo fileInfo = new FileInfo(fileReference.toString(), filename, size);
+                                                                    FileRef fileRef, String filename, long size) {
+        FileInfo fileInfo = new FileInfo(fileRef.toString(), filename, size);
 
         UriComponents uriComponents = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
-                .queryParam("fileRef", fileReference.toString())
+                .queryParam("fileRef", fileRef.toString())
                 .buildAndExpand();
 
         HttpHeaders httpHeaders = new HttpHeaders();

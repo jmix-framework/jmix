@@ -68,7 +68,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
             ReadContext ctx = parseResponse(response);
 
-            String fileURI = ctx.read("$.fileReference");
+            String fileURI = ctx.read("$.fileRef");
 
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
             assertEquals(0, (int) ctx.read("$.size"));
@@ -90,7 +90,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             ReadContext ctx = parseResponse(response);
 
-            String fileURI = ctx.read("$.fileReference");
+            String fileURI = ctx.read("$.fileRef");
 
             assertNotNull(fileURI);
             assertEquals(0, (int) ctx.read("$.size"));
@@ -117,7 +117,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusLine().getStatusCode());
 
             ReadContext ctx = parseResponse(response);
-            String fileURI = ctx.read("$.fileReference");
+            String fileURI = ctx.read("$.fileRef");
 
             assertEquals(id, fileURI);
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));
@@ -178,7 +178,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
 
         try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
             ReadContext ctx = parseResponse(response);
-            return ctx.read("$.fileReference");
+            return ctx.read("$.fileRef");
         }
     }
 
@@ -200,7 +200,7 @@ public class FilesControllerFT extends AbstractRestControllerFT {
             assertEquals(HttpStatus.SC_CREATED, response.getStatusLine().getStatusCode());
             ReadContext ctx = parseResponse(response);
 
-            String fileURI = ctx.read("$.fileReference");
+            String fileURI = ctx.read("$.fileRef");
 
             assertNotNull(fileURI);
             assertEquals(FILE_TO_UPLOAD_TXT, ctx.read("$.name"));

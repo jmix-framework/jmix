@@ -34,6 +34,7 @@ import io.jmix.pivottable.widget.serialization.PivotJsonSerializationContext;
 import org.apache.groovy.util.Maps;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.spockframework.util.Assert;
@@ -47,7 +48,7 @@ import java.time.Month;
 import java.time.ZoneOffset;
 import java.util.*;
 
-
+@Disabled // // temporary fix, see Haulmont/jmix-ui#392
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {PivotTableTestConfiguration.class})
 public class PivotTableSerializerTest  {

@@ -25,6 +25,7 @@ dependencies {
 
     api project(':ui')
     api project(':ui-export')
+    api project(':ui-widgets') // temporary fix, see Haulmont/jmix-ui#392
 
     api 'org.apache.poi:poi'
 

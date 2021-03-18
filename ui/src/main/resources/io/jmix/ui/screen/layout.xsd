@@ -3506,7 +3506,7 @@
 
     <xs:complexType name="inputDialogParamsType">
         <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element name="stringParameter" type="inputDialogPrimitiveParam"/>
 
                 <xs:element name="booleanParameter" type="inputDialogPrimitiveParam"/>

@@ -23,6 +23,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.hibernate.impl.HibernateDataProperties;
 import org.hibernate.boot.spi.MetadataImplementor;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -84,9 +85,10 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
                         String columnName = getSoftDeletionPropertyColumn(propertyClass.getJavaClass());
                         if (columnName != null) {
                             Property property = entityBinding.getProperty(metaProperty.getName());
-                            if (property.getValue() instanceof Filterable) {
-                                Filterable bag = (Filterable) property.getValue();
+                            if (property.getValue() instanceof Bag) {
+                                Bag bag = (Bag) property.getValue();
                                 if (isManyToMany(metaProperty)) {
+                                    applyIgnoreNotFound(bag);
                                     addManyToManyFilter(columnName, bag);
                                 } else {
                                     addFilter(columnName, bag);
@@ -96,6 +98,13 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
                     }
                 }
             }
+        }
+    }
+
+    private void applyIgnoreNotFound(Bag bag) {
+        if (bag.getElement() instanceof ManyToOne){
+            ManyToOne manyToOne = (ManyToOne) bag.getElement();
+            manyToOne.setIgnoreNotFound(true);
         }
     }
 

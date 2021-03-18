@@ -30,7 +30,7 @@ import spock.lang.Ignore
 import test_support.DataSpec
 import test_support.entity.soft_delete.*
 
-class SoftDeleteTestH extends DataSpec {
+class SoftDeleteTest extends DataSpec {
 
     @Autowired
     DataManager dataManager

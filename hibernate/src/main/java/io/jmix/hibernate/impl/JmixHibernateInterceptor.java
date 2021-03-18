@@ -18,7 +18,6 @@ package io.jmix.hibernate.impl;
 
 import io.jmix.core.Entity;
 import io.jmix.core.EntityStates;
-import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.hibernate.impl.load.InitialLoadedState;
@@ -38,13 +37,9 @@ public class JmixHibernateInterceptor extends EmptyInterceptor {
     private static final Logger log = LoggerFactory.getLogger(JmixHibernateInterceptor.class);
 
     @Autowired
-    protected Metadata jmixMetadata;
-    @Autowired
     protected EntityStates entityStates;
     @Autowired
     protected MetadataTools metadataTools;
-    @Autowired
-    protected LoadedValueProvider loadedValueProvider;
 
     protected MetadataImplementor hibernateMetadata;
 
@@ -77,8 +72,7 @@ public class JmixHibernateInterceptor extends EmptyInterceptor {
         if (entity instanceof Entity) {
             InitialLoadedState.Builder builder = InitialLoadedState.builder();
             for (int i = 0; i < propertyNames.length; i++) {
-                builder.value(propertyNames[i], loadedValueProvider.convertLoadedValue(entity, propertyNames[i], state[i]));
-//                builder.value(propertyNames[i], state[i]);
+                builder.value(propertyNames[i], state[i]);
             }
             EntitySystemAccess.addExtraState(entity, builder.build(EntitySystemAccess.getEntityEntry(entity)));
         }

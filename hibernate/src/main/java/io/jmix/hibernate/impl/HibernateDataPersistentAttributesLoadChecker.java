@@ -21,11 +21,10 @@ import io.jmix.core.impl.CorePersistentAttributesLoadChecker;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.data.StoreAwareLocator;
+import org.hibernate.Hibernate;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.PersistenceUtil;
 
 import static io.jmix.core.entity.EntitySystemAccess.getEntityEntry;
 
@@ -39,10 +38,8 @@ public class HibernateDataPersistentAttributesLoadChecker extends CorePersistent
 
     @Override
     protected PropertyLoadedState isLoadedByFetchGroup(Object entity, String property) {
-        PersistenceUtil persistenceUnitUtil = Persistence.getPersistenceUtil();
-        if (persistenceUnitUtil.isLoaded(entity)) {
-
-            if (persistenceUnitUtil.isLoaded(entity, property)) {
+        if (Hibernate.isInitialized(entity)) {
+            if (Hibernate.isPropertyInitialized(entity, property)) {
                 return PropertyLoadedState.YES;
             } else {
                 return PropertyLoadedState.NO;

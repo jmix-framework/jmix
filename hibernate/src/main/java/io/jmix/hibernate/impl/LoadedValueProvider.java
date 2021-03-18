@@ -53,7 +53,7 @@ public class LoadedValueProvider {
         if (entity instanceof Entity) {
             InitialLoadedState state = EntitySystemAccess.getExtraState(entity, InitialLoadedState.class);
             if (state != null) {
-                return state.getLoadedValue(attribute);
+                return convertLoadedValue(entity, attribute, state.getLoadedValue(attribute));
             }
         }
 

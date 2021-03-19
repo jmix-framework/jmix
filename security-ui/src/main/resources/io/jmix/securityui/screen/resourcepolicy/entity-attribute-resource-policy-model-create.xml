@@ -40,7 +40,6 @@
                 <column id="view" editable="true"/>
                 <column id="modify" editable="true"/>
             </columns>
-            <rows/>
         </table>
         <hbox id="editActions" spacing="true">
             <button action="commit"/>

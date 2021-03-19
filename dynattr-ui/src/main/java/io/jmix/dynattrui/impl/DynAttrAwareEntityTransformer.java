@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -60,8 +61,7 @@ public class DynAttrAwareEntityTransformer implements EditedEntityTransformer {
         if (container instanceof HasLoader) {
             DataLoader loader = ((HasLoader) container).getLoader();
             if (loader instanceof CollectionLoader) {
-                CollectionLoader collectionLoader = (CollectionLoader) loader;
-                Map<String, Object> hints = collectionLoader.getHints();
+                Map<String, Serializable> hints = loader.getHints();
 
                 needDynamicAttributes = hints != null
                         && Boolean.TRUE.equals(hints.get(DynAttrQueryHints.LOAD_DYN_ATTR));

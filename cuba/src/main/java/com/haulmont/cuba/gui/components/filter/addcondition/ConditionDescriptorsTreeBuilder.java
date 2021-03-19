@@ -34,7 +34,7 @@ import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.EntityAttrAccess;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.ui.component.Component.HasXmlDescriptor;
 import io.jmix.ui.component.FilterImplementation;
 import io.jmix.ui.screen.FrameOwner;

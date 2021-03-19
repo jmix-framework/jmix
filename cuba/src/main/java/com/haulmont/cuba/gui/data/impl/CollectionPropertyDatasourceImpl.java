@@ -33,7 +33,7 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.core.security.AccessDeniedException;
-import io.jmix.core.security.EntityAttrAccess;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.component.AggregationInfo;
 import io.jmix.ui.component.data.aggregation.impl.AggregatableDelegate;

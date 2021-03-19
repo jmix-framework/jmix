@@ -19,7 +19,7 @@ package com.haulmont.cuba.core.global;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.core.security.EntityAttrAccess;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 
 /**

@@ -31,7 +31,7 @@ import io.jmix.core.Messages;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.core.security.EntityAttrAccess;
+import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;

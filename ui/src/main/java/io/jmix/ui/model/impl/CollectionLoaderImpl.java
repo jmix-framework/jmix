@@ -53,7 +53,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     protected Map<String, Object> parameters = new HashMap<>();
     protected int firstResult = 0;
     protected int maxResults = Integer.MAX_VALUE;
-    protected boolean softDeletion = true;
     protected boolean cacheable;
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;

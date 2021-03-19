@@ -56,7 +56,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     protected Condition condition;
     protected Map<String, Object> parameters = new HashMap<>();
     protected Object entityId;
-    protected boolean softDeletion = true;
     protected FetchPlan fetchPlan;
     protected String fetchPlanName;
     protected Map<String, Serializable> hints;

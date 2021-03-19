@@ -18,6 +18,7 @@ package io.jmix.eclipselink.impl.lazyloading;
 
 import io.jmix.core.EntityAttributeVisitor;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -44,7 +45,9 @@ public abstract class AbstractSingleValueHolder extends AbstractValueHolder {
             if (property.getRange().asClass().getJavaClass().isAssignableFrom(getOwner().getClass())) {
                 replaceToExistingReferences(entity, property, getOwner());
             }
-            if (getLoadOptions().isSoftDeletion()) {
+
+            Object value = getLoadOptions().getHints().get(PersistenceHints.SOFT_DELETION);
+            if (value == null || Boolean.TRUE.equals(value)) {
                 replaceLoadOptions(entity, property);
             }
         }

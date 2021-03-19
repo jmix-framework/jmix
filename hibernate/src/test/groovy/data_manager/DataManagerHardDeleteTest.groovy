@@ -52,14 +52,14 @@ class DataManagerHardDeleteTest extends DataSpec {
         tx.executeWithoutResult {status ->
             sdBefore = PersistenceHints.isSoftDeletion(entityManager)
 
-            dm.save(new SaveContext().removing(customer1).setSoftDeletion(false))
+            dm.save(new SaveContext().removing(customer1).setHint(PersistenceHints.SOFT_DELETION, false))
 
             sdAfter = PersistenceHints.isSoftDeletion(entityManager)
         }
 
         then:
 
-        !dm.load(Id.of(customer1)).softDeletion(false).optional().isPresent()
+        !dm.load(Id.of(customer1)).hint(PersistenceHints.SOFT_DELETION, false).optional().isPresent()
         sdBefore
         sdAfter
     }

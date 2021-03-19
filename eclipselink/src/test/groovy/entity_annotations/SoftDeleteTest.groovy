@@ -21,6 +21,7 @@ import io.jmix.core.TimeSource
 import io.jmix.core.entity.EntityEntrySoftDelete
 import io.jmix.core.security.SystemAuthenticator
 import io.jmix.core.security.InMemoryUserRepository
+import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -97,10 +98,12 @@ class SoftDeleteTest extends DataSpec {
         when:
         Date beforeDelete = timeSource.currentTimestamp()
         dataManager.remove(entity)
-        entity = dataManager.load(SoftDeleteWithUserEntity).id(entity.getId()).softDeletion(false).one()
+        entity = dataManager.load(SoftDeleteWithUserEntity).id(entity.getId())
+                .hint(PersistenceHints.SOFT_DELETION,false).one()
 
         dataManager.remove(tsOnly)
-        tsOnly = dataManager.load(SoftDeleteEntity).id(tsOnly.getId()).softDeletion(false).one()
+        tsOnly = dataManager.load(SoftDeleteEntity).id(tsOnly.getId())
+                .hint(PersistenceHints.SOFT_DELETION, false).one()
         Date afterDelete = timeSource.currentTimestamp()
 
 
@@ -155,7 +158,8 @@ class SoftDeleteTest extends DataSpec {
         when:
         dataManager.remove(el1)
         parent = dataManager.load(EntityWithSoftDeletedManyToManyCollection).id(parent.getId())
-                .fetchPlanProperties("collection").softDeletion(false).one()
+                .fetchPlanProperties("collection")
+                .hint(PersistenceHints.SOFT_DELETION, false).one()
 
         then:
         parent.collection.size() == 2

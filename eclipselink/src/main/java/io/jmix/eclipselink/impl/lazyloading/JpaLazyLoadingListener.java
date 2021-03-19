@@ -88,7 +88,6 @@ public class JpaLazyLoadingListener implements DataStoreEventListener {
         }
 
         LoadOptions loadOptions = LoadOptions.with()
-                .setSoftDeletion(loadContext.isSoftDeletion())
                 .setAccessConstraints(loadContext.getAccessConstraints().stream()
                         .filter(c -> c instanceof InMemoryConstraint)
                         .collect(Collectors.toList()))

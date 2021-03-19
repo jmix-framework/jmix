@@ -26,7 +26,6 @@ import java.util.Map;
 class LoadOptions implements Serializable {
     private static final long serialVersionUID = 7963025798626360359L;
 
-    protected boolean softDeletion;
     protected Map<String, Serializable> hints;
     protected transient List<AccessConstraint<?>> accessConstraints;
 
@@ -35,7 +34,7 @@ class LoadOptions implements Serializable {
     }
 
     public static LoadOptions with(LoadOptions srcOptions) {
-        return with().setSoftDeletion(srcOptions.isSoftDeletion())
+        return with()
                 .setHints(srcOptions.getHints())
                 .setAccessConstraints(srcOptions.getAccessConstraints());
     }
@@ -43,17 +42,8 @@ class LoadOptions implements Serializable {
     private LoadOptions() {
     }
 
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    public LoadOptions setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
-        return this;
-    }
-
     public Map<String, Serializable> getHints() {
-        return hints;
+        return hints == null ? Collections.emptyMap() : hints;
     }
 
     public LoadOptions setHints(Map<String, Serializable> hints) {

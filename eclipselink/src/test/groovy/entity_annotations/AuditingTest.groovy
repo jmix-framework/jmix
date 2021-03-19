@@ -22,6 +22,7 @@ import io.jmix.core.entity.EntityEntryAuditable
 import io.jmix.core.security.CurrentAuthentication
 import io.jmix.core.security.InMemoryUserRepository
 import io.jmix.core.security.SystemAuthenticator
+import io.jmix.data.PersistenceHints
 import io.jmix.data.impl.converters.AuditConversionService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.User
@@ -164,7 +165,8 @@ class AuditingTest extends DataSpec {
         irregularEntity.setName("test")
         irregularEntity = dataManager.save(irregularEntity)
         dataManager.remove(irregularEntity)
-        irregularEntity = dataManager.load(IrregularAuditTypesEntity).id(irregularEntity.id).softDeletion(false).one()
+        irregularEntity = dataManager.load(IrregularAuditTypesEntity).id(irregularEntity.id)
+                .hint(PersistenceHints.SOFT_DELETION, false).one()
 
         then:
         irregularEntity.createdDate != null

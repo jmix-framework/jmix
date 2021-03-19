@@ -17,8 +17,6 @@
 package test_support
 
 import groovy.sql.Sql
-import io.jmix.core.security.PermissionType
-import test_support.DataSet
 import io.jmix.samples.rest.entity.driver.DriverStatus
 
 class DataUtils {
@@ -89,41 +87,6 @@ class DataUtils {
                 name: name
         )
         return roleId
-    }
-
-    static UUID createUserRole(DataSet dataSet, Sql sql, UUID userId, UUID roleId) {
-        UUID id = UUID.randomUUID();
-        sql.dataSet('sample_rest_sec_user_role').add(
-                id: id,
-                version: 1,
-                user_id: userId,
-                role_id: roleId
-        )
-        return id
-    }
-
-    static UUID createUserRole(DataSet dataSet, Sql sql, UUID userId, String roleName) {
-        UUID id = UUID.randomUUID();
-        sql.dataSet('sample_rest_sec_user_role').add(
-                id: id,
-                version: 1,
-                user_id: userId,
-                role_name: roleName
-        )
-        return id
-    }
-
-    static UUID createPermission(DataSet dataSet, Sql sql, UUID roleId, PermissionType permissionType, String target, int value) {
-        def permissionId = dataSet.createPermissionUuid()
-        sql.dataSet('sec_permission').add(
-                id: permissionId,
-                version: 1,
-                role_id: roleId,
-                permission_type: permissionType.id,
-                target: target,
-                value_: value
-        )
-        return permissionId
     }
 
     static UUID createCar(DataSet dataSet, Sql sql, String vin) {

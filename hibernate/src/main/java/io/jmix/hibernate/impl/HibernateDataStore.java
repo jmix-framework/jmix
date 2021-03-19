@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.jpa.EntityManagerProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -221,7 +222,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
 
     @Override
     protected Set<Object> saveAll(SaveContext context) {
-        SessionImplementor em = (SessionImplementor) storeAwareLocator.getEntityManager(storeName);
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
         Set<Object> result = new HashSet<>();
 
@@ -361,8 +362,10 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
             entities.addAll(removedEntities);
 
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
-
-            List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect((SessionImplementor) em, entities);
+            SessionImplementor si = em instanceof EntityManagerProxy ?
+                    (SessionImplementor) ((EntityManagerProxy) em).getTargetEntityManager()
+                    : (SessionImplementor) em;
+            List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(si, entities);
 
             boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
             try {

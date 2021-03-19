@@ -40,6 +40,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.OrderComparator;
 import org.springframework.core.Ordered;
+import org.springframework.orm.jpa.EntityManagerProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.ResourceHolderSupport;
 import org.springframework.transaction.support.ResourceHolderSynchronization;
@@ -426,7 +427,11 @@ public class HibernatePersistenceSupport implements ApplicationContextAware {
                     transactionListener.beforeCommit(container.getStoreName(), allInstances);
                 }
 
-                List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect((SessionImplementor) storeAwareLocator.getEntityManager(container.getStoreName()), container.getAllInstances());
+                EntityManager em = storeAwareLocator.getEntityManager(container.getStoreName());
+                SessionImplementor si = em instanceof EntityManagerProxy ?
+                        (SessionImplementor) ((EntityManagerProxy) em).getTargetEntityManager()
+                        : (SessionImplementor) em;
+                List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(si, container.getAllInstances());
 
                 detachAll();
 

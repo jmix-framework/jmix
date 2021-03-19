@@ -237,7 +237,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                             restoreEnabled = false;
                         }
 
-                        if(!removeEnabled && !restoreEnabled) {
+                        if (!removeEnabled && !restoreEnabled) {
                             break;
                         }
                     }
@@ -249,7 +249,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             }
 
             Action restoreAction = entitiesTable.getAction(RESTORE_ACTION_ID);
-            if(restoreAction != null) {
+            if (restoreAction != null) {
                 restoreAction.setEnabled(restoreEnabled);
             }
         });
@@ -268,16 +268,16 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
 
         switch (Objects.requireNonNull(showMode.getValue())) {
             case ALL:
-                entitiesDl.setSoftDeletion(false);
+                entitiesDl.setHint("jmix.softDeletion", false);
                 entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
                 break;
             case NON_REMOVED:
-                entitiesDl.setSoftDeletion(true);
+                entitiesDl.setHint("jmix.softDeletion", true);
                 entitiesDl.setQuery(String.format(BASE_SELECT_QUERY, meta.getName()));
                 break;
             case REMOVED:
-                if(metadataTools.isSoftDeletable(meta.getJavaClass())) {
-                    entitiesDl.setSoftDeletion(false);
+                if (metadataTools.isSoftDeletable(meta.getJavaClass())) {
+                    entitiesDl.setHint("jmix.softDeletion", false);
                     entitiesDl.setQuery(
                             String.format(
                                     DELETED_ONLY_SELECT_QUERY,

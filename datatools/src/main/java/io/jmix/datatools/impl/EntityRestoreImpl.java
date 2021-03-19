@@ -58,7 +58,7 @@ public class EntityRestoreImpl implements EntityRestore {
                 continue;
             }
 
-            if(!metadataTools.isJpaEntity(entity.getClass())) {
+            if (!metadataTools.isJpaEntity(entity.getClass())) {
                 log.warn("Unable to restore non-JPA entity {}", entity);
                 continue;
             }
@@ -70,11 +70,13 @@ public class EntityRestoreImpl implements EntityRestore {
     }
 
     protected void restoreEntity(Object entity, SaveContext saveContext) {
-        Optional<Object> reloadedEntityOpt = dataManager.load(Id.of(entity)).softDeletion(false).optional();
+        Optional<Object> reloadedEntityOpt = dataManager.load(Id.of(entity))
+                .hint("jmix.softDeletion", false)
+                .optional();
         if (reloadedEntityOpt.isPresent() && EntityValues.isSoftDeleted(reloadedEntityOpt.get())) {
             Object reloadedEntity = reloadedEntityOpt.get();
             log.info("Restoring deleted entity {}", reloadedEntity);
-            Date deleteTs = (Date)((EntityEntrySoftDelete) getUncheckedEntityEntry(reloadedEntity)).getDeletedDate(); //TODO: add to EntityValues?
+            Date deleteTs = (Date) ((EntityEntrySoftDelete) getUncheckedEntityEntry(reloadedEntity)).getDeletedDate(); //TODO: add to EntityValues?
             EntityValues.setDeletedDate(reloadedEntity, null);
             EntityValues.setDeletedBy(reloadedEntity, null);
             saveContext.saving(reloadedEntity);
@@ -138,7 +140,7 @@ public class EntityRestoreImpl implements EntityRestore {
         String jpql = getOnDeleteCascadePropertyQueryString(detailMetaClass, inverseProperty);
 
         Object entityId = restorationContext.getEntityId();
-        if(entityId == null) {
+        if (entityId == null) {
             throw new IllegalStateException("EntityId is null");
         }
 
@@ -164,7 +166,7 @@ public class EntityRestoreImpl implements EntityRestore {
         query.setParameter("end", DateUtils.addMilliseconds(deleteTs, 1000));
         return new LoadContext<Entity>(metaClass)
                 .setQuery(query)
-                .setSoftDeletion(false);
+                .setHint("jmix.softDeletion", false);
     }
 
     private void processOnDeleteInverseProperties(RestorationContext restorationContext) {
@@ -185,7 +187,7 @@ public class EntityRestoreImpl implements EntityRestore {
         MetaClass detailMetaClass = property.getDomain();
         log.trace("Process OnDeleteInverse Cascade property {}. MetaClass: {}", property, detailMetaClass);
         Object entityId = restorationContext.getEntityId();
-        if(entityId == null) {
+        if (entityId == null) {
             throw new IllegalStateException("EntityId is null");
         }
         if (!metadataTools.isSoftDeletable(detailMetaClass.getJavaClass())) {

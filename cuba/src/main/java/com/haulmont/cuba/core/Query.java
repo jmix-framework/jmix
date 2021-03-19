@@ -17,7 +17,7 @@ package com.haulmont.cuba.core;
 
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
-import io.jmix.data.QueryHints;
+import com.haulmont.cuba.core.global.QueryHints;
 
 import javax.annotation.Nullable;
 import javax.persistence.FlushModeType;

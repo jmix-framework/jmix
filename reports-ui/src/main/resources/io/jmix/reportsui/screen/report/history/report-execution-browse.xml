@@ -22,7 +22,7 @@
                 <button id="excel" action="executionsTable.excel"/>
                 <button id="download" action="executionsTable.download"/>
             </buttonsPanel>
-            <rowsCount/>
+            <simplePagination/>
             <columns>
                 <column id="startTime">
                     <formatter class="io.jmix.ui.component.formatter.DateFormatter"

@@ -26,7 +26,7 @@ import io.jmix.ui.meta.StudioFacet;
         category = "Facets",
         icon = "icon/dynamicAttributes.svg",
         xmlns = "http://jmix.io/schema/dynattr/ui",
-        xmlnsAlias = "dynattrui"
+        xmlnsAlias = "dynattr"
 )
 public interface DynAttrFacet extends Facet {
     String FACET_NAME = "dynamicAttributes";

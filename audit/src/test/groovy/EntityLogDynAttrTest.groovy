@@ -20,6 +20,7 @@ import io.jmix.audit.entity.EntityLogItem
 import io.jmix.core.*
 import io.jmix.core.entity.EntityValues
 import io.jmix.data.DataConfiguration
+import io.jmix.data.PersistenceHints
 import io.jmix.data.entity.ReferenceToEntity
 import io.jmix.dynattr.AttributeType
 import io.jmix.dynattr.DynAttrConfiguration
@@ -141,6 +142,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
         notLoggedAttribute.category = firstCategory
         notLoggedAttribute.defaultEntity = new ReferenceToEntity()
     }
+
     private void createSecondEntityAttributes() {
         entityAttribute = metadata.create(CategoryAttribute)
         entityAttribute.name = 'Entity Attribute'
@@ -216,7 +218,7 @@ class EntityLogDynAttrTest extends AbstractEntityLogTest {
 
         when: 'entity restored'
         FirstEntity deletedEntity = dataManager.load(Id.of(firstEntity))
-                .softDeletion(false)
+                .hint(PersistenceHints.SOFT_DELETION, false)
                 .hint(DynAttrQueryHints.LOAD_DYN_ATTR, true)
                 .one()
 

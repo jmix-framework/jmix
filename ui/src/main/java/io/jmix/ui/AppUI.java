@@ -113,7 +113,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     protected Notifications notifications;
     protected WebBrowserTools webBrowserTools;
 
-
     protected UrlChangeHandler urlChangeHandler;
     protected UrlRouting urlRouting;
     protected History history;
@@ -162,59 +161,43 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     @Override
     public Screens getScreens() {
+        if (screens == null) {
+            screens = beanFactory.getBean(Screens.class);
+        }
         return screens;
-    }
-
-    @Autowired
-    @Lazy
-    protected void setScreens(Screens screens) {
-        this.screens = screens;
     }
 
     @Override
     public Dialogs getDialogs() {
+        if (dialogs == null) {
+            dialogs = beanFactory.getBean(Dialogs.class);
+        }
         return dialogs;
-    }
-
-    @Autowired
-    @Lazy
-    protected void setDialogs(Dialogs dialogs) {
-        this.dialogs = dialogs;
     }
 
     @Override
     public Notifications getNotifications() {
+        if (notifications == null) {
+            notifications = beanFactory.getBean(Notifications.class);
+        }
         return notifications;
-    }
-
-    @Autowired
-    @Lazy
-    protected void setNotifications(Notifications notifications) {
-        this.notifications = notifications;
     }
 
     @Override
     public WebBrowserTools getWebBrowserTools() {
+        if (webBrowserTools == null) {
+            webBrowserTools = beanFactory.getBean(WebBrowserTools.class);
+        }
         return webBrowserTools;
-    }
-
-    @Autowired
-    @Lazy
-    protected void setWebBrowserTools(WebBrowserTools webBrowserTools) {
-        this.webBrowserTools = webBrowserTools;
     }
 
     @Override
     public Fragments getFragments() {
+        if (fragments == null) {
+            fragments = beanFactory.getBean(Fragments.class);
+        }
         return fragments;
     }
-
-    @Autowired
-    @Lazy
-    protected void setFragments(Fragments fragments) {
-        this.fragments = fragments;
-    }
-
 
     public UrlRouting getUrlRouting() {
         return urlRouting;

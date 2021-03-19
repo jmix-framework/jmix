@@ -17,6 +17,8 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.DevelopmentException;
 import io.jmix.ui.GuiDevelopmentException;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.Facet;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.model.ScreenData;
@@ -117,5 +119,15 @@ public class FragmentLoader extends ContainerLoader<Fragment> implements Compone
                 resultComponent.addFacet(facet);
             }
         }
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        Action action = loadDeclarativeActionByType(actionsHolder, element);
+        if (action != null) {
+            return action;
+        }
+
+        return super.loadDeclarativeAction(actionsHolder, element);
     }
 }

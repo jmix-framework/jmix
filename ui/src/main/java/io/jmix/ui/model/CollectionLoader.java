@@ -53,17 +53,6 @@ public interface CollectionLoader<E> extends BaseCollectionLoader {
     LoadContext<E> createLoadContext();
 
     /**
-     * Sets custom hint that should be used by the query for loading data.
-     */
-    void setHint(String hintName, Serializable value);
-
-    /**
-     * @return custom hints which are used by the query for loading data.
-     */
-    @Nullable
-    Map<String, Serializable> getHints();
-
-    /**
      * Returns true if the query for loading data is cacheable.
      */
     boolean isCacheable();

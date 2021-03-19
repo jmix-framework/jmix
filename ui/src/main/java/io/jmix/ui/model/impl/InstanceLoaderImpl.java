@@ -130,7 +130,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
         }
 
         loadContext.setFetchPlan(resolveFetchPlan());
-        loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
 
         return loadContext;
@@ -228,16 +227,6 @@ public class InstanceLoaderImpl<E> implements InstanceLoader<E> {
     @Override
     public void setEntityId(Object entityId) {
         this.entityId = entityId;
-    }
-
-    @Override
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    @Override
-    public void setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
     }
 
     @Override

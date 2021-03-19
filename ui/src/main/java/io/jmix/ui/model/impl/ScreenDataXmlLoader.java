@@ -286,13 +286,15 @@ public class ScreenDataXmlLoader {
             loader.setDataContext(screenData.getDataContext());
             loader.setContainer(container);
 
-            loadSoftDeletion(element, loader);
+            loadAdditionalLoaderProperties(element, loader);
             loadQuery(element, loader);
             loadEntityId(element, loader);
         }
 
         screenData.registerLoader(loaderId, loader);
     }
+
+
 
     protected void loadCollectionLoader(ScreenData screenData, Element element, CollectionContainer<Object> container,
                                         @Nullable ScreenData hostScreenData) {
@@ -312,7 +314,7 @@ public class ScreenDataXmlLoader {
             loader.setContainer(container);
 
             loadQuery(element, loader);
-            loadSoftDeletion(element, loader);
+            loadAdditionalLoaderProperties(element, loader);
             loadFirstResult(element, loader);
             loadMaxResults(element, loader);
             loadCacheable(element, loader);
@@ -338,7 +340,7 @@ public class ScreenDataXmlLoader {
             loader.setContainer(container);
 
             loadQuery(element, loader);
-            loadSoftDeletion(element, loader);
+            loadAdditionalLoaderProperties(element, loader);
             loadFirstResult(element, loader);
             loadMaxResults(element, loader);
 
@@ -366,7 +368,7 @@ public class ScreenDataXmlLoader {
             loader.setContainer(container);
 
             loadQuery(element, loader);
-            loadSoftDeletion(element, loader);
+            loadAdditionalLoaderProperties(element, loader);
 
             String storeName = element.attributeValue("store");
             if (!Strings.isNullOrEmpty(storeName))
@@ -431,10 +433,7 @@ public class ScreenDataXmlLoader {
         return queryEl.getText().trim();
     }
 
-    protected void loadSoftDeletion(Element element, DataLoader loader) {
-        String softDeletionVal = element.attributeValue("softDeletion");
-        if (!Strings.isNullOrEmpty(softDeletionVal))
-            loader.setSoftDeletion(Boolean.parseBoolean(softDeletionVal));
+    protected void loadAdditionalLoaderProperties(Element element, DataLoader loader) {
     }
 
     protected void loadEntityId(Element element, InstanceLoader<Object> loader) {

@@ -19,6 +19,7 @@ package io.jmix.ui.model;
 import io.jmix.core.querycondition.Condition;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -98,12 +99,13 @@ public interface DataLoader {
     void removeParameter(String name);
 
     /**
-     * Returns true if the loader respects soft deletion, i.e. softly deleted instances are not loaded.
+     * Sets custom hint that should be used by the query for loading data.
      */
-    boolean isSoftDeletion();
+    void setHint(String hintName, Serializable value);
 
     /**
-     * Set to false if you want to load softly deleted instances too. Soft deletion is true by default.
+     * @return custom hints which are used by the query for loading data.
      */
-    void setSoftDeletion(boolean softDeletion);
+    @Nullable
+    Map<String, Serializable> getHints();
 }

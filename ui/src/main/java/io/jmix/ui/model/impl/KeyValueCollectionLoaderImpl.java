@@ -30,6 +30,7 @@ import io.jmix.ui.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -53,9 +54,8 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     protected Map<String, Object> parameters = new HashMap<>();
     protected int firstResult = 0;
     protected int maxResults = Integer.MAX_VALUE;
-    protected boolean softDeletion = true;
     protected Sort sort;
-
+    protected Map<String, Serializable> hints;
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, List<KeyValueEntity>> delegate;
     protected EventHub events = new EventHub();
@@ -124,7 +124,8 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
         if (maxResults < Integer.MAX_VALUE)
             query.setMaxResults(maxResults);
 
-        loadContext.setSoftDeletion(softDeletion);
+        loadContext.setHints(hints);
+
         return loadContext;
     }
 
@@ -228,6 +229,19 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     }
 
     @Override
+    public void setHint(String hintName, Serializable value) {
+        if (hints == null) {
+            hints = new HashMap<>();
+        }
+        hints.put(hintName, value);
+    }
+
+    @Override
+    public Map<String, Serializable> getHints() {
+        return hints;
+    }
+
+    @Override
     public Function<ValueLoadContext, List<KeyValueEntity>> getDelegate() {
         return delegate;
     }
@@ -245,16 +259,6 @@ public class KeyValueCollectionLoaderImpl implements KeyValueCollectionLoader {
     @Override
     public Subscription addPostLoadListener(Consumer<PostLoadEvent> listener) {
         return events.subscribe(PostLoadEvent.class, listener);
-    }
-
-    @Override
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    @Override
-    public void setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
     }
 
     @Override

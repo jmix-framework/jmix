@@ -210,7 +210,7 @@ class ScreenDataTest extends DataContextSpec {
                 <collection id="usersCont"
                             class="test_support.entity.sec.User" fetchPlan="user.browse">
             
-                    <loader id="usersLoader" softDeletion="false" firstResult="100" maxResults="1000" cacheable="true">
+                    <loader id="usersLoader" firstResult="100" maxResults="1000" cacheable="true">
                         <query>
                             select u from sec$User u
                         </query>
@@ -222,7 +222,7 @@ class ScreenDataTest extends DataContextSpec {
                         <property name="login"/>
                         <property name="name"/>
                     </properties>
-                    <loader id="userInfoLoader" store="foo" softDeletion="false" firstResult="100" maxResults="1000">
+                    <loader id="userInfoLoader" store="foo" firstResult="100" maxResults="1000">
                         <query>
                             select u.login, u.name from sec$User u where u.login like :login
                         </query>
@@ -234,7 +234,7 @@ class ScreenDataTest extends DataContextSpec {
                         <property name="login"/>
                         <property name="name"/>
                     </properties>
-                    <loader id="userInfoInstanceLoader" store="foo" softDeletion="false">
+                    <loader id="userInfoInstanceLoader" store="foo">
                         <query>
                             select u.login, u.name from sec$User u where u.id = 1
                         </query>
@@ -256,21 +256,17 @@ class ScreenDataTest extends DataContextSpec {
         then:
 
         userLoader.entityId == UUID.fromString('60885987-1b61-4247-94c7-dff348347f93')
-        !userLoader.softDeletion
         ((InstanceLoaderImpl) userLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.edit')
 
-        !usersLoader.softDeletion
         usersLoader.firstResult == 100
         usersLoader.maxResults == 1000
         usersLoader.cacheable
         ((CollectionLoaderImpl) usersLoader).createLoadContext().fetchPlan == fetchPlanRepository.getFetchPlan(User, 'user.browse')
 
-        !userInfoLoader.softDeletion
         userInfoLoader.firstResult == 100
         userInfoLoader.maxResults == 1000
         userInfoLoader.storeName == 'foo'
 
-        !userInfoInstanceLoader.softDeletion
         userInfoInstanceLoader.storeName == 'foo'
     }
 

@@ -32,6 +32,7 @@ import io.jmix.ui.model.KeyValueInstanceLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,8 +51,7 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     protected String query;
     protected Condition condition;
     protected Map<String, Object> parameters = new HashMap<>();
-    protected boolean softDeletion = true;
-
+    protected Map<String, Serializable> hints;
     protected String storeName = Stores.MAIN;
     protected Function<ValueLoadContext, KeyValueEntity> delegate;
     protected EventHub events = new EventHub();
@@ -109,7 +109,8 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
         query.setParameters(parameters);
         query.setMaxResults(1);
 
-        loadContext.setSoftDeletion(softDeletion);
+        loadContext.setHints(hints);
+
         return loadContext;
     }
 
@@ -187,6 +188,19 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     }
 
     @Override
+    public void setHint(String hintName, Serializable value) {
+        if (hints == null) {
+            hints = new HashMap<>();
+        }
+        hints.put(hintName, value);
+    }
+
+    @Override
+    public Map<String, Serializable> getHints() {
+        return hints;
+    }
+
+    @Override
     public Function<ValueLoadContext, KeyValueEntity> getLoadDelegate() {
         return delegate;
     }
@@ -204,16 +218,6 @@ public class KeyValueInstanceLoaderImpl implements KeyValueInstanceLoader {
     @Override
     public Subscription addPostLoadListener(Consumer<PostLoadEvent> listener) {
         return events.subscribe(PostLoadEvent.class, listener);
-    }
-
-    @Override
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    @Override
-    public void setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
     }
 
     @Override

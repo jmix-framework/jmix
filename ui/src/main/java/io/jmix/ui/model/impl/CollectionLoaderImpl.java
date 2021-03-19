@@ -128,7 +128,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
             query.setMaxResults(maxResults);
 
         loadContext.setFetchPlan(resolveFetchPlan());
-        loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
 
         return loadContext;
@@ -237,16 +236,6 @@ public class CollectionLoaderImpl<E> implements CollectionLoader<E> {
     @Override
     public void setMaxResults(int maxResults) {
         this.maxResults = maxResults;
-    }
-
-    @Override
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    @Override
-    public void setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
     }
 
     @Override

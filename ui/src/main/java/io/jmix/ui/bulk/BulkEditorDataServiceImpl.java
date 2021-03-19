@@ -44,7 +44,7 @@ public class BulkEditorDataServiceImpl implements BulkEditorDataService {
 
         LoadContext<E> loadContext = new LoadContext<>(loadDescriptor.getMetaClass());
         loadContext.setIds(ids);
-        loadContext.setSoftDeletion(false);
+        loadContext.setHint("jmix.softDeletion", false);
         loadContext.setFetchPlan(loadDescriptor.getFetchPlan());
 
         return dataManager.loadList(loadContext);

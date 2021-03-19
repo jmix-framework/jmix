@@ -617,6 +617,24 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
         return id;
     }
 
+    @Nullable
+    protected Action loadDeclarativeActionByType(ActionsHolder actionsHolder, Element element) {
+        String id = loadActionId(element);
+
+        String actionTypeId = element.attributeValue("type");
+        if (StringUtils.isNotEmpty(actionTypeId)) {
+            Actions actions = applicationContext.getBean(Actions.class);
+            Action instance = actions.create(actionTypeId, id);
+
+            initAction(element, instance);
+            loadActionConstraint(instance, element);
+
+            return instance;
+        }
+
+        return null;
+    }
+
     protected void initAction(Element element, Action targetAction) {
         String caption = element.attributeValue("caption");
         if (StringUtils.isNotEmpty(caption)) {

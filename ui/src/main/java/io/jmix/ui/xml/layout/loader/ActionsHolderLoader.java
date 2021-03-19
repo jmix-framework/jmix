@@ -16,90 +16,25 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.GuiDevelopmentException;
 import io.jmix.ui.action.Action;
-import io.jmix.ui.Actions;
 import io.jmix.ui.action.ListAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.ListComponent;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public abstract class ActionsHolderLoader<T extends ActionsHolder> extends AbstractComponentLoader<T> {
 
     @Override
     protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
-        String id = element.attributeValue("id");
-        if (StringUtils.isEmpty(id)) {
-            throw new GuiDevelopmentException("No action id provided", context,
-                    "ActionsHolder ID", actionsHolder.getId());
-        }
-
-        String actionTypeId = element.attributeValue("type");
-        if (StringUtils.isNotEmpty(actionTypeId)) {
-            Actions actions = applicationContext.getBean(Actions.class);
-            Action instance = actions.create(actionTypeId, id);
-
-            if (instance instanceof ListAction) {
-                ((ListAction) instance).setTarget((ListComponent) actionsHolder);
+        Action action = loadDeclarativeActionByType(actionsHolder, element);
+        if (action != null) {
+            if (action instanceof ListAction) {
+                ((ListAction) action).setTarget((ListComponent) actionsHolder);
             }
 
-            loadStandardActionProperties(instance, element);
-
-            loadActionConstraint(instance, element);
-
-            loadShortcut(instance, element);
-
-            loadCustomProperties(instance, element);
-
-            return instance;
+            return action;
         }
 
         return super.loadDeclarativeAction(actionsHolder, element);
-    }
-
-    protected void loadShortcut(Action instance, Element element) {
-        String shortcut = StringUtils.trimToNull(element.attributeValue("shortcut"));
-        if (StringUtils.isNotEmpty(shortcut)) {
-            instance.setShortcut(loadShortcut(shortcut));
-        }
-    }
-
-    protected void loadStandardActionProperties(Action instance, Element element) {
-        String enable = element.attributeValue("enable");
-        if (StringUtils.isNotEmpty(enable)) {
-            instance.setEnabled(Boolean.parseBoolean(enable));
-        }
-
-        String visible = element.attributeValue("visible");
-        if (StringUtils.isNotEmpty(visible)) {
-            instance.setVisible(Boolean.parseBoolean(visible));
-        }
-
-        String caption = element.attributeValue("caption");
-        if (caption != null) {
-            instance.setCaption(loadResourceString(caption));
-        }
-
-        String description = element.attributeValue("description");
-        if (StringUtils.isNotEmpty(description)) {
-            instance.setDescription(loadResourceString(description));
-        }
-
-        String icon = element.attributeValue("icon");
-        if (StringUtils.isNotEmpty(icon)) {
-            instance.setIcon(getIconPath(icon));
-        }
-    }
-
-    protected void loadCustomProperties(Action instance, Element element) {
-        Element propertiesEl = element.element("properties");
-        if (propertiesEl != null) {
-            ActionCustomPropertyLoader propertyLoader = applicationContext.getBean(ActionCustomPropertyLoader.class);
-            for (Element propertyEl : propertiesEl.elements("property")) {
-                propertyLoader.load(instance,
-                        propertyEl.attributeValue("name"), propertyEl.attributeValue("value"));
-            }
-        }
     }
 }

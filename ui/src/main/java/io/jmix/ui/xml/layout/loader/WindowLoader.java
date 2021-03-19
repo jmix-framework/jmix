@@ -16,12 +16,9 @@
 package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.DevelopmentException;
-import io.jmix.ui.component.Component;
-import io.jmix.ui.component.DialogWindow;
-import io.jmix.ui.component.Facet;
-import io.jmix.ui.component.Window;
+import io.jmix.ui.action.Action;
+import io.jmix.ui.component.*;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.component.WindowMode;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.screen.UiControllerUtils;
@@ -207,5 +204,15 @@ public class WindowLoader extends ContainerLoader<Window> implements ComponentRo
                 resultComponent.addFacet(facet);
             }
         }
+    }
+
+    @Override
+    protected Action loadDeclarativeAction(ActionsHolder actionsHolder, Element element) {
+        Action action = loadDeclarativeActionByType(actionsHolder, element);
+        if (action != null) {
+            return action;
+        }
+
+        return super.loadDeclarativeAction(actionsHolder, element);
     }
 }

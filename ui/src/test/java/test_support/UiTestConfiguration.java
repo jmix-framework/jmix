@@ -27,6 +27,7 @@ import io.jmix.core.Resources;
 import io.jmix.core.Stores;
 import io.jmix.core.annotation.JmixModule;
 import io.jmix.core.impl.JmixMessageSource;
+import io.jmix.core.impl.scanning.AnnotationScanMetadataReaderFactory;
 import io.jmix.core.security.CoreSecurityConfiguration;
 import io.jmix.data.impl.JmixEntityManagerFactoryBean;
 import io.jmix.data.impl.JmixTransactionManager;
@@ -34,11 +35,13 @@ import io.jmix.data.persistence.DbmsSpecifics;
 import io.jmix.ui.menu.MenuBuilder;
 import io.jmix.ui.menu.MenuConfig;
 import io.jmix.ui.menu.SideMenuBuilder;
+import io.jmix.ui.sys.ActionsConfiguration;
 import io.jmix.ui.sys.registration.ComponentRegistration;
 import io.jmix.ui.sys.registration.ComponentRegistrationBuilder;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -52,6 +55,7 @@ import test_support.bean.TestSideMenuBuilder;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.Collections;
 
 @Configuration
 @ComponentScan
@@ -99,6 +103,14 @@ public class UiTestConfiguration {
     @Primary
     TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
         return new TransactionTemplate(transactionManager);
+    }
+
+    @Bean
+    public ActionsConfiguration actions(ApplicationContext applicationContext,
+                                        AnnotationScanMetadataReaderFactory metadataReaderFactory) {
+        ActionsConfiguration actionsConfiguration = new ActionsConfiguration(applicationContext, metadataReaderFactory);
+        actionsConfiguration.setBasePackages(Collections.singletonList("screen_actions.action"));
+        return actionsConfiguration;
     }
 
     @Bean

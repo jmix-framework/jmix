@@ -51,4 +51,40 @@
       }
     }
   }
+
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+
+  &.large .#{$primary-stylename} {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-drawer-size-style($primary-stylename: $primary-stylename);
+  }
+}
+
+@mixin he-drawer-size-style($primary-stylename: jmix-drawer) {
+  .#{$primary-stylename}-footer .#{$primary-stylename}-collapse-button {
+    @include drawer-footer-button()
+  }
 }

@@ -23,22 +23,72 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
 @mixin he-sidemenu($primary-stylename: c-sidemenu) {
   @include he-sidemenu-styles($primary-stylename: $primary-stylename);
 
-  &.small {
-    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename,
-    $unit-size: $v-unit-size--small,
-    $font-size: $v-font-size--small,
-    $scaling-factor: $v-scaling-factor--small,
-    $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
-    $sidemenu-top-height : $cuba-sidemenu-top-height--small);
+  /* Global size */
+
+  &.small .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--small,
+                                     $font-size           : $v-font-size--small,
+                                     $scaling-factor      : $v-scaling-factor--small,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
   }
 
-  &.large {
-    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename,
-    $unit-size: $v-unit-size--large,
-    $font-size: $v-font-size--large,
-    $scaling-factor: $v-scaling-factor--large,
-    $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
-    $sidemenu-top-height : $cuba-sidemenu-top-height--large);
+  &.large .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--large,
+                                     $font-size           : $v-font-size--large,
+                                     $scaling-factor      : $v-scaling-factor--large,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
+  }
+
+  /* Size within a container */
+
+  .small .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--small,
+                                     $font-size           : $v-font-size--small,
+                                     $scaling-factor      : $v-scaling-factor--small,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
+  }
+
+  .medium .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
+  }
+
+  .large .#{$primary-stylename} {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--large,
+                                     $font-size           : $v-font-size--large,
+                                     $scaling-factor      : $v-scaling-factor--large,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
+  }
+
+  /* Own size */
+
+  .#{$primary-stylename}.small {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--small,
+                                     $font-size           : $v-font-size--small,
+                                     $scaling-factor      : $v-scaling-factor--small,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--small,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--small);
+  }
+
+  .#{$primary-stylename}.medium {
+    @include he-sidemenu-size-styles($primary-stylename: $primary-stylename);
+  }
+
+  .#{$primary-stylename}.large {
+    @include he-sidemenu-size-styles($primary-stylename   : $primary-stylename,
+                                     $unit-size           : $v-unit-size--large,
+                                     $font-size           : $v-font-size--large,
+                                     $scaling-factor      : $v-scaling-factor--large,
+                                     $sidemenu-top-offset : $cuba-sidemenu-top-offset--large,
+                                     $sidemenu-top-height : $cuba-sidemenu-top-height--large);
   }
 }
 
@@ -196,17 +246,16 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
                                $scaling-factor      : 1,
                                $sidemenu-top-offset : $cuba-sidemenu-top-offset,
                                $sidemenu-top-height : $cuba-sidemenu-top-height) {
+
+   font-size: $font-size;
+   line-height: round($unit-size);
+
   .#{$primary-stylename}-wrap {
     font-size: 0;
 
     & > * {
       font-size: $font-size;
     }
-  }
-
-  .#{$primary-stylename} {
-    font-size: $font-size;
-    line-height: round($unit-size);
   }
 
   .#{$primary-stylename}-title {
@@ -444,6 +493,7 @@ $cuba-sidemenu-top-height--large: $v-unit-size--large + 2 * $cuba-sidemenu-top-o
     background: var($active-background-color);
   }
 }
+
 @mixin he-sidemenu-useractions-button-color-style($color, $hover-background-color, $active-background-color) {
   color: var($color);
 

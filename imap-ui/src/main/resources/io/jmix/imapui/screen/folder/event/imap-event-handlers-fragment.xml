@@ -40,7 +40,7 @@
                     <column id="beanName"/>
                     <column id="methodName"/>
                 </columns>
-                <rows/>
+                <simplePagination/>
                 <buttonsPanel>
                     <button id="addHandlerBtn" action="handlersTable.add"/>
                     <button action="handlersTable.remove"/>

@@ -34,7 +34,7 @@
             <columns>
                 <column id="name"/>
             </columns>
-            <rows/>
+            <simplePagination/>
         </treeTable>
 
         <hbox id="lookupActions" spacing="true">

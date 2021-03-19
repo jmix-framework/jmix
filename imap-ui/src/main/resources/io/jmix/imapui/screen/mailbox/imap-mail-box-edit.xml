@@ -140,7 +140,7 @@
                                 <column id="name"/>
                                 <column id="enabled" editable="true"/>
                             </columns>
-                            <rows/>
+                            <simplePagination/>
                             <buttonsPanel>
                                 <button action="foldersTable.refresh"/>
                             </buttonsPanel>
@@ -158,7 +158,7 @@
                                 <column id="event"/>
                                 <column id="enabled" editable="true"/>
                             </columns>
-                            <rows/>
+                            <simplePagination/>
                         </table>
                     </groupBox>
                     <fragment id="handlersFragment" screen="imap_EventHandlersFragment" height="100%"/>

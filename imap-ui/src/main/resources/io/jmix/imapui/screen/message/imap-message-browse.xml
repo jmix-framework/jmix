@@ -57,7 +57,7 @@
                 <column id="flags"/>
                 <column id="messageId"/>
             </columns>
-            <rows/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="editBtn"

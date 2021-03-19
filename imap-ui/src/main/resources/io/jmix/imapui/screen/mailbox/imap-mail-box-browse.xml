@@ -59,7 +59,7 @@
                 <column id="port"/>
                 <column id="secureMode"/>
             </columns>
-            <rows/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel">
                 <button id="createBtn"
                         action="mailBoxesTable.create"/>

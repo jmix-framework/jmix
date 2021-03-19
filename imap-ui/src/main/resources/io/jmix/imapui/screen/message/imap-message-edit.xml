@@ -112,7 +112,7 @@
                                 <column id="name"/>
                                 <column id="fileSize"/>
                             </columns>
-                            <rows/>
+                            <simplePagination/>
                             <buttonsPanel>
                                 <button id="downloadBtn"
                                         action="attachmentsTable.download"

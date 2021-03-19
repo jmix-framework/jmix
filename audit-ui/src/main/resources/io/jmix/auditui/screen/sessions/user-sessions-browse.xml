@@ -40,7 +40,7 @@
                 <column id="principalName"/>
                 <column id="lastRequest"/>
             </columns>
-            <rowsCount/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="refreshBtn" action="sessionsTable.refresh"/>

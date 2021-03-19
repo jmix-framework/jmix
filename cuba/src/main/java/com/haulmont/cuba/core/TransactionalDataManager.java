@@ -17,12 +17,9 @@
 package com.haulmont.cuba.core;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
-import com.haulmont.cuba.core.global.EntitySet;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.FluentLoader;
-import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.*;
-import io.jmix.core.*;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.entity.KeyValueEntity;
 
@@ -199,7 +196,8 @@ public interface TransactionalDataManager {
 
     /**
      * Removes the entity instance from the data store.
-     * @param entity    entity instance
+     *
+     * @param entity       entity instance
      * @param softDeletion whether to use soft deletion for entities implementing {@link com.haulmont.cuba.core.entity.SoftDelete}
      *                     (true by default)
      */
@@ -284,9 +282,10 @@ public interface TransactionalDataManager {
 
     /**
      * Entry point to TransactionalAction API.
-     * @param supplier  defines how to retrieve {@link com.haulmont.cuba.core.global.CommitContext}
-     * @return          instance of {@link com.haulmont.cuba.core.global.TransactionalAction} without any additional
-     *                  actions ({@code onSuccess, onFail, beforeCommit, afterCompletion}) and with {@code joinTransaction=true}
+     *
+     * @param supplier defines how to retrieve {@link com.haulmont.cuba.core.global.CommitContext}
+     * @return instance of {@link com.haulmont.cuba.core.global.TransactionalAction} without any additional
+     * actions ({@code onSuccess, onFail, beforeCommit, afterCompletion}) and with {@code joinTransaction=true}
      */
     TransactionalAction commitAction(Supplier<CommitContext> supplier);
 }

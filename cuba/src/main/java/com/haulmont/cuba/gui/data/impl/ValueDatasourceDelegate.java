@@ -17,7 +17,7 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.global.AppBeans;
-import io.jmix.core.ValueLoadContext;
+import com.haulmont.cuba.core.global.ValueLoadContext;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.impl.keyvalue.KeyValueMetaClass;
 import io.jmix.core.impl.keyvalue.KeyValueMetaPropertyBuilder;
@@ -25,6 +25,7 @@ import io.jmix.core.metamodel.datatype.Datatype;
 import io.jmix.core.metamodel.datatype.Enumeration;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.PersistenceHints;
 
 import java.text.ParseException;
 import java.util.List;
@@ -116,7 +117,7 @@ public class ValueDatasourceDelegate {
         if (storeName != null)
             context.setStoreName(storeName);
 
-        context.setSoftDeletion(ds.isSoftDeletion());
+        context.setHint(PersistenceHints.SOFT_DELETION, ds.isSoftDeletion());
 
         context.setIdName(idName);
         for (MetaProperty property : ds.metaClass.getProperties()) {
@@ -155,8 +156,8 @@ public class ValueDatasourceDelegate {
 
     protected List<MetaProperty> getEnumProperties(MetaClass metaClass) {
         return metaClass.getOwnProperties().stream()
-                        .filter(p -> p.getRange().isEnum())
-                        .collect(Collectors.toList());
+                .filter(p -> p.getRange().isEnum())
+                .collect(Collectors.toList());
     }
 
     protected void convertEnumValues(KeyValueEntity entity, List<MetaProperty> enumProperties) {

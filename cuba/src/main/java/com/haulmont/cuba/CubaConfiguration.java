@@ -29,6 +29,7 @@ import com.haulmont.cuba.core.sys.CubaNumberIdCache;
 import com.haulmont.cuba.gui.components.CubaUiTestIdsSupport;
 import com.haulmont.cuba.gui.components.presentation.CubaPresentationActionsBuilder;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
+import com.haulmont.cuba.gui.model.impl.CubaScreenDataXmlLoader;
 import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
@@ -61,6 +62,7 @@ import io.jmix.ui.component.impl.UiTestIdsSupport;
 import io.jmix.ui.component.presentation.action.PresentationActionsBuilder;
 import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
+import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.navigation.UrlChangeHandler;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
@@ -223,6 +225,12 @@ public class CubaConfiguration {
     @Scope(BeanDefinition.SCOPE_PROTOTYPE)
     protected ScreenData screenData() {
         return new CubaScreenDataImpl();
+    }
+
+    @Bean("cuba_ScreenDataXmlLoader")
+    @Primary
+    protected ScreenDataXmlLoader screenDataXmlLoader() {
+        return new CubaScreenDataXmlLoader();
     }
 
     @Bean("cuba_EntityStates")

@@ -20,6 +20,7 @@ import io.jmix.core.*;
 import io.jmix.core.common.util.Preconditions;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.data.PersistenceHints;
 import io.jmix.dynattr.DynAttrQueryHints;
 
 import javax.persistence.TemporalType;
@@ -182,10 +183,20 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
         return this;
     }
 
-    @Override
+    /**
+     * @param softDeletion whether to use soft deletion when loading entities
+     */
     public LoadContext<E> setSoftDeletion(boolean softDeletion) {
-        super.setSoftDeletion(softDeletion);
+        super.setHint(PersistenceHints.SOFT_DELETION, softDeletion);
         return this;
+    }
+
+    /**
+     * @return whether to use soft deletion when loading entities
+     */
+    public boolean isSoftDeletion() {
+        Object value = getHints().get(PersistenceHints.SOFT_DELETION);
+        return value == null || Boolean.TRUE.equals(value);
     }
 
     @Override
@@ -244,7 +255,6 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
         ctx.setQuery(query != null ? query.copy() : null);
         ctx.fetchPlan = fetchPlan;
         ctx.id = id;
-        ctx.softDeletion = softDeletion;
         ctx.prevQueries.addAll(prevQueries.stream().map(Query::copy).collect(Collectors.toList()));
         ctx.queryKey = queryKey;
         if (hints != null) {
@@ -257,8 +267,8 @@ public class LoadContext<E extends Entity> extends io.jmix.core.LoadContext<E> {
     @Override
     public String toString() {
         return String.format(
-                "LoadContext{metaClass=%s, query=%s, fetchPlan=%s, id=%s, softDeletion=%s, partialEntities=%s}",
-                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities
+                "LoadContext{metaClass=%s, query=%s, fetchPlan=%s, id=%s, partialEntities=%s}",
+                metaClass, query, fetchPlan, id, loadPartialEntities
         );
     }
 

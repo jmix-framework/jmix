@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.LoadContext
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
 import com.haulmont.cuba.core.testsupport.TestSupport
@@ -126,7 +127,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading all"() {
         def loader
-        io.jmix.core.LoadContext loadContext
+        LoadContext loadContext
 
         when:
 
@@ -171,12 +172,12 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading by id"() {
         def loader
-        io.jmix.core.LoadContext loadContext
+        LoadContext loadContext
 
         when:
 
         loader = dataManager.load(Customer).id(customer.id)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -186,7 +187,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).id(customer.id).softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -195,7 +196,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).id(customer.id).fetchPlan('_base')
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -204,7 +205,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).id(customer.id).fetchPlan(baseView)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -213,12 +214,12 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading by query"() {
         def loader
-        io.jmix.core.LoadContext loadContext
+        LoadContext loadContext
 
         when:
 
         loader = dataManager.load(Customer).query('select c from test$Customer c')
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -231,7 +232,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         loader = dataManager.load(Customer).query('select c from test$Customer c where name = :n')
                 .parameter('n', 'Smith')
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -241,7 +242,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         loader = dataManager.load(Customer).query('select c from test$Customer c where createTs >= :c')
                 .parameter('c', new Date(), TemporalType.DATE)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -250,7 +251,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).query('select c from test$Customer c').cacheable(true)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -259,7 +260,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).query('select c from test$Customer c').softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -270,7 +271,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         loader = dataManager.load(Customer).query('select c from test$Customer c')
                 .firstResult(10)
                 .maxResults(100)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -280,12 +281,12 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test LoadContext when loading by collection of ids"() {
         def loader
-        io.jmix.core.LoadContext loadContext
+        LoadContext loadContext
 
         when:
 
         loader = dataManager.load(Customer).ids(customer.id, customer2.id)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -296,7 +297,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).ids(customer.id, customer2.id).softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -305,7 +306,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).ids(customer.id, customer2.id).fetchPlan('_base')
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -314,7 +315,7 @@ class FluentLoaderTest extends CoreTestSpecification {
         when:
 
         loader = dataManager.load(Customer).ids(customer.id, customer2.id).fetchPlan(baseView)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -323,12 +324,12 @@ class FluentLoaderTest extends CoreTestSpecification {
 
     def "test positional params"() {
         def loader
-        io.jmix.core.LoadContext loadContext
+        LoadContext loadContext
 
         when:
 
         loader = dataManager.load(Customer).query('select c from test$Customer c where c.name = ?1 and c.email = ?2', "Joe", "joe@mail.com")
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
@@ -340,7 +341,7 @@ class FluentLoaderTest extends CoreTestSpecification {
 
         loader = dataManager.load(Customer).query('select c from test$Customer c where c.a1=?1 and c.a2=?2 and c.a3=?3 and c.a4=?4 and c.a5=?5 and c.a6=?6 and c.a7=?7 and c.a8=?8 and c.a9=?9 and c.a10=?10 and c.a11=?11',
                 "v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11")
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
+        loadContext = (LoadContext) FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 

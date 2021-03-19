@@ -16,14 +16,11 @@
 package com.haulmont.cuba.gui.data.impl;
 
 import com.haulmont.cuba.core.entity.contracts.Id;
-import com.haulmont.cuba.core.global.EntitySet;
-import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.FluentLoader;
-import com.haulmont.cuba.core.global.LoadContext;
 import com.haulmont.cuba.core.global.*;
 import com.haulmont.cuba.gui.data.DataSupplier;
+import io.jmix.core.Entity;
+import io.jmix.core.FetchPlan;
 import io.jmix.core.Metadata;
-import io.jmix.core.*;
 import io.jmix.core.entity.KeyValueEntity;
 import io.jmix.core.metamodel.model.MetaClass;
 

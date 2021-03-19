@@ -19,8 +19,11 @@ package com.haulmont.cuba.core.global;
 import io.jmix.core.Entity;
 import io.jmix.core.FetchPlan;
 import io.jmix.core.FetchPlanBuilder;
+import io.jmix.core.LoadContext;
 import io.jmix.core.constraint.AccessConstraint;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.Condition;
+import io.jmix.data.PersistenceHints;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.TemporalType;
@@ -85,7 +88,7 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
     }
 
     public FluentLoader<E> softDeletion(boolean softDeletion) {
-        all().softDeletion(softDeletion);
+        all().hint(PersistenceHints.SOFT_DELETION, softDeletion);
         return this;
     }
 
@@ -175,6 +178,11 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
         return new ByQuery<>(this, queryString, parameters, applicationContext);
     }
 
+    @Override
+    protected LoadContext<E> instantiateLoadContext(MetaClass metaClass) {
+        return new com.haulmont.cuba.core.global.LoadContext<>(metaClass);
+    }
+
     public static class ById<E extends Entity> extends io.jmix.core.FluentLoader.ById<E> {
 
         protected ById(io.jmix.core.FluentLoader<E> loader, Object id) {
@@ -201,9 +209,8 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
             return (ById<E>) super.fetchPlanProperties(properties);
         }
 
-        @Override
         public FluentLoader.ById<E> softDeletion(boolean softDeletion) {
-            return (ById<E>) super.softDeletion(softDeletion);
+            return (ById<E>) super.hint(PersistenceHints.SOFT_DELETION, softDeletion);
         }
 
         @Override
@@ -284,9 +291,8 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
             return (ByIds<E>) super.fetchPlanProperties(properties);
         }
 
-        @Override
         public FluentLoader.ByIds<E> softDeletion(boolean softDeletion) {
-            return (ByIds<E>) super.softDeletion(softDeletion);
+            return (ByIds<E>) super.hint(PersistenceHints.SOFT_DELETION, softDeletion);
         }
 
         @Override
@@ -394,9 +400,8 @@ public class FluentLoader<E extends Entity> extends io.jmix.core.FluentLoader<E>
             return (ByQuery<E>) super.fetchPlanProperties(properties);
         }
 
-        @Override
         public FluentLoader.ByQuery<E> softDeletion(boolean softDeletion) {
-            return (ByQuery<E>) super.softDeletion(softDeletion);
+            return (ByQuery<E>) super.hint(PersistenceHints.SOFT_DELETION, softDeletion);
         }
 
         @Override

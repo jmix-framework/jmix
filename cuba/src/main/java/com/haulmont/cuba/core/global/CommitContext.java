@@ -16,6 +16,7 @@
 package com.haulmont.cuba.core.global;
 
 import io.jmix.core.*;
+import io.jmix.data.PersistenceHints;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -154,6 +155,22 @@ public class CommitContext extends SaveContext {
      */
     public void setDiscardCommitted(boolean discardCommitted) {
         setDiscardSaved(discardCommitted);
+    }
+
+    /**
+     * @return whether to use soft deletion for this commit
+     */
+    public boolean isSoftDeletion() {
+        Object value = getHints().get(PersistenceHints.SOFT_DELETION);
+        return value == null || Boolean.TRUE.equals(value);
+    }
+
+    /**
+     * @param softDeletion whether to use soft deletion for this commit
+     */
+    public SaveContext setSoftDeletion(boolean softDeletion) {
+        setHint(PersistenceHints.SOFT_DELETION, softDeletion);
+        return this;
     }
 
     /**

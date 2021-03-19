@@ -17,6 +17,7 @@
 package spec.haulmont.cuba.core.data_manager
 
 import com.haulmont.cuba.core.global.DataManager
+import com.haulmont.cuba.core.global.ValueLoadContext
 import com.haulmont.cuba.core.model.sales.Customer
 import com.haulmont.cuba.core.model.sales.Status
 import com.haulmont.cuba.core.testsupport.TestSupport

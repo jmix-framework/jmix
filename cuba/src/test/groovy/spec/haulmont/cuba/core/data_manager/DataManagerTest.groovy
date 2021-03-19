@@ -21,6 +21,7 @@ import com.haulmont.cuba.core.entity.contracts.Id
 import com.haulmont.cuba.core.global.AppBeans
 import com.haulmont.cuba.core.global.DataManager
 import com.haulmont.cuba.core.global.LoadContext
+import com.haulmont.cuba.core.global.ValueLoadContext
 import com.haulmont.cuba.core.model.common.Group
 import com.haulmont.cuba.core.model.common.User
 import com.haulmont.cuba.core.model.primary_keys.CompositeKeyEntity
@@ -123,7 +124,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group = :group')
         query.setParameter('group', group)
-        def list = dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
+        def list = dataManager.loadValues(new ValueLoadContext().setQuery(query).addProperty('id').addProperty('login'))
 
         then: "ok"
 
@@ -135,7 +136,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group.id = :groupId')
         query.setParameter('groupId', group.id)
-        list = dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
+        list = dataManager.loadValues(new ValueLoadContext().setQuery(query).addProperty('id').addProperty('login'))
 
         then: "ok"
 
@@ -147,7 +148,7 @@ class DataManagerTest extends CoreTestSpecification {
 
         query = ValueLoadContext.createQuery('select u.id, u.login from test$User u where u.group.id = :group')
         query.setParameter('group', group)
-        list = dataManager.loadValues(ValueLoadContext.create().setQuery(query).addProperty('id').addProperty('login'))
+        list = dataManager.loadValues(new ValueLoadContext().setQuery(query).addProperty('id').addProperty('login'))
 
         then: "fail"
 

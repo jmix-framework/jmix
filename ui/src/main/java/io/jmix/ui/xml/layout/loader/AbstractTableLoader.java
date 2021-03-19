@@ -142,14 +142,10 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
 
     protected void loadTableData() {
         TableDataHolder holder = initTableDataHolder();
-        if (!holder.isContainerLoaded()) {
-            String metaClassStr = element.attributeValue("metaClass");
-            if (Strings.isNullOrEmpty(metaClassStr)) {
-                throw new GuiDevelopmentException("Table doesn't have data binding",
-                        context, "Table ID", element.attributeValue("id"));
-            }
-
-            holder.setMetaClass(getMetadata().getClass(metaClassStr));
+        if (!holder.isContainerLoaded()
+                && holder.getMetaClass() == null) {
+            throw new GuiDevelopmentException("Table doesn't have data binding",
+                    context, "Table ID", element.attributeValue("id"));
         }
 
         List<Table.Column> availableColumns;
@@ -193,7 +189,8 @@ public abstract class AbstractTableLoader<T extends Table> extends ActionsHolder
         TableDataHolder holder = new TableDataHolder();
 
         String containerId = element.attributeValue("dataContainer");
-        if (containerId == null) {
+        if (Strings.isNullOrEmpty(containerId)) {
+            loadMetaClass(element, holder::setMetaClass);
             return holder;
         }
 

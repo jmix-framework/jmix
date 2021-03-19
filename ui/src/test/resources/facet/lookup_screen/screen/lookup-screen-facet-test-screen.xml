@@ -52,7 +52,6 @@
             <columns>
                 <column id="number"/>
             </columns>
-            <rows/>
         </table>
     </layout>
 </window>

@@ -65,7 +65,6 @@
                     <column id="readableWriteable"/>
                     <column id="valueString"/>
                 </columns>
-                <rows/>
             </table>
             <label value="msg://mbean.operations" stylename="h2"/>
             <vbox id="operations" spacing="true">

@@ -21,7 +21,9 @@ import com.google.common.collect.ImmutableMap;
 import io.jmix.core.ClassManager;
 import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
+import io.jmix.core.Metadata;
 import io.jmix.core.common.util.ReflectionHelper;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.Actions;
 import io.jmix.ui.GuiDevelopmentException;
@@ -982,5 +984,15 @@ public abstract class AbstractComponentLoader<T extends Component> implements Co
                                                 Consumer<T> setter) {
         loadEnum(element, type, attributeName)
                 .ifPresent(setter);
+    }
+
+    protected Optional<MetaClass> loadMetaClass(Element element) {
+        return loadString(element, "metaClass")
+                .map(metaClassStr -> applicationContext.getBean(Metadata.class).getClass(metaClassStr));
+    }
+
+    protected void loadMetaClass(Element element, Consumer<MetaClass> setter) {
+        loadString(element, "metaClass", metaClassStr ->
+                setter.accept(applicationContext.getBean(Metadata.class).getClass(metaClassStr)));
     }
 }

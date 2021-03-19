@@ -38,7 +38,7 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
         super.loadComponent();
 
         loadCaptionProperty(resultComponent, element);
-        loadMetaClass(resultComponent, element);
+        loadMetaClass(element, resultComponent::setMetaClass);
     }
 
     protected void loadCaptionProperty(EntityPicker resultComponent, Element element) {
@@ -58,17 +58,6 @@ public class EntityPickerLoader extends AbstractValuePickerLoader<EntityPicker> 
 
     protected EntityFieldCreationSupport getEntityFieldCreationSupport() {
         return applicationContext.getBean(EntityFieldCreationSupport.class);
-    }
-
-    protected void loadMetaClass(EntityPicker resultComponent, Element element) {
-        String metaClass = element.attributeValue("metaClass");
-        if (!StringUtils.isEmpty(metaClass)) {
-            resultComponent.setMetaClass(getMetadata().getClass(metaClass));
-        }
-    }
-
-    protected Metadata getMetadata() {
-        return applicationContext.getBean(Metadata.class);
     }
 
     @Override

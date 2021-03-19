@@ -18,7 +18,6 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.ComboBox;
@@ -26,7 +25,6 @@ import io.jmix.ui.component.EntityComboBox;
 import io.jmix.ui.component.compatibility.CaptionAdapter;
 import io.jmix.ui.component.data.options.ContainerOptions;
 import io.jmix.ui.component.impl.EntityFieldCreationSupport;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class EntityComboBoxLoader extends ComboBoxLoader {
@@ -47,7 +45,7 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
         super.loadComponent();
 
         loadCaptionProperty(resultComponent, element);
-        loadMetaClass(getResultComponent(), element);
+        loadMetaClass(element, getResultComponent()::setMetaClass);
         loadActions(getResultComponent(), element);
 
         if (getResultComponent().getActions().isEmpty()) {
@@ -55,13 +53,6 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
             if (!added) {
                 addDefaultActions();
             }
-        }
-    }
-
-    protected void loadMetaClass(EntityComboBox resultComponent, Element element) {
-        String metaClass = element.attributeValue("metaClass");
-        if (!StringUtils.isEmpty(metaClass)) {
-            resultComponent.setMetaClass(getMetadata().getClass(metaClass));
         }
     }
 
@@ -83,10 +74,6 @@ public class EntityComboBoxLoader extends ComboBoxLoader {
 
     protected EntityFieldCreationSupport getEntityFieldCreationSupport() {
         return applicationContext.getBean(EntityFieldCreationSupport.class);
-    }
-
-    protected Metadata getMetadata() {
-        return applicationContext.getBean(Metadata.class);
     }
 
     @Override

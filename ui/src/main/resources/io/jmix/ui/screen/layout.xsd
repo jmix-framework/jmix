@@ -1534,15 +1534,6 @@
         <xs:attribute name="exclude" type="xs:string"/>
     </xs:attributeGroup>
 
-    <xs:complexType name="tableRowsType">
-        <xs:attribute name="datasource" type="xs:string"/>
-    </xs:complexType>
-
-    <xs:complexType name="treeTableRowsType">
-        <xs:attribute name="datasource" type="xs:string"/>
-        <xs:attribute name="hierarchyProperty" type="xs:string"/>
-    </xs:complexType>
-
     <xs:complexType name="tableColumnsList">
         <xs:sequence>
             <xs:element name="column" maxOccurs="unbounded" type="tableColumnComponent"/>
@@ -2714,7 +2705,6 @@
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
-                    <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
 
                 <xs:attribute name="stylename" type="tableStylename"/>
@@ -2734,7 +2724,6 @@
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="tableColumnsList"/>
-                    <xs:element name="rows" type="treeTableRowsType"/>
                 </xs:all>
 
                 <xs:attribute name="hierarchyProperty" type="xs:string"/>
@@ -2756,7 +2745,6 @@
                     <xs:element name="buttonsPanel" minOccurs="0" type="buttonsPanelComponent"/>
                     <xs:element name="simplePagination" minOccurs="0" type="listComponentSimplePaginationComponent"/>
                     <xs:element name="columns" type="groupTableColumnsType"/>
-                    <xs:element name="rows" type="tableRowsType"/>
                 </xs:all>
 
                 <xs:attributeGroup ref="isTableComponent"/>

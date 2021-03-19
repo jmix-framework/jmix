@@ -158,14 +158,10 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
     protected void loadDataGridData() {
         DataGridDataHolder holder = initDataGridDataHolder();
-        if (!holder.isContainerLoaded()) {
-            String metaClassStr = element.attributeValue("metaClass");
-            if (Strings.isNullOrEmpty(metaClassStr)) {
-                throw new GuiDevelopmentException("DataGrid doesn't have data binding",
-                        context, "DataGrid ID", element.attributeValue("id"));
-            }
-
-            holder.setMetaClass(getMetadata().getClass(metaClassStr));
+        if (!holder.isContainerLoaded()
+                && holder.getMetaClass() == null) {
+            throw new GuiDevelopmentException("DataGrid doesn't have data binding",
+                    context, "DataGrid ID", element.attributeValue("id"));
         }
 
         Element columnsElement = element.element("columns");
@@ -191,6 +187,7 @@ public abstract class AbstractDataGridLoader<T extends DataGrid> extends Actions
 
         String containerId = element.attributeValue("dataContainer");
         if (Strings.isNullOrEmpty(containerId)) {
+            loadMetaClass(element, holder::setMetaClass);
             return holder;
         }
 

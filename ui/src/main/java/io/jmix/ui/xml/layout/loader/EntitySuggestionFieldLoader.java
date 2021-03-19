@@ -16,14 +16,12 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.core.Metadata;
 import io.jmix.ui.Actions;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.entitypicker.EntityLookupAction;
 import io.jmix.ui.action.entitypicker.EntityOpenAction;
 import io.jmix.ui.component.ActionsHolder;
 import io.jmix.ui.component.EntitySuggestionField;
-import org.apache.commons.lang3.StringUtils;
 import org.dom4j.Element;
 
 public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<EntitySuggestionField> {
@@ -40,7 +38,7 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
 
         loadTabIndex(resultComponent, element);
 
-        loadMetaClass(resultComponent, element);
+        loadMetaClass(element, resultComponent::setMetaClass);
 
         loadCaptionProperty(resultComponent, element);
 
@@ -57,10 +55,6 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
         loadQuery(resultComponent, element);
     }
 
-    protected Metadata getMetadata() {
-        return applicationContext.getBean(Metadata.class);
-    }
-
     protected void loadActions(EntitySuggestionField suggestionField) {
         loadActions(suggestionField, element);
         if (suggestionField.getActions().isEmpty()) {
@@ -73,13 +67,6 @@ public class EntitySuggestionFieldLoader extends AbstractSuggestionFieldLoader<E
 
         getResultComponent().addAction(actions.create(EntityLookupAction.ID));
         getResultComponent().addAction(actions.create(EntityOpenAction.ID));
-    }
-
-    protected void loadMetaClass(EntitySuggestionField suggestionField, Element element) {
-        String metaClass = element.attributeValue("metaClass");
-        if (StringUtils.isNotEmpty(metaClass)) {
-            suggestionField.setMetaClass(getMetadata().findClass(metaClass));
-        }
     }
 
     @Override

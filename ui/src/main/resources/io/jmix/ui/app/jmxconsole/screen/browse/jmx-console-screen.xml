@@ -45,7 +45,6 @@
                 <button action="mbeansTable.refresh" icon="REFRESH_ACTION"/>
                 <button action="mbeansTable.inspect" icon="EDIT_ACTION"/>
             </buttonsPanel>
-            <rows/>
             <actions>
                 <action id="refresh" caption="msg:///actions.Refresh"/>
                 <action id="inspect" trackSelection="true" caption="msg://action.inspect"/>

@@ -19,12 +19,12 @@ public class Types {
     }
 
     public enum FilterOperation {
-        EQ("EQ", PropertyCondition.Operation.EQUAL),
-        NEQ("NEQ", PropertyCondition.Operation.NOT_EQUAL),
-        GT("GT", PropertyCondition.Operation.GREATER),
-        GTE("GTE", PropertyCondition.Operation.GREATER_OR_EQUAL),
-        LT("LT", PropertyCondition.Operation.LESS),
-        LTE("LTE", PropertyCondition.Operation.LESS_OR_EQUAL),
+        EQ("_eq", PropertyCondition.Operation.EQUAL),
+        NEQ("_neq", PropertyCondition.Operation.NOT_EQUAL),
+        GT("_gt", PropertyCondition.Operation.GREATER),
+        GTE("_gte", PropertyCondition.Operation.GREATER_OR_EQUAL),
+        LT("_lt", PropertyCondition.Operation.LESS),
+        LTE("_lte", PropertyCondition.Operation.LESS_OR_EQUAL),
         CONTAINS("_contains", PropertyCondition.Operation.CONTAINS),
         NOT_CONTAINS("_notContains", PropertyCondition.Operation.NOT_CONTAINS),
         STARTS_WITH("_startsWith", PropertyCondition.Operation.STARTS_WITH),

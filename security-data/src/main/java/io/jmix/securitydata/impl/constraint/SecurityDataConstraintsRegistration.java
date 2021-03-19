@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.constraint;
+package io.jmix.securitydata.impl.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
+import io.jmix.securitydata.constraint.CrudEntityConstraint;
+import io.jmix.securitydata.constraint.InMemoryCrudEntityConstraint;
+import io.jmix.securitydata.constraint.LoadValuesConstraint;
+import io.jmix.securitydata.constraint.ReadEntityQueryConstraint;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-public class UiSecurityConstraintsRegistration {
+@Component("sec_SecurityDataConstraintsRegistration")
+public class SecurityDataConstraintsRegistration {
 
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
@@ -31,10 +37,9 @@ public class UiSecurityConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(UiShowScreenConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
-
-        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(CrudEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(ReadEntityQueryConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(InMemoryCrudEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(LoadValuesConstraint.class));
     }
 }

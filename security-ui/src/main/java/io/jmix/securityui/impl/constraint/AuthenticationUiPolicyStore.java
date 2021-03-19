@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.constraint;
+package io.jmix.securityui.impl.constraint;
 
 import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
+import io.jmix.securityui.constraint.UiPolicyStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

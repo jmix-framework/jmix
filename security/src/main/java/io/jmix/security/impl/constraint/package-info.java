@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.constraint;
+@NonNullApi
+@Internal
+package io.jmix.security.impl.constraint;
 
-public class UiResourcePolicyIndex {
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.handler;
+package io.jmix.securityui.impl.handler;
 
 import io.jmix.core.Messages;
 import io.jmix.core.security.AccessDeniedException;

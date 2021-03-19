@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.securityui.impl.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
+import io.jmix.securityui.constraint.UiEntityConstraint;
+import io.jmix.securityui.constraint.UiMenuConstraint;
+import io.jmix.securityui.constraint.UiShowScreenConstraint;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
-public class SecurityConstraintsRegistration {
+public class UiSecurityConstraintsRegistration {
 
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
@@ -31,8 +34,10 @@ public class SecurityConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(ExportImportEntityConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(EntityAttributeConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(UiShowScreenConstraint.class));
+
+        accessConstraintsRegistry.register(beanFactory.getBean(UiMenuConstraint.class));
+
+        accessConstraintsRegistry.register(beanFactory.getBean(UiEntityConstraint.class));
     }
 }

@@ -24,7 +24,7 @@ import io.jmix.core.rememberme.RememberMeProperties;
 import io.jmix.core.security.UserRepository;
 import io.jmix.core.security.impl.JmixSessionAuthenticationStrategy;
 import io.jmix.core.session.SessionProperties;
-import io.jmix.security.constraint.SecurityConstraintsRegistration;
+import io.jmix.security.impl.constraint.SecurityConstraintsRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.*;

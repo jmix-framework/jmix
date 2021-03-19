@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.jmix.securitydata.constraint;
+package io.jmix.security.impl.constraint;
 
 import io.jmix.core.AccessConstraintsRegistry;
+import io.jmix.security.constraint.EntityAttributeConstraint;
+import io.jmix.security.constraint.ExportImportEntityConstraint;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-@Component("sec_SecurityDataConstraintsRegistration")
-public class SecurityDataConstraintsRegistration {
+public class SecurityConstraintsRegistration {
 
     @Autowired
     protected AccessConstraintsRegistry accessConstraintsRegistry;
@@ -33,9 +33,8 @@ public class SecurityDataConstraintsRegistration {
 
     @PostConstruct
     public void registerConstraints() {
-        accessConstraintsRegistry.register(beanFactory.getBean(CrudEntityConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(ReadEntityQueryConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(InMemoryCrudEntityConstraint.class));
-        accessConstraintsRegistry.register(beanFactory.getBean(LoadValuesConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(ExportImportEntityConstraint.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(SpecificConstraintImpl.class));
+        accessConstraintsRegistry.register(beanFactory.getBean(EntityAttributeConstraint.class));
     }
 }

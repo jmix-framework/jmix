@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui;
+@NonNullApi
+@Internal
+package io.jmix.securityui.impl.constraint;
 
-import io.jmix.securityui.impl.constraint.UiSecurityConstraintsRegistration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@ComponentScan
-public class StandardSecurityUiConfiguration {
-
-    @Bean(name = "sec_UiConstraintsRegistration")
-    public UiSecurityConstraintsRegistration constraintsRegistration() {
-        return new UiSecurityConstraintsRegistration();
-    }
-}
+import io.jmix.core.annotation.Internal;
+import org.springframework.lang.NonNullApi;

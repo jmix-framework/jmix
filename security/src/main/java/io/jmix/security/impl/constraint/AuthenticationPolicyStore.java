@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.jmix.security.constraint;
+package io.jmix.security.impl.constraint;
 
 import io.jmix.core.ExtendedEntities;
 import io.jmix.core.metamodel.model.MetaClass;
@@ -22,6 +22,7 @@ import io.jmix.core.security.CurrentAuthentication;
 import io.jmix.security.authentication.ResourcePolicyIndex;
 import io.jmix.security.authentication.RowLevelPolicyIndex;
 import io.jmix.security.authentication.PolicyAwareGrantedAuthority;
+import io.jmix.security.constraint.PolicyStore;
 import io.jmix.security.model.ResourcePolicy;
 import io.jmix.security.model.ResourcePolicyType;
 import io.jmix.security.model.RowLevelPolicy;

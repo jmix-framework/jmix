@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.jmix.securityui.constraint;
+package io.jmix.securityui.impl.constraint;
 
 import io.jmix.security.model.ResourcePolicyEffect;
+import io.jmix.securityui.constraint.UiPolicyStore;
+import io.jmix.securityui.constraint.UiSecureOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;

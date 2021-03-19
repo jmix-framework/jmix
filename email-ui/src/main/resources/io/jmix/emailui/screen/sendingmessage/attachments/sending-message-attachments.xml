@@ -46,7 +46,7 @@
                 <column id="disposition"/>
                 <column id="updateTs"/>
             </columns>
-            <rows/>
+            <simplePagination/>
         </table>
         <hbox id="lookupActions" spacing="true" visible="false">
             <button action="lookupSelectAction"/>

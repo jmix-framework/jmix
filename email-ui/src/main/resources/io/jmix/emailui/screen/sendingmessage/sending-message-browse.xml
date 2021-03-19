@@ -70,7 +70,7 @@
                         <column id="deadline"/>
                         <column id="attemptsMade"/>
                     </columns>
-                    <rows/>
+                    <simplePagination/>
                     <buttonsPanel id="buttonsPanel">
                         <button id="downloadAttachmentBtn" action="sendingMessageTable.downloadAttachment"/>
                         <button id="resendEmailBtn" action="sendingMessageTable.resendEmail"/>

@@ -16,7 +16,6 @@
 
 package io.jmix.core.impl;
 
-import io.jmix.core.annotation.Internal;
 import io.jmix.core.entity.annotation.*;
 import io.jmix.core.impl.scanning.EntityDetector;
 import io.jmix.core.impl.scanning.JmixModulesClasspathScanner;
@@ -44,7 +43,6 @@ import java.util.Map;
  * INTERNAL.
  * Creates metadata session and loads metadata from annotated Java classes.
  */
-@Internal
 @Component("core_MetadataLoader")
 @Scope("prototype")
 public class MetadataLoader {

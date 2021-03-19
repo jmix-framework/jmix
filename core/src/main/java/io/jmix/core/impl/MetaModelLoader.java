@@ -68,7 +68,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  * INTERNAL.
  * Loads meta-model from a set of annotated Java classes.
  */
-@Internal
 @Component("core_MetaModelLoader")
 public class MetaModelLoader {
 

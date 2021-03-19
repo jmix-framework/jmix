@@ -164,7 +164,6 @@ class ScreenDataTest extends DataContextSpec {
         userLoader.dataContext == dataContext
         userLoader.container == userCont
         userLoader.query == 'select u from sec$User u where u.id = 1'
-        userLoader.softDeletion
 
         usersCont != null
         usersLoader != null
@@ -173,7 +172,6 @@ class ScreenDataTest extends DataContextSpec {
         usersLoader.dataContext == dataContext
         usersLoader.container == usersCont
         usersLoader.query == 'select u from sec$User u'
-        usersLoader.softDeletion
         usersLoader.firstResult == 0
         usersLoader.maxResults == Integer.MAX_VALUE
         !usersLoader.cacheable

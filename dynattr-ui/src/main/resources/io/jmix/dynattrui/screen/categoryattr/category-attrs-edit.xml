@@ -167,7 +167,7 @@
                         <column id="screen" editable="true"/>
                         <column id="component" editable="true"/>
                     </columns>
-                    <rows/>
+                    <simplePagination/>
                     <buttonsPanel>
                         <button id="createBtn" action="targetScreensTable.create"/>
                         <button id="removeBtn" action="targetScreensTable.remove"/>

@@ -56,7 +56,7 @@
                 <column id="label"/>
                 <column id="category"/>
             </columns>
-            <rows/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn" action="templateBlocksTable.create"/>

@@ -58,7 +58,7 @@
                 <column id="code"/>
                 <column id="type"/>
             </columns>
-            <rows/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <popupButton id="createBtn" caption="msg:///actions.Create">

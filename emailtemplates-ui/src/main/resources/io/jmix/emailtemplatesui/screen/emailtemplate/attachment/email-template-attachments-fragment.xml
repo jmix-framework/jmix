@@ -43,7 +43,7 @@
                             <column id="report.defaultTemplate.reportOutputType"/>
                             <column id="report.description"/>
                         </columns>
-                        <rows />
+                        <simplePagination/>
                         <buttonsPanel>
                             <button action="reportsTable.add"/>
                             <button action="reportsTable.remove"/>
@@ -87,7 +87,7 @@
                         <column id="name"/>
                         <column id="createTs"/>
                     </columns>
-                    <rows/>
+                    <simplePagination/>
                     <buttonsPanel alwaysVisible="true">
                         <button action="filesTable.create"/>
                         <button action="filesTable.edit"/>

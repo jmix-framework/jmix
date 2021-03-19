@@ -62,7 +62,7 @@
             <columns>
                 <column id="name"/>
             </columns>
-            <rows/>
+            <simplePagination/>
             <buttonsPanel id="buttonsPanel"
                           alwaysVisible="true">
                 <button id="createBtn"

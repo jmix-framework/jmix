@@ -55,7 +55,7 @@
                 <column id="required" caption="msg://io.jmix.reportsui.screen.parameter.edit/parameters.required"/>
                 <column id="validationOn"/>
             </columns>
-            <rows/>
+            <simplePagination/>
         </table>
         <label value="msg://io.jmix.reportsui.screen.report.edit.tabs/report.crossParametersValidation" stylename="h2"/>
         <groupBox id="validationScriptGroupBox" collapsable="true" collapsed="true">

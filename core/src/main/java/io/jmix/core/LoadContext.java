@@ -52,7 +52,6 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     protected FetchPlan fetchPlan;
     protected Object id;
     protected List<Object> idList = new ArrayList<>(0);
-    protected boolean softDeletion = true;
     protected List<Query> prevQueries = new ArrayList<>(0);
     protected List<AccessConstraint<?>> accessConstraints;
     protected int queryKey;
@@ -159,21 +158,6 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     }
 
     /**
-     * @return whether to use soft deletion when loading entities
-     */
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    /**
-     * @param softDeletion whether to use soft deletion when loading entities
-     */
-    public LoadContext<E> setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
-        return this;
-    }
-
-    /**
      * Allows to execute query on a previous query result.
      *
      * @return editable list of previous queries
@@ -274,11 +258,10 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
         ctx.query = query != null ? query.copy() : null;
         ctx.fetchPlan = fetchPlan;
         ctx.id = id;
-        ctx.softDeletion = softDeletion;
         ctx.prevQueries.addAll(prevQueries.stream().map(Query::copy).collect(Collectors.toList()));
         ctx.queryKey = queryKey;
         if (hints != null) {
-            ctx.getHints().putAll(hints);
+            ctx.setHints(new HashMap<>(hints));
         }
         ctx.joinTransaction = joinTransaction;
         return ctx;
@@ -287,8 +270,8 @@ public class LoadContext<E> implements DataLoadContext, Serializable {
     @Override
     public String toString() {
         return String.format(
-                "LoadContext{metaClass=%s, query=%s, fetchPlan=%s, id=%s, softDeletion=%s, partialEntities=%s}",
-                metaClass, query, fetchPlan, id, softDeletion, loadPartialEntities
+                "LoadContext{metaClass=%s, query=%s, fetchPlan=%s, id=%s, partialEntities=%s}",
+                metaClass, query, fetchPlan, id, loadPartialEntities
         );
     }
 

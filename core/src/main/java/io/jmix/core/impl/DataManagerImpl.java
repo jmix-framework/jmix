@@ -223,7 +223,7 @@ public class DataManagerImpl implements DataManager {
 
     protected SaveContext createSaveContext(SaveContext context) {
         SaveContext newCtx = new SaveContext();
-        newCtx.setSoftDeletion(context.isSoftDeletion());
+        newCtx.setHints(context.getHints());
         newCtx.setDiscardSaved(context.isDiscardSaved());
         newCtx.setAccessConstraints(context.getAccessConstraints());
         newCtx.setJoinTransaction(context.isJoinTransaction());

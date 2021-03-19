@@ -44,6 +44,7 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     protected String idName;
     protected List<String> properties = new ArrayList<>();
     protected List<AccessConstraint<?>> accessConstraints;
+    protected Map<String, Serializable> hints; // lazy initialized map
     protected boolean joinTransaction;
 
     /**
@@ -105,18 +106,29 @@ public class ValueLoadContext implements DataLoadContext, Serializable {
     }
 
     /**
-     * @param softDeletion whether to use soft deletion when loading entities
+     * @return custom hints which are used by the query
      */
-    public ValueLoadContext setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
+    public Map<String, Object> getHints() {
+        return hints == null ? Collections.emptyMap() : Collections.unmodifiableMap(hints);
+    }
+
+    /**
+     * Sets custom hint that should be used by the query.
+     */
+    public ValueLoadContext setHint(String hintName, Serializable value) {
+        if (hints == null) {
+            hints = new HashMap<>();
+        }
+        hints.put(hintName, value);
         return this;
     }
 
     /**
-     * @return whether to use soft deletion when loading entities
+     * Sets custom hints that should be used by the query.
      */
-    public boolean isSoftDeletion() {
-        return softDeletion;
+    public ValueLoadContext setHints(Map<String, Serializable> hints) {
+        this.hints = hints;
+        return this;
     }
 
     /**

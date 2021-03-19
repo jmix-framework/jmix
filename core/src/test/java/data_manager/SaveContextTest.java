@@ -90,14 +90,14 @@ public class SaveContextTest {
 
         // when:
         ctx = new SaveContext().saving(pet).removing(owner)
-                .setSoftDeletion(false)
+                .setHint("jmix.softDeletion", false)
                 .setDiscardSaved(true)
                 .setJoinTransaction(true)
-                .setDbHint("h1", "v1");
+                .setHint("h1", "v1");
         // then:
-        assertFalse(ctx.isSoftDeletion());
+        assertFalse((Boolean) ctx.getHints().get("jmix.softDeletion"));
         assertTrue(ctx.isDiscardSaved());
         assertTrue(ctx.isJoinTransaction());
-        assertEquals("v1", ctx.getDbHints().get("h1"));
+        assertEquals("v1", ctx.getHints().get("h1"));
     }
 }

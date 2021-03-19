@@ -20,6 +20,7 @@ import io.jmix.core.constraint.AccessConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.TemporalType;
+import java.io.Serializable;
 import java.util.*;
 
 class AbstractFluentValueLoader {
@@ -29,7 +30,7 @@ class AbstractFluentValueLoader {
     private boolean joinTransaction = true;
     private String store;
     private String queryString;
-    private boolean softDeletion = true;
+    private Map<String, Serializable> hints;
     private Map<String, Object> parameters = new HashMap<>();
     private Set<String> noConversionParams = new HashSet<>();
     private List<AccessConstraint<?>> accessConstraints;
@@ -46,10 +47,11 @@ class AbstractFluentValueLoader {
     }
 
     protected ValueLoadContext createLoadContext() {
-        ValueLoadContext loadContext = ValueLoadContext.create();
+        ValueLoadContext loadContext = instantiateValueLoadContext();
         if (store != null)
             loadContext.setStoreName(store);
-        loadContext.setSoftDeletion(softDeletion);
+
+        loadContext.setHints(hints);
 
         ValueLoadContext.Query query = ValueLoadContext.createQuery(queryString);
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
@@ -83,10 +85,21 @@ class AbstractFluentValueLoader {
     }
 
     /**
-     * Sets soft deletion. The soft deletion is true by default.
+     * Sets custom hint that should be used by the query.
      */
-    public AbstractFluentValueLoader softDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
+    public AbstractFluentValueLoader hint(String hintName, Serializable value) {
+        if (this.hints == null) {
+            this.hints = new HashMap<>();
+        }
+        this.hints.put(hintName, value);
+        return this;
+    }
+
+    /**
+     * Sets custom hints that should be used by the query.
+     */
+    public AbstractFluentValueLoader hints(Map<String, Serializable> hints) {
+        this.hints = hints;
         return this;
     }
 
@@ -158,5 +171,9 @@ class AbstractFluentValueLoader {
     public AbstractFluentValueLoader maxResults(int maxResults) {
         this.maxResults = maxResults;
         return this;
+    }
+
+    protected ValueLoadContext instantiateValueLoadContext() {
+        return new ValueLoadContext();
     }
 }

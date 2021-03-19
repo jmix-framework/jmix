@@ -38,7 +38,7 @@ public class SaveContext implements Serializable {
     protected boolean discardSaved;
     protected boolean joinTransaction = true;
     protected List<AccessConstraint<?>> accessConstraints;
-    protected Map<String, Object> dbHints = new HashMap<>();
+    protected Map<String, Serializable> hints;
 
     /**
      * /**
@@ -115,30 +115,29 @@ public class SaveContext implements Serializable {
         return fetchPlans;
     }
 
-    public SaveContext setDbHint(String name, Object value) {
-        dbHints.put(name, value);
+    /**
+     * @return custom hints which are used by the query
+     */
+    public Map<String, Serializable> getHints() {
+        return hints == null ? Collections.emptyMap() : Collections.unmodifiableMap(hints);
+    }
+
+    /**
+     * Sets custom hint that should be used by the query.
+     */
+    public SaveContext setHint(String hintName, Serializable value) {
+        if (hints == null) {
+            hints = new HashMap<>();
+        }
+        hints.put(hintName, value);
         return this;
     }
 
     /**
-     * @return custom hints which can be used later during query construction
+     * Sets custom hints that should be used by the query.
      */
-    public Map<String, Object> getDbHints() {
-        return dbHints;
-    }
-
-    /**
-     * @return whether to use soft deletion for this commit
-     */
-    public boolean isSoftDeletion() {
-        return softDeletion;
-    }
-
-    /**
-     * @param softDeletion whether to use soft deletion for this commit
-     */
-    public SaveContext setSoftDeletion(boolean softDeletion) {
-        this.softDeletion = softDeletion;
+    public SaveContext setHints(Map<String, Serializable> hints) {
+        this.hints = hints;
         return this;
     }
 

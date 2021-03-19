@@ -212,7 +212,7 @@ public class EntityImportExportImpl implements EntityImportExport {
     public Collection importEntities(Collection entities, EntityImportPlan importPlan, boolean validate, boolean optimisticLocking) {
         List<ReferenceInfo> referenceInfoList = new ArrayList<>();
         SaveContext saveContext = new SaveContext();
-        saveContext.setSoftDeletion(false);
+        saveContext.setHint("jmix.softDeletion", false);
 
         //import is performed in two steps. We have to do so, because imported entity may have a reference to
         //the reference that is imported in the same batch.
@@ -225,9 +225,9 @@ public class EntityImportExportImpl implements EntityImportExport {
             //set softDeletion to false because we can import deleted entity, so we'll restore it and update
 
             LoadContext<?> ctx = new LoadContext<>(metadata.getClass(srcEntity.getClass()))
-                    .setSoftDeletion(false)
                     .setFetchPlan(fetchPlan)
                     .setHint("dynattr.load", true)
+                    .setHint("jmix.softDeletion", false)
                     .setId(EntityValues.getId(srcEntity))
                     .setAccessConstraints(accessConstraintsRegistry.getConstraints());
             Object dstEntity = dataManager.load(ctx);
@@ -263,7 +263,7 @@ public class EntityImportExportImpl implements EntityImportExport {
 
         //we shouldn't remove entities with the softDeletion = false
         if (!saveContext.getEntitiesToRemove().isEmpty()) {
-            saveContext.setSoftDeletion(true);
+            saveContext.setHint("jmix.softDeletion", true);
         }
 
         saveContext.setAccessConstraints(accessConstraintsRegistry.getConstraints());
@@ -646,7 +646,7 @@ public class EntityImportExportImpl implements EntityImportExport {
                 .findFirst().orElse(null);
         if (result == null) {
             LoadContext<?> ctx = new LoadContext<>(metadata.getClass(entity.getClass()))
-                    .setSoftDeletion(false)
+                    .setHint("jmix.softDeletion", false)
                     .setFetchPlan(fetchPlanRepository.getFetchPlan(metadata.getClass(entity).getJavaClass(), FetchPlan.INSTANCE_NAME))
                     .setId(EntityValues.getId(entity));
             result = dataManager.load(ctx);

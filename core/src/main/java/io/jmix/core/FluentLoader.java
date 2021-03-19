@@ -48,7 +48,6 @@ public class FluentLoader<E> {
     private FetchPlan fetchPlan;
     private String fetchPlanName;
     private FetchPlanBuilder fetchPlanBuilder;
-    private boolean softDeletion = true;
     private Map<String, Serializable> hints;
     private List<AccessConstraint<?>> accessConstraints;
 
@@ -80,7 +79,7 @@ public class FluentLoader<E> {
 
     LoadContext<E> createLoadContext() {
         MetaClass metaClass = metadata.getClass(entityClass);
-        LoadContext<E> loadContext = new LoadContext<>(metaClass);
+        LoadContext<E> loadContext = instantiateLoadContext(metaClass);
         initCommonLoadContextParameters(loadContext);
 
         String entityName = metaClass.getName();
@@ -88,6 +87,10 @@ public class FluentLoader<E> {
         loadContext.setQuery(new LoadContext.Query(queryString));
 
         return loadContext;
+    }
+
+    protected LoadContext<E> instantiateLoadContext(MetaClass metaClass) {
+        return new LoadContext<>(metaClass);
     }
 
     private void initCommonLoadContextParameters(LoadContext<E> loadContext) {
@@ -106,7 +109,6 @@ public class FluentLoader<E> {
             loadContext.setFetchPlan(fetchPlanBuilder.build());
         }
 
-        loadContext.setSoftDeletion(softDeletion);
         loadContext.setHints(hints);
         loadContext.setAccessConstraints(accessConstraints);
     }
@@ -178,7 +180,7 @@ public class FluentLoader<E> {
         }
 
         LoadContext<E> createLoadContext() {
-            LoadContext<E> loadContext = new LoadContext(loader.metaClass).setId(id);
+            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass).setId(id);
             loader.initCommonLoadContextParameters(loadContext);
             return loadContext;
         }
@@ -256,14 +258,6 @@ public class FluentLoader<E> {
         }
 
         /**
-         * Sets soft deletion. The soft deletion is true by default.
-         */
-        public ById<E> softDeletion(boolean softDeletion) {
-            loader.softDeletion = softDeletion;
-            return this;
-        }
-
-        /**
          * Sets custom hint that should be used by the query.
          */
         public ById<E> hint(String hintName, Serializable value) {
@@ -310,7 +304,7 @@ public class FluentLoader<E> {
         }
 
         LoadContext<E> createLoadContext() {
-            LoadContext<E> loadContext = new LoadContext(loader.metaClass).setIds(ids);
+            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass).setIds(ids);
             loader.initCommonLoadContextParameters(loadContext);
             return loadContext;
         }
@@ -375,14 +369,6 @@ public class FluentLoader<E> {
         public ByIds<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
-            return this;
-        }
-
-        /**
-         * Sets soft deletion. The soft deletion is true by default.
-         */
-        public ByIds<E> softDeletion(boolean softDeletion) {
-            loader.softDeletion = softDeletion;
             return this;
         }
 
@@ -458,7 +444,7 @@ public class FluentLoader<E> {
         LoadContext<E> createLoadContext() {
             Preconditions.checkNotEmptyString(queryString, "query is empty");
 
-            LoadContext<E> loadContext = new LoadContext<>(loader.metaClass);
+            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
             Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
@@ -553,13 +539,6 @@ public class FluentLoader<E> {
             return this;
         }
 
-        /**
-         * Sets soft deletion. The soft deletion is true by default.
-         */
-        public ByQuery<E> softDeletion(boolean softDeletion) {
-            loader.softDeletion = softDeletion;
-            return this;
-        }
 
         /**
          * Sets custom hint that should be used by the query.
@@ -700,7 +679,7 @@ public class FluentLoader<E> {
         LoadContext<E> createLoadContext() {
             Preconditions.checkNotEmptyString(queryString, "query is empty");
 
-            LoadContext<E> loadContext = new LoadContext<>(loader.metaClass);
+            LoadContext<E> loadContext = loader.instantiateLoadContext(loader.metaClass);
             loader.initCommonLoadContextParameters(loadContext);
 
             Collection<QueryStringProcessor> processors = loader.applicationContext.getBeansOfType(QueryStringProcessor.class).values();
@@ -793,14 +772,6 @@ public class FluentLoader<E> {
         public ByCondition<E> fetchPlanProperties(String... properties) {
             loader.createFetchPlanBuilder();
             loader.fetchPlanBuilder.addAll(properties);
-            return this;
-        }
-
-        /**
-         * Sets soft deletion. The soft deletion is true by default.
-         */
-        public ByCondition<E> softDeletion(boolean softDeletion) {
-            loader.softDeletion = softDeletion;
             return this;
         }
 

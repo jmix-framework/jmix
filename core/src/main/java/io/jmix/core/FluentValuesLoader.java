@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.TemporalType;
+import java.io.Serializable;
 import java.util.*;
 
 @Component("core_FluentValuesLoader")
@@ -108,8 +109,14 @@ public class FluentValuesLoader extends AbstractFluentValueLoader {
     }
 
     @Override
-    public FluentValuesLoader softDeletion(boolean softDeletion) {
-        super.softDeletion(softDeletion);
+    public FluentValuesLoader hint(String hintName, Serializable value) {
+        super.hint(hintName, value);
+        return this;
+    }
+
+    @Override
+    public FluentValuesLoader hints(Map<String, Serializable> hints) {
+        super.hints(hints);
         return this;
     }
 

@@ -66,21 +66,26 @@ public class CubaDataGridLoader extends DataGridLoader {
 
     @Override
     protected DataGridDataHolder initDataGridDataHolder() {
+        DataGridDataHolder dataHolder = super.initDataGridDataHolder();
+        if (dataHolder.isContainerLoaded()) {
+            return dataHolder;
+        }
+
         String datasourceId = element.attributeValue("datasource");
         if (Strings.isNullOrEmpty(datasourceId)) {
-            return super.initDataGridDataHolder();
+            return dataHolder;
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadCollectionDatasource(
                 datasourceId, context, (ComponentLoaderContext) getComponentContext()
         );
 
-        CubaDataGridDataHolder holder = new CubaDataGridDataHolder();
-        holder.setDatasource(datasource);
-        holder.setMetaClass(datasource.getMetaClass());
-        holder.setFetchPlan(datasource.getView());
+        CubaDataGridDataHolder cubaDataHolder = new CubaDataGridDataHolder();
+        cubaDataHolder.setDatasource(datasource);
+        cubaDataHolder.setMetaClass(datasource.getMetaClass());
+        cubaDataHolder.setFetchPlan(datasource.getView());
 
-        return holder;
+        return cubaDataHolder;
     }
 
     @Override

@@ -66,21 +66,26 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
 
     @Override
     protected DataGridDataHolder initDataGridDataHolder() {
+        DataGridDataHolder dataHolder = super.initDataGridDataHolder();
+        if (dataHolder.isContainerLoaded()) {
+            return dataHolder;
+        }
+
         String datasourceId = element.attributeValue("datasource");
         if (Strings.isNullOrEmpty(datasourceId)) {
-            return super.initDataGridDataHolder();
+            return dataHolder;
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadCollectionDatasource(
                 datasourceId, context, (ComponentLoaderContext) getComponentContext()
         );
 
-        CubaTreeDataGridDataHolder holder = new CubaTreeDataGridDataHolder();
-        holder.setDatasource(datasource);
-        holder.setMetaClass(datasource.getMetaClass());
-        holder.setFetchPlan(datasource.getView());
+        CubaTreeDataGridDataHolder cubaDataHolder = new CubaTreeDataGridDataHolder();
+        cubaDataHolder.setDatasource(datasource);
+        cubaDataHolder.setMetaClass(datasource.getMetaClass());
+        cubaDataHolder.setFetchPlan(datasource.getView());
 
-        return holder;
+        return cubaDataHolder;
     }
 
     @Override

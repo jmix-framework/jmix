@@ -56,21 +56,26 @@ public class CubaGroupTableLoader extends GroupTableLoader {
 
     @Override
     protected TableDataHolder initTableDataHolder() {
+        TableDataHolder dataHolder = super.initTableDataHolder();
+        if (dataHolder.isContainerLoaded()) {
+            return dataHolder;
+        }
+
         Element rowsElement = element.element("rows");
         if (rowsElement == null) {
-            return super.initTableDataHolder();
+            return dataHolder;
         }
 
         CollectionDatasource datasource = DatasourceLoaderHelper.loadTableDatasource(
                 element, rowsElement, context, (ComponentLoaderContext) getComponentContext()
         );
 
-        CubaGroupTableDataHolder holder = new CubaGroupTableDataHolder();
-        holder.setDatasource(datasource);
-        holder.setMetaClass(datasource.getMetaClass());
-        holder.setFetchPlan(datasource.getView());
+        CubaGroupTableDataHolder cubaDataHolder = new CubaGroupTableDataHolder();
+        cubaDataHolder.setDatasource(datasource);
+        cubaDataHolder.setMetaClass(datasource.getMetaClass());
+        cubaDataHolder.setFetchPlan(datasource.getView());
 
-        return holder;
+        return cubaDataHolder;
     }
 
     @Override

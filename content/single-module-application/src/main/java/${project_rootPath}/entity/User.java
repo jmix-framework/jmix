@@ -5,7 +5,7 @@ import io.jmix.core.entity.annotation.SystemLevel;
 import io.jmix.core.metamodel.annotation.DependsOnProperties;
 import io.jmix.core.metamodel.annotation.InstanceName;
 import io.jmix.core.metamodel.annotation.JmixEntity;
-import io.jmix.security.authentication.GrantedAuthorityContainer;
+import io.jmix.security.authentication.AcceptsGrantedAuthorities;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(name = "${userTable}", indexes = {
         @Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements UserDetails, GrantedAuthorityContainer {
+public class User implements UserDetails, AcceptsGrantedAuthorities {
 
     @Id
     @Column(name = "ID")

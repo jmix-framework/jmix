@@ -23,6 +23,6 @@ import java.util.Collection;
 /**
  * Provides the ability to store authorities on a {@link org.springframework.security.core.userdetails.UserDetails}
  */
-public interface GrantedAuthorityContainer {
+public interface AcceptsGrantedAuthorities {
     void setAuthorities(Collection<? extends GrantedAuthority> authorities);
 }

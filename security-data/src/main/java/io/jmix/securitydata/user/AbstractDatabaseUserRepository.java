@@ -23,7 +23,7 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.security.PasswordNotMatchException;
 import io.jmix.core.security.UserManager;
 import io.jmix.core.security.UserRepository;
-import io.jmix.security.authentication.GrantedAuthorityContainer;
+import io.jmix.security.authentication.AcceptsGrantedAuthorities;
 import io.jmix.security.authentication.RoleGrantedAuthority;
 import io.jmix.security.model.ResourceRole;
 import io.jmix.security.model.RowLevelRole;
@@ -176,8 +176,8 @@ public abstract class AbstractDatabaseUserRepository<T extends UserDetails> impl
                 .list();
         if (!users.isEmpty()) {
             T user = users.get(0);
-            if (user instanceof GrantedAuthorityContainer) {
-                ((GrantedAuthorityContainer) user).setAuthorities(createAuthorities(username));
+            if (user instanceof AcceptsGrantedAuthorities) {
+                ((AcceptsGrantedAuthorities) user).setAuthorities(createAuthorities(username));
             }
             return user;
         } else {

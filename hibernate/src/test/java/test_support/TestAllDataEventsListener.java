@@ -20,6 +20,8 @@ import io.jmix.core.Id;
 import io.jmix.core.event.EntityChangedEvent;
 import io.jmix.core.event.EntityLoadingEvent;
 import io.jmix.core.event.EntitySavingEvent;
+import io.jmix.data.impl.AfterCompleteTransactionListener;
+import io.jmix.data.impl.BeforeCommitTransactionListener;
 import io.jmix.data.listener.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;

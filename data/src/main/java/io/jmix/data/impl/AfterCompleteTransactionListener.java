@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package io.jmix.data.listener;
+package io.jmix.data.impl;
 
 import java.util.Collection;
 
 /**
- * Interface for listeners notified before transaction commit. They are invoked after all "Before" but before "After"
- * entity listeners.
+ * Interface for listeners notified after transaction completion.
  *
- * <p>{@code BeforeCommitTransactionListener} must be implemented by managed beans. They can also implement
+ * <p>{@code AfterCompleteTransactionListener} must be implemented by managed beans. They can also implement
  * the {@code Ordered} interface to influence their execution order. A listener that does not implement the
  * {@code Ordered} interface is appended to the end of the invocation list.
  */
-public interface BeforeCommitTransactionListener {
+public interface AfterCompleteTransactionListener {
 
     /**
-     * Invoked before transaction commit.
-     * @param storeName data store name
-     * @param managedEntities   current persistence context, i.e. a collection of entities in Managed state
+     * Invoked after transaction completion.
+     *
+     * @param committed        true if the transaction was committed
+     * @param detachedEntities collection of entities in Detached state
+     *                         that made up the persistence context of the completed transaction
      */
-    void beforeCommit(String storeName, Collection<Object> managedEntities);
+    void afterComplete(boolean committed, Collection<Object> detachedEntities);
 }

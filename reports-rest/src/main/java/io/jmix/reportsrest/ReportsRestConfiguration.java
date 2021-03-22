@@ -12,20 +12,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-@Order(200)
 @Configuration
 @ComponentScan
 @ConfigurationPropertiesScan
 @EnableWebSecurity
 @JmixModule(dependsOn = {CoreConfiguration.class, ReportsConfiguration.class})
 @PropertySource(name = "io.jmix.reportsrest", value = "classpath:/io/jmix/reportsrest/module.properties")
-public class ReportsRestConfiguration extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/rest/reports/**")
-                .authorizeRequests().anyRequest().authenticated()
-                .and().csrf();
-    }
-
+public class ReportsRestConfiguration {
 }

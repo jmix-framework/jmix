@@ -55,8 +55,6 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected WindowConfig windowConfig;
-    @Autowired
     protected Metadata metadata;
     @Autowired
     protected TimeSource timeSource;
@@ -297,16 +295,11 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     public void onInstancePickerLookup(Action.ActionPerformedEvent event) {
         final MetaClass metaClass = instancePicker.getMetaClass();
         if (instancePicker.isEditable()) {
-            String currentWindowAlias;
-
             if (metaClass == null) {
                 throw new IllegalStateException("Please specify metaclass or property for PickerField");
             }
-            currentWindowAlias = windowConfig.getLookupScreenId(metaClass);
 
-            Screen lookup;
-            //if (windowConfig.hasWindow(currentWindowAlias)) {
-            lookup = screenBuilders.lookup(instancePicker)
+            Screen lookup = screenBuilders.lookup(instancePicker)
                     .withSelectHandler(items -> {
                         if (!items.isEmpty()) {
                             Object item = items.iterator().next();
@@ -314,9 +307,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
                         }
                     })
                     .build();
-            //} else {
-            // TODO entity browser ?
-            //}
+
             lookup.addAfterCloseListener(afterCloseEvent -> instancePicker.focus());
             lookup.show();
         }

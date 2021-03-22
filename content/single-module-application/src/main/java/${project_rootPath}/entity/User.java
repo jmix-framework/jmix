@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table(name = "${userTable}", indexes = {
         @Index(name = "IDX_${userTable}_ON_USERNAME", columnList = "USERNAME", unique = true)
 })
-public class User implements UserDetails, AcceptsGrantedAuthorities {
+public class User implements JmixUserDetails {
 
     @Id
     @Column(name = "ID")

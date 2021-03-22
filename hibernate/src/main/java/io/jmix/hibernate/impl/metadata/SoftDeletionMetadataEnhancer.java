@@ -22,6 +22,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.Range;
 import io.jmix.hibernate.impl.HibernateDataProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.spi.MetadataImplementor;
 import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.*;
@@ -31,10 +32,13 @@ import org.springframework.stereotype.Component;
 import javax.persistence.Column;
 import java.lang.reflect.AnnotatedElement;
 
+import static java.lang.String.format;
+
 @Component("hibernate_SoftDeletionMetadataEnhancer")
 public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
 
-    private static final String IS_NOT_DELETED_CONDITION = " is null";
+    private static final String IS_NOT_DELETED_CONDITION = "%s is null";
+    private static final String AND_IS_NOT_DELETED_CONDITION = "%s AND " + IS_NOT_DELETED_CONDITION;
 
     @Autowired
     private MetadataTools metadataTools;
@@ -62,7 +66,7 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
                     String deletedDateProperty = metadataTools.findDeletedDateProperty(mappedClass);
                     if (jmixMetadata.getClass(mappedClass).getOwnProperties().stream()
                             .anyMatch(p -> p.getName().equals(deletedDateProperty))) {
-                        throw new IllegalStateException(String.format(
+                        throw new IllegalStateException(format(
                                 "Soft deletion property '%s' is not supported on inherited classes (class: %s)",
                                 deletedDateProperty,
                                 mappedClass.getName())
@@ -102,7 +106,7 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
     }
 
     private void applyIgnoreNotFound(Bag bag) {
-        if (bag.getElement() instanceof ManyToOne){
+        if (bag.getElement() instanceof ManyToOne) {
             ManyToOne manyToOne = (ManyToOne) bag.getElement();
             manyToOne.setIgnoreNotFound(true);
         }
@@ -110,13 +114,27 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
 
     private void addFilter(String columnName, Filterable bag) {
         if (bag instanceof Collection) {
-            ((Collection) bag).setWhere(columnName + IS_NOT_DELETED_CONDITION);
+            Collection collection = (Collection) bag;
+            if (StringUtils.isNotEmpty(collection.getWhere())) {
+                collection.setWhere(format(
+                        AND_IS_NOT_DELETED_CONDITION,
+                        collection.getWhere(), columnName));
+            } else {
+                collection.setWhere(format(IS_NOT_DELETED_CONDITION, columnName));
+            }
         }
     }
 
     private void addManyToManyFilter(String columnName, Filterable bag) {
         if (bag instanceof Collection) {
-            ((Collection) bag).setManyToManyWhere(columnName + IS_NOT_DELETED_CONDITION);
+            Collection collection = (Collection) bag;
+            if (StringUtils.isNotEmpty(collection.getManyToManyWhere())) {
+                collection.setManyToManyWhere(format(
+                        AND_IS_NOT_DELETED_CONDITION,
+                        collection.getManyToManyWhere(), columnName));
+            } else {
+                collection.setManyToManyWhere(format(IS_NOT_DELETED_CONDITION, columnName));
+            }
         }
     }
 
@@ -128,7 +146,14 @@ public class SoftDeletionMetadataEnhancer implements MetadataEnhancer {
         Class<?> mappedClass = entityBinding.getMappedClass();
         String columnName = getSoftDeletionPropertyColumn(mappedClass);
         if (columnName != null) {
-            entityBinding.setWhere(columnName + IS_NOT_DELETED_CONDITION);
+            if (StringUtils.isNotEmpty(entityBinding.getWhere())) {
+                entityBinding.setWhere(format(
+                        AND_IS_NOT_DELETED_CONDITION,
+                        entityBinding.getWhere(), columnName));
+            } else {
+                entityBinding.setWhere(format(IS_NOT_DELETED_CONDITION, columnName));
+            }
+
         }
     }
 

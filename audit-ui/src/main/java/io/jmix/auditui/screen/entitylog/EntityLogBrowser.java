@@ -98,7 +98,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
     @Autowired
     protected DataContext dataContext;
     @Autowired
-    protected EntityPicker instancePicker;
+    protected EntityPicker<Object> instancePicker;
     @Autowired
     protected Table<EntityLogItem> entityLogTable;
     @Autowired
@@ -306,8 +306,7 @@ public class EntityLogBrowser extends StandardLookup<EntityLogItem> {
 
             Screen lookup;
             //if (windowConfig.hasWindow(currentWindowAlias)) {
-            lookup = screenBuilders.lookup(metaClass.getJavaClass(), this)
-                    .withScreenId(currentWindowAlias)
+            lookup = screenBuilders.lookup(instancePicker)
                     .withSelectHandler(items -> {
                         if (!items.isEmpty()) {
                             Object item = items.iterator().next();

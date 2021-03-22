@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 @Component("jmix_CubaTransactionListenersManager")
 public class CubaTransactionListenersManager implements
         ApplicationContextAware,
-        io.jmix.data.listener.BeforeCommitTransactionListener,
-        io.jmix.data.listener.AfterCompleteTransactionListener {
+        io.jmix.data.impl.BeforeCommitTransactionListener,
+        io.jmix.data.impl.AfterCompleteTransactionListener {
 
     protected List<BeforeCommitTransactionListener> beforeCommitTxListeners;
 

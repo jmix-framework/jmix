@@ -257,10 +257,10 @@ public class JmixEntityManager implements EntityManager {
     }
 
     @Override
-    public void setProperty(String propertyName, Object value) {
+    public void setProperty(String propertyName, @Nullable Object value) {
         if (PersistenceHints.SOFT_DELETION.equals(propertyName)) {
-            Preconditions.checkNotNullArgument(value, "soft deletion value must not be null");
-            setSoftDeletion((Boolean) value);
+            boolean softDeletion = value == null || Boolean.TRUE.equals(value);
+            setSoftDeletion(softDeletion);
         } else {
             delegate.setProperty(propertyName, value);
         }

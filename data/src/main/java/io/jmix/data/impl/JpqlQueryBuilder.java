@@ -256,7 +256,7 @@ public class JpqlQueryBuilder<Q extends JmixQuery> {
                     }
                 }
             }
-            resultQuery = conditionJpqlGenerator.processQuery(resultQuery, actualized);
+            resultQuery = conditionJpqlGenerator.processQuery(resultQuery, valueProperties, actualized);
         }
     }
 

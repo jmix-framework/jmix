@@ -158,7 +158,6 @@ public class JmixInitializeCollectionEventListener implements InitializeCollecti
                         fetchPlans.builder(metaClass.getJavaClass())
                                 .add(property, builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
-                .setSoftDeletion(state.isSoftDeletion())
                 .setAccessConstraints(state.getAccessConstraints())
                 .setHints(state.getHints());
     }

@@ -85,7 +85,6 @@ public class CollectionValuePropertyHolder extends AbstractValueHolder {
                         getFetchPlans().builder(metaClass.getJavaClass())
                                 .add(getPropertyInfo().getName(), builder -> builder.addFetchPlan(FetchPlan.BASE))
                                 .build())
-                .setSoftDeletion(getLoadOptions().isSoftDeletion())
                 .setAccessConstraints(getLoadOptions().getAccessConstraints())
                 .setHints(getLoadOptions().getHints());
     }

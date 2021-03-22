@@ -44,6 +44,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.jpa.EntityManagerProxy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -138,7 +139,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
     protected Object loadOne(LoadContext<?> context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
         Query query = createQuery(em, context, false);
 
@@ -155,7 +156,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         queryResultsManager.savePreviousQueryResults(context);
 
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
         if (!context.getIds().isEmpty()) {
             if (metadataTools.hasCompositePrimaryKey(metaClass)) {
@@ -211,7 +212,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         queryResultsManager.savePreviousQueryResults(context);
 
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
         Query query = createQuery(em, context, true);
         Number result = (Number) query.getSingleResult();
@@ -221,7 +222,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
 
     @Override
     protected Set<Object> saveAll(SaveContext context) {
-        SessionImplementor em = (SessionImplementor) storeAwareLocator.getEntityManager(storeName);
+        EntityManager em = storeAwareLocator.getEntityManager(storeName);
 
         Set<Object> result = new HashSet<>();
 
@@ -271,7 +272,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
         Set<Object> result = new HashSet<>();
         boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
         try {
-            em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+            em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
             for (Object entity : context.getEntitiesToRemove()) {
                 Object merged = em.merge(entity);
                 em.remove(merged);
@@ -286,7 +287,7 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
     //    @Override
     protected List<Object> loadAllValues(ValueLoadContext context) {
         EntityManager em = storeAwareLocator.getEntityManager(storeName);
-        em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+        em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
 
         Query query = createLoadQuery(em, context);
         return executeQuery(query, false);
@@ -361,12 +362,14 @@ public class HibernateDataStore extends AbstractDataStore implements DataSorting
             entities.addAll(removedEntities);
 
             EntityManager em = storeAwareLocator.getEntityManager(storeName);
-
-            List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect((SessionImplementor) em, entities);
+            SessionImplementor si = em instanceof EntityManagerProxy ?
+                    (SessionImplementor) ((EntityManagerProxy) em).getTargetEntityManager()
+                    : (SessionImplementor) em;
+            List<EntityChangedEventInfo> eventsInfo = entityChangedEventManager.collect(si, entities);
 
             boolean softDeletionBefore = PersistenceHints.isSoftDeletion(em);
             try {
-                em.setProperty(PersistenceHints.SOFT_DELETION, context.isSoftDeletion());
+                em.setProperty(PersistenceHints.SOFT_DELETION, context.getHints().get(PersistenceHints.SOFT_DELETION));
                 persistenceSupport.processFlush(em, false);
                 ((EntityManager) em.getDelegate()).flush();
             } finally {

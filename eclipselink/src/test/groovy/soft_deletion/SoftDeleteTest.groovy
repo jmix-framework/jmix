@@ -16,7 +16,7 @@
 
 package soft_deletion
 
-
+import io.jmix.data.PersistenceHints
 import test_support.entity.TestAppEntity
 import io.jmix.core.DataManager
 import io.jmix.core.EntityStates
@@ -61,7 +61,7 @@ class SoftDeleteTest extends DataSpec {
 
         when:
 
-        def entity2 = dataManager.load(TestAppEntity).id(entity.id).softDeletion(false)
+        def entity2 = dataManager.load(TestAppEntity).id(entity.id).hint(PersistenceHints.SOFT_DELETION, false)
                 .optional().orElse(null)
 
         then:

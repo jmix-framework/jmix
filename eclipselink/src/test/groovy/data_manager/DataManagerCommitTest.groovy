@@ -17,6 +17,7 @@
 package data_manager
 
 import io.jmix.core.*
+import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import test_support.DataSpec
@@ -162,7 +163,7 @@ class DataManagerCommitTest extends DataSpec {
         def customer = dataManager.create(Customer)
         dataManager.remove(dataManager.save(customer))
         def committedCustomer = dataManager.load(Customer).id(customer.id)
-                .softDeletion(false)
+                .hint(PersistenceHints.SOFT_DELETION, false)
                 .optional().orElse(null)
 
         def order = dataManager.create(Order)
@@ -170,7 +171,7 @@ class DataManagerCommitTest extends DataSpec {
         order.customer = committedCustomer
 
         SaveContext commitContext = new SaveContext().saving(order)
-        commitContext.setSoftDeletion(false)
+        commitContext.setHint(PersistenceHints.SOFT_DELETION, false)
         EntitySet committedEntities = dataManager.save(commitContext)
 
         def committedOrder = committedEntities.get(Order, order.id)

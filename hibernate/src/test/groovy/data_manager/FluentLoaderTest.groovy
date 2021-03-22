@@ -139,17 +139,7 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.entityMetaClass.name == 'sales_Customer'
         loadContext.query.queryString == 'select e from sales_Customer e'
-        loadContext.softDeletion
         !loadContext.query.cacheable
-
-        when:
-
-        loader = dataManager.load(Customer).all().softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        !loadContext.softDeletion
 
         when:
 
@@ -183,16 +173,6 @@ class FluentLoaderTest extends DataSpec {
         then:
 
         loadContext.id == customerId
-        loadContext.softDeletion
-
-        when:
-
-        loader = dataManager.load(Customer).id(customer.id).softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        !loadContext.softDeletion
 
         when:
 
@@ -226,7 +206,6 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.query.queryString == 'select c from sales_Customer c'
         loadContext.id == null
-        loadContext.softDeletion
         !loadContext.query.cacheable
 
         when:
@@ -257,15 +236,6 @@ class FluentLoaderTest extends DataSpec {
         then:
 
         loadContext.query.cacheable
-
-        when:
-
-        loader = dataManager.load(Customer).query('select c from sales_Customer c').softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        !loadContext.softDeletion
 
         when:
 
@@ -309,7 +279,6 @@ class FluentLoaderTest extends DataSpec {
         loadContext.query.queryString == 'select e from sales_Customer e'
         loadContext.query.condition == propertyCondition
         loadContext.id == null
-        loadContext.softDeletion
         !loadContext.query.cacheable
 
         when:
@@ -320,15 +289,6 @@ class FluentLoaderTest extends DataSpec {
         then:
 
         loadContext.query.cacheable
-
-        when:
-
-        loader = dataManager.load(Customer).condition(propertyCondition).softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        !loadContext.softDeletion
 
         when:
 
@@ -356,16 +316,6 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.id == null
         loadContext.ids == [customerId, customer2Id]
-        loadContext.softDeletion
-
-        when:
-
-        loader = dataManager.load(Customer).ids(customer.id, customer2.id).softDeletion(false)
-        loadContext = FluentLoaderTestAccess.createLoadContext(loader)
-
-        then:
-
-        !loadContext.softDeletion
 
         when:
 

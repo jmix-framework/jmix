@@ -109,7 +109,8 @@ public class QueryResultsManagerImpl implements QueryResultsManager {
             return;
 
         List idList = transaction.execute(status -> {
-            entityManager.setProperty(PersistenceHints.SOFT_DELETION, loadContext.isSoftDeletion());
+            entityManager.setProperty(PersistenceHints.SOFT_DELETION,
+                    loadContext.getHints().get(PersistenceHints.SOFT_DELETION));
 
             QueryTransformer transformer = queryTransformerFactory.transformer(contextQuery.getQueryString());
             String primaryKeyName = metadataTools.getPrimaryKeyName(metadata.getClass(entityName));

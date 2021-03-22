@@ -30,6 +30,29 @@ public class PersistenceHints {
 
     public static final String CACHEABLE = "jmix.cacheable";
 
+    /**
+     * Defines a Jmix query hint which enable customization of generated SQL statements.
+     * Adds an SQL hint string after the SQL statement.
+     * <p>The SQL hint can be used on certain database platforms to define how the query uses indexes
+     * and other such low level usages. It should be the full hint string including the comment delimiters.
+     * <p>Corresponds to {@code org.eclipse.persistence.config.QueryHints#HINT}
+     * <p>Usage examples:
+     * <pre>
+     *    query.setHint(PersistenceHints.SQL_HINT, "OPTION(RECOMPILE)");
+     * </pre>
+     */
+    public static final String SQL_HINT = "jmix.sql.hint";
+
+    /**
+     * Defines a Jmix query hint which enable customization of generated SQL statements.
+     * Adds <code>OPTION(RECOMPILE)</code> SQL hint for MSSQL database. Hint value is ignored.
+     * <p>Usage examples:
+     * <pre>
+     *    query.setHint(PersistenceHints.MSSQL_RECOMPILE_HINT, true);
+     * </pre>
+     */
+    public static final String MSSQL_RECOMPILE_HINT = "jmix.mssql.recompile";
+
     public static boolean isSoftDeletion(EntityManager entityManager) {
         Boolean softDeletion = (Boolean) entityManager.getProperties().get(SOFT_DELETION);
         return softDeletion == null || softDeletion;

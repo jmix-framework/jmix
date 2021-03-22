@@ -26,6 +26,7 @@ import io.jmix.core.datastore.DataStoreEventListener;
 import io.jmix.core.entity.EntitySystemAccess;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.PersistenceHints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,8 +65,10 @@ public class HibernateLazyLoadingListener implements DataStoreEventListener {
         Set<Entity> loadedEntities = new HashSet<>();
         traverseEntities(entity, loadedEntities);
 
+        Object softDeletion = loadContext.getHints().get(PersistenceHints.SOFT_DELETION);
+
         LoadOptionsState.Builder stateBuilder = LoadOptionsState.builder()
-                .softDeletion(loadContext.isSoftDeletion())
+                .softDeletion(softDeletion == null || Boolean.TRUE.equals(softDeletion))
                 .accessConstraints(loadContext.getAccessConstraints().stream()
                         .filter(c -> c instanceof InMemoryConstraint)
                         .collect(Collectors.toList()))

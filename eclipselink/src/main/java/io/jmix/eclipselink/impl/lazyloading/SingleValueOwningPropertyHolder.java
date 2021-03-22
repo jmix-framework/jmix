@@ -21,6 +21,7 @@ import io.jmix.core.UuidProvider;
 import io.jmix.core.impl.SerializationContext;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
+import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.indirection.ValueHolderInterface;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -53,7 +54,7 @@ public class SingleValueOwningPropertyHolder extends AbstractSingleValueHolder {
 
         LoadContext<?> loadContext = new LoadContext<>(metaClass)
                 .setId(getEntityId())
-                .setSoftDeletion(false)
+                .setHint(PersistenceHints.SOFT_DELETION, false)
                 .setHints(loadOptions.getHints())
                 .setAccessConstraints(loadOptions.getAccessConstraints());
 

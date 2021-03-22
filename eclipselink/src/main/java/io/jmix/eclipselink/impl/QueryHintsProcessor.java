@@ -17,7 +17,7 @@
 package io.jmix.eclipselink.impl;
 
 
-import io.jmix.data.QueryHints;
+import io.jmix.data.PersistenceHints;
 import org.eclipse.persistence.jpa.JpaQuery;
 import org.springframework.stereotype.Component;
 
@@ -33,9 +33,9 @@ public class QueryHintsProcessor {
 
     @PostConstruct
     protected void init() {
-        hintHandlers.put(QueryHints.SQL_HINT,
+        hintHandlers.put(PersistenceHints.SQL_HINT,
                 (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.HINT, value));
-        hintHandlers.put(QueryHints.MSSQL_RECOMPILE_HINT,
+        hintHandlers.put(PersistenceHints.MSSQL_RECOMPILE_HINT,
                 (query, value) -> query.setHint(org.eclipse.persistence.config.QueryHints.HINT, "OPTION(RECOMPILE)"));
     }
 

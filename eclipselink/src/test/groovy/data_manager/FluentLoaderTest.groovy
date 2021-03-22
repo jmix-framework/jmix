@@ -19,6 +19,7 @@ package data_manager
 
 import io.jmix.core.*
 import io.jmix.core.querycondition.PropertyCondition
+import io.jmix.data.PersistenceHints
 import org.springframework.beans.factory.annotation.Autowired
 import test_support.DataSpec
 import test_support.entity.sales.Customer
@@ -139,17 +140,18 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.entityMetaClass.name == 'sales_Customer'
         loadContext.query.queryString == 'select e from sales_Customer e'
-        loadContext.softDeletion
+        loadContext.hints[PersistenceHints.SOFT_DELETION] == null
         !loadContext.query.cacheable
 
         when:
 
-        loader = dataManager.load(Customer).all().softDeletion(false)
+        loader = dataManager.load(Customer).all()
+                .hint(PersistenceHints.SOFT_DELETION, false)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        !loadContext.softDeletion
+        !loadContext.hints[PersistenceHints.SOFT_DELETION]
 
         when:
 
@@ -183,16 +185,16 @@ class FluentLoaderTest extends DataSpec {
         then:
 
         loadContext.id == customerId
-        loadContext.softDeletion
+        loadContext.hints[PersistenceHints.SOFT_DELETION] == null
 
         when:
 
-        loader = dataManager.load(Customer).id(customer.id).softDeletion(false)
+        loader = dataManager.load(Customer).id(customer.id).hint(PersistenceHints.SOFT_DELETION, false)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        !loadContext.softDeletion
+        !loadContext.hints[PersistenceHints.SOFT_DELETION]
 
         when:
 
@@ -226,7 +228,7 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.query.queryString == 'select c from sales_Customer c'
         loadContext.id == null
-        loadContext.softDeletion
+        loadContext.hints[PersistenceHints.SOFT_DELETION] == null
         !loadContext.query.cacheable
 
         when:
@@ -260,12 +262,13 @@ class FluentLoaderTest extends DataSpec {
 
         when:
 
-        loader = dataManager.load(Customer).query('select c from sales_Customer c').softDeletion(false)
+        loader = dataManager.load(Customer).query('select c from sales_Customer c')
+                .hint(PersistenceHints.SOFT_DELETION, false)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        !loadContext.softDeletion
+        !loadContext.hints[PersistenceHints.SOFT_DELETION]
 
         when:
 
@@ -309,7 +312,7 @@ class FluentLoaderTest extends DataSpec {
         loadContext.query.queryString == 'select e from sales_Customer e'
         loadContext.query.condition == propertyCondition
         loadContext.id == null
-        loadContext.softDeletion
+        loadContext.hints[PersistenceHints.SOFT_DELETION] == null
         !loadContext.query.cacheable
 
         when:
@@ -323,12 +326,13 @@ class FluentLoaderTest extends DataSpec {
 
         when:
 
-        loader = dataManager.load(Customer).condition(propertyCondition).softDeletion(false)
+        loader = dataManager.load(Customer).condition(propertyCondition)
+                .hint(PersistenceHints.SOFT_DELETION, false)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        !loadContext.softDeletion
+        !loadContext.hints[PersistenceHints.SOFT_DELETION]
 
         when:
 
@@ -356,16 +360,17 @@ class FluentLoaderTest extends DataSpec {
 
         loadContext.id == null
         loadContext.ids == [customerId, customer2Id]
-        loadContext.softDeletion
+        loadContext.hints[PersistenceHints.SOFT_DELETION] == null
 
         when:
 
-        loader = dataManager.load(Customer).ids(customer.id, customer2.id).softDeletion(false)
+        loader = dataManager.load(Customer).ids(customer.id, customer2.id)
+                .hint(PersistenceHints.SOFT_DELETION, false)
         loadContext = FluentLoaderTestAccess.createLoadContext(loader)
 
         then:
 
-        !loadContext.softDeletion
+        !loadContext.hints[PersistenceHints.SOFT_DELETION]
 
         when:
 

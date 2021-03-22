@@ -209,8 +209,8 @@ public class HibernateDelegateJmixEntityManager extends SessionDelegatorBaseImpl
     @Override
     public void setProperty(String propertyName, Object value) {
         if (PersistenceHints.SOFT_DELETION.equals(propertyName)) {
-            Preconditions.checkNotNullArgument(value, "soft deletion value must not be null");
-            setSoftDeletion((Boolean) value);
+            boolean softDeletion = value == null || Boolean.TRUE.equals(value);
+            setSoftDeletion(softDeletion);
         } else {
             delegate.setProperty(propertyName, value);
         }

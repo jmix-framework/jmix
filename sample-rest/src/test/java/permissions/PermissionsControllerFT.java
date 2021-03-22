@@ -71,7 +71,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
 
     @Test
     public void getEntitiesPermissions() throws Exception {
-        String url = baseUrl + "/permissions?entities=true";
+        String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
@@ -83,13 +83,25 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
 
     @Test
     public void getEntityAttributesPermissions() throws Exception {
-        String url = baseUrl + "/permissions?entityAttributes=true";
+        String url = baseUrl + "/permissions";
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
             assertEquals(1, ctx.<Collection>read("$.entityAttributes").size());
             assertEquals("ref$Currency:name", ctx.read("$.entityAttributes[0].target"));
             assertEquals(2, (int) ctx.read("$.entityAttributes[0].value"));
+        }
+    }
+
+    @Test
+    public void getSpecificPermissions() throws Exception {
+        String url = baseUrl + "/permissions";
+        try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
+            assertEquals(HttpStatus.SC_OK, statusCode(response));
+            ReadContext ctx = parseResponse(response);
+            assertEquals(1, ctx.<Collection>read("$.specifics").size());
+            assertEquals("rest.fileDownload.enabled", ctx.read("$.specifics[0].target"));
+            assertEquals(1, (int) ctx.read("$.specifics[0].value"));
         }
     }
 }

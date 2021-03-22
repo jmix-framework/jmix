@@ -121,7 +121,6 @@ public class FileDownloadController {
     }
 
     protected String getContentType(FileRef fileRef) {
-        ;
         String extension = FilenameUtils.getExtension(fileRef.getFileName());
         if (StringUtils.isEmpty(extension)) {
             return FileTypesHelper.DEFAULT_MIME_TYPE;

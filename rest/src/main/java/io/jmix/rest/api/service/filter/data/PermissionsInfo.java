@@ -24,9 +24,9 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PermissionsInfo {
-
     private List<ShortPermissionInfo> entities;
     private List<ShortPermissionInfo> entityAttributes;
+    private List<ShortPermissionInfo> specifics;
 
     public PermissionsInfo() {
     }
@@ -47,5 +47,14 @@ public class PermissionsInfo {
 
     public void setEntityAttributes(List<ShortPermissionInfo> entityAttributes) {
         this.entityAttributes = entityAttributes;
+    }
+
+    @Nullable
+    public List<ShortPermissionInfo> getSpecifics() {
+        return specifics;
+    }
+
+    public void setSpecifics(List<ShortPermissionInfo> specifics) {
+        this.specifics = specifics;
     }
 }

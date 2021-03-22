@@ -33,6 +33,6 @@ public interface PermissionRole {
     @EntityPolicy(entityName = "ref_Car", actions = UPDATE)
     @EntityPolicy(entityName = "ref$Currency", actions = READ)
     @EntityAttributePolicy(entityName = "ref$Currency", attributes = "name", action = MODIFY)
-    @SpecificPolicy(resources = "rest.enabled")
+    @SpecificPolicy(resources = {"rest.enabled", "rest.fileDownload.enabled"})
     void access();
 }

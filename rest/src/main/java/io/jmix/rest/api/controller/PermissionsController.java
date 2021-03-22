@@ -39,13 +39,7 @@ public class PermissionsController {
     protected PermissionsControllerManager permissionsControllerManager;
 
     @GetMapping("/rest/permissions")
-    public PermissionsInfo getPermissions(@RequestParam(required = false) boolean entities,
-                                          @RequestParam(required = false) boolean entityAttributes) {
-        PermissionsControllerManager.PermissionRequestParams params =
-                new PermissionsControllerManager.PermissionRequestParams();
-        params.setEntities(entities);
-        params.setEntityAttributes(entityAttributes);
-        return permissionsControllerManager.getPermissions(params);
+    public PermissionsInfo getPermissions() {
+        return permissionsControllerManager.getPermissions();
     }
-
 }

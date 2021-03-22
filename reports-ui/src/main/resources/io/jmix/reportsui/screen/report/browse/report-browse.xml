@@ -46,10 +46,11 @@
                 resizable="true"/>
 
     <layout expand="reportsTable" spacing="true">
-        <filter id="genericFilter" dataLoader="reportDl" applyTo="reportsTable">
+        <filter id="genericFilter" dataLoader="reportDl">
             <properties include=".*"/>
         </filter>
-        <groupTable id="reportsTable" editable="false" multiselect="true" width="100%" dataContainer="reportDc">
+        <groupTable id="reportsTable" editable="false"
+                    multiselect="true" width="100%" dataContainer="reportDc">
             <actions>
                 <action id="create" type="create"/>
                 <action id="edit" type="edit"/>
@@ -80,7 +81,7 @@
                 <group>
                     <column id="group" width="200px"/>
                 </group>
-                <column id="locName"/>
+                <column id="name"/> <!-- //TODO Locale helper (locName/localeName property when it will be ok) -->
                 <column id="description" maxTextLength="100"/>
                 <column id="code"/>
             </columns>

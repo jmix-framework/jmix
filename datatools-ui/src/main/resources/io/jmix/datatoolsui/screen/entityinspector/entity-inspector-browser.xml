@@ -29,7 +29,6 @@ messagesPack="io.jmix.datatoolsui.screen.entityinspector">
                       nullOptionVisible="false"/>
             <comboBox id="showMode" optionsEnum="io.jmix.datatoolsui.screen.entityinspector.ShowMode"
                       nullOptionVisible="false" align="MIDDLE_LEFT"/>
-            <checkBox id="textSelection" caption="msg://textSelection" align="MIDDLE_LEFT" visible="false"/>
         </hbox>
         <vbox id="filterBox" visible="false"/>
         <vbox id="tableBox"/>

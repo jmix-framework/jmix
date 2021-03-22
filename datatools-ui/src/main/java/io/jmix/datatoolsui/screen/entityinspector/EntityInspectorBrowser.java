@@ -108,9 +108,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
     protected ComboBox<MetaClass> entitiesLookup;
 
     @Autowired
-    protected CheckBox textSelection;
-
-    @Autowired
     protected BoxLayout filterBox;
 
     @Autowired
@@ -170,7 +167,6 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
             entitiesLookup.addValueChangeListener(e -> showEntities());
             showMode.addValueChangeListener(e -> showEntities());
         }
-        textSelection.addValueChangeListener(e -> changeTableTextSelectionEnabled());
     }
 
     @Override
@@ -198,17 +194,12 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
         }
     }
 
-    protected void changeTableTextSelectionEnabled() {
-        entitiesTable.setTextSelectionEnabled(textSelection.isChecked());
-    }
-
     protected void createEntitiesTable(MetaClass meta) {
         if (entitiesTable != null)
             tableBox.remove(entitiesTable);
         if (filter != null) {
             filterBox.remove(filter);
         }
-        textSelection.setVisible(true);
 
         entitiesTable = InspectorTableBuilder.from(getApplicationContext(), createContainer(meta))
                 .withMaxTextLength(MAX_TEXT_LENGTH)

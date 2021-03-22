@@ -181,7 +181,7 @@ public class KeyValueEntity
             id = properties.get(idName);
         if (id == null)
             id = "?(" + uuid + ")";
-        return "sys$KeyValueEntity-" + id;
+        return "sys_KeyValueEntity-" + id;
     }
 
     @Override

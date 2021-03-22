@@ -41,7 +41,7 @@ public class KeyValueMetaClass extends MetadataObjectImpl implements MetaClass {
     }
 
     public KeyValueMetaClass() {
-        name = "sys$KeyValueEntity";
+        name = "sys_KeyValueEntity";
     }
 
     @Nullable

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.Collections;
 
-@Component("GraphqlAuthorizedUrlsProvider")
+@Component("gql_GraphqlAuthorizedUrlsProvider")
 public class GraphqlAuthorizedUrlsProvider implements AuthorizedUrlsProvider {
 
     public static final String GRAPHQL_ENDPOINT_PATTERN = "/graphql/**";

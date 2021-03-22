@@ -99,7 +99,7 @@ public class PermissionsControllerFT extends AbstractRestControllerFT {
         try (CloseableHttpResponse response = sendGet(url, oauthToken, null)) {
             assertEquals(HttpStatus.SC_OK, statusCode(response));
             ReadContext ctx = parseResponse(response);
-            assertEquals(1, ctx.<Collection>read("$.specifics").size());
+            assertEquals(2, ctx.<Collection>read("$.specifics").size());
             assertEquals("rest.fileDownload.enabled", ctx.read("$.specifics[0].target"));
             assertEquals(1, (int) ctx.read("$.specifics[0].value"));
         }

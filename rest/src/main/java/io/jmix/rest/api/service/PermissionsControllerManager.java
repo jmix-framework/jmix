@@ -102,6 +102,8 @@ public class PermissionsControllerManager {
 
         if (downloadContext.isPermitted()) {
             specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 1));
+        } else {
+            specificPermissions.add(new ShortPermissionInfo(downloadContext.getName(), 0));
         }
 
         RestFileUploadContext uploadContext = new RestFileUploadContext();
@@ -109,6 +111,8 @@ public class PermissionsControllerManager {
 
         if (uploadContext.isPermitted()) {
             specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 1));
+        } else {
+            specificPermissions.add(new ShortPermissionInfo(uploadContext.getName(), 0));
         }
 
         return permissionsInfo;

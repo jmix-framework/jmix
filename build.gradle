@@ -92,6 +92,13 @@ dependencies {
     def uiVersion = baseVersion
     def reportsVersion = baseVersion
 
+    if (isTrialBuild()) {
+        mapsVersion = mapsVersion + '.trial'
+        bpmVersion = bpmVersion + '.trial'
+
+        version = version + '.trial'
+    }
+
     constraints {
         api "io.jmix.audit:jmix-audit:${snapshotOr(auditVersion)}"
         api "io.jmix.audit:jmix-audit-ui:${snapshotOr(auditVersion)}"
@@ -317,4 +324,8 @@ String snapshotOr(String releaseVer) {
     } else {
         return version
     }
+}
+
+boolean isTrialBuild() {
+    return rootProject.hasProperty('buildTrial') && rootProject.hasProperty('jmixRelease')
 }

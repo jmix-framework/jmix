@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet author="audit" id="1">
+    <changeSet author="audit" id="1" context="!cuba">
 
         <createTable tableName="AUDIT_LOGGED_ENTITY">
             <column name="ID" type="${uuid.type}">
@@ -59,7 +59,7 @@
 
     </changeSet>
 
-    <changeSet author="audit" id="2">
+    <changeSet author="audit" id="2" context="!cuba">
         <addColumn tableName="AUDIT_ENTITY_LOG">
             <column name="SYS_TENANT_ID" type="varchar(255)"/>
         </addColumn>

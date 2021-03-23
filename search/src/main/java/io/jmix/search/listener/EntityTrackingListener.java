@@ -26,6 +26,7 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
+import io.jmix.data.PersistenceHints;
 import io.jmix.data.StoreAwareLocator;
 import io.jmix.search.index.mapping.IndexConfigurationProvider;
 import io.jmix.search.index.queue.QueueService;
@@ -86,7 +87,7 @@ public class EntityTrackingListener {
         if (isTrackedEntityReloadingRequired(event.getType(), entityName)) {
             entity = dataManager.load(entityId)
                     .fetchPlanProperties(primaryKeyPropertyName)
-                    //.softDeletion(false)
+                    .hint(PersistenceHints.SOFT_DELETION, false)
                     .one();
         }
 
@@ -182,6 +183,7 @@ public class EntityTrackingListener {
                         .query(queryString)
                         .parameter("ref", entity)
                         .fetchPlanProperties(primaryKeyPropertyName)
+                        .hint(PersistenceHints.SOFT_DELETION, false)
                         .list()
                         .stream()
                         .map(loadedEntity -> getPrimaryKey(metaClass, loadedEntity))

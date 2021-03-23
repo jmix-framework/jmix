@@ -16,17 +16,17 @@
 
 package io.jmix.searchui.screen.entitysearcher;
 
-import com.google.common.collect.EvictingQueue;
 import io.jmix.core.*;
-import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
-import io.jmix.search.SearchManager;
+import io.jmix.search.IndexProcessManager;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.SearchService;
+import io.jmix.search.searching.impl.FieldHit;
+import io.jmix.search.searching.impl.SearchResult;
+import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.search.utils.PropertyTools;
-import io.jmix.searchui.SearchLauncher;
-import io.jmix.searchui.component.SearchField;
-import io.jmix.ui.*;
+import io.jmix.ui.AppUI;
+import io.jmix.ui.ScreenBuilders;
+import io.jmix.ui.UiComponents;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.*;
@@ -37,9 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static io.jmix.search.SearchService.*;
 import static io.jmix.ui.component.Component.Alignment.MIDDLE_LEFT;
 
+//TODO Temporaty screen. It will be removed later
 @UiController("entitySearcher.browser")
 @UiDescriptor("entity-searcher-browser.xml")
 public class EntitySearcherBrowser extends Screen {
@@ -47,9 +47,7 @@ public class EntitySearcherBrowser extends Screen {
     private static final Logger log = LoggerFactory.getLogger(EntitySearcherBrowser.class);
 
     @Autowired
-    protected SearchService searchService;
-    @Autowired
-    protected SearchManager searchManager;
+    protected IndexProcessManager indexManager;
     @Autowired
     protected UiComponents uiComponents;
     @Autowired
@@ -118,7 +116,7 @@ public class EntitySearcherBrowser extends Screen {
         log.debug("[IVGA] onPerformSearchAction with term '{}", searchTerm);
         *//*if(StringUtils.isNotBlank(searchTerm)) {
             searchTerm = searchTerm.trim();
-            SearchResult searchResult = searchService.search(searchTerm);
+            SearchResult searchResult = entitySearcherImpl.search(searchTerm);
             initSearchResults(searchResult);
         }*//*
 
@@ -127,7 +125,7 @@ public class EntitySearcherBrowser extends Screen {
 
     @Subscribe("reindexAllAction")
     public void onReindexAllAction(Action.ActionPerformedEvent event) {
-        searchManager.asyncReindexAll();
+        indexManager.scheduleReindexAll();
     }
 
     /*protected void initSearchResults(SearchResult searchResult) {
@@ -275,7 +273,7 @@ public class EntitySearcherBrowser extends Screen {
     }
 
     protected Object reloadEntity(MetaClass metaClass, Object entityId) {
-        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         return dataManager
                 .load(metaClass.getJavaClass())
                 .query(String.format("select e from %s e where e.%s in :id", metaClass.getName(), primaryKeyProperty))

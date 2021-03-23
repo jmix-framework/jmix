@@ -16,7 +16,9 @@
 
 package io.jmix.search.utils;
 
+import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -31,23 +33,30 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-//todo review 'find' methods naming
 @Component("search_PropertyTools")
 public class PropertyTools {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyTools.class);
 
     @Autowired
-    private MetadataTools metadataTools;
+    protected MetadataTools metadataTools;
+    @Autowired
+    protected Metadata metadata;
 
-    public Map<String, MetaPropertyPath> findPropertyPaths(MetaClass metaClass, String pathString) {
-        log.info("[IVGA] findPropertyPaths: MetaClass={}, PathString={}", metaClass, pathString);
-        if(hasWildcard(pathString)) {
+    /**
+     * Finds properties of entity by provided path string. Path string supports wildcard '*'.
+     * @param metaClass entity meta class
+     * @param pathString path to property to find
+     * @return map with effective property path as a key and property itself as a value
+     */
+    public Map<String, MetaPropertyPath> findPropertiesByPath(MetaClass metaClass, String pathString) {
+        log.debug("Find properties by path: MetaClass={}, PathString={}", metaClass, pathString);
+        if (hasWildcard(pathString)) {
             return findPropertiesByWildcardPath(metaClass, pathString);
         } else {
             MetaPropertyPath propertyPath = metaClass.getPropertyPath(pathString);
-            if(propertyPath == null) {
-                log.warn("[IVGA] Class '{}' doesn't have property '{}'", metaClass, pathString);
+            if (propertyPath == null) {
+                log.debug("Entity '{}' doesn't have property '{}'", metaClass, pathString);
                 return Collections.emptyMap();
             } else {
                 return Collections.singletonMap(pathString, propertyPath);
@@ -55,19 +64,35 @@ public class PropertyTools {
         }
     }
 
-    public boolean isEntityIdUsedAsSearchPrimaryKey(MetaClass metaClass) {
-        return getPrimaryKeyPropertyNameForSearchOpt(metaClass)
+    /**
+     * Checks if entity primary key is used as index primary key.
+     * @param metaClass entity meta class
+     * @return true if entity pk property is used for indexing as identifier
+     */
+    public boolean isEntityIdUsedAsIndexPrimaryKey(MetaClass metaClass) {
+        return getPrimaryKeyPropertyNameForIndexOpt(metaClass)
                 .map(searchPk -> searchPk.equals(metadataTools.getPrimaryKeyName(metaClass)))
                 .orElse(false);
     }
 
-    public String getPrimaryKeyPropertyNameForSearch(MetaClass metaClass) {
-        return getPrimaryKeyPropertyNameForSearchOpt(metaClass).orElseThrow(
+    /**
+     * Gets name of property contains unique primary key is used as identifier for index object.
+     * Throws exception if primary key can't be resolved.
+     * @param metaClass entity meta class
+     * @return property name
+     */
+    public String getPrimaryKeyPropertyNameForIndex(MetaClass metaClass) {
+        return getPrimaryKeyPropertyNameForIndexOpt(metaClass).orElseThrow(
                 () -> new RuntimeException("Proper primary key property not found for entity " + metaClass.getName())
         );
     }
 
-    public Optional<String> getPrimaryKeyPropertyNameForSearchOpt(MetaClass metaClass) {
+    /**
+     * Gets optional name of property contains unique primary key is used as identifier for index object.
+     * @param metaClass entity meta class
+     * @return Optional property name
+     */
+    public Optional<String> getPrimaryKeyPropertyNameForIndexOpt(MetaClass metaClass) {
         String primaryKeyPropertyName;
         if (metadataTools.hasCompositePrimaryKey(metaClass) && metadataTools.hasUuid(metaClass)) {
             primaryKeyPropertyName = metadataTools.getUuidPropertyName(metaClass.getJavaClass());
@@ -77,27 +102,39 @@ public class PropertyTools {
         return Optional.ofNullable(primaryKeyPropertyName);
     }
 
-    private Map<String, MetaPropertyPath> findPropertiesByWildcardPath(MetaClass metaClass, String path) {
-        if(StringUtils.isBlank(path)) {
+    /**
+     * Extracts index primary key value from entity instance
+     * @param instance entity instance
+     * @return primary key value
+     */
+    public Optional<String> getPrimaryKeyForIndexOpt(Object instance) {
+        MetaClass metaClass = metadata.getClass(instance);
+        return getPrimaryKeyPropertyNameForIndexOpt(metaClass)
+                .map(pk -> EntityValues.getValue(instance, pk))
+                .map(Object::toString);
+    }
+
+    protected Map<String, MetaPropertyPath> findPropertiesByWildcardPath(MetaClass metaClass, String path) {
+        if (StringUtils.isBlank(path)) {
             return Collections.emptyMap();
         }
         String[] pathItems = path.split("\\.");
-        return findByPath(metaClass, pathItems, new MetaPropertyPath(metaClass));
+        return findPropertiesByPathItems(metaClass, pathItems, new MetaPropertyPath(metaClass));
     }
 
-    private Map<String, MetaPropertyPath> findByPath(MetaClass metaClass, String[] pathItems, MetaPropertyPath parentPath) {
-        log.info("[IVGA] Find by path: Class={}, PathItems={}, parentPath={}", metaClass, Arrays.deepToString(pathItems), parentPath);
-        if(pathItems.length == 0) {
+    protected Map<String, MetaPropertyPath> findPropertiesByPathItems(MetaClass metaClass, String[] pathItems, MetaPropertyPath parentPath) {
+        log.debug("Find properties by path items: entity={}, PathItems={}, parentPath={}", metaClass, Arrays.deepToString(pathItems), parentPath);
+        if (pathItems.length == 0) {
             return Collections.emptyMap();
         }
 
         Map<String, MetaPropertyPath> result;
 
         String pathItem = pathItems[0];
-        log.info("[IVGA] Path Item = {}", pathItem);
-        if(pathItems.length == 1) {
-            log.info("[IVGA] '{}' is the last level of path", pathItem);
-            if(hasWildcard(pathItem)) {
+        log.debug("Path Item = {}", pathItem);
+        if (pathItems.length == 1) {
+            log.debug("'{}' is the last level of path", pathItem);
+            if (hasWildcard(pathItem)) {
                 Pattern pattern = Pattern.compile(pathItem.replace("*", ".*")); //todo exclude inverse properties
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = localPropertiesByPattern.stream()
@@ -106,7 +143,7 @@ public class PropertyTools {
                         .collect(Collectors.toMap(MetaPropertyPath::toPathString, Function.identity()));
             } else {
                 MetaProperty property = metaClass.findProperty(pathItem);
-                if(property != null && isSearchableProperty(property)) {
+                if (property != null && isSearchableProperty(property)) {
                     result = new HashMap<>();
                     MetaPropertyPath newPath = createPropertyPath(parentPath, property);
                     result.put(newPath.toPathString(), newPath);
@@ -115,24 +152,24 @@ public class PropertyTools {
                 }
             }
         } else {
-            if(hasWildcard(pathItem)) {
+            if (hasWildcard(pathItem)) {
                 Pattern pattern = Pattern.compile(pathItem.replace("*", ".*"));
                 List<MetaProperty> localPropertiesByPattern = findLocalPropertiesByPattern(metaClass, pattern);
                 result = new HashMap<>();
-                for(MetaProperty property : localPropertiesByPattern) {
-                    if(isReferenceProperty(property)) {
+                for (MetaProperty property : localPropertiesByPattern) {
+                    if (isReferenceProperty(property)) {
                         MetaClass nextMetaClass = property.getRange().asClass();
                         MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
-                        result.putAll(findByPath(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath));
+                        result.putAll(findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath));
                     }
                 }
 
             } else {
                 MetaProperty property = metaClass.findProperty(pathItem);
-                if(property != null && isReferenceProperty(property)) {
+                if (property != null && isReferenceProperty(property)) {
                     MetaClass nextMetaClass = property.getRange().asClass();
                     MetaPropertyPath nextPath = createPropertyPath(parentPath, property);
-                    result = findByPath(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath);
+                    result = findPropertiesByPathItems(nextMetaClass, Arrays.copyOfRange(pathItems, 1, pathItems.length), nextPath);
                 } else {
                     result = Collections.emptyMap();
                 }
@@ -141,11 +178,11 @@ public class PropertyTools {
         return result;
     }
 
-    private MetaPropertyPath createPropertyPath(MetaPropertyPath parentPath, MetaProperty property) {
+    protected MetaPropertyPath createPropertyPath(MetaPropertyPath parentPath, MetaProperty property) {
         return new MetaPropertyPath(parentPath, property);
     }
 
-    private List<MetaProperty> findLocalPropertiesByPattern(MetaClass metaClass, Pattern pattern) {
+    protected List<MetaProperty> findLocalPropertiesByPattern(MetaClass metaClass, Pattern pattern) {
         Collection<MetaProperty> allLocalProperties = metaClass.getProperties();
         return allLocalProperties.stream()
                 .filter((property) -> pattern.matcher(property.getName()).matches())

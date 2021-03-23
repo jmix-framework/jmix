@@ -18,7 +18,8 @@ package io.jmix.searchui.screen.result;
 
 import io.jmix.core.Messages;
 import io.jmix.core.common.util.ParamsMap;
-import io.jmix.search.SearchService;
+import io.jmix.search.searching.EntitySearcher;
+import io.jmix.search.searching.impl.SearchResult;
 import io.jmix.searchui.SearchLauncher;
 import io.jmix.ui.Notifications;
 import io.jmix.ui.ScreenBuilders;
@@ -40,7 +41,7 @@ public class SearchLauncherImpl implements SearchLauncher {
     @Autowired
     protected Messages messages;
     @Autowired
-    protected SearchService searchService;
+    protected EntitySearcher entitySearcher;
     @Autowired
     protected ScreenBuilders screenBuilders;
 
@@ -57,7 +58,7 @@ public class SearchLauncherImpl implements SearchLauncher {
         } else {
             String preparedSearchTerm = searchTerm.trim();
 
-            SearchService.SearchResult searchResult = searchService.search(preparedSearchTerm);
+            SearchResult searchResult = entitySearcher.search(preparedSearchTerm);
 
             if (searchResult.isEmpty()) {
                 Notifications notifications = screenContext.getNotifications();

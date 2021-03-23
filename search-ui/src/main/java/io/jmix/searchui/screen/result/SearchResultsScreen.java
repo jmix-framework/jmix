@@ -21,8 +21,9 @@ import io.jmix.core.*;
 import io.jmix.core.common.datastruct.Pair;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.search.SearchProperties;
-import io.jmix.search.SearchService;
-import io.jmix.search.SearchService.SearchResult;
+import io.jmix.search.searching.impl.SearchResult;
+import io.jmix.search.searching.impl.FieldHit;
+import io.jmix.search.searching.impl.SearchResultEntry;
 import io.jmix.search.utils.PropertyTools;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.ScreenBuilders;
@@ -219,14 +220,14 @@ public class SearchResultsScreen extends Screen {
     }
 
     protected void displayInstances(SearchResult searchResult, String entityName, CssLayout instancesLayout) {
-        Set<SearchService.SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
+        Set<SearchResultEntry> entries = searchResult.getEntriesByEntityName(entityName);
 
-        for (SearchService.SearchResultEntry entry : entries) {
+        for (SearchResultEntry entry : entries) {
             Button instanceBtn = createInstanceButton(entityName, entry);
             instancesLayout.add(instanceBtn);
 
             List<String> list = new ArrayList<>(entry.getFieldHits().size());
-            for (SearchService.FieldHit fieldHit : entry.getFieldHits()) {
+            for (FieldHit fieldHit : entry.getFieldHits()) {
                 list.add(fieldHit.getFieldName() + " : " + fieldHit.getHighlights());
             }
             Collections.sort(list);
@@ -238,7 +239,7 @@ public class SearchResultsScreen extends Screen {
         }
     }
 
-    protected Button createInstanceButton(String entityName, SearchService.SearchResultEntry entry) {
+    protected Button createInstanceButton(String entityName, SearchResultEntry entry) {
         LinkButton instanceBtn = uiComponents.create(LinkButton.class);
         instanceBtn.setStyleName("fts-found-instance");
         instanceBtn.setAlignment(MIDDLE_LEFT);
@@ -262,7 +263,7 @@ public class SearchResultsScreen extends Screen {
         return hitLabel;
     }
 
-    protected void onInstanceClick(String entityName, SearchService.SearchResultEntry entry) {
+    protected void onInstanceClick(String entityName, SearchResultEntry entry) {
         Screen appWindow = Optional.ofNullable(AppUI.getCurrent())
                 .map(AppUI::getTopLevelWindow)
                 .map(Window::getFrameOwner)
@@ -283,7 +284,7 @@ public class SearchResultsScreen extends Screen {
         }
     }
 
-    protected void openEntityWindow(SearchService.SearchResultEntry entry, String entityName, OpenMode openMode, FrameOwner origin) {
+    protected void openEntityWindow(SearchResultEntry entry, String entityName, OpenMode openMode, FrameOwner origin) {
         MetaClass metaClass = metadata.getSession().getClass(entityName);
         Object entity = reloadEntity(metaClass, entry.getDocId());
         screenBuilders.editor(metaClass.getJavaClass(), origin)
@@ -293,7 +294,7 @@ public class SearchResultsScreen extends Screen {
     }
 
     protected Object reloadEntity(MetaClass metaClass, Object entityId) {
-        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyProperty = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         return dataManager
                 .load(metaClass.getJavaClass())
                 .query(String.format("select e from %s e where e.%s in :id", metaClass.getName(), primaryKeyProperty))

@@ -50,30 +50,51 @@ public class SearchProperties {
         this.autoMapIndexFileContent = autoMapIndexFileContent;
     }
 
+    /**
+     * @return max amount of documents returned by single search request to Elasticsearch
+     */
     public int getEsSearchSize() {
         return esSearchSize;
     }
 
+    /**
+     * @return max amount of result pages
+     */
     public int getMaxSearchPageCount() {
         return maxSearchPageCount;
     }
 
+    /**
+     * @return batch size for post-search entity processing
+     */
     public int getSearchReloadEntitiesBatchSize() {
         return searchReloadEntitiesBatchSize;
     }
 
+    /**
+     * @return amount of queue items processed in single batch
+     */
     public int getProcessQueueBatchSize() {
         return processQueueBatchSize;
     }
 
+    /**
+     * @return max amount of items can be processed during single execution
+     */
     public int getMaxProcessedQueueItemsPerExecution() {
         return maxProcessedQueueItemsPerExecution;
     }
 
+    /**
+     * @return amount of entity instances enqueued in single batch during entity reindex process
+     */
     public int getReindexEntityEnqueueBatchSize() {
         return reindexEntityEnqueueBatchSize;
     }
 
+    /**
+     * @return is file content indexed using Auto Map strategy
+     */
     public boolean isAutoMapIndexFileContent() {
         return autoMapIndexFileContent;
     }

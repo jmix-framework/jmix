@@ -21,11 +21,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation to mark index definition interfaces.<br/>
+ * Methods in such interfaces can be annotated via field-mapping annotations to map some entity properties to index fields.
+ * //todo add info about manual implementation
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JmixEntitySearchIndex {
 
+    /**
+     * Provides custom name of index.<br/>
+     * Index name will be generated if it isn't explicitly specified
+     *
+     * @return name of index
+     */
     String indexName() default "";
 
+    /**
+     * Provides entity that should be indexed using this index definition interface.<br/>
+     * All properties defined in further field-mapping annotation related to this entity.
+     *
+     * @return entity class
+     */
     Class<?> entity();
 }

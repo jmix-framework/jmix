@@ -16,7 +16,9 @@
 
 package io.jmix.search.listener;
 
-import io.jmix.core.*;
+import io.jmix.core.DataManager;
+import io.jmix.core.Id;
+import io.jmix.core.Metadata;
 import io.jmix.core.entity.EntityValues;
 import io.jmix.core.event.AttributeChanges;
 import io.jmix.core.event.EntityChangedEvent;
@@ -25,9 +27,9 @@ import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.core.security.EntityOp;
 import io.jmix.data.StoreAwareLocator;
-import io.jmix.search.index.mapping.AnnotatedIndexDefinitionsProvider;
-import io.jmix.search.index.queue.QueueItem;
+import io.jmix.search.index.mapping.IndexConfigurationProvider;
 import io.jmix.search.index.queue.QueueService;
+import io.jmix.search.index.queue.entity.QueueItem;
 import io.jmix.search.utils.PropertyTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class EntityTrackingListener {
     @Autowired
     protected Metadata metadata;
     @Autowired
-    protected AnnotatedIndexDefinitionsProvider indexDefinitionsProvider;
+    protected IndexConfigurationProvider indexDefinitionsProvider;
     @Autowired
     protected DataManager dataManager;
     @Autowired
@@ -67,7 +69,7 @@ public class EntityTrackingListener {
                 log.trace("Process event: {}", event);
                 processEvent(event);
             }
-        } catch(Exception e){
+        } catch (Exception e) {
             log.error("Failed to process event {}", event, e);
         }
     }
@@ -78,21 +80,21 @@ public class EntityTrackingListener {
         MetaClass metaClass = metadata.getClass(entityClass);
         EntityOp entityOperation = resolveEntityOperation(event);
         String entityName = metaClass.getName();
-        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
 
         Object entity = null;
-        if(isTrackedEntityReloadingRequired(event.getType(), entityName)) {
+        if (isTrackedEntityReloadingRequired(event.getType(), entityName)) {
             entity = dataManager.load(entityId)
                     .fetchPlanProperties(primaryKeyPropertyName)
-                    .softDeletion(false)
+                    //.softDeletion(false)
                     .one();
         }
 
-        if (indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
+        if (entity != null && indexDefinitionsProvider.isDirectlyIndexed(entityName)) { //todo check dirty fields
             log.debug("{} is directly indexed", entityId);
-            Optional<String> primaryKey = getPrimaryKey(metaClass, entity);
-            log.debug("Primary Key of tracked entity: {}", primaryKey);
-            primaryKey.ifPresent(pk -> queueService.enqueue(metaClass, pk, entityOperation));
+
+            queueService.enqueue(entity, entityOperation);
+            //primaryKey.ifPresent(pk -> queueService.enqueue(entity, entityOperation));
         }
 
         Map<MetaClass, Set<String>> dependentEntityPks;
@@ -136,14 +138,14 @@ public class EntityTrackingListener {
         log.debug("Load dependent entity pks for entity {}: {}", entity, dependencyMetaData);
 
         Map<MetaClass, Set<String>> result = new HashMap<>();
-        for(Map.Entry<MetaClass, Set<MetaPropertyPath>> entry : dependencyMetaData.entrySet()) {
+        for (Map.Entry<MetaClass, Set<MetaPropertyPath>> entry : dependencyMetaData.entrySet()) {
             Set<MetaPropertyPath> properties = entry.getValue();
-            if(properties.isEmpty()) {
+            if (properties.isEmpty()) {
                 continue;
             }
             Set<String> entityPks = new HashSet<>();
             String entityName = entry.getKey().getName();
-            for(MetaPropertyPath propertyPath : properties) {
+            for (MetaPropertyPath propertyPath : properties) {
                 log.debug("Load entities '{}' dependent via property '{}'", entityName, propertyPath);
                 MetaProperty[] metaProperties = propertyPath.getMetaProperties();
                 int currentEntityIndex = 1;
@@ -155,10 +157,10 @@ public class EntityTrackingListener {
                         .append(entityName)
                         .append(' ')
                         .append(currentEntityAlias);
-                for(int i = 0; i < metaProperties.length; i++) {
+                for (int i = 0; i < metaProperties.length; i++) {
                     MetaProperty property = metaProperties[i];
                     currentPropertyPathSb.append('.').append(property.getName());
-                    if(i == metaProperties.length - 1) {
+                    if (i == metaProperties.length - 1) {
                         querySb.append(" where ").append(currentPropertyPathSb).append(" = :ref");
                     } else {
                         boolean oneToMany = property.getAnnotatedElement().isAnnotationPresent(OneToMany.class);
@@ -175,7 +177,7 @@ public class EntityTrackingListener {
                 log.debug("Query String: {}", queryString);
 
                 MetaClass metaClass = entry.getKey();
-                String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+                String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
                 List<String> refObjectPks = dataManager.load(metaClass.getJavaClass())
                         .query(queryString)
                         .parameter("ref", entity)
@@ -209,7 +211,7 @@ public class EntityTrackingListener {
     }
 
     protected Optional<String> getPrimaryKey(MetaClass metaClass, Object entity) {
-        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForSearch(metaClass);
+        String primaryKeyPropertyName = propertyTools.getPrimaryKeyPropertyNameForIndex(metaClass);
         return Optional.ofNullable(EntityValues.getValue(entity, primaryKeyPropertyName)).map(Object::toString);
     }
 

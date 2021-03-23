@@ -19,17 +19,20 @@ package io.jmix.search.index.mapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
+import io.jmix.search.index.mapping.strategy.FieldConfiguration;
+import io.jmix.search.index.mapping.strategy.ValueMapper;
 
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Contains details of single mapped field.
+ */
 public class MappingFieldDescriptor {
 
     protected String entityPropertyFullName; //TODO exclude this (have metaPropertyPath)?
 
     protected String indexPropertyFullName;
-
-    //protected MetaClass rootEntityMetaClass;
 
     protected MetaPropertyPath metaPropertyPath;
 
@@ -46,26 +49,45 @@ public class MappingFieldDescriptor {
     //todo runtime parameters
 
 
+    /**
+     * Gets full property name in metamodel.
+     *
+     * @return property name
+     */
     public String getEntityPropertyFullName() {
         return entityPropertyFullName;
     }
 
+    /**
+     * Gets full name of field in index.
+     *
+     * @return index field name
+     */
     public String getIndexPropertyFullName() {
         return indexPropertyFullName;
     }
 
-    /*public MetaClass getRootEntityMetaClass() {
-        return rootEntityMetaClass;
-    }*/
-
+    /**
+     * Gets metamodel property.
+     *
+     * @return {@link MetaPropertyPath}
+     */
     public MetaPropertyPath getMetaPropertyPath() {
         return metaPropertyPath;
     }
 
+    /**
+     * Gets meta class of metamodel property.
+     *
+     * @return {@link MetaClass}
+     */
     public MetaClass getPropertyMetaClass() {
         return metaPropertyPath.getMetaClass();
     }
 
+    /**
+     * @return true if this field doesn't have metamodel property and exists within index only, false otherwise
+     */
     public boolean isStandalone() {
         return standalone;
     }
@@ -79,10 +101,6 @@ public class MappingFieldDescriptor {
         this.indexPropertyFullName = indexPropertyFullName;
     }
 
-    /*public void setRootEntityMetaClass(MetaClass rootEntityMetaClass) {
-        this.rootEntityMetaClass = rootEntityMetaClass;
-    }*/
-
     public void setMetaPropertyPath(MetaPropertyPath metaPropertyPath) {
         this.metaPropertyPath = metaPropertyPath;
     }
@@ -91,6 +109,11 @@ public class MappingFieldDescriptor {
         this.standalone = standalone;
     }
 
+    /**
+     * Gets field configuration
+     *
+     * @return {@link FieldConfiguration}
+     */
     public FieldConfiguration getFieldConfiguration() {
         return fieldConfiguration;
     }
@@ -99,6 +122,12 @@ public class MappingFieldDescriptor {
         this.fieldConfiguration = fieldConfiguration;
     }
 
+    /**
+     * Gets descriptor order based on mapping strategy it created by.
+     * If several descriptors are related to the same field the one with the latest order will be used.
+     *
+     * @return order
+     */
     public int getOrder() {
         return order;
     }
@@ -107,22 +136,26 @@ public class MappingFieldDescriptor {
         this.order = order;
     }
 
+    /**
+     * Extracts value from entity instance
+     *
+     * @param entity instance
+     * @return value as json
+     */
     public JsonNode getValue(Object entity) {
         return valueMapper.getValue(entity, metaPropertyPath, Collections.emptyMap() /* runtime parameters */);
     }
-
-    /*public ValueMapper getValueMapper() {
-        return valueMapper;
-    }*/
 
     public void setValueMapper(ValueMapper valueMapper) {
         this.valueMapper = valueMapper;
     }
 
-    public ValueMapper getValueMapper() {
-        return valueMapper;
-    }
-
+    /**
+     * Gets all properties that used in instance name value.
+     * Makes sence only if current {@link MappingFieldDescriptor} relates to reference property
+     *
+     * @return list of {@link MetaPropertyPath}
+     */
     public List<MetaPropertyPath> getInstanceNameRelatedProperties() {
         return instanceNameRelatedProperties;
     }

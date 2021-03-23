@@ -18,13 +18,28 @@ package io.jmix.search.index.annotation;
 
 import java.lang.annotation.*;
 
+//TODO Not supported yet
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(ScaledNumberField.Container.class)
 public @interface ScaledNumberField {
 
+    /**
+     * Provides entity properties should be covered by this annotation.<br/>
+     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
+     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     *
+     * @return properties should be processed
+     */
     String[] includeProperty() default "";
 
+    /**
+     * Provides entity properties should NOT be covered by this annotation.<br/>
+     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
+     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     *
+     * @return properties should not be processed
+     */
     String[] excludeProperty() default "";
 
     int scale() default 0;

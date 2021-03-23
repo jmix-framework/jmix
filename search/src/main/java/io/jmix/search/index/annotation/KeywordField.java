@@ -18,14 +18,42 @@ package io.jmix.search.index.annotation;
 
 import java.lang.annotation.*;
 
+//TODO Not supported yet
+
+/**
+ * One of the field-mapping annotation. Should be set on methods in index definition interfaces.<br/>
+ * Covers textual properties only.
+ * Textual content of such properties will be normalized and stored as a single-term keyword during indexing.
+ */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(KeywordField.Container.class)
 public @interface KeywordField {
 
+    /**
+     * Provides entity properties should be covered by this annotation.<br/>
+     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
+     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     *
+     * @return properties should be processed
+     */
     String[] includeProperty() default "";
 
+    /**
+     * Provides entity properties should NOT be covered by this annotation.<br/>
+     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
+     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     *
+     * @return properties should not be processed
+     */
     String[] excludeProperty() default "";
+
+    /**
+     * Provides normalizer that will be applied to all keyword fields covered by this annotation.
+     *
+     * @return name of normalizer
+     */
+    String normalizer() default "";
 
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)

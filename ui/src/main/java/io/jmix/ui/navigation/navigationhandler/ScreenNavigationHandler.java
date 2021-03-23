@@ -278,14 +278,8 @@ public class ScreenNavigationHandler implements NavigationHandler {
                     "Subscribe for 'UrlParamsChangedEvent' to obtain its serialized id", windowInfo.getId());
         }
 
-        Screen editor;
         OpenMode openMode = getScreenOpenMode(requestedState.getNestedRoute(), screenRoute, ui);
-
-        if (isLegacyScreen(windowInfo.getControllerClass())) {
-            editor = ui.getScreens().create(windowInfo.getId(), openMode, new MapScreenOptions(options));
-        } else {
-            editor = ui.getScreens().create(windowInfo.getId(), openMode);
-        }
+        Screen editor = doCreateEditor(windowInfo, ui, openMode, options);
 
         if (MapUtils.isNotEmpty(options)) {
             Object entity = options.get("item");
@@ -294,6 +288,10 @@ public class ScreenNavigationHandler implements NavigationHandler {
         }
 
         return editor;
+    }
+
+    protected Screen doCreateEditor(WindowInfo windowInfo, AppUI ui, OpenMode openMode, Map<String, Object> options) {
+        return ui.getScreens().create(windowInfo.getId(), openMode);
     }
 
     protected OpenMode getScreenOpenMode(String requestedRoute, String screenRoute, AppUI ui) {
@@ -363,11 +361,5 @@ public class ScreenNavigationHandler implements NavigationHandler {
 
     protected boolean isEditor(WindowInfo windowInfo) {
         return EditorScreen.class.isAssignableFrom(windowInfo.getControllerClass());
-    }
-
-    protected boolean isLegacyScreen(Class<? extends FrameOwner> controllerClass) {
-        return false;
-        // TODO: legacy-ui
-        // return LegacyFrame.class.isAssignableFrom(controllerClass);
     }
 }

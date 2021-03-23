@@ -17,10 +17,7 @@
 package io.jmix.securityui.screen.resourcerole;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.security.model.*;
 import io.jmix.security.role.ResourceRoleRepository;
 import io.jmix.securitydata.entity.ResourcePolicyEntity;
@@ -30,6 +27,7 @@ import io.jmix.securityui.model.ResourcePolicyModel;
 import io.jmix.securityui.model.ResourceRoleModel;
 import io.jmix.securityui.model.RoleModelConverter;
 import io.jmix.securityui.screen.resourcepolicy.*;
+import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.ScreenBuilders;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.list.AddAction;
@@ -123,6 +121,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
     @Autowired
     private ScreenBuilders screenBuilders;
 
+    private Set<UUID> forRemove;
+
     private boolean resourcePoliciesTableExpanded = true;
 
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
@@ -178,6 +178,8 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
                 throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
             }
         });
+
+        forRemove = new HashSet<>();
     }
 
     @Subscribe
@@ -326,6 +328,16 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
         }
     }
 
+    @Install(to = "resourcePoliciesTable.remove", subject = "afterActionPerformedHandler")
+    private void resourcePoliciesTableRemoveAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<ResourcePolicyModel> event) {
+        List<ResourcePolicyModel> policyModels = event.getItems();
+        Set<UUID> databaseIds = policyModels.stream()
+                .map(resourcePolicyModel -> resourcePolicyModel.getCustomProperties().get("databaseId"))
+                .map(UUID::fromString)
+                .collect(Collectors.toSet());
+        forRemove.addAll(databaseIds);
+    }
+
     private void saveRoleEntityToDatabase(Collection<Object> modifiedInstances) {
         ResourceRoleModel roleModel = getEditedEntity();
         String roleDatabaseId = roleModel.getCustomProperties().get("databaseId");
@@ -370,6 +382,10 @@ public class ResourceRoleModelEdit extends StandardEditor<ResourceRoleModel> {
             policyEntity.setAction(policyModel.getAction());
             policyEntity.setEffect(policyModel.getEffect());
             policyEntity.setPolicyGroup(policyModel.getPolicyGroup());
+        }
+
+        for (UUID databaseId : forRemove) {
+            dataManager.remove(Id.of(databaseId, ResourcePolicyEntity.class));
         }
 
         Set<String> childRoles = childRolesDc.getItems().stream()

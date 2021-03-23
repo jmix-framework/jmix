@@ -17,10 +17,7 @@
 package io.jmix.securityui.screen.rowlevelrole;
 
 import com.google.common.base.Strings;
-import io.jmix.core.DataManager;
-import io.jmix.core.LoadContext;
-import io.jmix.core.Messages;
-import io.jmix.core.Metadata;
+import io.jmix.core.*;
 import io.jmix.security.model.RoleSource;
 import io.jmix.security.model.RowLevelPolicyAction;
 import io.jmix.security.model.RowLevelPolicyType;
@@ -29,6 +26,7 @@ import io.jmix.security.role.RowLevelRoleRepository;
 import io.jmix.securitydata.entity.RowLevelPolicyEntity;
 import io.jmix.securitydata.entity.RowLevelRoleEntity;
 import io.jmix.securityui.model.*;
+import io.jmix.ui.RemoveOperation;
 import io.jmix.ui.action.list.*;
 import io.jmix.ui.component.GroupTable;
 import io.jmix.ui.component.TextField;
@@ -108,6 +106,8 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
 
     private boolean openedByCreateAction;
 
+    private Set<UUID> forRemove;
+
     public void setOpenedByCreateAction(boolean openedByCreateAction) {
         this.openedByCreateAction = openedByCreateAction;
     }
@@ -160,6 +160,8 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
                 throw new ValidationException(messages.getMessage("io.jmix.securityui.screen.role/RoleModelEdit.uniqueCode"));
             }
         });
+
+        forRemove = new HashSet<>();
     }
 
     @Install(to = "rowLevelPoliciesTable.create", subject = "initializer")
@@ -190,6 +192,16 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
         if (!isDatabaseSource) {
             rowLevelPoliciesTable.setItemClickAction(rowLevelPoliciesTableView);
         }
+    }
+
+    @Install(to = "rowLevelPoliciesTable.remove", subject = "afterActionPerformedHandler")
+    private void rowLevelPoliciesTableRemoveAfterActionPerformedHandler(RemoveOperation.AfterActionPerformedEvent<RowLevelPolicyModel> event) {
+        List<RowLevelPolicyModel> policyModels = event.getItems();
+        Set<UUID> databaseIds = policyModels.stream()
+                .map(resourcePolicyModel -> resourcePolicyModel.getCustomProperties().get("databaseId"))
+                .map(UUID::fromString)
+                .collect(Collectors.toSet());
+        forRemove.addAll(databaseIds);
     }
 
     private void saveRoleEntityToDatabase(Collection<Object> modifiedInstances) {
@@ -239,6 +251,10 @@ public class RowLevelRoleModelEdit extends StandardEditor<RowLevelRoleModel> {
             policyEntity.setWhereClause(policyModel.getWhereClause());
             policyEntity.setJoinClause(policyModel.getJoinClause());
             policyEntity.setScript(policyModel.getScript());
+        }
+
+        for (UUID databaseId : forRemove) {
+            dataManager.remove(Id.of(databaseId, RowLevelPolicyEntity.class));
         }
 
         Set<String> childRoles = childRolesDc.getItems().stream()

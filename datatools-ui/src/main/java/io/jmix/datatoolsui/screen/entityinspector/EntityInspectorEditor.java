@@ -289,7 +289,6 @@ public class EntityInspectorEditor extends StandardEditor {
         AddAction addAction = createAddAction(table, metaProperty);
         addButton.setAction(addAction);
         table.addAction(addAction);
-        addButton.setIcon(icons.get(JmixIcon.ADD_ACTION));
         return addButton;
     }
 
@@ -313,7 +312,6 @@ public class EntityInspectorEditor extends StandardEditor {
         CreateAction createAction = createCreateAction(table, metaProperty);
         createButton.setAction(createAction);
         table.addAction(createAction);
-        createButton.setIcon(icons.get(JmixIcon.CREATE_ACTION));
         return createButton;
     }
 
@@ -350,7 +348,6 @@ public class EntityInspectorEditor extends StandardEditor {
         EditAction editAction = createEditAction(table, metaProperty);
         editButton.setAction(editAction);
         table.addAction(editAction);
-        editButton.setIcon(icons.get(JmixIcon.EDIT_ACTION));
         return editButton;
     }
 
@@ -379,8 +376,6 @@ public class EntityInspectorEditor extends StandardEditor {
         Action removeAction = createRemoveAction(table, metaProperty);
         removeButton.setAction(removeAction);
         table.addAction(removeAction);
-        removeButton.setIcon(icons.get(JmixIcon.REMOVE_ACTION));
-        removeButton.setCaption(messages.getMessage("remove"));
         return removeButton;
     }
 

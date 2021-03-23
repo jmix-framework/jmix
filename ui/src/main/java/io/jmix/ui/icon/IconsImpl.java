@@ -20,9 +20,9 @@ import com.google.common.base.Splitter;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import io.jmix.core.JmixModules;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.common.util.ReflectionHelper;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.theme.ThemeConstantsManager;
 import org.apache.commons.lang3.StringUtils;
@@ -48,7 +48,7 @@ public class IconsImpl implements Icons {
     protected ThemeConstantsManager themeConstantsManager;
 
     @Autowired
-    protected UiProperties uiProperties;
+    protected JmixModules modules;
 
     protected LoadingCache<String, String> iconsCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<String, String>() {
@@ -63,7 +63,8 @@ public class IconsImpl implements Icons {
     @EventListener(ContextRefreshedEvent.class)
     @Order(JmixOrder.HIGHEST_PRECEDENCE + 100)
     public void init() {
-        String iconSetsProp = uiProperties.getIconsConfig();
+        String iconSetsProp = String.join(" ", modules.getPropertyValues("jmix.ui.iconsConfig"));
+
         if (StringUtils.isEmpty(iconSetsProp)) {
             return;
         }

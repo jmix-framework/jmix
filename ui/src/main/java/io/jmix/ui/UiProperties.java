@@ -77,7 +77,6 @@ public class UiProperties {
     boolean forceRefreshAuthenticatedTabs;
     boolean allowAnonymousAccess;
     boolean htmlSanitizerEnabled;
-    String iconsConfig;
     private boolean compositeMenu;
     List<String> viewFileExtensions;
     int saveExportedByteArrayDataThresholdBytes;
@@ -138,7 +137,6 @@ public class UiProperties {
             @DefaultValue("false") boolean forceRefreshAuthenticatedTabs,
             @DefaultValue("false") boolean allowAnonymousAccess,
             @DefaultValue("true") boolean htmlSanitizerEnabled,
-            @DefaultValue("io.jmix.ui.icon.JmixIcon") String iconsConfig,
             @DefaultValue("true") boolean compositeMenu,
             @DefaultValue({"htm", "html", "jpg", "png", "jpeg", "pdf"}) List<String> viewFileExtensions,
             @DefaultValue("102400") int saveExportedByteArrayDataThresholdBytes,
@@ -197,7 +195,6 @@ public class UiProperties {
         this.forceRefreshAuthenticatedTabs = forceRefreshAuthenticatedTabs;
         this.allowAnonymousAccess = allowAnonymousAccess;
         this.htmlSanitizerEnabled = htmlSanitizerEnabled;
-        this.iconsConfig = iconsConfig;
         this.compositeMenu = compositeMenu;
         this.viewFileExtensions = viewFileExtensions;
         this.saveExportedByteArrayDataThresholdBytes = saveExportedByteArrayDataThresholdBytes;
@@ -445,10 +442,6 @@ public class UiProperties {
      */
     public boolean isHtmlSanitizerEnabled() {
         return htmlSanitizerEnabled;
-    }
-
-    public String getIconsConfig() {
-        return iconsConfig;
     }
 
     public boolean isCompositeMenu() {

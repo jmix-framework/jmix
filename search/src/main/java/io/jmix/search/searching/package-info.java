@@ -14,21 +14,7 @@
  * limitations under the License.
  */
 
+@NonNullApi
 package io.jmix.search.searching;
 
-import io.jmix.search.searching.impl.SearchResult;
-
-/**
- * Provides functionality for searching entities in index.
- */
-public interface EntitySearcher {
-
-    String NAME = "search_EntitySearcher";
-
-    /**
-     * Performs search in all search indices with provided term.
-     * @param searchTerm term to search in indices
-     * @return {@link SearchResult} with found objects
-     */
-    SearchResult search(String searchTerm);
-}
+import org.springframework.lang.NonNullApi;

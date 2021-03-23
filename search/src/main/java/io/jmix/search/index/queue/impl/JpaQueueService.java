@@ -84,8 +84,6 @@ public class JpaQueueService implements QueueService {
                 pks.add(primaryKeyOpt.get());
             }
         });
-
-        log.info("[IVGA] Grouped entities: {}", groupedEntities);
         groupedEntities.forEach((metaClass, pks) -> enqueue(metaClass, pks, operation));
     }
 

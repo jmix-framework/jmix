@@ -37,13 +37,13 @@ public class JobManager {
     // (e.g. keep timestamps of last queuing and last start of processing queue to detect necessity of request to database)
     @Scheduled(fixedDelay = 5000L)
     public void scheduleQueueTrackingJob() {
-        log.trace("[IVGA] Process Queue");
+        log.trace("Process Queue");
         indexProcessManager.processQueue();
     }
 
     @Scheduled(fixedDelay = 1000L)
     public void scheduleReindexJob() {
-        log.trace("[IVGA] Check reindex entities");
+        log.trace("Check reindex entities");
         indexProcessManager.processNextReindexingEntity();
     }
 }

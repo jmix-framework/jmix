@@ -222,7 +222,7 @@ public class EntityIndexerImpl implements EntityIndexer {
     }
 
     //todo move to tools?
-    public void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
+    private void merge(JsonNode toBeMerged, JsonNode mergedInTo) {
         log.trace("Merge object {} into {}", toBeMerged, mergedInTo);
         Iterator<Map.Entry<String, JsonNode>> incomingFieldsIterator = toBeMerged.fields();
         Iterator<Map.Entry<String, JsonNode>> mergedIterator;

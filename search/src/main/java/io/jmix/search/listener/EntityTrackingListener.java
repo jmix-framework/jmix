@@ -95,7 +95,6 @@ public class EntityTrackingListener {
             log.debug("{} is directly indexed", entityId);
 
             queueService.enqueue(entity, entityOperation);
-            //primaryKey.ifPresent(pk -> queueService.enqueue(entity, entityOperation));
         }
 
         Map<MetaClass, Set<String>> dependentEntityPks;

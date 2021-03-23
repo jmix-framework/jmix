@@ -29,14 +29,6 @@
                     <button id="reindexAllButton" action="reindexAllAction" caption="Reindex All"/>
                 </buttonsPanel>
             </groupBox>
-            <!--<hbox id="searchInputBox" spacing="true">
-                <textField id="searchInput"/>
-                <button id="searchButton" action="performSearchAction" icon="SEARCH"/>
-            </hbox>
-            <scrollBox id="contentBox"/>
-            <hbox width="100%" >
-                <hbox id="navigationBox" align="MIDDLE_CENTER"/>
-            </hbox>-->
             <search:searchField id="searchField"/>
         </vbox>
     </layout>

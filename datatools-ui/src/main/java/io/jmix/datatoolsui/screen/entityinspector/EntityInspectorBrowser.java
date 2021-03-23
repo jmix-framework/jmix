@@ -480,6 +480,8 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                                     int restored = entityRestore.restoreEntities(entityList);
                                     entitiesDl.load();
                                     entitiesTable.focus();
+                                    entitiesTable.setSelected(Collections.EMPTY_LIST);
+                                    entitiesTable.setSelected(entityList);
                                     notifications.create(Notifications.NotificationType.TRAY)
                                             .withDescription(
                                                     messages.formatMessage(
@@ -489,6 +491,7 @@ public class EntityInspectorBrowser extends StandardLookup<Object> {
                                                     )
                                             )
                                             .show();
+
                                 }),
                                 new DialogAction(DialogAction.Type.CANCEL).withHandler(event -> {
                                     entitiesTable.focus();

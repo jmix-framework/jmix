@@ -43,6 +43,10 @@
     width: $cuba-sidemenu-layout-expanded-width;
     @include cuba-sidemenu-collapsed(false);
 
+    $bg: $cuba-sidemenu-background-color;
+    @include linear-gradient(to left, (darken($bg, valo-gradient-opacity() / 2) 0%, $bg round($v-unit-size/4)), $fallback: $bg);
+    color: valo-font-color($bg, 0.5);
+
     &.collapsed {
       width: $cuba-sidemenu-layout-collapsed-width;
       overflow: hidden;
@@ -91,6 +95,8 @@
     .jmix-drawer-content {
       flex-grow: 1;
       flex-shrink: 1;
+
+      @include halo-drawer-content-style();
     }
 
     .c-user-timezone-label {
@@ -162,6 +168,10 @@
   .#{$button-stylename} {
     @include drawer-footer-button();
 
+    $bg: darken($cuba-sidemenu-title-background-color, 6%);
+
+    background: $bg;
+    color: valo-font-color($bg, 0.40);
     width: $cuba-sidemenu-layout-collapsed-width;
 
     margin-right: auto;
@@ -170,6 +180,10 @@
 
     &::before {
       height: 100%;
+    }
+
+    &:hover {
+      color: valo-font-color($bg, 1);
     }
 
     @if $cuba-sidemenu-layout-collapse-enabled == false {
@@ -192,5 +206,45 @@
     right: 0;
     bottom: 0;
     left: 0;
+  }
+}
+
+@mixin halo-drawer-content-style() {
+  &.c-sidemenu {
+    $bg: $cuba-sidemenu-background-color;
+    color: valo-font-color($bg, 0.5);
+
+    .c-sidemenu-item {
+      font-weight: $cuba-sidemenu-item-font-weight;
+
+      &:hover {
+        color: valo-font-color($bg, 1);
+      }
+    }
+
+    .c-sidemenu-item-header {
+      color: valo-font-color($bg, 0.5);
+
+      @if $cuba-sidemenu-separate-items {
+        border-bottom: valo-border(
+                $color: $bg,
+                $strength: 0.5,
+                $border: first-number($v-border) solid v-tone);
+      } @else {
+        border-bottom: none;
+      }
+    }
+
+    .c-sidemenu-item-focused {
+      color: valo-font-color($bg, 1);
+
+      .v-ch & span.v-icon {
+        color: valo-font-color($bg, 1);
+      }
+    }
+
+    .c-sidemenu-submenu.c-sidemenu-submenu-open {
+      background: $cuba-sidemenu-submenu-background-color;
+    }
   }
 }

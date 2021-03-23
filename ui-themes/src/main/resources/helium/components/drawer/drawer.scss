@@ -16,10 +16,32 @@
 
 @mixin he-drawer($primary-stylename: jmix-drawer) {
   .#{$primary-stylename} {
+    background: var(--app-background-color);
+    color: var(--text-main-color);
 
     .jmix-drawer-header {
       color: var(--sidemenu-title-color);
       background: var(--sidemenu-title-background-color);
+    }
+
+    .jmix-drawer-content.c-sidemenu {
+      color: var(--sidemenu-text-color);
+
+      .c-sidemenu-item {
+        @include he-sidemenu-item-style();
+      }
+
+      .c-sidemenu-item-header {
+        @include he-sidemenu-item-header-style();
+      }
+
+      .c-sidemenu-item-focused {
+        @include he-sidemenu-item-focused-style();
+      }
+
+      .c-sidemenu-submenu.c-sidemenu-submenu-open {
+        background: var(--app-background-color);
+      }
     }
 
     .jmix-drawer-footer {
@@ -33,6 +55,16 @@
                 $hover-background-color   : --sidemenu-collapsible-action-button-hover-background-color,
                 $active-background-color  : --sidemenu-collapsible-action-button-active-background-color
         );
+      }
+
+      .jmix-drawer-collapse-button {
+        @include he-button-color-style($main-color            : --button-default-color,
+                                       $text-color            : --button-default-text-color,
+                                       $hover-color           : --button-default-hover-color,
+                                       $active-color          : --button-default-active-color,
+                                       $disabled-color        : --button-default-disabled-color,
+                                       $disabled-text-color   : --button-default-disabled-text-color,
+                                       $focused-border-color  : --button-default-focused-border-color);
       }
     }
 

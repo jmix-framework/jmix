@@ -16,15 +16,12 @@
 
 package io.jmix.hibernate.impl.listeners;
 
-import io.jmix.core.Entity;
 import io.jmix.hibernate.impl.HibernatePersistenceSupport;
 import org.hibernate.event.spi.EventSource;
 import org.hibernate.event.spi.PostLoadEvent;
 import org.hibernate.event.spi.PostLoadEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static io.jmix.core.entity.EntitySystemAccess.getUncheckedEntityEntry;
 
 @Component("hibernate_PostLoadEventListener")
 public class HibernatePostLoadEventListener implements PostLoadEventListener {
@@ -37,9 +34,6 @@ public class HibernatePostLoadEventListener implements PostLoadEventListener {
     @Override
     public void onPostLoad(PostLoadEvent event) {
         Object entity = event.getEntity();
-        if (entity instanceof Entity) {
-            getUncheckedEntityEntry(entity).setNew(false);
-        }
         EventSource eventSource = event.getSession();
         persistenceSupport.registerInstance(entity, eventSource);
     }

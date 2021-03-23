@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="1" author="dashboards">
+        <!-- DSHBRD_DASHBOARD_GROUP -->
+        <createTable tableName="DSHBRD_DASHBOARD_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="DSHBRD_DASHBOARD_GROUP" indexName="IDX_DASHBOARD_GROUP_UNIQ_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <!-- DSHBRD_DASHBOARD_GROUP -->
+
+        <!-- DSHBRD_PERSISTENT_DASHBOARD -->
+        <createTable tableName="DSHBRD_PERSISTENT_DASHBOARD">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="DASHBOARD_MODEL" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REFERENCE_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_PERSISTENT_DASHBOARD_GROUP" references="DSHBRD_DASHBOARD_GROUP(ID)"/>
+            </column>
+            <column name="IS_AVAILABLE_FOR_ALL_USERS" type="boolean"/>
+        </createTable>
+
+        <createIndex tableName="DSHBRD_PERSISTENT_DASHBOARD" indexName="IDX_PERS_DASHBOARD_UK_REFNAME" unique="true">
+            <column name="REFERENCE_NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+
+        <createIndex tableName="DSHBRD_PERSISTENT_DASHBOARD" indexName="IDX_PERSISTENTDASHBOARD_GROUP">
+            <column name="GROUP_ID"/>
+        </createIndex>
+        <!-- DSHBRD_PERSISTENT_DASHBOARD -->
+
+        <!-- DSHBRD_TEMPLATE_GROUP -->
+        <createTable tableName="DSHBRD_TEMPLATE_GROUP">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="DSHBRD_TEMPLATE_GROUP" indexName="IDX_DASHBOARD_TEMGRO_UK_NAME" unique="true">
+            <column name="NAME"/>
+            <column name="DELETE_TS"/>
+        </createIndex>
+        <!-- DSHBRD_TEMPLATE_GROUP -->
+
+        <!-- DSHBRD_WIDGET_TEMPLATE -->
+        <createTable tableName="DSHBRD_WIDGET_TEMPLATE">
+            <column name="ID" type="${uuid.type}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="VERSION" type="int" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATE_TS" type="datetime"/>
+            <column name="CREATED_BY" type="varchar(50)"/>
+            <column name="UPDATE_TS" type="datetime"/>
+            <column name="UPDATED_BY" type="varchar(50)"/>
+            <column name="DELETE_TS" type="datetime"/>
+            <column name="DELETED_BY" type="varchar(50)"/>
+
+            <column name="NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_AVAILABLE_FOR_ALL_USERS" type="boolean"/>
+            <column name="WIDGET_MODEL" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GROUP_ID" type="${uuid.type}">
+                <constraints foreignKeyName="FK_DASHBOARD_WIDGETEMPL_GROUP" references="DSHBRD_TEMPLATE_GROUP(ID)"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="DSHBRD_WIDGET_TEMPLATE" indexName="IDX_DASHBOARD_WIDGTEMP_GROUP">
+            <column name="GROUP_ID"/>
+        </createIndex>
+        <!-- DSHBRD_WIDGET_TEMPLATE -->
+    </changeSet>
+</databaseChangeLog>

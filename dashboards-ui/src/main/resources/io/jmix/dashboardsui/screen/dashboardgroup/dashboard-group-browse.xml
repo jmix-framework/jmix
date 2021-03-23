@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ Copyright 2021 Haulmont.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<window xmlns="http://jmix.io/schema/ui/window"
+        caption="msg://browseCaption"
+        focusComponent="dashboardGroupsTable">
+    <data>
+        <collection id="dashboardGroupsDс"
+                         class="io.jmix.dashboards.entity.DashboardGroup"
+                         fetchPlan="dashboards">
+            <loader id="dashboardGroupsDl">
+                <query>
+                    <![CDATA[select e from dshbrd_DashboardGroup e]]>
+                </query>
+            </loader>
+
+        </collection>
+    </data>
+    <dialogMode height="600"
+                width="800"/>
+    <facets>
+        <dataLoadCoordinator auto="true"/>
+    </facets>
+
+    <layout expand="dashboardGroupsTable"
+            spacing="true">
+        <filter id="filter"
+                dataLoader="dashboardGroupsDl">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="dashboardGroupsTable"
+                    width="100%" dataContainer="dashboardGroupsDс">
+            <actions>
+                <action id="create" type="create"/>
+                <action id="edit" type="edit"/>
+                <action id="remove" type="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+            </columns>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="dashboardGroupsTable.create"/>
+                <button id="editBtn"
+                        action="dashboardGroupsTable.edit"/>
+                <button id="removeBtn"
+                        action="dashboardGroupsTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

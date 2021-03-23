@@ -39,7 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 @UiController("report_InputParameters.fragment")
-@UiDescriptor("input-parameters-frame.xml")
+@UiDescriptor("input-parameters-fragment.xml")
 public class InputParametersFragment extends ScreenFragment {
     public static final String REPORT_PARAMETER = "report";
     public static final String PARAMETERS_PARAMETER = "parameters";

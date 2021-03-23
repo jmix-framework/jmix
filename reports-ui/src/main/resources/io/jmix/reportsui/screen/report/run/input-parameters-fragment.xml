@@ -14,8 +14,7 @@
   ~ limitations under the License.
   -->
 
-<window xmlns="http://jmix.io/schema/ui/window"
-        caption="msg://inputParameters">
+<fragment xmlns="http://jmix.io/schema/ui/fragment">
 
     <data>
         <collection id="templateReportsDc"
@@ -48,4 +47,4 @@
             </rows>
         </gridLayout>
     </layout>
-</window>
+</fragment>

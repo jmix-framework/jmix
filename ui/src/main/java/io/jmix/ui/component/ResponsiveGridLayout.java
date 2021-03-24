@@ -29,7 +29,8 @@ import java.util.Objects;
  * <p>
  * Each component must be located in the corresponding {@link Column}.
  */
-public interface ResponsiveGridLayout extends Component, Component.BelongToFrame, HasComponents, HasHtmlSanitizer {
+public interface ResponsiveGridLayout extends Component, Component.BelongToFrame, HasComponents,
+        LayoutClickNotifier, HasHtmlSanitizer {
 
     String NAME = "responsiveGridLayout";
 

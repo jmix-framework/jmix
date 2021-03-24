@@ -18,13 +18,17 @@ package io.jmix.ui.widget;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.vaadin.event.LayoutEvents;
+import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.server.KeyMapper;
 import com.vaadin.server.SizeWithUnit;
+import com.vaadin.shared.EventId;
 import com.vaadin.shared.Registration;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.AbstractSingleComponentContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HasComponents;
+import io.jmix.ui.widget.client.responsivegridlayout.JmixResponsiveGridLayoutServerRpc;
 import io.jmix.ui.widget.client.responsivegridlayout.JmixResponsiveGridLayoutState;
 import io.jmix.ui.widget.responsivegridlayout.ResponsiveGridLayoutSerializationHelper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,7 +41,7 @@ import java.util.*;
 
 @WebJarResource("bootstrap:css/bootstrap-grid.min.css")
 public class JmixResponsiveGridLayout extends AbstractComponent
-        implements HasComponents, HasComponents.ComponentAttachDetachNotifier {
+        implements HasComponents, HasComponents.ComponentAttachDetachNotifier, LayoutEvents.LayoutClickNotifier {
 
     private static final Logger log = LoggerFactory.getLogger(JmixResponsiveGridLayout.class);
 
@@ -50,7 +54,27 @@ public class JmixResponsiveGridLayout extends AbstractComponent
     protected boolean initialized = false;
 
     public JmixResponsiveGridLayout() {
+        registerRpc(createRpc());
         initComponent();
+    }
+
+    protected JmixResponsiveGridLayoutServerRpc createRpc() {
+        return (mouseDetails, clickedConnector) -> {
+            Component layout = JmixResponsiveGridLayout.this;
+            // Because JmixResponsiveGridLayout doesn't extend ComponentContainer,
+            // we can't use LayoutEvents.LayoutClickEvent.createEvent and need to
+            // find a proper 'childComponent' manually
+            Component clickedComponent = (Component) clickedConnector;
+            Component childComponent = clickedComponent;
+            while (childComponent != null
+                    && childComponent.getParent() != layout) {
+                childComponent = childComponent.getParent();
+            }
+
+            LayoutClickEvent event = new LayoutClickEvent(layout, mouseDetails,
+                    clickedComponent, childComponent);
+            fireEvent(event);
+        };
     }
 
     protected void initComponent() {
@@ -201,6 +225,20 @@ public class JmixResponsiveGridLayout extends AbstractComponent
 
     protected void fireComponentDetachEvent(Component component) {
         fireEvent(new ComponentDetachEvent(this, component));
+    }
+
+    @Override
+    public Registration addLayoutClickListener(LayoutEvents.LayoutClickListener listener) {
+        return addListener(EventId.LAYOUT_CLICK_EVENT_IDENTIFIER,
+                LayoutClickEvent.class, listener,
+                LayoutEvents.LayoutClickListener.clickMethod);
+    }
+
+    @Override
+    @Deprecated
+    public void removeLayoutClickListener(LayoutEvents.LayoutClickListener listener) {
+        removeListener(EventId.LAYOUT_CLICK_EVENT_IDENTIFIER,
+                LayoutClickEvent.class, listener);
     }
 
     @Override

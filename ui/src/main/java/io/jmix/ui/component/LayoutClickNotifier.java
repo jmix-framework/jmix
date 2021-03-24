@@ -42,7 +42,7 @@ public interface LayoutClickNotifier {
         private final Component clickedComponent;
         private final MouseEventDetails mouseEventDetails;
 
-        public LayoutClickEvent(ComponentContainer layout, @Nullable Component childComponent,
+        public LayoutClickEvent(HasComponents layout, @Nullable Component childComponent,
                                 @Nullable Component clickedComponent, MouseEventDetails mouseEventDetails) {
             super(layout);
             this.childComponent = childComponent;
@@ -51,8 +51,8 @@ public interface LayoutClickNotifier {
         }
 
         @Override
-        public ComponentContainer getSource() {
-            return (ComponentContainer) super.getSource();
+        public HasComponents getSource() {
+            return (HasComponents) super.getSource();
         }
 
         /**

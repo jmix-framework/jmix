@@ -18,12 +18,16 @@ package io.jmix.ui.widget.client.responsivegridlayout;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
+import com.vaadin.client.Util;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractHasComponentsConnector;
+import com.vaadin.client.ui.LayoutClickEventHandler;
 import com.vaadin.shared.ui.Connect;
+import com.vaadin.shared.ui.LayoutClickRpc;
 import io.jmix.ui.widget.JmixResponsiveGridLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +41,23 @@ public class JmixResponsiveGridLayoutConnector extends AbstractHasComponentsConn
     protected List<String> containerStyles = new ArrayList<>();
 
     protected boolean layoutUpdated;
+
+    protected LayoutClickEventHandler clickEventHandler = createLayoutClickEventHandler();
+
+    protected LayoutClickEventHandler createLayoutClickEventHandler() {
+        return new LayoutClickEventHandler(this) {
+
+            @Override
+            protected ComponentConnector getChildComponent(Element element) {
+                return Util.getConnectorForElement(getConnection(), getWidget(), element);
+            }
+
+            @Override
+            protected LayoutClickRpc getLayoutClickRPC() {
+                return getRpcProxy(JmixResponsiveGridLayoutServerRpc.class);
+            }
+        };
+    }
 
     @Override
     public JmixResponsiveGridLayoutWidget getWidget() {
@@ -92,6 +113,7 @@ public class JmixResponsiveGridLayoutConnector extends AbstractHasComponentsConn
     @Override
     public void onStateChanged(StateChangeEvent stateChangeEvent) {
         super.onStateChanged(stateChangeEvent);
+        clickEventHandler.handleEventHandlerRegistration();
 
         if (stateChangeEvent.hasPropertyChanged("configuration")) {
             updateWidgetLayout();

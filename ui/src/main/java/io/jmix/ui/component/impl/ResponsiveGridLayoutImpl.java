@@ -17,7 +17,10 @@
 package io.jmix.ui.component.impl;
 
 import com.google.common.base.Preconditions;
+import com.vaadin.event.LayoutEvents;
 import com.vaadin.server.Sizeable;
+import com.vaadin.shared.Registration;
+import io.jmix.core.common.event.Subscription;
 import io.jmix.ui.AppUI;
 import io.jmix.ui.component.*;
 import io.jmix.ui.widget.JmixResponsiveGridLayout;
@@ -25,6 +28,7 @@ import org.apache.commons.collections4.MapUtils;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +41,7 @@ public class ResponsiveGridLayoutImpl extends AbstractComponent<JmixResponsiveGr
     protected List<Row> rowOrder = new ArrayList<>();
 
     protected List<Component> ownComponents = new ArrayList<>();
+    protected Registration layoutClickRegistration;
 
     public ResponsiveGridLayoutImpl() {
         component = createComponent();
@@ -138,6 +143,47 @@ public class ResponsiveGridLayoutImpl extends AbstractComponent<JmixResponsiveGr
 
     protected void removeOwnComponent(Component component) {
         ownComponents.remove(component);
+    }
+
+    @Override
+    public Subscription addLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        if (layoutClickRegistration == null) {
+            LayoutEvents.LayoutClickListener layoutClickListener = event -> {
+                Component childComponent = findChildComponent(event.getChildComponent());
+                Component clickedComponent = findChildComponent(event.getClickedComponent());
+                MouseEventDetails mouseEventDetails = WrapperUtils.toMouseEventDetails(event);
+
+                LayoutClickEvent layoutClickEvent =
+                        new LayoutClickEvent(this, childComponent, clickedComponent, mouseEventDetails);
+
+
+                publish(LayoutClickEvent.class, layoutClickEvent);
+            };
+            layoutClickRegistration = component.addLayoutClickListener(layoutClickListener);
+        }
+
+        getEventHub().subscribe(LayoutClickEvent.class, listener);
+
+        return () -> internalRemoveLayoutClickListener(listener);
+    }
+
+    @Nullable
+    protected Component findChildComponent(com.vaadin.ui.Component clickedComponent) {
+        for (Component component : getComponents()) {
+            if (component.unwrapComposition(com.vaadin.ui.Component.class) == clickedComponent) {
+                return component;
+            }
+        }
+        return null;
+    }
+
+    protected void internalRemoveLayoutClickListener(Consumer<LayoutClickEvent> listener) {
+        unsubscribe(LayoutClickEvent.class, listener);
+
+        if (!hasSubscriptions(LayoutClickEvent.class)) {
+            layoutClickRegistration.remove();
+            layoutClickRegistration = null;
+        }
     }
 
     @Override

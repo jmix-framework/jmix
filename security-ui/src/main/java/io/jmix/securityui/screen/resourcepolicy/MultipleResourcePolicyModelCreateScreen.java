@@ -18,13 +18,13 @@ package io.jmix.securityui.screen.resourcepolicy;
 
 import io.jmix.core.Messages;
 import io.jmix.securityui.model.ResourcePolicyModel;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.Screen;
 import io.jmix.ui.screen.ScreenValidation;
 import io.jmix.ui.screen.StandardCloseAction;
@@ -56,7 +56,7 @@ public abstract class MultipleResourcePolicyModelCreateScreen extends Screen {
         Messages messages = getApplicationContext().getBean(Messages.class);
         Icons icons = getApplicationContext().getBean(Icons.class);
 
-        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiScreenProperties.class).getCommitShortcut();
 
         Action commitAndCloseAction = new BaseAction(COMMIT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Ok"))

@@ -18,12 +18,12 @@ package io.jmix.securityui.screen.roleassignment;
 
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Window;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -67,7 +67,7 @@ public class RoleAssignmentScreen extends Screen {
         Messages messages = getApplicationContext().getBean(Messages.class);
         Icons icons = getApplicationContext().getBean(Icons.class);
 
-        String commitShortcut = getApplicationContext().getBean(UiProperties.class).getCommitShortcut();
+        String commitShortcut = getApplicationContext().getBean(UiScreenProperties.class).getCommitShortcut();
 
         Action commitAndCloseAction = new BaseAction(Window.COMMIT_ACTION_ID)
                 .withCaption(messages.getMessage("actions.Ok"))

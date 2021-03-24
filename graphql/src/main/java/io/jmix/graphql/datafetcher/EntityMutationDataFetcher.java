@@ -77,9 +77,6 @@ public class EntityMutationDataFetcher {
         };
     }
 
-    /**
-     * Finds entity with given metaClass.
-     */
     protected Object getMainEntity(Collection<Object> importedEntities, MetaClass metaClass) {
         Object mainEntity = null;
         if (importedEntities.size() > 1) {

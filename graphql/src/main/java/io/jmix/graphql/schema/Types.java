@@ -85,6 +85,8 @@ public class Types {
      * Shortcut for input value definition
      *
      * @param fieldName field name
+     * @param type input value type
+     * @param description input value description
      * @return field
      */
     public static InputValueDefinition valueDef(String fieldName, String type, @Nullable String description) {
@@ -98,6 +100,8 @@ public class Types {
      * Shortcut for input value definition that has list type
      *
      * @param fieldName field name
+     * @param type input value type
+     * @param description input value description
      * @return field
      */
     public static InputValueDefinition listValueDef(String fieldName, String type, @Nullable String description) {

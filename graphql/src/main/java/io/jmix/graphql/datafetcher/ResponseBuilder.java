@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 ;
 
 /**
- * Converts entities to Map<String, Object> response format.
+ * Converts entities to Map&lt;String, Object&gt; response format.
  */
 @Component
 public class ResponseBuilder {
@@ -52,13 +52,13 @@ public class ResponseBuilder {
 
 
     /**
-     * Convert loaded entity to data fetcher return format (Map<String, Object>)
+     * Convert loaded entity to data fetcher return format (Map&lt;String, Object&gt;)
      *
      * @param entity loaded entity
      * @param fetchPlan loaded entity properties
      * @param metaClass entity meta class
      * @param props we need pass full set of properties to have information about system props such '_instanceName'
-     * @return entity converted to response as Map<String, Object>
+     * @return entity converted to response as Map&lt;String, Object&gt;
      */
     public Map<String, Object> buildResponse(Entity entity, FetchPlan fetchPlan, MetaClass metaClass, Set<String> props) {
         Map<String, Object> entityAsMap = new HashMap<>();
@@ -112,6 +112,9 @@ public class ResponseBuilder {
     /**
      * Method constructs {@link FetchPlanBuilder} for a regular {@link FetchPlan} from the {@link EntityImportPlan}. The
      * regular fetchPlan will include all properties defined in the import plan.
+     *
+     * @param importPlan regular import plan
+     * @return builder for constructed fetch plan
      */
     protected FetchPlanBuilder constructFetchPlanFromImportPlan(EntityImportPlan importPlan) {
         FetchPlanBuilder fetchPlanBuilder = fetchPlans.builder(importPlan.getEntityClass());

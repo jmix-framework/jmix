@@ -122,6 +122,7 @@ public class EntityQueryDataFetcher {
     /**
      * Convert graphql orderBy object to jmix format.
      *
+     * @param path - parent property path
      * @param orderBy - graphql orderBy object
      * @return pair that contains propertyPath as key ans SortOrder as value
      */

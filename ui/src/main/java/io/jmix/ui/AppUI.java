@@ -33,6 +33,7 @@ import io.jmix.ui.event.UIRefreshEvent;
 import io.jmix.ui.exception.UiExceptionHandler;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.navigation.*;
+import io.jmix.ui.settings.UserSettingsTools;
 import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.sys.LinkHandler;
 import io.jmix.ui.sys.TestIdManager;
@@ -100,6 +101,9 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     @Autowired
     protected BeanFactory beanFactory;
+
+    @Autowired
+    protected UserSettingsTools userSettingsTools;
 
     protected TestIdManager testIdManager = new TestIdManager();
 
@@ -329,11 +333,6 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     }
 
     protected void setupUI() {
-//        if (!app.getConnection().isConnected()) {
-//            app.loginOnStart();
-//        } else {
-//            app.createTopLevelWindow(this);
-//        }
         app.loginOnStart();
     }
 
@@ -542,11 +541,9 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     }
 
     protected void updateUiTheme() {
-//        UserSession userSession = userSessionSource.getUserSession();
-//
-//        if (userSession.isAuthenticated()) {
+        if (hasAuthenticatedSession()) {
             // load theme from user settings
-            /*String themeName = userSettingsTools.loadTheme();
+            String themeName = userSettingsTools.loadTheme();
 
             if (!Objects.equals(themeName, getTheme())) {
                 // check theme support
@@ -555,8 +552,8 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
                     app.applyTheme(themeName);
                     setTheme(themeName);
                 }
-            }*/
-//        }
+            }
+        }
     }
 
     public JmixFileDownloader getFileDownloader() {

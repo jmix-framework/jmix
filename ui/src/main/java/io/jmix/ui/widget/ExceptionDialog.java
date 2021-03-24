@@ -33,14 +33,11 @@ import io.jmix.ui.component.KeyCombination;
 import io.jmix.ui.icon.IconResolver;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
-import io.jmix.ui.sys.ControllerUtils;
 import io.jmix.ui.theme.ThemeClassNames;
 import io.jmix.ui.theme.ThemeConstants;
 import io.jmix.ui.xml.layout.ComponentLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import javax.annotation.Nullable;
@@ -57,8 +54,6 @@ import static io.jmix.ui.action.DialogAction.Type;
  */
 public class ExceptionDialog extends JmixWindow {
 
-    private static final Logger log = LoggerFactory.getLogger(ExceptionDialog.class);
-
     protected VerticalLayout mainLayout;
 
     protected TextArea stackTraceTextArea;
@@ -68,8 +63,6 @@ public class ExceptionDialog extends JmixWindow {
     protected Button showStackTraceButton;
 
     protected boolean isStackTraceVisible = false;
-
-    protected Map<String, Object> additionalExceptionReportBinding = null;
 
     protected Messages messages;
 
@@ -352,29 +345,6 @@ public class ExceptionDialog extends JmixWindow {
 
     protected void forceLogout() {
         AppUI ui = (AppUI) getUI();
-
-        //todo MG logout
-        // App app = ui.getApp();
-        try {
-//            Connection connection = app.getConnection();
-//            if (connection.isConnected()) {
-//                connection.logout();
-//            }
-        } catch (Exception e) {
-            log.warn("Exception on forced logout", e);
-        } finally {
-            // always restart UI
-            String url = ControllerUtils.getLocationWithoutParams() + "?restartApp";
-
-            ui.getPage().open(url, "_self");
-        }
-    }
-
-    public void setAdditionalExceptionReportBinding(Map<String, Object> binding) {
-        additionalExceptionReportBinding = binding;
-    }
-
-    public Map<String, Object> getAdditionalExceptionReportBinding() {
-        return additionalExceptionReportBinding;
+        ui.getApp().logout();
     }
 }

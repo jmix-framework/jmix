@@ -443,10 +443,7 @@ public abstract class App {
         List<AppUI> authenticatedUIs = getAppUIs()
                 .stream()
                 .filter(ui ->
-                                uiProperties.isForceRefreshAuthenticatedTabs()
-//                        ui.hasAuthenticatedSession()
-//                                && (Objects.equals(ui.getUserSession(), currentSession)
-                )
+                        uiProperties.isForceRefreshAuthenticatedTabs())
                 .collect(Collectors.toList());
 
         removeAllWindows(authenticatedUIs);
@@ -492,19 +489,6 @@ public abstract class App {
         }
     }
 
-//    /**
-//     * Sets UserSession from {@link Connection#getSession()}
-//     * and re-initializes the given {@code ui}.
-//     */
-//    public void recreateUi(AppUI ui) {
-//        ui.setUserSession(connection.getSession());
-//
-//        removeAllWindows(Collections.singletonList(ui));
-//        createTopLevelWindow(ui);
-//
-//        ui.getPage().open(ControllerUtils.getLocationWithoutParams(), "_self");
-//    }
-
     /**
      * Try to perform logout. If there are unsaved changes in opened windows then logout will not be performed and
      * unsaved changes dialog will appear.
@@ -545,10 +529,8 @@ public abstract class App {
                                             result.success();
                                         }),
                                 new DialogAction(DialogAction.Type.CANCEL, Action.Status.PRIMARY)
-                                        .withHandler(event -> {
-
-                                            result.fail();
-                                        })
+                                        .withHandler(event ->
+                                                result.fail())
                         )
                         .show();
 
@@ -582,9 +564,10 @@ public abstract class App {
     }
 
     protected void forceLogout() {
-        //todo MG
-//        Connection connection = getConnection();
-//        connection.logout();
+        String contextPath = environment.getProperty(CoreProperties.SERVER_SERVLET_CONTEXTPATH);
+        String logoutPath = Strings.isNullOrEmpty(contextPath) ? "/logout" : contextPath + "/logout";
+
+        AppUI.getCurrent().getPage().setLocation(logoutPath);
     }
 
     /**

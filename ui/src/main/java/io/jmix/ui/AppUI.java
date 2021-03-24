@@ -102,7 +102,7 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
     @Autowired
     protected BeanFactory beanFactory;
 
-    @Autowired
+    @Autowired(required = false)
     protected UserSettingsTools userSettingsTools;
 
     protected TestIdManager testIdManager = new TestIdManager();
@@ -542,6 +542,10 @@ public class AppUI extends UI implements ErrorHandler, EnhancedUI, UiExceptionHa
 
     protected void updateUiTheme() {
         if (hasAuthenticatedSession()) {
+            if (userSettingsTools == null) {
+                return;
+            }
+
             // load theme from user settings
             String themeName = userSettingsTools.loadTheme();
 

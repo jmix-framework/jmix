@@ -16,7 +16,6 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.AbstractFrame;
 import com.haulmont.cuba.gui.data.Datasource;
 import com.haulmont.cuba.gui.data.DsContext;
@@ -24,7 +23,6 @@ import com.haulmont.cuba.gui.data.impl.DatasourceImplementation;
 import com.haulmont.cuba.gui.data.impl.GenericDataSupplier;
 import com.haulmont.cuba.gui.screen.compatibility.LegacyFrame;
 import com.haulmont.cuba.gui.sys.ScreenViewsLoader;
-import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DsContextLoader;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.xml.layout.loader.FragmentLoader;
@@ -85,15 +83,5 @@ public class CubaFragmentLoader extends FragmentLoader {
                 dsContext.setFrameContext(resultComponent.getContext());
             }
         }
-    }
-
-    @Nullable
-    @Override
-    protected String loadShortcutFromAlias(String shortcut) {
-        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
-                SHORTCUT_ALIASES,
-                getProperties(),
-                applicationContext.getBean(CubaProperties.class),
-                context);
     }
 }

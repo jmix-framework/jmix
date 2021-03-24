@@ -34,7 +34,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.security.entity.EntityAttrAccess;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.WindowInfo;
 import io.jmix.ui.action.Action;
@@ -42,6 +41,7 @@ import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiComponentProperties;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.Nullable;
@@ -180,7 +180,7 @@ public class AddAction extends ListAction
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.ADD_ACTION);
 
-        setShortcut(AppBeans.get(UiProperties.class).getTableAddShortcut());
+        setShortcut(AppBeans.get(UiComponentProperties.class).getTableAddShortcut());
     }
 
     @Override

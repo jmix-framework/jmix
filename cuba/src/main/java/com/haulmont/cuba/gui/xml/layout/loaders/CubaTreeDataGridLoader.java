@@ -17,7 +17,6 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DataGrid;
@@ -166,16 +165,6 @@ public class CubaTreeDataGridLoader extends TreeDataGridLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
-    }
-
-    @Nullable
-    @Override
-    protected String loadShortcutFromAlias(String shortcut) {
-        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
-                SHORTCUT_ALIASES,
-                getProperties(),
-                applicationContext.getBean(CubaProperties.class),
-                context);
     }
 
     protected static class CubaTreeDataGridDataHolder extends DataGridDataHolder {

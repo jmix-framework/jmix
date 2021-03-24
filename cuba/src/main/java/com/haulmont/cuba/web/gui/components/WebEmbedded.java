@@ -16,13 +16,13 @@
 
 package com.haulmont.cuba.web.gui.components;
 
+import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.components.Embedded;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Resource;
 import com.vaadin.server.StreamResource;
 import com.vaadin.server.ThemeResource;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.component.impl.AbstractComponent;
 import io.jmix.ui.download.DownloadDataProvider;
 import io.jmix.ui.sys.ControllerUtils;
@@ -52,7 +52,7 @@ public class WebEmbedded extends AbstractComponent<com.vaadin.ui.Embedded> imple
     protected Resource resource;
 
     @Autowired
-    protected UiProperties uiProperties;
+    protected CubaProperties cubaProperties;
 
     public WebEmbedded() {
         component = new com.vaadin.ui.Embedded();
@@ -86,7 +86,7 @@ public class WebEmbedded extends AbstractComponent<com.vaadin.ui.Embedded> imple
             } else {
                 File file = new File(src);
                 if (!file.isAbsolute()) {
-                    String root = uiProperties.getEmbeddedResourcesRoot();
+                    String root = cubaProperties.getEmbeddedResourcesRoot();
                     if (root != null) {
                         if (!root.endsWith(File.separator)) {
                             root += File.separator;

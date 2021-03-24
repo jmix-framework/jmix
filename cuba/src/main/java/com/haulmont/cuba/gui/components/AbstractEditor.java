@@ -37,13 +37,13 @@ import io.jmix.core.security.EntityOp;
 import io.jmix.core.validation.group.UiCrossFieldChecks;
 import io.jmix.dynattr.model.Categorized;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.ComponentsHelper;
 import io.jmix.ui.component.ValidationErrors;
 import io.jmix.ui.component.Window;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.ReadOnlyAwareScreen;
 import io.jmix.ui.screen.ReadOnlyScreensSupport;
 import io.jmix.ui.util.OperationResult;
@@ -89,10 +89,10 @@ public class AbstractEditor<T extends Entity> extends AbstractWindow
         Component commitAndCloseButton =
                 ComponentsHelper.findComponent(getFrame(), WINDOW_COMMIT_AND_CLOSE);
 
-        UiProperties properties = getApplicationContext().getBean(UiProperties.class);
+        UiScreenProperties screenProperties = getApplicationContext().getBean(UiScreenProperties.class);
 
         boolean commitAndCloseButtonExists = false;
-        String commitShortcut = properties.getCommitShortcut();
+        String commitShortcut = screenProperties.getCommitShortcut();
         if (commitAndCloseButton != null) {
             commitAndCloseButtonExists = true;
 

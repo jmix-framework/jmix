@@ -38,6 +38,7 @@ import io.jmix.ui.Notifications;
 import io.jmix.ui.Screens;
 import io.jmix.ui.component.CloseOriginType;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.CloseAction;
 import io.jmix.ui.screen.EditorScreen;
 import io.jmix.ui.screen.LookupScreen;
@@ -394,7 +395,7 @@ public interface Window extends io.jmix.ui.component.Window, Frame {
     }
 
     /**
-     * An event that is fired before a screen is closed with {@link io.jmix.ui.UiProperties#getCloseShortcut()}.
+     * An event that is fired before a screen is closed with {@link UiScreenProperties#getCloseShortcut()}.
      *
      * @deprecated Use {@link BeforeCloseEvent} with {@link CloseOrigin}
      */

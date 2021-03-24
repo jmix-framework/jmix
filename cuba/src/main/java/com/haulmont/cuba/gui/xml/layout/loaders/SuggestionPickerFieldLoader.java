@@ -16,7 +16,6 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DatasourceComponent;
 import com.haulmont.cuba.gui.components.Field;
@@ -31,7 +30,6 @@ import io.jmix.ui.component.EntitySuggestionField;
 import io.jmix.ui.xml.layout.loader.EntitySuggestionFieldLoader;
 import org.dom4j.Element;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 import static com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper.loadInvokeAction;
@@ -101,16 +99,6 @@ public class SuggestionPickerFieldLoader extends EntitySuggestionFieldLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
-    }
-
-    @Nullable
-    @Override
-    protected String loadShortcutFromAlias(String shortcut) {
-        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
-                SHORTCUT_ALIASES,
-                getProperties(),
-                applicationContext.getBean(CubaProperties.class),
-                context);
     }
 
     @Override

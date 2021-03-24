@@ -17,8 +17,6 @@
 package com.haulmont.cuba.gui.xml.data;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.WindowManager.OpenType;
 import com.haulmont.cuba.gui.components.*;
 import com.haulmont.cuba.gui.components.actions.ListActionType;
@@ -34,7 +32,6 @@ import io.jmix.core.metamodel.datatype.DatatypeRegistry;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.security.EntityOp;
 import io.jmix.ui.GuiDevelopmentException;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
 import io.jmix.ui.component.ActionsHolder;
@@ -50,10 +47,8 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class ComponentLoaderHelper {
@@ -70,12 +65,6 @@ public final class ComponentLoaderHelper {
             io.jmix.ui.component.DataGrid.LocalDateTimeRenderer.class,
             io.jmix.ui.component.DataGrid.NumberRenderer.class
     );
-
-    protected static final Map<String, Function<CubaProperties, String>> CUBA_SHORTCUT_ALIASES =
-            ImmutableMap.<String, Function<CubaProperties, String>>builder()
-                    .put("FILTER_APPLY_SHORTCUT", CubaProperties::getFilterApplyShortcut)
-                    .put("FILTER_SELECT_SHORTCUT", CubaProperties::getFilterSelectShortcut)
-                    .build();
 
     public static Optional<Action> loadLegacyPickerAction(PickerField actionsHolder,
                                                           Element element, ComponentLoader.Context context,
@@ -430,27 +419,6 @@ public final class ComponentLoaderHelper {
             rowsCount.setRowsCountTarget(listComponent);
             ((HasRowsCount) listComponent).setRowsCount(rowsCount);
         }
-    }
-
-    @Nullable
-    public static String loadShortcutFromAlias(String shortcut,
-                                               Map<String, Function<UiProperties, String>> shortcutAliases,
-                                               UiProperties uiProperties,
-                                               CubaProperties cubaProperties,
-                                               ComponentLoader.Context context) {
-        if (shortcut.endsWith("_SHORTCUT}")) {
-            String alias = shortcut.substring(2, shortcut.length() - 1);
-            if (shortcutAliases.containsKey(alias)) {
-                return shortcutAliases.get(alias).apply(uiProperties);
-            } else if (CUBA_SHORTCUT_ALIASES.containsKey(alias)) {
-                return CUBA_SHORTCUT_ALIASES.get(alias).apply(cubaProperties);
-            } else {
-                String message = String.format("An error occurred while loading shortcut. " +
-                        "Can't find shortcut for alias \"%s\"", alias);
-                throw new GuiDevelopmentException(message, context);
-            }
-        }
-        return null;
     }
 
     public static void loadTableColumnType(io.jmix.ui.component.Table.Column column,

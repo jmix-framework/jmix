@@ -19,9 +19,9 @@ import com.haulmont.cuba.core.global.AppBeans;
 import io.jmix.core.Entity;
 import io.jmix.core.Messages;
 import io.jmix.core.MetadataTools;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.AbstractAction;
 import io.jmix.ui.component.Component;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.LookupScreen;
 
 import java.util.Collection;
@@ -45,7 +45,7 @@ public class SelectAction extends AbstractAction {
         this.window = window;
         this.primary = true;
 
-        setShortcut(AppBeans.get(UiProperties.class).getCommitShortcut());
+        setShortcut(AppBeans.get(UiScreenProperties.class).getCommitShortcut());
 
         Messages messages = AppBeans.get(Messages.class);
         setCaption(messages.getMessage("actions.Select"));

@@ -33,13 +33,14 @@ import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import com.haulmont.cuba.security.entity.EntityAttrAccess;
 import io.jmix.core.security.EntityOp;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.UiScreenProperties;
 import org.springframework.context.annotation.Scope;
 
 import java.util.Collections;
@@ -173,10 +174,9 @@ public class CreateAction extends ListAction
 
         this.icon = AppBeans.get(Icons.class).get(JmixIcon.CREATE_ACTION);
 
-        UiProperties properties = AppBeans.get(UiProperties.class);
-        setShortcut(properties.getTableInsertShortcut());
+        setShortcut(AppBeans.get(UiComponentProperties.class).getTableInsertShortcut());
 
-        this.addFirst = properties.isCreateActionAddsFirst();
+        this.addFirst = AppBeans.get(UiScreenProperties.class).isCreateActionAddsFirst();
     }
 
     /**
@@ -457,7 +457,7 @@ public class CreateAction extends ListAction
      * Whether this action will add a new instance to the beginning of the datasource's collection.
      * Affects only standalone datasources, for nested datasources new items are always added to the end.
      *
-     * @see io.jmix.ui.UiProperties#isCreateActionAddsFirst()
+     * @see UiScreenProperties#isCreateActionAddsFirst()
      */
     public void setAddFirst(boolean addFirst) {
         this.addFirst = addFirst;

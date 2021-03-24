@@ -31,7 +31,6 @@ import io.jmix.core.entity.EntityValues;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.WindowConfig;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.BaseAction;
@@ -43,6 +42,7 @@ import io.jmix.ui.component.data.meta.EntityOptions;
 import io.jmix.ui.component.data.meta.EntityValueSource;
 import io.jmix.ui.icon.Icons;
 import io.jmix.ui.icon.JmixIcon;
+import io.jmix.ui.UiComponentProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
 
@@ -185,7 +185,7 @@ public interface PickerField<V extends Entity> extends Field<V>, EntityPicker<V>
 
         protected boolean editable = true;
 
-        protected UiProperties properties = AppBeans.get(UiProperties.class);
+        protected UiComponentProperties properties = AppBeans.get(UiComponentProperties.class);
 
         public StandardAction(String id, PickerField pickerField) {
             super(id);

@@ -23,13 +23,13 @@ import io.jmix.core.DevelopmentException;
 import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.annotation.Internal;
-import io.jmix.ui.UiProperties;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.*;
 import io.jmix.ui.component.Component;
 import io.jmix.ui.component.Fragment;
 import io.jmix.ui.component.Frame;
 import io.jmix.ui.icon.Icons;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -419,7 +419,9 @@ public class AbstractFrame extends ScreenFragment implements com.haulmont.cuba.g
             buffer.append(error.description).append("\n");
         }
 
-        NotificationType notificationType = NotificationType.valueOf(AppBeans.get(UiProperties.class).getValidationNotificationType());
+        NotificationType notificationType = NotificationType.valueOf(
+                AppBeans.get(UiScreenProperties.class).getValidationNotificationType()
+        );
         showNotification(messages.getMessage("validationFail.caption"), buffer.toString(), notificationType);
     }
 

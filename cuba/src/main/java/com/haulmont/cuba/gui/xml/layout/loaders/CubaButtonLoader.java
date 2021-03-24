@@ -16,9 +16,7 @@
 
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.gui.xml.DeclarativeAction;
-import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import io.jmix.ui.component.ActionOwner;
 import io.jmix.ui.component.Button;
 import io.jmix.ui.xml.layout.loader.ButtonLoader;
@@ -57,16 +55,6 @@ public class CubaButtonLoader extends ButtonLoader {
                 component.getFrame()
         );
         component.setAction(action);
-    }
-
-    @Nullable
-    @Override
-    protected String loadShortcutFromAlias(String shortcut) {
-        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
-                SHORTCUT_ALIASES,
-                getProperties(),
-                applicationContext.getBean(CubaProperties.class),
-                context);
     }
 
     @Override

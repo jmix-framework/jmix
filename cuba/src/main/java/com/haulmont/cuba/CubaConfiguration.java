@@ -32,6 +32,7 @@ import com.haulmont.cuba.gui.model.impl.CubaScreenDataImpl;
 import com.haulmont.cuba.gui.model.impl.CubaScreenDataXmlLoader;
 import com.haulmont.cuba.gui.presentation.Presentations;
 import com.haulmont.cuba.gui.presentation.PresentationsImpl;
+import com.haulmont.cuba.gui.xml.CubaPropertyShortcutLoader;
 import com.haulmont.cuba.security.app.UserSettingServiceBean;
 import com.haulmont.cuba.web.app.settings.UserSettingsToolsImpl;
 import com.haulmont.cuba.web.gui.CubaUiControllerReflectionInspector;
@@ -65,6 +66,8 @@ import io.jmix.ui.menu.MenuItemCommands;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.model.impl.ScreenDataXmlLoader;
 import io.jmix.ui.navigation.UrlChangeHandler;
+import io.jmix.ui.UiComponentProperties;
+import io.jmix.ui.UiScreenProperties;
 import io.jmix.ui.screen.FrameOwner;
 import io.jmix.ui.screen.ScreenOptions;
 import io.jmix.ui.settings.UserSettingService;
@@ -308,6 +311,14 @@ public class CubaConfiguration {
     @Primary
     protected EditorBuilderProcessor editorBuilderProcessor() {
         return new com.haulmont.cuba.gui.builders.EditorBuilderProcessor();
+    }
+
+    @Bean("cuba_PropertyShortcutLoader")
+    @Primary
+    protected CubaPropertyShortcutLoader propertyShortcutLoader(UiComponentProperties componentProperties,
+                                                                UiScreenProperties screenProperties,
+                                                                CubaProperties cubaProperties) {
+        return new CubaPropertyShortcutLoader(componentProperties, screenProperties, cubaProperties);
     }
 
     @EventListener

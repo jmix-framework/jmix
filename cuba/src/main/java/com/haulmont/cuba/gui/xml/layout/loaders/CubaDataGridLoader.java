@@ -17,7 +17,6 @@
 package com.haulmont.cuba.gui.xml.layout.loaders;
 
 import com.google.common.base.Strings;
-import com.haulmont.cuba.CubaProperties;
 import com.haulmont.cuba.core.global.Scripting;
 import com.haulmont.cuba.gui.UiComponents;
 import com.haulmont.cuba.gui.components.DataGrid;
@@ -25,7 +24,6 @@ import com.haulmont.cuba.gui.components.RowsCount;
 import com.haulmont.cuba.gui.data.CollectionDatasource;
 import com.haulmont.cuba.gui.xml.data.ComponentLoaderHelper;
 import com.haulmont.cuba.gui.xml.data.DatasourceLoaderHelper;
-import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.dynattrui.DynAttrEmbeddingStrategies;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.component.ActionsHolder;
@@ -166,16 +164,6 @@ public class CubaDataGridLoader extends DataGridLoader {
 
         return actionOpt.orElseGet(() ->
                 super.loadDeclarativeAction(actionsHolder, element));
-    }
-
-    @Nullable
-    @Override
-    protected String loadShortcutFromAlias(String shortcut) {
-        return ComponentLoaderHelper.loadShortcutFromAlias(shortcut,
-                SHORTCUT_ALIASES,
-                getProperties(),
-                applicationContext.getBean(CubaProperties.class),
-                context);
     }
 
     protected static class CubaDataGridDataHolder extends DataGridDataHolder {

@@ -20,6 +20,7 @@ import io.jmix.core.JmixOrder;
 import io.jmix.core.Messages;
 import io.jmix.core.Metadata;
 import io.jmix.core.MetadataTools;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
 import io.jmix.ui.Actions;
 import io.jmix.ui.UiComponents;
@@ -100,6 +101,16 @@ public class BulkEditComponentGenerationStrategy extends AbstractComponentGenera
         comboBox.setOptionsMap(options);
 
         return comboBox;
+    }
+
+    @Override
+    protected Component createEntityField(ComponentGenerationContext context, MetaPropertyPath mpp) {
+        MetaClass metaClass = mpp.getMetaProperty().getRange().asClass();
+        EntityPicker entityPicker = entityFieldCreationSupport.createEntityField(metaClass, context.getOptions());
+
+        setValueSource(entityPicker, context);
+
+        return entityPicker;
     }
 
     @Override

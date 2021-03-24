@@ -147,11 +147,10 @@ public class AttributeEnumerationScreen extends Screen {
     @Subscribe(id = "localizedEnumValuesDc", target = Target.DATA_CONTAINER)
     protected void onLocalizedEnumValuesDcItemChange(InstanceContainer.ItemChangeEvent<AttributeLocalizedEnumValue> event) {
         AttributeLocalizedEnumValue prevLocalizedEnumValue = event.getPrevItem();
-        if (prevLocalizedEnumValue != null) {
+        if (prevLocalizedEnumValue != null && localizationFragment != null) {
             String localizedValues = msgBundleTools.convertMsgBundleToEnumMsgBundle(prevLocalizedEnumValue.getValue(), localizationFragment.getNameMsgBundle());
             prevLocalizedEnumValue.setLocalizedValues(localizedValues);
         }
-
         if (localizationFragment != null) {
             AttributeLocalizedEnumValue localizedEnumValue = event.getItem();
             if (localizedEnumValue != null) {

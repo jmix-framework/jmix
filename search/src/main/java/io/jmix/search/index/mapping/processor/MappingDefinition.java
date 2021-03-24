@@ -23,15 +23,14 @@ import java.util.List;
 /**
  * Contains information about indexed properties defined via field-mapping annotations on methods
  * within index definition interface marked with {@link JmixEntitySearchIndex}
- * <p>
- * <br/>Also it can be directly created in method implementation.
+ * Also it can be directly created in method implementation.
  * Method should fulfil the following requirements:
  * <ul>
  *     <li>Static</li>
  *     <li>With return type - {@link MappingDefinition}</li>
  *     <li>Without parameters</li>
  * </ul>
- * <br/><b>Note:</b> if definition method has implementation any field-mapping annotations on it will be ignored
+ * <p><b>Note:</b> if definition method has implementation any field-mapping annotations on it will be ignored
  */
 public class MappingDefinition { //todo create builder
 

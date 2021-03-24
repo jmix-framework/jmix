@@ -68,7 +68,9 @@ public class AnnotatedIndexDefinitionProcessor {
 
     /**
      * Processes index definition interface marked with {@link JmixEntitySearchIndex} annotation
-     * and creates {@link IndexConfiguration} for it.
+     * and creates {@link IndexConfiguration} based on it.
+     * @param className full name of index definition interface
+     * @return {@link IndexConfiguration}
      */
     public IndexConfiguration createIndexConfiguration(String className) {
         log.debug("Create Index Definition for class {}", className);

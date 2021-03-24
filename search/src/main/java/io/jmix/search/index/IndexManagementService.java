@@ -83,14 +83,14 @@ public interface IndexManagementService {
     GetIndexResponse getIndex(@Nullable String indexName) throws IOException;
 
     /**
-     * Prepares all search indices defined in application.<br/>
-     * See {@link IndexManagementService#prepareIndex(IndexConfiguration)}
+     * Prepares all search indices defined in application.
+     * <p>See {@link IndexManagementService#prepareIndex(IndexConfiguration)}
      */
     void prepareIndexes();
 
     /**
-     * Updates index to the actual state.<br/>
-     * Non-existent index will be created, irrelevant index will be recreated.
+     * Updates index to the actual state.
+     * <p>Non-existent index will be created, irrelevant index will be recreated.
      *
      * @param indexConfiguration actual index configuration
      */

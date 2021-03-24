@@ -25,18 +25,18 @@ import java.lang.annotation.*;
 public @interface ScaledNumberField {
 
     /**
-     * Provides entity properties should be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties that should be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should be processed
      */
     String[] includeProperty() default "";
 
     /**
-     * Provides entity properties should NOT be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties should NOT be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should not be processed
      */

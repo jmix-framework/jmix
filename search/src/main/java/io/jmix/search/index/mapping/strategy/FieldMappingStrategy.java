@@ -21,8 +21,8 @@ import io.jmix.core.metamodel.model.MetaPropertyPath;
 import java.util.Map;
 
 /**
- * Base interface for mapping strategy.<br/>
- * mapping strategy defines the way of transformation of property metadata and content into index mapping and value.
+ * Base interface for mapping strategy.
+ * <p>Mapping strategy defines the way of transformation of property metadata and content into index mapping and value.
  */
 public interface FieldMappingStrategy {
 

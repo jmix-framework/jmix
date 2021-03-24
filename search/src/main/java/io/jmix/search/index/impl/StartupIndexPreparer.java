@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- * Prepares indices on application startup.<br/>
+ * Prepares indices on application startup.
  */
 @Component(StartupIndexPreparer.NAME)
 public class StartupIndexPreparer {

@@ -19,8 +19,8 @@ package io.jmix.search.index.annotation;
 import java.lang.annotation.*;
 
 /**
- * One of the field-mapping annotation. Should be set on methods in index definition interfaces.<br/>
- * Entity properties covered by this annotation will be indexed the most common way depends on their datatype.
+ * One of the field-mapping annotation. Should be set on methods in index definition interfaces.
+ * <p>Entity properties covered by this annotation will be indexed the most common way depends on their datatype.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,32 +28,32 @@ import java.lang.annotation.*;
 public @interface AutoMappedField {
 
     /**
-     * Provides entity properties should be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties that should be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should be processed
      */
     String[] includeProperty() default "";
 
     /**
-     * Provides entity properties should NOT be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties that should NOT be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should not be processed
      */
     String[] excludeProperty() default "";
 
     /**
-     * Provides analyzer that will be applied to all textual fields covered by this annotation.
+     * Provides analyzer that should be applied to all textual fields covered by this annotation.
      *
      * @return name of analyzer
      */
     String analyzer() default "";
 
     /**
-     * Provides normalizer that will be applied to all keyword fields covered by this annotation.
+     * Provides normalizer that should be applied to all keyword fields covered by this annotation.
      *
      * @return name of normalizer
      */

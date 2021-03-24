@@ -38,15 +38,15 @@ public interface IndexProcessManager {
     void reindexEntity(@Nullable String entityName);
 
     /**
-     * Performs reindex of all entities asynchronously. Entity instances will be added to the queue
-     * by the invocation of {@link IndexProcessManager#processNextReindexingEntity}
+     * Performs reindex of all entities asynchronously.
+     * <p>Entity instances will be added to the queue by the invocation of {@link IndexProcessManager#processNextReindexingEntity}
      * or {@link IndexProcessManager#processNextReindexingBatch} from a scheduled task.
      */
     void scheduleReindexAll();
 
     /**
-     * Performs reindex of provided entity asynchronously. Entity instances will be added to the queue
-     * by the invocation of {@link IndexProcessManager#processNextReindexingEntity}
+     * Performs reindex of provided entity asynchronously.
+     * <p>Entity instances will be added to the queue by the invocation of {@link IndexProcessManager#processNextReindexingEntity}
      * or {@link IndexProcessManager#processNextReindexingBatch} from a scheduled task.
      *
      * @param entityName entity
@@ -55,14 +55,14 @@ public interface IndexProcessManager {
 
     /**
      * Adds all instances of next entity to queue.
-     * At least one entity should be previously scheduled for reindex by calling {@link IndexProcessManager#scheduleReindexAll()}
+     * <p>At least one entity should be previously scheduled for reindex by calling {@link IndexProcessManager#scheduleReindexAll()}
      * or {@link IndexProcessManager#scheduleReindexEntity(String)} ()}.
      */
     void processNextReindexingEntity();
 
     /**
      * Adds next batch of instances to queue
-     * At least one entity should be previously scheduled for reindex by calling {@link IndexProcessManager#scheduleReindexAll()}
+     * <p>At least one entity should be previously scheduled for reindex by calling {@link IndexProcessManager#scheduleReindexAll()}
      * or {@link IndexProcessManager#scheduleReindexEntity(String)} ()}.
      */
     void processNextReindexingBatch();

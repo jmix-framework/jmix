@@ -21,8 +21,8 @@ import java.lang.annotation.*;
 //TODO Not supported yet
 
 /**
- * One of the field-mapping annotation. Should be set on methods in index definition interfaces.<br/>
- * Covers FileRef properties only. Allows to index file name and content.
+ * One of the field-mapping annotation. Should be set on methods in index definition interfaces.
+ * <p>Covers FileRef properties only. Allows to index file name and content.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,18 +30,18 @@ import java.lang.annotation.*;
 public @interface FileField {
 
     /**
-     * Provides entity properties should be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties that should be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should be processed
      */
     String[] includeProperty() default "";
 
     /**
-     * Provides entity properties should NOT be covered by this annotation.<br/>
-     * Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").<br/>
-     * Wildcard is allow on the last level of multilevel properties ("*", "refPropertyName.*").
+     * Provides entity properties that should NOT be covered by this annotation.
+     * <p>Properties should be defined in a full-name format started from the root entity ("localPropertyName", "refPropertyName.propertyName").
+     * <p>Wildcard is allowed at the last level of multilevel properties ("*", "refPropertyName.*").
      *
      * @return properties should not be processed
      */

@@ -68,8 +68,6 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
     @Autowired
     protected ComboBox<String> propertyField;
     @Autowired
-    protected TextField<String> captionField;
-    @Autowired
     protected Metadata metadata;
     @Autowired
     protected MessageTools messageTools;
@@ -174,9 +172,6 @@ public class PropertyFilterConditionEdit extends FilterConditionEdit<PropertyFil
         if (StringUtils.isNotEmpty(property) && event.isUserOriginated()) {
             String parameterName = PropertyConditionUtils.generateParameterName(property);
             getEditedEntity().setParameterName(parameterName);
-
-            String caption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass, property);
-            getEditedEntity().setCaption(caption);
 
             EnumSet<PropertyFilter.Operation> availableOperations = propertyFilterSupport
                     .getAvailableOperations(filterMetaClass, property);

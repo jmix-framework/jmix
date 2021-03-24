@@ -58,6 +58,7 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
 
         groupFilter.setOperation(model.getOperation());
         groupFilter.setCaption(model.getCaption());
+        groupFilter.setOperationCaptionVisible(model.getOperationCaptionVisible());
 
         if (model.getOwnFilterConditions() != null) {
             for (FilterCondition ownFilterCondition : model.getOwnFilterConditions()) {
@@ -77,6 +78,7 @@ public class GroupFilterConverter extends AbstractFilterComponentConverter<Group
 
         groupFilterCondition.setOperation(groupFilter.getOperation());
         groupFilterCondition.setCaption(groupFilter.getCaption());
+        groupFilterCondition.setOperationCaptionVisible(groupFilter.isOperationCaptionVisible());
 
         List<FilterCondition> ownFilterConditions = new ArrayList<>();
         for (FilterComponent ownFilterComponent : groupFilter.getOwnFilterComponents()) {

@@ -81,6 +81,18 @@ public interface PropertyFilter<V> extends SingleFilterComponent<V> {
     void setOperationEditable(boolean operationEditable);
 
     /**
+     * @return whether to show operation caption
+     */
+    boolean isOperationCaptionVisible();
+
+    /**
+     * Sets whether to show operation caption.
+     *
+     * @param operationCaptionVisible whether to show operation caption
+     */
+    void setOperationCaptionVisible(boolean operationCaptionVisible);
+
+    /**
      * Adds a listener that is invoked when the {@code operation} property changes.
      *
      * @param listener a listener to add

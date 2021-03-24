@@ -17,7 +17,6 @@
 package io.jmix.ui.component.filter.builder;
 
 import io.jmix.core.JmixOrder;
-import io.jmix.core.MessageTools;
 import io.jmix.core.Messages;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaPropertyPath;
@@ -50,8 +49,6 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
     protected FilterComponents filterComponents;
     @Autowired
     protected Messages messages;
-    @Autowired
-    protected MessageTools messageTools;
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
     @Autowired
@@ -103,7 +100,6 @@ public class PropertyConditionBuilder extends AbstractConditionBuilder {
         Class modelClass = filterComponents.getModelClass(PropertyFilter.class);
         FilterCondition filterCondition = (FilterCondition) metadata.create(modelClass);
         MetaClass metaClass = metaPropertyPath.getMetaClass();
-        filterCondition.setCaption(messageTools.getPropertyCaption(metaPropertyPath.getMetaProperty()));
 
         if (PropertyFilterCondition.class.isAssignableFrom(modelClass)) {
             String property = metaPropertyPath.toPathString();

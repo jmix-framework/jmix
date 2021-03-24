@@ -16,19 +16,22 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import com.google.common.base.Strings;
+import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.ui.action.Action;
 import io.jmix.ui.action.filter.FilterAddConditionAction;
 import io.jmix.ui.action.list.EditAction;
 import io.jmix.ui.action.list.RemoveAction;
 import io.jmix.ui.component.Button;
-import io.jmix.ui.component.HasValue;
+import io.jmix.ui.component.Filter;
 import io.jmix.ui.component.ListComponent;
 import io.jmix.ui.component.LogicalFilterComponent;
-import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
+import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.LogicalFilterCondition;
+import io.jmix.ui.entity.PropertyFilterCondition;
 import io.jmix.ui.model.CollectionContainer;
 import io.jmix.ui.model.InstanceContainer;
 import io.jmix.ui.screen.EditedEntityContainer;
@@ -49,6 +52,9 @@ import java.util.List;
 public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFilterCondition> {
 
     @Autowired
+    protected PropertyFilterSupport propertyFilterSupport;
+
+    @Autowired
     protected InstanceContainer<GroupFilterCondition> filterConditionDc;
     @Autowired
     protected CollectionContainer<FilterCondition> filterConditionsDc;
@@ -59,8 +65,8 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     protected Button moveUpButton;
     @Autowired
     protected Tree<FilterCondition> conditionsTree;
-    @Autowired
-    protected TextField<String> captionField;
+
+    protected MetaClass filterMetaClass;
 
     @Override
     public InstanceContainer<GroupFilterCondition> getInstanceContainer() {
@@ -96,6 +102,13 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
     @Override
     public ListComponent<FilterCondition> getListComponent() {
         return conditionsTree;
+    }
+
+    @Override
+    public void setCurrentConfiguration(Filter.Configuration currentConfiguration) {
+        super.setCurrentConfiguration(currentConfiguration);
+
+        filterMetaClass = currentConfiguration.getOwner().getDataLoader().getContainer().getEntityMetaClass();
     }
 
     @Subscribe
@@ -177,11 +190,22 @@ public class GroupFilterConditionEdit extends LogicalFilterConditionEdit<GroupFi
         moveDownButton.setEnabled(moveDownButtonEnabled);
     }
 
-    @Subscribe("operationField")
-    protected void onOperationFieldValueChange(HasValue.ValueChangeEvent<LogicalFilterComponent.Operation> event) {
-        LogicalFilterComponent.Operation operation = event.getValue();
-        if (operation != null && event.isUserOriginated()) {
-            captionField.setValue(logicalFilterSupport.getOperationCaption(operation));
+    @Install(to = "conditionsTree", subject = "itemCaptionProvider")
+    protected String conditionsTreeItemCaptionProvider(FilterCondition filterCondition) {
+        if (Strings.isNullOrEmpty(filterCondition.getCaption())) {
+            if (filterCondition instanceof PropertyFilterCondition) {
+                PropertyFilterCondition propertyFilterCondition = (PropertyFilterCondition) filterCondition;
+                return propertyFilterSupport.getPropertyFilterCaption(filterMetaClass,
+                        propertyFilterCondition.getProperty(), propertyFilterCondition.getOperation(),
+                        propertyFilterCondition.getOperationCaptionVisible()
+                                && !propertyFilterCondition.getOperationEditable());
+            }
+
+            if (filterCondition instanceof GroupFilterCondition) {
+                return logicalFilterSupport.getOperationCaption(((GroupFilterCondition) filterCondition).getOperation());
+            }
         }
+
+        return filterCondition.getCaption();
     }
 }

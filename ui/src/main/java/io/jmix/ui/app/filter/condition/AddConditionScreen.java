@@ -16,6 +16,7 @@
 
 package io.jmix.ui.app.filter.condition;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import io.jmix.core.AccessManager;
 import io.jmix.core.LoadContext;
@@ -34,10 +35,12 @@ import io.jmix.ui.component.TextField;
 import io.jmix.ui.component.Tree;
 import io.jmix.ui.component.filter.builder.PropertyConditionBuilder;
 import io.jmix.ui.component.filter.registration.FilterComponents;
+import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.component.propertyfilter.PropertyFilterSupport;
 import io.jmix.ui.entity.AbstractSingleFilterCondition;
 import io.jmix.ui.entity.FilterCondition;
 import io.jmix.ui.entity.FilterValueComponent;
+import io.jmix.ui.entity.GroupFilterCondition;
 import io.jmix.ui.entity.HeaderFilterCondition;
 import io.jmix.ui.entity.JpqlFilterCondition;
 import io.jmix.ui.entity.PropertyFilterCondition;
@@ -56,7 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -81,6 +83,8 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
     protected AccessManager accessManager;
     @Autowired
     protected PropertyFilterSupport propertyFilterSupport;
+    @Autowired
+    protected LogicalFilterSupport logicalFilterSupport;
 
     @Autowired
     protected CollectionLoader<FilterCondition> filterConditionsDl;
@@ -288,31 +292,19 @@ public class AddConditionScreen extends StandardLookup<FilterCondition> {
         }
     }
 
-    @Override
-    protected void select(Collection<FilterCondition> items) {
-        for (FilterCondition filterCondition : items) {
-            if (filterCondition instanceof PropertyFilterCondition
-                    && propertiesHeaderCondition != null
-                    && Objects.equals(propertiesHeaderCondition, getHeaderFilterCondition(filterCondition))) {
-                String fullCaption = propertyFilterSupport.getPropertyFilterCaption(filterMetaClass,
+    @Install(to = "filterConditionsTree", subject = "itemCaptionProvider")
+    protected String filterConditionsTreeItemCaptionProvider(FilterCondition filterCondition) {
+        if (Strings.isNullOrEmpty(filterCondition.getCaption())) {
+            if (filterCondition instanceof PropertyFilterCondition) {
+                return messageTools.getPropertyCaption(filterMetaClass,
                         ((PropertyFilterCondition) filterCondition).getProperty());
-                filterCondition.setCaption(fullCaption);
+            }
+
+            if (filterCondition instanceof GroupFilterCondition) {
+                return logicalFilterSupport.getOperationCaption(((GroupFilterCondition) filterCondition).getOperation());
             }
         }
 
-        super.select(items);
-    }
-
-    @Nullable
-    protected HeaderFilterCondition getHeaderFilterCondition(@Nullable FilterCondition filterCondition) {
-        if (filterCondition instanceof HeaderFilterCondition) {
-            return (HeaderFilterCondition) filterCondition;
-        }
-
-        if (filterCondition == null) {
-            return null;
-        }
-
-        return getHeaderFilterCondition(filterCondition.getParent());
+        return filterCondition.getCaption();
     }
 }

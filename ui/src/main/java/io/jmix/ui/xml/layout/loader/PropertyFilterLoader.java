@@ -17,7 +17,6 @@ package io.jmix.ui.xml.layout.loader;
 
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.metamodel.model.MetaProperty;
-import io.jmix.ui.component.Component;
 import io.jmix.ui.component.HasValue;
 import io.jmix.ui.component.PropertyFilter;
 import io.jmix.ui.component.PropertyFilter.Operation;
@@ -50,28 +49,8 @@ public class PropertyFilterLoader extends AbstractSingleFilterComponentLoader<Pr
     public void loadComponent() {
         super.loadComponent();
 
+        loadBoolean(element, "operationCaptionVisible", resultComponent::setOperationCaptionVisible);
         loadDefaultValue(resultComponent, element);
-    }
-
-    @Override
-    protected void loadCaption(Component.HasCaption component, Element element) {
-        super.loadCaption(component, element);
-
-        if (component.getCaption() == null) {
-            String caption = getDefaultCaption();
-            component.setCaption(caption);
-        }
-    }
-
-    protected String getDefaultCaption() {
-        MetaClass metaClass = resultComponent.getDataLoader().getContainer().getEntityMetaClass();
-        return getPropertyFilterSupport().getPropertyFilterCaption(
-                metaClass, resultComponent.getProperty(), resultComponent.getOperation(),
-                isOperationCaptionVisible() && !resultComponent.isOperationEditable());
-    }
-
-    protected boolean isOperationCaptionVisible() {
-        return loadBoolean(element, "operationCaptionVisible").orElse(true);
     }
 
     @Override

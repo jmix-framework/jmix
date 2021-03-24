@@ -16,12 +16,10 @@
 
 package io.jmix.ui.xml.layout.loader;
 
-import io.jmix.ui.component.Component;
 import io.jmix.ui.component.FilterComponent;
 import io.jmix.ui.component.GroupFilter;
 import io.jmix.ui.component.LogicalFilterComponent;
 import io.jmix.ui.component.SupportsCaptionPosition;
-import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.model.ScreenData;
 import io.jmix.ui.screen.FrameOwner;
@@ -66,6 +64,7 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
         loadEnum(element, SupportsCaptionPosition.CaptionPosition.class, "captionPosition",
                 resultComponent::setCaptionPosition);
 
+        loadBoolean(element, "operationCaptionVisible", resultComponent::setOperationCaptionVisible);
         loadCaption(resultComponent, element);
         loadDescription(resultComponent, element);
 
@@ -93,28 +92,5 @@ public class GroupFilterLoader extends AbstractComponentLoader<GroupFilter> {
 
             component.add((FilterComponent) filterComponentLoader.getResultComponent());
         }
-    }
-
-    @Override
-    protected void loadCaption(Component.HasCaption component, Element element) {
-        super.loadCaption(component, element);
-
-        if (isOperationCaptionVisible()) {
-            String operationCaption = getLogicalFilterSupport().getOperationCaption(resultComponent.getOperation());
-
-            if (component.getCaption() == null) {
-                component.setCaption(operationCaption);
-            } else {
-                component.setCaption(component.getCaption() + " " + operationCaption);
-            }
-        }
-    }
-
-    protected boolean isOperationCaptionVisible() {
-        return loadBoolean(element, "operationCaptionVisible").orElse(true);
-    }
-
-    protected LogicalFilterSupport getLogicalFilterSupport() {
-        return applicationContext.getBean(LogicalFilterSupport.class);
     }
 }

@@ -40,6 +40,7 @@
                            contextHelpText="msg://propertyFilterConditionEdit.parameterNameFieldContextHelp"/>
                 <textField id="captionField" property="caption"/>
                 <checkBox id="operationEditableField" property="operationEditable"/>
+                <checkBox id="operationCaptionVisibleField" property="operationCaptionVisible"/>
                 <hbox id="defaultValueBox" caption="msg://io.jmix.ui.entity/FilterValueComponent.defaultValue"/>
                 <checkBox id="visibleField" property="visible"/>
             </column>

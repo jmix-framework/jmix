@@ -36,6 +36,9 @@ public abstract class LogicalFilterCondition extends FilterCondition {
     protected String operation;
 
     @JmixProperty
+    protected Boolean operationCaptionVisible = true;
+
+    @JmixProperty
     protected List<FilterCondition> ownFilterConditions = new ArrayList<>();
 
     public LogicalFilterComponent.Operation getOperation() {
@@ -44,6 +47,14 @@ public abstract class LogicalFilterCondition extends FilterCondition {
 
     public void setOperation(LogicalFilterComponent.Operation operation) {
         this.operation = operation != null ? operation.getId() : null;
+    }
+
+    public Boolean getOperationCaptionVisible() {
+        return operationCaptionVisible;
+    }
+
+    public void setOperationCaptionVisible(Boolean operationCaptionVisible) {
+        this.operationCaptionVisible = operationCaptionVisible;
     }
 
     public List<FilterCondition> getOwnFilterConditions() {

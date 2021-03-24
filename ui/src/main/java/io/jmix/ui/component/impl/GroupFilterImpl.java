@@ -16,19 +16,23 @@
 
 package io.jmix.ui.component.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.annotation.Internal;
 import io.jmix.core.querycondition.Condition;
 import io.jmix.core.querycondition.LogicalCondition;
 import io.jmix.ui.UiComponents;
 import io.jmix.ui.component.*;
+import io.jmix.ui.component.groupfilter.LogicalFilterSupport;
 import io.jmix.ui.model.DataLoader;
 import io.jmix.ui.property.UiFilterProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -38,6 +42,7 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     protected static final String GROUP_FILTER_STYLENAME = "jmix-group-filter";
 
     protected UiComponents uiComponents;
+    protected LogicalFilterSupport logicalFilterSupport;
 
     protected DataLoader dataLoader;
     protected Condition initialDataLoaderCondition;
@@ -48,6 +53,8 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
     protected int columnsCount;
     protected CaptionPosition captionPosition = CaptionPosition.LEFT;
+    protected String caption;
+    protected boolean operationCaptionVisible = true;
 
     protected Operation operation = Operation.AND;
     protected LogicalCondition queryCondition = LogicalCondition.and();
@@ -69,6 +76,11 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
     public void setUiFilterProperties(UiFilterProperties uiFilterProperties) {
         this.columnsCount = uiFilterProperties.getColumnsCount();
         this.autoApply = uiFilterProperties.isAutoApply();
+    }
+
+    @Autowired
+    public void setLogicalFilterSupport(LogicalFilterSupport logicalFilterSupport) {
+        this.logicalFilterSupport = logicalFilterSupport;
     }
 
     @Override
@@ -126,6 +138,7 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
             this.operation = operation;
 
             updateQueryCondition();
+            updateCaption();
 
             if (!isConditionModificationDelegated()) {
                 updateDataLoaderCondition();
@@ -145,6 +158,55 @@ public class GroupFilterImpl extends CompositeComponent<GroupBoxLayout> implemen
 
             updateConditionsLayout();
         }
+    }
+
+    @Nullable
+    @Override
+    public String getCaption() {
+        return caption;
+    }
+
+    @Override
+    public void setCaption(@Nullable String caption) {
+        if (!Objects.equals(this.caption, caption)) {
+            this.caption = caption;
+
+            updateCaption();
+        }
+    }
+
+    @Override
+    public boolean isOperationCaptionVisible() {
+        return operationCaptionVisible;
+    }
+
+    @Override
+    public void setOperationCaptionVisible(boolean operationCaptionVisible) {
+        if (this.operationCaptionVisible != operationCaptionVisible) {
+            this.operationCaptionVisible = operationCaptionVisible;
+
+            updateCaption();
+        }
+    }
+
+    protected void updateCaption() {
+        String caption;
+        if (operationCaptionVisible) {
+            String operationCaption = logicalFilterSupport.getOperationCaption(operation);
+            if (Strings.isNullOrEmpty(this.caption)) {
+                caption = operationCaption;
+            } else {
+                caption = this.caption + " " + operationCaption;
+            }
+        } else {
+            if (Strings.isNullOrEmpty(this.caption)) {
+                caption = null;
+            } else {
+                caption = this.caption;
+            }
+        }
+
+        getComposition().setCaption(caption);
     }
 
     @Override

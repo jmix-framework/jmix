@@ -83,6 +83,18 @@ public interface LogicalFilterComponent extends FilterComponent {
     void setOperation(Operation operation);
 
     /**
+     * @return whether to show operation caption
+     */
+    boolean isOperationCaptionVisible();
+
+    /**
+     * Sets whether to show operation caption.
+     *
+     * @param operationCaptionVisible whether to show operation caption
+     */
+    void setOperationCaptionVisible(boolean operationCaptionVisible);
+
+    /**
      * Operation representing corresponding logical filtering condition.
      */
     enum Operation implements EnumClass<String> {

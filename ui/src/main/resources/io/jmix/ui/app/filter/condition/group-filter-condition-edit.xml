@@ -44,6 +44,7 @@
                     <column width="100%">
                         <comboBox id="operationField" property="operation" nullOptionVisible="false" required="true"/>
                         <textField id="captionField" property="caption"/>
+                        <checkBox id="operationCaptionVisibleField" property="operationCaptionVisible"/>
                         <checkBox id="visibleField" property="visible"/>
                     </column>
                 </form>

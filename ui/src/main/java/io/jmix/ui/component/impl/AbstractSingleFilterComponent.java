@@ -28,6 +28,7 @@ import io.jmix.ui.property.UiFilterProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -206,11 +207,13 @@ public abstract class AbstractSingleFilterComponent<V> extends CompositeComponen
 
     @Override
     public void setCaption(@Nullable String caption) {
-        this.caption = caption;
-        updateCaption();
+        if (!Objects.equals(this.caption, caption)) {
+            this.caption = caption;
+            updateCaption(caption);
+        }
     }
 
-    protected void updateCaption() {
+    protected void updateCaption(@Nullable String caption) {
         if (captionPosition == CaptionPosition.TOP) {
             root.setCaption(caption);
         } else {

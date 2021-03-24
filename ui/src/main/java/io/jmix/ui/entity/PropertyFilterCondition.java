@@ -41,6 +41,9 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
     @JmixProperty
     protected Boolean operationEditable = true;
 
+    @JmixProperty
+    protected Boolean operationCaptionVisible = true;
+
     public String getProperty() {
         return property;
     }
@@ -71,5 +74,13 @@ public class PropertyFilterCondition extends AbstractSingleFilterCondition {
 
     public void setOperationEditable(Boolean operationEditable) {
         this.operationEditable = operationEditable;
+    }
+
+    public Boolean getOperationCaptionVisible() {
+        return operationCaptionVisible;
+    }
+
+    public void setOperationCaptionVisible(Boolean operationCaptionVisible) {
+        this.operationCaptionVisible = operationCaptionVisible;
     }
 }

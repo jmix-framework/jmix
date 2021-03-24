@@ -16,6 +16,7 @@
 
 package io.jmix.ui.component.impl;
 
+import com.google.common.base.Strings;
 import io.jmix.core.common.event.Subscription;
 import io.jmix.core.metamodel.model.MetaClass;
 import io.jmix.core.querycondition.PropertyCondition;
@@ -48,6 +49,7 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
 
     protected Operation operation;
     protected boolean operationEditable = false;
+    protected boolean operationCaptionVisible = true;
 
     @Autowired
     public void setPropertyFilterSupport(PropertyFilterSupport propertyFilterSupport) {
@@ -99,6 +101,7 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
 
             if (operation != null) {
                 operationSelector.setCaption(getOperationCaption(operation));
+                updateCaption(caption);
             }
         }
     }
@@ -173,6 +176,8 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
         Operation prevOperation = this.operation != null ? this.operation : operation;
         this.operation = operation;
 
+        updateCaption(caption);
+
         OperationChangeEvent operationChangeEvent = new OperationChangeEvent(this, operation, prevOperation);
         publish(OperationChangeEvent.class, operationChangeEvent);
     }
@@ -236,7 +241,39 @@ public class PropertyFilterImpl<V> extends AbstractSingleFilterComponent<V> impl
                 operationSelector = createOperationSelector();
                 root.add(operationSelector, captionPosition == CaptionPosition.TOP ? 0 : 1);
             }
+
+            updateCaption(caption);
         }
+    }
+
+    @Override
+    public boolean isOperationCaptionVisible() {
+        return operationCaptionVisible;
+    }
+
+    @Override
+    public void setOperationCaptionVisible(boolean operationCaptionVisible) {
+        if (this.operationCaptionVisible != operationCaptionVisible) {
+            this.operationCaptionVisible = operationCaptionVisible;
+
+            updateCaption(caption);
+        }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    protected void updateCaption(@Nullable String caption) {
+        String newCaption;
+        if (dataLoader == null || operation == null
+                || getProperty() == null || !Strings.isNullOrEmpty(caption)) {
+            newCaption = caption;
+        } else {
+            MetaClass metaClass = dataLoader.getContainer().getEntityMetaClass();
+            newCaption = propertyFilterSupport.getPropertyFilterCaption(metaClass, getProperty(), operation,
+                    operationCaptionVisible && !operationEditable);
+        }
+
+        super.updateCaption(newCaption);
     }
 
     protected void removeOperationSelector() {

@@ -65,6 +65,7 @@ public class PropertyFilterConverter
         propertyFilter.setProperty(model.getProperty());
         propertyFilter.setOperation(model.getOperation());
         propertyFilter.setOperationEditable(model.getOperationEditable());
+        propertyFilter.setOperationCaptionVisible(model.getOperationCaptionVisible());
         propertyFilter.setParameterName(model.getParameterName());
 
         HasValue valueComponent = convertValueComponentToComponent(model);
@@ -84,6 +85,7 @@ public class PropertyFilterConverter
         condition.setProperty(propertyFilter.getProperty());
         condition.setOperation(propertyFilter.getOperation());
         condition.setOperationEditable(propertyFilter.isOperationEditable());
+        condition.setOperationCaptionVisible(propertyFilter.isOperationCaptionVisible());
         condition.setParameterName(propertyFilter.getParameterName());
 
         FilterValueComponent valueComponent = convertValueComponentToModel(propertyFilter);
